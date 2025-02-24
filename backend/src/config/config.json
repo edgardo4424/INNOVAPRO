@@ -1,0 +1,10 @@
+{
+    "development": {
+      "username": "root",
+      "password": "Andres_Innova_2025",
+      "database": "innovapro",
+      "host": "localhost",
+      "dialect": "mysql",
+      "port": "3306"
+    }
+  }

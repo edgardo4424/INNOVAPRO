@@ -1,0 +1,105 @@
+/* Estilos para el Login con una estética corporativa del sector construcción */
+
+:root {
+  --primary-color: #0671c9; /* Azul oscuro profesional */
+  --secondary-color: #4307d0; /* Azul más claro con un leve toque de morado */
+  --accent-color: #f08a24; /* Anaranjado vibrante */
+  --hover-color: #ffb765; /* Color del hover*/
+  --background-color: #f4f4f4; /* Fondo claro para contraste */
+  --text-color: #ffffff; /* Texto en blanco para mejor visibilidad */
+}
+
+.login-version {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: var(--secondary-color);
+  opacity: 0.7;
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+.login-box {
+  background: var(--background-color);
+  padding: 3rem;
+  border-radius: 10px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 350px;
+}
+
+.login-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.login-input {
+  width: 90%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 2px solid var(--secondary-color);
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.login-button {
+  width: 90%;
+  padding: 10px;
+  background: var(--accent-color);
+  color: var(--text-color);
+  border: none;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.login-button:hover {
+  background: var(--hover-color);
+}
+
+.login-links {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.login-links a {
+  color: var(--secondary-color);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.login-links a:hover {
+  text-decoration: underline;
+}
+
+.login-logo {
+  width: 100%; /* Se adapta al contenedor */
+  max-width: 100%; /* Tamaño máximo */
+  height: auto; /* Mantiene la proporción */
+  display: block; /* Evita espacios adicionales */
+  margin: 0 auto 0rem; /* Centrado y separación */
+}
+
+.recaptcha-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+/* 🔥 Ajuste en pantallas pequeñas */
+@media (max-width: 768px) {
+  .recaptcha-container {
+    transform: scale(0.85); /* Reduce el tamaño en móviles */
+  }
+}
