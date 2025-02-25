@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const clientes = sequelize.define(
+    const Cliente = sequelize.define(
         "clientes",
         {
             id: {
@@ -19,11 +19,12 @@ module.exports = (sequelize, DataTypes) => {
             ruc: {
                 type: DataTypes.STRING(11),
                 unique: true,
-                allowNull: false,
+                allowNull: true,
             },
             dni: {
                 type: DataTypes.STRING,
                 unique: true,
+                allowNull: true,
             },
             telefono:{
                 type: DataTypes.STRING,
@@ -53,7 +54,16 @@ module.exports = (sequelize, DataTypes) => {
             timestamps: false,
             tableName: "clientes",
         }
-    );
+    );    
 
-    return clientes;
+    Cliente.associate = (models) => {
+        Cliente.belongsToMany(models.contactos, {
+            through: "contacto_clientes",
+            foreignKey: "cliente_id",
+            otherKey: "contacto_id",
+            as: "contactos_asociados",
+        });
+    };
+    
+    return Cliente;
 };

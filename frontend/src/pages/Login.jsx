@@ -1,5 +1,5 @@
 import { APP_VERSION } from "../config";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha"; // Importamos reCAPTCHA
@@ -8,9 +8,20 @@ import styles from "../styles/Login.module.css";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const recaptchaRef = useRef(null);
   const [recaptchaToken, setRecaptchaToken] = useState(null); // Guardamos el token del reCAPTCHA
   const { login } = useAuth();
   const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (recaptchaRef.current) {
+      recaptchaRef.current.reset(); // 🔹 Reinicia el reCAPTCHA al cargar la página
+    }
+  }, []);
+
+  function handleRecaptcha(value) {
+    setRecaptchaToken(value);
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -51,9 +62,9 @@ export default function Login() {
             required
           />
           <div className={styles["recaptcha-container"]}>
-            <ReCAPTCHA
+            <ReCAPTCHA ref={recaptchaRef}
               sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
-              onChange={(token) => setRecaptchaToken(token)}
+              onChange={handleRecaptcha}
             />
           </div>
 

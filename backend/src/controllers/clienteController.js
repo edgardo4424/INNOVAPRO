@@ -1,19 +1,24 @@
 const db = require("../models");
+const Cliente = db.clientes;
+const Contacto = db.contactos; 
 
-// 🔹 Obtener todos los clientes con sus obras y contactos asociados
+// 🔹 Obtener todos los clientes con sus obras y contactos
 exports.obtenerClientes = async (req, res) => {
     try {
-        const clientes = await db.clientes.findAll({
+        const clientes = await Cliente.findAll({
+            attributes: [
+                "id", "razon_social", "tipo", "ruc", "dni", "telefono", "email", 
+                "domicilio_fiscal", "representante_legal", "dni_representante", "creado_por", "fecha_creacion"
+            ],
             include: [
                 {
-                    model: db.obras, 
-                    as: "obras",
-                    duplicating: false, // 🔥 Evita la duplicación
-                    required: false // 🔹 Asegura que se muestren clientes aunque no tengan obras
+                    model: Contacto,
+                    through: { attributes: [] }, // ✅ Relación correcta con la tabla intermedia
+                    as: "contactos_asociados",
                 },
-                {model: db.contactos, as: "contactos"}
-            ]
+            ],
         });
+
         res.status(200).json(clientes);
     } catch (error) {
         console.error("❌ Error al obtener clientes:", error);
@@ -38,15 +43,40 @@ exports.obtenerClientePorId = async (req, res) => {
 // 🔹 Crear un nuevo cliente
 exports.crearCliente = async (req, res) => {
     try {
-        const { razon_social, ruc, domicilio_fiscal, representante_legal, dni_representante, creado_por } = req.body;
+        const { razon_social, tipo, ruc, dni, domicilio_fiscal, representante_legal, dni_representante, telefono, email, creado_por } = req.body;
 
-        if (!razon_social || !ruc || !domicilio_fiscal || !representante_legal || !dni_representante || !creado_por) {
-            return res.status(400).json({ mensaje: "Todos los campos son obligatorios" });
+        if (!razon_social || !tipo || !creado_por) {
+            return res.status(400).json({ mensaje: "Razón social, tipo y usuario creador son obligatorios." });
         }
 
-        const nuevoCliente = await db.clientes.create({
-            razon_social, ruc, domicilio_fiscal, representante_legal, dni_representante, creado_por
-        });
+        let nuevoClienteData = {
+            razon_social,
+            tipo,
+            telefono: telefono || "",  // 🔥 Si es null, se guarda como ""
+            email: email || "",
+            creado_por,
+        };
+
+        // 🔥 Si el cliente es una Empresa, validamos y asignamos los campos extra
+        if (tipo === "Empresa") {
+            if (!ruc || !domicilio_fiscal || !representante_legal || !dni_representante) {
+                return res.status(400).json({ mensaje: "Los datos de la empresa son obligatorios." });
+            }
+            nuevoClienteData = {
+                ...nuevoClienteData,
+                ruc: ruc || "",
+                domicilio_fiscal: domicilio_fiscal || "",
+                representante_legal: representante_legal || "",
+                dni_representante: dni_representante || "",
+            };
+        } else {
+            if (!dni) {
+                return res.status(400).json({ mensaje: "El DNI es obligatorio para clientes Particulares." });
+            }
+            nuevoClienteData = { ...nuevoClienteData, dni: dni || "" };
+        }
+
+        const nuevoCliente = await db.clientes.create(nuevoClienteData);
 
         res.status(201).json({ mensaje: "Cliente creado exitosamente", cliente: nuevoCliente });
     } catch (error) {

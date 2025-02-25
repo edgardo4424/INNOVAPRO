@@ -11,27 +11,17 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
+            email: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
             telefono: {
                 type: DataTypes.STRING,
+                allowNull: true,
             },
             cargo: {
                 type: DataTypes.STRING,
-            },
-            cliente_id: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                references: {
-                    model: "clientes",
-                    key: "id",
-                },
-            },
-            obra_id: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                references: {
-                    model: "obras",
-                    key: "id",
-                },
+                allowNull: true,
             },     
         },
         {
@@ -39,6 +29,22 @@ module.exports = (sequelize, DataTypes) => {
             tableName: "contactos",
         }
     );
+
+    Contacto.associate = (models) => {
+        Contacto.belongsToMany(models.clientes, {
+            through: "contacto_clientes",
+            foreignKey: "contacto_id",
+            otherKey: "cliente_id",
+            as: "clientes_asociados",
+        });
+
+        Contacto.belongsToMany(models.obras, {
+            through: "contacto_obras",
+            foreignKey: "contacto_id",
+            otherKey: "obra_id",
+            as: "obras_asociadas",
+        });
+    };
 
     return Contacto;
 };

@@ -3,6 +3,9 @@ import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 import ProtectedRoute from "../components/ProtectedRoute";
 import GestionUsuarios from "../components/GestionUsuarios";
+import GestionEmpresas from "../components/GestionEmpresas";
+import GestionClientes from "../components/GestionClientes";
+import GestionContactos from "../components/GestionContactos"; // 🔥 IMPORTAMOS EL NUEVO MÓDULO
 
 export default function AppRoutes() {
   return (
@@ -31,10 +34,34 @@ export default function AppRoutes() {
             </ProtectedRoute>
           } 
         />
+        <Route 
+          path="/gestion-empresas" 
+          element={
+            <ProtectedRoute>
+              <GestionEmpresas />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/gestion-clientes" 
+          element={
+            <ProtectedRoute>
+              <GestionClientes />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/gestion-contactos" 
+          element={
+            <ProtectedRoute>
+              <GestionContactos />
+            </ProtectedRoute>
+          } 
+        />
 
         {/* 🔥 Si la ruta no existe, redirigir siempre a `/login` */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
-      </BrowserRouter>
+    </BrowserRouter>
   );
 }

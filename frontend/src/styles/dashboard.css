@@ -91,6 +91,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
 }
 
 .dashboard-header {
@@ -207,6 +208,8 @@
     gap: 10px;
   }
 
+  
+
   .pagination {
     flex-direction: column;
     gap: 5px;
@@ -215,6 +218,26 @@
   .pagination button {
     width: 100%;
   }
+
+  .modal {
+    width: 90%; /* Más ancho en móviles */
+    max-width: none;
+  }
+}
+
+.add-button {
+  background-color: #ff8c00;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.add-button:hover {
+  background-color: #003366;
 }
 
 .gestion-usuarios-btn {
@@ -230,7 +253,7 @@
 }
 
 .gestion-usuarios-btn:hover {
-  background: #e67e00;
+  background: #003366;
 }
 
 .gestion-usuarios-form {
@@ -264,6 +287,11 @@
 
 .gestion-usuarios-form button:hover {
   background: var(--hover-color);
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
 }
 
 .custom-table {
@@ -410,15 +438,19 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  width: 60%; /* 🔥 Antes era más angosto, ahora ocupa el 60% de la pantalla */
+  max-width: 800px; /* 🔥 No exceder los 800px en pantallas grandes */
   background: white;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
 }
 
 .modal-content {
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 
 .modal-actions {
@@ -439,4 +471,54 @@
   color: white;
   padding: 8px 12px;
   border-radius: 5px;
+}
+
+/* Estilos para react-select */
+.css-yk16xz-control {
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  padding: 5px;
+}
+
+.css-1pahdxg-control {
+  border-color: #007bff !important;
+  box-shadow: 0 0 0 1px #007bff !important;
+}
+
+.css-26l3qy-menu {
+  border-radius: 5px;
+}
+
+/* Estilos para mejorar la disposición del formulario */
+.gestion-contactos-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+.gestion-contactos-form input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.gestion-contactos-form button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.gestion-contactos-form button:hover {
+  background: #0056b3;
 }

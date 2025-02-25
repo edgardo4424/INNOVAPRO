@@ -3,13 +3,17 @@ const db = require("../models");
 // 🔹 Obtener todas las obras
 exports.obtenerObras = async (req, res) => {
     try {
-        const obras = await db.Obra.findAll();
+        if (!db.obras) {
+            return res.status(500).json({ mensaje: "Error interno: Modelo de Obras no encontrado." });
+        }
+        const obras = await db.obras.findAll();
         res.status(200).json(obras);
     } catch (error) {
         console.error("❌ Error al obtener obras:", error);
         res.status(500).json({ mensaje: "Error interno del servidor" });
     }
 };
+
 
 // 🔹 Obtener obras por cliente ID
 exports.obtenerObrasPorCliente = async (req, res) => {

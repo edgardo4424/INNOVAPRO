@@ -1,27 +1,31 @@
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ Importa useNavigate
+import { useNavigate } from "react-router-dom";
 import { FaBars, FaSignOutAlt, FaCog, FaBell } from "react-icons/fa";
 import GestionUsuarios from "../components/GestionUsuarios";
+import GestionEmpresas from "../components/GestionEmpresas";
+import GestionClientes from "../components/GestionClientes"; // 🔥 IMPORTAMOS EL NUEVO MÓDULO
 import CotizacionForm from "../components/CotizacionForm";
+import GestionContactos from "../components/GestionContactos"; // 🔥 IMPORTACIÓN FALTANTE
+
 import "../styles/dashboard.css";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [moduloActivo, setModuloActivo] = useState(null);
-  const navigate = useNavigate(); // ✅ Crea el navegador
+  const navigate = useNavigate();
 
   if (!user) return <p className="error">Error: Usuario no autenticado.</p>;
 
   const modulesByRole = {
-    Gerencia: ["Gestión de Usuarios", "Reportes", "Estadísticas", "Administración", "Cotizaciones"],
-    Ventas: ["Clientes", "Cotizaciones", "Pedidos"],
+    Gerencia: ["Gestión de Usuarios", "Gestión de Empresas", "Gestión de Clientes", "Gestión de Contactos", "Reportes", "Estadísticas", "Administración", "Cotizaciones"],
+    Ventas: ["Gestión de Clientes", "Gestión de Contactos", "Cotizaciones", "Pedidos"],
     OT: ["Proyectos", "Planos", "Materiales"],
     Almacén: ["Inventario", "Entradas", "Salidas"],
     Administración: ["Usuarios", "Finanzas", "Permisos"],
     Clientes: ["Mis Pedidos", "Facturas", "Soporte"],
-  };
+};
 
   const modules = modulesByRole[user.rol] || [];
 
@@ -69,25 +73,28 @@ export default function Dashboard() {
         </header>
 
         <section className="dashboard-content">
-          {!moduloActivo ? (
-            <div className="dashboard-widgets">
-              {modules.map((module) => (
-                <button key={module} className="widget" onClick={() => setModuloActivo(module)}>
-                  {module}
-                </button>
-              ))}
-            </div>
-          ) : (
-            <>
-              <button className="back-button" onClick={() => setModuloActivo(null)}>
-                ⬅ Volver al inicio
-              </button>
-              {moduloActivo === "Gestión de Usuarios" && <GestionUsuarios />}
-              {moduloActivo === "Cotizaciones" && <CotizacionForm />}
-              {moduloActivo === "Reportes" && <div>📊 Módulo de Reportes</div>}
-              {moduloActivo === "Estadísticas" && <div>📈 Módulo de Estadísticas</div>}
-            </>
-          )}
+            {!moduloActivo ? (
+                <div className="dashboard-widgets">
+                    {modules.map((module) => (
+                        <button key={module} className="widget" onClick={() => setModuloActivo(module)}>
+                            {module}
+                        </button>
+                    ))}
+                </div>
+            ) : (
+                <>
+                    <button className="back-button" onClick={() => setModuloActivo(null)}>
+                        ⬅ Volver al inicio
+                    </button>
+                    {moduloActivo === "Gestión de Usuarios" && <GestionUsuarios />}
+                    {moduloActivo === "Gestión de Empresas" && <GestionEmpresas />}
+                    {moduloActivo === "Gestión de Clientes" && <GestionClientes />}
+                    {moduloActivo === "Gestión de Contactos" && <GestionContactos />}
+                    {moduloActivo === "Cotizaciones" && <CotizacionForm />}
+                    {moduloActivo === "Reportes" && <div>📊 Módulo de Reportes</div>}
+                    {moduloActivo === "Estadísticas" && <div>📈 Módulo de Estadísticas</div>}
+                </>
+            )}
         </section>
       </main>
     </div>

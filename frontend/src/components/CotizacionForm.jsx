@@ -104,7 +104,7 @@ export default function CotizacionForm() {
           <option value="">Selecciona una empresa proveedora</option>
           {empresas.map((empresa) => (
             <option key={empresa.id} value={empresa.id}>
-              {empresa.nombre}
+              {empresa.razon_social}
             </option>
           ))}
         </select>

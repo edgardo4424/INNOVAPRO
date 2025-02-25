@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const obras = sequelize.define(
+    const Obra = sequelize.define(
         "obras",
         {
             id: {
@@ -10,17 +10,6 @@ module.exports = (sequelize, DataTypes) => {
             nombre: {
                 type: DataTypes.STRING,
                 allowNull: false,
-            },
-            cliente_id: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                references: {
-                    model: "clientes",
-                    key: "id",
-                },
-            },
-            contacto_principal_id: {
-                type: DataTypes.INTEGER,
             },
             ubicacion: {
                 type: DataTypes.ENUM('Amazonas', 'Áncash', 'Apurímac', 'Arequipa', 'Ayacucho', 'Cajamarca', 'Callao', 'Cusco', 'Huancavelica', 'Huánuco', 'Ica', 'Junín', 'La Libertad', 'Lambayeque', 'Lima Metropolitana', 'Loreto', 'Madre de Dios', 'Moquegua', 'Pasco', 'Piura', 'Puno', 'San Martín', 'Tacna', 'Tumbes', 'Ucayali'),
@@ -58,5 +47,14 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
-    return obras;
+    Obra.associate = (models) => {
+        Obra.belongsToMany(models.contactos, {
+            through: "contacto_obras",
+            foreignKey: "obra_id",
+            otherKey: "contacto_id",
+            as: "contactos_asociados",
+        });
+    };
+
+    return Obra;
 };

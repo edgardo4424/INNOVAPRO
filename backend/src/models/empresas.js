@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
                 autoIncrement: true,
                 primaryKey: true,
             },
-            nombre: {
+            razon_social: {
                 type: DataTypes.STRING,
                 allowNull: false,
                 unique: true,
