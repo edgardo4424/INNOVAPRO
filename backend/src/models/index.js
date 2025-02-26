@@ -14,12 +14,16 @@ db.cotizaciones = require("./cotizaciones")(sequelize, DataTypes);
 db.cotizacion_detalles = require("./cotizacion_detalles")(sequelize, DataTypes);
 db.contacto_clientes = require("./contacto_clientes")(sequelize, DataTypes);
 db.contacto_obras = require("./contacto_obras")(sequelize, DataTypes);
+db.ProductoServicio = require("./productos_servicios")(sequelize, DataTypes);
+db.EmpresaProducto = require("./empresa_producto")(sequelize, DataTypes);
 
 // Asociaciones
 if (db.clientes.associate) db.clientes.associate(db);
 if (db.contactos.associate) db.contactos.associate(db);
 if (db.obras.associate) db.obras.associate(db);
-
+if (db.ProductoServicio.associate) db.ProductoServicio.associate(db);
+if (db.EmpresaProducto.associate) db.EmpresaProducto.associate(db);
+if (db.empresas_proveedoras.associate) db.empresas_proveedoras.associate(db);
 
 /*
 // 📌 Definir relaciones entre las tablas

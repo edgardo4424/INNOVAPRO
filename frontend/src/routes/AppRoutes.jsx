@@ -6,6 +6,7 @@ import GestionUsuarios from "../components/GestionUsuarios";
 import GestionEmpresas from "../components/GestionEmpresas";
 import GestionClientes from "../components/GestionClientes";
 import GestionContactos from "../components/GestionContactos"; // 🔥 IMPORTAMOS EL NUEVO MÓDULO
+import GestionProductosServicios from "../components/GestionProductosServicios";
 
 export default function AppRoutes() {
   return (
@@ -57,6 +58,13 @@ export default function AppRoutes() {
               <GestionContactos />
             </ProtectedRoute>
           } 
+        />
+        <Route path="/gestion-productos-servicios" 
+        element={
+          <ProtectedRoute>
+            <GestionProductosServicios />
+          </ProtectedRoute>
+        } 
         />
 
         {/* 🔥 Si la ruta no existe, redirigir siempre a `/login` */}

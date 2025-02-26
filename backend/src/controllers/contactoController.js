@@ -13,11 +13,13 @@ exports.obtenerContactos = async (req, res) => {
                     model: Cliente,
                     through: { attributes: [] }, 
                     as: "clientes_asociados",
+                    attributes: ["id", "razon_social"] // 🔥 Solo obtener los atributos necesarios
                 },
                 {
                     model: Obra,
                     through: { attributes: [] }, 
                     as: "obras_asociadas",
+                    attributes: ["id", "nombre"] // 🔥 Solo obtener los atributos necesarios
                 },
             ],
         });

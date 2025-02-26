@@ -7,6 +7,7 @@ import GestionEmpresas from "../components/GestionEmpresas";
 import GestionClientes from "../components/GestionClientes"; // 🔥 IMPORTAMOS EL NUEVO MÓDULO
 import CotizacionForm from "../components/CotizacionForm";
 import GestionContactos from "../components/GestionContactos"; // 🔥 IMPORTACIÓN FALTANTE
+import GestionProductosServicios from "../components/GestionProductosServicios";
 
 import "../styles/dashboard.css";
 
@@ -19,7 +20,7 @@ export default function Dashboard() {
   if (!user) return <p className="error">Error: Usuario no autenticado.</p>;
 
   const modulesByRole = {
-    Gerencia: ["Gestión de Usuarios", "Gestión de Empresas", "Gestión de Clientes", "Gestión de Contactos", "Reportes", "Estadísticas", "Administración", "Cotizaciones"],
+    Gerencia: ["Gestión de Usuarios", "Gestión de Empresas", "Gestión de Clientes", "Gestión de Contactos", "Gestión de Productos y Servicios", "Reportes", "Estadísticas", "Administración", "Cotizaciones"],
     Ventas: ["Gestión de Clientes", "Gestión de Contactos", "Cotizaciones", "Pedidos"],
     OT: ["Proyectos", "Planos", "Materiales"],
     Almacén: ["Inventario", "Entradas", "Salidas"],
@@ -90,6 +91,7 @@ export default function Dashboard() {
                     {moduloActivo === "Gestión de Empresas" && <GestionEmpresas />}
                     {moduloActivo === "Gestión de Clientes" && <GestionClientes />}
                     {moduloActivo === "Gestión de Contactos" && <GestionContactos />}
+                    {moduloActivo === "Gestión de Productos y Servicios" && <GestionProductosServicios />}
                     {moduloActivo === "Cotizaciones" && <CotizacionForm />}
                     {moduloActivo === "Reportes" && <div>📊 Módulo de Reportes</div>}
                     {moduloActivo === "Estadísticas" && <div>📈 Módulo de Estadísticas</div>}

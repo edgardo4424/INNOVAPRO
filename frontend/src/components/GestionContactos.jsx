@@ -32,8 +32,9 @@ export default function GestionContactos() {
         const resContactos = await api.get("/contactos");
         const resClientes = await api.get("/clientes");
         const resObras = await api.get("/obras");
+
         setContactos(resContactos.data || []);
-        setClientes(resClientes.data || []);
+        setClientes(resClientes.data.filter(cliente => cliente.ruc)); // 🔥 Filtra solo clientes con RUC
         setObras(resObras.data || []);
       } catch (error) {
         console.error("❌ Error al obtener datos:", error);
@@ -49,11 +50,16 @@ export default function GestionContactos() {
   function handleAbrirModal(contacto) {
     setContactoEditando({
         ...contacto,
-        clientes_asociados: contacto.clientes_asociados.map(cliente => cliente.id), // Extraer IDs de clientes
-        obras_asociadas: contacto.obras_asociadas.map(obra => obra.id) // Extraer IDs de obras
+        clientes_asociados: Array.isArray(contacto.clientes_asociados) 
+            ? contacto.clientes_asociados.map(c => c.id) 
+            : [],
+        obras_asociadas: Array.isArray(contacto.obras_asociadas) 
+            ? contacto.obras_asociadas.map(o => o.id) 
+            : []
     });
     setMostrarModal(true);
 }
+
 
 function handleCerrarModal() {
   setContactoEditando(null);
@@ -85,8 +91,8 @@ function handleCerrarModal() {
             email: nuevoContacto.email,
             telefono: nuevoContacto.telefono,
             cargo: nuevoContacto.cargo,
-            clientes: nuevoContacto.clientes || [],  // Enviar array vacío si no hay clientes
-            obras: nuevoContacto.obras || []        // Enviar array vacío si no hay obras
+            clientes: nuevoContacto.clientes.map(c => c.id || c), // 🔥 Asegura que sean solo IDs
+            obras: nuevoContacto.obras.map(o => o.id || o) // 🔥 Asegura que sean solo IDs
         };
 
         console.log("🔹 Enviando datos al backend:", nuevoContactoData);
@@ -95,11 +101,13 @@ function handleCerrarModal() {
         setContactos([...contactos, res.data.contacto]);
         setNuevoContacto({ nombre: "", email: "", telefono: "", cargo: "", clientes: [], obras: [] });
         alert("✅ Contacto agregado con éxito");
+        handleCerrarModalAgregar();
     } catch (error) {
         console.error("❌ Error al agregar contacto:", error);
         alert("❌ Error al agregar contacto.");
     }
 }
+
 
 async function handleGuardarEdicion(e) {
   e.preventDefault();
@@ -206,15 +214,16 @@ function handleSeleccionObras(selectedOptions) {
               <td>{contacto.telefono}</td>
               <td>{contacto.cargo}</td>
               <td>
-                {contacto.clientes_asociados?.length > 0 
-                  ? contacto.clientes_asociados.map(c => c.razon_social).join(", ") 
-                  : "—"}
+                  {contacto.clientes_asociados?.length > 0 
+                      ? contacto.clientes_asociados.map(c => c.razon_social).join(", ") 
+                      : "—"}
               </td>
               <td>
-                {contacto.obras_asociadas?.length > 0 
-                  ? contacto.obras_asociadas.map(o => o.nombre).join(", ") 
-                  : "—"}
+                  {contacto.obras_asociadas?.length > 0 
+                      ? contacto.obras_asociadas.map(o => o.nombre).join(", ") 
+                      : "—"}
               </td>
+
               <td>
                 <button onClick={() => handleAbrirModal(contacto)}>✏️</button>
                 <button onClick={() => handleEliminar(contacto.id)}>🗑️</button>

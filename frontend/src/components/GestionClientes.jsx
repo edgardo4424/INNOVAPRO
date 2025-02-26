@@ -103,19 +103,34 @@ export default function GestionClientes() {
     }
 }
 
-  async function handleGuardarEdicion() {
-    if (!clienteEditando) return;
-    try {
-      await api.put(`/clientes/${clienteEditando.id}`, clienteEditando);
-      setClientes(clientes.map((c) => (c.id === clienteEditando.id ? clienteEditando : c)));
+async function handleGuardarEdicion() {
+  if (!clienteEditando) return;
+  try {
+      const clienteData = {
+          razon_social: clienteEditando.razon_social,
+          tipo: clienteEditando.tipo,
+          telefono: clienteEditando.telefono,
+          email: clienteEditando.email,
+          ...(clienteEditando.tipo === "Empresa"
+              ? {
+                    ruc: clienteEditando.ruc,
+                    representante_legal: clienteEditando.representante_legal,
+                    dni_representante: clienteEditando.dni_representante,
+                    domicilio_fiscal: clienteEditando.domicilio_fiscal,
+                }
+              : { dni: clienteEditando.dni }),
+      };
+
+      await api.put(`/clientes/${clienteEditando.id}`, clienteData);
+      setClientes(clientes.map((c) => (c.id === clienteEditando.id ? { ...c, ...clienteData } : c)));
       alert("✅ Cliente actualizado correctamente");
-      setClienteEditando(null);
-      setMostrarModal(false);
-    } catch (error) {
+      handleCerrarModal();
+  } catch (error) {
       console.error("❌ Error al editar cliente:", error);
       alert("❌ No se pudo actualizar el cliente.");
-    }
   }
+}
+
 
   function handleAbrirModal(cliente) {
     setClienteEditando({ ...cliente });

@@ -208,17 +208,6 @@
     gap: 10px;
   }
 
-  
-
-  .pagination {
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  .pagination button {
-    width: 100%;
-  }
-
   .modal {
     width: 90%; /* Más ancho en móviles */
     max-width: none;
@@ -333,23 +322,26 @@
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+/* 🔹 Paginación mejorada */
 .pagination {
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: 8px;
   margin-top: 15px;
+  gap: 5px;
 }
 
 .pagination button {
-  padding: 6px 12px;
-  font-size: 14px;
-  border: none;
-  background: #0671c9;
+  background-color: #007bff;
   color: white;
+  border: none;
+  padding: 8px 12px;
   cursor: pointer;
-  border-radius: 5px;
-  transition: background 0.3s ease-in-out;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.pagination button.active {
+  background-color: #0056b3;
 }
 
 .pagination button:hover {
@@ -435,28 +427,28 @@
 
 .modal {
   position: fixed;
-  top: 50%;
+  top: 10%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  width: 60%; /* 🔥 Antes era más angosto, ahora ocupa el 60% de la pantalla */
-  max-width: 800px; /* 🔥 No exceder los 800px en pantallas grandes */
+  transform: translate(-50%, 0);
+  width: 50%;
+  max-width: 700px;
   background: white;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 8px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
   z-index: 1000;
+  max-height: 85vh;
+  overflow-y: auto;
 }
 
-.modal-content {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.modal-actions {
-  margin-top: 10px;
-  display: flex;
-  justify-content: space-between;
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
 }
 
 .save-button {
@@ -521,4 +513,115 @@
 
 .gestion-contactos-form button:hover {
   background: #0056b3;
+}
+
+/* 🔹 Contenedor de atributos optimizado */
+.atributos-container {
+  max-height: 180px; /* Se habilita scroll a partir de 3 atributos */
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+
+.atributos-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.atributos-table th, .atributos-table td {
+  padding: 6px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+
+.atributos-table th {
+  background-color: #0671c9;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* 🔹 Estilo para los inputs dentro de la tabla de atributos */
+.atributos-table input {
+  width: 90%;
+  padding: 5px;
+  font-size: 12px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+
+
+/* 🔹 Botón de eliminar mejorado */
+.btn-eliminar {
+  background-color: #dc3545;
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-eliminar:hover {
+  background-color: #b02a37;
+}
+
+.btn-guardar {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-guardar:hover {
+  background-color: #218838;
+}
+
+.btn-cancelar {
+  background-color: #007bff;
+  color: white;
+  margin-left: 10px;
+}
+
+.btn-cancelar:hover {
+  background-color: #0056b3;
+}
+
+
+.btn-agregar {
+  margin-top: 10px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.btn-agregar:hover {
+  background-color: #0056b3;
+}
+
+/* 🔹 Alineación de botones Guardar y Cancelar */
+.botones-modal {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.botones-modal button {
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  transition: background 0.3s ease-in-out;
 }

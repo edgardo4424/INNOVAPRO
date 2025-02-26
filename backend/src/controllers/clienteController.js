@@ -89,7 +89,7 @@ exports.crearCliente = async (req, res) => {
 exports.actualizarCliente = async (req, res) => {
     try {
         const { id } = req.params;
-        const cliente = await db.Cliente.findByPk(id);
+        const cliente = await db.clientes.findByPk(id);
 
         if (!cliente) {
             return res.status(404).json({ mensaje: "Cliente no encontrado" });
@@ -108,7 +108,7 @@ exports.eliminarCliente = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const cliente = await db.Cliente.findByPk(id);
+        const cliente = await db.clientes.findByPk(id);
         if (!cliente) {
             return res.status(404).json({ mensaje: "Cliente no encontrado" });
         }

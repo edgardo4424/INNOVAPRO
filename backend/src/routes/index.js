@@ -9,6 +9,9 @@ const obraController = require("../controllers/obraController");
 const contactoController = require("../controllers/contactoController");
 const cotizacionController = require("../controllers/cotizacionController");
 const cotizacionDetalleController = require("../controllers/cotizacionDetalleController");
+const productosServiciosRoutes = require("./productosServiciosRoutes");
+
+router.use("/productos-servicios", productosServiciosRoutes);
 
 // Ruta para verificar si el token es válido
 router.get("/verify-session", verificarToken, (req, res) => {
