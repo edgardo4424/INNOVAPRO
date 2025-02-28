@@ -99,8 +99,8 @@ export default function GestionUsuarios() {
 
       {/* 🔥 Barra superior: Botón de agregar usuario + Búsqueda */}
       <div className="top-actions">
-        <button className="gestion-usuarios-btn" onClick={() => setMostrarFormulario(!mostrarFormulario)}>
-          {mostrarFormulario ? "Cerrar Formulario" : "Agregar Usuario"}
+        <button className="add-button" onClick={() => setMostrarFormulario(!mostrarFormulario)}>
+          {mostrarFormulario ? "Cerrar Formulario" : " ➕ Agregar Usuario"}
         </button>
         <input type="text" placeholder="Buscar usuario..." value={busqueda} onChange={(e) => setBusqueda(e.target.value)} className="busqueda-input" />
       </div>

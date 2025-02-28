@@ -86,20 +86,35 @@ function handleCerrarModal() {
   async function handleAgregarContacto(e) {
     e.preventDefault();
     try {
+        // 🔥 Extraer solo los IDs de los clientes y obras (si son objetos, convertirlos a IDs)
+        const clientesIDs = Array.isArray(nuevoContacto.clientes) 
+            ? nuevoContacto.clientes.map(c => (typeof c === "object" ? c.value : c)) 
+            : [];
+
+        const obrasIDs = Array.isArray(nuevoContacto.obras) 
+            ? nuevoContacto.obras.map(o => (typeof o === "object" ? o.value : o)) 
+            : [];
+
         const nuevoContactoData = {
             nombre: nuevoContacto.nombre,
             email: nuevoContacto.email,
             telefono: nuevoContacto.telefono,
             cargo: nuevoContacto.cargo,
-            clientes: nuevoContacto.clientes.map(c => c.id || c), // 🔥 Asegura que sean solo IDs
-            obras: nuevoContacto.obras.map(o => o.id || o) // 🔥 Asegura que sean solo IDs
+            clientes: clientesIDs,
+            obras: obrasIDs
         };
 
         console.log("🔹 Enviando datos al backend:", nuevoContactoData);
 
         const res = await api.post("/contactos", nuevoContactoData);
-        setContactos([...contactos, res.data.contacto]);
+        const contactoCreado = res.data.contacto;
+
+        // 🔥 Volvemos a obtener los contactos para incluir los clientes y obras asignados
+        const resContactos = await api.get("/contactos");
+        setContactos(resContactos.data);
+
         setNuevoContacto({ nombre: "", email: "", telefono: "", cargo: "", clientes: [], obras: [] });
+
         alert("✅ Contacto agregado con éxito");
         handleCerrarModalAgregar();
     } catch (error) {
@@ -214,19 +229,20 @@ function handleSeleccionObras(selectedOptions) {
               <td>{contacto.telefono}</td>
               <td>{contacto.cargo}</td>
               <td>
-                  {contacto.clientes_asociados?.length > 0 
+                  {Array.isArray(contacto.clientes_asociados) && contacto.clientes_asociados.length > 0 
                       ? contacto.clientes_asociados.map(c => c.razon_social).join(", ") 
                       : "—"}
               </td>
               <td>
-                  {contacto.obras_asociadas?.length > 0 
+                  {Array.isArray(contacto.obras_asociadas) && contacto.obras_asociadas.length > 0 
                       ? contacto.obras_asociadas.map(o => o.nombre).join(", ") 
                       : "—"}
               </td>
 
+
               <td>
-                <button onClick={() => handleAbrirModal(contacto)}>✏️</button>
-                <button onClick={() => handleEliminar(contacto.id)}>🗑️</button>
+                <button onClick={() => handleAbrirModal(contacto)} className="edit-button">✏️</button>
+                <button onClick={() => handleEliminar(contacto.id)} className="delete-button">🗑️</button>
               </td>
             </tr>
           ))}
@@ -239,38 +255,99 @@ function handleSeleccionObras(selectedOptions) {
         <button disabled={paginaActual === totalPaginas} onClick={() => setPaginaActual(paginaActual + 1)}>Siguiente ➡</button>
       </div>
 
+      {/* Modal de Agregar Contacto */}
       {mostrarModalAgregar && (
-        <div className="modal">
-            <div className="modal-content">
-                <h3>Agregar Contacto</h3>
-                    <form onSubmit={handleAgregarContacto} className="gestion-contactos-form">
-                        <input type="text" placeholder="Nombre" value={nuevoContacto.nombre} onChange={(e) => setNuevoContacto({ ...nuevoContacto, nombre: e.target.value })} required />
-                        <input type="email" placeholder="Email" value={nuevoContacto.email} onChange={(e) => setNuevoContacto({ ...nuevoContacto, email: e.target.value })} required />
-                        <input type="text" placeholder="Teléfono" value={nuevoContacto.telefono} onChange={(e) => setNuevoContacto({ ...nuevoContacto, telefono: e.target.value })} />
-                        <input type="text" placeholder="Cargo" value={nuevoContacto.cargo} onChange={(e) => setNuevoContacto({ ...nuevoContacto, cargo: e.target.value })} />
+          <div className="modal">
+              <div className="modal-content">
+                  <h3>Agregar Contacto</h3>
+                  <form onSubmit={handleAgregarContacto} className="gestion-contactos-form">
+                      
+                      <div className="form-group">
+                          <label>Nombre</label>
+                          <input
+                              type="text"
+                              value={nuevoContacto.nombre}
+                              onChange={(e) => setNuevoContacto({ ...nuevoContacto, nombre: e.target.value })}
+                              required
+                          />
+                      </div>
 
-                        <label>Asignar Clientes</label>
-                            <Select
-                                isMulti
-                                options={clientes.map((cliente) => ({ value: cliente.id, label: cliente.razon_social }))}
-                                onChange={handleSeleccionClientes}
-                                placeholder="Selecciona uno o varios clientes..."
-                            />
+                      <div className="form-group">
+                          <label>Email</label>
+                          <input
+                              type="email"
+                              value={nuevoContacto.email}
+                              onChange={(e) => setNuevoContacto({ ...nuevoContacto, email: e.target.value })}
+                              required
+                          />
+                      </div>
 
-                        <label>Asignar Obras</label>
-                            <Select
-                                isMulti
-                                options={obras.map((obra) => ({ value: obra.id, label: obra.nombre }))}
-                                onChange={handleSeleccionObras}
-                                placeholder="Selecciona una o varias obras..."
-                            />
+                      <div className="form-group">
+                          <label>Teléfono</label>
+                          <input
+                              type="text"
+                              value={nuevoContacto.telefono}
+                              onChange={(e) => setNuevoContacto({ ...nuevoContacto, telefono: e.target.value })}
+                          />
+                      </div>
 
-                        <button type="submit">Guardar Contacto</button>
-                    </form>
-                    <button onClick={handleCerrarModalAgregar}>Cancelar</button>
-                </div>
-            </div>
+                      <div className="form-group">
+                          <label>Cargo</label>
+                          <input
+                              type="text"
+                              value={nuevoContacto.cargo}
+                              onChange={(e) => setNuevoContacto({ ...nuevoContacto, cargo: e.target.value })}
+                          />
+                      </div>
+
+                      <div className="form-group">
+                          <label>Asignar Clientes</label>
+                          <Select
+                              isMulti
+                              options={clientes.map((cliente) => ({
+                                  value: cliente.id,
+                                  label: cliente.razon_social || cliente.nombre,
+                              }))}
+                              value={clientes
+                                  .filter((c) => nuevoContacto.clientes.includes(c.id))
+                                  .map((c) => ({ value: c.id, label: c.razon_social || c.nombre }))}
+                              onChange={(selected) => {
+                                  const nuevosClientes = selected.map((s) => s.value);
+                                  setNuevoContacto({ ...nuevoContacto, clientes: nuevosClientes });
+                              }}
+                              placeholder="Selecciona clientes..."
+                          />
+                      </div>
+
+                      <div className="form-group">
+                          <label>Asignar Obras</label>
+                          <Select
+                              isMulti
+                              options={obras.map((obra) => ({
+                                  value: obra.id,
+                                  label: obra.nombre,
+                              }))}
+                              value={obras
+                                  .filter((o) => nuevoContacto.obras.includes(o.id))
+                                  .map((o) => ({ value: o.id, label: o.nombre }))}
+                              onChange={(selected) => {
+                                  const nuevasObras = selected.map((s) => s.value);
+                                  setNuevoContacto({ ...nuevoContacto, obras: nuevasObras });
+                              }}
+                              placeholder="Selecciona obras..."
+                          />
+                      </div>
+
+                      {/* Botones en la parte inferior */}
+                      <div className="modal-buttons">
+                          <button type="submit" className="btn-guardar">Guardar Contacto</button>
+                          <button type="button" className="btn-cancelar" onClick={handleCerrarModalAgregar}>Cancelar</button>
+                      </div>
+                  </form>
+              </div>
+          </div>
       )}
+
 
 {mostrarModal && (
         <div className="modal">

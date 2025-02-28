@@ -1,7 +1,500 @@
-/* frontend/src/styles/global.css */
+/* === GLOBALIZACIÓN Y OPTIMIZACIÓN DE ESTILOS === */
+
+:root {
+  --primary-color: #0671c9;
+  --secondary-color: #014d98;
+  --tertiary-color: #120f78;
+  --accent-color: #f08a24;
+  --hover-color: #ffb765;
+  --background-color: #f4f4f4;
+  --text-color: #ffffff;
+  --border-radius: 12px;
+  --shadow-light: 0px 5px 20px rgba(0, 0, 0, 0.15);
+  --shadow-medium: 0px 8px 25px rgba(0, 0, 0, 0.2);
+  --shadow-deep: 0px 10px 30px rgba(0, 0, 0, 0.3);
+  --transition-speed: 0.3s;
+  --transition-fast: 0.2s;
+}
+
+/* Aplicado a la constante de version del sistema de Innova*/
+.login-version {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-color);
+  opacity: 0.7;
+}
+
 body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-  }
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: var(--primary-color);
+}
+
+/* === TRANSICIONES Y EFECTOS CINEMÁTICOS === */
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in {
+  animation: slideIn 0.5s ease-in-out;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* === BOTONES GLOBALES === */
+button {
+  background: var(--accent-color);
+  color: var(--text-color);
+  padding: 12px 18px;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background var(--transition-speed), transform var(--transition-speed);
+}
+
+button:hover {
+  background: var(--hover-color);
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.95);
+  animation: buttonPress 0.1s ease-in-out;
+}
+
+@keyframes buttonPress {
+  from { transform: scale(1.05); }
+  to { transform: scale(0.95); }
+}
+
+.add-button {
+  background-color: #ff8c00;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.add-button:hover {
+  background-color: #003366;
+}
+
+.btn-agregar {
+  margin-top: 10px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.btn-agregar:hover {
+  background-color: #0056b3;
+}
+
+.edit-button {
+  background: #0671c9;
+  color: white;
+  padding: 5px 10px;
+  margin-right: 5px;
+  border-radius: 5px;
+}
+
+.back-button {
+  background: var(--secondary-color);
+  color: var(--text-color);
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  transition: background 0.3s ease-in-out;
+}
+
+.back-button:hover {
+  background: var(--tertiary-color);
+}
+
+.delete-button {
+  background: red;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.delete-button:hover {
+  background: #c0392b;
+}
+
+/* 🔹 Botón de eliminar mejorado */
+.btn-eliminar {
+  background-color: #dc3545;
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-eliminar:hover {
+  background-color: #b02a37;
+}
+
+.save-button {
+  background: #0671c9;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 5px;
+}
+
+.cancel-button {
+  background: red;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 5px;
+}
+
+.btn-guardar {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-guardar:hover {
+  background-color: #218838;
+}
+
+.btn-cancelar {
+  background-color: #007bff;
+  color: white;
+  margin-left: 10px;
+}
+
+.btn-cancelar:hover {
+  background-color: #0056b3;
+}
+
+/* 🔹 Alineación de botones Guardar y Cancelar */
+.botones-modal {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.botones-modal button {
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  transition: background 0.3s ease-in-out;
+}
+
+/* === INPUTS GLOBALES === */
+input, select, textarea {
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--border-radius);
+  background: rgba(255, 255, 255, 0.1);
   
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0px 0px 8px rgba(240, 138, 36, 0.6);
+  outline: none;
+}
+
+input.error {
+  animation: shake 0.3s ease-in-out;
+  border-color: red;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+}
+
+.busqueda-input {
+  flex: 1;
+  margin-left: 10px; /* Espacio entre el botón y la búsqueda */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  width: 100%;
+  max-width: 300px;
+}
+
+/* === FORMULARIOS === */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
+}
+
+.form-label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+label {
+  display: block;
+  margin: 10px 0 5px;
+  font-weight: bold;
+}
+
+/* === DASHBOARD === */
+.dashboard-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  transition: all var(--transition-speed) ease-in-out;
+  overflow: hidden;
+  position: relative;
+}
+
+.dashboard-sidebar {
+  width: 0;
+  height: 100vh;
+  background: rgba(19, 15, 120, 0.192); /* Transparente con difuminado */
+  backdrop-filter: blur(10px); /* Efecto de difuminado */
+  color: var(--text-color);
+  overflow: hidden;
+  padding-top: 20px;
+  transition: width var(--transition-speed) ease-in-out;
+  box-shadow: var(--shadow-deep);
+  opacity: 0;
+  z-index: 999;
+}
+
+.dashboard-content {
+  padding: 20px;
+  background: #ffffff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
+  max-height: calc(100vh - 120px); /* Ajusta la altura según el header */
+  overflow-y: auto; /* Permite scroll sin mostrar la barra */
+  -ms-overflow-style: none; /* Oculta la barra en Edge */
+  scrollbar-width: none; /* Oculta la barra en Firefox */
+}
+
+/* 🔥 Ocultar la barra de desplazamiento en Webkit (Chrome, Safari) */
+.dashboard-content::-webkit-scrollbar {
+  display: none;
+}
+
+/* === WIDGETS === */
+.widget {
+  background: var(--text-color);
+  color: var(--primary-color);
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  text-align: center;
+  font-weight: bold;
+  box-shadow: var(--shadow-medium);
+  backdrop-filter: blur(15px);
+  transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.widget:hover {
+  transform: scale(1.1) rotate(1deg);
+  box-shadow: var(--shadow-deep);
+}
+
+/* === TABLAS === */
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
+  overflow: hidden;
+}
+
+.custom-table th {
+  background: var(--primary-color);
+  color: white;
+  padding: 12px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.custom-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 14px;
+}
+
+.custom-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transition: background var(--transition-fast);
+}
+
+/* === PAGINACION === */
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+  gap: 5px;
+}
+
+.pagination button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.pagination button.active {
+  background-color: #0056b3;
+}
+
+.pagination button:hover {
+  background: #014d98;
+}
+
+.pagination span {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.pagination button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* === MODALES === */
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  max-width: 700px;
+  background: rgba(255, 255, 255, 0.971);
+  padding: 20px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-deep);
+  backdrop-filter: blur(20px);
+  transition: opacity var(--transition-speed), transform var(--transition-speed);
+}
+
+.modal.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.modal.hide {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.95);
+}
+
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* Estilos para react-select */
+.css-yk16xz-control {
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  padding: 5px;
+}
+
+.css-1pahdxg-control {
+  border-color: #007bff !important;
+  box-shadow: 0 0 0 1px #007bff !important;
+}
+
+.css-26l3qy-menu {
+  border-radius: 5px;
+}
+
+/* === ESTILOS GENERALES PARA MÓDULOS === */
+.module-container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-medium);
+  backdrop-filter: blur(15px);
+  transition: all var(--transition-speed);
+}
+
+.module-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: var(--secondary-color);
+  color: var(--text-color);
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.module-content {
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+}
+
+/* === GRÁFICOS Y REPORTES === */
+.chart-container {
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
+  transition: all var(--transition-speed);
+}
+
+.chart-container:hover {
+  box-shadow: var(--shadow-medium);
+}

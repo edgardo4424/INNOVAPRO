@@ -7,6 +7,7 @@ import GestionEmpresas from "../components/GestionEmpresas";
 import GestionClientes from "../components/GestionClientes";
 import GestionContactos from "../components/GestionContactos"; // 🔥 IMPORTAMOS EL NUEVO MÓDULO
 import GestionProductosServicios from "../components/GestionProductosServicios";
+import GestionObras from "../components/GestionObras";
 
 export default function AppRoutes() {
   return (
@@ -63,6 +64,13 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <GestionProductosServicios />
+          </ProtectedRoute>
+        } 
+        />
+        <Route path="/gestion-obras" 
+        element={
+          <ProtectedRoute>
+            <GestionObras />
           </ProtectedRoute>
         } 
         />

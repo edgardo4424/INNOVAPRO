@@ -14,25 +14,10 @@ exports.obtenerObras = async (req, res) => {
     }
 };
 
-
-// 🔹 Obtener obras por cliente ID
-exports.obtenerObrasPorCliente = async (req, res) => {
-    try {
-        const { clienteId } = req.params;
-        if (!clienteId) return res.status(400).json({ mensaje: "Cliente ID es requerido" });
-
-        const obras = await db.Obra.findAll({ where: { cliente_id: clienteId } });
-        res.status(200).json(obras);
-    } catch (error) {
-        console.error("❌ Error al obtener obras por cliente:", error);
-        res.status(500).json({ mensaje: "Error interno del servidor" });
-    }
-};
-
 // 🔹 Obtener una obra por ID
 exports.obtenerObraPorId = async (req, res) => {
     try {
-        const obra = await db.Obras.findByPk(req.params.id);
+        const obra = await db.obras.findByPk(req.params.id);
         if (!obra) return res.status(404).json({ mensaje: "Obra no encontrada" });
 
         res.status(200).json(obra);
@@ -45,13 +30,26 @@ exports.obtenerObraPorId = async (req, res) => {
 // 🔹 Crear una nueva obra
 exports.crearObra = async (req, res) => {
     try {
-        const { nombre, direccion, ubicacion, cliente_id } = req.body;
 
-        if (!nombre || !direccion || !ubicacion || !cliente_id) {
+        if (!req.usuario) {
+            return res.status(403).json({ error: "Usuario no autenticado" });
+        }
+
+        const { nombre, direccion, ubicacion, estado, cliente_id } = req.body;
+
+        if (!nombre || !direccion || !ubicacion || !estado || !cliente_id) {
             return res.status(400).json({ mensaje: "Todos los campos son obligatorios" });
         }
 
-        const nuevaObra = await db.Obra.create({ nombre, direccion, ubicacion, cliente_id });
+        const nuevaObra = await db.obras.create({
+            nombre,
+            direccion,
+            ubicacion,
+            estado,
+            creado_por: req.usuario.id,  // 🔥 Ahora se asigna correctamente el usuario creador
+        });
+
+        console.log("✅ Obra creada con éxito:", nuevaObra);
         res.status(201).json({ mensaje: "Obra creada exitosamente", obra: nuevaObra });
     } catch (error) {
         console.error("❌ Error al crear obra:", error);
@@ -62,12 +60,12 @@ exports.crearObra = async (req, res) => {
 // 🔹 Actualizar una obra
 exports.actualizarObra = async (req, res) => {
     try {
-        const { nombre, direccion, ubicacion } = req.body;
-        const obra = await db.Obra.findByPk(req.params.id);
+        const { nombre, direccion, ubicacion, estado } = req.body;
+        const obra = await db.obras.findByPk(req.params.id);
 
         if (!obra) return res.status(404).json({ mensaje: "Obra no encontrada" });
 
-        await obra.update({ nombre, direccion, ubicacion });
+        await obra.update({ nombre, direccion, ubicacion, estado });
         res.status(200).json({ mensaje: "Obra actualizada correctamente", obra });
     } catch (error) {
         console.error("❌ Error al actualizar obra:", error);
@@ -78,7 +76,7 @@ exports.actualizarObra = async (req, res) => {
 // 🔹 Eliminar una obra
 exports.eliminarObra = async (req, res) => {
     try {
-        const obra = await db.Obra.findByPk(req.params.id);
+        const obra = await db.obras.findByPk(req.params.id);
         if (!obra) return res.status(404).json({ mensaje: "Obra no encontrada" });
 
         await obra.destroy();

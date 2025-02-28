@@ -10,6 +10,7 @@ const contactoController = require("../controllers/contactoController");
 const cotizacionController = require("../controllers/cotizacionController");
 const cotizacionDetalleController = require("../controllers/cotizacionDetalleController");
 const productosServiciosRoutes = require("./productosServiciosRoutes");
+const obraRoutes = require("./obraRoutes");
 
 router.use("/productos-servicios", productosServiciosRoutes);
 
@@ -23,6 +24,9 @@ router.post("/login", usuarioController.login);
 
 // 📌 PROTEGER RUTAS DESPUÉS DEL LOGIN
 router.use(verificarToken); // 🔥 SOLO SE APLICA DESPUÉS DEL LOGIN
+
+// 📌 RUTA PARA UBICACIONES DE OBRAS
+router.use("/obras", obraRoutes); // 🔥 Integrar obrasRoutes correctamente
 
 // 🔹 Rutas de Usuarios (Solo Gerencia puede acceder)
 if (usuarioController.obtenerUsuarios) router.get("/usuarios", esGerente, usuarioController.obtenerUsuarios);

@@ -1,69 +1,74 @@
 /* Estilos para el Login con una estética corporativa del sector construcción */
 
-:root {
-  --primary-color: #0671c9; /* Azul oscuro profesional */
-  --secondary-color: #4307d0; /* Azul más claro con un leve toque de morado */
-  --accent-color: #f08a24; /* Anaranjado vibrante */
-  --hover-color: #ffb765; /* Color del hover*/
-  --background-color: #f4f4f4; /* Fondo claro para contraste */
-  --text-color: #ffffff; /* Texto en blanco para mejor visibilidad */
-}
-
-.login-version {
-  margin-top: 1rem;
-  font-size: 0.8rem;
-  color: var(--secondary-color);
-  opacity: 0.7;
-}
-
+/* === LOGIN ESTILOS PRO+ === */
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .login-box {
-  background: var(--background-color);
+  background: rgba(0, 0, 0, 0.244);
   padding: 3rem;
-  border-radius: 10px;
-  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-medium);
   text-align: center;
-  width: 350px;
+  width: 400px;
+  backdrop-filter: blur(20px);
 }
 
 .login-title {
-  font-size: 1.8rem;
+  font-size: 2rem;
   font-weight: bold;
-  color: var(--primary-color);
+  color: var(--text-color);
   margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
 }
 
 .login-input {
   width: 90%;
-  padding: 10px;
+  padding: 12px;
   margin: 10px 0;
-  border: 2px solid var(--secondary-color);
-  border-radius: 5px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--border-radius);
   font-size: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-color);
+  transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.login-input:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0px 0px 8px rgba(240, 138, 36, 0.6);
+  outline: none;
 }
 
 .login-button {
-  width: 90%;
-  padding: 10px;
+  width: 100%;
+  padding: 12px;
   background: var(--accent-color);
   color: var(--text-color);
   border: none;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   font-size: 1.2rem;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.3s ease-in-out;
+  transition: background var(--transition-speed), transform var(--transition-speed);
 }
 
 .login-button:hover {
   background: var(--hover-color);
+  transform: scale(1.05);
 }
 
 .login-links {
@@ -72,7 +77,7 @@
 }
 
 .login-links a {
-  color: var(--secondary-color);
+  color: var(--text-color);
   text-decoration: none;
   font-weight: bold;
 }

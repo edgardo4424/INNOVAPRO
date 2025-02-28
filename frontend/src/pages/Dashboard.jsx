@@ -8,7 +8,9 @@ import GestionClientes from "../components/GestionClientes"; // 🔥 IMPORTAMOS 
 import CotizacionForm from "../components/CotizacionForm";
 import GestionContactos from "../components/GestionContactos"; // 🔥 IMPORTACIÓN FALTANTE
 import GestionProductosServicios from "../components/GestionProductosServicios";
+import GestionObras from "../components/GestionObras";
 
+import "../styles/global.css";
 import "../styles/dashboard.css";
 
 export default function Dashboard() {
@@ -20,8 +22,8 @@ export default function Dashboard() {
   if (!user) return <p className="error">Error: Usuario no autenticado.</p>;
 
   const modulesByRole = {
-    Gerencia: ["Gestión de Usuarios", "Gestión de Empresas", "Gestión de Clientes", "Gestión de Contactos", "Gestión de Productos y Servicios", "Reportes", "Estadísticas", "Administración", "Cotizaciones"],
-    Ventas: ["Gestión de Clientes", "Gestión de Contactos", "Cotizaciones", "Pedidos"],
+    Gerencia: ["Gestión de Usuarios", "Gestión de Empresas", "Gestión de Clientes", "Gestión de Contactos", "Gestión de Productos y Servicios", "Gestión de Obras", "Cotizaciones"],
+    Ventas: ["Gestión de Clientes", "Gestión de Contactos", "Gestión de Obras", "Cotizaciones"],
     OT: ["Proyectos", "Planos", "Materiales"],
     Almacén: ["Inventario", "Entradas", "Salidas"],
     Administración: ["Usuarios", "Finanzas", "Permisos"],
@@ -92,9 +94,8 @@ export default function Dashboard() {
                     {moduloActivo === "Gestión de Clientes" && <GestionClientes />}
                     {moduloActivo === "Gestión de Contactos" && <GestionContactos />}
                     {moduloActivo === "Gestión de Productos y Servicios" && <GestionProductosServicios />}
+                    {moduloActivo === "Gestión de Obras" && <GestionObras />}
                     {moduloActivo === "Cotizaciones" && <CotizacionForm />}
-                    {moduloActivo === "Reportes" && <div>📊 Módulo de Reportes</div>}
-                    {moduloActivo === "Estadísticas" && <div>📈 Módulo de Estadísticas</div>}
                 </>
             )}
         </section>

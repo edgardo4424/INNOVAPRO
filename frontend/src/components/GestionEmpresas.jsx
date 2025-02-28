@@ -112,7 +112,7 @@ async function handleGuardarEdicion() {
         {/* 🔥 Barra superior: Botón de agregar empresa + Búsqueda */}
         <div className="top-actions">
             <button className="add-button" onClick={() => setMostrarFormulario(!mostrarFormulario)}>
-                {mostrarFormulario ? "Cerrar Formulario" : "Agregar Empresa"}
+                {mostrarFormulario ? "Cerrar Formulario" : " ➕ Agregar Empresa"}
             </button>
             <input type="text" placeholder="Buscar empresa..." value={busqueda} onChange={(e) => setBusqueda(e.target.value)} className="busqueda-input" />
         </div>

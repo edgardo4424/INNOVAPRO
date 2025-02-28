@@ -21,10 +21,17 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
             },
             estado: {
-                type: DataTypes.ENUM('Activo', 'Inactivo', 'En Construcción', 'Finalizado'),
+                type: DataTypes.ENUM(
+                  "Planificación",
+                  "Demolición",
+                  "Excavación",
+                  "Cimentación y estructura",
+                  "Cerramientos y albañilería",
+                  "Acabados",
+                  "Entrega y postventa"
+                ),
                 allowNull: false,
-                defaultValue: "En Construcción",
-            },
+            },              
             creado_por: {
                 type: DataTypes.INTEGER,
                 allowNull: false,

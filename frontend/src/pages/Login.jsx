@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha"; // Importamos reCAPTCHA
 import styles from "../styles/Login.module.css";
+import "../styles/global.css";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -43,7 +44,7 @@ export default function Login() {
   return (
     <div className={styles["login-container"]}>
       <div className={styles["login-box"]}>
-        <img src="/images/logo_azul.png" alt="Logo Innova" className={styles["login-logo"]} />
+        <img src="/images/logo_blanco.png" alt="Logo Innova" className={styles["login-logo"]} />
         <form onSubmit={handleSubmit}>
           <input
             type="email"

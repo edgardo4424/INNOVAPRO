@@ -13,7 +13,9 @@ api.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
-});
+},
+(error) => Promise.reject(error)
+);
 
 // Manejo de errores 401 (sesión expirada)
 api.interceptors.response.use(

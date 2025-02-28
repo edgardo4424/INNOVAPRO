@@ -203,8 +203,8 @@ export default function GestionProductosServicios() {
                 <td>{producto.tipo}</td>
                 <td>{producto.empresas?.map((e) => e.razon_social).join(", ") || "—"}</td>
                 <td>
-                  <button onClick={() => handleAbrirModal(producto)}>✏️</button>
-                  <button onClick={() => handleEliminar(producto.id)}>🗑️</button>
+                  <button onClick={() => handleAbrirModal(producto)} className="edit-button">✏️</button>
+                  <button onClick={() => handleEliminar(producto.id)} className="delete-button">🗑️</button>
                 </td>
               </tr>
             ))}
