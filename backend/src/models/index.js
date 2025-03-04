@@ -24,64 +24,8 @@ if (db.obras.associate) db.obras.associate(db);
 if (db.ProductoServicio.associate) db.ProductoServicio.associate(db);
 if (db.EmpresaProducto.associate) db.EmpresaProducto.associate(db);
 if (db.empresas_proveedoras.associate) db.empresas_proveedoras.associate(db);
-
-/*
-// 📌 Definir relaciones entre las tablas
-
-// 🔹 Un usuario (comercial) puede crear muchas cotizaciones
-db.usuarios.hasMany(db.cotizaciones, { foreignKey: "usuario_id" });
-db.cotizaciones.belongsTo(db.usuarios, { foreignKey: "usuario_id" });
-
-// 🔹 Una empresa proveedora puede tener muchas cotizaciones
-db.empresas_proveedoras.hasMany(db.cotizaciones, { foreignKey: "empresa_proveedora_id" });
-db.cotizaciones.belongsTo(db.empresas_proveedoras, { foreignKey: "empresa_proveedora_id" });
-
-// 🔹 Un cliente puede tener muchas obras
-db.clientes.hasMany(db.obras, { foreignKey: "cliente_id", as: "obras" });
-db.obras.belongsTo(db.clientes, { foreignKey: "cliente_id" });
-
-// ✅ Relación Muchos a Muchos usando la tabla intermedia contacto_clientes
-db.clientes.belongsToMany(db.contactos, {
-    through: db.contacto_clientes,
-    foreignKey: "cliente_id",
-    otherKey: "contacto_id",
-    as: "contactos",
-});
-
-db.contactos.belongsToMany(db.clientes, {
-    through: db.contacto_clientes,
-    foreignKey: "contacto_id",
-    otherKey: "cliente_id",
-    as: "clientes",
-});
-
-// 🔹 Un cliente puede tener muchas cotizaciones
-db.clientes.hasMany(db.cotizaciones, { foreignKey: "cliente_id" });
-db.cotizaciones.belongsTo(db.clientes, { foreignKey: "cliente_id" });
-
-// ✅ Relación Muchos a Muchos usando la tabla intermedia contacto_obras
-db.obras.belongsToMany(db.contactos, {
-    through: db.contacto_obras,
-    foreignKey: "obra_id",
-    otherKey: "contacto_id",
-    as: "contactos",
-});
-
-db.contactos.belongsToMany(db.obras, {
-    through: db.contacto_obras,
-    foreignKey: "contacto_id",
-    otherKey: "obra_id",
-    as: "obras",
-});
-
-// 🔹 Una obra puede tener muchas cotizaciones
-db.obras.hasMany(db.cotizaciones, { foreignKey: "obra_id" });
-db.cotizaciones.belongsTo(db.obras, { foreignKey: "obra_id" });
-
-// 🔹 Un contacto puede estar relacionado a muchas cotizaciones
-db.contactos.hasMany(db.cotizaciones, { foreignKey: "contacto_id" });
-db.cotizaciones.belongsTo(db.contactos, { foreignKey: "contacto_id" });
-*/
+if (db.cotizaciones.associate) db.cotizaciones.associate(db);
+if (db.cotizacion_detalles.associate) db.cotizacion_detalles.associate(db);
 
 // Agregar Sequelize a la exportación
 db.sequelize = sequelize;

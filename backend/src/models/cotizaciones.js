@@ -1,3 +1,4 @@
+
 module.exports = (sequelize, DataTypes) => {
     const cotizaciones = sequelize.define(
         "cotizaciones",
@@ -19,22 +20,7 @@ module.exports = (sequelize, DataTypes) => {
                     model: "empresas_proveedoras",
                     key: "id",
                 },
-            },
-            cliente_id: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                references: {
-                    model: "clientes",
-                    key: "id",
-                },
-            },
-            obra_id: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                references: {
-                    model: "obras",
-                    key: "id",
-                },
+                onDelete: "CASCADE",
             },
             contacto_id: {
                 type: DataTypes.INTEGER,
@@ -43,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
                     model: "contactos",
                     key: "id",
                 },
+                onDelete: "CASCADE",
             },
             usuario_id: {
                 type: DataTypes.INTEGER,
@@ -51,11 +38,7 @@ module.exports = (sequelize, DataTypes) => {
                     model: "usuarios",
                     key: "id",
                 },
-            },
-            motivo: {
-                type: DataTypes.ENUM("ALQUILER", "VENTA"),
-                allowNull: false,
-                defaultValue: "ALQUILER",
+                onDelete: "CASCADE",
             },
             fecha_creacion: {
                 type: DataTypes.DATE,
@@ -68,12 +51,46 @@ module.exports = (sequelize, DataTypes) => {
             observaciones: {
                 type: DataTypes.TEXT,
             },
+            motivo: {
+                type: DataTypes.ENUM("ALQUILER", "VENTA"),
+                allowNull: false,
+                defaultValue: "ALQUILER",
+            },
+            descuento_aprobado: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+            },
+            total_sin_descuento: {
+                type: DataTypes.DECIMAL(10, 2),
+                allowNull: false,
+                defaultValue: 0.00,
+            },
+            total_con_descuento: {
+                type: DataTypes.DECIMAL(10, 2),
+                allowNull: false,
+                defaultValue: 0.00,
+            },
         },
         {
             timestamps: false,
             tableName: "cotizaciones",
         }
     );
+
+    cotizaciones.associate = (models) => {
+        cotizaciones.belongsTo(models.empresas_proveedoras, { 
+            foreignKey: "empresa_proveedora_id", 
+            as: "empresa_proveedora" 
+        });
+        cotizaciones.belongsTo(models.contactos, { 
+            foreignKey: "contacto_id", 
+            as: "contacto" 
+        });
+        cotizaciones.belongsTo(models.usuarios, { 
+            foreignKey: "usuario_id", 
+            as: "usuario" 
+        });
+    };     
 
     return cotizaciones;
 };

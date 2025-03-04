@@ -5,11 +5,13 @@ const EmpresaProveedora = db.empresas_proveedoras;
 // 🔹 Obtener todos los productos/servicios con opción de filtrar por empresa proveedora
 exports.obtenerProductosServicios = async (req, res) => {
     try {
-        const { empresa_id } = req.query;
+        const empresa_id = req.query.empresa; // Captura el parámetro correcto
 
-        let whereCondition = {};
+        let whereCondition = {}; // Condición para filtrar productos
+
+        // Si se recibe un empresa_id, aplicamos el filtro correctamente
         if (empresa_id) {
-            whereCondition = { id: empresa_id };
+            whereCondition = { id: parseInt(empresa_id) }; // Aseguramos que sea un número
         }
 
         const productos = await ProductoServicio.findAll({
@@ -17,11 +19,13 @@ exports.obtenerProductosServicios = async (req, res) => {
                 {
                     model: EmpresaProveedora,
                     as: "empresas",
-                    where: whereCondition,
-                    through: { attributes: [] } // Evita mostrar la tabla intermedia
+                    through: { attributes: [] }, // Evita mostrar la tabla intermedia
+                    where: empresa_id ? { id: parseInt(empresa_id) } : undefined // Filtro correcto
                 }
             ]
         });
+
+        console.log("📌 Productos con parámetros:", JSON.stringify(productos, null, 2));
 
         res.status(200).json(productos);
     } catch (error) {

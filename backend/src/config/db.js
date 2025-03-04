@@ -43,6 +43,12 @@ const sequelize = new Sequelize(
       define: {
         charset: "utf8mb4",
         collate: "utf8mb4_general_ci"
+      },
+      pool: {
+            max: 2, // �9�7 Reducimos el m��ximo de conexiones simult��neas
+            min: 0,
+            acquire: 10000, // Tiempo m��ximo para obtener una conexi��n
+            idle: 5000 // Tiempo antes de liberar una conexi��n inactiva
       }
     }
   );
