@@ -11,8 +11,10 @@ const cotizacionController = require("../controllers/cotizacionController");
 const cotizacionDetalleController = require("../controllers/cotizacionDetalleController");
 const productosServiciosRoutes = require("./productosServiciosRoutes");
 const obraRoutes = require("./obraRoutes");
+const tareasRoutes = require("./tareasRoutes");
 
 router.use("/productos-servicios", productosServiciosRoutes);
+router.use("/tareas", tareasRoutes); // 🔥 Integrando las rutas de tareas
 
 // Ruta para verificar si el token es válido
 router.get("/verify-session", verificarToken, (req, res) => {
@@ -51,7 +53,6 @@ if (empresaController.eliminarEmpresa) router.delete("/empresas_proveedoras/:id"
 // 🔹 Rutas de Obras
 if (obraController.obtenerObras) router.get("/obras", obraController.obtenerObras);
 if (obraController.obtenerObraPorId) router.get("/obras/:id", obraController.obtenerObraPorId);
-if (obraController.obtenerObrasPorCliente) router.get("/obras/cliente/:clienteId", obraController.obtenerObrasPorCliente);
 if (obraController.crearObra) router.post("/obras", obraController.crearObra);
 if (obraController.actualizarObra) router.put("/obras/:id", obraController.actualizarObra);
 if (obraController.eliminarObra) router.delete("/obras/:id", obraController.eliminarObra);
@@ -59,7 +60,6 @@ if (obraController.eliminarObra) router.delete("/obras/:id", obraController.elim
 // 🔹 Rutas de Contactos
 if (contactoController.obtenerContactos) router.get("/contactos", contactoController.obtenerContactos);
 if (contactoController.obtenerContactoPorId) router.get("/contactos/:id", contactoController.obtenerContactoPorId);
-if (contactoController.obtenerContactosPorObra) router.get("/contactos/obra/:obraId", contactoController.obtenerContactosPorObra);
 if (contactoController.crearContacto) router.post("/contactos", contactoController.crearContacto);
 if (contactoController.actualizarContacto) router.put("/contactos/:id", contactoController.actualizarContacto);
 if (contactoController.eliminarContacto) router.delete("/contactos/:id", contactoController.eliminarContacto);
