@@ -9,68 +9,104 @@
   cursor: pointer;
   z-index: 1000;
   color: var(--text-color);
-  transition: transform var(--transition-speed);
+  transition: transform var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed);
 }
 
 .menu-toggle:hover {
   transform: rotate(90deg) scale(1.2);
+  color: var(--accent-color);
+  box-shadow: 0px 4px 10px rgba(255, 140, 0, 0.5);
 }
 
+/* === SIDEBAR MEJORADO === */
 .dashboard-container.expanded .dashboard-sidebar {
-  width: 250px; /* Más compacta pero visible */
+  width: 270px; /* Un poco más amplio para mejor visibilidad */
   opacity: 1;
   transform: translateX(0);
 }
 
-.dashboard-sidebar .sidebar-header {
+.dashboard-sidebar {
+  background: linear-gradient(180deg, var(--secondary-color), var(--primary-color)); /* Degradado moderno */
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-deep);
+  transition: width var(--transition-speed), opacity var(--transition-fast), transform var(--transition-speed);
+  border-right: 2px solid rgba(255, 255, 255, 0.1);
   display: flex;
-  align-items: center;
-  padding: 1rem;
-  justify-content: space-between;
+  flex-direction: column;
+  height: 100vh;
+  padding-top: 65px;
 }
 
+/* === MENÚ DE LA BARRA LATERAL === */
 .dashboard-menu {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  padding: 1rem;
+  padding: 1.1rem;
+  gap: 10px; /* Más aire entre módulos */
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
-  gap: 10px; /* Más aire entre módulos */
-}
-
-.dashboard-menu .menu-item {
-  padding: 12px;
-  border-radius: var(--border-radius);
-  transition: background var(--transition-speed), transform var(--transition-speed);
 }
 
 .dashboard-container.expanded .dashboard-menu {
   opacity: 1;
 }
 
+/* === Ítems del menú === */
+.dashboard-menu .menu-item {
+  padding: 10px;
+  border-radius: var(--border-radius);
+  transition: background var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
+  color: var(--text-color);
+  font-weight: bold;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
 .dashboard-menu .menu-item:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.05);
-  box-shadow: 0px 5px 15px rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.07);
+  box-shadow: var(--shadow-medium);
 }
 
 .dashboard-main {
+  position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
 }
 
+.dashboard-main::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  height: 50%;
+  background: url("/public/images/logo_azul.png") no-repeat center;
+  background-size: contain;
+  opacity: 0.08; /* Transparencia para que no moleste */
+  pointer-events: none; /* No interfiere con los elementos */
+}
+
+/* === HEADER MEJORADO === */
 .dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 3rem;
-  background: var(--secondary-color);
+  padding: 1.2rem 4rem;
+  background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
   color: var(--text-color);
+  height: 6%;
+  box-shadow: var(--shadow-medium);
 }
 
+/* Contenedor izquierdo (logo + bienvenida) */
 .header-left {
   display: flex;
   align-items: center;
@@ -78,15 +114,19 @@
 }
 
 .welcome-message {
-  font-size: 2rem; /* Ajusta el tamaño de la fuente según sea necesario */
+  font-size: 1.8rem; /* Ajusta el tamaño de la fuente según sea necesario */
+  font-weight: bold;
+  padding-top: 10px;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
 }
 
+/* Contenedor derecho (iconos de usuario) */
 .header-right {
   display: flex;
   align-items: center;
   gap: 15px;
 }
-
+/* === ÍCONOS DEL HEADER === */
 .header-icon {
   font-size: 1.5rem;
   cursor: pointer;
@@ -94,8 +134,8 @@
 }
 
 .header-icon:hover {
-  color: var(--accent-color);
-  transform: scale(1.2);
+  color: var(--hover-color);
+  transform: scale(1.25);
 }
 
 /* Estilo para la flecha que aparece cuando el usuario hace scroll*/
@@ -120,12 +160,13 @@
 .dashboard-widgets {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .dashboard-logo {
   width: 50px; /* Tamaño base */
   height: auto;
+  padding-left: 15px;
 }
 
 @media (min-width: 1200px) {
@@ -141,48 +182,68 @@
     height: auto;
   }
 
-  .gestion-usuarios-form {
+  .gestion-form-global {
     flex-direction: column;
     gap: 10px;
   }
 
   .modal {
-    width: 90%; /* Más ancho en móviles */
+    width: 50%; /* Más ancho en móviles */
     max-width: none;
   }
 }
 
-.gestion-usuarios-form {
+/* === FORMULARIO DE GESTIÓN DE USUARIOS MEJORADO === */
+.gestion-form-global {
   display: flex;
-  gap: 15px;
-  margin-bottom: 20px;
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.05);
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 15px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
+  transition: all var(--transition-speed);
 }
 
-.gestion-usuarios-form input,
-.gestion-usuarios-form select {
+.gestion-form-global:hover {
+  box-shadow: var(--shadow-medium);
+  transform: scale(1.02);
+}
+
+.gestion-form-global input,
+.gestion-form-global select {
   flex: 1;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  padding: 5px;
+  width: 99%;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
-.gestion-usuarios-form button {
-  padding: 10px 15px;
+.gestion-form-global input:focus,
+.gestion-form-global select:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0px 0px 10px rgba(240, 138, 36, 0.5);
+  outline: none;
+}
+
+.gestion-form-global button {
+  padding: 5px 5px;
   background: var(--accent-color);
   color: var(--text-color);
   border: none;
-  border-radius: 5px;
-  font-size: 1rem;
+  border-radius: var(--border-radius);
+  font-size: 14px;
   cursor: pointer;
-  transition: background 0.3s ease-in-out;
+  transition: background var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
 }
 
-.gestion-usuarios-form button:hover {
+.gestion-form-global button:hover {
   background: var(--hover-color);
+  transform: scale(1.01);
+  box-shadow: var(--shadow-medium);
 }
 
 .table-responsive {
@@ -204,40 +265,6 @@
 .error-message {
   color: red;
   font-weight: bold;
-}
-
-/* Estilos para mejorar la disposición del formulario */
-.gestion-contactos-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  max-width: 600px;
-  margin: 20px auto;
-}
-
-.gestion-contactos-form input {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-}
-
-.gestion-contactos-form button {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.gestion-contactos-form button:hover {
-  background: #0056b3;
 }
 
 /* 🔹 Contenedor de atributos optimizado */
@@ -277,4 +304,45 @@
   border-radius: 4px;
   border: 1px solid #ccc;
   text-align: center;
+}
+
+
+.notification-dropdown.show {
+  opacity: 1;
+  transform: translateY(0);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* 🔹 Contenedor principal */
+.contenedor-mantenimiento {
+  position: relative;
+}
+
+/* 🔹 Aplica desenfoque solo al contenido */
+.modulo-en-mantenimiento {
+  filter: blur(3px); /* Aplica el desenfoque */
+  pointer-events: none; /* Bloquea interacciones */
+}
+
+/* 🔹 Overlay con mensaje sin desenfoque */
+.overlay-mantenimiento {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8); /* Fondo oscuro */
+  padding: 20px 40px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  color: white;
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-align: center;
+  z-index: 20;
+}
+
+/* 🔥 Iconos de urgencia */
+.notification-icon {
+  font-size: 16px;
+  margin-right: 8px;
 }

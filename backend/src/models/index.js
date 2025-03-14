@@ -17,6 +17,7 @@ db.contacto_obras = require("./contacto_obras")(sequelize, DataTypes);
 db.ProductoServicio = require("./productos_servicios")(sequelize, DataTypes);
 db.EmpresaProducto = require("./empresa_producto")(sequelize, DataTypes);
 db.tareas = require("./tareas")(sequelize, DataTypes);
+db.notificaciones = require("./notificacion")(sequelize, DataTypes);
 
 // Asociaciones
 if (db.clientes.associate) db.clientes.associate(db);
@@ -28,6 +29,7 @@ if (db.empresas_proveedoras.associate) db.empresas_proveedoras.associate(db);
 if (db.cotizaciones.associate) db.cotizaciones.associate(db);
 if (db.cotizacion_detalles.associate) db.cotizacion_detalles.associate(db);
 if (db.tareas.associate) db.tareas.associate(db);
+if (db.notificaciones.associate) db.notificaciones.associate(db);
 
 // Agregar Sequelize a la exportación
 db.sequelize = sequelize;

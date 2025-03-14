@@ -5,9 +5,11 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import GestionUsuarios from "../components/GestionUsuarios";
 import GestionEmpresas from "../components/GestionEmpresas";
 import GestionClientes from "../components/GestionClientes";
-import GestionContactos from "../components/GestionContactos"; // 🔥 IMPORTAMOS EL NUEVO MÓDULO
+import GestionContactos from "../components/GestionContactos";
 import GestionProductosServicios from "../components/GestionProductosServicios";
 import GestionObras from "../components/GestionObras";
+import CentroAtencion from "../components/CentroAtencion";
+import RegistrarTarea from "../components/RegistrarTarea";
 
 export default function AppRoutes() {
   return (
@@ -73,6 +75,19 @@ export default function AppRoutes() {
             <GestionObras />
           </ProtectedRoute>
         } 
+        />
+        <Route path="/centro-atencion" 
+        element={
+          <ProtectedRoute>
+            <CentroAtencion />
+          </ProtectedRoute>
+        } 
+        />
+        <Route path="/registrar-tarea" 
+        element={
+          <ProtectedRoute>
+            <RegistrarTarea />
+          </ProtectedRoute>} 
         />
 
         {/* 🔥 Si la ruta no existe, redirigir siempre a `/login` */}

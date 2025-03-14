@@ -28,7 +28,7 @@ exports.obtenerEmpresaPorId = async (req, res) => {
 // 🔹 Crear una empresa proveedora
 exports.crearEmpresa = async (req, res) => {
     try {
-        const { razon_social, ruc, direccion, representante_legal, dni_representante, cargo_representante, telefono_representante, creado_por } = req.body;
+        const { razon_social, ruc, direccion, representante_legal, dni_representante, cargo_representante, telefono_representante, telefono_oficina, creado_por } = req.body;
         const nuevaEmpresa = await db.empresas_proveedoras.create({
             razon_social,
             ruc,
@@ -37,6 +37,7 @@ exports.crearEmpresa = async (req, res) => {
             dni_representante,
             cargo_representante,
             telefono_representante,
+            telefono_oficina: telefono_oficina || null,
             creado_por
         });
         res.status(201).json(nuevaEmpresa);

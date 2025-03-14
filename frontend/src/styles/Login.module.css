@@ -1,15 +1,59 @@
 /* Estilos para el Login con una estética corporativa del sector construcción */
 
 /* === LOGIN ESTILOS PRO+ === */
+
+/* 🔹 Estilo para la versión del sistema en el login */
+.login-version {
+  position: absolute;
+  bottom: 10px;
+  right: 15px;
+  font-size: 12px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.7); /* Blanco con transparencia */
+  background: rgba(0, 0, 0, 0.3); /* Fondo semi-transparente */
+  padding: 5px 10px;
+  border-radius: 8px;
+  backdrop-filter: blur(5px); /* Efecto de desenfoque */
+  transition: all 0.3s ease-in-out;
+}
+
+.login-version:hover {
+  color: #fff;
+  background: rgba(0, 0, 0, 0.6);
+  transform: scale(1.05);
+}
+
 .login-container {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(15px);
-  animation: fadeIn 1s ease-in-out;
+  width: 100vw;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("/public/images/wallpaper1.jpeg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  overflow: hidden;
 }
+
+.login-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.233); /* Oscurece la imagen */
+  z-index: 1;
+}
+
+.login-box {
+  position: relative; /* Para que esté sobre el fondo */
+  z-index: 2;
+}
+
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
@@ -17,14 +61,27 @@
 }
 
 .login-box {
+  position: absolute; /* Para que el fondo no lo agrande */
+  background: rgba(255, 255, 255, 0.2);
+  padding: 30px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
+  backdrop-filter: blur(10px);
+  max-width: 400px; /* Limita el tamaño del formulario */
+  width: 90%;
+}
+
+/*
+.login-box {
   background: rgba(0, 0, 0, 0.244);
-  padding: 3rem;
+  padding: 1rem;
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-medium);
   text-align: center;
   width: 400px;
   backdrop-filter: blur(20px);
 }
+*/
 
 .login-title {
   font-size: 2rem;
@@ -36,13 +93,13 @@
 }
 
 .login-input {
-  width: 90%;
-  padding: 12px;
-  margin: 10px 0;
+  width: 94%;
+  padding: 10px;
+  margin: 1px 1px;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: var(--border-radius);
   font-size: 1rem;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.437);
   color: var(--text-color);
   transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
 }
@@ -98,8 +155,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 15px;
-  margin-bottom: 15px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  filter: brightness(0.9) contrast(1.2); /* Ajuste de color ligero */
+}
+
+.recaptcha-container iframe {
+  transform: scale(0.85);
+  transform-origin: center;
 }
 
 /* 🔥 Ajuste en pantallas pequeñas */

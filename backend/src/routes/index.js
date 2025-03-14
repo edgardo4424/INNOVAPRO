@@ -12,7 +12,9 @@ const cotizacionDetalleController = require("../controllers/cotizacionDetalleCon
 const productosServiciosRoutes = require("./productosServiciosRoutes");
 const obraRoutes = require("./obraRoutes");
 const tareasRoutes = require("./tareasRoutes");
+const notificacionesRoutes = require("./notificacionesRoutes");
 
+router.use("/notificaciones", notificacionesRoutes);
 router.use("/productos-servicios", productosServiciosRoutes);
 router.use("/tareas", tareasRoutes); // 🔥 Integrando las rutas de tareas
 
@@ -33,7 +35,7 @@ router.use("/obras", obraRoutes); // 🔥 Integrar obrasRoutes correctamente
 // 🔹 Rutas de Usuarios (Solo Gerencia puede acceder)
 if (usuarioController.obtenerUsuarios) router.get("/usuarios", esGerente, usuarioController.obtenerUsuarios);
 if (usuarioController.crearUsuario) router.post("/usuarios", esGerente, usuarioController.crearUsuario);
-if (usuarioController.modificarRolUsuario) router.put("/usuarios/:id", esGerente, usuarioController.modificarRolUsuario);
+if (usuarioController.actualizarUsuario) router.put("/usuarios/:id", esGerente, usuarioController.actualizarUsuario);
 if (usuarioController.eliminarUsuario) router.delete("/usuarios/:id", esGerente, usuarioController.eliminarUsuario);
 
 // 🔹 Rutas de Clientes

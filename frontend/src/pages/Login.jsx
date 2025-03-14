@@ -44,7 +44,7 @@ export default function Login() {
   return (
     <div className={styles["login-container"]}>
       <div className={styles["login-box"]}>
-        <img src="/images/logo_blanco.png" alt="Logo Innova" className={styles["login-logo"]} />
+      <img src={`${process.env.PUBLIC_URL}/images/logo_blanco.png`} alt="Logo Innova" className={styles["login-logo"]} />
         <form onSubmit={handleSubmit}>
           <input
             type="email"
@@ -66,6 +66,8 @@ export default function Login() {
             <ReCAPTCHA ref={recaptchaRef}
               sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
               onChange={handleRecaptcha}
+              theme="dark"
+              size="normal"
             />
           </div>
 
@@ -73,8 +75,8 @@ export default function Login() {
             Ingresar
           </button>
         </form>
-        <p className={styles["login-version"]}>{APP_VERSION}</p>
       </div>
+      <p className={styles["login-version"]}>{APP_VERSION}</p>
     </div>
   );
 }

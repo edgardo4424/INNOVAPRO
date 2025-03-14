@@ -19,19 +19,23 @@ Module.prototype.require = function (path) {
     return originalRequire.apply(this, arguments);
 };
 
-console.log("🚀 'undici' y 'fetch' han sido completamente erradicados.");
-console.log("🚀 WebAssembly completamente deshabilitado.");
-
 // 📌 Carga de módulos necesarios
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const http = require("http"); // 🔥 Agregar esta línea si no está
+const socketIo = require("socket.io");
 const compression = require("compression");
 const helmet = require("helmet");
 const db = require("./models"); // Importa Sequelize para la conexión
 const routes = require("./routes"); // Importa rutas
-
+const { inicializarWebSockets } = require("./utils/websockets");
 const app = express();
+
+const server = http.createServer(app);
+inicializarWebSockets(server);
+
+
 const PORT = process.env.PORT || 3000;
 
 // ✅ Aplicar middlewares globales
@@ -43,7 +47,6 @@ app.use(helmet()); // 🛡️ Protege contra ataques comunes
 // ⏳ Timeout extendido sin cortar conexiones
 app.use((req, res, next) => {
     res.setTimeout(2400000, () => {
-        console.log("⏳ La solicitud está tardando, pero no interrumpimos al usuario.");
     });
     next();
 });
@@ -54,15 +57,14 @@ app.use("/api", routes);
 // ✅ Verificar conexión a la base de datos antes de iniciar el servidor
 (async () => {
     try {
+        const start = Date.now()
         await db.sequelize.authenticate();
+        console.log(`⏳ Conexión establecida en ${Date.now() - start}ms`);
+
         console.log("✅ Conexión exitosa a la base de datos.");
 
-        // 🔥 Mostrar las tablas reconocidas por Sequelize
-        const tablas = await db.sequelize.getQueryInterface().showAllTables();
-        console.log("📂 Tablas detectadas:", tablas);
-
         // 🚀 Iniciar el servidor solo si la base de datos está conectada
-        app.listen(PORT, "0.0.0.0", () => {
+        server.listen(PORT, "0.0.0.0", () => {
             console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
         });
     } catch (err) {

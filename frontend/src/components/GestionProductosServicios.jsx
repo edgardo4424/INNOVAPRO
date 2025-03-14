@@ -190,7 +190,7 @@ export default function GestionProductosServicios() {
           <tr>
             <th>Nombre</th>
             <th>Tipo</th>
-            <th>Empresas</th>
+            <th>Filiales de Innova</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -332,8 +332,8 @@ export default function GestionProductosServicios() {
                     {/* Botón para agregar atributos */}
                     <button className="btn-agregar" type="button" onClick={handleAgregarAtributo}>➕ Agregar Atributo</button>
 
-                    {/* Empresas Proveedoras */}
-                    <label>Empresas Proveedoras</label>
+                    {/* Filiales de Innova */}
+                    <label>Filiales de Innova</label>
                     <Select
                         isMulti
                         options={empresas.map((empresa) => ({ value: empresa.id, label: empresa.razon_social }))}
@@ -343,7 +343,7 @@ export default function GestionProductosServicios() {
                         onChange={(selected) =>
                             setNuevaData({ ...nuevaData, empresas: selected.map((s) => s.value) })
                         }
-                        placeholder="Selecciona empresas..."
+                        placeholder="Selecciona filiales..."
                     />
 
                     {/* Botones de acción */}
@@ -447,8 +447,8 @@ export default function GestionProductosServicios() {
                     {/* Botón para agregar atributos */}
                     <button className="btn-agregar" type="button" onClick={handleAgregarAtributo}>➕ Agregar Atributo</button>
 
-                    {/* Empresas Proveedoras */}
-                    <label>Empresas Proveedoras</label>
+                    {/* Filiales de Innova */}
+                    <label>Filiales de Innova</label>
                     <Select
                         isMulti
                         options={empresas.map((empresa) => ({ value: empresa.id, label: empresa.razon_social }))}
@@ -458,7 +458,7 @@ export default function GestionProductosServicios() {
                         onChange={(selected) =>
                             setProductoEditando({ ...productoEditando, empresas: selected.map((s) => s.value) })
                         }
-                        placeholder="Selecciona empresas..."
+                        placeholder="Selecciona filiales..."
                     />
 
                     {/* Botones de acción */}

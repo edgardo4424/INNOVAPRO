@@ -9,6 +9,10 @@ exports.login = async (req, res) => {
         const { email, password, recaptchaToken } = req.body;
         console.log("📩 Recibido en backend:", req.body);
 
+        if (!/\S+@\S+\.\S+/.test(email)) {
+            return res.status(400).json({ error: "Formato de correo inválido" });
+        }
+
         if (!email || !password || !recaptchaToken){
             return res.status(400).json({ mensaje: "❌ Todos los campos son obligatorios, incluyendo reCAPTCHA."});
         }
@@ -81,45 +85,104 @@ exports.crearUsuario = async (req, res) => {
     try {
         const { nombre, email, password, rol } = req.body;
 
+        // Validación de campos vacíos
+        if (!nombre || !email || !password || !rol) {
+            return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+        }
+
+        // Validar formato de nombre
+        const regexNombre = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/;
+        if (!regexNombre.test(nombre)) {
+        return res.status(400).json({ error: 'Nombre solo debe contener letras' });
+        }
+
+        // Validar formato de correo
+        if (!/\S+@\S+\.\S+/.test(email)) {
+            return res.status(400).json({ error: 'Formato de correo inválido' });
+        }
+
         // Verificar si el correo ya está en uso
         const usuarioExistente = await db.usuarios.findOne({ where: { email } });
         if (usuarioExistente) {
             return res.status(400).json({ mensaje: "El correo ya está registrado" });
         }
 
+        // Validar contraseña segura
+        const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
+        if (!regexPassword.test(password)) {
+        return res.status(400).json({
+            error: 'La contraseña debe tener al menos 8 caracteres, incluir una mayúscula, una minúscula y un número.'
+        });
+        }
+
+        // Validar rol
+        const rolesPermitidos = ['Gerencia', 'Ventas', 'Oficina Técnica', 'Almacén', 'Administración', 'Clientes'];
+        if (!rolesPermitidos.includes(rol)) {
+        return res.status(400).json({ error: 'Rol no permitido' });
+        }
+
+        // Encriptar contraseña
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        // Crear usuario
         const nuevoUsuario = await db.usuarios.create({
-            nombre, email, password: hashedPassword, rol
+            nombre, 
+            email, 
+            password: hashedPassword, 
+            rol
         });
 
         res.status(201).json({ mensaje: "Usuario creado exitosamente", usuario: nuevoUsuario });
     } catch (error) {
-        console.error("❌ Error al crear usuario:", error);
-        res.status(500).json({ mensaje: "Error interno del servidor" });
+        res.status(500).json({ mensaje: "Error al registrar usuario" });
     }
 };
 
-// 🔹 Modificar el rol de un usuario
-exports.modificarRolUsuario = async (req, res) => {
+// 🔹 Modificar datos completos del usuario
+exports.actualizarUsuario = async (req, res) => {
     try {
         const { id } = req.params;
-        const { rol } = req.body;
+        const { nombre, email, rol } = req.body;
 
         const usuario = await db.usuarios.findByPk(id);
-        if (!usuario) {
-            return res.status(404).json({ mensaje: "Usuario no encontrado" });
+       
+        // Validación de campos vacíos
+        if (!nombre || !email || !rol) {
+            return res.status(400).json({ error: 'Todos los campos son obligatorios' });
         }
 
-        usuario.rol = rol;
-        await usuario.save();
+        // Validar formato de nombre
+        const regexNombre = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/;
+        if (!regexNombre.test(nombre)) {
+        return res.status(400).json({ error: 'Nombre solo debe contener letras' });
+        }
 
-        res.status(200).json({ mensaje: "Rol actualizado correctamente", usuario });
+        // Validar formato de correo
+        if (!/\S+@\S+\.\S+/.test(email)) {
+            return res.status(400).json({ error: 'Formato de correo inválido' });
+        }
+
+        // Validar rol
+        const rolesPermitidos = ['Gerencia', 'Ventas', 'Oficina Técnica', 'Almacén', 'Administración', 'Clientes'];
+        if (!rolesPermitidos.includes(rol)) {
+        return res.status(400).json({ error: 'Rol no permitido' });
+        }
+
+        // 🚀 Actualizar datos
+        usuario.nombre = nombre || usuario.nombre;
+        usuario.email = email || usuario.email;
+        usuario.rol = rol || usuario.rol;
+
+        await usuario.save();
+        
+
+        res.status(200).json({ mensaje: "Usuario actualizado correctamente", usuario });
     } catch (error) {
-        console.error("❌ Error al modificar rol:", error);
+        console.error("❌ Error al actualizar usuario:", error);
         res.status(500).json({ mensaje: "Error interno del servidor" });
     }
 };
+
 
 // 🔹 Eliminar un usuario
 exports.eliminarUsuario = async (req, res) => {

@@ -35,9 +35,9 @@ exports.crearObra = async (req, res) => {
             return res.status(403).json({ error: "Usuario no autenticado" });
         }
 
-        const { nombre, direccion, ubicacion, estado, cliente_id } = req.body;
+        const { nombre, direccion, ubicacion, estado } = req.body;
 
-        if (!nombre || !direccion || !ubicacion || !estado || !cliente_id) {
+        if (!nombre || !direccion || !ubicacion || !estado) {
             return res.status(400).json({ mensaje: "Todos los campos son obligatorios" });
         }
 
@@ -49,7 +49,6 @@ exports.crearObra = async (req, res) => {
             creado_por: req.usuario.id,  // 🔥 Ahora se asigna correctamente el usuario creador
         });
 
-        console.log("✅ Obra creada con éxito:", nuevaObra);
         res.status(201).json({ mensaje: "Obra creada exitosamente", obra: nuevaObra });
     } catch (error) {
         console.error("❌ Error al crear obra:", error);

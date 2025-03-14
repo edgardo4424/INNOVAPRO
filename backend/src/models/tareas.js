@@ -46,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
             },
             estado: {
-                type: DataTypes.ENUM("Pendiente", "En proceso", "Finalizada", "Cancelada"),
+                type: DataTypes.ENUM("Pendiente", "En proceso", "Finalizada", "Devuelta", "Cancelada"),
                 defaultValue: "Pendiente",
             },
             detalles: {
@@ -58,6 +58,17 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.DATE,
                 defaultValue: DataTypes.NOW,
             },
+            asignadoA: {
+                type: DataTypes.INTEGER, // Usuario de OT que tomó la tarea
+                allowNull: true
+            },
+            motivoDevolucion: { 
+                type: DataTypes.TEXT, 
+                allowNull: true },
+            correccionComercial: { 
+                type: DataTypes.TEXT, 
+                allowNull: true 
+            }
         },
         {
             timestamps: false,
@@ -69,6 +80,10 @@ module.exports = (sequelize, DataTypes) => {
         Tarea.belongsTo(models.usuarios, {
             foreignKey: "usuarioId",
             as: "usuario_solicitante",
+        });
+        Tarea.belongsTo(models.usuarios, {  
+            foreignKey: "asignadoA",
+            as: "tecnico_asignado"
         });
         Tarea.belongsTo(models.empresas_proveedoras, {
             foreignKey: "empresaProveedoraId",

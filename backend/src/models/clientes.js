@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
             },
             tipo:{
-                type: DataTypes.ENUM('Empresa','Particular'),
+                type: DataTypes.ENUM('Persona Jurídica','Persona Natural'),
                 allowNull: false,
             },
             ruc: {
