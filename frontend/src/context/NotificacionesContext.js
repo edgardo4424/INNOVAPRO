@@ -14,13 +14,25 @@ export const NotificacionesProvider = ({ children }) => {
     useEffect(() => {
         if (!user) return; // 🔥 Evita errores si el usuario aún no está autenticado
 
-        const socket = io(api.defaults.baseURL.replace("/api", "")); // 🔥 Conectar a WebSockets
+        // 🔥 URL BASE SIN `backend/api`, SOLO EL DOMINIO
+        const SOCKET_URL =
+            process.env.NODE_ENV === "production"
+                ? "wss://erp.grupoinnova.pe" // 🔥 PRODUCCIÓN
+                : "ws://localhost:3001"; // 🔥 DESARROLLO
+        
+        console.log(`🔌 Conectando a WebSockets en: ${SOCKET_URL}/backend/api/socket.io`);
+
+        const socket = io(SOCKET_URL, {
+            path: "/backend/api/socket.io", // 🔥 RUTA CORRECTA PARA WEBSOCKETS
+            transports: ["websocket", "polling"], // 🔥 Transportes permitidos
+            withCredentials: true,
+            allowEIO3: true, // 🔥 Compatibilidad con versiones anteriores
+        });
 
         async function fetchNotificaciones() {
             try {
                 const res = await api.get("/notificaciones");
                 console.log("📩 Notificaciones cargadas:", res.data);
-                // 🔥 FILTRAMOS SOLO LAS NO LEÍDAS
                 setNotificaciones(res.data.filter(noti => !noti.leida));
             } catch (error) {
                 console.error("❌ Error al obtener notificaciones:", error);
@@ -32,14 +44,14 @@ export const NotificacionesProvider = ({ children }) => {
         // 🔥 Evento cuando llega una nueva notificación
         socket.on(`notificacion_${user.id}`, (data) => {
             console.log("📩 Nueva notificación recibida:", data);
-            setNotificaciones((prev) => [...prev, data]); // 🔥 Agregar nueva notificación
+            setNotificaciones((prev) => [...prev, data]);
         });
 
         // 🔥 Evento cuando una notificación es marcada como leída
         socket.on(`notificacion_leida_${user.id}`, ({ id }) => {
             console.log("✅ Notificación marcada como leída:", id);
             setNotificaciones((prev) =>
-                prev.filter((noti) => noti.id !== id) // 🔥 Eliminar la notificación leída
+                prev.filter((noti) => noti.id !== id)
             );
         });
 

@@ -14,15 +14,18 @@ const inicializarWebSockets = (server) => {
     }
 
     io = socketIo(server, {
+        path: "/backend/api/socket.io", // 🔥 RUTA CORRECTA PARA WEBSOCKETS
         cors: {
             origin: CLIENT_URL,
             methods: ["GET", "POST"],
-            credentials: true
-        }
+            credentials: true,
+            transports: ["websocket", "polling"], // 🔥 FORZAR TRANSPORTES PERMITIDOS
+        },
+        allowEIO3: true, // 🔥 Compatibilidad con versiones anteriores de socket.io
     });
 
     io.on("connection", (socket) => {
-        console.log("✅ Usuario conectado a WebSockets");
+        console.log("✅ Usuario conectado a WebSockets:", socket.id);
 
         socket.on("nuevaNotificacion", (data) => {
             io.emit(`notificacion_${data.usuarioId}`, data);
@@ -36,6 +39,9 @@ const inicializarWebSockets = (server) => {
         socket.on("disconnect", () => {
             console.log("❌ Usuario desconectado de WebSockets");
         });
+
+        // 🔥 Prueba de conexión para verificar que funciona
+        socket.emit("test_connection", { message: "🔥 WebSocket funcionando!" });
     });
 
     return io;

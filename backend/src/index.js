@@ -20,7 +20,7 @@ Module.prototype.require = function (path) {
 };
 
 // 📌 Carga de módulos necesarios
-require("dotenv").config();
+require("dotenv").config({ path: "../.env" });
 const express = require("express");
 const cors = require("cors");
 const http = require("http"); // 🔥 Agregar esta línea si no está
@@ -38,8 +38,8 @@ inicializarWebSockets(server);
 
 
 // 🔥 Detectamos si estamos en producción o desarrollo
-const PORT = process.env.PORT || 3000;
-const API_BASE_URL = process.env.API_URL || "http://localhost:5000/api";
+const PORT = process.env.PORT || 3001;
+const API_BASE_URL = process.env.API_URL || "http://localhost:3001/api";
 
 // ✅ Aplicar middlewares globales
 app.use(cors());
@@ -55,7 +55,10 @@ app.use((req, res, next) => {
 });
 
 // 📂 Cargar rutas correctamente (SIN DUPLICAR)
-app.use("/api", routes);
+const API_BASE_PATH = process.env.NODE_ENV === "production" ? "/backend/api" : "/api";
+app.use(API_BASE_PATH, routes);
+console.log(`🔀 API corriendo en: ${API_BASE_PATH}`);
+
 
 // ✅ Verificar conexión a la base de datos antes de iniciar el servidor
 (async () => {
