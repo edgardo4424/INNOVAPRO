@@ -1,35 +1,8 @@
 require("dotenv").config();
 const { Sequelize } = require("sequelize");
 
-// 🔥 Asegurar que DB_DIALECT sea string puro sin comillas raras
-const dbDialect = process.env.DB_DIALECT.replace(/['"]+/g, '').trim();
-
-module.exports = {
-  development: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
-    dialect: process.env.DB_DIALECT || "mysql",
-    logging: false,
-  },
-  test: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
-    dialect: "mysql",
-    logging: false,
-  },
-  production: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
-    dialect: "mysql",
-    logging: false,
-  }
-};
+//Detectamos si estamos en producción o en desarrollo
+const isProduction = process.env.NODE_ENV == "production";
 
 // Configuración de la conexión a la base de datos
 const sequelize = new Sequelize(
@@ -45,10 +18,10 @@ const sequelize = new Sequelize(
         collate: "utf8mb4_general_ci"
       },
       pool: {
-            max: 2, // �9�7 Reducimos el m��ximo de conexiones simult��neas
+            max: isProduction ? 5 : 2, // Ajustamos según el entorno
             min: 0,
-            acquire: 10000, // Tiempo m��ximo para obtener una conexi��n
-            idle: 5000 // Tiempo antes de liberar una conexi��n inactiva
+            acquire: 10000, // Tiempo máximo para obtener una conexión
+            idle: 5000 // Tiempo antes de liberar una conexión inactiva
       }
     }
   );
