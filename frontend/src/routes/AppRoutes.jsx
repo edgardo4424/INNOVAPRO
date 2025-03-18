@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 import ProtectedRoute from "../components/ProtectedRoute";
@@ -12,8 +12,12 @@ import CentroAtencion from "../components/CentroAtencion";
 import RegistrarTarea from "../components/RegistrarTarea";
 
 export default function AppRoutes() {
+  const Router = process.env.NODE_ENV === "production" ? HashRouter : BrowserRouter;
+  const LOGIN_PATH = process.env.NODE_ENV === "production" ? "/#/login" : "/login";
+  const DASHBOARD_PATH = process.env.NODE_ENV === "production" ? "/#/dashboard" : "/dashboard";
+
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
         {/* 🔥 Rutas públicas */}
         <Route path="/login" element={<Login />} />
@@ -28,6 +32,12 @@ export default function AppRoutes() {
             <ProtectedRoute>
               <Dashboard />
             </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="*"
+          element={
+            <Navigate to={LOGIN_PATH} replace />
           } 
         />
         <Route 
@@ -93,6 +103,6 @@ export default function AppRoutes() {
         {/* 🔥 Si la ruta no existe, redirigir siempre a `/login` */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }

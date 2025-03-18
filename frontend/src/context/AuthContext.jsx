@@ -76,11 +76,13 @@ export function AuthProvider({ children }) {
     delete axios.defaults.headers.common["Authorization"];
     setUser(null);
 
+    const LOGIN_URL = process.env.NODE_ENV === "production" ? "/#/login" : "/login";
+
     setTimeout(() => {
       if (navigate) {
-        navigate("/login", { replace: true }); // 🔥 Usa React Router correctamente solo si está disponible
+        navigate(LOGIN_URL, { replace: true });  // 🔥 Usa React Router correctamente solo si está disponible
       } else {
-        window.location.replace("/login"); // 🔥 Alternativa segura
+        window.location.replace(LOGIN_URL);  // 🔥 Alternativa segura
       }
     }, 100);
   };
