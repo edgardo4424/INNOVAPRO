@@ -2,6 +2,11 @@ const socketIo = require("socket.io");
 
 let io;
 
+// 🔥 Detectamos si estamos en desarrollo o producción
+const CLIENT_URL = process.env.NODE_ENV === "production"
+    ? process.env.FRONTEND_URL_PROD || "https://erp.grupoinnova.pe"
+    : process.env.FRONTEND_URL || "http://localhost:3000";
+
 const inicializarWebSockets = (server) => {
     if (io) {
         console.log("⚠️ WebSockets ya inicializados. No se reinician.");
@@ -10,8 +15,9 @@ const inicializarWebSockets = (server) => {
 
     io = socketIo(server, {
         cors: {
-            origin: "*",
-            methods: ["GET", "POST"]
+            origin: CLIENT_URL,
+            methods: ["GET", "POST"],
+            credentials: true
         }
     });
 
