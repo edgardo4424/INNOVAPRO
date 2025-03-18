@@ -14,7 +14,7 @@ export const NotificacionesProvider = ({ children }) => {
     useEffect(() => {
         if (!user) return; // 🔥 Evita errores si el usuario aún no está autenticado
 
-        const socket = io("http://localhost:5000"); // 🔥 Conectar a WebSockets
+        const socket = io(api.defaults.baseURL.replace("/api", "")); // 🔥 Conectar a WebSockets
 
         async function fetchNotificaciones() {
             try {

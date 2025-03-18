@@ -30,13 +30,16 @@ const helmet = require("helmet");
 const db = require("./models"); // Importa Sequelize para la conexión
 const routes = require("./routes"); // Importa rutas
 const { inicializarWebSockets } = require("./utils/websockets");
-const app = express();
 
+
+const app = express();
 const server = http.createServer(app);
 inicializarWebSockets(server);
 
 
+// 🔥 Detectamos si estamos en producción o desarrollo
 const PORT = process.env.PORT || 3000;
+const API_BASE_URL = process.env.API_URL || "http://localhost:5000/api";
 
 // ✅ Aplicar middlewares globales
 app.use(cors());
@@ -65,7 +68,7 @@ app.use("/api", routes);
 
         // 🚀 Iniciar el servidor solo si la base de datos está conectada
         server.listen(PORT, "0.0.0.0", () => {
-            console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+            console.log(`🚀 Servidor corriendo en ${API_BASE_URL}`);
         });
     } catch (err) {
         console.error("❌ Error de conexión a la base de datos:", err);
@@ -75,7 +78,7 @@ app.use("/api", routes);
 
 // 📌 Ruta de prueba para verificar el estado del backend
 app.get("/", (req, res) => {
-    res.json({ message: "🚀 Backend de Innova corriendo correctamente." });
+    res.json({ message: `🚀 Backend de Innova corriendo en ${API_BASE_URL}` });
 });
 
 // ✅ Intentar forzar Garbage Collector si está disponible

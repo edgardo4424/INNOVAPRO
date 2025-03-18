@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+import api from "../services/api"; // 🔥 Usamos el API dinámico
 
 const AuthContext = createContext();
 
@@ -17,7 +18,7 @@ export function AuthProvider({ children }) {
       }
 
       try {
-        const res = await axios.get("http://localhost:5000/api/verify-session", {
+        const res = await api.get("/verify-session", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -43,7 +44,7 @@ export function AuthProvider({ children }) {
   // 🔹 Iniciar sesión con validación de reCAPTCHA
   const login = async (email, password, recaptchaToken, navigate) => {
     try {
-      const res = await axios.post("http://localhost:5000/api/login", { email, password, recaptchaToken });
+      const res = await api.post("/login", { email, password, recaptchaToken });
 
       console.log("🟢 Login exitoso:", res.data);
       const { token, usuario } = res.data;

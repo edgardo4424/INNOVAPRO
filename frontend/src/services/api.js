@@ -1,7 +1,18 @@
 import axios from "axios";
 
+// 🔥 Detectamos si estamos en desarrollo o producción
+const API_URL =
+  process.env.NODE_ENV === "production"
+    ? process.env.REACT_APP_API_URL_PROD
+    : process.env.REACT_APP_API_URL;
+
+    // 🔥 Verificar si la variable está bien cargada
+if (!API_URL) {
+  console.error("⚠️ ERROR: No se encontró REACT_APP_API_URL_PROD o REACT_APP_API_URL en el entorno.");
+}
+
 const api = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: API_URL,
   timeout: 2400000,
   headers: { "Content-Type": "application/json" },
 });
