@@ -213,7 +213,7 @@ export default function GestionUsuarios() {
 
     {/* 🔹 Modal de crear usuario */}
     {mostrarModalAgregar && (
-      <div className="modal">
+      <div className="centro-modal">
         <div className="modal-content">
           <h3>Crear Usuario</h3>
           <form onSubmit={handleAgregarUsuario } className="gestion-form-global">
@@ -279,7 +279,7 @@ export default function GestionUsuarios() {
 
     {/* 🔹 Modal de edición */}
     {usuarioEditando && (
-      <div className="modal">
+      <div className="centro-modal">
         <div className="modal-content">
           <h3>Editar Usuario</h3>
           <form onSubmit={handleGuardarEdicion} className="gestion-form-global">

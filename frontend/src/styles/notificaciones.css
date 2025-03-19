@@ -96,7 +96,7 @@
   /* 🔥 Mensaje cuando no hay notificaciones */
 .no-notifications {
     text-align: center;
-    color: #666;
+    color: #ffffff;
     font-size: 14px;
     padding: 12px;
     font-style: italic;
@@ -127,4 +127,39 @@
     100% {
       box-shadow: 0 0 8px rgba(255, 59, 48, 0.8);
     }
+  }
+
+  @media (max-width: 480px) {
+
+  /* 🔹 Estilo del dropdown */
+  .notification-dropdown {
+    position: fixed;
+    top: 55px;
+    right: 10px;
+    width: 350px;
+    padding: 10px;
+  }
+
+  /* 🔥 Encabezado del dropdown */
+  .notification-dropdown h4 {
+    font-size: 18px;
+    padding-bottom: 5px;
+    font-weight: 600;
+  }
+
+  /* 🔹 Lista de notificaciones */
+  .notification-dropdown ul {
+    list-style: none;
+    padding: 5px;
+    max-height: 250px;
+  }
+
+  /* 🔹 Cada notificación */
+  .notification-dropdown li {
+    padding: 5px;
+    font-size: 14px;
+    margin-bottom: 5px;
+    border-radius: 8px;
+  }
+  
   }

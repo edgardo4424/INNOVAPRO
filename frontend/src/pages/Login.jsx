@@ -13,7 +13,8 @@ export default function Login() {
   const [recaptchaToken, setRecaptchaToken] = useState(null); // Guardamos el token del reCAPTCHA
   const { login } = useAuth();
   const navigate = useNavigate();
-  
+  const [loading, setLoading] = useState(false); // ⏳ Estado de carga
+
   useEffect(() => {
     if (recaptchaRef.current) {
       recaptchaRef.current.reset(); // 🔹 Reinicia el reCAPTCHA al cargar la página
@@ -27,10 +28,14 @@ export default function Login() {
   async function handleSubmit(e) {
     e.preventDefault();
 
+    if (loading) return; // ⛔ Evitar múltiples clics
+
     if (!recaptchaToken) {
       alert("❌ Debes completar el reCAPTCHA.");
       return;
     }
+
+    setLoading(true); // 🔥 Desactiva el botón
 
     const success = await login(email, password, recaptchaToken);
     if (success) {
@@ -38,6 +43,7 @@ export default function Login() {
       navigate("/dashboard");
     } else {
       alert("❌ Credenciales incorrectas o fallo en reCAPTCHA.");
+      setLoading(false); // 🔥 Reactiva el botón
     }
   }
 
@@ -71,8 +77,8 @@ export default function Login() {
             />
           </div>
 
-          <button type="submit" className={styles["login-button"]}>
-            Ingresar
+          <button type="submit" disabled={loading} className={styles["login-button"]}>
+            {loading ? "Cargando..." : "Ingresar"}
           </button>
         </form>
       </div>

@@ -20,12 +20,16 @@
 
 /* === SIDEBAR MEJORADO === */
 .dashboard-container.expanded .dashboard-sidebar {
-  width: 270px; /* Un poco más amplio para mejor visibilidad */
+  left:0;
   opacity: 1;
   transform: translateX(0);
+  position: fixed;
+  top: 0;
+  width: 250px;
 }
 
 .dashboard-sidebar {
+  position: absolute;
   background: linear-gradient(180deg, var(--secondary-color), var(--primary-color)); /* Degradado moderno */
   backdrop-filter: blur(12px);
   box-shadow: var(--shadow-deep);
@@ -114,7 +118,7 @@
 }
 
 .welcome-message {
-  font-size: 1.8rem; /* Ajusta el tamaño de la fuente según sea necesario */
+  font-size: 1.4rem; /* Ajusta el tamaño de la fuente según sea necesario */
   font-weight: bold;
   padding-top: 10px;
   text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
@@ -128,14 +132,14 @@
 }
 /* === ÍCONOS DEL HEADER === */
 .header-icon {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   cursor: pointer;
   transition: color var(--transition-speed), transform var(--transition-speed);
 }
 
 .header-icon:hover {
   color: var(--hover-color);
-  transform: scale(1.25);
+  transform: scale(1.2);
 }
 
 /* Estilo para la flecha que aparece cuando el usuario hace scroll*/
@@ -167,30 +171,6 @@
   width: 50px; /* Tamaño base */
   height: auto;
   padding-left: 15px;
-}
-
-@media (min-width: 1200px) {
-  .dashboard-logo {
-    width: 150px; /* Ajusta para pantallas grandes */
-    height: auto;
-  }
-}
-
-@media (max-width: 768px) {
-  .dashboard-logo {
-    width: 150px; /* Ajusta para pantallas pequeñas */
-    height: auto;
-  }
-
-  .gestion-form-global {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .modal {
-    width: 50%; /* Más ancho en móviles */
-    max-width: none;
-  }
 }
 
 /* === FORMULARIO DE GESTIÓN DE USUARIOS MEJORADO === */
@@ -345,4 +325,144 @@
 .notification-icon {
   font-size: 16px;
   margin-right: 8px;
+}
+
+@media (min-width: 1200px) {
+  .dashboard-logo {
+    width: 150px; /* Ajusta para pantallas grandes */
+    height: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-logo {
+    width: 150px; /* Ajusta para pantallas pequeñas */
+    height: auto;
+    display: flex;
+    align-items: center;
+    gap: 40px; 
+  }
+
+  .welcome-message {
+    font-size: 1.2rem;
+    max-width: 280px;
+  }
+
+  .menu-toggle {
+    font-size: 24px;
+    top: 20px;
+    left: 20px;
+  }
+
+}
+
+@media (max-width: 480px) {
+  .dashboard-logo {
+    width: 100px; /* Ajusta para pantallas grandes */
+    height: auto;
+  }
+
+  .welcome-message {
+    font-size: 1rem;
+    max-width: 60px;
+  }
+
+  .menu-toggle {
+    top: 20px;
+    left: 20px;
+    font-size: 15px;
+  }
+  
+  .dashboard-container.expanded .dashboard-sidebar {
+    width: 75%;
+  }
+
+  /* === MENÚ DE LA BARRA LATERAL === */
+  .dashboard-menu {
+    padding: 2rem;
+    gap: 15px; /* Más aire entre módulos */
+  }
+
+    /* === Ítems del menú === */
+  .dashboard-menu .menu-item {
+    padding: 10px;
+  }
+
+  /* === HEADER MEJORADO === */
+  .dashboard-header {
+    padding: 0.5rem 2.8rem;
+    height: 6%;
+  }
+
+  /* Contenedor izquierdo (logo + bienvenida) */
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Añade un gap para espaciado entre el logo y el mensaje */
+  }
+
+  .welcome-message {
+    opacity: 0;
+  }
+
+  /* Contenedor derecho (iconos de usuario) */
+  .header-right {
+    gap: 10px;
+  }
+
+  /* === ÍCONOS DEL HEADER === */
+  .header-icon {
+    font-size: 1.5rem;
+  }
+
+  .dashboard-widgets {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+  }
+  
+  .dashboard-logo {
+    padding-left: 30px;
+  }
+
+  .dashboard-main::before {
+    position: fixed;
+  }
+
+.gestion-form-global {
+  gap: 5px;
+  margin-bottom: 0px;
+  padding: 15px;
+}
+
+.gestion-form-global input,
+.gestion-form-global select {
+  padding: 5px;
+  width: 95%;
+  font-size: 14px;
+}
+
+.gestion-form-global button {
+  padding: 5px 5px;
+  font-size: 14px;
+}
+
+.top-actions {
+  margin-bottom: 10px;
+  padding: 5px;
+}
+
+/* 🔹 Overlay con mensaje sin desenfoque */
+.overlay-mantenimiento {
+  position: fixed;
+  padding: 5px 10px;
+  font-size: 1.5rem;
+  width: 100%;
+}
+
+/* 🔥 Iconos de urgencia */
+.notification-icon {
+  margin-right: 0px;
+}
+
 }

@@ -253,7 +253,7 @@ export default function GestionEmpresas() {
 
         {/* 🔹 Modal de crear empresa */}
         {mostrarModalAgregar && (
-          <div className="modal">
+          <div className="centro-modal">
             <div className="modal-content">
               <h3>Crear Filial</h3>
               <form onSubmit={handleAgregarEmpresa } className="gestion-form-global">
@@ -363,7 +363,7 @@ export default function GestionEmpresas() {
 
         {/* 🔹 Modal de edición */}
         {empresaEditando && (
-        <div className="modal">
+        <div className="centro-modal">
           <div className="modal-content">
             <h3>Editar Filial</h3>
             <form onSubmit={handleGuardarEdicion} className="gestion-form-global">

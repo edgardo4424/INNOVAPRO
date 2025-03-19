@@ -44,45 +44,6 @@
     }
 }
 
-/* 🔹 VERSIÓN EN TARJETAS PARA MÓVILES */
-@media (max-width: 600px) {
-    .custom-table, .custom-table thead, .custom-table tbody, .custom-table th, .custom-table td, .custom-table tr {
-        display: block;
-        width: 100%;
-    }
-
-    .custom-table thead {
-        display: none; /* Oculta el encabezado en móviles */
-    }
-
-    .custom-table tbody tr {
-        display: flex;
-        flex-direction: column;
-        background: white;
-        margin-bottom: 10px;
-        padding: 10px;
-        border-radius: 10px;
-        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .custom-table td {
-        display: flex;
-        justify-content: space-between;
-        padding: 8px;
-        border-bottom: 1px solid #ddd;
-    }
-
-    .custom-table td:last-child {
-        border-bottom: none;
-    }
-
-    .custom-table td:before {
-        content: attr(data-label);
-        font-weight: bold;
-        margin-right: 10px;
-    }
-}
-
 /* 🔹 Botones dentro de la tabla */
 .edit-button {
     background: #007bff;
@@ -134,9 +95,9 @@
     background: #fff;
     padding: 25px; /* 🔥 Más espacio interno para mejor legibilidad */
     border-radius: 12px; /* 🔥 Bordes más suaves y profesionales */
-    width: 600px;
+    width: 500px;
     max-width: 90%;
-    max-height: 75vh;
+    max-height: 50%;
     overflow-y: auto;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25); /* 🔥 Sombra más difuminada y elegante */
     animation: slideDown 0.3s ease-in-out;
@@ -155,15 +116,6 @@
     }
 }
 
-/* 📌 Ajuste en móviles */
-@media (max-width: 600px) {
-    .modal-content {
-        width: 95%;
-        padding: 20px;
-        max-height: 85vh; /* Más espacio en pantallas pequeñas */
-    }
-}
-
 
 /* 🔹 Título mejorado */
 .modal-content h3 {
@@ -177,23 +129,6 @@
     border-bottom: 2px solid #004085; /* 🔥 Línea sutil para separar */
 }
 
-
-/* 🔹 Botón de cierre */
-.back-button {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 20%;
-    margin-top: 10px;
-    font-size: 16px;
-}
-
-.back-button:hover {
-    background-color: #c82333;
-}
 
 /* 🔹 Botón de cierre en la esquina superior derecha */
 .close-button {
@@ -542,4 +477,139 @@ th.sortable.active::after {
     color: #0056b3;
     font-weight: bold;
 }
-  
+
+@media (max-width: 480px) {
+    /* 🔷 Estilos generales del Centro de Atención */
+    .centro-atencion-container {
+        padding: 20px;
+    }
+
+    /* 🔹 Título del módulo */
+    .centro-atencion-container h2 {
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+
+    /* 🔹 Contenedor del modal refinado */
+    .modal-content {
+        max-width: 80%;
+    }
+
+    /* 🔹 Título mejorado */
+    .modal-content h3 {
+        font-size: 18px; /* 🔥 Un poco más grande para más presencia */
+        letter-spacing: 1px; /* 🔥 Espaciado sutil para mayor legibilidad */
+        margin-bottom: 0px;
+        padding-bottom: 5px;
+    }
+
+
+    /* 🔹 Base para todos los botones (Diseño elegante y uniforme) */
+    .button {
+        padding: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+    /* 🔹 Contenedor para organizar los botones */
+    .button-group {
+        margin-top: 10px;
+    }
+
+    /* 🔹 Contenedor de detalles refinado */
+    .detalles-tarea {
+        padding: 15px;
+        border-radius: 10px;
+        display: grid;
+        grid-template-columns: repeat(1, 1fr); /* 🔥 Mantiene dos columnas */
+        gap: 5px;
+    }
+
+    /* 🔹 Ítems individuales */
+    .detalles-tarea p {
+        padding: 5px;
+        border-radius: 5px;
+        font-size: 15px;
+    }
+
+    /* 🔹 Lista de detalles mejorada */
+    .tarea-detalles {
+        border-radius: 10px;
+        display: grid;
+        grid-template-columns: repeat(1, 1fr); /* 🔥 Mantiene dos columnas */
+        gap: 5px;
+    }
+
+    /* 🔹 Títulos de las secciones */
+    .tarea-detalles h4 {
+        font-size: 15px;
+        margin-bottom: 0px;
+        padding-bottom: 5px;
+        text-align: center;
+    }
+
+    /* 🔹 Estilos para la lista de detalles */
+    .tarea-detalles ul {
+        padding: 5px;
+        border-radius: 5px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    /* 🔹 Ítems de la lista */
+    .tarea-detalles li {
+        padding: 5px;
+        border-radius: 5px;
+        font-size: 14px;
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    /* 🔹 Estados */
+    .estado {
+        padding: 5px 0px;
+        border-radius: 5px;
+    }
+    
+    /* 🔹 Contenedor de las pestañas */
+    .estado-tabs {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    /* 🔹 Botones de pestañas */
+    .tab-button {
+        padding: 8px;
+        border-radius: 5px;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.0s;
+    }
+
+    .pagination {
+        margin-top: 15px;
+    }
+
+    .busqueda-input {
+        padding: 5px;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    /* 🔹 Solo las columnas ordenables tendrán estilos especiales */
+    th.sortable {
+        padding-right: 0px;
+    }
+
+    /* 🔹 Íconos de ordenación con mejor alineación */
+    th.sortable::after {
+        font-size: 14px;
+        margin-left: 5px;
+        transition: color 0.0s;
+    }
+
+  }

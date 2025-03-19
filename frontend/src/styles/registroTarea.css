@@ -274,4 +274,118 @@
     background: #b52b39;
   }
   
+  @media (max-width: 480px) {
+    .registro-tarea-container {
+      max-width: 100%;
+      padding: 15px;
+    }
+  
+    .registro-tarea-titulo {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    
+    .registro-tarea-mensaje {
+      padding: 1px 1px;
+      font-size: 15px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    
+    .registro-tarea-form {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+      padding: 10px;
+    }
+  
+    .registro-tarea-form input,
+    .registro-tarea-form select {
+      flex: 1;
+      padding: 1px;
+      width: 99%;
+      font-size: 13px;
+    }
+  
+    .registro-tarea-form button {
+      padding: 5px 5px;
+      font-size: 13px;
+    }
+    
+    .tarea-detalles {
+      padding: 10px;
+    }
+    
+    .nota-label {
+      font-size: 15px;
+      margin-bottom: 5px;
+    }
+    
+    .nota-textarea {
+      width: 95%;
+      min-height: 50px;
+      max-height: 150px;
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    /* 🔹 Mejoras en los estilos de checklist */
+    .sub-options {
+      padding: 5px;
+      border-radius: 8px;
+      margin-top: 5px;
+    }
+    
+    .sub-options-title {
+      font-size: 15px;
+      margin-bottom: 0px;
+    }
+    
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 0px;
+    }
+    
+    .checkbox-item {
+      padding: 0px 0px;
+      border-radius: 8px;
+    }
+  
+    /* ✅ Agregar efecto visual cuando está seleccionado */
+  .checkbox-item input[type="checkbox"]:checked + span {
+      padding: 6px 0px;
+    }
+  
+    .checkbox-item span {
+      padding: 5px 0px;
+    }
+    
+    /* 🎯 Pequeño texto de ayuda */
+    .hint-text {
+      margin-top: 0px;
+    }  
+  
+    /* 🔹 Contenedor de fecha y hora */
+  .entrega-container {
+      gap: 0px;
+      margin-top: 0px;
+      padding: 15px;
+      border-radius: 5px;
+    }
+    
+    /* ✅ Mejoramos los inputs de fecha y hora */
+    .entrega-container input {
+      width: 95%;
+      padding: 5px;
+      font-size: 14px;
+    }
+    
+    .btn-ir-centro, .btn-volver {
+      padding: 10px;
+      font-size: 15px;
+    }
+  
+  }
   

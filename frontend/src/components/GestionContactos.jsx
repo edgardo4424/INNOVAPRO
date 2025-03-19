@@ -264,7 +264,7 @@ export default function GestionContactos() {
   
       {/* Modal de Agregar Contacto */}
       {mostrarModalAgregar && (
-        <div className="modal">
+        <div className="centro-modal">
           <div className="modal-content">
             <h3>Agregar Contacto</h3>
             <form onSubmit={handleAgregarContacto} className="gestion-form-global">
@@ -343,7 +343,7 @@ export default function GestionContactos() {
   
       {/* Modal de Editar Contacto */}
       {contactoEditando && (
-        <div className="modal">
+        <div className="centro-modal">
           <div className="modal-content">
             <h3>Editar Contacto</h3>
             <form onSubmit={handleGuardarEdicion} className="gestion-form-global">

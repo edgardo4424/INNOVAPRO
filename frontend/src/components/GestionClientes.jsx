@@ -281,7 +281,7 @@ export default function GestionClientes() {
       
       {/* Modal de Agregar Cliente */}
       {mostrarModalAgregar && (
-        <div className="modal">
+        <div className="centro-modal">
           <div className="modal-content">
             <h3>Agregar Cliente</h3>
             <form onSubmit={handleAgregarCliente} className="gestion-form-global">
@@ -394,7 +394,7 @@ export default function GestionClientes() {
 
       {/* 🔹 Modal de edición */}
       {clienteEditando && (
-        <div className="modal">
+        <div className="centro-modal">
           <div className="modal-content">
             <h3>Editar Cliente</h3>
             <form onSubmit={handleGuardarEdicion} className="gestion-form-global">

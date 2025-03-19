@@ -216,7 +216,7 @@ export default function GestionObras() {
 
       {/* Modal de Agregar Obra */}
       {mostrarModalAgregar && (
-          <div className="modal">
+          <div className="centro-modal">
             <div className="modal-content">
               <h3>Agregar Obra</h3>
               <form onSubmit={handleAgregarObra} className="gestion-form-global">
@@ -271,7 +271,7 @@ export default function GestionObras() {
 
       {/* Modal de Editar Obra */}
         {obraEditando && (
-          <div className="modal">
+          <div className="centro-modal">
             <div className="modal-content">
               <h3>Editar Obra</h3>
               <form onSubmit={handleGuardarEdicion} className="gestion-form-global">

@@ -243,7 +243,7 @@ export default function GestionProductosServicios() {
 
 
     {mostrarModalAgregar && (
-        <div className="modal">
+        <div className="centro-modal">
             <div className="modal-content">
                 <h3>Agregar Producto/Servicio</h3>
                 <form onSubmit={handleCrearProducto} className="gestion-productos-form">
@@ -358,7 +358,7 @@ export default function GestionProductosServicios() {
 
     {/* Modal de Edición */}
     {mostrarModal && (
-        <div className="modal">
+        <div className="centro-modal">
             <div className="modal-content">
                 <h3>Editar Producto/Servicio</h3>
                 <form onSubmit={handleActualizarProducto} className="gestion-productos-form">
