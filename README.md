@@ -3,7 +3,7 @@ INNOVA_PRO+/
 │   ├── src/               # Código fuente del backend
 │   │   ├── config/        # Configuración global (DB, variables de entorno)
 │   │   ├── controllers/   # Controladores de rutas (lógica de negocio)
-│   │   ├── models/        # Definiciones de modelos y ORM (MongoDB, MySQL, etc.)
+│   │   ├── models/        # Definiciones de modelos y ORM (MySQL, etc.)
 │   │   ├── routes/        # Definición de las rutas (API endpoints)
 │   │   ├── services/      # Lógica reutilizable (autenticación, correos, etc.)
 │   │   ├── utils/         # Funciones auxiliares o helper functions
@@ -14,7 +14,7 @@ INNOVA_PRO+/
 │   ├── package.json       # Dependencias del backend
 │   ├── README.md          # Documentación backend
 │
-│── frontend/              # Todo el código del cliente (React, Next.js, etc.)
+│── frontend/              # Todo el código del cliente (React, etc.)
 │   ├── public/            # Archivos estáticos (logos, imágenes, etc.)
 │   ├── src/               # Código fuente del frontend
 │   │   ├── components/    # Componentes reutilizables de UI
@@ -40,11 +40,3 @@ INNOVA_PRO+/
 │
 │── .gitignore             # Archivos a ignorar en Git
 │── README.md              # Documentación general del proyecto
-
-🔷 Comunicación Estandarizada
-Cuando me escribas en 2 meses, dime algo como:
-
-👉 Ejemplo:
-"Necesito mejorar la autenticación en backend/src/services/authService.js para que expire el token después de 30 min."
-
-Así puedo entenderte rápido y saber en qué parte del código trabajar.
