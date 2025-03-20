@@ -90,7 +90,9 @@ export default function Dashboard() {
       "Gestión de Contactos", 
       "Gestión de Obras", 
       "Cotizaciones", 
-      "Registrar Tarea"],
+      "Registrar Tarea",
+      "Centro de Atención"
+    ],
     'Oficina Técnica': [
       "Centro de Atención"
     ],

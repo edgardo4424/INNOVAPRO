@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import "../styles/registroTarea.css";
-import CentroAtencion from "./CentroAtencion";
+import Select from "react-select";
 
 export default function RegistrarTarea() {
   // Obtiene información del usuario autenticado
@@ -25,7 +25,6 @@ export default function RegistrarTarea() {
     detalles: {},
   });
 
-  const [mostrarCentroAtencion, setMostrarCentroAtencion] = useState(false);
 
   // Efecto para cargar las empresas y clientes al montar el componente
   useEffect(() => {
@@ -92,17 +91,8 @@ export default function RegistrarTarea() {
 
   return (
     <div className="registro-tarea-container">
-        {/* 🔥 CAMBIAR ENTRE EL REGISTRO Y EL CENTRO DE ATENCIÓN */}
-        {mostrarCentroAtencion ? (
-            <>
-            <button className="btn-volver" onClick={() => setMostrarCentroAtencion(false)}>
-                ⬅ Volver al Registro de Tareas
-            </button>
-            <CentroAtencion />
-            </>
-        ) : (
-            <>
       <h2 className="registro-tarea-titulo">📌 Registrar Nueva Tarea</h2>
+      {/* Mensaje de aclaración para los comerciales */}
       <div className="registro-tarea-mensaje">
         <p>🛠️ <strong>Estimado compañero comercial</strong>, brinde toda la información necesaria para completar su tarea en los tiempos que lo necesite.</p>
       </div>
@@ -111,30 +101,46 @@ export default function RegistrarTarea() {
         
         {/* Selección de filial */}
         <div className="form-group">
-          <label>Filial de Innova:</label>
-          <select value={formData.empresaProveedoraId} onChange={(e) => setFormData({ ...formData, empresaProveedoraId: e.target.value })} required>
-            <option value="">Seleccione...</option>
-            {empresas.map(emp => <option key={emp.id} value={emp.id}>{emp.razon_social}</option>)}
-          </select>
+        <label>Filial de Innova:</label>
+        <Select
+            value={formData.empresaProveedoraId 
+            ? { value: formData.empresaProveedoraId, label: empresas.find(emp => emp.id === formData.empresaProveedoraId)?.razon_social || "Seleccione..." } 
+            : null}
+            onChange={(selected) => setFormData({ ...formData, empresaProveedoraId: selected ? selected.value : "" })}
+            options={empresas.map(emp => ({ value: emp.id, label: emp.razon_social }))}
+            placeholder="Seleccione..."
+            isSearchable
+        />
         </div>
 
         {/* Selección de cliente */}
         <div className="form-group">
-          <label>Cliente:</label>
-          <select value={formData.clienteId} onChange={(e) => setFormData({ ...formData, clienteId: e.target.value })} required>
-            <option value="">Seleccione...</option>
-            {clientes.map(cli => <option key={cli.id} value={cli.id}>{cli.razon_social}</option>)}
-          </select>
+        <label>Cliente:</label>
+        <Select
+            value={formData.clienteId 
+            ? { value: formData.clienteId, label: clientes.find(cli => cli.id === formData.clienteId)?.razon_social || "Seleccione..." } 
+            : null}
+            onChange={(selected) => setFormData({ ...formData, clienteId: selected ? selected.value : "" })}
+            options={clientes.map(cli => ({ value: cli.id, label: cli.razon_social }))}
+            placeholder="Seleccione..."
+            isSearchable
+        />
         </div>
 
         {/* Selección de obra */}
         <div className="form-group">
-          <label>Obra:</label>
-          <select value={formData.obraId} onChange={(e) => setFormData({ ...formData, obraId: e.target.value })} required>
-            <option value="">Seleccione...</option>
-            {obras.map(obra => <option key={obra.id} value={obra.id}>{obra.nombre}</option>)}
-          </select>
+        <label>Obra:</label>
+        <Select
+            value={formData.obraId 
+            ? { value: formData.obraId, label: obras.find(obra => obra.id === formData.obraId)?.nombre || "Seleccione..." } 
+            : null}
+            onChange={(selected) => setFormData({ ...formData, obraId: selected ? selected.value : "" })}
+            options={obras.map(obra => ({ value: obra.id, label: obra.nombre }))}
+            placeholder="Seleccione..."
+            isSearchable
+        />
         </div>
+
 
         {/* Selección del nivel de urgencia */}
         <div className="form-group">
@@ -1816,7 +1822,7 @@ export default function RegistrarTarea() {
             </select>
 
             {/* Fecha y Hora de Entrega */}
-            {formData.detalles.transporte == "Nosotros" && (
+            
             <div className="entrega-container">
                 <label>Fecha de entrega en obra:</label>
                 <input
@@ -1845,7 +1851,7 @@ export default function RegistrarTarea() {
                 required
                 />
             </div>
-            )}
+            
 
             {/* Nota */}
             <div className="sub-options">
@@ -2420,12 +2426,6 @@ export default function RegistrarTarea() {
         <button type="submit" className="btn-registrar">Registrar Tarea</button>
       </form>
 
-        {/* 🔥 BOTÓN PARA IR AL CENTRO DE ATENCIÓN */}
-        <button className="btn-ir-centro" onClick={() => setMostrarCentroAtencion(true)}>
-            📋 Ver Centro de Atención
-          </button>
-        </>
-        )}
     </div>
   );
 }

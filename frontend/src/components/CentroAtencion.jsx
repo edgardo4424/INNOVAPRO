@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import "../styles/centroAtencion.css";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function CentroAtencion() {
   // Obtiene información del usuario autenticado
@@ -17,6 +19,9 @@ export default function CentroAtencion() {
   const [orden, setOrden] = useState("asc");
   const [columnaOrdenada, setColumnaOrdenada] = useState(null);
   const [estado, setEstado] = useState("");
+  const [fechaFiltroInicio, setFechaFiltroInicio] = useState(null);
+  const [fechaFiltroFin, setFechaFiltroFin] = useState(null);
+
 
   // 🔹 Cargar tareas según el estado seleccionado
   useEffect(() => {
@@ -61,18 +66,54 @@ export default function CentroAtencion() {
     setPaginaActual(1);
   };
 
-  // 🔹 Función para filtrar tareas por búsqueda
-  const filtrarTareas = (tarea) => {
-    const busquedaLower = busqueda.toLowerCase();
   
-    return (
-      tarea.cliente?.razon_social?.toLowerCase().includes(busquedaLower) ||
-      tarea.obra?.nombre?.toLowerCase().includes(busquedaLower) ||
-      tarea.tipoTarea?.toLowerCase().includes(busquedaLower) ||
-      (tarea.usuario_solicitante && tarea.usuario_solicitante.nombre?.toLowerCase().includes(busquedaLower)) || // 🔥 Verifica que usuario_solicitante exista
-      (tarea.tecnico_asignado && tarea.tecnico_asignado.nombre?.toLowerCase().includes(busquedaLower)) // 🔥 Verifica que tecnico_asignado exista
-    );
+// 🔹 Función para filtrar tareas con búsqueda por ID, texto y rango de fechas
+const filtrarTareas = (tarea) => {
+  const busquedaLower = busqueda.toLowerCase();
+
+  // 🔥 Si hay una búsqueda por ID, buscar coincidencias exactas o parciales
+  const coincideID = tarea.id?.toString().includes(busqueda.trim());
+
+  // 🔥 Si hay una búsqueda por texto, verificar coincidencias en los campos relevantes
+  const coincideTexto =
+    tarea.cliente?.razon_social?.toLowerCase().includes(busquedaLower) ||
+    tarea.obra?.nombre?.toLowerCase().includes(busquedaLower) ||
+    tarea.tipoTarea?.toLowerCase().includes(busquedaLower) ||
+    (tarea.usuario_solicitante && tarea.usuario_solicitante.nombre?.toLowerCase().includes(busquedaLower)) ||
+    (tarea.tecnico_asignado && tarea.tecnico_asignado.nombre?.toLowerCase().includes(busquedaLower));
+
+  // 🔥 Asegurar que `tarea.fecha_creacion` existe y tiene valor
+  if (!tarea.fecha_creacion) {
+    console.warn("⚠️ Tarea sin fecha_creacion:", tarea);
+    return coincideTexto || coincideID; // Si no hay fecha, solo filtrar por texto/ID
+  }
+
+  // 🔥 Convertir la fecha de la tarea a `YYYY-MM-DD`
+  const fechaTarea = new Date(tarea.fecha_creacion).toISOString().split("T")[0];
+
+  // 🔥 Convertir fechas del filtro a `YYYY-MM-DD`
+  const convertirFecha = (fecha) => {
+    if (!fecha) return null;
+    return fecha.toISOString().split("T")[0];
   };
+
+  const fechaInicio = convertirFecha(fechaFiltroInicio);
+  const fechaFin = convertirFecha(fechaFiltroFin);
+
+
+  // 🔥 Comparar fechas correctamente
+  const coincideFecha =
+    (!fechaInicio || fechaTarea >= fechaInicio) &&
+    (!fechaFin || fechaTarea <= fechaFin);
+
+  // 🔥 Retornar verdadero si coincide con el texto/ID o si entra en el rango de fechas
+  return (coincideTexto || coincideID) && coincideFecha;
+};
+
+
+
+
+
   
   // 🔹 Función para seleccionar una tarea
   const handleSeleccionarTarea = (tarea) => {
@@ -227,8 +268,9 @@ async function handleCorregirTarea() {
     <div className="centro-atencion-container">
       <h2>Centro de Atención - Oficina Técnica</h2>
 
-      {/* 🔹 Barra de búsqueda */}
+      {/* 🔹 Barra de búsqueda mejorada */}
       <div className="busqueda-container">
+        {/* 🔥 Input de búsqueda por texto o ID */}
         <input
           type="text"
           placeholder="Buscar tarea..."
@@ -236,6 +278,36 @@ async function handleCorregirTarea() {
           onChange={(e) => setBusqueda(e.target.value)}
           className="busqueda-input"
         />
+
+        {/* 🔥 Filtro por fecha de inicio */}
+        <DatePicker
+          selected={fechaFiltroInicio}
+          onChange={(date) => {
+            setFechaFiltroInicio(date);
+          }}
+          selectsStart
+          startDate={fechaFiltroInicio}
+          endDate={fechaFiltroFin}
+          placeholderText="Fecha inicio"
+          className="busqueda-input"
+          dateFormat="yyyy-MM-dd"
+        />
+
+        {/* 🔥 Filtro por fecha de fin */}
+        <DatePicker
+          selected={fechaFiltroFin}
+          onChange={(date) => {
+            setFechaFiltroFin(date);
+          }}
+          selectsEnd
+          startDate={fechaFiltroInicio}
+          endDate={fechaFiltroFin}
+          minDate={fechaFiltroInicio}
+          placeholderText="Fecha fin"
+          className="busqueda-input"
+          dateFormat="yyyy-MM-dd"
+        />
+
       </div>
 
       {/* 🔹 Sub-pestañas para filtrar */}

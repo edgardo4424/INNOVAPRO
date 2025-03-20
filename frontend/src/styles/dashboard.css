@@ -327,6 +327,12 @@
   margin-right: 8px;
 }
 
+/* Estilo para el mapa */
+.map-container {
+  width: 100%;
+  height: 400px;
+}
+
 @media (min-width: 1200px) {
   .dashboard-logo {
     width: 150px; /* Ajusta para pantallas grandes */

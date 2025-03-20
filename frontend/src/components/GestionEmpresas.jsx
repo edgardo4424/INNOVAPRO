@@ -182,6 +182,7 @@ export default function GestionEmpresas() {
       e?.direccion?.toLowerCase().includes(busqueda.toLowerCase()) ||
       e?.representante_legal?.toLowerCase().includes(busqueda.toLowerCase()) ||
       e?.dni_representante?.includes(busqueda) ||
+      e?.cargo_representante?.toLowerCase().includes(busqueda.toLowerCase()) ||
       e?.ruc?.includes(busqueda)
   );
 
@@ -306,13 +307,31 @@ export default function GestionEmpresas() {
                   required 
                 />
 
-                {/* DNI Representante - Exactamente 8 dígitos numéricos */}
+                {/* Tipo de documento */}
+                <select
+                  value={nuevaEmpresa.tipo_documento || "DNI"}
+                  onChange={(e) => setNuevaEmpresa({ ...nuevaEmpresa, tipo_documento: e.target.value})}
+                  required
+                >
+                  <option value="DNI">DNI</option>
+                  <option value="CE">CE</option>
+                  <option value="Pasaporte">Pasaporte</option>
+                </select>
+
+                {/* Número de documento */}
                 <input 
                   type="text" 
-                  placeholder="DNI Representante" 
+                  placeholder="Número de Documento" 
                   value={nuevaEmpresa.dni_representante} 
                   onChange={(e) => {
-                    const value = e.target.value.replace(/[^0-9]/g, "").slice(0, 8);
+                    let value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
+                    if (nuevaEmpresa.tipo_documento === "DNI") {
+                      value = value.replace(/[^0-9]/g, "").slice(0, 8);
+                    } else if (nuevaEmpresa.tipo_documento === "CE") {
+                      value = value.slice(0, 12);
+                    } else {
+                      value = value.slice(0,9);
+                    }
                     setNuevaEmpresa({ ...nuevaEmpresa, dni_representante: value });
                   }} 
                   required 
@@ -412,16 +431,35 @@ export default function GestionEmpresas() {
               }} 
             />
 
-            {/* DNI Representante - Exactamente 8 dígitos numéricos */}
-            <input 
-              type="text" 
-              placeholder="DNI Representante"
-              value={empresaEditando.dni_representante} 
-              onChange={(e) => {
-                const value = e.target.value.replace(/[^0-9]/g, "").slice(0, 8);
-                setEmpresaEditando({ ...empresaEditando, dni_representante: value });
-              }} 
-            />
+            {/* Tipo de documento */}
+            <select
+                  value={nuevaEmpresa.tipo_documento || "DNI"}
+                  onChange={(e) => setEmpresaEditando({ ...empresaEditando, tipo_documento: e.target.value})}
+                  required
+                >
+                  <option value="DNI">DNI</option>
+                  <option value="CE">CE</option>
+                  <option value="Pasaporte">Pasaporte</option>
+                </select>
+
+                {/* Número de documento */}
+                <input 
+                  type="text" 
+                  placeholder="Número de Documento" 
+                  value={empresaEditando.dni_representante} 
+                  onChange={(e) => {
+                    let value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
+                    if (empresaEditando.tipo_documento === "DNI") {
+                      value = value.replace(/[^0-9]/g, "").slice(0, 8);
+                    } else if (empresaEditando.tipo_documento === "CE") {
+                      value = value.slice(0, 12);
+                    } else {
+                      value = value.slice(0,9);
+                    }
+                    setNuevaEmpresa({ ...empresaEditando, dni_representante: value });
+                  }} 
+                  required 
+                />
 
             {/* Cargo Representante - Solo letras y espacios */}
             <input 

@@ -12,8 +12,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
             },
             ubicacion: {
-                type: DataTypes.ENUM('Amazonas', 'Áncash', 'Apurímac', 'Arequipa', 'Ayacucho', 'Cajamarca', 'Callao', 'Cusco', 'Huancavelica', 'Huánuco', 'Ica', 'Junín', 'La Libertad', 'Lambayeque', 'Lima Metropolitana', 'Loreto', 'Madre de Dios', 'Moquegua', 'Pasco', 'Piura', 'Puno', 'San Martín', 'Tacna', 'Tumbes', 'Ucayali'),
-                defaultValue: "Lima Metropolitana",
+                type: DataTypes.STRING(255), 
                 allowNull: false,
             },
             direccion: {

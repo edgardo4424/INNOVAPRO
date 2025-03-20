@@ -3,7 +3,7 @@
   "version": "1.1.0",
   "description": "Frontend de INNOVA PRO+",
   "main": "src/index.js",
-  "homepage":".",
+  "homepage": ".",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -11,10 +11,12 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "@react-google-maps/api": "^2.20.6",
     "ajv": "^8.17.1",
     "ajv-keywords": "^5.1.0",
     "axios": "^1.7.9",
     "react": "^18.0.0",
+    "react-datepicker": "^8.2.1",
     "react-dom": "^18.0.0",
     "react-google-recaptcha": "^3.1.0",
     "react-icons": "^5.4.0",

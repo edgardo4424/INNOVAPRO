@@ -329,13 +329,32 @@ export default function GestionClientes() {
                       setNuevoCliente({ ...nuevoCliente, representante_legal: value });
                     }} 
                   />
-                  {/* DNI Representante - Exactamente 8 dígitos numéricos */}
+
+                  {/* Tipo de Documento - Representante */}
+                  <select 
+                      value={nuevoCliente.tipo_documento || "DNI"} 
+                      onChange={(e) => setNuevoCliente({ ...nuevoCliente, tipo_documento: e.target.value })}
+                      required
+                    >
+                      <option value="DNI">DNI</option>
+                      <option value="CE">CE</option>
+                      <option value="Pasaporte">Pasaporte</option>
+                    </select>
+
+                  {/* Número de Documento - Representante */}
                   <input 
                     type="text" 
-                    placeholder="DNI Representante" 
+                    placeholder="Número de Documento" 
                     value={nuevoCliente.dni_representante} 
                     onChange={(e) => {
-                      const value = e.target.value.replace(/[^0-9]/g, "").slice(0, 8);
+                      let value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
+                      if (nuevoCliente.tipo_documento === "DNI") {
+                        value = value.replace(/[^0-9]/g, "").slice(0, 8); 
+                      } else if (nuevoCliente.tipo_documento === "CE") {
+                        value = value.slice(0, 12);
+                      } else {
+                        value = value.slice(0, 9);
+                      }
                       setNuevoCliente({ ...nuevoCliente, dni_representante: value });
                     }} 
                     required 
@@ -352,16 +371,37 @@ export default function GestionClientes() {
                   />
                 </>
               ) : (
-                <input 
-                type="text" 
-                placeholder="DNI" 
-                value={nuevoCliente.dni} 
-                onChange={(e) => {
-                  const value = e.target.value.replace(/[^0-9]/g, "").slice(0, 8);
-                  setNuevoCliente({ ...nuevoCliente, dni: value });
-                }} 
-                required 
-              />
+                <>
+                  {/* Tipo de Documento - Cliente */}
+                  <select 
+                    value={nuevoCliente.tipo_documento || "DNI"} 
+                    onChange={(e) => setNuevoCliente({ ...nuevoCliente, tipo_documento: e.target.value })}
+                    required
+                  >
+                    <option value="DNI">DNI</option>
+                    <option value="CE">CE</option>
+                    <option value="Pasaporte">Pasaporte</option>
+                  </select>
+
+                  {/* Número de Documento - Cliente */}
+                  <input 
+                  type="text" 
+                  placeholder="Número de Documento" 
+                  value={nuevoCliente.dni} 
+                  onChange={(e) => {
+                    let value = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
+                    if (nuevoCliente.tipo_documento === "DNI") {
+                      value = value.replace(/[^0-9]/g, "").slice(0, 8); 
+                    } else if (nuevoCliente.tipo_documento === "CE") {
+                      value = value.slice(0, 12);
+                    } else {
+                      value = value.slice(0, 9);
+                    }
+                    setNuevoCliente({ ...nuevoCliente, dni: value });
+                  }} 
+                  required 
+                />
+                </>
             )}
 
             {/* Teléfono - Exactamente 9 dígitos numéricos */}

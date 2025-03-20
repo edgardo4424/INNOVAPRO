@@ -437,12 +437,14 @@
 .busqueda-container {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap; /* Permite que los elementos se ajusten en pantallas pequeñas */
+    gap: 10px; /* Espaciado entre los filtros */
     margin-bottom: 10px;
 }
 
 .busqueda-input {
-    width: 50%;
-    padding: 8px;
+    width: 90%;
+    padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 14px;
@@ -612,4 +614,14 @@ th.sortable.active::after {
         transition: color 0.0s;
     }
 
+    .busqueda-container {
+        flex-direction: column; /* Poner los elementos en columna */
+        align-items: left; /* Centrar en móviles */
+    }
+
+    .busqueda-container input,
+    .busqueda-container .busqueda-input,
+    .busqueda-container .react-datepicker-wrapper {
+        width: 100%; /* Ocupar todo el ancho */
+    }
   }

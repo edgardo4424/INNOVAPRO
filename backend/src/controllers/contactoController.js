@@ -56,7 +56,6 @@ exports.obtenerContactoPorId = async (req, res) => {
 // 🔹 Crear un nuevo contacto
 exports.crearContacto = async (req, res) => {
     try {
-        console.log(" Datos recibidos en req.body:", req.body);
 
         const { nombre, email, telefono, cargo, clientes: clientesIds, obras: obrasIds } = req.body;
 
@@ -64,8 +63,6 @@ exports.crearContacto = async (req, res) => {
             return res.status(400).json({ mensaje: "Nombre y email son obligatorios" });
         }
 
-        console.log("🔹 Clientes IDs:", clientesIds);
-        console.log("🔹 Obras IDs:", obrasIds);
 
         const transaction = await Contacto.sequelize.transaction();
 

@@ -3,7 +3,6 @@ const db = require("../models");
 // 🔹 Crear una cotización
 exports.crearCotizacion = async (req, res) => {
     try {
-        console.log("📥 Datos recibidos en el backend:", req.body);
         
         const { empresa_proveedora_id, contacto_id, usuario_id, motivo, observaciones, estado, productos, descuento } = req.body || {};
 
