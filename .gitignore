@@ -15,3 +15,20 @@ yarn-error.log*
 .env
 .idea/
 .vscode/
+
+# Ignorar la carpeta de datos grandes
+backend/data/
+
+# Ignorar archivos de configuración locales, como variables de entorno
+.env
+*.env
+
+# Ignorar archivos de dependencias y builds que no sean necesarios
+node_modules/
+*.log
+*.zip
+*.tar.gz
+
+# Ignorar archivos temporales y de cache
+.DS_Store
+Thumbs.db
