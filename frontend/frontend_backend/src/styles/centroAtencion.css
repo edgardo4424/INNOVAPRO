@@ -1,0 +1,627 @@
+/* 🔷 Estilos generales del Centro de Atención */
+.centro-atencion-container {
+    padding: 20px;
+    background: #f4f7fc;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 🔹 Título del módulo */
+.centro-atencion-container h2 {
+    text-align: center;
+    font-size: 24px;
+    color: #004085;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.custom-table th, .custom-table td {
+    padding: 5px;
+    text-align: left;
+    border-bottom: 2px solid #ddd;
+    white-space: nowrap; /* Evita que el texto se corte */
+}
+
+.custom-table tbody tr:hover {
+    background: #e8f0ff;
+    cursor: pointer;
+}
+
+/* 🔹 Responsivo para pantallas pequeñas */
+@media (max-width: 768px) {
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .custom-table {
+        min-width: 100%;
+    }
+
+    .custom-table th, .custom-table td {
+        padding: 8px;
+        font-size: 14px;
+    }
+}
+
+/* 🔹 Botones dentro de la tabla */
+.edit-button {
+    background: #007bff;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.edit-button:hover {
+    background: #0056b3;
+}
+
+/* 🔷 MODAL: Fondo Oscurecido */
+.centro-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.55); /* 🔹 Un poco más oscuro pero sin exagerar */
+    backdrop-filter: blur(6px); /* 🔥 Efecto GLASS para mayor profesionalismo */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    transform: scale(0.95);
+    animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+/* 🔥 Animación de aparición */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+
+/* 🔹 Contenedor del modal refinado */
+.modal-content {
+    background: #fff;
+    padding: 25px; /* 🔥 Más espacio interno para mejor legibilidad */
+    border-radius: 12px; /* 🔥 Bordes más suaves y profesionales */
+    width: 500px;
+    max-width: 90%;
+    max-height: 50%;
+    overflow-y: auto;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25); /* 🔥 Sombra más difuminada y elegante */
+    animation: slideDown 0.3s ease-in-out;
+    position: relative;
+}
+
+/* 🔥 Animación de entrada mejorada */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* 🔹 Título mejorado */
+.modal-content h3 {
+    font-size: 22px; /* 🔥 Un poco más grande para más presencia */
+    color: #002b5e; /* 🔥 Un azul más oscuro y corporativo */
+    text-align: center;
+    font-weight: bold;
+    letter-spacing: 0.5px; /* 🔥 Espaciado sutil para mayor legibilidad */
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #004085; /* 🔥 Línea sutil para separar */
+}
+
+
+/* 🔹 Botón de cierre en la esquina superior derecha */
+.close-button {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    font-size: 22px;
+    font-weight: bold;
+    color: #555;
+    cursor: pointer;
+    
+}
+
+/* 🔥 Efecto hover */
+.close-button:hover {
+    color: #c82333; /* Rojo suave para destacar */
+    
+}
+
+
+/* 🔹 Base para todos los botones (Diseño elegante y uniforme) */
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    width: auto;
+    min-width: 130px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    outline: none;
+}
+
+/* 🔥 Efecto hover */
+.button:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 🎯 Botón de acción principal (Finalizar tarea) */
+.primary-button {
+    background-color: #0056b3; /* Azul oscuro, más corporativo */
+    color: white;
+}
+
+.primary-button:hover {
+    background-color: #003d80;
+}
+
+/* ⏳ Botón secundario (Liberar tarea) */
+.secondary-button {
+    background-color: #6c757d; /* Gris oscuro, más sobrio */
+    color: white;
+}
+
+.secondary-button:hover {
+    background-color: #5a6268;
+}
+
+/* ❌ Botón de alerta (Cancelar tarea) */
+.danger-button {
+    background-color: #b02a37; /* Rojo oscuro, menos chillón */
+    color: white;
+}
+
+.danger-button:hover {
+    background-color: #902028;
+}
+
+/* 🔄 Botón de retroceso (Devolver tarea) */
+.warning-button {
+    background-color: #856404; /* Amarillo oscuro, más sobrio */
+    color: white;
+}
+
+.warning-button:hover {
+    background-color: #6c5203;
+}
+
+/* 🔹 Contenedor para organizar los botones */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* 📌 Si hay poco espacio, los botones se acomodan en columnas */
+@media (max-width: 600px) {
+    .button-group {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+/* 🔹 Contenedor de detalles refinado */
+.detalles-tarea {
+    background: #ffffff; /* 🔥 Fondo limpio */
+    padding: 15px;
+    border-radius: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 🔥 Mantiene dos columnas */
+    gap: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* 🔥 Sombra ligera */
+}
+
+/* 🔹 Ítems individuales */
+.detalles-tarea p {
+    background: #f8f9fa;
+    padding: 5px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin: 0; /* Elimina márgenes innecesarios */
+}
+
+/* 🔥 Resaltar títulos */
+.detalles-tarea p strong {
+    color: #aa390d;
+    font-weight: bold;
+}
+
+
+/* 🔹 Lista de detalles mejorada */
+.tarea-detalles {
+    background: #ffffff; /* 🔥 Fondo blanco puro para mejor contraste */
+    padding: 18px; /* 🔥 Más espacio interno */
+    border-radius: 12px; /* 🔥 Bordes más sutiles y modernos */
+    margin-top: 15px;
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* 🔥 Sombra ligera para darle profundidad */
+}
+
+/* 🔹 Títulos de las secciones */
+.tarea-detalles h4 {
+    font-size: 16px;
+    font-weight: bold;
+    color: #004085; /* 🔥 Azul corporativo más elegante */
+    margin-bottom: 8px;
+    border-bottom: 2px solid #004085;
+    padding-bottom: 4px;
+}
+
+/* 🔹 Estilos para la lista de detalles */
+.tarea-detalles ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 🔥 Mantiene las dos columnas */
+    gap: 10px;
+}
+
+/* 🔹 Ítems de la lista */
+.tarea-detalles li {
+    background: #f8f9fa; /* 🔥 Fondo gris claro para separar cada detalle */
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #333;
+    display: flex;
+    align-items: right;
+    justify-content: space-between;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* 🔥 Resaltar claves */
+.tarea-detalles li strong {
+    color: #aa390d;
+    font-weight: bold;
+}
+
+/* 🔹 Estados */
+.estado {
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    display: inline-block;
+    min-width: 100px;
+  }
+  
+  .estado-pendiente {
+    background-color: #ffcc00; /* Amarillo */
+    color: #333;
+  }
+  
+  .estado-en-proceso {
+    background-color: #007bff; /* Azul */
+    color: white;
+  }
+  
+  .estado-finalizada {
+    background-color: #28a745; /* Verde */
+    color: white;
+  }
+  
+  .estado-cancelada {
+    background-color: #dc3545; /* Rojo */
+    color: white;
+  }
+  
+  /* 🔹 Urgencias */
+  .urgencia {
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    display: inline-block;
+    min-width: 100px;
+  }
+  
+  .urgencia-prioridad {
+    background-color: #d9534f; /* Rojo oscuro */
+    color: white;
+  }
+  
+  .urgencia-normal {
+    background-color: #f0ad4e; /* Naranja */
+    color: white;
+  }
+  
+  .urgencia-baja-prioridad {
+    background-color: #5bc0de; /* Azul claro */
+    color: white;
+  }
+
+  /* 🔹 Contenedor de las pestañas */
+.estado-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+/* 🔹 Botones de pestañas */
+.tab-button {
+    background: #e0e0e0;
+    color: #333;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+/* 🔥 Estado activo */
+.tab-button.active {
+    background: #0056b3;
+    color: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* 🎯 Efecto hover */
+.tab-button:hover {
+    background: #004085;
+    color: white;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+    gap: 5px;
+}
+
+.page-button {
+    background: #e0e0e0;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.page-button.active {
+    background: #0056b3;
+    color: white;
+    font-weight: bold;
+}
+
+.page-button:hover {
+    background: #004085;
+    color: white;
+}
+
+.busqueda-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap; /* Permite que los elementos se ajusten en pantallas pequeñas */
+    gap: 10px; /* Espaciado entre los filtros */
+    margin-bottom: 10px;
+}
+
+.busqueda-input {
+    width: 90%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* 🔹 Solo las columnas ordenables tendrán estilos especiales */
+th.sortable {
+    cursor: pointer;
+    position: relative;
+    padding-right: 20px;
+    transition: background-color 0.3s ease;
+}
+
+/* 🔥 Columna actualmente ordenada */
+th.sortable.active {
+    background-color: #a100be;
+    font-weight: bold;
+}
+
+/* 🔹 Íconos de ordenación con mejor alineación */
+th.sortable::after {
+    content: " ↕️";
+    font-size: 14px;
+    color: #888;
+    margin-left: 8px;
+    transition: color 0.3s;
+}
+
+/* 🔹 Ícono cambia al ordenar */
+th.sortable.active::after {
+    content: attr(data-order);
+    color: #0056b3;
+    font-weight: bold;
+}
+
+@media (max-width: 480px) {
+    /* 🔷 Estilos generales del Centro de Atención */
+    .centro-atencion-container {
+        padding: 20px;
+    }
+
+    /* 🔹 Título del módulo */
+    .centro-atencion-container h2 {
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+
+    /* 🔹 Contenedor del modal refinado */
+    .modal-content {
+        max-width: 80%;
+    }
+
+    /* 🔹 Título mejorado */
+    .modal-content h3 {
+        font-size: 18px; /* 🔥 Un poco más grande para más presencia */
+        letter-spacing: 1px; /* 🔥 Espaciado sutil para mayor legibilidad */
+        margin-bottom: 0px;
+        padding-bottom: 5px;
+    }
+
+
+    /* 🔹 Base para todos los botones (Diseño elegante y uniforme) */
+    .button {
+        padding: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+    /* 🔹 Contenedor para organizar los botones */
+    .button-group {
+        margin-top: 10px;
+    }
+
+    /* 🔹 Contenedor de detalles refinado */
+    .detalles-tarea {
+        padding: 15px;
+        border-radius: 10px;
+        display: grid;
+        grid-template-columns: repeat(1, 1fr); /* 🔥 Mantiene dos columnas */
+        gap: 5px;
+    }
+
+    /* 🔹 Ítems individuales */
+    .detalles-tarea p {
+        padding: 5px;
+        border-radius: 5px;
+        font-size: 15px;
+    }
+
+    /* 🔹 Lista de detalles mejorada */
+    .tarea-detalles {
+        border-radius: 10px;
+        display: grid;
+        grid-template-columns: repeat(1, 1fr); /* 🔥 Mantiene dos columnas */
+        gap: 5px;
+    }
+
+    /* 🔹 Títulos de las secciones */
+    .tarea-detalles h4 {
+        font-size: 15px;
+        margin-bottom: 0px;
+        padding-bottom: 5px;
+        text-align: center;
+    }
+
+    /* 🔹 Estilos para la lista de detalles */
+    .tarea-detalles ul {
+        padding: 5px;
+        border-radius: 5px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    /* 🔹 Ítems de la lista */
+    .tarea-detalles li {
+        padding: 5px;
+        border-radius: 5px;
+        font-size: 14px;
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    /* 🔹 Estados */
+    .estado {
+        padding: 5px 0px;
+        border-radius: 5px;
+    }
+    
+    /* 🔹 Contenedor de las pestañas */
+    .estado-tabs {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    /* 🔹 Botones de pestañas */
+    .tab-button {
+        padding: 8px;
+        border-radius: 5px;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.0s;
+    }
+
+    .pagination {
+        margin-top: 15px;
+    }
+
+    .busqueda-input {
+        padding: 5px;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    /* 🔹 Solo las columnas ordenables tendrán estilos especiales */
+    th.sortable {
+        padding-right: 0px;
+    }
+
+    /* 🔹 Íconos de ordenación con mejor alineación */
+    th.sortable::after {
+        font-size: 14px;
+        margin-left: 5px;
+        transition: color 0.0s;
+    }
+
+    .busqueda-container {
+        flex-direction: column; /* Poner los elementos en columna */
+        align-items: left; /* Centrar en móviles */
+    }
+
+    .busqueda-container input,
+    .busqueda-container .busqueda-input,
+    .busqueda-container .react-datepicker-wrapper {
+        width: 100%; /* Ocupar todo el ancho */
+    }
+  }
