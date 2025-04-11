@@ -1,0 +1,93 @@
+FLUJO COMPLETO PARA INICIAR TU BACKEND
+
+📦 1. Crear el proyecto y configurarlo
+
+mkdir erp-backend
+cd erp-backend
+npm init -y
+
+📦 2. Instalar dependencias
+
+npm install express sequelize mysql2 dotenv cors morgan
+npm install --save-dev sequelize-cli
+
+🛠️ 3. Inicializar Sequelize CLI
+
+npx sequelize-cli init
+
+Esto creará:
+    config/
+    migrations/
+    models/
+    seeders/
+
+⚙️ 4. Configurar base de datos
+
+📁 .env (en la raíz)
+
+DB_USER=root
+DB_PASS=tu_clave
+DB_NAME=erp_db
+DB_HOST=localhost
+
+📁 config/config.js
+
+require('dotenv').config();
+
+module.exports = {
+  development: {
+    username: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+    host: process.env.DB_HOST,
+    dialect: "mysql",
+    logging: false
+  }
+};
+
+🧱 5. Crear modelos y migraciones (uno a uno)
+
+5.1 Cliente
+
+npx sequelize-cli model:generate --name clientes --attributes nombre:string,email:string
+
+5.2 Usuario
+
+npx sequelize-cli model:generate --name usuarios --attributes nombre:string,email:string
+
+
+npx sequelize-cli migration:generate --name create-usuarios --migrations-path src/migrations
+
+
+Ejecutar migraciones:
+npx sequelize-cli db:migrate
+
+Revertir la ultima migraciones
+npx sequelize-cli db:migrate:undo
+
+Revertir todas las migraciones
+npx sequelize-cli db:migrate:undo:all
+
+✅ Comandos para generar los seeders
+
+npx sequelize-cli seed:generate --name 01-demo-roles
+npx sequelize-cli seed:generate --name 02-demo-modulos
+npx sequelize-cli seed:generate --name 03-demo-rol-modulos
+npx sequelize-cli seed:generate --name 04-demo-usuarios
+npx sequelize-cli seed:generate --name 05-demo-clientes
+
+🔢 Los números al inicio (01, 02, etc.) ayudan a mantener el orden lógico al ejecutar los seeders, aunque Sequelize los ejecuta por fecha de creación.
+
+✅ Comando para ejecutar los seeders
+
+npx sequelize-cli db:seed:all
+
+🧹 Comandos para deshacer seeders
+
+Para deshacer uno:
+
+npx sequelize-cli db:seed:undo --seed src/seeders/XXXXXX-01-demo-roles.js
+
+Para deshacer todos:
+
+npx sequelize-cli db:seed:undo:all
