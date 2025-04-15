@@ -5,3 +5,8 @@ git Branch   : saber en que rama estoy
 git checkout -b nombre-rama : Para crear nueva rama
 
 git switch nombre-rama
+
+git log
+
+HEAD -> developer01
+significa que esa es tu cabecera. Es tu último commit en esa rama
