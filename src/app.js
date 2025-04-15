@@ -17,8 +17,12 @@ applyMiddlewares(app);
     }
   })();
 
+  
+// 📂 Cargar rutas correctamente (SIN DUPLICAR)
+const API_BASE_PATH = process.env.NODE_ENV === "production" ? "/backend/api" : "/api";
+console.log(`🔀 API corriendo en: ${API_BASE_PATH}`);
 // Rutas principales
-app.use('/api', routes);
+app.use(API_BASE_PATH, routes);
 
 // ✅ Ruta no encontrada (404 personalizada)
 app.use('*', (req, res) => {

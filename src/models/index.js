@@ -8,12 +8,26 @@ const db = {};
 
 const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
-fs.readdirSync(__dirname)
-  .filter(file => file !== basename && file.endsWith('.model.js'))
-  .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-    db[model.name] = model;
+// Función recursiva que encuentra todos los archivos `.model.js` dentro de /modules
+const getModelFiles = (dirPath, files = []) => {
+  fs.readdirSync(dirPath).forEach(file => {
+    const fullPath = path.join(dirPath, file);
+    if (fs.statSync(fullPath).isDirectory()) {
+      getModelFiles(fullPath, files);
+    } else if (file.endsWith('.model.js')) {
+      files.push(fullPath);
+    }
   });
+  return files;
+};
+
+const modelFiles = getModelFiles(path.resolve(__dirname, '../modules'));
+
+modelFiles.forEach(file => {
+  const model = require(file)(sequelize, Sequelize.DataTypes);
+  db[model.name] = model;
+  console.log('✅ Modelo cargado:', model.name);
+});
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {

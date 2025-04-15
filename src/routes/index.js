@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const clienteRoutes = require('./cliente.routes');
-const cotizacionRoutes = require('./cotizacion.routes');
-const usuarioRoutes = require('./usuario.routes');
-const moduloRoutes = require('./modulo.routes');
+const clienteRoutes = require('../modules/cliente/cliente.routes');
+const cotizacionRoutes = require('../modules/cotizacion/cotizacion.routes');
+const usuarioRoutes = require('../modules/usuario/usuario.routes');
+const moduloRoutes = require('../modules/modulo/modulo.routes');
 
 router.use('/clientes', clienteRoutes);
 router.use('/cotizaciones', cotizacionRoutes);

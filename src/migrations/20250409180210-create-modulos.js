@@ -14,6 +14,12 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
         unique: true
+      },
+      url: {
+        type: Sequelize.STRING
+      },
+      icono: {
+        type: Sequelize.STRING
       }
     });
   },

@@ -1,0 +1,7 @@
+staging: antes del commit
+
+git Branch   : saber en que rama estoy
+
+git checkout -b nombre-rama : Para crear nueva rama
+
+git switch nombre-rama

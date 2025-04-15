@@ -10,6 +10,10 @@ module.exports = {
         primaryKey: true,
         allowNull: false
       },
+      nombre: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       email: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -19,7 +23,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      rolId: {
+      rol_id: {
         type: Sequelize.INTEGER,
         allowNull: false, // ✅ El rol es obligatorio para todo usuario
         references: {

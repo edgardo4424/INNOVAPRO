@@ -1,0 +1,1 @@
+export const CODIGO_ROL_GERENTE_GENERAL = 1;

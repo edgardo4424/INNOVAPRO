@@ -21,8 +21,12 @@ const io = new Server(server, {
 
 socketHandler(io);
 
-const PORT = process.env.PORT || 3000;
+// 🔥 Detectamos si estamos en producción o desarrollo
+const PORT = process.env.PORT || 3001;
+const API_BASE_URL = process.env.API_URL || "http://localhost:3001/api";
 
 server.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
+  console.log(`🚀 Servidor corriendo en ${API_BASE_URL}`);
 });
+
+// Hola hice un cambio en github :)

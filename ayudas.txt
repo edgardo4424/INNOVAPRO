@@ -91,3 +91,5 @@ npx sequelize-cli db:seed:undo --seed src/seeders/XXXXXX-01-demo-roles.js
 Para deshacer todos:
 
 npx sequelize-cli db:seed:undo:all
+
+npx sequelize-cli migration:generate --name add-nuevo-campo-to-usuarios
