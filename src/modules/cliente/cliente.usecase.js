@@ -1,11 +1,16 @@
 const clienteRepository = require("./cliente.repository");
 const { ErrorPersonalizado } = require("../../utils/errorPersonalizado");
+const { clienteCreateSchema } = require("./cliente.schema");
 
 /*
   En el caso de uso decide qué datos son sensibles y deben ocultarse.
 */
 
 exports.crearCliente = async (data) => {
+
+  // Falta validar campos duplicados
+  
+
   const nuevoCliente = await clienteRepository.create(data);
   return nuevoCliente;
 };
@@ -35,3 +40,8 @@ exports.obtenerUnCliente = async ({ id }) => {
 exports.eliminarCliente = async ({ id }) => {
   return await clienteRepository.delete(id);
 };
+
+exports.obtenerClientesConSusContactos = async() => {
+  const clientesConContactos = await clienteRepository.getClientsWithContacts();
+  return clientesConContactos;
+}

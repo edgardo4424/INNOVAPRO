@@ -34,3 +34,15 @@ exports.delete = async (id) => {
     return false
   }
 };
+
+exports.getClientsWithContacts = async() => {
+    const clientes = await Cliente.findAll({
+        include: [
+            {
+                model: Contacto,
+                through: { attributes: [] }, // ✅ Relación correcta con la tabla intermedia
+            }
+        ]
+    });
+  return clientes.map((u) => u.get({ plain: true }));
+}

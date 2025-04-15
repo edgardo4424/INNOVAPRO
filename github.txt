@@ -2,7 +2,8 @@ staging: antes del commit
 
 git Branch   : saber en que rama estoy
 
-git checkout -b nombre-rama : Para crear nueva rama
+git checkout -b nombre-rama 
+    Para crear nueva rama
 
 git switch nombre-rama
 
@@ -10,3 +11,53 @@ git log
 
 HEAD -> developer01
 significa que esa es tu cabecera. Es tu último commit en esa rama
+
+Eliminar una rama cuando ya se hizo el merge
+git branch -D developer01
+
+git reset --soft ad5b9b84cd62c9bad91baf8b3f298832f47f1019
+básicamente lo que hiciste fue mezclar los tres commits en uno (Los cambios se mantienen y se mezclan dentro del commit del hash)
+
+git reset --mixed ad5b9b84cd62c9bad91baf8b3f298832f47f1019
+Se mezclan los commits pero los cambios solo estan en tu maquina local, tienes que hacer el git add y git commit
+
+ git reset --hard ad5b9b84cd62c9bad91baf8b3f298832f47f1019
+ Vuelve al commit del hash y los demas commit se eliminan
+
+ git revert ad5b9b84cd62c9bad91baf8b3f298832f47f1019    El que usaremos generalmente
+ Revierte al commit del hash, pero puedes elegir la parte donde hubo cambio, mantenerlo o revertirlo
+
+git tag -a nombre-del-tag -m "Versión 1.0 estable"
+Nombrar una tag
+
+git checkout ad5b9b84cd62c9bad91baf8b3f298832f47f1019    
+Para explorar que habia en ese commit
+
+git checkout main  o  git switch -   
+Cuando ya termines de visualizar que habia en el commit anterior, puedes volver a la rama principal
+
+git tag -d nombre-del-tag     
+Eliminar nombre tag 
+
+
+Comando para mejorar los log de la consola, ejecutar una vez en el cmd 
+git config --global alias.superlog "log --graph --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
+
+
+Ahora se puede probar
+git superlog
+
+Generar llave publica y privada github
+
+ssh-keygen -t ed25519 -C "tu_correo@example.com"
+
+Verificar los archivos
+dir $env:USERPROFILE\.ssh
+
+sc config ssh-agent start=auto
+net start ssh-agent
+
+ssh-add $env:USERPROFILE\.ssh\id_ed25519
+Get-Content $env:USERPROFILE\.ssh\id_ed25519.pub
+
+ssh -T git@github.com
