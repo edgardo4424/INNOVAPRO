@@ -2,8 +2,8 @@ module.exports = async (id, clienteData, clienteRepository, entidadService) => {
     const cliente = await clienteRepository.obtenerPorId(id); // Llama al método del repositorio para obtener el cliente por ID
     if (!cliente) return { codigo: 404, respuesta: { mensaje: "Cliente no encontrado" } } // Si no se encuentra el cliente, retorna un error 404
 
-    const errorCampos = entidadService.validarCamposObligatorios(clienteData, 'editar')
-    if ( errorCampos ) return { codigo: 400, respuesta: { mensaje: errorCampos } } // Validamos campos obligatorios
+    const errorCampos = entidadService.validarCamposObligatorios(clienteData, 'editar');
+    if (errorCampos) { return { codigo: 400, respuesta: { mensaje: errorCampos } } } // Validamos campos obligatorios
 
     const errorTipo = entidadService.validarTipoEntidad(clienteData)
     if ( errorTipo ) return { codigo: 400, respuesta: { mensaje: errorTipo } } // Validamos por tipo de cliente

@@ -5,37 +5,42 @@ const { Op } = require("sequelize");
  * Aplica para cualquier entidad tipo Persona (cliente, proveedor, etc.)
  */
 function validarCamposObligatorios(datos, modo = "crear") {
-    const { razon_social, tipo, creado_por } = datos;
-    const camposCrear = [
-      'razon_social',
-      'tipo',
-      'telefono',
-      'email',
-      'ruc',
-      'representante_legal',
-      'dni_representante',
-      'creado_por'
+    const camposValidos = [
+      "razon_social",
+      "tipo",
+      "ruc",
+      "dni",
+      "telefono",
+      "email",
+      "domicilio_fiscal",
+      "representante_legal",
+      "dni_representante",
+      "creado_por"
     ];
   
     if (modo === "crear") {
+      const { razon_social, tipo, creado_por } = datos;
       if (!razon_social || !tipo) {
         return "Razón social y tipo de entidad son obligatorios.";
       }
-  
       if (!creado_por) {
         return "El campo 'creado_por' es obligatorio al registrar una nueva entidad.";
       }
     }
   
     if (modo === "editar") {
-      const tieneAlMenosUnCampoValido = camposCrear.some(campo => campo in datos);
+      const tieneAlMenosUnCampoValido = camposValidos.some(campo => {
+        return datos[campo] !== undefined && datos[campo] !== null && datos[campo] !== "";
+      });
+  
       if (!tieneAlMenosUnCampoValido) {
         return "Debe proporcionar al menos un campo válido para actualizar.";
       }
     }
   
     return null;
-  }  
+  }
+  
 
 
 

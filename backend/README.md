@@ -1,18 +1,16 @@
-# INNOVA PRO+ Backend - Refactorización y Testeo Automatizado
+# INNOVA PRO+ - Refactorización Backend
 
-Este README documenta todo el trabajo realizado en la rama `refactor/backend` de INNOVA PRO+, incluyendo la refactorización total a Clean Architecture por módulos y la implementación de pruebas automáticas con Jest.
+## 📊 Contexto
+Este cambio corresponde a una **refactorización completa** del backend del sistema **INNOVA PRO+**, orientada a mejorar la escalabilidad, mantenibilidad y claridad del código. Se implementó:
+
+- Arquitectura por **módulos independientes**
+- **Clean Architecture** + arquitectura en capas
+- Principios **SOLID**
+- **Tests automatizados** con `Jest`
 
 ---
 
-## 🚀 Refactorización completa del backend a Clean Architecture
-
-### 🔧 Antes:
-- Arquitectura semi-monolítica
-- Modelos, rutas y controladores mezclados
-- Escasa separación de responsabilidades
-
-### ✅ Ahora:
-Estructura escalable basada en **módulos por dominio**, con principios **SOLID** y **Clean Architecture**:
+## 🌍 Estructura final
 
 ```
 backend/src/
@@ -25,15 +23,22 @@ backend/src/
           actualizarCliente.js
           eliminarCliente.js
       domain/
-        entities/Cliente.js
-        repositories/ClienteRepository.js
+        entities/
+          Cliente.js
+        repositories/
+          ClienteRepository.js
       infrastructure/
-        models/clienteModel.js
-        repositories/sequelizeClienteRepository.js
-        services/entidadService.js
+        models/
+          clienteModel.js
+        repositories/
+          sequelizeClienteRepository.js
+        services/
+          entidadService.js
       interfaces/
-        controllers/clienteController.js
-        routes/clienteRoutes.js
+        controllers/
+          clienteController.js
+        routes/
+          clienteRoutes.js
       tests/
         crearCliente.test.js
         obtenerClientes.test.js
@@ -41,91 +46,75 @@ backend/src/
         eliminarCliente.test.js
 ```
 
-### 🌐 Configuración global
-- `config/db.js` para conexión Sequelize
-- `models/index.js` para cargar todos los modelos y asociaciones
-- `shared/` para utils, constantes, middlewares comunes
+---
+
+## 🚀 Características implementadas
+
+- Separación clara entre capas: **aplicación**, **dominio**, **infraestructura** e **interfaces**
+- Repositorios desacoplados de Sequelize
+- Validador inteligente para creación y edición de entidades
+- Cobertura completa de pruebas para:
+  - Crear cliente
+  - Obtener clientes
+  - Actualizar cliente
+  - Eliminar cliente
 
 ---
 
-## 📈 Implementación de Tests con Jest
+## 🔧 Pruebas automatizadas
 
-Se escribieron tests unitarios para validar la lógica del módulo **Clientes**, cubriendo:
+Las pruebas se ejecutan con:
 
-| Test | Descripción |
-|------|-------------|
-| `crearCliente.test.js` | Verifica creación exitosa y validaciones |
-| `obtenerClientes.test.js` | Verifica retorno de array de clientes |
-| `actualizarCliente.test.js` | Verifica edición correcta de un cliente existente |
-| `eliminarCliente.test.js` | Verifica eliminación de un cliente por ID |
-
-### 🎮 Validaciones incluidas:
-- Campos obligatorios para creación
-- Detección de duplicados (`ruc`, `email`, `dni`)
-- Validación inteligente según `tipo` de cliente (jurídico/natural)
-
-### ⚖️ Dependencias usadas:
 ```bash
-npm install --save-dev jest supertest
-```
-
----
-
-## 🏐 Probar en tu entorno local
-
-### 🔄 Clona y cambia a la rama de refactor:
-```bash
-git clone https://github.com/TU_ORG/innova-pro-backend.git
-cd innova-pro-backend
-git checkout refactor/backend
-```
-
-### ⚖️ Configura tus variables:
-Crea un archivo `.env` con tu configuración local de MySQL:
-```env
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=tu_clave
-DB_NAME=innovapro
-```
-
-### ⚙️ Ejecuta las migraciones y datos iniciales si fuera necesario
-(Según tu configuración de Sequelize CLI o init script)
-
-### 📚 Corre los tests:
-```bash
-npm install
 npm test
 ```
 
-### ✅ Esperado:
-```
-PASS ✅ crearCliente.test.js
-PASS ✅ obtenerClientes.test.js
-PASS ✅ actualizarCliente.test.js
-PASS ✅ eliminarCliente.test.js
+Todas las pruebas se encuentran en:
+```bash
+/src/modules/clientes/tests/
 ```
 
----
-
-## 🔹 Recomendaciones para nuevos colaboradores
-
-- Seguir la arquitectura modular por dominio
-- Escribir pruebas al crear nuevos useCases
-- No trabajar directamente en `main`, usar ramas por funcionalidad
-- Validar con `npm test` antes de hacer push
+Puedes ejecutar una prueba específica así:
+```bash
+npm test -- src/modules/clientes/tests/actualizarCliente.test.js
+```
 
 ---
 
-## 🚀 Próximos pasos
+## 👀 Cómo probar esta rama en tu entorno local
 
-- Refactorizar y testear los módulos de `usuarios`, `obras`, `cotizaciones`
-- Integrar CI/CD con GitHub Actions para correr test en cada PR
-- Implementar cobertura con `jest --coverage`
+### 1. Clona el repo y posicionate en la rama
+```bash
+git clone git@github.com:edgardo4424/INNOVAPRO.git
+cd INNOVAPRO
+```
+
+### 2. Cambia a la rama de refactor
+```bash
+git checkout refactor/backend
+```
+
+### 3. Instala dependencias
+```bash
+cd backend
+npm install
+```
+
+### 4. Ejecuta las pruebas
+```bash
+npm test
+```
 
 ---
 
-**INNOVA PRO+ v1.1.1 - Backend Refactor & Test Ready 🚀**
+## 💡 Recomendaciones
+- Ejecuta `npm test` antes de hacer nuevos cambios
+- Usa los `useCases` para toda lógica de negocio
+- Evita escribir queries Sequelize fuera de `infrastructure/repositories`
+- Si agregas nuevos campos, actualiza también el `validador`
 
-Mantenido por: [@andresinnova](https://github.com/edgardo4424/)
+---
+
+## 🏆 Autor refactorización
+**Andrés Edgardo Martínez Salvatierra**  
+Refactor y automatización completa del módulo `clientes` con arquitectura escalable y testable.

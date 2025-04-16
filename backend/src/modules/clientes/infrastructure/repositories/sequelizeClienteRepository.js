@@ -32,11 +32,14 @@ class SequelizeClienteRepository {
     }
 
     async actualizarCliente(id, clienteData) {
-        const cliente = await this.obtenerPorId(id); // Llama al método del repositorio para obtener el cliente por ID
-        if (!cliente) return null; // Si no se encuentra el cliente, retorna null
+        const cliente = await Cliente.findByPk(id); // Busca el cliente por ID
+        if (!cliente) { // Si no se encuentra el cliente, retorna null
+          console.log("❌ Cliente no encontrado");
+          return null; 
+        }
         await cliente.update(clienteData); // Actualiza el cliente con los nuevos datos
         return cliente; // Retorna el cliente actualizado
-    }
+      }
 
     async eliminarCliente(id) {
         const cliente = await this.obtenerPorId(id); // Llama al método del repositorio para obtener el cliente por ID
