@@ -7,6 +7,7 @@ const sunatRoutes = require("./sunatRoutes");
 const clienteRoutes = require('../modules/clientes/interfaces/routes/clienteRoutes');
 const usuarioRoutes = require('../modules/usuarios/interfaces/routes/usuarioRoutes')
 const filialesRoutes = require('../modules/filiales/interfaces/routes/filialRoutes')
+const obrasRoutes = require('../modules/obras/interfaces/routes/obraRoutes')
 
 // 📌 Rutas públicas
 router.use("/auth", require("./authRoutes"));  
@@ -23,7 +24,7 @@ router.use('/clientes', clienteRoutes); // Rutas de clientes
 router.use("/usuarios", usuarioRoutes);
 
 router.use("/empresas_proveedoras", filialesRoutes);
-router.use("/obras", require("./obraRoutes"));
+router.use("/obras", obrasRoutes);
 router.use("/contactos", require("./contactoRoutes"));
 router.use("/cotizaciones", require("./cotizaciones"));
 router.use("/productos-servicios", require("./productosServiciosRoutes"));

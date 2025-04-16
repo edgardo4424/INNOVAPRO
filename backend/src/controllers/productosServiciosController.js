@@ -25,8 +25,6 @@ exports.obtenerProductosServicios = async (req, res) => {
             ]
         });
 
-        console.log("📌 Productos con parámetros:", JSON.stringify(productos, null, 2));
-
         res.status(200).json(productos);
     } catch (error) {
         console.error("❌ Error al obtener productos/servicios:", error);
