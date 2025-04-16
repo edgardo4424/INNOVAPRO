@@ -11,7 +11,9 @@ router.use("/auth", require("./authRoutes"));
 router.use("/sunat", sunatRoutes); // 🔥 Ruta para pruebas de importación SUNAT
 
 // 📌 PROTEGER RUTAS DESPUÉS DEL LOGIN
-//router.use(verificarToken); // 🔥 SOLO SE APLICA DESPUÉS DEL LOGIN
+
+// COMENTAR LA LÍNEA DE ABAJO SOLO PARA HACER PRUEBAS EN POSTMAN
+router.use(verificarToken); // 🔥 SOLO SE APLICA DESPUÉS DEL LOGIN
 
 router.use("/usuarios", require("./usuarioRoutes"));
 
