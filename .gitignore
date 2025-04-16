@@ -18,6 +18,8 @@ yarn-error.log*
 
 # Ignorar la carpeta de datos grandes
 backend/data/
+backend/data/sunat/padron_reducido_ruc.zip
+backend/data/sunat/padron_reducido_ruc.txt
 
 # Ignorar archivos de configuración locales, como variables de entorno
 .env
