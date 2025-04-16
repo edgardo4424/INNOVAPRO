@@ -5,6 +5,8 @@ const { verificarToken } = require("../middlewares/authMiddleware");
 const sunatRoutes = require("./sunatRoutes");
 
 const clienteRoutes = require('../modules/clientes/interfaces/routes/clienteRoutes');
+const usuarioRoutes = require('../modules/usuarios/interfaces/routes/usuarioRoutes')
+const filialesRoutes = require('../modules/filiales/interfaces/routes/filialRoutes')
 
 // 📌 Rutas públicas
 router.use("/auth", require("./authRoutes"));  
@@ -15,12 +17,12 @@ router.use("/sunat", sunatRoutes); // 🔥 Ruta para pruebas de importación SUN
 // COMENTAR LA LÍNEA DE ABAJO SOLO PARA HACER PRUEBAS EN POSTMAN
 router.use(verificarToken); // 🔥 SOLO SE APLICA DESPUÉS DEL LOGIN
 
-router.use("/usuarios", require("./usuarioRoutes"));
-
 //router.use("/clientes", require("./clienteRoutes"));
 router.use('/clientes', clienteRoutes); // Rutas de clientes
 
-router.use("/empresas_proveedoras", require("./empresaRoutes"));
+router.use("/usuarios", usuarioRoutes);
+
+router.use("/empresas_proveedoras", filialesRoutes);
 router.use("/obras", require("./obraRoutes"));
 router.use("/contactos", require("./contactoRoutes"));
 router.use("/cotizaciones", require("./cotizaciones"));
