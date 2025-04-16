@@ -1,7 +1,7 @@
-const db = require("../../models"); // Llamamos los modelos sequalize de la base de datos
+const db = require("../../../../models"); // Llamamos los modelos sequalize de la base de datos
 const Cliente = db.clientes; // Llamamos al modelo de clientes
 const Contacto = db.contactos; // Llamamos al modelo de contactos
-const entidadService = require("../../services/entidadService"); // Llamamos al servicio de validación de datos
+const entidadService = require("../../infrastructure/services/entidadService"); // Llamamos al servicio de validación de datos
 
 // Obtenenemos todos los clientes con sus obras y contactos
 exports.obtenerClientes = async (req, res) => {

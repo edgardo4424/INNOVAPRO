@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const clienteController = require("../controllers/clientes/clienteController");
+const clienteController = require("../controllers/clienteController");
 
 // 📌 Rutas de clientes (protegidas por token desde index.js)
 router.get("/", clienteController.obtenerClientes);

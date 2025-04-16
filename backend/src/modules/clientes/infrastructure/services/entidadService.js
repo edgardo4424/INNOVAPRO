@@ -6,18 +6,38 @@ const { Op } = require("sequelize");
  */
 function validarCamposObligatorios(datos, modo = "crear") {
     const { razon_social, tipo, creado_por } = datos;
-
-    if (!razon_social || !tipo) {
+    const camposCrear = [
+      'razon_social',
+      'tipo',
+      'telefono',
+      'email',
+      'ruc',
+      'representante_legal',
+      'dni_representante',
+      'creado_por'
+    ];
+  
+    if (modo === "crear") {
+      if (!razon_social || !tipo) {
         return "Razón social y tipo de entidad son obligatorios.";
-    }
-
-    // Solo al crear se exige creado_por
-    if (modo === "crear" && !creado_por) {
+      }
+  
+      if (!creado_por) {
         return "El campo 'creado_por' es obligatorio al registrar una nueva entidad.";
+      }
     }
-
+  
+    if (modo === "editar") {
+      const tieneAlMenosUnCampoValido = camposCrear.some(campo => campo in datos);
+      if (!tieneAlMenosUnCampoValido) {
+        return "Debe proporcionar al menos un campo válido para actualizar.";
+      }
+    }
+  
     return null;
-}
+  }  
+
+
 
 /**
  * Valida los campos requeridos según el tipo de entidad (Natural o Jurídica)
@@ -64,14 +84,15 @@ function construirEntidadData(datos) {
 
     if (tipo === "Persona Jurídica") {
         return {
-            ...base,
-            ruc,
-            domicilio_fiscal,
-            representante_legal,
-            dni_representante,
-            dni: null,
+          ...base,
+          ruc,
+          domicilio_fiscal,
+          representante_legal,
+          dni_representante,
+          // ✅ solo incluye dni si fue enviado explícitamente
+          ...(datos.dni && datos.dni.trim() ? { dni: datos.dni.trim() } : {})
         };
-    }
+      }      
 
     if (tipo === "Persona Natural") {
         return {
@@ -94,24 +115,29 @@ function construirEntidadData(datos) {
  * @param {number|null} excludeId - ID a excluir cuando estás actualizando
  */
 async function verificarDuplicados(modelo, datos = {}, excludeId = null) {
+    
+
     if (!modelo || typeof modelo.findOne !== "function") {
       throw new Error("Modelo no válido para verificación de duplicados.");
     }
-  
+
     const condiciones = [];
   
-    if (datos.ruc) condiciones.push({ ruc: datos.ruc });
-    if (datos.dni) condiciones.push({ dni: datos.dni });
-    if (datos.dni_representante) condiciones.push({ dni_representante: datos.dni_representante });
-    if (datos.email) condiciones.push({ email: datos.email });
+    if (datos.ruc && datos.ruc.trim()) condiciones.push({ ruc: datos.ruc.trim() });
+    if (datos.dni && datos.dni.trim()) condiciones.push({ dni: datos.dni.trim() });
+    if (datos.dni_representante && datos.dni_representante.trim()) condiciones.push({ dni_representante: datos.dni_representante.trim() });
+    if (datos.email && datos.email.trim()) condiciones.push({ email: datos.email.trim() });
+
   
-    if (condiciones.length === 0) return null;
+    if (condiciones.length === 0) {
+        return null;
+    }
   
     const where = { [Op.or]: condiciones };
     if (excludeId) {
       where.id = { [Op.ne]: excludeId };
     }
-  
+    
     const duplicado = await modelo.findOne({ where });
     if (!duplicado) return null;
   
