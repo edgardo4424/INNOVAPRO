@@ -7,16 +7,22 @@ const sequelize = require("../config/db");
 const { Cliente } = require('../modules/clientes/infrastructure/models/clienteModel');
 db.clientes = Cliente;
 
+const { Obra } = require('../modules/obras/infrastructure/models/obraModel');
+db.obras = Obra;
+
+const { Filial } = require('../modules/filiales/infrastructure/models/filialModel');
+db.empresas_proveedoras = Filial;
+
 // Cargar modelos asegurando que coincidan con la base de datos
 
 // Usuarios y roles
 db.usuarios = require("./usuarios")(sequelize, DataTypes);
 
 // Entidades comerciales
-db.empresas_proveedoras = require("./empresas")(sequelize, DataTypes);
-//db.clientes = require("./clientes")(sequelize, DataTypes);
+
+
 db.contactos = require("./contactos")(sequelize, DataTypes);
-db.obras = require("./obras")(sequelize, DataTypes);
+
 
 // Cotizaciones
 db.cotizaciones = require("./cotizaciones")(sequelize, DataTypes);

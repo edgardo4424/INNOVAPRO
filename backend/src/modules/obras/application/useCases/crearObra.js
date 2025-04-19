@@ -1,17 +1,11 @@
-module.exports = async (obraData, obraRepository, entidadService) => {
-  const errorCampos = entidadService.validarCamposObligatorios(obraData);
+const Obra = require("../../domain/entities/obra"); // Importamos la clase Obra
 
-  if (errorCampos) return { codigo: 400, respuesta: { mensaje: errorCampos } }; // Validamos campos obligatorios
+module.exports = async (obraData, obraRepository) => {
+  const errorCampos = Obra.validarCamposObligatorios(obraData, "crear"); // Validamos los campos obligatorios de la obra
+  if (errorCampos) return { codigo: 400, respuesta: { mensaje: errorCampos } }; 
 
-  const nuevoObraData = {
-    nombre: obraData.nombre,
-    direccion: obraData.direccion,
-    ubicacion: obraData.ubicacion,
-    estado: obraData.estado,
-    creado_por: obraData.creado_por,
-  };
-
-  const nuevoObra = await obraRepository.crear(nuevoObraData); // Creamos el nuevo obra con todos sus datos en la base de datos
+  const nuevaObraData = new Obra(obraData); // Creamos una nueva instancia de la clase Obra con los datos proporcionados
+  const nuevoObra = await obraRepository.crear(nuevaObraData); // Creamos el nuevo obra con todos sus datos en la base de datos
 
   return {
     codigo: 201,

@@ -48,11 +48,18 @@ const Obra = sequelize.define(
     fecha_actualizacion: {
       type: DataTypes.DATE,
     },
-  },
-  {
+  }, {
     timestamps: false,
     tableName: "obras",
-  }
-);
+  });
+
+Obra.associate = (models) => {
+  Obra.belongsToMany(models.contactos, {
+      through: "contacto_obras",
+      foreignKey: "obra_id",
+      otherKey: "contacto_id",
+      as: "contactos_asociados",
+  });
+}
 
 module.exports = { Obra }; // Exporta el modelo para que pueda ser utilizado en otros módulos

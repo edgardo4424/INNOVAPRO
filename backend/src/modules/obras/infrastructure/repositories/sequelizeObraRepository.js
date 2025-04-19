@@ -9,21 +9,13 @@ class SequelizeObraRepository {
     async crear(obraData) {
           return await Obra.create(obraData);
       }
-      
-
+    
     async obtenerObras() {
-
-        const obras = Obra.findAll();
-       
-        return obras
+        return await Obra.findAll();
     }
 
     async obtenerPorId(id) {
         return await Obra.findByPk(id); // Llama al método del repositorio para obtener un cliente por ID
-    }
-
-    async obtenerPorRuc(ruc){
-        return await Obra.findOne({ where: { ruc } });
     }
 
     async actualizarObra(id, obraData) {

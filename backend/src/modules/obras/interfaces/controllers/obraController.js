@@ -1,7 +1,5 @@
 const sequelizeObraRepository = require('../../infrastructure/repositories/sequelizeObraRepository'); // Importamos el repositorio de obras
 
-const entidadService = require('../../infrastructure/services/entidadService'); // Importamos el servicio de entidades
-
 const crearObra = require('../../application/useCases/crearObra'); // Importamos el caso de uso para crear un obra
 const obtenerObras = require('../../application/useCases/obtenerObras'); // Importamos el caso de uso para obtener todos los obras
 const obtenerObraPorId = require('../../application/useCases/obtenerObraPorId'); // Importamos el caso de uso para obtener un obra por ID
@@ -18,7 +16,7 @@ const ObraController = {
                 ...req.body,
                 creado_por: req.usuario.id
             }
-            const nuevoObra = await crearObra(datos, obraRepository, entidadService ); // Llamamos al caso de uso para crear un obra
+            const nuevoObra = await crearObra(datos, obraRepository ); // Llamamos al caso de uso para crear un obra
            
             res.status(nuevoObra.codigo).json(nuevoObra.respuesta); // Respondemos con el obra creado
         } catch (error) {
@@ -48,7 +46,7 @@ const ObraController = {
 
     async actualizarObra(req, res) {
         try {
-            const obraActualizado = await actualizarObra(req.params.id, req.body, obraRepository, entidadService); // Llamamos al caso de uso para actualizar un obra
+            const obraActualizado = await actualizarObra(req.params.id, req.body, obraRepository); // Llamamos al caso de uso para actualizar un obra
             
             res.status(obraActualizado.codigo).json(obraActualizado.respuesta); // Respondemos con el obra actualizado
         } catch (error) {

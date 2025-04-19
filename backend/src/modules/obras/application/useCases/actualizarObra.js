@@ -1,15 +1,14 @@
-module.exports = async (id, obraData, obraRepository, entidadService) => {
-   
-    const errorCampos = entidadService.validarCamposObligatorios(obraData);
+const Obra = require("../../domain/entities/obra"); // Importamos la clase Obra
+
+module.exports = async (id, obraData, obraRepository) => {
+    const obra = await obraRepository.obtenerPorId(id); // Llama al método del repositorio para obtener la obra por ID
+    if (!obra) return { codigo: 404, respuesta: { mensaje: "Obra no encontrada" } } // Si no se encuentra la obra, retorna un error 404
     
-    if (errorCampos) { return { codigo: 400, respuesta: { mensaje: errorCampos } } } // Validamos campos obligatorios
+    const errorCampos = Obra.validarCamposObligatorios(obraData, "editar"); // Validamos los campos obligatorios de la obra
+    if (errorCampos) { return { codigo: 400, respuesta: { mensaje: errorCampos } } } // Si hay un error en los campos, retornamos un error 400
 
-    const obra = await obraRepository.obtenerPorId(id); // Llama al método del repositorio para obtener el obra por ID
-   
-    if (!obra) return { codigo: 404, respuesta: { mensaje: "Obra no encontrado" } } // Si no se encuentra el obra, retorna un error 404
+    const obraActualizada = await obraRepository.actualizarObra(id, obraData)
 
-   const obraActualizado = await obraRepository.actualizarObra(id, obraData)
-
-   return { codigo: 200, respuesta: { mensaje: "Obra actualizado correctamente", obra: obraActualizado } } // Retornamos el cliente creado
+   return { codigo: 200, respuesta: { mensaje: "Obra actualizado correctamente", obra: obraActualizada } } // Retornamos el cliente creado
 
 } // Exporta la función para que pueda ser utilizada en otros módulos
