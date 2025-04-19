@@ -1,37 +1,14 @@
-module.exports = async (filialData, filialRepository, entidadService) => {
-  const errorCampos = entidadService.validarCamposObligatorios(filialData);
+const Filial = require("../../domain/entities/filial"); // Importamos la clase Filial
 
+module.exports = async (filialData, filialRepository, entidadService) => {
+  const errorCampos = Filial.validarCamposObligatorios(filialData, "crear"); // Validamos los campos obligatorios de la entidad Filial
   if (errorCampos) return { codigo: 400, respuesta: { mensaje: errorCampos } }; // Validamos campos obligatorios
 
-  // Validar si ya existe una filial con ese RUC
-  const filialExistente = await filialRepository.obtenerPorRuc(filialData.ruc);
- 
-  if (filialExistente) {
-    return {
-      codigo: 400,
-      respuesta: {
-        mensaje:
-          "El RUC ingresado ya está registrado en otra empresa proveedora.",
-      },
-    };
-  }
+  const duplicado = await entidadService.verificarDuplicadosRUC(filialRepository.getModel(), filialData) // Validamos los campos duplicados
+  if ( duplicado ) return { codigo: 400, respuesta: { mensaje: duplicado } } // Verificamos si hay duplicados
 
-  const nuevoFilialData = {
-    razon_social: filialData.razon_social,
-    ruc: filialData.ruc,
-    direccion: filialData.direccion,
-    representante_legal: filialData.representante_legal,
-    dni_representante: filialData.dni_representante,
-    cargo_representante: filialData.cargo_representante,
-    telefono_representante: filialData.telefono_representante,
-    telefono_oficina: filialData.telefono_oficina || null,
-    creado_por: filialData.creado_por,
-  };
+  const nuevoFilialData = new Filial(filialData); // Creamos una nueva instancia de la clase Filial con los datos proporcionados
+  const nuevoFilial = await filialRepository.crear(nuevoFilialData); // Creamos el nuevo filial en la base de datos
 
-  const nuevoFilial = await filialRepository.crear(nuevoFilialData); // Creamos el nuevo filial con todos sus datos en la base de datos
-
-  return {
-    codigo: 201,
-    respuesta: { mensaje: "Filial creado exitosamente", empresa: nuevoFilial },
-  }; // Retornamos el cliente creado
+  return { codigo: 201, respuesta: { mensaje: "Filial creado exitosamente", empresa: nuevoFilial } }; // Retornamos el cliente creado
 }; // Exporta la función para que pueda ser utilizada en otros módulos

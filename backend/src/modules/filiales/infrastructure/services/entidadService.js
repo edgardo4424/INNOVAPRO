@@ -1,49 +1,13 @@
 const { Op } = require("sequelize");
 
-/**
- * Verifica si los campos mínimos obligatorios están presentes.
- */
-function validarCamposObligatorios(datos) {
-  const {
-    razon_social,
-    ruc,
-    direccion,
-    representante_legal,
-    dni_representante,
-    cargo_representante,
-    telefono_representante,
-    telefono_oficina,
-    creado_por,
-  } = datos;
-
-  // Validacion de editar
-  // Validación de campos vacíos
-  if (
-    !razon_social ||
-    !ruc ||
-    !direccion ||
-    !representante_legal ||
-    !dni_representante ||
-    !cargo_representante ||
-    !creado_por
-  ) {
-    return "Todos los campos son obligatorios";
-  }
-
-  return null;
-}
-
-/**
- * Verifica si existe algún duplicado en base a campos únicos (DNI, RUC, Email, etc.)
- * @param {Model} modelo - Modelo Sequelize (ej: db.clientes, db.empresas_proveedoras)
- * @param {Object} datos - Datos recibidos
- * @param {number|null} excludeId - ID a excluir cuando estás actualizando
- */
 async function verificarDuplicadosRUC(modelo, datos = {}, excludeId = null) {
   
   if (!modelo || typeof modelo.findOne !== "function") {
     throw new Error("Modelo no válido para verificación de duplicados.");
   }
+
+  if (!datos.ruc) return null; // 🔥 No validamos duplicado si no hay RUC
+
   const empresaExistente = await modelo.findOne({
     where: {
       ruc: datos.ruc,
@@ -51,14 +15,10 @@ async function verificarDuplicadosRUC(modelo, datos = {}, excludeId = null) {
     },
   });
 
-  if(empresaExistente) {
-    return "El RUC ingresado ya está registrado en otra empresa."
-  }
+  if (!empresaExistente) return null;
 
-  return null
+  return "El RUC ingresado ya está registrado.";
+
 }
 
-module.exports = {
-  validarCamposObligatorios,
-  verificarDuplicadosRUC,
-};
+module.exports = { verificarDuplicadosRUC }; // Exporta la función para que pueda ser utilizada en otros módulos

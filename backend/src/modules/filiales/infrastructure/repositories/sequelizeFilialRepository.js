@@ -7,15 +7,19 @@ class SequelizeFilialRepository {
     }
 
     async crear(filialData) {
+        try {
           return await Filial.create(filialData);
+        } catch (error) {
+          console.error("❌ Error al crear filial:", error.message);
+          console.error("🔍 Detalles:", error.original?.sqlMessage || error);
+          throw error;
+        }
       }
+      
       
 
     async obtenerFiliales() {
-
-        const filiales = Filial.findAll();
-       
-        return filiales
+        return await Filial.findAll();
     }
 
     async obtenerPorId(id) {
