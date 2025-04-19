@@ -2,29 +2,23 @@ const express = require("express");
 const router = express.Router();
 const { verificarToken } = require("../middlewares/authMiddleware");
 
-const sunatRoutes = require("./sunatRoutes");
+const { registerModuleRoutes } = require("../../scripts/registerModuleRoutes");
 
-const clienteRoutes = require('../modules/clientes/interfaces/routes/clienteRoutes');
-const usuarioRoutes = require('../modules/usuarios/interfaces/routes/usuarioRoutes')
-const filialesRoutes = require('../modules/filiales/interfaces/routes/filialRoutes')
-const obrasRoutes = require('../modules/obras/interfaces/routes/obraRoutes')
+const sunatRoutes = require("./sunatRoutes");
 
 // 📌 Rutas públicas
 router.use("/auth", require("./authRoutes"));  
 router.use("/sunat", sunatRoutes); // 🔥 Ruta para pruebas de importación SUNAT
 
 // 📌 PROTEGER RUTAS DESPUÉS DEL LOGIN
+if (process.env.NODE_ENV !== "development") {
+    router.use(verificarToken);
+}
 
-// COMENTAR LA LÍNEA DE ABAJO SOLO PARA HACER PRUEBAS EN POSTMAN
-router.use(verificarToken); // 🔥 SOLO SE APLICA DESPUÉS DEL LOGIN
+// Cargar dinámicamente rutas de módulos con Clean Architecture
+registerModuleRoutes(router, null); // Ya protegemos globamente con el middleware verificarToken
 
-//router.use("/clientes", require("./clienteRoutes"));
-router.use('/clientes', clienteRoutes); // Rutas de clientes
-
-router.use("/usuarios", usuarioRoutes);
-
-router.use("/empresas_proveedoras", filialesRoutes);
-router.use("/obras", obrasRoutes);
+// Rutas aun no refactorizadas a Clean Architecture
 router.use("/contactos", require("./contactoRoutes"));
 router.use("/cotizaciones", require("./cotizaciones"));
 router.use("/productos-servicios", require("./productosServiciosRoutes"));

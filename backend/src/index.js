@@ -20,7 +20,7 @@ Module.prototype.require = function (path) {
 };
 
 // 📌 Carga de módulos necesarios
-require("dotenv").config({ path: "../.env" });
+require("./config/env"); // Cargar variables de entorno globalmente
 const express = require("express");
 const cors = require("cors");
 const http = require("http"); // 🔥 Agregar esta línea si no está
