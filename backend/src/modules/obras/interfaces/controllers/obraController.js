@@ -11,16 +11,16 @@ const obraRepository = new sequelizeObraRepository(); // Instancia del repositor
 const ObraController = {
     async crearObra(req, res) {
         try {
-          
             const datos = {
                 ...req.body,
                 creado_por: req.usuario.id
             }
+            console.log('datos', datos);
             const nuevoObra = await crearObra(datos, obraRepository ); // Llamamos al caso de uso para crear un obra
            
             res.status(nuevoObra.codigo).json(nuevoObra.respuesta); // Respondemos con el obra creado
         } catch (error) {
-        
+            console.log('error', error);
             res.status(500).json({ error: error.message }); // Respondemos con un error
         }
     },

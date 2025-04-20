@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../../../../config/db"); // Asegúrate de importar correctamente tu instancia de Sequelize
 
 const Obra = sequelize.define(
-  "Obra",
+  "obras",
   {
     id: {
       type: DataTypes.INTEGER,

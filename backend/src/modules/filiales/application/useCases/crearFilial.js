@@ -8,6 +8,8 @@ module.exports = async (filialData, filialRepository, entidadService) => {
   if ( duplicado ) return { codigo: 400, respuesta: { mensaje: duplicado } } // Verificamos si hay duplicados
 
   const nuevoFilialData = new Filial(filialData); // Creamos una nueva instancia de la clase Filial con los datos proporcionados
+
+  console.log('nuevoFilialData', nuevoFilialData);
   const nuevoFilial = await filialRepository.crear(nuevoFilialData); // Creamos el nuevo filial en la base de datos
 
   return { codigo: 201, respuesta: { mensaje: "Filial creado exitosamente", empresa: nuevoFilial } }; // Retornamos el cliente creado

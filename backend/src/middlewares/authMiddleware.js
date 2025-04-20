@@ -11,6 +11,7 @@ async function verificarToken(req, res, next) {
   }
 
   try {
+    console.log('token', token);
     const verificado = jwt.verify(token, process.env.JWT_SECRET);
     
     const usuario = await db.usuarios.findByPk(verificado.id);

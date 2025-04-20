@@ -20,8 +20,8 @@ db.usuarios = require("./usuarios")(sequelize, DataTypes);
 
 // Entidades comerciales
 
-
-db.contactos = require("./contactos")(sequelize, DataTypes);
+const { Contacto } = require('../modules/contactos/infrastructure/models/contactoModel');
+db.contactos = Contacto
 
 
 // Cotizaciones
