@@ -98,7 +98,8 @@ export default function GestionContactos() {
             handleCerrarModalAgregar();
         } catch (error) {
             console.error("❌ Error al agregar contacto:", error);
-            alert("❌ Error al agregar contacto.");
+            
+            alert(`❌ ${error.response.data.mensaje}`)
         }
     }
 
@@ -133,7 +134,8 @@ export default function GestionContactos() {
       
         } catch (error) {
             console.error("❌ Error al editar contacto:", error);
-            alert("❌ No se pudo actualizar el contacto.");
+            
+            alert(`❌ ${error.response.data.mensaje}`)
         }
       }
 

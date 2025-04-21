@@ -104,6 +104,8 @@ export default function GestionClientes() {
   // Función para agregar un cliente nuevo
   async function handleAgregarCliente(e) {
     e.preventDefault();
+
+    console.log('clickeando');
     try {
         
         // 🔹 Validar antes de enviar
@@ -117,6 +119,7 @@ export default function GestionClientes() {
         if (nuevoCliente.tipo === "Persona Natural") {
           clienteAEnviar = {
               ...clienteAEnviar,
+              dni: nuevoCliente.dniNatural,
               ruc: null,
               representante_legal: null,
               dni_representante: null,
@@ -135,6 +138,8 @@ export default function GestionClientes() {
               clienteAEnviar[key] = null;
           }
       });
+
+      console.log({clienteAEnviar});
 
         const res = await api.post("/clientes", clienteAEnviar);
         
@@ -174,6 +179,7 @@ export default function GestionClientes() {
         console.error("❌ Error al agregar cliente:", error);
         if (error.response && error.response.data && error.response.data.mensaje) {
           setErrorMensaje(`❌ ${error.response.data.mensaje}`);
+          alert(`❌ ${error.response.data.mensaje}`)
       } else {
           setErrorMensaje("❌ Error al agregar cliente: Error desconocido.");
       }
@@ -185,6 +191,7 @@ export default function GestionClientes() {
     e.preventDefault();
     if (!clienteEditando) return;
     try {
+      console.log(clienteEditando);
         const clienteData = {
             razon_social: clienteEditando.razon_social,
             tipo: clienteEditando.tipo,
@@ -197,8 +204,10 @@ export default function GestionClientes() {
                       dni_representante: clienteEditando.dni_representante,
                       domicilio_fiscal: clienteEditando.domicilio_fiscal,
                   }
-                : { dni: clienteEditando.dni }),
+                : { dni: clienteEditando.dniNatural }),
         };
+
+        console.log(clienteData);
   
         await api.put(`/clientes/${clienteEditando.id}`, clienteData);
         setClientes(clientes.map((c) => (c.id === clienteEditando.id ? { ...c, ...clienteData } : c)));
@@ -209,6 +218,7 @@ export default function GestionClientes() {
       console.error("❌ Error al modificar cliente:", error);
       if (error.response && error.response.data && error.response.data.mensaje) {
         setErrorMensaje(`❌ ${error.response.data.mensaje}`);
+        alert(`❌ ${error.response.data.mensaje}`)
     } else {
         setErrorMensaje("❌ Error al modificar cliente: Error desconocido.");
     }
@@ -760,7 +770,7 @@ export default function GestionClientes() {
                     if (tipo === "DNI") validador = validarDNI;
                     else if (tipo === "CE") validador = validarCE;
                     else validador = validarPasaporte;
-
+                    
                     dniNaturaled.onChange(e, validador);
                     setClienteEditando(prev => ({ ...prev, dniNatural: e.target.value}));
                   }}
@@ -798,7 +808,7 @@ export default function GestionClientes() {
               <button
                 type="submit"
                 className="btn-guardar"
-                disabled={
+               /*  disabled={
                   // Validación general
                   !razonSocialEd.valor ||
                   !!razonSocialEd.error ||
@@ -823,7 +833,7 @@ export default function GestionClientes() {
                     !dniNaturaled.valor ||
                     !!dniNaturaled.error
                   ))
-                }
+                } */
               >
                 Guardar Cliente
               </button>

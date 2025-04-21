@@ -30,7 +30,7 @@ export default function RegistrarTarea() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const resEmpresas = await api.get("/empresas_proveedoras");
+        const resEmpresas = await api.get("/filiales");
         const resClientes = await api.get("/clientes");
         setEmpresas(resEmpresas.data || []);
         setClientes(resClientes.data || []);

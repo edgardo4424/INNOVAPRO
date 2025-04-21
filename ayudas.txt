@@ -1,0 +1,8 @@
+Comandos github
+
+// Verificar siempre estar en la rama refactor/backend
+git checkout refactor/backend
+
+git add .
+git commit -m ""
+git push -u origin refactor/backend

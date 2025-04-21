@@ -91,8 +91,8 @@ export default function GestionUsuarios() {
       alert("✅ Usuario agregado con éxito");
       handleCerrarModalAgregar();
     } catch (error) {
-      console.error("❌ Error al agregar usuario:", error);
-      alert("❌ Error al agregar usuario.");
+    
+      alert(`❌ Error al agregar usuario. ${ error.response.data?.mensaje}`);
     }
   }
 
@@ -123,8 +123,9 @@ export default function GestionUsuarios() {
         setUsuarioEditando(null);
       }
     } catch (error) {
+      console.log(error);
       console.error("❌ Error al actualizar usuario:", error);
-      alert("❌ No se pudo actualizar el usuario.");
+      alert(`❌ No se pudo actualizar el usuario. ${ error.response.data?.mensaje}`);
     }
   }
   
@@ -219,7 +220,7 @@ export default function GestionUsuarios() {
       <div className="centro-modal">
         <div className="modal-content">
           <h3>Crear Usuario</h3>
-          <form onSubmit={handleAgregarUsuario } className="gestion-form-global">
+          <form onSubmit={handleAgregarUsuario } className="gestion-form-global" autocomplete="off">
             <input 
               type="text" 
               placeholder="Nombre" 
@@ -240,7 +241,8 @@ export default function GestionUsuarios() {
                 email.onChange(e);
                 setNuevoUsuario((prev) => ({ ...prev, email: e.target.value }));
               }}
-              required 
+              required
+              autocomplete="off" 
             />
             {email.error && <p className="error-message">{email.error}</p>}
 
@@ -254,6 +256,7 @@ export default function GestionUsuarios() {
                 validatePassword(value); // asumes que ya usas esta función
               }} 
               required 
+              autocomplete="new-password"
             />
             {error?.password && <p className="error-message">{error.password}</p>}
 

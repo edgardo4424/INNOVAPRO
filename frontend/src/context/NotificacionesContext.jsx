@@ -18,8 +18,8 @@ export const NotificacionesProvider = ({ children }) => {
         async function fetchNotificaciones() {
             try {
                 const res = await api.get("/notificaciones");
-                console.log("📩 Notificaciones cargadas:", res.data);
-                setNotificaciones(res.data.filter(noti => !noti.leida));
+                console.log("📩 Notificaciones cargadas:", res.data.notificaciones);
+                setNotificaciones(res.data.notificaciones.filter(noti => !noti.leida));
             } catch (error) {
                 console.error("❌ Error al obtener notificaciones:", error);
             }
@@ -27,8 +27,8 @@ export const NotificacionesProvider = ({ children }) => {
 
         fetchNotificaciones();
 
-        const canal = `notificacion_${user.id}`;
-        const canalLeida = `notificacion_leida_${user.id}`;
+        const canal = `notificacion_usuario_${user.id}`;
+        const canalLeida = `notificacion_leida_usuario_${user.id}`;
 
         console.log("📡 Subscrito a canal:", canal);
         console.log("🔌 Estado del socket:", socket.connected);

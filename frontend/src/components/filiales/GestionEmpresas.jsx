@@ -34,7 +34,8 @@ export default function GestionEmpresas() {
   useEffect(() => {
     async function fetchEmpresas() {
       try {
-        const res = await api.get("/empresas_proveedoras");
+        const res = await api.get("/filiales");
+        console.log('res',res);
         setEmpresas(res.data || []);
       } catch (error) {
         console.error("❌ Error al obtener filiales:", error);
@@ -50,7 +51,7 @@ export default function GestionEmpresas() {
   async function handleEliminar(id) {
     if (!window.confirm("¿Seguro que quieres eliminar este filial?")) return;
     try {
-      await api.delete(`/empresas_proveedoras/${id}`);
+      await api.delete(`/filiales/${id}`);
       setEmpresas(empresas.filter((e) => e.id !== id));
       alert("✅ Filial eliminado con éxito");
     } catch (error) {
@@ -64,7 +65,7 @@ export default function GestionEmpresas() {
   
     try {
       const empresaConUsuario = { ...nuevaEmpresa, creado_por: user.id }; // Agregar usuario actual
-      const res = await api.post("/empresas_proveedoras", empresaConUsuario);
+      const res = await api.post("/filiales", empresaConUsuario);
   
       if (res.status === 201 || res.status === 200) { // Asegurarse de que la respuesta es correcta
         console.log("✅ Nueva filial agregada:", res.data);
@@ -102,7 +103,7 @@ export default function GestionEmpresas() {
       }
     } catch (error) {
       console.error("❌ Error al agregar filial:", error);
-      alert("❌ Error al agregar filial.");
+      alert(`❌ Error al agregar filial. ${ error.response.data?.mensaje}`);
     }
   }
   
@@ -112,16 +113,18 @@ export default function GestionEmpresas() {
     e.preventDefault();
   
     if (!empresaEditando) return;
+
+    const empresaConUsuario = { ...empresaEditando, creado_por: user.id }; // Agregar usuario actual
   
     try {
-      const response = await api.put(`/empresas_proveedoras/${empresaEditando.id}`, empresaEditando);
+      const response = await api.put(`/filiales/${empresaEditando.id}`, empresaConUsuario);
   
       if (response.status === 200) {
         console.log("✅ Filial actualizada en la base de datos:", response.data);
   
         // 🔥 Asegurar que los datos devueltos mantengan la estructura esperada
         const empresaActualizada = {
-          id: empresaEditando.id,
+          id: response.data.filial.id,
           razon_social: empresaEditando.razon_social,
           ruc: empresaEditando.ruc,
           direccion: empresaEditando.direccion,
