@@ -1,29 +1,19 @@
-const bcrypt = require("bcryptjs");
+const Usuario = require ("../../domain/entities/usuario"); // Importamos la entidad Usuario
+const { prepararUsuarioParaGuardar } = require ("../../infrastructure/services/entidadService"); // Importamos la función para preparar el usuario para guardar
 
-module.exports = async (usuarioData, usuarioRepository, entidadService) => {
+module.exports = async (usuarioData, usuarioRepository) => {
 
-  const errorCampos = entidadService.validarCamposObligatorios(usuarioData, "crear");
-  
-  if (errorCampos) return { codigo: 400, respuesta: { mensaje: errorCampos } }; // Validamos campos obligatorios
+  const error = Usuario.validar(usuarioData, "crear");
+  if (error) return { codigo: 400, respuesta: { mensaje: error } }; 
 
   // Verificar si el correo ya está en uso
   const usuarioExistente = await usuarioRepository.obtenerPorEmail(usuarioData.email);
- 
   if (usuarioExistente) {
     return { codigo: 400, respuesta: { mensaje: "El correo ya está registrado" } }
   }
 
-   // Encriptar contraseña
-   const hashedPassword = await bcrypt.hash(usuarioData.password, 10);
-
-   const nuevoUsuarioData = {
-     nombre: usuarioData.nombre,
-     email: usuarioData.email,
-     password: hashedPassword,
-     rol: usuarioData.rol
-   }
-  
-  const nuevoUsuario = await usuarioRepository.crear(nuevoUsuarioData); // Creamos el nuevo usuario con todos sus datos en la base de datos
+  const usuarioTransformado = await prepararUsuarioParaGuardar(usuarioData); // Preparamos el usuario para guardar en la base de datos
+  const nuevoUsuario = await usuarioRepository.crear(usuarioTransformado); // Creamos el nuevo usuario con todos sus datos en la base de datos
 
   return { codigo: 201, respuesta: { mensaje: "Usuario creado exitosamente", usuario: nuevoUsuario } } // Retornamos el cliente creado
   

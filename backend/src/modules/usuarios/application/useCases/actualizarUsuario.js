@@ -1,12 +1,19 @@
-module.exports = async (id, usuarioData, usuarioRepository, entidadService) => {
+const Usuario = require ("../../domain/entities/usuario"); // Importamos la entidad Usuario
+
+module.exports = async (id, usuarioData, usuarioRepository) => {
+    const usuarioExistente = await usuarioRepository.obtenerPorId(id); // Buscamos el usuario por ID
+    if (!usuarioExistente) return { codigo: 404, respuesta: { mensaje: "Usuario no encontrado" } } // Si no se encuentra el usuario, retorna un error 404
    
-    const errorCampos = entidadService.validarCamposObligatorios(usuarioData, 'editar');
+    const errorCampos = Usuario.validar(usuarioData, 'editar');
+    if (errorCampos) { return { codigo: 400, respuesta: { mensaje: errorCampos } } } 
     
-    if (errorCampos) { return { codigo: 400, respuesta: { mensaje: errorCampos } } } // Validamos campos obligatorios
+    // Verificar si el correo ya está en uso
+    const correoExistente = await usuarioRepository.obtenerPorEmail(usuarioData.email);
+    if (correoExistente) {
+        return { codigo: 400, respuesta: { mensaje: "El correo ya está registrado" } }
+    }
 
-   const usuarioActualizado = await usuarioRepository.actualizarUsuario(id, usuarioData)
+    const usuarioActualizado = await usuarioRepository.actualizarUsuario(id, usuarioData)
 
-
-   return { codigo: 200, respuesta: { mensaje: "Usuario actualizado correctamente", usuario: usuarioActualizado } } // Retornamos el cliente creado
-
+    return { codigo: 200, respuesta: { mensaje: "Usuario actualizado correctamente", usuario: usuarioActualizado } } // Retornamos el cliente creado
 } // Exporta la función para que pueda ser utilizada en otros módulos

@@ -1,7 +1,5 @@
 const sequelizeUsuarioRepository = require('../../infrastructure/repositories/sequelizeUsuarioRepository'); // Importamos el repositorio de usuarios
 
-const entidadService = require('../../infrastructure/services/entidadService'); // Importamos el servicio de entidades
-
 const crearUsuario = require('../../application/useCases/crearUsuario'); // Importamos el caso de uso para crear un Usuario
 const obtenerUsuarios = require('../../application/useCases/obtenerUsuarios'); // Importamos el caso de uso para obtener todos los Usuarios
 const obtenerUsuarioPorId = require('../../application/useCases/obtenerUsuarioPorId'); // Importamos el caso de uso para obtener un Usuario por ID
@@ -13,12 +11,9 @@ const usuarioRepository = new sequelizeUsuarioRepository(); // Instancia del rep
 const UsuarioController = {
     async crearUsuario(req, res) {
         try {
-          
-            const nuevoUsuario = await crearUsuario(req.body, usuarioRepository, entidadService ); // Llamamos al caso de uso para crear un usuario
-       
+            const nuevoUsuario = await crearUsuario(req.body, usuarioRepository ); // Llamamos al caso de uso para crear un usuario
             res.status(nuevoUsuario.codigo).json(nuevoUsuario.respuesta); // Respondemos con el usuario creado
         } catch (error) {
-         
             res.status(500).json({ error: error.message }); // Respondemos con un error
         }
     },
@@ -26,7 +21,6 @@ const UsuarioController = {
     async obtenerUsuarios(req, res) {
         try {
             const usuarios = await obtenerUsuarios(usuarioRepository); // Llamamos al caso de uso para obtener todos los usuarios
-          
             res.status(200).json({ usuarios: usuarios.respuesta || [] }); // 🔥 Siempre devuelve un array, aunque esté vacío
         } catch (error) {
             res.status(500).json({ error: error.message }); // Respondemos con un error
@@ -44,12 +38,9 @@ const UsuarioController = {
 
     async actualizarUsuario(req, res) {
         try {
-          
-            const usuarioActualizado = await actualizarUsuario(req.params.id, req.body, usuarioRepository, entidadService); // Llamamos al caso de uso para actualizar un usuario
-            
+            const usuarioActualizado = await actualizarUsuario(req.params.id, req.body, usuarioRepository); // Llamamos al caso de uso para actualizar un usuario
             res.status(usuarioActualizado.codigo).json(usuarioActualizado.respuesta); // Respondemos con el usuario actualizado
         } catch (error) {
-           
             res.status(500).json({ error: error.message }); // Respondemos con un error
         }
     },
@@ -62,7 +53,6 @@ const UsuarioController = {
             res.status(500).json({ error: error.message }); // Respondemos con un error
         }
     }
-
 };
 
 module.exports = UsuarioController; // Exportamos el controlador de usuarios

@@ -1,12 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const obraController = require("../controllers/obraController");
-const { verificarToken } = require("../../../../middlewares/authMiddleware");
+const { verificarToken } = require("../../../../shared/middlewares/authMiddleware");
+
+router.use(verificarToken); // Verificamos el token para todas las rutas
 
 // 📌 Rutas protegidas solo para Gerencia
-router.get("/", verificarToken, obraController.obtenerObras);
-router.post("/", verificarToken, obraController.crearObra);
-router.put("/:id", verificarToken, obraController.actualizarObra);
-router.delete("/:id", verificarToken, obraController.eliminarObra);
+router.get("/", obraController.obtenerObras);
+router.post("/", obraController.crearObra);
+router.put("/:id", obraController.actualizarObra);
+router.delete("/:id", obraController.eliminarObra);
 
 module.exports = router;

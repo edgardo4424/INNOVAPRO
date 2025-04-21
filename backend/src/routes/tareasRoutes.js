@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { verificarToken } = require("../middlewares/authMiddleware");
+const { verificarToken } = require("../shared/middlewares/authMiddleware");
 const tareasController = require("../controllers/tareas/tareasController");
 
 // 📌 Crear una nueva tarea

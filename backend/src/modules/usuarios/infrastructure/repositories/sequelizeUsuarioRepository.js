@@ -1,22 +1,19 @@
 const { Usuario } = require("../models/usuarioModel");
-const db = require("../../../../models"); // Llamamos los modelos sequalize de la base de datos
+const UsuarioRepository = require("../../domain/repositories/usuarioRepository"); // Importamos la interfaz del repositorio
 
-class SequelizeUsuarioRepository {
+class SequelizeUsuarioRepository extends UsuarioRepository { // La clase SequelizeUsuarioRepository extiende la interfaz UsuarioRepository
     getModel() {
         return require('../models/usuarioModel').Usuario; // Retorna el modelo de cliente
     }
 
     async crear(usuarioData) {
           return await Usuario.create(usuarioData);
-      }
-      
+    }
 
     async obtenerUsuarios() {
-
         const usuarios = Usuario.findAll({
             attributes: ["id", "nombre", "email", "rol"]
         });
-       
         return usuarios
     }
 

@@ -37,6 +37,8 @@ describe("Caso de uso: Actualizar Contacto", () => {
       999999,
       {
         email: "contacto@gmail.com",
+        obra: ["arrieta 123"],
+        clientes: ["Barcelona FC"],
       },
       contactoRepository
     );

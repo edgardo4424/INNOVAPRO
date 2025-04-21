@@ -1,5 +1,4 @@
 const axios = require("axios");
-require("dotenv").config({ path: "../.env" });
 
 async function validarCaptcha(token) {
   const response = await axios.post(

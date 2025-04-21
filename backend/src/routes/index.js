@@ -1,13 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const { verificarToken } = require("../middlewares/authMiddleware");
+const { verificarToken } = require("../shared/middlewares/authMiddleware");
 
 const { registerModuleRoutes } = require("../../scripts/registerModuleRoutes");
 
 const sunatRoutes = require("./sunatRoutes");
 
 // 📌 Rutas públicas
-router.use("/auth", require("./authRoutes"));  
 router.use("/sunat", sunatRoutes); // 🔥 Ruta para pruebas de importación SUNAT
 
 // 📌 PROTEGER RUTAS DESPUÉS DEL LOGIN

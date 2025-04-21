@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
-const db = require("../models");
+const db = require("../../models");
 
 // 🔹 Middleware para verificar token
 async function verificarToken(req, res, next) {

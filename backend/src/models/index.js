@@ -13,10 +13,8 @@ db.obras = Obra;
 const { Filial } = require('../modules/filiales/infrastructure/models/filialModel');
 db.empresas_proveedoras = Filial;
 
-// Cargar modelos asegurando que coincidan con la base de datos
-
-// Usuarios y roles
-db.usuarios = require("./usuarios")(sequelize, DataTypes);
+const { Usuario } = require('../modules/usuarios/infrastructure/models/usuarioModel');
+db.usuarios = Usuario;
 
 // Entidades comerciales
 
