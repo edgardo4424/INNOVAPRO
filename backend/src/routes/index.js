@@ -18,10 +18,8 @@ if (process.env.NODE_ENV !== "development") {
 registerModuleRoutes(router, null); // Ya protegemos globamente con el middleware verificarToken
 
 // Rutas aun no refactorizadas a Clean Architecture
-router.use("/contactos", require("./contactoRoutes"));
 router.use("/cotizaciones", require("./cotizaciones"));
 router.use("/productos-servicios", require("./productosServiciosRoutes"));
-router.use("/notificaciones", require("./notificacionesRoutes"));
 router.use("/tareas", require("./tareasRoutes"));
 router.use("/ruc", require("./rucRoutes"));
 

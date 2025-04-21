@@ -4,6 +4,7 @@ const db = {};
 const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 
+// Módulos con modelos modernos y centralizados
 const { Cliente } = require('../modules/clientes/infrastructure/models/clienteModel');
 db.clientes = Cliente;
 
@@ -16,37 +17,30 @@ db.empresas_proveedoras = Filial;
 const { Usuario } = require('../modules/usuarios/infrastructure/models/usuarioModel');
 db.usuarios = Usuario;
 
-// Entidades comerciales
-
 const { Contacto } = require('../modules/contactos/infrastructure/models/contactoModel');
-db.contactos = Contacto
+db.contactos = Contacto;
+
+const { Notificaciones } = require('../modules/notificaciones/infrastructure/models/notificacionModel');
+db.notificaciones = Notificaciones;
 
 
 // Cotizaciones
 db.cotizaciones = require("./cotizaciones")(sequelize, DataTypes);
 db.cotizacion_detalles = require("./cotizacion_detalles")(sequelize, DataTypes);
 
-// Productos y relaciones
+// Productos
 db.ProductoServicio = require("./productos_servicios")(sequelize, DataTypes);
 db.EmpresaProducto = require("./empresa_producto")(sequelize, DataTypes);
 
-// Tareas
+// Tareas 
 db.tareas = require("./tareas")(sequelize, DataTypes);
 
-// Notificaciones
-db.notificaciones = require("./notificacion")(sequelize, DataTypes);
-
-// Relaciones intermedias
-db.contacto_clientes = require("./contacto_clientes")(sequelize, DataTypes);
-db.contacto_obras = require("./contacto_obras")(sequelize, DataTypes);
-
-// Base de datos de la sunat
+// SUNAT
 db.contrisunat = require("./contrisunat")(sequelize, DataTypes);
 db.ubigeos = require("./ubigeos")(sequelize, DataTypes);
 
-// Asociaciones
+// ✅ Solo se asocian los que tienen .associate()
 if (db.clientes.associate) db.clientes.associate(db);
-if (db.contactos.associate) db.contactos.associate(db);
 if (db.obras.associate) db.obras.associate(db);
 if (db.ProductoServicio.associate) db.ProductoServicio.associate(db);
 if (db.EmpresaProducto.associate) db.EmpresaProducto.associate(db);
@@ -56,7 +50,7 @@ if (db.cotizacion_detalles.associate) db.cotizacion_detalles.associate(db);
 if (db.tareas.associate) db.tareas.associate(db);
 if (db.notificaciones.associate) db.notificaciones.associate(db);
 
-// Agregar Sequelize a la exportación
+// Sequelize
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

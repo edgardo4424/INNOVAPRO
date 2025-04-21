@@ -1,5 +1,5 @@
 const db = require("../models");
-const { emitirNotificacionUsuario } = require("../utils/notificaciones");
+const { emitirNotificacionPrivada } = require("../modules/notificaciones/infrastructure/services/emisorNotificaciones");
 
 /**
  * El técnico toma la tarea y se asigna a sí mismo.
@@ -23,7 +23,7 @@ async function tomarTarea(idTarea, usuario) {
       tipo: "tarea",
     });
   
-    emitirNotificacionUsuario(notiTecnico); // 🔥 ENVÍA OBJETO COMPLETO
+    emitirNotificacionPrivada(notificacion.usuarioId, notiTecnico); // 🔥 ENVÍA OBJETO COMPLETO
   
     // ✅ Notificar al creador
     if (tarea.usuario_solicitante) {
@@ -33,7 +33,7 @@ async function tomarTarea(idTarea, usuario) {
         tipo: "tarea",
       });
   
-      emitirNotificacionUsuario(notiCreador); // 🔥 ENVÍA OBJETO COMPLETO
+      emitirNotificacionPrivada(notificacion.usuarioId, notiCreador); // 🔥 ENVÍA OBJETO COMPLETO
     }
   
     return tarea;
@@ -59,7 +59,7 @@ async function liberarTarea(idTarea, usuario) {
         tipo: "info",
     });
 
-    emitirNotificacionUsuario(notificacion);
+    emitirNotificacionPrivada(notificacion.usuarioId, notificacion);
 
     return tarea;
 }
@@ -82,7 +82,7 @@ async function finalizarTarea(idTarea, usuario) {
         tipo: "exito",
     });
 
-    emitirNotificacionUsuario(notificacion);
+    emitirNotificacionPrivada(notificacion.usuarioId, notificacion);
 
     return tarea;
 }
@@ -106,7 +106,7 @@ async function devolverTarea(idTarea, motivo) {
         tipo: "advertencia",
     });
 
-    emitirNotificacionUsuario(notificacion);
+    emitirNotificacionPrivada(notificacion.usuarioId, notificacion);
 
     return tarea;
 }
@@ -137,7 +137,7 @@ async function corregirTarea(idTarea, correccion, usuarioId) {
             tipo: "info",
         });
     
-        emitirNotificacionUsuario(notificacion);
+        emitirNotificacionPrivada(notificacion.usuarioId, notificacion);
     }
     
     return tarea;

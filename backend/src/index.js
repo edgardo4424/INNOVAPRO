@@ -76,7 +76,7 @@ console.log(`🔀 API corriendo en: ${API_BASE_PATH}`);
 })();
 
 // INICIALIZA LOS SOCKETS DESPUÉS DEL SERVER
-const { inicializarWebSockets } = require("./utils/websockets");
+const { inicializarWebSockets } = require("./shared/utils/websockets");
 inicializarWebSockets(server);
 
 // 📌 Ruta de prueba para verificar el estado del backend
