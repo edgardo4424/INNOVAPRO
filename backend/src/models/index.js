@@ -36,7 +36,8 @@ db.ProductoServicio = require("./productos_servicios")(sequelize, DataTypes);
 db.EmpresaProducto = require("./empresa_producto")(sequelize, DataTypes);
 
 // Tareas 
-db.tareas = require("./tareas")(sequelize, DataTypes);
+const { Tarea } = require('../modules/tareas/infrastructure/models/tareaModel');
+db.tareas = Tarea;
 
 // SUNAT
 db.contrisunat = require("./contrisunat")(sequelize, DataTypes);

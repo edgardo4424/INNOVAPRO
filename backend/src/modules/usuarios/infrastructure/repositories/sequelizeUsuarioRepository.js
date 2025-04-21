@@ -31,6 +31,7 @@ class SequelizeUsuarioRepository extends UsuarioRepository { // La clase Sequeli
           console.log("❌ Usuario no encontrado");
           return null; 
         }
+     
         await usuario.update(usuarioData); // Actualiza el usuario con los nuevos datos
         return usuario; // Retorna el usuario actualizado
       }

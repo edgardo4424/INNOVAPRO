@@ -17,7 +17,7 @@ class Cliente {
             "razon_social", "tipo", "ruc", "dni", "telefono", "email",
             "domicilio_fiscal", "representante_legal", "dni_representante", "creado_por"
         ]
-        console.log('datos',datos);
+        
         if (modo === "crear") {
             if (!datos.razon_social || !datos.tipo) {
                 console.log('entro');

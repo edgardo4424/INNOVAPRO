@@ -8,12 +8,15 @@ module.exports = async (id, usuarioData, usuarioRepository) => {
     if (errorCampos) { return { codigo: 400, respuesta: { mensaje: errorCampos } } } 
     
     // Verificar si el correo ya está en uso
-    const correoExistente = await usuarioRepository.obtenerPorEmail(usuarioData.email);
-    if (correoExistente) {
+    const usuarioExistentePorEmail = await usuarioRepository.obtenerPorEmail(usuarioData.email);
+    
+    // Verificar si el nuevo email ya ha sido registrado en otro usuario
+    if (usuarioExistentePorEmail && usuarioData.email == usuarioExistentePorEmail.email) {
+     
         return { codigo: 400, respuesta: { mensaje: "El correo ya está registrado" } }
     }
 
     const usuarioActualizado = await usuarioRepository.actualizarUsuario(id, usuarioData)
-
+  
     return { codigo: 200, respuesta: { mensaje: "Usuario actualizado correctamente", usuario: usuarioActualizado } } // Retornamos el cliente creado
 } // Exporta la función para que pueda ser utilizada en otros módulos

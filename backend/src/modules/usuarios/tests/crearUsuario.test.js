@@ -12,7 +12,7 @@ describe("crearUsuario", () => {
     }
 
     const datosValidos = {
-      nombre: "Lucas",
+      nombre: "Lucas Romero",
       email: "lucas@grupoinnova.pe",
       password: "Admin123",
       rol: "Gerencia",

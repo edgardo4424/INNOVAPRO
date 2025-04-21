@@ -4,10 +4,6 @@ const sequelize = require("../../../../config/db");
 const Notificaciones = sequelize.define(
   "notificaciones",
   {
-    titulo: { 
-      type: DataTypes.STRING, 
-      allowNull: false 
-    },
     mensaje: { 
       type: DataTypes.TEXT, 
       allowNull: false 
@@ -16,7 +12,7 @@ const Notificaciones = sequelize.define(
       type: DataTypes.STRING, 
       allowNull: false 
     },
-    usuario_id: { 
+    usuarioId: { 
       type: DataTypes.INTEGER, 
       allowNull: false ,
       references: {
@@ -33,7 +29,7 @@ const Notificaciones = sequelize.define(
 
 Notificaciones.associate = (models) => {
   Notificaciones.belongsTo(models.usuarios, {
-    foreignKey: "usuario_id",
+    foreignKey: "usuarioId",
     as: "usuario",
   });
 };

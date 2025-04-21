@@ -15,7 +15,7 @@ const ObraController = {
                 ...req.body,
                 creado_por: req.usuario.id
             }
-            console.log('datos', datos);
+           
             const nuevoObra = await crearObra(datos, obraRepository ); // Llamamos al caso de uso para crear un obra
            
             res.status(nuevoObra.codigo).json(nuevoObra.respuesta); // Respondemos con el obra creado

@@ -41,6 +41,7 @@ const UsuarioController = {
             const usuarioActualizado = await actualizarUsuario(req.params.id, req.body, usuarioRepository); // Llamamos al caso de uso para actualizar un usuario
             res.status(usuarioActualizado.codigo).json(usuarioActualizado.respuesta); // Respondemos con el usuario actualizado
         } catch (error) {
+            
             res.status(500).json({ error: error.message }); // Respondemos con un error
         }
     },
