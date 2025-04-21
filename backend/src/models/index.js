@@ -20,6 +20,9 @@ db.usuarios = Usuario;
 const { Contacto } = require('../modules/contactos/infrastructure/models/contactoModel');
 db.contactos = Contacto;
 
+db.contacto_clientes = require("./contacto_clientes")(sequelize, DataTypes);
+db.contacto_obras = require("./contacto_obras")(sequelize, DataTypes);
+
 const { Notificaciones } = require('../modules/notificaciones/infrastructure/models/notificacionModel');
 db.notificaciones = Notificaciones;
 
@@ -40,6 +43,7 @@ db.contrisunat = require("./contrisunat")(sequelize, DataTypes);
 db.ubigeos = require("./ubigeos")(sequelize, DataTypes);
 
 // ✅ Solo se asocian los que tienen .associate()
+if (db.contactos.associate) db.contactos.associate(db);
 if (db.clientes.associate) db.clientes.associate(db);
 if (db.obras.associate) db.obras.associate(db);
 if (db.ProductoServicio.associate) db.ProductoServicio.associate(db);
