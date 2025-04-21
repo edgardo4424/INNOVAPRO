@@ -20,8 +20,6 @@ class Tarea {
     
     if (modo === "crear") {
 
-      console.log(datos);
-
       if (!datos.usuarioId || !datos.empresaProveedoraId || !datos.clienteId || !datos.obraId || !datos.tipoTarea || !datos.urgencia) {
         return "Todos los campos son obligatorios.";
     }

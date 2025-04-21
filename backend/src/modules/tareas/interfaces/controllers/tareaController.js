@@ -12,6 +12,7 @@ const liberarTarea = require('../../application/useCases/liberarTarea')
 const finalizarTarea = require('../../application/useCases/finalizarTarea')
 const cancelarTarea = require('../../application/useCases/cancelarTarea')
 const devolverTarea = require('../../application/useCases/devolverTarea')
+const corregirTarea = require('../../application/useCases/corregirTarea')
 
 const tareaRepository = new sequelizeTareaRepository(); 
 
@@ -112,6 +113,17 @@ const TareaController = {
             }
 
             const tarea = await devolverTarea(req.params.id, req.usuario.id, motivo, tareaRepository);
+            res.status(200).json(tarea.respuesta);
+        } catch (error) {
+            console.log('error',error);
+            res.status(500).json({ error: error.message }); 
+        }
+    },
+
+    async corregirTarea(req, res) {
+        try {
+
+            const tarea = await corregirTarea(req.params.id, req.usuario.id, correccion, tareaRepository);
             res.status(200).json(tarea.respuesta);
         } catch (error) {
             console.log('error',error);

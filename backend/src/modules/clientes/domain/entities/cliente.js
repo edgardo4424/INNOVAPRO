@@ -20,7 +20,7 @@ class Cliente {
         
         if (modo === "crear") {
             if (!datos.razon_social || !datos.tipo) {
-                console.log('entro');
+                
                 return "Razón social y tipo de entidad son obligatorios.";
             }
             if (!datos.creado_por) {

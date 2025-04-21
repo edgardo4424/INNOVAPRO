@@ -25,8 +25,8 @@ router.put("/:id/cancelar", tareaController.cancelarTarea);
 router.put("/:id/devolver", tareaController.devolverTarea);
 
 // 🔹 Ruta para corregir una tarea devuelta
-/* router.put("/:id/corregir", tareaController.corregirTarea);
- */
+router.put("/:id/corregir", tareaController.corregirTarea);
+
 // 📌 Eliminar una tarea
 router.delete("/:id", tareaController.eliminarTarea);
 

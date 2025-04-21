@@ -161,6 +161,35 @@ class SequelizeTareaRepository {
     tarea.motivoDevolucion = motivo;
     return await tarea.save();
   }
+  async corregirTarea(idTarea, correcion, idUsuario) { // idUsuario es el id del usuario que viene del token
+    
+    const tarea = await Tarea.findByPk(idTarea, {
+      include: [
+        {
+          model: db.usuarios,
+          as: "tecnico_asignado", // este alias debe coincidir con tu asociación
+          attributes: ["id", "nombre"]
+        },
+        {
+          model: db.usuarios,
+          as: "usuario_solicitante", // este alias debe coincidir con tu asociación
+          attributes: ["id", "nombre"]
+        }
+      ]
+    });
+
+    if (!tarea || tarea.asignadoA !== idUsuario) {
+        return null;
+    }
+
+    if(tarea.estado != "Devuelta") return null;
+
+    tarea.estado = "Pendiente";
+    tarea.correccionComercial = correcion;
+    tarea.asignadoA = null;
+    return await tarea.save();
+  }
+  
 
   async eliminarTarea(id) {
     const tarea = await this.obtenerPorId(id); // Llama al método del repositorio para obtener el tarea por ID
