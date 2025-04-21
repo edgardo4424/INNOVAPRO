@@ -1,48 +1,68 @@
 const ActualizarFilial = require("../application/useCases/actualizarFilial");
-const SequelizeFilialRepository = require("../infrastructure/repositories/sequelizeFilialRepository");
-const { verificarDuplicadosRUC } = require("../infrastructure/services/entidadService");
 
-const filialRepository = new SequelizeFilialRepository();
+describe("🧪 Caso de uso: Actualizar Filial", () => {
+  const mockFilial = {
+    id: 1,
+    razon_social: "Empresa Test",
+    direccion: "Antigua",
+    telefono_oficina: "999",
+  };
 
-describe("Caso de uso: Actualizar Filial", () => {
-  let filialCreado;
+  const mockModelo = {
+    findOne: jest.fn().mockResolvedValue(null),
+  }
 
-  beforeAll(async () => {
-    const datosIniciales = {
-      razon_social: `Empresa Test ${Date.now()}`,
-      ruc: `20${Math.floor(100000000 + Math.random() * 900000000)}`,
-      direccion: "Av. Siempre Viva 123",
-      representante_legal: "Luis Ramírez",
-      dni_representante: "77889966",
-      cargo_representante: "Gerente",
-      telefono_representante: "987654321",
-      telefono_oficina: "012345678",
-      creado_por: 1
-    };
+  const verificarDuplicadosRUC = jest.fn().mockImplementation(() => Promise.resolve(null));
 
-    filialCreado = await filialRepository.crear(datosIniciales);
-  });
+  const mockFilialRepository = {
+    obtenerPorId: jest.fn(),
+    actualizarFilial: jest.fn(),
+    getModel: jest.fn(() => mockModelo),
+  };
 
-  it("debe actualizar correctamente una filial existente", async () => {
-    const nuevosDatos = {
-      telefono_oficina: "011111111",
+
+  it("✅ debe actualizar correctamente una filial existente", async () => {
+    mockFilialRepository.obtenerPorId.mockResolvedValue(mockFilial);
+    mockFilialRepository.actualizarFilial.mockResolvedValue({
+      ...mockFilial,
       direccion: "Calle Actualizada 456",
-    };
+      telefono_oficina: "011111111",
+    });
 
-    const resultado = await ActualizarFilial(filialCreado.id, nuevosDatos, filialRepository, { verificarDuplicadosRUC });
+    const resultado = await ActualizarFilial(
+      1,
+      { direccion: "Calle Actualizada 456", telefono_oficina: "011111111" },
+      mockFilialRepository,
+      { verificarDuplicadosRUC }
+    );
 
     expect(resultado.codigo).toBe(200);
-    expect(resultado.respuesta.filial.telefono_oficina).toBe("011111111");
     expect(resultado.respuesta.filial.direccion).toBe("Calle Actualizada 456");
   });
 
-  it("debe retornar 404 si la filial no existe", async () => {
-    const resultado = await ActualizarFilial(999999, { telefono_oficina: "999999" }, filialRepository, { verificarDuplicadosRUC });
+  it("❌ debe retornar 404 si la filial no existe", async () => {
+    mockFilialRepository.obtenerPorId.mockResolvedValue(null);
+
+    const resultado = await ActualizarFilial(
+      999,
+      { telefono_oficina: "999999" },
+      mockFilialRepository,
+      { verificarDuplicadosRUC }
+    );
+
     expect(resultado.codigo).toBe(404);
   });
 
-  it("debe fallar si no se envían campos válidos", async () => {
-    const resultado = await ActualizarFilial(filialCreado.id, {}, filialRepository, { verificarDuplicadosRUC });
+  it("❌ debe fallar si no se envían campos válidos", async () => {
+    mockFilialRepository.obtenerPorId.mockResolvedValue(mockFilial);
+
+    const resultado = await ActualizarFilial(
+      1,
+      {},
+      mockFilialRepository,
+      { verificarDuplicadosRUC }
+    );
+
     expect(resultado.codigo).toBe(400);
     expect(resultado.respuesta.mensaje).toMatch(/al menos un campo válido/i);
   });

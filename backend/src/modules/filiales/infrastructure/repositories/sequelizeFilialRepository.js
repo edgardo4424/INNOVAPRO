@@ -1,5 +1,4 @@
 const { Filial } = require("../models/filialModel");
-const db = require("../../../../models"); // Llamamos los modelos sequalize de la base de datos
 
 class SequelizeFilialRepository {
     getModel() {
@@ -15,8 +14,6 @@ class SequelizeFilialRepository {
           throw error;
         }
       }
-      
-      
 
     async obtenerFiliales() {
         return await Filial.findAll();

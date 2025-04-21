@@ -1,5 +1,4 @@
 const { Obra } = require("../models/obraModel");
-const db = require("../../../../models"); // Llamamos los modelos sequalize de la base de datos
 
 class SequelizeObraRepository {
     getModel() {
