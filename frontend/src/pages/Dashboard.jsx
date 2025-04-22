@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom";
 import { FaBars, FaSignOutAlt, FaCog, FaBell, FaExclamationCircle, FaExclamationTriangle, FaInfoCircle, FaClipboardList  } from "react-icons/fa";
 import GestionUsuarios from "../components/usuarios/GestionUsuarios";
 import GestionEmpresas from "../components/filiales/GestionEmpresas";
-import GestionClientes from "../components/clientes/GestionClientes"; 
+import GestionClientes from "../modules/clientes/pages/GestionClientes"; 
 import CotizacionForm from "../components/cotizaciones/CotizacionForm";
 import GestionContactos from "../components/clientes/GestionContactos"; 
 import GestionProductosServicios from "../components/productos/GestionProductosServicios";

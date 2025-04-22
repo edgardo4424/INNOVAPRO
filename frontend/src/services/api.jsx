@@ -44,7 +44,7 @@ api.interceptors.response.use(
 
 export const buscarDatosPorRUC = async (ruc) => {
   try {
-    const res = await api.get(`/ruc/buscar-ruc/${ruc}`);
+    const res = await api.get(`/sunat/buscar-ruc/${ruc}`);
     return res.data;
   } catch (error) {
     console.error("❌ Error buscando RUC en SUNAT:", error);

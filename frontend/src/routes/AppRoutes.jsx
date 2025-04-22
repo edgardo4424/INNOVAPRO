@@ -4,7 +4,7 @@ import Dashboard from "../pages/Dashboard";
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 import GestionUsuarios from "../components/usuarios/GestionUsuarios";
 import GestionEmpresas from "../components/filiales/GestionEmpresas";
-import GestionClientes from "../components/clientes/GestionClientes";
+import GestionClientes from "../modules/clientes/pages/GestionClientes";
 import GestionContactos from "../components/clientes/GestionContactos";
 import GestionProductosServicios from "../components/productos/GestionProductosServicios";
 import GestionObras from "../components/clientes/GestionObras";

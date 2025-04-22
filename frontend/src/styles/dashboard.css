@@ -243,8 +243,14 @@
 }
 
 .error-message {
-  color: red;
-  font-weight: bold;
+  color: #e74c3c;
+  font-size: 0.8rem;
+  margin-top: 2px;
+  margin-bottom: 10px;
+  background-color: #fef0f0;
+  padding: 6px 10px;
+  border-left: 4px solid #e74c3c;
+  border-radius: 4px;
 }
 
 /* 🔹 Contenedor de atributos optimizado */
