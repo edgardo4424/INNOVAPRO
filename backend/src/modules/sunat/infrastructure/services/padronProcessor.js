@@ -6,12 +6,14 @@ const readline = require("readline");
 const iconv = require("iconv-lite");
 const mysql = require("mysql2/promise");
 const cron = require("node-cron");
+const ejecutarImportacionSUNAT = require("../../application/useCases/ejecutarImportacionSunat");
 
 const SUNAT_URL = "https://www.sunat.gob.pe/descargaPRR/padron_reducido_ruc.zip";
-const DEST_DIR = path.resolve(__dirname, "../../data/sunat");
+const DEST_DIR = path.resolve(__dirname, "../../../../../data/sunat");
 const ZIP_FILE = path.join(DEST_DIR, "padron_reducido_ruc.zip");
 const TXT_FILE = path.join(DEST_DIR, "padron_reducido_ruc.txt");
 
+// 🔌 Conexión directa a la base de datos (para carga masiva)
 async function connectDB() {
   return mysql.createPool({
     host: process.env.DB_HOST,
@@ -87,83 +89,54 @@ async function loadPadronToDB(filePath) {
 
     counter++;
 
-    // 🔥 Insertamos cada 10,000 registros para mejorar el rendimiento
     if (batch.length >= 10000) {
-      await db.query(
-        `INSERT INTO ContriSUNAT (
-          ruc, nombre_razon_social, estado_contribuyente, condicion_domicilio,
-          ubigeo, tipo_via, nombre_via, codigo_zona, tipo_zona, numero,
-          interior, lote, departamento, manzana, kilometro
-        ) VALUES ? 
-        ON DUPLICATE KEY UPDATE 
-          nombre_razon_social=VALUES(nombre_razon_social),
-          estado_contribuyente=VALUES(estado_contribuyente),
-          condicion_domicilio=VALUES(condicion_domicilio),
-          ubigeo=VALUES(ubigeo),
-          tipo_via=VALUES(tipo_via),
-          nombre_via=VALUES(nombre_via),
-          codigo_zona=VALUES(codigo_zona),
-          tipo_zona=VALUES(tipo_zona),
-          numero=VALUES(numero),
-          interior=VALUES(interior),
-          lote=VALUES(lote),
-          departamento=VALUES(departamento),
-          manzana=VALUES(manzana),
-          kilometro=VALUES(kilometro)`, 
-        [batch]
-      );
-      batch = []; // Vaciamos el array para el siguiente bloque
+      await insertBatch(db, batch);
+      batch = [];
       console.log(`→ ${counter} líneas procesadas...`);
     }
   }
 
-  // 🔥 Insertar los últimos registros que quedaron fuera del último batch
-  if (batch.length > 0) {
-    await db.query(
-      `INSERT INTO ContriSUNAT (
-        ruc, nombre_razon_social, estado_contribuyente, condicion_domicilio,
-        ubigeo, tipo_via, nombre_via, codigo_zona, tipo_zona, numero,
-        interior, lote, departamento, manzana, kilometro
-      ) VALUES ? 
-      ON DUPLICATE KEY UPDATE 
-        nombre_razon_social=VALUES(nombre_razon_social),
-        estado_contribuyente=VALUES(estado_contribuyente),
-        condicion_domicilio=VALUES(condicion_domicilio),
-        ubigeo=VALUES(ubigeo),
-        tipo_via=VALUES(tipo_via),
-        nombre_via=VALUES(nombre_via),
-        codigo_zona=VALUES(codigo_zona),
-        tipo_zona=VALUES(tipo_zona),
-        numero=VALUES(numero),
-        interior=VALUES(interior),
-        lote=VALUES(lote),
-        departamento=VALUES(departamento),
-        manzana=VALUES(manzana),
-        kilometro=VALUES(kilometro)`, 
-      [batch]
-    );
-  }
+  if (batch.length > 0) await insertBatch(db, batch);
 
   rl.close();
   await db.end();
   console.log(`✅ Carga completa: ${counter} registros procesados.`);
 }
 
-async function executeFullProcess() {
-  try {
-    await downloadPadron();
-    const filePath = await extractTXT();
-    await loadPadronToDB(filePath);
-    console.log("🎉 Proceso completo sin permisos raros.");
-  } catch (error) {
-    console.error("❌ Error en el proceso:", error.message);
-  }
+async function insertBatch(db, batch) {
+  return db.query(
+    `INSERT INTO ContriSUNAT (
+      ruc, nombre_razon_social, estado_contribuyente, condicion_domicilio,
+      ubigeo, tipo_via, nombre_via, codigo_zona, tipo_zona, numero,
+      interior, lote, departamento, manzana, kilometro
+    ) VALUES ? 
+    ON DUPLICATE KEY UPDATE 
+      nombre_razon_social=VALUES(nombre_razon_social),
+      estado_contribuyente=VALUES(estado_contribuyente),
+      condicion_domicilio=VALUES(condicion_domicilio),
+      ubigeo=VALUES(ubigeo),
+      tipo_via=VALUES(tipo_via),
+      nombre_via=VALUES(nombre_via),
+      codigo_zona=VALUES(codigo_zona),
+      tipo_zona=VALUES(tipo_zona),
+      numero=VALUES(numero),
+      interior=VALUES(interior),
+      lote=VALUES(lote),
+      departamento=VALUES(departamento),
+      manzana=VALUES(manzana),
+      kilometro=VALUES(kilometro)`,
+    [batch]
+  );
 }
 
-// 🕓 Ejecutar automáticamente el primer domingo del mes a las 03:00 AM
+// 🕓 Cron automático: primer domingo del mes a las 03:00 AM
 cron.schedule("0 3 1-7 * 0", () => {
-  console.log("🚀 Iniciando proceso automático SUNAT...");
-  executeFullProcess();
+  console.log("⏰ Ejecutando proceso automático SUNAT...");
+  ejecutarImportacionSUNAT();
 });
 
-module.exports = { executeFullProcess };
+module.exports = {
+  downloadPadron,
+  extractTXT,
+  loadPadronToDB,
+};
