@@ -5,6 +5,6 @@ const { verificarToken } = require("../../../../shared/middlewares/authMiddlewar
 const { esGerente } = require("../../../../shared/middlewares/rolMiddleware");
 
 router.get("/buscar-ruc/:ruc", sunatController.buscarPorRUC);
-router.post("/importar-sunat", verificarToken, esGerente, sunatController.importarPadronSUNAT);
+router.post("/importar-sunat", verificarToken, esGerente, sunatController.importarPadron);
 
 module.exports = router;

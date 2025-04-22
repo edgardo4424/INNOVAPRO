@@ -4,11 +4,6 @@ const { verificarToken } = require("../shared/middlewares/authMiddleware");
 
 const { registerModuleRoutes } = require("../../scripts/registerModuleRoutes");
 
-const sunatRoutes = require("./sunatRoutes");
-
-// 📌 Rutas públicas
-router.use("/sunat", sunatRoutes); // 🔥 Ruta para pruebas de importación SUNAT
-
 // 📌 PROTEGER RUTAS DESPUÉS DEL LOGIN
 if (process.env.NODE_ENV !== "development") {
     router.use(verificarToken);
@@ -21,6 +16,5 @@ registerModuleRoutes(router, null); // Ya protegemos globamente con el middlewar
 router.use("/cotizaciones", require("./cotizaciones"));
 router.use("/productos-servicios", require("./productosServiciosRoutes"));
 router.use("/tareas", require("./tareasRoutes"));
-router.use("/ruc", require("./rucRoutes"));
 
 module.exports = router;
