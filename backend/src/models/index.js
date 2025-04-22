@@ -26,6 +26,11 @@ db.contacto_obras = require("./contacto_obras")(sequelize, DataTypes);
 const { Notificaciones } = require('../modules/notificaciones/infrastructure/models/notificacionModel');
 db.notificaciones = Notificaciones;
 
+const { ContriSUNAT } = require('../modules/sunat/infrastructure/models/contrisunat');
+db.contrisunat = ContriSUNAT;
+
+const { Ubigeo } = require('../modules/sunat/infrastructure/models/ubigeos');
+db.ubigeos = Ubigeo;
 
 // Cotizaciones
 db.cotizaciones = require("./cotizaciones")(sequelize, DataTypes);
@@ -39,9 +44,6 @@ db.EmpresaProducto = require("./empresa_producto")(sequelize, DataTypes);
 const { Tarea } = require('../modules/tareas/infrastructure/models/tareaModel');
 db.tareas = Tarea;
 
-// SUNAT
-db.contrisunat = require("./contrisunat")(sequelize, DataTypes);
-db.ubigeos = require("./ubigeos")(sequelize, DataTypes);
 
 // ✅ Solo se asocian los que tienen .associate()
 if (db.contactos.associate) db.contactos.associate(db);
@@ -54,6 +56,7 @@ if (db.cotizaciones.associate) db.cotizaciones.associate(db);
 if (db.cotizacion_detalles.associate) db.cotizacion_detalles.associate(db);
 if (db.tareas.associate) db.tareas.associate(db);
 if (db.notificaciones.associate) db.notificaciones.associate(db);
+if (db.contrisunat.associate) db.contrisunat.associate(db);
 
 // Sequelize
 db.sequelize = sequelize;
