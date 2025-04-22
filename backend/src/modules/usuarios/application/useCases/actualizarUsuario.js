@@ -9,9 +9,9 @@ module.exports = async (id, usuarioData, usuarioRepository) => {
     
     // Verificar si el correo ya está en uso
     const usuarioExistentePorEmail = await usuarioRepository.obtenerPorEmail(usuarioData.email);
-    
+
     // Verificar si el nuevo email ya ha sido registrado en otro usuario
-    if (usuarioExistentePorEmail && usuarioData.email == usuarioExistentePorEmail.email) {
+    if (usuarioExistentePorEmail && id != usuarioExistentePorEmail.id) {
      
         return { codigo: 400, respuesta: { mensaje: "El correo ya está registrado" } }
     }
