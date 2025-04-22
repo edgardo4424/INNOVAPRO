@@ -91,7 +91,7 @@ class SequelizeTareaRepository {
       ]
     });
 
-    if (!tarea || tarea.asignadoA !== idUsuario) {
+    if (!tarea || tarea.asignadoA != idUsuario) {
         return null;
     }
 
@@ -113,7 +113,7 @@ class SequelizeTareaRepository {
       ]
     });
 
-    if (!tarea || tarea.asignadoA !== idUsuario) {
+    if (!tarea || tarea.asignadoA != idUsuario) {
         return null;
     }
 
@@ -133,7 +133,7 @@ class SequelizeTareaRepository {
       ]
     });
 
-    if (!tarea || tarea.asignadoA !== idUsuario) {
+    if (!tarea || tarea.asignadoA != idUsuario) {
         return null;
     }
 
@@ -153,7 +153,7 @@ class SequelizeTareaRepository {
       ]
     });
 
-    if (!tarea || tarea.asignadoA !== idUsuario) {
+    if (!tarea || tarea.asignadoA != idUsuario) {
         return null;
     }
 
@@ -161,7 +161,7 @@ class SequelizeTareaRepository {
     tarea.motivoDevolucion = motivo;
     return await tarea.save();
   }
-  async corregirTarea(idTarea, correcion, idUsuario) { // idUsuario es el id del usuario que viene del token
+  async corregirTarea(idTarea, correcion) { 
     
     const tarea = await Tarea.findByPk(idTarea, {
       include: [
@@ -178,15 +178,19 @@ class SequelizeTareaRepository {
       ]
     });
 
-    if (!tarea || tarea.asignadoA !== idUsuario) {
+    if (!tarea) {
         return null;
     }
+
+    console.log("ESTADO", tarea.estado);
 
     if(tarea.estado != "Devuelta") return null;
 
     tarea.estado = "Pendiente";
     tarea.correccionComercial = correcion;
     tarea.asignadoA = null;
+
+    console.log('pasara a pendiente');
     return await tarea.save();
   }
   

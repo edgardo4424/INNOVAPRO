@@ -5,11 +5,10 @@ const {
   emitirNotificacionPrivada,
 } = require("../../../notificaciones/infrastructure/services/emisorNotificaciones");
 
-module.exports = async (idTarea, idUsuario, correcion, tareaRepository) => {
-  
-    // id de la tarea e id del usuario del middleware (idUsuario)
-    
-  const tarea = await tareaRepository.corregirTarea(idTarea, correcion, idUsuario);
+module.exports = async (idTarea, correcion, tareaRepository) => {
+  const usuarioIdTecnico = await tareaRepository.obtenerPorId(idTarea);
+
+  const tarea = await tareaRepository.corregirTarea(idTarea, correcion);
 
   if (!tarea) {
     return {
@@ -20,15 +19,39 @@ module.exports = async (idTarea, idUsuario, correcion, tareaRepository) => {
 
   // ✅ Notificar al tecnico
 
-  const notificacion = {
-    usuarioId: tecnicoId,
-    mensaje: `La tarea #${tarea.id} ha sido corregida por el comercial ${tarea.usuario_solicitante?.nombre || "desconocido"}.`,
+  const notificacionAlTecnico = {
+    usuarioId: usuarioIdTecnico.asignadoA,
+    mensaje: `La tarea #${tarea.id} ha sido corregida por el comercial ${
+      tarea.usuario_solicitante?.nombre || "desconocido"
+    }.`,
     tipo: "info",
-}
+  };
 
-  const notiRegistrado = await notificacionRepository.crear(notificacion);
+  const notiRegistradoTecnico = await notificacionRepository.crear(
+    notificacionAlTecnico
+  );
 
-  emitirNotificacionPrivada(notiRegistrado.usuarioId, notiRegistrado);
+  emitirNotificacionPrivada(
+    notificacionAlTecnico.usuarioId,
+    notiRegistradoTecnico
+  );
+
+  // ✅ Notificar al creador
+
+  const notificacionAlCreador = {
+    usuarioId: tarea.usuarioId,
+    mensaje: `La tarea #${tarea.id} ha sido corregida`,
+    tipo: "info",
+  };
+
+  const notiRegistradoCreador = await notificacionRepository.crear(
+    notificacionAlCreador
+  );
+
+  emitirNotificacionPrivada(
+    notificacionAlCreador.usuarioId,
+    notiRegistradoCreador
+  );
 
   return {
     codigo: 200,
