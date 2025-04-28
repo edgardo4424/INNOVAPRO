@@ -37,10 +37,10 @@ export default function Login() {
 
     setLoading(true); // 🔥 Desactiva el botón
 
-    const success = await login(email, password, recaptchaToken);
+    const success = await login(email, password, recaptchaToken, navigate);
     if (success) {
       console.log("✅ Login exitoso. Redirigiendo al dashboard...");
-      navigate("/dashboard");
+      navigate("/");
     } else {
       alert("❌ Credenciales incorrectas o fallo en reCAPTCHA.");
       setLoading(false); // 🔥 Reactiva el botón

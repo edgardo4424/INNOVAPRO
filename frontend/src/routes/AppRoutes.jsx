@@ -1,6 +1,6 @@
 import { BrowserRouter, HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import App from "../App";
 import Login from "../pages/Login";
-import Dashboard from "../pages/Dashboard";
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 import GestionUsuarios from "../components/usuarios/GestionUsuarios";
 import GestionEmpresas from "../components/filiales/GestionEmpresas";
@@ -11,6 +11,9 @@ import GestionObras from "../components/clientes/GestionObras";
 import CentroAtencion from "../components/tareas/CentroAtencion";
 import RegistrarTarea from "../components/tareas/RegistrarTarea";
 
+import DashboardHome from "../modules/dashboard/pages/DashboardHome";
+import DashboardLayout from "../modules/dashboard/pages/DashboardLayout";
+
 export default function AppRoutes() {
   const Router = process.env.NODE_ENV === "production" ? HashRouter : BrowserRouter;
   const LOGIN_PATH = process.env.NODE_ENV === "production" ? "/#/login" : "/login";
@@ -19,90 +22,29 @@ export default function AppRoutes() {
   return (
     <Router>
       <Routes>
-        {/* 🔥 Rutas públicas */}
+
+        {/* Ruta pública */}
         <Route path="/login" element={<Login />} />
-        
-        {/* 🔥 Redirección automática a /login si la ruta raíz (/) no tiene sesión */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
 
-        {/* 🔥 Rutas protegidas con validación */}
-        <Route 
-          path="/dashboard" 
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="*"
-          element={
-            <Navigate to={LOGIN_PATH} replace />
-          } 
-        />
-        <Route 
-          path="/gestion-usuarios" 
-          element={
-            <ProtectedRoute>
-              <GestionUsuarios />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/gestion-empresas" 
-          element={
-            <ProtectedRoute>
-              <GestionEmpresas />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/gestion-clientes" 
-          element={
-            <ProtectedRoute>
-              <GestionClientes />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/gestion-contactos" 
-          element={
-            <ProtectedRoute>
-              <GestionContactos />
-            </ProtectedRoute>
-          } 
-        />
-        <Route path="/gestion-productos-servicios" 
-        element={
-          <ProtectedRoute>
-            <GestionProductosServicios />
-          </ProtectedRoute>
-        } 
-        />
-        <Route path="/gestion-obras" 
-        element={
-          <ProtectedRoute>
-            <GestionObras />
-          </ProtectedRoute>
-        } 
-        />
-        <Route path="/centro-atencion" 
-        element={
-          <ProtectedRoute>
-            <CentroAtencion />
-          </ProtectedRoute>
-        } 
-        />
-        <Route path="/registrar-tarea" 
-        element={
-          <ProtectedRoute>
-            <RegistrarTarea />
-          </ProtectedRoute>} 
-        />
+        {/* Rutas protegidas */}
+        <Route path="/" element={<ProtectedRoute />}>
+          <Route element={<DashboardLayout />}>
+            <Route index element={<DashboardHome />} />
+            <Route path="gestion-usuarios" element={<GestionUsuarios />} />
+            <Route path="gestion-empresas" element={<GestionEmpresas />} />
+            <Route path="gestion-clientes" element={<GestionClientes />} />
+            <Route path="gestion-contactos" element={<GestionContactos />} />
+            <Route path="gestion-productos-servicios" element={<GestionProductosServicios />} />
+            <Route path="gestion-obras" element={<GestionObras />} />
+            <Route path="centro-atencion" element={<CentroAtencion />} />
+            <Route path="registrar-tarea" element={<RegistrarTarea />} />
+          </Route>
+        </Route>
 
-        {/* 🔥 Si la ruta no existe, redirigir siempre a `/login` */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        {/* Catch-all */}
+        <Route path="*" element={<Navigate to={LOGIN_PATH} replace />} />
+
       </Routes>
     </Router>
   );
-}
+  }

@@ -19,11 +19,13 @@ export default function ClienteForm({
   return (
     <form onSubmit={onSubmit} className="gestion-form-global">
       {/* Tipo de cliente */}
-      <label>Tipo:</label>
-      <select name="tipo" value={cliente.tipo} onChange={handleChange}>
-        <option value="Persona Jurídica">Persona Jurídica</option>
-        <option value="Persona Natural">Persona Natural</option>
-      </select>
+      <div className="form-group">
+        <label>Tipo de Cliente:</label>
+        <select name="tipo" value={cliente.tipo} onChange={handleChange}>
+          <option value="Persona Jurídica">Persona Jurídica</option>
+          <option value="Persona Natural">Persona Natural</option>
+        </select>
+      </div>
 
       {/* Razon Social / Nombre */}
       <input
@@ -153,10 +155,10 @@ export default function ClienteForm({
       {getError("email") && <p className="error-message">{getError("email")}</p>}
 
       {/* Botones */}
-      <div className="form-buttons">
-        <button type="submit" className="btn-guardar">Guardar</button>
-        <button type="button" className="btn-cancelar" onClick={onCancel}>Cancelar</button>
-      </div>
+      
+      <button type="submit" className="btn-guardar">Guardar</button>
+      <button type="button" className="btn-cancelar" onClick={onCancel}>Cancelar</button>
+      
     </form>
   );
 }

@@ -4,8 +4,12 @@ import clientesService from "../services/clientesService";
 import { validarClienteJuridico, validarClienteNatural } from "../validaciones/validarCliente";
 import { toast } from "react-toastify";
 import { buscarDatosPorRUC } from "../../../services/api";
+import { useAuth } from "../../../context/AuthContext";
+import { parsearError } from "../../../utils/parsearError";
 
-export default function ModalAgregarCliente({ onClose }) {
+export default function ModalAgregarCliente({ onClose, agregarCliente }) {
+  const { user } = useAuth();
+
   const [cliente, setCliente] = useState({
     tipo: "Persona Jurídica",
     tipo_documento: "DNI",
@@ -58,6 +62,11 @@ export default function ModalAgregarCliente({ onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const clienteSeguro = { ...cliente };
+    if (!clienteSeguro.tipo_documento) {
+      clienteSeguro.tipo_documento = "DNI";
+    }
+
     const erroresValidados =
       cliente.tipo === "Persona Jurídica"
         ? validarClienteJuridico(cliente)
@@ -75,8 +84,17 @@ export default function ModalAgregarCliente({ onClose }) {
         if (clienteLimpio[key] === "") clienteLimpio[key] = null;
       });
 
+      if (user && user.id) {
+        clienteLimpio.creado_por = user.id;
+      } else {
+        console.error("⚠️ Usuario no encontrado en AuthContext");
+        toast.error("Error de autenticación. Cierra sesión e ingresa de nuevo.");
+        return; 
+      }
+
       const res = await clientesService.crear(clienteLimpio);
       if (res.data && res.data.cliente) {
+        agregarCliente(res.data.cliente);
         toast.success("Cliente agregado correctamente");
         onClose();
       } else {
@@ -84,7 +102,7 @@ export default function ModalAgregarCliente({ onClose }) {
       }
     } catch (error) {
       console.error("❌ Error al agregar cliente:", error);
-      toast.error("Error al agregar cliente");
+      toast.error(parsearError(error));
     }
   };
 
