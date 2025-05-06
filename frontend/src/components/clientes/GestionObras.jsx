@@ -227,7 +227,7 @@ export default function GestionObras() {
             placeholder="Buscar obra..." 
             value={busqueda} 
             onChange={(e) => setBusqueda(e.target.value)} 
-            className="busqueda-input" 
+            className="busqueda-input"  
           />
         </div>
 

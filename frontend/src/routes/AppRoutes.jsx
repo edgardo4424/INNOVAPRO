@@ -7,7 +7,7 @@ import GestionEmpresas from "../components/filiales/GestionEmpresas";
 import GestionClientes from "../modules/clientes/pages/GestionClientes";
 import GestionContactos from "../modules/contactos/pages/GestionContactos";
 import GestionProductosServicios from "../components/productos/GestionProductosServicios";
-import GestionObras from "../components/clientes/GestionObras";
+import GestionObras from "../modules/obras/pages/GestionObras";
 import CentroAtencion from "../components/tareas/CentroAtencion";
 import RegistrarTarea from "../components/tareas/RegistrarTarea";
 
