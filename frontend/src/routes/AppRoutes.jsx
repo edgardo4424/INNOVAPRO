@@ -2,7 +2,7 @@ import { BrowserRouter, HashRouter, Routes, Route, Navigate } from "react-router
 import App from "../App";
 import Login from "../pages/Login";
 import ProtectedRoute from "../components/auth/ProtectedRoute";
-import GestionUsuarios from "../components/usuarios/GestionUsuarios";
+import GestionUsuarios from "../modules/usuarios/pages/GestionUsuarios";
 import GestionEmpresas from "../modules/filiales/pages/GestionEmpresas";
 import GestionClientes from "../modules/clientes/pages/GestionClientes";
 import GestionContactos from "../modules/contactos/pages/GestionContactos";
