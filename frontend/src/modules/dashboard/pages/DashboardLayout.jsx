@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import { Sidebar, Header } from "../components";
+import "../styles/dashboard.css";
 
 export default function DashboardLayout() {
   const { user, logout } = useAuth();

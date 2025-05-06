@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import clientesService from "../services/clientesService";
 import { toast } from "react-toastify";
+import { confirmToast } from "../../../utils/confirmToast";
 
 export function useGestionClientes() {
   const [clientes, setClientes] = useState([]);
@@ -42,16 +43,17 @@ export function useGestionClientes() {
   };
 
   const eliminarCliente = async (id) => {
-    if (!window.confirm("¿Seguro que quieres eliminar este cliente?")) return;
-    try {
-      await clientesService.eliminar(id);
-      setClientes((prev) => prev.filter((c) => c.id !== id));
-      toast.success("Cliente eliminado");
-    } catch (error) {
-      console.error("❌ Error al eliminar cliente:", error);
-      toast.error("No se pudo eliminar el cliente");
-    }
-  };
+    confirmToast("¿Seguro que deseas eliminar este cliente?", async () => {
+      try {
+        await clientesService.eliminar(id);
+        setClientes((prev) => prev.filter((c) => c.id !== id));
+        toast.success("Cliente eliminado");
+      } catch (error) {
+        console.error("❌ Error al eliminar cliente:", error);
+        toast.error("No se pudo eliminar el cliente");
+      }
+    })
+  }; 
 
   // 🔍 Filtro de búsqueda
   const clientesFiltrados = clientes.filter((c) =>

@@ -33,14 +33,14 @@ export default function TablaClientes({ clientes, onEditar, onEliminar }) {
               <td>{cliente.representante_legal || "—"}</td>
               <td>{cliente.dni_representante || "—"}</td>
               <td>
-                <div style={{ display: "flex", gap: "5px" }}>
+              <div style={{ display: "flex", gap: "1px", justifyContent: "left" }}>
                   <button onClick={() => onEditar(cliente)} className="edit-button">
-                    ✏️
+                  ✏️Editar
                   </button>
-                  <button onClick={() => onEliminar(cliente.id)} className="delete-button">
-                    🗑
+                  <button onClick={() => onEliminar(cliente.id)} className="btn-eliminar">
+                  🗑Eliminar
                   </button>
-                </div>
+              </div>
               </td>
             </tr>
           ))}

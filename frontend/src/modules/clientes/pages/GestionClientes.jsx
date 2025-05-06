@@ -3,12 +3,11 @@ import TablaClientes from "../components/TablaClientes";
 import ModalAgregarCliente from "../components/ModalAgregarCliente";
 import ModalEditarCliente from "../components/ModalEditarCliente";
 import { useGestionClientes } from "../hooks/useGestionClientes";
-import { useModuloNavegacion } from "../../../hooks/useModuloNavegacion";
-import "../../../styles/dashboard.css";
+import ModuloNavegacion from "../../shared/components/ModuloNavegacion";
+import Paginacion from "../../shared/components/Paginacion";
+
 
 export default function GestionClientes() {
-  const { irModuloAnterior, irModuloSiguiente, volverInicio, moduloSiguiente, moduloAnterior } = useModuloNavegacion();
-
   const {
     clientesPaginados,
     busqueda,
@@ -30,28 +29,7 @@ export default function GestionClientes() {
   return (
     <div className="dashboard-main">
       
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}>
-        
-        {/* Botón Volver Inicio */}
-        <button className="back-button" onClick={volverInicio}>
-          ⬅ Volver al inicio
-        </button>
-
-        {/* Botón Módulo Anterior */}
-        {moduloAnterior && (
-          <button className="back-button" onClick={irModuloAnterior}>
-            ⬅ {moduloAnterior.name}
-          </button>
-        )}
-
-        {/* Botón Siguiente Módulo */}
-        {moduloSiguiente && (
-          <button className="next-button" onClick={irModuloSiguiente}>
-            {moduloSiguiente.name} ➡
-          </button>
-        )}
-
-      </div>
+      <ModuloNavegacion />
 
       <h2>Gestión de Clientes</h2>
 
@@ -81,17 +59,12 @@ export default function GestionClientes() {
         />
       )}
 
-      <div className="pagination">
-        <button disabled={paginaActual === 1} onClick={() => setPaginaActual(paginaActual - 1)}>
-          ⬅ Anterior
-        </button>
-        <span>
-          Página {paginaActual} de {totalPaginas}
-        </span>
-        <button disabled={paginaActual === totalPaginas} onClick={() => setPaginaActual(paginaActual + 1)}>
-          Siguiente ➡
-        </button>
-      </div>
+      <Paginacion
+        paginaActual={paginaActual}
+        totalPaginas={totalPaginas}
+        onPaginarAnterior={() => setPaginaActual(paginaActual - 1)}
+        onPaginarSiguiente={() => setPaginaActual(paginaActual + 1)}
+      />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../../context/AuthContext";
 
-export function useModuloNavegacion() {
+export default function ModuloNavegacion() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -29,38 +29,43 @@ export function useModuloNavegacion() {
     "Oficina Técnica": [
       { name: "Centro de Atención", path: "/centro-atencion" },
     ],
-    // Agrega los demás roles si quieres aquí
+    // Agrega otros roles si aplica
   };
 
   const modules = modulesByRole[user?.rol] || [];
   const currentPath = location.pathname;
-
   const currentIndex = modules.findIndex((mod) => mod.path === currentPath);
 
   const moduloAnterior = currentIndex > 0 ? modules[currentIndex - 1] : null;
   const moduloSiguiente = currentIndex < modules.length - 1 ? modules[currentIndex + 1] : null;
 
   const irModuloAnterior = () => {
-    if (moduloAnterior) {
-      navigate(moduloAnterior.path);
-    }
+    if (moduloAnterior) navigate(moduloAnterior.path);
   };
 
   const irModuloSiguiente = () => {
-    if (moduloSiguiente) {
-      navigate(moduloSiguiente.path);
-    }
+    if (moduloSiguiente) navigate(moduloSiguiente.path);
   };
 
-  const volverInicio = () => {
-    navigate("/");
-  };
+  const volverInicio = () => navigate("/");
 
-  return {
-    moduloAnterior,
-    moduloSiguiente,
-    irModuloAnterior,
-    irModuloSiguiente,
-    volverInicio,
-  };
+  return (
+    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}>
+      <button className="back-button" onClick={volverInicio}>
+        ⬅ Volver al inicio
+      </button>
+
+      {moduloAnterior && (
+        <button className="back-button" onClick={irModuloAnterior}>
+          ⬅ {moduloAnterior.name}
+        </button>
+      )}
+
+      {moduloSiguiente && (
+        <button className="next-button" onClick={irModuloSiguiente}>
+          {moduloSiguiente.name} ➡
+        </button>
+      )}
+    </div>
+  );
 }
