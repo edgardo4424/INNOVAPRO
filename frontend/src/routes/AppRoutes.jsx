@@ -9,7 +9,7 @@ import GestionContactos from "../modules/contactos/pages/GestionContactos";
 import GestionProductosServicios from "../components/productos/GestionProductosServicios";
 import GestionObras from "../modules/obras/pages/GestionObras";
 import CentroAtencion from "../components/tareas/CentroAtencion";
-import RegistrarTarea from "../components/tareas/RegistrarTarea";
+import RegistrarTarea from "../modules/tareas/pages/RegistrarTarea";
 
 import DashboardHome from "../modules/dashboard/pages/DashboardHome";
 import DashboardLayout from "../modules/dashboard/pages/DashboardLayout";
