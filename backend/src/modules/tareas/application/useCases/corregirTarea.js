@@ -1,15 +1,14 @@
-const SequelizeNotificacionesRepository = require("../../../notificaciones/infrastructure/repositories/sequelizeNotificacionesRepository"); // Importamos el repositorio de notificaciones
-const notificacionRepository = new SequelizeNotificacionesRepository(); // Instancia del repositorio de notificaciones
+// backend/src/modules/tareas/application/useCases/corregirTarea.js
+const SequelizeNotificacionesRepository = require("../../../notificaciones/infrastructure/repositories/sequelizeNotificacionesRepository");
+const notificacionRepository = new SequelizeNotificacionesRepository();
 
 const {
   emitirNotificacionPrivada,
 } = require("../../../notificaciones/infrastructure/services/emisorNotificaciones");
 
-module.exports = async (idTarea, idUsuario, correcion, tareaRepository) => {
-  
-    // id de la tarea e id del usuario del middleware (idUsuario)
-    
-  const tarea = await tareaRepository.corregirTarea(idTarea, correcion, idUsuario);
+module.exports = async (idTarea, idUsuario, correccion, tareaRepository) => {
+  // 🔍 Buscar y corregir la tarea
+  const tarea = await tareaRepository.corregirTarea(idTarea, correccion, idUsuario);
 
   if (!tarea) {
     return {
@@ -18,17 +17,22 @@ module.exports = async (idTarea, idUsuario, correcion, tareaRepository) => {
     };
   }
 
-  // ✅ Notificar al tecnico
+  // ✅ Notificar al técnico si está asignado
+  const tecnicoId = tarea.tecnico_asignado?.id;
+  if (tecnicoId) {
+    try {
+      const notificacion = {
+        usuarioId: tecnicoId,
+        mensaje: `La tarea #${tarea.id} ha sido corregida por el comercial ${tarea.usuario_solicitante?.nombre || "desconocido"}.`,
+        tipo: "info",
+      };
 
-  const notificacion = {
-    usuarioId: tecnicoId,
-    mensaje: `La tarea #${tarea.id} ha sido corregida por el comercial ${tarea.usuario_solicitante?.nombre || "desconocido"}.`,
-    tipo: "info",
-}
-
-  const notiRegistrado = await notificacionRepository.crear(notificacion);
-
-  emitirNotificacionPrivada(notiRegistrado.usuarioId, notiRegistrado);
+      const notiRegistrado = await notificacionRepository.crear(notificacion);
+      emitirNotificacionPrivada(notiRegistrado.usuarioId, notiRegistrado);
+    } catch (error) {
+      console.error("❌ Error al enviar notificación de corrección:", error.message);
+    }
+  }
 
   return {
     codigo: 200,
@@ -37,4 +41,4 @@ module.exports = async (idTarea, idUsuario, correcion, tareaRepository) => {
       tarea: tarea,
     },
   };
-}; // Exporta la función para que pueda ser utilizada en otros módulos
+};

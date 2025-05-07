@@ -1,5 +1,5 @@
 import useRegistrarTarea from "../hooks/useRegistrarTarea";
-import "../../../styles/registroTarea.css";
+import ModuloNavegacion from "../../shared/components/ModuloNavegacion";
 import FormularioGeneral from "../components/FormularioGeneral";
 
 export default function RegistrarTarea() {
@@ -20,6 +20,9 @@ export default function RegistrarTarea() {
 
   return (
     <div className="registro-tarea-container">
+
+      <ModuloNavegacion />
+      
       <h2 className="registro-tarea-titulo">📌 Registrar Nueva Tarea</h2>
 
       <div className="registro-tarea-mensaje">
