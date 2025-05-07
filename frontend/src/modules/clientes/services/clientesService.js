@@ -1,4 +1,4 @@
-import api from "../../../services/api";
+import api from "@/shared/services/api";
 
 const clientesService = {
   obtenerTodos: () => api.get("/clientes"),

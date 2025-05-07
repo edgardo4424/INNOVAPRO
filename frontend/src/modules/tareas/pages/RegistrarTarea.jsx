@@ -1,5 +1,5 @@
 import useRegistrarTarea from "../hooks/useRegistrarTarea";
-import ModuloNavegacion from "../../shared/components/ModuloNavegacion";
+import ModuloNavegacion from "@/shared/components/ModuloNavegacion"
 import FormularioGeneral from "../components/FormularioGeneral";
 
 export default function RegistrarTarea() {

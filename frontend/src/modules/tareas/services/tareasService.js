@@ -1,4 +1,4 @@
-import api from "../../../services/api";
+import api from "@/shared/services/api";
 
 const tareasService = {
   obtenerFiliales: async () => {

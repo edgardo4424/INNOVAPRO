@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { FaClipboardList, FaExclamationCircle, FaExclamationTriangle, FaInfoCircle, FaCog, FaSignOutAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import Notificaciones from "../../../components/tareas/Notificaciones";
+import Notificaciones from "@/shared/components/Notificaciones";
 
 export default function Header({ user, logout, tareasPendientes = [], notificacionesAbiertas, setNotificacionesAbiertas }) {
   const navigate = useNavigate();

@@ -1,8 +1,10 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import api from "../services/api";
+import api from "../shared/services/api";
 import { useAuth } from "./AuthContext";
-import socket from "../services/socket";
+import socket from "../shared/services/socket"
+
+const tiposValidos = ["error", "info", "tarea", "exito", "advertencia", "sistema", "cliente", "admin"];
 
 const NotificacionesContext = createContext();
 
@@ -30,53 +32,26 @@ export const NotificacionesProvider = ({ children }) => {
         const canal = `notificacion_usuario_${user.id}`;
         const canalLeida = `notificacion_leida_usuario_${user.id}`;
 
-        console.log("📡 Subscrito a canal:", canal);
-        console.log("🔌 Estado del socket:", socket.connected);
-
         // 🔥 Evento cuando llega una nueva notificación
         socket.on(canal, (data) => {
-            console.log("📩 Nueva notificación recibida:", data);
-        
+
             // Validar estructura mínima
-            if (!data?.id || !data?.mensaje || !data?.tipo) {
-            console.warn("⚠️ Notificación malformada ignorada:", data);
-            return;
-            }
-        
-            // Aceptar solo tipos conocidos
-            const tiposValidos = [
-                "error", 
-                "info", 
-                "tarea", 
-                "exito", 
-                "advertencia",
-                "sistema",
-                "cliente",
-                "admin",
-            ];
-            if (!tiposValidos.includes(data.tipo)) {
-            console.warn("⚠️ Tipo de notificación no reconocida:", data.tipo);
-            return;
-            }
+            if (!data?.id || !data?.mensaje || !data?.tipo) return;
+            if (!tiposValidos.includes(data.tipo)) return;
         
             // Evitar duplicados
             setNotificaciones((prev) => {
-            const yaExiste = prev.some((n) => n.id === data.id);
-            if (yaExiste) return prev;
-            return [data, ...prev];
-            });
+                if (prev.some((n) => n.id === data.id)) return prev;
+                return [data, ...prev];
+              });
         });
         
         // 🔥 Evento cuando una notificación es marcada como leída
         socket.on(canalLeida, ({ id }) => {
             if (!id) return;
-            console.log("✅ Notificación marcada como leída:", id);
-            setNotificaciones((prev) =>
-            prev.filter((noti) => noti.id !== id)
-            );
+            setNotificaciones((prev) => prev.filter((noti) => noti.id !== id));
         });
   
-
         return () => {
             socket.off(canal);
             socket.off(canalLeida);

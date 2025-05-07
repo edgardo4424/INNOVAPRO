@@ -1,4 +1,4 @@
-import api from "../services/api";
+import api from "@/shared/services/api";
 
 export default function useTareaActions({ tareas, setTareas, tareaSeleccionada, handleCerrarDetalle, user }) {
 

@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 export default function ModuloNavegacion() {
   const { user } = useAuth();
@@ -12,9 +12,7 @@ export default function ModuloNavegacion() {
       { name: "Gestión de Filiales de Innova", path: "/gestion-empresas" },
       { name: "Gestión de Clientes", path: "/gestion-clientes" },
       { name: "Gestión de Contactos", path: "/gestion-contactos" },
-      { name: "Gestión de Productos y Servicios", path: "/gestion-productos-servicios" },
       { name: "Gestión de Obras", path: "/gestion-obras" },
-      { name: "Cotizaciones", path: "/cotizaciones" },
       { name: "Centro de Atención", path: "/centro-atencion" },
       { name: "Registrar Tarea", path: "/registrar-tarea" },
     ],
@@ -22,7 +20,6 @@ export default function ModuloNavegacion() {
       { name: "Gestión de Clientes", path: "/gestion-clientes" },
       { name: "Gestión de Contactos", path: "/gestion-contactos" },
       { name: "Gestión de Obras", path: "/gestion-obras" },
-      { name: "Cotizaciones", path: "/cotizaciones" },
       { name: "Registrar Tarea", path: "/registrar-tarea" },
       { name: "Centro de Atención", path: "/centro-atencion" },
     ],

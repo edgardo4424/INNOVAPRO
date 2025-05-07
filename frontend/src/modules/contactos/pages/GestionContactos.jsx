@@ -2,8 +2,8 @@ import useContactos from "../hooks/useContactos";
 import TablaContactos from "../components/TablaContactos";
 import ModalAgregarContacto from "../components/ModalAgregarContacto";
 import ModalEditarContacto from "../components/ModalEditarContacto";
-import Paginacion from "../../shared/components/Paginacion";
-import ModuloNavegacion from "../../shared/components/ModuloNavegacion";
+import Paginacion from "@/shared/components/Paginacion";
+import ModuloNavegacion from "@/shared/components/ModuloNavegacion"
 
 export default function GestionContactos() {
   const {

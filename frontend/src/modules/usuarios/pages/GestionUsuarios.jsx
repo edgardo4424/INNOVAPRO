@@ -2,8 +2,8 @@ import useUsuarios from "../hooks/useUsuarios";
 import TablaUsuarios from "../components/TablaUsuarios";
 import ModalAgregarUsuario from "../components/ModalAgregarUsuario";
 import ModalEditarUsuario from "../components/ModalEditarUsuario";
-import ModuloNavegacion from "../../shared/components/ModuloNavegacion";
-import Paginacion from "../../shared/components/Paginacion";
+import ModuloNavegacion from "@/shared/components/ModuloNavegacion"
+import Paginacion from "@/shared/components/Paginacion";
 import "../../../styles/dashboard.css";
 
 export default function GestionUsuarios() {

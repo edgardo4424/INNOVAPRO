@@ -2,8 +2,8 @@ import useEmpresas from "../hooks/useEmpresas";
 import TablaEmpresas from "../components/TablaEmpresas";
 import ModalAgregarEmpresa from "../components/ModalAgregarEmpresa";
 import ModalEditarEmpresa from "../components/ModalEditarEmpresa";
-import ModuloNavegacion from "../../shared/components/ModuloNavegacion";
-import Paginacion from "../../shared/components/Paginacion";
+import ModuloNavegacion from "@/shared/components/ModuloNavegacion"
+import Paginacion from "@/shared/components/Paginacion";
 
 export default function GestionEmpresas() {
   const {

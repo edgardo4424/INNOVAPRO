@@ -2,8 +2,8 @@ import useObras from "../hooks/useObras";
 import TablaObras from "../components/TablaObras";
 import ModalAgregarObra from "../components/ModalAgregarObra";
 import ModalEditarObra from "../components/ModalEditarObra";
-import ModuloNavegacion from "../../shared/components/ModuloNavegacion";
-import Paginacion from "../../shared/components/Paginacion";
+import ModuloNavegacion from "@/shared/components/ModuloNavegacion"
+import Paginacion from "@/shared/components/Paginacion";
 
 export default function GestionObras() {
   const {

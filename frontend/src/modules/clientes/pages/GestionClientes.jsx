@@ -3,8 +3,8 @@ import TablaClientes from "../components/TablaClientes";
 import ModalAgregarCliente from "../components/ModalAgregarCliente";
 import ModalEditarCliente from "../components/ModalEditarCliente";
 import { useGestionClientes } from "../hooks/useGestionClientes";
-import ModuloNavegacion from "../../shared/components/ModuloNavegacion";
-import Paginacion from "../../shared/components/Paginacion";
+import ModuloNavegacion from "@/shared/components/ModuloNavegacion"
+import Paginacion from "@/shared/components/Paginacion";
 
 
 export default function GestionClientes() {

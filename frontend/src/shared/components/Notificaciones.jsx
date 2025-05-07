@@ -1,7 +1,7 @@
-import { useNotificaciones } from "../../context/NotificacionesContext";
+import { useNotificaciones } from "@/context/NotificacionesContext";
 import { useState, useRef, useEffect } from "react";
-import api from "../../services/api";
-import "../../styles/notificaciones.css";
+import api from "../services/api";
+import "@/styles/notificaciones.css";
 
 export default function Notificaciones() {
     const { notificaciones, setNotificaciones } = useNotificaciones();

@@ -1,8 +1,8 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
+import AppRoutes from "./routes/AppRoutes";
 
 function App() {
-  return <Outlet />;
+  return <AppRoutes />;
 }
 
 export default App;

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import api from "@/services/api";
+import api from "@/shared/services/api";
 import { useAuth } from "@/context/AuthContext";
-import useTareaActions from "@/hooks/useTareaActions";
+import useTareaActions from "./useTareaActions";
 
 export default function useCentroAtencion() {
   const { user } = useAuth();

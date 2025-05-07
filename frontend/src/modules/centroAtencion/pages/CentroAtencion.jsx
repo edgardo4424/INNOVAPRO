@@ -2,7 +2,7 @@ import useCentroAtencion from "../hooks/useCentroAtencion";
 import TablaTareas from "../components/TablaTareas";
 import DetalleTarea from "../components/DetalleTarea";
 import DatePicker from "react-datepicker";
-import ModuloNavegacion from "../../shared/components/ModuloNavegacion";
+import ModuloNavegacion from "@/shared/components/ModuloNavegacion"
 import "react-datepicker/dist/react-datepicker.css";
 
 export default function CentroAtencion() {

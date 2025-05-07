@@ -1,18 +1,17 @@
 import { BrowserRouter, HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import App from "../App";
-import Login from "../pages/Login";
-import ProtectedRoute from "../components/auth/ProtectedRoute";
-import GestionUsuarios from "../modules/usuarios/pages/GestionUsuarios";
-import GestionEmpresas from "../modules/filiales/pages/GestionEmpresas";
-import GestionClientes from "../modules/clientes/pages/GestionClientes";
-import GestionContactos from "../modules/contactos/pages/GestionContactos";
-import GestionProductosServicios from "../components/productos/GestionProductosServicios";
-import GestionObras from "../modules/obras/pages/GestionObras";
-import CentroAtencion from "../modules/centroAtencion/pages/CentroAtencion";
-import RegistrarTarea from "../modules/tareas/pages/RegistrarTarea";
+import Login from "@/modules/auth/pages/Login";
+import ProtectedRoute from "./ProtectedRoute";
+import GestionUsuarios from "@/modules/usuarios/pages/GestionUsuarios";
+import GestionEmpresas from "@/modules/filiales/pages/GestionEmpresas";
+import GestionClientes from "@/modules/clientes/pages/GestionClientes";
+import GestionContactos from "@/modules/contactos/pages/GestionContactos";
+import GestionObras from "@/modules/obras/pages/GestionObras";
+import CentroAtencion from "@/modules/centroAtencion/pages/CentroAtencion";
+import RegistrarTarea from "@/modules/tareas/pages/RegistrarTarea";
 
-import DashboardHome from "../modules/dashboard/pages/DashboardHome";
-import DashboardLayout from "../modules/dashboard/pages/DashboardLayout";
+import DashboardHome from "@/modules/dashboard/pages/DashboardHome";
+import DashboardLayout from "@/modules/dashboard/pages/DashboardLayout";
 
 export default function AppRoutes() {
   const Router = process.env.NODE_ENV === "production" ? HashRouter : BrowserRouter;
@@ -34,7 +33,6 @@ export default function AppRoutes() {
             <Route path="gestion-empresas" element={<GestionEmpresas />} />
             <Route path="gestion-clientes" element={<GestionClientes />} />
             <Route path="gestion-contactos" element={<GestionContactos />} />
-            <Route path="gestion-productos-servicios" element={<GestionProductosServicios />} />
             <Route path="gestion-obras" element={<GestionObras />} />
             <Route path="centro-atencion" element={<CentroAtencion />} />
             <Route path="registrar-tarea" element={<RegistrarTarea />} />

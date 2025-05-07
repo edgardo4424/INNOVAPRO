@@ -3,7 +3,7 @@ import ClienteForm from "../forms/ClienteForm";
 import clientesService from "../services/clientesService";
 import { validarClienteJuridico, validarClienteNatural } from "../validaciones/validarCliente";
 import { toast } from "react-toastify";
-import { buscarDatosPorRUC } from "../../../services/api";
+import { buscarDatosPorRUC } from "@/shared/services/api";
 import { useAuth } from "../../../context/AuthContext";
 import { parsearError } from "../../../utils/parsearError";
 

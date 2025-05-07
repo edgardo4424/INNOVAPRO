@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
-import api from "../services/api";
+import api from "../shared/services/api";
 
 const AuthContext = createContext();
 
@@ -69,23 +69,15 @@ export function AuthProvider({ children }) {
 
   // 🔹 Cerrar sesión y redirigir correctamente
   const logout = () => {
-    
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     delete axios.defaults.headers.common["Authorization"];
     setUser(null);
     setLoading(false);
-
+  
     const LOGIN_URL = process.env.NODE_ENV === "production" ? "/#/login" : "/login";
-
-    setTimeout(() => {
-      if (navigate) {
-        navigate(LOGIN_URL, { replace: true });  // 🔥 Usa React Router correctamente solo si está disponible
-      } else {
-        window.location.replace(LOGIN_URL);  // 🔥 Alternativa segura
-      }
-    }, 100);
-  };
+    window.location.replace(LOGIN_URL); // siempre redirige por seguridad
+  };  
 
   return (
     <AuthContext.Provider value={{ user, loading, login, logout }}>
