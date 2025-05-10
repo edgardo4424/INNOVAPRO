@@ -15,6 +15,7 @@ export default function ModuloNavegacion() {
       { name: "Gestión de Obras", path: "/gestion-obras" },
       { name: "Centro de Atención", path: "/centro-atencion" },
       { name: "Registrar Tarea", path: "/registrar-tarea" },
+      { name: "Registrar Cotización", path: "/cotizaciones/registrar" }
     ],
     Ventas: [
       { name: "Gestión de Clientes", path: "/gestion-clientes" },
@@ -22,6 +23,7 @@ export default function ModuloNavegacion() {
       { name: "Gestión de Obras", path: "/gestion-obras" },
       { name: "Registrar Tarea", path: "/registrar-tarea" },
       { name: "Centro de Atención", path: "/centro-atencion" },
+      { name: "Registrar Cotización", path: "/cotizaciones/registrar" }
     ],
     "Oficina Técnica": [
       { name: "Centro de Atención", path: "/centro-atencion" },
