@@ -40,4 +40,11 @@ const Usuario = sequelize.define(
   }
 );
 
+Usuario.associate = (models) => {
+ 
+  Usuario.hasMany(models.cotizaciones, {
+    foreignKey: "usuario_id",
+});
+};
+
 module.exports = { Usuario }; // Exporta el modelo para que pueda ser utilizado en otros módulos

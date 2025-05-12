@@ -61,6 +61,10 @@ Cliente.associate = (models) => {
         otherKey: "contacto_id",
         as: "contactos_asociados",
     });
+
+    Cliente.hasMany(models.cotizaciones,{
+     foreignKey: "cliente_id",
+  })
 };
 
 module.exports = { Cliente }; // Exporta el modelo para que pueda ser utilizado en otros módulos
