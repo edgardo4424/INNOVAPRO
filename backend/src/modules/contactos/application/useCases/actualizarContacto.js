@@ -8,6 +8,10 @@ module.exports = async (id, contactoData, contactoRepository, entidadService) =>
     if (errorCampos) { return { codigo: 400, respuesta: { mensaje: errorCampos } } } // Validamos campos obligatorios
 
     const datosActualizados = Contacto.construirDatosContacto(contactoData) // Almacenamos los datos del Contacto a actualizar
+
+    datosActualizados.clientesIds = contactoData.clientes_asociados || [];
+    datosActualizados.obrasIds = contactoData.obras_asociadas || [];
+
     const contactoActualizado = await contactoRepository.actualizarContacto(id, datosActualizados) // Actualizamos el contacto en la base de datos
 
 

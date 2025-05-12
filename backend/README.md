@@ -1,120 +1,107 @@
-# INNOVA PRO+ - Refactorización Backend
+# INNOVA PRO+ – Backend
 
-## 📊 Contexto
-Este cambio corresponde a una **refactorización completa** del backend del sistema **INNOVA PRO+**, orientada a mejorar la escalabilidad, mantenibilidad y claridad del código. Se implementó:
-
-- Arquitectura por **módulos independientes**
-- **Clean Architecture** + arquitectura en capas
-- Principios **SOLID**
-- **Tests automatizados** con `Jest`
+Este es el backend del ERP **INNOVA PRO+**, desarrollado en **Node.js + Express + Sequelize**, con una arquitectura profesional basada en **Clean Architecture** y principios **SOLID**, ideal para escalar y mantener más de 20 módulos empresariales.
 
 ---
 
-## 🌍 Estructura final
+## 🚀 Inicio rápido
 
-```
-backend/src/
-  modules/
-    clientes/
-      application/
-        useCases/
-          crearCliente.js
-          obtenerClientes.js
-          actualizarCliente.js
-          eliminarCliente.js
-      domain/
-        entities/
-          Cliente.js
-        repositories/
-          ClienteRepository.js
-      infrastructure/
-        models/
-          clienteModel.js
-        repositories/
-          sequelizeClienteRepository.js
-        services/
-          entidadService.js
-      interfaces/
-        controllers/
-          clienteController.js
-        routes/
-          clienteRoutes.js
-      tests/
-        crearCliente.test.js
-        obtenerClientes.test.js
-        actualizarCliente.test.js
-        eliminarCliente.test.js
-```
-
----
-
-## 🚀 Características implementadas
-
-- Separación clara entre capas: **aplicación**, **dominio**, **infraestructura** e **interfaces**
-- Repositorios desacoplados de Sequelize
-- Validador inteligente para creación y edición de entidades
-- Cobertura completa de pruebas para:
-  - Crear cliente
-  - Obtener clientes
-  - Actualizar cliente
-  - Eliminar cliente
-
----
-
-## 🔧 Pruebas automatizadas
-
-Las pruebas se ejecutan con:
-
-```bash
-npm test
-```
-
-Todas las pruebas se encuentran en:
-```bash
-/src/modules/clientes/tests/
-```
-
-Puedes ejecutar una prueba específica así:
-```bash
-npm test -- src/modules/clientes/tests/actualizarCliente.test.js
-```
-
----
-
-## 👀 Cómo probar esta rama en tu entorno local
-
-### 1. Clona el repo y posicionate en la rama
-```bash
-git clone git@github.com:edgardo4424/INNOVAPRO.git
-cd INNOVAPRO
-```
-
-### 2. Cambia a la rama de refactor
-```bash
-git checkout refactor/backend
-```
-
-### 3. Instala dependencias
+### 1. Clona el proyecto y entra al backend
 ```bash
 cd backend
+```
+
+### 2. Instala dependencias
+```bash
 npm install
 ```
 
-### 4. Ejecuta las pruebas
+### 3. Configura el entorno
+Copia y adapta el archivo `.env`:
+```
+PORT=3001
+DB_HOST=localhost
+DB_NAME=innova_db
+DB_USER=root
+DB_PASSWORD=123456
+```
+
+### 4. Ejecuta el servidor
 ```bash
-npm test
+npm start
 ```
 
 ---
 
-## 💡 Recomendaciones
-- Ejecuta `npm test` antes de hacer nuevos cambios
-- Usa los `useCases` para toda lógica de negocio
-- Evita escribir queries Sequelize fuera de `infrastructure/repositories`
-- Si agregas nuevos campos, actualiza también el `validador`
+## 🧠 Arquitectura
+
+```bash
+backend/src/
+├── modules/               # Cada módulo es independiente (clientes, obras, tareas...)
+│   └── tareas/            # Ejemplo de módulo
+│       ├── application/   # Casos de uso (negocio puro)
+│       ├── domain/        # Entidades y contratos (interfaces)
+│       ├── infrastructure/# Modelos Sequelize, repositorios, servicios externos
+│       └── interfaces/    # Rutas y controladores
+├── shared/                # Utilidades, middlewares, helpers comunes
+├── config/                # Configuraciones globales (DB, env...)
+└── index.js               # Punto de entrada del backend
+```
+
+---
+
+## ✅ Características
+
+- Estructura modular, escalable y desacoplada
+- Lógica de negocio en `application/useCases`
+- Validaciones centralizadas por entidad
+- Repositorios desacoplados (puedes cambiar Sequelize sin tocar dominio)
+- Soporte para pruebas automatizadas con **Jest**
+
+---
+
+## 🔬 Pruebas
+
+Ejecuta todas las pruebas:
+```bash
+npm test
+```
+
+Ejecuta una prueba específica:
+```bash
+npm test -- src/modules/clientes/tests/crearCliente.test.js
+```
+
+---
+
+## 🧪 Ejemplo: estructura de un módulo
+```bash
+modules/clientes/
+├── application/
+│   └── useCases/
+├── domain/
+│   ├── entities/
+│   └── repositories/
+├── infrastructure/
+│   ├── models/
+│   └── repositories/
+├── interfaces/
+│   ├── controllers/
+│   └── routes/
+└── tests/
+```
+
+---
+
+## 💡 Recomendaciones de desarrollo
+
+- Toda lógica debe ir en `useCases/`
+- Nunca accedas a Sequelize fuera de `infrastructure/repositories`
+- Valida los datos en la capa de entidad (`domain/entities`)
+- Usa `shared/` para middlewares reutilizables, mensajes o utilidades
 
 ---
 
 ## 🏆 Autor refactorización
 **Andrés Edgardo Martínez Salvatierra**  
-Refactor y automatización completa del módulo `clientes` con arquitectura escalable y testable.
+Refactor y automatización completa del backend con arquitectura limpia, modular y testeable para INNOVA PRO+.

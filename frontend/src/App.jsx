@@ -1,8 +1,12 @@
+// Este archivo es el punto de entrada visual
+// Renderiza <AppRoutes /> 
+// No tiene lógica, solo conecta
+
 import React from "react";
-import { Outlet } from "react-router-dom";
+import AppRoutes from "./routes/AppRoutes";
 
 function App() {
-  return <Outlet />;
+  return <AppRoutes />;
 }
 
 export default App;

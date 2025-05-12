@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
-import api from "../services/api"; // 🔥 Usamos el API dinámico
+import api from "../shared/services/api";
 
 const AuthContext = createContext();
 
@@ -28,11 +28,11 @@ export function AuthProvider({ children }) {
           console.log("✅ Sesión válida, usuario:", storedUser);
         } else {
           console.warn("⚠️ Sesión inválida. Cerrando sesión...");
-          logout(null); // 🔥 Llamamos logout sin `navigate`
+          logout(); 
         }
       } catch (error) {
         console.error("❌ Error verificando sesión:", error.response?.data || error.message);
-        logout(null); // 🔥 Llamamos logout sin `navigate`
+        logout();  
       } finally {
         setLoading(false);
       }
@@ -46,22 +46,21 @@ export function AuthProvider({ children }) {
     try {
       const res = await api.post("/auth/login", { email, password, recaptchaToken });
 
-      console.log("🟢 Login exitoso:", res.data);
       const { token, usuario } = res.data;
 
-      if (!token || !usuario) {
-        console.error("❌ Error: Token o usuario inválidos.");
-        logout(navigate);
+      if (token && usuario) {
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(usuario));
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        setUser(usuario);
+        if (navigate) {
+          navigate("/", { replace: true });
+        }
+        return true;
+      } else {
+        console.error("❌ Error en login: No se recibió Token o usuario.");
         return false;
-      }
-
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(usuario));
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
-      setUser(usuario);
-      if (navigate) navigate("/dashboard", { replace: true }); // 🔥 Solo navega si `navigate` está disponible
-      return true;
+      } 
     } catch (error) {
       console.error("❌ Error en login:", error.response?.data || error.message);
       return false;
@@ -69,27 +68,20 @@ export function AuthProvider({ children }) {
   };
 
   // 🔹 Cerrar sesión y redirigir correctamente
-  const logout = (navigate) => {
-    console.log("🚪 Cerrando sesión...");
+  const logout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     delete axios.defaults.headers.common["Authorization"];
     setUser(null);
-
+    setLoading(false);
+  
     const LOGIN_URL = process.env.NODE_ENV === "production" ? "/#/login" : "/login";
-
-    setTimeout(() => {
-      if (navigate) {
-        navigate(LOGIN_URL, { replace: true });  // 🔥 Usa React Router correctamente solo si está disponible
-      } else {
-        window.location.replace(LOGIN_URL);  // 🔥 Alternativa segura
-      }
-    }, 100);
-  };
+    window.location.replace(LOGIN_URL); // siempre redirige por seguridad
+  };  
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
-      {!loading ? children : <h2>Cargando...</h2>}
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
+      {loading ? <h2 style={{ textAlign: "center" }}>Cargando...</h2> : children}
     </AuthContext.Provider>
   );
 }
