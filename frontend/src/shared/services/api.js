@@ -2,7 +2,7 @@ import axios from "axios";
 
 // 🔥 Detectamos si estamos en desarrollo o producción
 const API_URL =
-  import.meta.env.NODE_ENV === "production"
+  import.meta.env.MODE === "production"
     ? import.meta.env.VITE_API_URL_PROD
     : import.meta.env.VITE_API_URL;
 
