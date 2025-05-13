@@ -16,27 +16,33 @@ class SequelizeCotizacionRepository {
       include: [
         {
           model: db.contactos,
-          as: "contacto"
+          as: "contacto",
+          attributes: ["id", "nombre"]
         },
         {
           model: db.clientes,
-          as: "cliente"
+          as: "cliente",
+          attributes: ["id", "razon_social"]
         },
         {
           model: db.obras,
-          as: "obra"
+          as: "obra",
+          attributes: ["id", "nombre"]
         },
          {
           model: db.empresas_proveedoras,
          /*  as: "empresas_proveedoras" */
+         attributes: ["id", "razon_social"]
         },
          {
           model: db.usuarios,
-          as: "usuario"
+          as: "usuario",
+           attributes: ["id", "nombre"]
         },
         {
           model: db.estados_cotizacion,
-          as: "estados_cotizacion"
+          as: "estados_cotizacion",
+          attributes: ["id", "nombre"]
         }
       ]
     });

@@ -1,5 +1,5 @@
 export function mapearDetallesDespiece({despiece, despiece_id}){
-  console.log('despiece', despiece);
+  
     return despiece.map(pieza => ({
     despiece_id,
     pieza_id: pieza.pieza_id,
