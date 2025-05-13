@@ -1,13 +1,11 @@
 const sequelizeCotizacionRepository = require('../../infrastructure/repositories/sequelizeCotizacionRepository'); // Importamos el repositorio de cotizaciones
 
-const crearCotizacion = require('../../application/useCases/crearCotizacionv2'); // Importamos el caso de uso para crear un cotizacion
+const crearCotizacion = require('../../application/useCases/crearCotizacion'); // Importamos el caso de uso para crear un cotizacion
 const obtenerCotizaciones = require('../../application/useCases/obtenerCotizaciones'); // Importamos el caso de uso para obtener todos los cotizacions
 /* const obtenerCotizacionPorId = require('../../application/useCases/obtenerCotizacionPorId'); // Importamos el caso de uso para obtener un cotizacion por ID
 const actualizarCotizacion = require('../../application/useCases/actualizarCotizacion'); // Importamos el caso de uso para actualizar un cotizacion
 const eliminarCotizacion = require('../../application/useCases/eliminarCotizacion'); // Importamos el caso de uso para eliminar un cotizacion
  */
-
-const crearDespiece = require('../../../despieces/application/useCases/crearDespiece')
 
 const cotizacionRepository = new sequelizeCotizacionRepository(); // Instancia del repositorio de cotizaciones
 
@@ -16,9 +14,12 @@ const CotizacionController = {
         try {
             const datos = {
                 ...req.body,
-                usuario_id: req.usuario.id
+                cotizacion: {
+                    ...req.body.cotizacion,
+                    usuario_id: req.usuario.id
+                }
             }
-           
+
             const nuevaCotizacion = await crearCotizacion(datos, cotizacionRepository ); // Llamamos al caso de uso para crear un cotizacion
            
             res.status(nuevaCotizacion.codigo).json(nuevaCotizacion.respuesta); // Respondemos con la cotizacion creada
