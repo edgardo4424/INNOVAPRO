@@ -3,17 +3,25 @@ import { useEffect } from "react";
 import { useWizardContext } from "../../hooks/useWizardCotizacion";
 import despieceMock from "../../data/despieceMock";
 import Loader from "../../../../shared/components/Loader"
+import { generarDespiece } from "../../services/cotizacionesService";
 
 const PasoConfirmacion = () => {
   const { formData, setFormData } = useWizardContext();
 
   useEffect(() => {
-    // Simulación de respuesta del backend al enviar atributos
-    setFormData((prev) => ({
-      ...prev,
-      despiece: despieceMock.despiece,
-      requiereAprobacion: false,
-    }));
+    const cargarDespiece = async () => {
+      try {
+        const  data  = await generarDespiece(formData.atributos);
+        setFormData((prev) => ({
+          ...prev,
+          despiece: data.despiece,
+          requiereAprobacion: false,
+        }));
+      } catch (error) {
+        console.error("Error generando despiece:", error);
+      }
+    };
+    cargarDespiece();
   }, []);
 
   const subtotal = parseFloat(despieceMock.precio_subtotal_venta_soles);

@@ -8,7 +8,7 @@ const contactosService = {
 
   obtenerClientes: async () => {
     const res = await api.get("/clientes");
-    return res.data.filter((c) => c.ruc); // solo clientes con RUC
+    return res.data.filter((clientes) => clientes.ruc); // solo clientes con RUC
   },
 
   obtenerObras: async () => {

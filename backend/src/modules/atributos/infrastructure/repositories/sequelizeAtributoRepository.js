@@ -1,4 +1,5 @@
 const { Atributo } = require("../models/atributoModel");
+const db = require("../../../../models");
 
 class SequelizeAtributoRepository {
   
@@ -11,12 +12,28 @@ class SequelizeAtributoRepository {
   }
 
   async obtenerAtributosPorUsoId(uso_id) {
-    return await Atributo.findAll({
-      where: {
-        uso_id
-      },
-      order: [['orden', 'ASC']] // Puedes usar 'DESC' si quieres descendente
+    const atributos = await Atributo.findAll({
+      where: { uso_id },
+      order: [["orden", "ASC"]],
+      include: [
+        {
+          model: db.atributos_valor,
+          as: "valores",
+          attributes: ["valor"],
+        },
+      ],
     });
+
+    // Transformamos para devolver el array de opciones directamente
+    const atributosTransformados = atributos.map((atrib) => {
+      const json = atrib.toJSON();
+      return {
+        ...json,
+        opciones: json.valores.map((v) => v.valor),
+      };
+    });
+
+    return atributosTransformados;
   }
 
 }
