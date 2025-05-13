@@ -54,4 +54,12 @@ const Filial = sequelize.define(
   }
 );
 
+Filial.associate = (models) => {
+ 
+  Filial.hasMany(models.cotizaciones, {
+    foreignKey: "filial_id",
+    
+});
+};
+
 module.exports = { Filial }; // Exporta el modelo para que pueda ser utilizado en otros módulos

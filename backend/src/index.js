@@ -5,20 +5,6 @@ process.env.WASM_DISABLE = "1";
 process.env.NODE_NO_WARNINGS = "1";
 process.env.NODE_OPTIONS = "--no-experimental-fetch";
 
-// 🚀 Eliminamos WebAssembly por completo
-global.WebAssembly = undefined;
-global.fetch = undefined;
-
-// 🔥 REDEFINIR REQUIRE PARA BLOQUEAR 'UNDICI' Y EVITAR QUE NODE LO USE
-const Module = require("module");
-const originalRequire = Module.prototype.require;
-Module.prototype.require = function (path) {
-    if (path.includes("undici") || path.includes("fetch") || path.includes("llhttpWasmData")) {
-        throw new Error("🚫 Bloqueo forzado: 'undici' y 'fetch' han sido eliminados.");
-    }
-    return originalRequire.apply(this, arguments);
-};
-
 // 📌 Carga de módulos necesarios
 require("./config/env"); // Cargar variables de entorno globalmente
 const express = require("express");
