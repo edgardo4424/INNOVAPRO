@@ -4,10 +4,10 @@
   "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
   "main": "eslint.config.js",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "build:prod": "vite build --mode production",
-    "preview": "vite preview"
+  "dev": "vite",
+  "build": "vite build",
+  "build:prod": "cross-env NODE_ENV=production vite build --mode production",
+  "preview": "vite preview"
   },
   "keywords": [],
   "author": "",
@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
+    "cross-env": "^7.0.3",
     "vite": "^6.2.2"
   }
 }

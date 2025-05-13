@@ -1,4 +1,4 @@
-const SequelizeNotificacionesRepository = require("../../../notificaciones/infrastructure/repositories/sequelizeNotificacionesRepository"); // Importamos el repositorio de notificaciones
+const SequelizeNotificacionesRepository = require("../../../notificaciones/infrastructure/repositories/SequelizeNotificacionesRepository"); // Importamos el repositorio de notificaciones
 const notificacionRepository = new SequelizeNotificacionesRepository(); // Instancia del repositorio de notificaciones
 
 const {
