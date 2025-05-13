@@ -29,6 +29,9 @@ const Atributo = sequelize.define(
     unidad_medida: {
       type: DataTypes.STRING,
     },
+    valores_por_defecto: {
+      type: DataTypes.JSON
+    },
     orden: {
       type: DataTypes.INTEGER,
       defaultValue: 1
