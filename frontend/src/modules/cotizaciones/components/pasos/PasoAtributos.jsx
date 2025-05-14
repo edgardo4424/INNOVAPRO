@@ -15,8 +15,22 @@ const PasoAtributos = () => {
       setLoading(true);
       try {
         const data = await obtenerAtributosPorUso(formData.uso_id);
-        console.log("🔍 Atributos con valores:", data);
-        setAtributos(data);
+
+        // ✅ Asegurarnos de que valores_por_defecto esté parseado como array
+        const atributosProcesados = data.map((atrib) => {
+          let valores = [];
+          try {
+            valores = Array.isArray(atrib.valores_por_defecto)
+              ? atrib.valores_por_defecto
+              : JSON.parse(atrib.valores_por_defecto || "[]");
+          } catch (error) {
+            console.warn(`❌ Error parseando valores_por_defecto en '${atrib.nombre}'`, error);
+          }
+          return { ...atrib, valores_por_defecto: valores };
+        });
+
+        console.log("🔍 Atributos procesados:", atributosProcesados);
+        setAtributos(atributosProcesados);
       } catch (error) {
         console.error("Error al cargar los atributos", error);
       } finally {
@@ -25,7 +39,7 @@ const PasoAtributos = () => {
     };
 
     cargarAtributos();
-  }, [formData.uso_id]); // 🔁 Se vuelve a ejecutar cada vez que cambia el uso seleccionado
+  }, [formData.uso_id]);
 
   const handleChange = (llave, valor) => {
     setFormData((prev) => ({
@@ -55,7 +69,7 @@ const PasoAtributos = () => {
               onChange={(e) => handleChange(atrib.llave_json, e.target.value)}
             >
               <option value="">Seleccione...</option>
-              {atrib.valores_por_defecto?.map((opt, i) => (
+              {atrib.valores_por_defecto.map((opt, i) => (
                 <option key={i} value={opt}>
                   {opt}
                 </option>
