@@ -15,6 +15,7 @@ const PasoAtributos = () => {
       setLoading(true);
       try {
         const data = await obtenerAtributosPorUso(formData.uso_id);
+        console.log("🔍 Atributos con valores:", data);
         setAtributos(data);
       } catch (error) {
         console.error("Error al cargar los atributos", error);
@@ -54,7 +55,7 @@ const PasoAtributos = () => {
               onChange={(e) => handleChange(atrib.llave_json, e.target.value)}
             >
               <option value="">Seleccione...</option>
-              {atrib.opciones?.map((opt, i) => (
+              {atrib.valores_por_defecto?.map((opt, i) => (
                 <option key={i} value={opt}>
                   {opt}
                 </option>

@@ -1,7 +1,7 @@
 // INNOVA PRO+ v1.2.1
 import { useState } from "react";
 import PasoContacto from "../components/pasos/PasoContacto.jsx";
-import PasoFilial from "../components/pasos/PasoFilial.jsx";
+import PasoFinal from "../components/pasos/PasoFinal.jsx";
 import PasoUso from "../components/pasos/PasoUso.jsx";
 import PasoAtributos from "../components/pasos/PasoAtributos";
 import PasoConfirmacion from "../components/pasos/PasoConfirmacion";
@@ -15,11 +15,12 @@ import { useAuth } from "../../../context/AuthContext.jsx";
 
 const pasos = [
   { id: 1, titulo: "Contacto", componente: PasoContacto },
-  { id: 2, titulo: "Filial", componente: PasoFilial },
-  { id: 3, titulo: "Uso del Equipo", componente: PasoUso },
-  { id: 4, titulo: "Atributos del Andamio", componente: PasoAtributos },
-  { id: 5, titulo: "Confirmación Final", componente: PasoConfirmacion },
+  { id: 2, titulo: "Uso del Equipo", componente: PasoUso },
+  { id: 3, titulo: "Atributos del Andamio", componente: PasoAtributos },
+  { id: 4, titulo: "Confirmación Final", componente: PasoConfirmacion },
+  { id: 5, titulo: "Revisión y Envío", componente: PasoFinal },
 ];
+
 
 const RegistrarCotizacionWizard = () => {
   const { user } = useAuth();

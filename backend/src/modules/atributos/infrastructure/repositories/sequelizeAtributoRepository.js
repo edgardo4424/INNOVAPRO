@@ -15,26 +15,21 @@ class SequelizeAtributoRepository {
     const atributos = await Atributo.findAll({
       where: { uso_id },
       order: [["orden", "ASC"]],
-      include: [
-        {
-          model: db.atributos_valor,
-          as: "valores",
-          attributes: ["valor"],
-        },
+      attributes: [
+        "id",
+        "llave_json",
+        "nombre",
+        "tipo_dato",
+        "unidad_medida",
+        "orden",
+        "uso_id",
+        "valores_por_defecto", // ✅ IMPORTANTE
       ],
+      exclude: ["createdAt", "updatedAt"], // opcional
     });
-
-    // Transformamos para devolver el array de opciones directamente
-    const atributosTransformados = atributos.map((atrib) => {
-      const json = atrib.toJSON();
-      return {
-        ...json,
-        opciones: json.valores.map((v) => v.valor),
-      };
-    });
-
-    return atributosTransformados;
-  }
+  
+    return atributos;
+  }  
 
 }
 

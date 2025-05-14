@@ -1,4 +1,4 @@
-// INNOVA PRO+ v1.2.1
+// INNOVA PRO+ v1.3.1
 import { useEffect, useState } from "react";
 import { useWizardContext } from "../../hooks/useWizardCotizacion";
 import api from "@/shared/services/api";
@@ -23,17 +23,20 @@ export default function PasoUso() {
     cargarUsos();
   }, []);
 
+  const handleChange = (campo, valor) => {
+    setFormData((prev) => ({ ...prev, [campo]: valor }));
+  };
+
   if (loading) return <Loader texto="Cargando usos disponibles..." />;
 
   return (
     <div className="paso-formulario">
-      <h3>Paso 3: ¿Qué deseas cotizar?</h3>
+      <h3>Paso 2: Detalles de la Cotización</h3>
+
       <label>Uso / Tipo de equipo:</label>
       <select
         value={formData.uso_id || ""}
-        onChange={(e) =>
-          setFormData((prev) => ({ ...prev, uso_id: parseInt(e.target.value) }))
-        }
+        onChange={(e) => handleChange("uso_id", parseInt(e.target.value))}
       >
         <option value="">Seleccione un uso...</option>
         {usos.map((u) => (
@@ -44,6 +47,18 @@ export default function PasoUso() {
       </select>
 
       {errores.uso_id && <p className="error-text">{errores.uso_id}</p>}
+
+      <label>Tipo de cotización:</label>
+      <select
+        value={formData.tipo_cotizacion || ""}
+        onChange={(e) => handleChange("tipo_cotizacion", e.target.value)}
+      >
+        <option value="">Seleccione...</option>
+        <option value="Alquiler">Alquiler</option>
+        <option value="Venta">Venta</option>
+      </select>
+
+      {errores.tipo_cotizacion && <p className="error-text">{errores.tipo_cotizacion}</p>}
     </div>
   );
 }
