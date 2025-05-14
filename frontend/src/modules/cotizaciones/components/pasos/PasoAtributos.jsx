@@ -1,20 +1,31 @@
-// INNOVA PRO+ v1.2.0
+// INNOVA PRO+ v1.2.2
 import { useEffect, useState } from "react";
 import { useWizardContext } from "../../hooks/useWizardCotizacion";
-import atributosMock from "../../data/atributosMock";
-import Loader from "../../../../shared/components/Loader"
+import Loader from "../../../../shared/components/Loader";
+import { obtenerAtributosPorUso } from "../../services/cotizacionesService";
 
 const PasoAtributos = () => {
   const { formData, setFormData, errores } = useWizardContext();
   const [atributos, setAtributos] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulación de carga desde backend
-    setTimeout(() => {
-      setFormData((prev) => ({ ...prev, uso_id: 2 })); // Fijamos uso_id = ANDAMIO TRABAJO
-      setAtributos(atributosMock);
-    }, 300);
-  }, []);
+    const cargarAtributos = async () => {
+      if (!formData.uso_id) return;
+      setLoading(true);
+      try {
+        const data = await obtenerAtributosPorUso(formData.uso_id);
+        console.log("🔍 Atributos con valores:", data);
+        setAtributos(data);
+      } catch (error) {
+        console.error("Error al cargar los atributos", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    cargarAtributos();
+  }, [formData.uso_id]); // 🔁 Se vuelve a ejecutar cada vez que cambia el uso seleccionado
 
   const handleChange = (llave, valor) => {
     setFormData((prev) => ({
@@ -26,11 +37,13 @@ const PasoAtributos = () => {
     }));
   };
 
-  if (atributos.length === 0) return <Loader texto="Cargando atributos..." />;
+  if (loading || atributos.length === 0) {
+    return <Loader texto="Cargando atributos..." />;
+  }
 
   return (
     <div className="paso-formulario">
-      <h3>Paso 2: Atributos del Andamio</h3>
+      <h3>Paso 4: Atributos del Uso Seleccionado</h3>
 
       {atributos.map((atrib) => (
         <div key={atrib.id}>
@@ -42,7 +55,7 @@ const PasoAtributos = () => {
               onChange={(e) => handleChange(atrib.llave_json, e.target.value)}
             >
               <option value="">Seleccione...</option>
-              {atrib.opciones?.map((opt, i) => (
+              {atrib.valores_por_defecto?.map((opt, i) => (
                 <option key={i} value={opt}>
                   {opt}
                 </option>

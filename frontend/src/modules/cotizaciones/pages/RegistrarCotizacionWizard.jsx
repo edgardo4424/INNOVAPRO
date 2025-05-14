@@ -1,5 +1,8 @@
+// INNOVA PRO+ v1.2.1
 import { useState } from "react";
-import PasoCliente from "../components/pasos/PasoCliente";
+import PasoContacto from "../components/pasos/PasoContacto.jsx";
+import PasoFinal from "../components/pasos/PasoFinal.jsx";
+import PasoUso from "../components/pasos/PasoUso.jsx";
 import PasoAtributos from "../components/pasos/PasoAtributos";
 import PasoConfirmacion from "../components/pasos/PasoConfirmacion";
 import ExitoCotizacion from "../components/ExitoCotizacion";
@@ -7,14 +10,20 @@ import useWizardCotizacion from "../hooks/useWizardCotizacion.jsx";
 import "../styles/wizard.css";
 import "../styles/exito.css";
 import { AnimatePresence, motion } from "framer-motion";
+import { crearCotizacion } from "../services/cotizacionesService.js";
+import { useAuth } from "../../../context/AuthContext.jsx";
 
 const pasos = [
-  { id: 1, titulo: "Datos del Cliente", componente: PasoCliente },
-  { id: 2, titulo: "Atributos del Andamio", componente: PasoAtributos },
-  { id: 3, titulo: "Confirmación Final", componente: PasoConfirmacion },
+  { id: 1, titulo: "Contacto", componente: PasoContacto },
+  { id: 2, titulo: "Uso del Equipo", componente: PasoUso },
+  { id: 3, titulo: "Atributos del Andamio", componente: PasoAtributos },
+  { id: 4, titulo: "Confirmación Final", componente: PasoConfirmacion },
+  { id: 5, titulo: "Revisión y Envío", componente: PasoFinal },
 ];
 
+
 const RegistrarCotizacionWizard = () => {
+  const { user } = useAuth();
   const [pasoActual, setPasoActual] = useState(0);
   const { formData, errores, validarPaso, setErrores } = useWizardCotizacion();
   const [guardando, setGuardando] = useState(false);
@@ -94,12 +103,36 @@ const RegistrarCotizacionWizard = () => {
         ) : (
           <button
             className="btn-success"
-            onClick={() => {
+            onClick={async () => {
               setGuardando(true);
-              setTimeout(() => {
-                setGuardando(false);
+              try {
+                const payload = {
+                  uso_id: formData.uso_id,
+                  atributos_formulario: formData.atributos,
+                  cotizacion: {
+                    cliente_id: formData.cliente_id, // Asignado automáticamente en PasoContacto
+                    obra_id: formData.obra_id,
+                    contacto_id: formData.contacto_id,
+                    usuario_id: user.id,
+                    filial_id: formData.filial_id || 1,
+                    estados_cotizacion_id: formData.requiereAprobacion ? 3 : 1,
+                    tipo_cotizacion: "Alquiler",
+                    tiene_transporte: false,
+                    tiene_instalacion: false,
+                    porcentaje_descuento: formData.descuento || 0,
+                    igv_porcentaje: 18,
+                  },
+                  despiece: formData.despiece,
+                };
+
+                console.log(payload);
+
+                await crearCotizacion(payload);
                 setPasoActual(pasos.length);
-              }, 1500);
+              } catch (error) {
+                console.error("Error al guardar cotización", error);
+              }
+              setGuardando(false);
             }}
           >
             {guardando ? "Guardando..." : "Guardar Cotización"}

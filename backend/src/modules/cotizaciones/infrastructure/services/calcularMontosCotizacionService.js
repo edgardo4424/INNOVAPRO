@@ -1,4 +1,4 @@
- export function calcularMontosCotizacion({despiece, tipoCotizacion, cotizacion}) {
+function calcularMontosCotizacion({despiece, tipoCotizacion, cotizacion}) {
 
   const igvPorcentaje = parseFloat(cotizacion.igv_porcentaje ?? 0) || 0;
   const porcentajeDescuento = parseFloat(cotizacion.porcentaje_descuento ?? 0) || 0;
@@ -33,3 +33,5 @@
     }
   };
   }
+
+  module.exports = { calcularMontosCotizacion };

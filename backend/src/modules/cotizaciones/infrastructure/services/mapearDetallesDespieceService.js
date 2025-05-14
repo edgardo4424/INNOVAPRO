@@ -1,5 +1,5 @@
-export function mapearDetallesDespiece({despiece, despiece_id}){
-  console.log('despiece', despiece);
+
+function mapearDetallesDespiece({despiece, despiece_id}){
     return despiece.map(pieza => ({
     despiece_id,
     pieza_id: pieza.pieza_id,
@@ -10,3 +10,5 @@ export function mapearDetallesDespiece({despiece, despiece_id}){
     precio_alquiler_soles: parseFloat(pieza.precio_alquiler_soles),
   }));
 }
+
+module.exports = { mapearDetallesDespiece };

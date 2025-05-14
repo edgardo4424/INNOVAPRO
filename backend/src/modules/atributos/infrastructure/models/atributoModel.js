@@ -29,6 +29,9 @@ const Atributo = sequelize.define(
     unidad_medida: {
       type: DataTypes.STRING,
     },
+    valores_por_defecto: {
+      type: DataTypes.JSON
+    },
     orden: {
       type: DataTypes.INTEGER,
       defaultValue: 1
@@ -45,6 +48,12 @@ Atributo.associate = (models) => {
     foreignKey: "uso_id",
     as: "uso",
   });
+
+Atributo.hasMany(models.atributos_valor, {
+  as: "valores",
+  foreignKey: "atributo_id",
+});
 };
+
 
 module.exports = { Atributo }; // Exporta el modelo para que pueda ser utilizado en otros módulos

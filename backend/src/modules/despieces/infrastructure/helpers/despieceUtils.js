@@ -1,7 +1,6 @@
 // helpers/despieceUtils.js
 
-  
- export function agruparPorPieza(todosDespieces, cantidadAndamios) {
+function agruparPorPieza(todosDespieces, cantidadAndamios) {
     const mapaPiezas = new Map();
   
     todosDespieces.forEach((despiece, i) => {
@@ -23,7 +22,7 @@
     });
   }
   
-  export function calcularSubtotales(filas) {
+function calcularSubtotales(filas) {
     const columnas = Object.keys(filas[0]).filter(k => k.startsWith("cant") || k === "total");
     const subtotales = {};
     columnas.forEach(col => {
@@ -32,13 +31,13 @@
     return subtotales;
   }
   
- export function mapearPiezasConDatos(piezasBD) {
+function mapearPiezasConDatos(piezasBD) {
     const piezaInfoMap = new Map();
     piezasBD.forEach(p => piezaInfoMap.set(p["pieza.item"], p));
     return piezaInfoMap;
   }
   
-  export function combinarResultados(resultadoFinal, piezaInfoMap) {
+function combinarResultados(resultadoFinal, piezaInfoMap) {
     return resultadoFinal
       .map(r => {
         const info = piezaInfoMap.get(r.item);
@@ -68,7 +67,7 @@
       .filter(Boolean);
   }
   
-  export function calcularTotalesGenerales(filas) {
+function calcularTotalesGenerales(filas) {
     return filas.reduce((acc, item) => {
       acc.peso_kg += item.peso_kg;
       acc.precio_venta_dolares += item.precio_venta_dolares;
@@ -82,4 +81,11 @@
       precio_alquiler_soles: 0
     });
   }
-  
+
+  module.exports = { 
+    agruparPorPieza,
+    calcularSubtotales,
+    mapearPiezasConDatos,
+    combinarResultados,
+    calcularTotalesGenerales,
+   };
