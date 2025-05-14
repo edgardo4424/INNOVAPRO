@@ -39,8 +39,8 @@ class Contacto {
         email: datos?.email,
         telefono: datos?.telefono,
         cargo: datos?.cargo,
-        clientesIds: datos?.clientes,
-        obrasIds: datos?.obras
+        clientesIds: datos?.clientes_asociados,
+        obrasIds: datos?.obras_asociadas
     }
 
     return base; // Retorna los datos del cliente según el tipo de entidad
