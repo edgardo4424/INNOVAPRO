@@ -75,6 +75,17 @@ db.cotizaciones = Cotizacion;
 const { EstadosCotizacion } = require('../modules/estados_cotizacion/infrastructure/models/estadosCotizacionModel')
 db.estados_cotizacion = EstadosCotizacion;
 
+const { TarifasTransporte } = require('../modules/tarifas_transporte/infrastructure/models/tarifasTransporteModel')
+db.tarifas_transporte = TarifasTransporte;
+
+const { DistritosTransporte } = require('../modules/distritos_transporte/infrastructure/models/distritosTransporteModel')
+db.distritos_transporte = DistritosTransporte;
+
+const { CostosPernocteTransporte } = require('../modules/costos_pernocte_transporte/infrastructure/models/costosPernocteTransporteModel')
+db.costos_pernocte_transporte = CostosPernocteTransporte;
+
+const { CotizacionesTransporte } = require('../modules/cotizaciones_transporte/infrastructure/models/cotizacionesTransporteModel')
+db.cotizaciones_transporte = CotizacionesTransporte;
 
 // ✅ Solo se asocian los que tienen .associate()
 if (db.contactos.associate) db.contactos.associate(db);
@@ -98,6 +109,10 @@ if (db.atributos.associate) db.atributos.associate(db)
 if (db.atributos_valor.associate) db.atributos_valor.associate(db)
 if (db.cotizaciones.associate) db.cotizaciones.associate(db)
 if (db.estados_cotizacion) db.estados_cotizacion.associate(db)
+if (db.tarifas_transporte) db.tarifas_transporte.associate(db)
+if (db.distritos_transporte) db.distritos_transporte.associate(db)
+//if (db.costos_pernocte_transporte) db.costos_pernocte_transporte.associate(db)
+if (db.cotizaciones_transporte) db.cotizaciones_transporte.associate(db)
 
 // Sequelize
 db.sequelize = sequelize;
