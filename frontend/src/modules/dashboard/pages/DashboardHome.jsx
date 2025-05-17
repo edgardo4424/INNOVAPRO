@@ -14,6 +14,8 @@ export default function DashboardHome() {
       { name: "Gestión de Obras", path: "/gestion-obras" },
       { name: "Centro de Atención", path: "/centro-atencion" },
       { name: "Registrar Tarea", path: "/registrar-tarea" },
+      { name: "Cotizaciones", path: "/cotizaciones" },
+      { name: "Registrar Cotización", path: "/cotizaciones/registrar" }
     ],
     Ventas: [
       { name: "Gestión de Clientes", path: "/gestion-clientes" },
@@ -21,6 +23,8 @@ export default function DashboardHome() {
       { name: "Gestión de Obras", path: "/gestion-obras" },
       { name: "Registrar Tarea", path: "/registrar-tarea" },
       { name: "Centro de Atención", path: "/centro-atencion" },
+      { name: "Cotizaciones", path: "/cotizaciones" },
+      { name: "Registrar Cotización", path: "/cotizaciones/registrar" }
     ],
     "Oficina Técnica": [
       { name: "Centro de Atención", path: "/centro-atencion" },

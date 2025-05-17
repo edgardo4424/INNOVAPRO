@@ -5,10 +5,6 @@ module.exports = async (contactoData, contactoRepository, entidadService) => {
     if ( errorCampos ) return { codigo: 400, respuesta: { mensaje: errorCampos } } // Validamos campos obligatorios
 
     const nuevoContactoData = Contacto.construirDatosContacto(contactoData) // Almacenamos los datos del contacto a crear
-
-    nuevoContactoData.clientesIds = contactoData.clientes_asociados || [];
-    nuevoContactoData.obrasIds = contactoData.obras_asociadas || [];
-    
     const nuevoContacto = await contactoRepository.crear(nuevoContactoData) // Creamos el nuevo contacto con todos sus datos en la base de datos
     
     return { codigo: 201, respuesta: { mensaje: "Contacto creado exitosamente", contacto: nuevoContacto } } // Retornamos el contacto creado

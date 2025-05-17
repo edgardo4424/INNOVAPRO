@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import api from "../shared/services/api";
+import { loginService } from "@/modules/auth/services/authService";
 
 const AuthContext = createContext();
 
@@ -43,29 +44,26 @@ export function AuthProvider({ children }) {
 
   // 🔹 Iniciar sesión con validación de reCAPTCHA
   const login = async (email, password, recaptchaToken, navigate) => {
-    try {
-      const res = await api.post("/auth/login", { email, password, recaptchaToken });
-
-      const { token, usuario } = res.data;
-
-      if (token && usuario) {
-        localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(usuario));
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        setUser(usuario);
-        if (navigate) {
-          navigate("/", { replace: true });
-        }
-        return true;
-      } else {
-        console.error("❌ Error en login: No se recibió Token o usuario.");
-        return false;
-      } 
-    } catch (error) {
-      console.error("❌ Error en login:", error.response?.data || error.message);
+    const data = await loginService(email, password, recaptchaToken);
+  
+    if (data?.error) {
+      alert(`❌ ${data.mensaje}`);
       return false;
     }
-  };
+  
+    if (data && data.token && data.usuario) {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.usuario));
+      axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+      setUser(data.usuario);
+      if (navigate) navigate("/", { replace: true });
+      return true;
+    }
+  
+    alert("❌ Error desconocido al iniciar sesión.");
+    return false;
+  };  
+  
 
   // 🔹 Cerrar sesión y redirigir correctamente
   const logout = () => {

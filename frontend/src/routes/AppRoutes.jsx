@@ -13,6 +13,12 @@ import RegistrarTarea from "@/modules/tareas/pages/RegistrarTarea";
 import DashboardHome from "@/modules/dashboard/pages/DashboardHome";
 import DashboardLayout from "@/modules/dashboard/pages/DashboardLayout";
 
+import { WizardProvider } from "@/modules/cotizaciones/hooks/useWizardCotizacion";
+import RegistrarCotizacionWizard from "@/modules/cotizaciones/pages/RegistrarCotizacionWizard";
+import GestionCotizaciones from "../modules/cotizaciones/pages/GestionCotizaciones";
+
+
+
 export default function AppRoutes() {
   const Router = process.env.NODE_ENV === "production" ? HashRouter : BrowserRouter;
   const LOGIN_PATH = process.env.NODE_ENV === "production" ? "/#/login" : "/login";
@@ -36,6 +42,18 @@ export default function AppRoutes() {
             <Route path="gestion-obras" element={<GestionObras />} />
             <Route path="centro-atencion" element={<CentroAtencion />} />
             <Route path="registrar-tarea" element={<RegistrarTarea />} />
+            <Route
+              path="cotizaciones"
+              element={<GestionCotizaciones/>}
+            />
+            <Route
+              path="cotizaciones/registrar"
+              element={
+                <WizardProvider>
+                  <RegistrarCotizacionWizard />
+                </WizardProvider>
+              }
+            />
           </Route>
         </Route>
 

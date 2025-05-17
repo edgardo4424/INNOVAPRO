@@ -27,14 +27,14 @@ export default function useContactos() {
   useEffect(() => {
     async function cargarDatos() {
       try {
-        const [c, cl, ob] = await Promise.all([
+        const [contactos, clientes, obras] = await Promise.all([
           contactosService.obtenerContactos(),
           contactosService.obtenerClientes(),
           contactosService.obtenerObras(),
         ]);
-        setContactos(c);
-        setClientes(cl);
-        setObras(ob);
+        setContactos(contactos);
+        setClientes(clientes);
+        setObras(obras);
       } catch (error) {
         console.error("❌ Error al cargar datos:", error);
         toast.error("Error al cargar contactos");

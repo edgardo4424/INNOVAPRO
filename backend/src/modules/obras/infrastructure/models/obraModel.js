@@ -60,6 +60,10 @@ Obra.associate = (models) => {
       otherKey: "contacto_id",
       as: "contactos_asociados",
   });
+
+   Obra.hasMany(models.cotizaciones,{
+     foreignKey: "obra_id",
+  })
 }
 
 module.exports = { Obra }; // Exporta el modelo para que pueda ser utilizado en otros módulos

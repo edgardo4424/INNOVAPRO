@@ -2,7 +2,16 @@ import React from "react";
 
 export default function DetalleTarea({ tarea, onCerrar, user, handleTomarTarea, handleLiberarTarea, handleFinalizarTarea, handleDevolverTarea, handleCancelarTarea, handleCorregirTarea }) {
   const renderDetalles = () => {
-    if (!tarea.detalles || Object.keys(tarea.detalles).length === 0) return null;
+    let detalles = tarea.detalles;
+    if (typeof detalles === "string") {
+      try {
+        detalles = JSON.parse(detalles);
+      } catch (error) {
+        console.error("Error al parsear los detalles:", error);
+        return null;
+      }
+    }
+    if (!detalles || Object.keys(detalles).length === 0) return null;
     const orden = [
       "apoyoTecnico", "apoyoAdministrativo", "tipoServicio", "estadoPasePedido",
       "numeroVersionContrato", "despacho", "tipoOperacion", "estadoHabilitacion",
@@ -16,7 +25,7 @@ export default function DetalleTarea({ tarea, onCerrar, user, handleTomarTarea, 
       <div className="tarea-detalles">
         <h4>Detalles Específicos</h4>
         <ul>
-          {Object.entries(tarea.detalles)
+          {Object.entries(detalles)
             .sort(([a], [b]) => {
               const ia = orden.indexOf(a);
               const ib = orden.indexOf(b);

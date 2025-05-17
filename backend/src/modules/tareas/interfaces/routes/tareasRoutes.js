@@ -13,6 +13,8 @@ router.get("/", tareaController.obtenerTareas);
 
 // 📌 Obtener una tarea por ID
 router.get("/:id", tareaController.obtenerTareaPorId);
+// 📌 Obtener tareas devueltas para corrección
+/* router.get("/devueltas", tareaController.obtenerTareasDevueltas); */
 
 // 📌 Actualizar una tarea (Ejemplo: cambiar estado)
 

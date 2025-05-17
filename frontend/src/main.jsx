@@ -1,3 +1,6 @@
+// Este archivo es el punto de entrada en REACT: ReactDOM.createRoot()
+// Aquí se envuelven los providers globales (AuthProvider, NotificacionesProvider, App, ToastContainer)
+
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";

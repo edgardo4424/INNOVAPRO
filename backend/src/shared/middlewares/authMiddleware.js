@@ -3,6 +3,8 @@ const db = require("../../models");
 
 // 🔹 Middleware para verificar token
 async function verificarToken(req, res, next) {
+
+
   const token = req.header("Authorization")?.replace("Bearer ", "");
   
   if (!token) {
@@ -13,7 +15,7 @@ async function verificarToken(req, res, next) {
     const verificado = jwt.verify(token, process.env.JWT_SECRET);
     
     const usuario = await db.usuarios.findByPk(verificado.id);
-    
+
     if (!usuario){
       return res.status(401).json({ mensaje: "Usuario no encontrado"});
     }

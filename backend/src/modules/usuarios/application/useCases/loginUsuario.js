@@ -9,7 +9,8 @@ module.exports = async (datoslogin, usuarioRepository ) => {
 
     const { email, password, recaptchaToken } = datoslogin; // Desestructuramos los datos de login
 
-    const captchaValido = await validarCaptcha(recaptchaToken); // Validamos el captcha
+    let captchaValido = false;
+    captchaValido = await validarCaptcha(recaptchaToken); // Validamos el captcha
     if (!captchaValido) {
         return { codigo: 403, respuesta: { mensaje: "Captcha inválido" } }; // Retornamos el error si el captcha no es válido
     }
