@@ -6,7 +6,7 @@ module.exports = async (
   cotizacionTransporteData,
   cotizacionesTransporteRepository
 ) => {
-  const { uso_id, peso_total_tn, distrito_transporte } =  cotizacionTransporteData;
+  const { uso_id, peso_total_tn, cantidad, distrito_transporte } =  cotizacionTransporteData;
 
   // 1. Calcular costo tarifa transporte
 
@@ -45,6 +45,8 @@ module.exports = async (
 
   const uso = await db.usos.findByPk(uso_id);
 
+  console.log('uso', uso);
+
   if (!uso) {
     return {
       codigo: 400,
@@ -72,8 +74,8 @@ module.exports = async (
 
   let tarifa_transporte_encontrado;
 
-  if (uso.grupo_tarifa == "andamio_multidireccional") {
-    /*  Calcular el precio en base al peso en Tn */
+  /* if (uso.grupo_tarifa == "andamio_multidireccional") {
+    //  Calcular el precio en base al peso en Tn 
     tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
       where: {
         rango_desde: { [Op.lt]: peso_total_tn },
@@ -82,6 +84,38 @@ module.exports = async (
     });
 
     costo_tarifas_transporte = Number( tarifa_transporte_encontrado.precio_soles);
+  } */
+
+  switch (uso.grupo_tarifa) {
+    case "andamio_multidireccional":
+        tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
+            where: {
+                grupo_tarifa: uso.grupo_tarifa,
+                rango_desde: { [Op.lt]: peso_total_tn },
+                rango_hasta: { [Op.gte]: peso_total_tn },
+            },
+        });
+
+        costo_tarifas_transporte = Number( tarifa_transporte_encontrado.precio_soles);
+        break;
+    
+    
+    case "escaleras":
+        tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
+            where: {
+                grupo_tarifa: uso.grupo_tarifa,
+                rango_desde: { [Op.lt]: cantidad },
+                rango_hasta: { [Op.gte]: cantidad },
+            },
+        });
+
+        console.log('tarifa_transporte_encontrado', tarifa_transporte_encontrado);
+
+        costo_tarifas_transporte = Number( tarifa_transporte_encontrado.precio_soles);
+        break;
+
+    default:
+        break;
   }
 
   // 2. Calcular costo segun el distrito
