@@ -3,6 +3,7 @@ import { useGestionCotizaciones } from "../hooks/useGestionCotizaciones";
 
 export default function GestionCotizaciones() {
    const {
+    cotizacionesPaginados,
       downloadPDF,
     } = useGestionCotizaciones();
   
@@ -11,7 +12,9 @@ export default function GestionCotizaciones() {
     <div className="dashboard-main">
       <h2>Gestión de Cotizaciones</h2>
 
-      <TablaCotizacion onDownloadPDF={downloadPDF} />
+      <TablaCotizacion 
+      cotizaciones={cotizacionesPaginados}
+        onDownloadPDF={downloadPDF} />
     </div>
   );
 }

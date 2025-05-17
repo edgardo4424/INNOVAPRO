@@ -22,10 +22,9 @@ export default function ExitoCotizacion() {
           Volver al Dashboard
         </button>
 
-        {/* Actívalo cuando Siberia cree el listado */}
-        {/* <button className="btn-secondary" onClick={() => navigate("/cotizaciones/listado")}>
+         <button className="btn-secondary" onClick={() => navigate("/cotizaciones")}>
           Ver Listado de Cotizaciones
-        </button> */}
+        </button> 
       </div>
     </motion.div>
   );
