@@ -29,3 +29,9 @@ export async function crearCotizacion({
   });
   return response.data;
 }
+
+// Obtener todas las cotizaciones (o recursos según la entidad)
+export async function obtenerTodos() {
+  const response = await api.get("/cotizaciones");
+  return response.data;
+}

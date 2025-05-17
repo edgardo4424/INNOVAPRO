@@ -1,40 +1,42 @@
-export default function TablaCotizacion({ onDownloadPDF }) {
+export default function TablaCotizacion({ cotizaciones, onDownloadPDF }) {
 
   return (
     <div className="table-responsive">
-
-
       <table className="custom-table">
         <thead>
           <tr>
-            <th>Empresa</th>
-            <th>Servicio</th>
-            <th>Uso / piezas </th>
-            <th>Fecha</th>
+            <th>Razón Social</th>
+            <th>Contacto</th>
+            <th>Tipo </th>
+            <th>Obra </th>
+            <th>Comercial</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Empresa 1</td>
-            <td>Alquiler</td>
-            <td>Escalera basica</td>
-            <td>07/05/2025</td>
+        {cotizaciones.map((cotizacion, index) => (
+          <tr key={cotizacion.id}>
+            <td>{cotizacion.cliente.razon_social || "—"}</td>
+            <td>{cotizacion.contacto.nombre || "—"}</td>
+            <td>{cotizacion.tipo_cotizacion || "—"}</td>
+            <td>{cotizacion.obra.nombre || "—"}</td>
+            <td>{cotizacion.usuario.nombre || "—"}</td>
             <td>
               <div
                 style={{ display: "flex", gap: "1px", justifyContent: "left" }}
               >
                 <button
-                  onClick={() => onDownloadPDF()}
+                  onClick={() => onDownloadPDF(cotizacion)}
                   className="edit-button"
                 >
-                  Descargar PDF
+                 PDF
                 </button>
                 <button className="edit-button">✏️Editar</button>
                 <button className="btn-eliminar">🗑Eliminar</button>
               </div>
             </td>
           </tr>
+           ))}
         </tbody>
       </table>
     </div>
