@@ -2,28 +2,25 @@ import { useEffect, useState } from "react";
 import { useWizardContext } from "../../hooks/useWizardCotizacion";
 import api from "@/shared/services/api";
 import Loader from "@/shared/components/Loader";
+import Select from "react-select";
 
 export default function PasoContacto() {
   const { formData, setFormData, errores } = useWizardContext();
 
   const [contactos, setContactos] = useState([]);
-  const [clientes, setClientes] = useState([]);
-  const [obras, setObras] = useState([]);
+  const [clientesFiltrados, setClientesFiltrados] = useState([]);
+  const [obrasFiltradas, setObrasFiltradas] = useState([]);
   const [filiales, setFiliales] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const cargarDatos = async () => {
       try {
-        const [contactosRes, clientesRes, obrasRes, filialesRes] = await Promise.all([
+        const [contactosRes, filialesRes] = await Promise.all([
           api.get("/contactos"),
-          api.get("/clientes"),
-          api.get("/obras"),
           api.get("/filiales")
         ]);
         setContactos(contactosRes.data);
-        setClientes(clientesRes.data);
-        setObras(obrasRes.data);
         setFiliales(filialesRes.data);
       } catch (error) {
         console.error("Error cargando datos del paso 1", error);
@@ -35,6 +32,21 @@ export default function PasoContacto() {
     cargarDatos();
   }, []);
 
+  const handleSeleccionContacto = (contactoId) => {
+    const contacto = contactos.find(c => c.id === contactoId);
+    setFormData((prev) => ({
+      ...prev,
+      contacto_id: contactoId,
+      contacto_nombre: contacto?.nombre || "",
+      cliente_id: null,
+      cliente_nombre: "",
+      obra_id: null,
+      obra_nombre: ""
+    }));
+    setClientesFiltrados(contacto.clientes_asociados || []);
+    setObrasFiltradas(contacto.obras_asociadas || []);
+  };
+
   const handleChange = (campo, valor) => {
     setFormData((prev) => ({ ...prev, [campo]: valor }));
   };
@@ -45,57 +57,65 @@ export default function PasoContacto() {
     <div className="paso-formulario">
       <h3>Paso 1: Selección del Contacto y Datos Relacionados</h3>
 
-      <label>Contacto:</label>
-      <select
-        value={formData.contacto_id || ""}
-        onChange={(e) => handleChange("contacto_id", parseInt(e.target.value))}
-      >
-        <option value="">Seleccione un contacto...</option>
-        {contactos.map((c) => (
-          <option key={c.id} value={c.id}>
-            {c.nombre} — {c.email}
-          </option>
-        ))}
-      </select>
+      <div className="wizard-section">
+        <label>Contacto:</label>
+        <Select
+          options={contactos.map(c => ({ label: `${c.nombre} — ${c.email}`, value: c.id }))}
+          value={contactos.find(c => c.id === formData.contacto_id)
+            ? { label: `${contactos.find(c => c.id === formData.contacto_id).nombre}`, value: formData.contacto_id }
+            : null}
+          onChange={(option) => handleSeleccionContacto(option.value)}
+          placeholder="Seleccione un contacto..."
+        />
+      </div>
 
-      <label>Cliente:</label>
-      <select
-        value={formData.cliente_id || ""}
-        onChange={(e) => handleChange("cliente_id", parseInt(e.target.value))}
-      >
-        <option value="">Seleccione un cliente...</option>
-        {clientes.map((c) => (
-          <option key={c.id} value={c.id}>
-            {c.razon_social}
-          </option>
-        ))}
-      </select>
+      <div className="wizard-section">
+        <label>Cliente:</label>
+        <Select
+          isDisabled={!formData.contacto_id}
+          options={clientesFiltrados.map(c => ({ label: c.razon_social, value: c.id }))}
+          value={clientesFiltrados.find(c => c.id === formData.cliente_id)
+            ? { label: clientesFiltrados.find(c => c.id === formData.cliente_id).razon_social, value: formData.cliente_id }
+            : null}
+          onChange={(option) => {
+            handleChange("cliente_id", option.value)
+            handleChange("cliente_nombre", option.label)
+          }}
+          placeholder="Seleccione un cliente relacionado..."
+        />
+      </div>
 
-      <label>Obra:</label>
-      <select
-        value={formData.obra_id || ""}
-        onChange={(e) => handleChange("obra_id", parseInt(e.target.value))}
-      >
-        <option value="">Seleccione una obra...</option>
-        {obras.map((o) => (
-          <option key={o.id} value={o.id}>
-            {o.nombre}
-          </option>
-        ))}
-      </select>
+      <div className="wizard-section">
+        <label>Obra:</label>
+        <Select
+          isDisabled={!formData.contacto_id}
+          options={obrasFiltradas.map(o => ({ label: o.nombre, value: o.id }))}
+          value={obrasFiltradas.find(o => o.id === formData.obra_id)
+            ? { label: obrasFiltradas.find(o => o.id === formData.obra_id).nombre, value: formData.obra_id }
+            : null}
+          onChange={(option) => {
+            handleChange("obra_id", option.value)
+            handleChange("obra_nombre", option.label)
+          }}
+          placeholder="Seleccione una obra relacionada..."
+        />
+      </div>
 
-      <label>Filial (Empresa Proveedora):</label>
-      <select
-        value={formData.filial_id || ""}
-        onChange={(e) => handleChange("filial_id", parseInt(e.target.value))}
-      >
-        <option value="">Seleccione una filial...</option>
-        {filiales.map((f) => (
-          <option key={f.id} value={f.id}>
-            {f.razon_social}
-          </option>
-        ))}
-      </select>
+      <div className="wizard-section">
+        <label>Filial (Empresa Proveedora):</label>
+        <Select
+          options={filiales.map(f => ({ label: f.razon_social, value: f.id }))}
+          value={filiales.find(f => f.id === formData.filial_id)
+            ? { label: filiales.find(f => f.id === formData.filial_id).razon_social, value: formData.filial_id }
+            : null}
+          onChange={(option) => {
+            handleChange("filial_id", option.value)
+            handleChange("filial_nombre", option.label)
+          }}
+          placeholder="Seleccione una filial..."
+        />
+      </div>
+      
     </div>
   );
 }

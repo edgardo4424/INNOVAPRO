@@ -45,6 +45,8 @@ const RegistrarCotizacionWizard = () => {
     setPasoActual((prev) => prev - 1);
   };
 
+  const exito = pasoActual === pasos.length;
+
   return (
     <div className="wizard-container">
       <motion.h2
@@ -61,11 +63,16 @@ const RegistrarCotizacionWizard = () => {
           <div
             key={paso.id}
             className={`step ${index === pasoActual ? "activo" : ""}`}
+            onClick={() => {
+              if (!exito) setPasoActual(index)
+            }}
+            style={{ cursor: exito ? "default" : "pointer", opacity: exito ? 0.5 : 1 }}
           >
             {paso.titulo}
           </div>
         ))}
       </div>
+
 
       <div className="wizard-body">
         {guardando ? (
@@ -90,12 +97,14 @@ const RegistrarCotizacionWizard = () => {
         )}
       </div>
 
+      {!exito && (
       <div className="wizard-footer">
         {pasoActual > 0 && (
           <button onClick={retrocederPaso} className="btn-secondary">
             Anterior
           </button>
         )}
+
         {pasoActual < pasos.length - 1 ? (
           <button onClick={avanzarPaso} className="btn-primary">
             Siguiente
@@ -125,8 +134,6 @@ const RegistrarCotizacionWizard = () => {
                   despiece: formData.despiece,
                 };
 
-                console.log(payload);
-
                 await crearCotizacion(payload);
                 setPasoActual(pasos.length);
               } catch (error) {
@@ -139,6 +146,7 @@ const RegistrarCotizacionWizard = () => {
           </button>
         )}
       </div>
+      )}
     </div>
   );
 };

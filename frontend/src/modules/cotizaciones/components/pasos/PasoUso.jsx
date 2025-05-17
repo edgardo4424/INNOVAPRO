@@ -32,33 +32,42 @@ export default function PasoUso() {
   return (
     <div className="paso-formulario">
       <h3>Paso 2: Detalles de la Cotización</h3>
+      
+      <div className="wizard-section">
+        <label>Uso / Tipo de equipo:</label>
+        <select
+          value={formData.uso_id || ""}
+          onChange={(e) => {
+            const selected = usos.find(u => u.id === parseInt(e.target.value))
+            handleChange("uso_id", selected.id)
+            handleChange("uso_nombre", selected.descripcion)
+          }}
+        >
+          <option value="">Seleccione un uso...</option>
+          {usos.map((u) => (
+            <option key={u.id} value={u.id}>
+              {u.descripcion}
+            </option>
+          ))}
+        </select>
 
-      <label>Uso / Tipo de equipo:</label>
-      <select
-        value={formData.uso_id || ""}
-        onChange={(e) => handleChange("uso_id", parseInt(e.target.value))}
-      >
-        <option value="">Seleccione un uso...</option>
-        {usos.map((u) => (
-          <option key={u.id} value={u.id}>
-            {u.descripcion}
-          </option>
-        ))}
-      </select>
+        {errores.uso_id && <p className="error-text">{errores.uso_id}</p>}
+      </div>
 
-      {errores.uso_id && <p className="error-text">{errores.uso_id}</p>}
+      <div className="wizard-section">
+        <label>Tipo de cotización:</label>
+        <select
+          value={formData.tipo_cotizacion || ""}
+          onChange={(e) => handleChange("tipo_cotizacion", e.target.value)}
+        >
+          <option value="">Seleccione...</option>
+          <option value="Alquiler">Alquiler</option>
+          <option value="Venta">Venta</option>
+        </select>
 
-      <label>Tipo de cotización:</label>
-      <select
-        value={formData.tipo_cotizacion || ""}
-        onChange={(e) => handleChange("tipo_cotizacion", e.target.value)}
-      >
-        <option value="">Seleccione...</option>
-        <option value="Alquiler">Alquiler</option>
-        <option value="Venta">Venta</option>
-      </select>
-
-      {errores.tipo_cotizacion && <p className="error-text">{errores.tipo_cotizacion}</p>}
+        {errores.tipo_cotizacion && <p className="error-text">{errores.tipo_cotizacion}</p>}
+      </div>
+      
     </div>
   );
 }
