@@ -66,29 +66,49 @@ export default function PasoConfirmacion() {
     <div className="paso-formulario">
       <h3>Paso 5: Confirmación Final</h3>
 
-      <h4 style={{ color: "#e67e22", marginBottom: "1rem" }}>Resumen del Despiece:</h4>
-      <ul style={{ color: "#e67e22", fontSize: "0.95rem", lineHeight: "1.4" }}>
-        {formData.despiece.map((pieza) => (
-          <li key={pieza.pieza_id}>
-            <strong>{pieza.descripcion}</strong> - {pieza.total} unidades - S/{" "}
-            {tipo === "Alquiler" ? pieza.precio_alquiler_soles : pieza.precio_venta_soles}
-          </li>
-        ))}
-      </ul>
+      <h4 style={{ color: "#004aad", marginBottom: "1rem" }}>Resumen del Despiece:</h4>
 
-      <hr />
+      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px" }}>
+        <thead>
+          <tr style={{ background: "#f3f6f9", color: "#333" }}>
+            <th style={{ padding: "0.5rem", borderBottom: "1px solid #ccc" }}>#</th>
+            <th style={{ padding: "0.5rem", borderBottom: "1px solid #ccc" }}>Descripción</th>
+            <th style={{ padding: "0.5rem", borderBottom: "1px solid #ccc" }}>Cantidad</th>
+            <th style={{ padding: "0.5rem", borderBottom: "1px solid #ccc" }}>Precio Unitario (S/)</th>
+            <th style={{ padding: "0.5rem", borderBottom: "1px solid #ccc" }}>Subtotal (S/)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {formData.despiece.map((pieza, i) => {
+            const precioUnitario =
+              tipo === "Alquiler" ? pieza.precio_u_alquiler_soles : pieza.precio_u_venta_soles;
+            const precioTotal =
+              tipo === "Alquiler" ? pieza.precio_alquiler_soles : pieza.precio_venta_soles;
+            return (
+              <tr key={pieza.pieza_id}>
+                <td style={{ padding: "0.4rem", borderBottom: "1px solid #eee" }}>{i + 1}</td>
+                <td style={{ padding: "0.4rem", borderBottom: "1px solid #eee" }}>{pieza.descripcion}</td>
+                <td style={{ padding: "0.4rem", textAlign: "center" }}>{pieza.total}</td>
+                <td style={{ padding: "0.4rem", textAlign: "right" }}>{precioUnitario}</td>
+                <td style={{ padding: "0.4rem", textAlign: "right" }}>{precioTotal}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
 
-      <div style={{ marginTop: "1rem" }}>
-        <p><strong>🧱 Total de piezas:</strong> {resumen.total_piezas}</p>
-        <p><strong>⚖️ Peso total (kg):</strong> {resumen.peso_total_kg}</p>
-        <p><strong>🚚 Peso total (ton):</strong> {resumen.peso_total_ton}</p>
-        <p><strong>💵 Subtotal venta (USD):</strong> ${resumen.precio_subtotal_venta_dolares}</p>
-        <p><strong>💰 Subtotal venta (S/):</strong> S/ {resumen.precio_subtotal_venta_soles}</p>
-        <p><strong>🛠️ Subtotal alquiler (S/):</strong> S/ {resumen.precio_subtotal_alquiler_soles}</p>
+      <div className="wizard-section" style={{ marginTop: "2rem" }}>
+        <div className="wizard-key-value"><strong>🧱 Total de piezas:</strong> {resumen.total_piezas}</div>
+        <div className="wizard-key-value"><strong>⚖️ Peso total (kg):</strong> {resumen.peso_total_kg}</div>
+        <div className="wizard-key-value"><strong>🚚 Peso total (ton):</strong> {resumen.peso_total_ton}</div>
+        <div className="wizard-key-value"><strong>💵 Subtotal venta (USD):</strong> ${resumen.precio_subtotal_venta_dolares}</div>
+        <div className="wizard-key-value"><strong>💰 Subtotal venta (S/):</strong> S/ {resumen.precio_subtotal_venta_soles}</div>
+        <div className="wizard-key-value"><strong>🛠️ Subtotal alquiler (S/):</strong> S/ {resumen.precio_subtotal_alquiler_soles}</div>
       </div>
 
-      <div style={{ marginTop: "1.5rem" }}>
-        <label><strong>🎯 Descuento (%):</strong></label>
+
+      <div className="bloque-descuento">
+        <label>🎯 Descuento (%):</label>
         <input
           type="number"
           value={formData.descuento || ""}
@@ -98,14 +118,14 @@ export default function PasoConfirmacion() {
           max="100"
         />
         {formData.requiereAprobacion && (
-          <p className="warning-text" style={{ color: "#e74c3c", marginTop: "0.5rem" }}>
+          <p className="warning-text">
             ⚠️ Este descuento requiere aprobación de Gerencia.
           </p>
         )}
 
-        <p style={{ marginTop: "1rem" }}>
-          <strong>Total final:</strong> S/{" "}
-          <span style={{ fontSize: "1.2rem" }}>{totalConDescuento}</span>
+        <p className="total-final">
+          💰 Total final:
+          <span>S/ {totalConDescuento}</span>
         </p>
       </div>
     </div>

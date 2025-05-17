@@ -28,27 +28,33 @@ export default function PasoFinal() {
     <div className="paso-formulario">
       <h3>Paso 6: Revisión y Confirmación</h3>
 
-      <p><strong>👤 Contacto seleccionado:</strong> ID #{contacto_id}</p>
-      <p><strong>🏢 Cliente:</strong> ID #{cliente_id}</p>
-      <p><strong>🏗️ Obra:</strong> ID #{obra_id}</p>
-      <p><strong>🏭 Filial (empresa proveedora):</strong> ID #{filial_id}</p>
-      <p><strong>⚙️ Uso seleccionado:</strong> ID #{uso_id}</p>
-      <p><strong>📦 Tipo de cotización:</strong> {tipo_cotizacion}</p>
+      <div className="wizard-section">
+        <h4>🧑 Información General</h4>
+        <div className="wizard-key-value"><strong>👤 Contacto:</strong> {formData.contacto_nombre || `ID #${contacto_id}`}</div>
+        <div className="wizard-key-value"><strong>🏢 Cliente:</strong> {formData.cliente_nombre || `ID #${cliente_id}`}</div>
+        <div className="wizard-key-value"><strong>🏗️ Obra:</strong> {formData.obra_nombre || `ID #${obra_id}`}</div>
+        <div className="wizard-key-value"><strong>🏭 Filial:</strong> {formData.filial_nombre || `ID #${filial_id}`}</div>
+      </div>
 
-      <hr />
+      <div className="wizard-section">
+        <h4>⚙️ Cotización</h4>
+        <div className="wizard-key-value"><strong>⚙️ Uso:</strong> {formData.uso_nombre || `ID #${uso_id}`}</div>
+        <div className="wizard-key-value"><strong>📦 Tipo de cotización:</strong> {tipo_cotizacion}</div>
+        <div className="wizard-key-value"><strong>Descuento:</strong> {formData.descuento || 0}%</div>
+        {formData.requiereAprobacion && (
+          <div className="wizard-key-value" style={{ color: "#e74c3c" }}>
+            ⚠️ Esta cotización requiere aprobación de Gerencia por el descuento aplicado.
+          </div>
+        )}
+      </div>
+      
+      <div className="wizard-total">
+        <strong>💰 Total final:</strong> <span> S/ {totalConDescuento}</span>
+      </div>
 
-      <p><strong>🎯 Descuento aplicado:</strong> {descuento || 0}%</p>
-      {requiereAprobacion && (
-        <p style={{ color: "#e74c3c" }}>
-          ⚠️ Esta cotización requiere aprobación de Gerencia por el descuento aplicado.
-        </p>
-      )}
-
-      <p><strong>💰 Total final:</strong> S/ {totalConDescuento}</p>
-
-      <p style={{ fontStyle: "italic", marginTop: "1rem" }}>
+      <div className="mensaje-revision-final">
         Revisa bien todos los datos antes de guardar. Esta será la información enviada al backend para registrar la cotización.
-      </p>
+      </div>
     </div>
   );
 }

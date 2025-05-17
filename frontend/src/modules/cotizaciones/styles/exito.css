@@ -1,9 +1,22 @@
 /* INNOVA PRO+ v1.2.0 */
 
-.exito-container {
+  .exito-container {
     text-align: center;
     padding: 3rem;
   }
+
+  .exito-container h2 {
+  color: #004aad;
+  margin-top: 1rem;
+  font-size: 24px;
+  }
+
+  .exito-container p {
+    font-size: 15px;
+    color: #666;
+    margin-top: 0.5rem;
+  }
+
   
   .exito-icon {
     font-size: 64px;

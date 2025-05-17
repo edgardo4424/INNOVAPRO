@@ -59,34 +59,36 @@ const PasoAtributos = () => {
     <div className="paso-formulario">
       <h3>Paso 4: Atributos del Uso Seleccionado</h3>
 
-      {atributos.map((atrib) => (
-        <div key={atrib.id}>
-          <label>{atrib.nombre}:</label>
+      <div className="atributos-grid">
+        {atributos.map((atrib) => (
+          <div key={atrib.id} className="wizard-section">
+            <label>{atrib.nombre}:</label>
 
-          {atrib.tipo_dato === "select" ? (
-            <select
-              value={formData.atributos[atrib.llave_json] || ""}
-              onChange={(e) => handleChange(atrib.llave_json, e.target.value)}
-            >
-              <option value="">Seleccione...</option>
-              {atrib.valores_por_defecto.map((opt, i) => (
-                <option key={i} value={opt}>
-                  {opt}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <input
-              type="number"
-              value={formData.atributos[atrib.llave_json] || ""}
-              onChange={(e) => handleChange(atrib.llave_json, e.target.value)}
-              placeholder={`Ingrese ${atrib.nombre.toLowerCase()}`}
-            />
-          )}
-        </div>
-      ))}
+            {atrib.tipo_dato === "select" ? (
+              <select
+                value={formData.atributos[atrib.llave_json] || ""}
+                onChange={(e) => handleChange(atrib.llave_json, e.target.value)}
+              >
+                <option value="">Seleccione...</option>
+                {atrib.valores_por_defecto.map((opt, i) => (
+                  <option key={i} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                type="number"
+                value={formData.atributos[atrib.llave_json] || ""}
+                onChange={(e) => handleChange(atrib.llave_json, e.target.value)}
+                placeholder={`Ingrese ${atrib.nombre.toLowerCase()}`}
+              />
+            )}
+          </div>
+        ))}
 
-      {errores.atributos && <p className="error-text">{errores.atributos}</p>}
+        {errores.atributos && <p className="error-text">{errores.atributos}</p>}
+      </div>
     </div>
   );
 };
