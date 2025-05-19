@@ -110,7 +110,7 @@ export default function PasoConfirmacion() {
       <div className="bloque-descuento">
         <label>🎯 Descuento (%):</label>
         <input
-          type="number"
+          type="text"
           value={formData.descuento || ""}
           onChange={(e) => handleDescuento(e.target.value)}
           placeholder="Ej: 5"

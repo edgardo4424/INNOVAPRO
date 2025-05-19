@@ -119,13 +119,13 @@ const RegistrarCotizacionWizard = () => {
                   uso_id: formData.uso_id,
                   atributos_formulario: formData.atributos,
                   cotizacion: {
-                    cliente_id: formData.cliente_id, // Asignado automáticamente en PasoContacto
+                    cliente_id: formData.cliente_id,
                     obra_id: formData.obra_id,
                     contacto_id: formData.contacto_id,
                     usuario_id: user.id,
                     filial_id: formData.filial_id || 1,
                     estados_cotizacion_id: formData.requiereAprobacion ? 3 : 1,
-                    tipo_cotizacion: "Alquiler",
+                    tipo_cotizacion: formData.tipo_cotizacion,
                     tiene_transporte: false,
                     tiene_instalacion: false,
                     porcentaje_descuento: formData.descuento || 0,

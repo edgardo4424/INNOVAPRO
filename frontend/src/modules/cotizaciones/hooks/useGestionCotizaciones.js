@@ -26,7 +26,7 @@ export function useGestionCotizaciones() {
 
 
 
-      doc.text("Razón Social:" + cotizacion.cliente.razon_social, 150, 16); 
+      doc.text("Razón Social:" + cotizacion.cliente.representante_legal, 150, 16); 
       doc.text("RUC: ", 150, 20); 
       doc.text("A/A: "+cotizacion.contacto.nombre, 150, 24); 
       doc.text("Domicilio Fiscal: ", 150, 28); 
@@ -121,13 +121,14 @@ export function useGestionCotizaciones() {
 
   const [cotizaciones, setCotizaciones] = useState([]);
   const [paginaActual, setPaginaActual] = useState(1);
-  const cotizacionesPorPagina = 5;
+  const cotizacionesPorPagina = 10;
 
    // 🔄 Cargar cotizaciones al iniciar
    useEffect(() => {
     async function fetchCotizaciones() {
       try {
         const res = await cotizacionesService.obtenerTodos();
+        console.log(res)
         setCotizaciones(res || []);
       } catch (error) {
         console.error("❌ Error al obtener cotizaciones:", error);
