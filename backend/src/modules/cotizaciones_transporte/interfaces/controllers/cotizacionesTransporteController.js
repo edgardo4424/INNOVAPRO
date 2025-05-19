@@ -23,6 +23,7 @@ const CotizacionesTransporteController = {
            
             res.status(costoTransporte.codigo).json(costoTransporte.respuesta); // Respondemos con el obra creado 
         } catch (error) {
+            console.log('error', error);
             res.status(500).json({ error: error.message }); 
         }
     },
