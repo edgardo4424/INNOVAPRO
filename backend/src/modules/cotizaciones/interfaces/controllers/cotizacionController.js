@@ -12,6 +12,9 @@ const cotizacionRepository = new sequelizeCotizacionRepository(); // Instancia d
 const CotizacionController = {
     async crearCotizacion(req, res) {
         try {
+
+            console.log('body', req.body);
+
             const datos = {
                 ...req.body,
                 cotizacion: {

@@ -6,7 +6,8 @@ module.exports = async (
   cotizacionTransporteData,
   cotizacionesTransporteRepository
 ) => {
-  const { uso_id, peso_total_tn, cantidad, distrito_transporte } =  cotizacionTransporteData;
+  const { uso_id, peso_total_tn, cantidad, distrito_transporte } =
+    cotizacionTransporteData;
 
   // 1. Calcular costo tarifa transporte
 
@@ -44,8 +45,6 @@ module.exports = async (
     */
 
   const uso = await db.usos.findByPk(uso_id);
-
-  console.log('uso', uso);
 
   if (!uso) {
     return {
@@ -87,35 +86,97 @@ module.exports = async (
   } */
 
   switch (uso.grupo_tarifa) {
+
     case "andamio_multidireccional":
-        tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
-            where: {
-                grupo_tarifa: uso.grupo_tarifa,
-                rango_desde: { [Op.lt]: peso_total_tn },
-                rango_hasta: { [Op.gte]: peso_total_tn },
-            },
-        });
+      tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
+        where: {
+          grupo_tarifa: uso.grupo_tarifa,
+          rango_desde: { [Op.lt]: peso_total_tn },
+          rango_hasta: { [Op.gte]: peso_total_tn },
+        },
+      });
 
-        costo_tarifas_transporte = Number( tarifa_transporte_encontrado.precio_soles);
-        break;
-    
-    
+      costo_tarifas_transporte = Number(
+        tarifa_transporte_encontrado.precio_soles
+      );
+      break;
+
     case "escaleras":
-        tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
-            where: {
-                grupo_tarifa: uso.grupo_tarifa,
-                rango_desde: { [Op.lt]: cantidad },
-                rango_hasta: { [Op.gte]: cantidad },
-            },
-        });
+      tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
+        where: {
+          grupo_tarifa: uso.grupo_tarifa,
+          rango_desde: { [Op.lt]: cantidad },
+          rango_hasta: { [Op.gte]: cantidad },
+        },
+      });
 
-        console.log('tarifa_transporte_encontrado', tarifa_transporte_encontrado);
+      console.log("tarifa_transporte_encontrado", tarifa_transporte_encontrado);
 
-        costo_tarifas_transporte = Number( tarifa_transporte_encontrado.precio_soles);
-        break;
+      costo_tarifas_transporte = Number(tarifa_transporte_encontrado.precio_soles);
+      break;
 
+    case "puntales":
+      const { tipo_puntal } = cotizacionTransporteData;
+      
+      tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
+        where: {
+          grupo_tarifa: uso.grupo_tarifa,
+          subtipo: tipo_puntal,
+          rango_desde: { [Op.lt]: peso_total_tn },
+          rango_hasta: { [Op.gte]: peso_total_tn },
+        },
+      });
+
+      costo_tarifas_transporte = Number(
+        tarifa_transporte_encontrado.precio_soles
+      );
+      break;
+
+    case "andamio_electrico":
+      tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
+        where: {
+          grupo_tarifa: uso.grupo_tarifa,
+          rango_desde: { [Op.lt]: cantidad },
+          rango_hasta: { [Op.gte]: cantidad },
+        },
+      });
+
+      costo_tarifas_transporte = Number(
+        tarifa_transporte_encontrado.precio_soles
+      );
+      break;
+
+    case "plataformas_de_descarga":
+      tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
+        where: {
+          grupo_tarifa: uso.grupo_tarifa,
+          rango_desde: { [Op.lt]: cantidad },
+          rango_hasta: { [Op.gte]: cantidad },
+        },
+      });
+
+      costo_tarifas_transporte = Number(
+        tarifa_transporte_encontrado.precio_soles
+      );
+      break;
+
+    case "escuadras":
+    
+      const { tipo_escuadra } = cotizacionTransporteData;
+      
+      tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
+        where: {
+          grupo_tarifa: uso.grupo_tarifa,
+          subtipo: tipo_escuadra,
+          rango_desde: { [Op.lt]: cantidad },
+          rango_hasta: { [Op.gte]: cantidad },
+        },
+      });
+
+      costo_tarifas_transporte = Number(tarifa_transporte_encontrado.precio_soles);
+      break;
     default:
-        break;
+      break;
   }
 
   // 2. Calcular costo segun el distrito
@@ -139,10 +200,14 @@ module.exports = async (
   if (distrito_transporte_encontrado) {
     switch (tarifa_transporte_encontrado.tipo_transporte) {
       case "Camioneta":
-        costo_distrito_transporte = Number(distrito_transporte_encontrado.extra_camioneta);
+        costo_distrito_transporte = Number(
+          distrito_transporte_encontrado.extra_camioneta
+        );
         break;
       case "Camión":
-        costo_distrito_transporte = Number(distrito_transporte_encontrado.extra_camion);
+        costo_distrito_transporte = Number(
+          distrito_transporte_encontrado.extra_camion
+        );
         break;
       default:
         break;
@@ -151,15 +216,18 @@ module.exports = async (
 
   // 3. Calcular costo pernocte transporte
 
-  const costos_pernocte_transporte_encontrado = await db.costos_pernocte_transporte.findOne({
-    where: {
-        tipo_transporte: tarifa_transporte_encontrado.tipo_transporte
-    }
-  })
-  
-  if(peso_total_tn <= costos_pernocte_transporte_encontrado.umbral_toneladas){
-    costo_pernocte_transporte= Number(costos_pernocte_transporte_encontrado.precio_soles)
-  }else{
+  const costos_pernocte_transporte_encontrado =
+    await db.costos_pernocte_transporte.findOne({
+      where: {
+        tipo_transporte: tarifa_transporte_encontrado.tipo_transporte,
+      },
+    });
+
+  if (peso_total_tn <= costos_pernocte_transporte_encontrado.umbral_toneladas) {
+    costo_pernocte_transporte = Number(
+      costos_pernocte_transporte_encontrado.precio_soles
+    );
+  } else {
     return {
       codigo: 400,
       respuesta: {
@@ -170,7 +238,10 @@ module.exports = async (
 
   // 4. Sumar los 3 costos
 
-  const costo_total = costo_tarifas_transporte + costo_distrito_transporte + costo_pernocte_transporte
+  const costo_total =
+    costo_tarifas_transporte +
+    costo_distrito_transporte +
+    costo_pernocte_transporte;
 
   return {
     codigo: 200,
@@ -181,8 +252,8 @@ module.exports = async (
         costo_tarifas_transporte,
         costo_distrito_transporte,
         costo_pernocte_transporte,
-        costo_total
+        costo_total,
       },
     },
-  }; 
-}; 
+  };
+};

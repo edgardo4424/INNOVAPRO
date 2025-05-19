@@ -13,6 +13,9 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
   const transaction = await db.sequelize.transaction(); // Iniciar transacción
 
   try {
+
+    //console.log('cotizacionData', cotizacionData);
+
     const { uso_id, atributos_formulario, cotizacion, despiece } = cotizacionData;
 
     if(despiece.length == 0) return { codigo: 400, respuesta: { mensaje: "No hay piezas en el despiece." } };
