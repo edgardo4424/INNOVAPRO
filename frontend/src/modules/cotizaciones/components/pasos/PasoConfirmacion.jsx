@@ -101,7 +101,7 @@ export default function PasoConfirmacion() {
         <div className="wizard-key-value"><strong>🧱 Total de piezas:</strong> {resumen.total_piezas}</div>
         <div className="wizard-key-value"><strong>⚖️ Peso total (kg):</strong> {resumen.peso_total_kg}</div>
         <div className="wizard-key-value"><strong>🚚 Peso total (ton):</strong> {resumen.peso_total_ton}</div>
-        <div className="wizard-key-value"><strong>💵 Subtotal venta (USD):</strong> ${resumen.precio_subtotal_venta_dolares}</div>
+        {/* <div className="wizard-key-value"><strong>💵 Subtotal venta (USD):</strong> ${resumen.precio_subtotal_venta_dolares}</div> */}
         <div className="wizard-key-value"><strong>💰 Subtotal venta (S/):</strong> S/ {resumen.precio_subtotal_venta_soles}</div>
         <div className="wizard-key-value"><strong>🛠️ Subtotal alquiler (S/):</strong> S/ {resumen.precio_subtotal_alquiler_soles}</div>
       </div>
@@ -119,7 +119,7 @@ export default function PasoConfirmacion() {
         />
         {formData.requiereAprobacion && (
           <p className="warning-text">
-            ⚠️ Este descuento requiere aprobación de Gerencia.
+            ⚠️ Recuerde informar a Gerencia sobre éste descuento.
           </p>
         )}
 

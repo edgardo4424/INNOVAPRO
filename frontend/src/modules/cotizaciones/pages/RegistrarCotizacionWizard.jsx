@@ -16,7 +16,7 @@ import { useAuth } from "../../../context/AuthContext.jsx";
 const pasos = [
   { id: 1, titulo: "Contacto", componente: PasoContacto },
   { id: 2, titulo: "Uso del Equipo", componente: PasoUso },
-  { id: 3, titulo: "Atributos del Andamio", componente: PasoAtributos },
+  { id: 3, titulo: "Atributos del Equipo", componente: PasoAtributos },
   { id: 4, titulo: "Confirmación Final", componente: PasoConfirmacion },
   { id: 5, titulo: "Revisión y Envío", componente: PasoFinal },
 ];
