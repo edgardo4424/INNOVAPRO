@@ -53,7 +53,7 @@ export default function PasoFinal() {
       </div>
 
       <div className="mensaje-revision-final">
-        Revisa bien todos los datos antes de guardar. Esta será la información enviada al backend para registrar la cotización.
+        Revisa bien todos los datos antes de guardar. Esta será la información registrada en su cotización.
       </div>
     </div>
   );
