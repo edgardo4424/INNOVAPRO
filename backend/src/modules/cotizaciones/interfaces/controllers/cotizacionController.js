@@ -1,7 +1,9 @@
 const sequelizeCotizacionRepository = require('../../infrastructure/repositories/sequelizeCotizacionRepository'); // Importamos el repositorio de cotizaciones
 
-const crearCotizacion = require('../../application/useCases/crearCotizacion'); // Importamos el caso de uso para crear un cotizacion
-const obtenerCotizaciones = require('../../application/useCases/obtenerCotizaciones'); // Importamos el caso de uso para obtener todos los cotizacions
+const crearCotizacion = require('../../application/useCases/crearCotizacion'); 
+const obtenerCotizaciones = require('../../application/useCases/obtenerCotizaciones'); 
+const generarPdfCotizacion = require('../../application/useCases/generarPdfCotizacion');
+
 /* const obtenerCotizacionPorId = require('../../application/useCases/obtenerCotizacionPorId'); // Importamos el caso de uso para obtener un cotizacion por ID
 const actualizarCotizacion = require('../../application/useCases/actualizarCotizacion'); // Importamos el caso de uso para actualizar un cotizacion
 const eliminarCotizacion = require('../../application/useCases/eliminarCotizacion'); // Importamos el caso de uso para eliminar un cotizacion
@@ -12,8 +14,6 @@ const cotizacionRepository = new sequelizeCotizacionRepository(); // Instancia d
 const CotizacionController = {
     async crearCotizacion(req, res) {
         try {
-
-            console.log('body', req.body);
 
             const datos = {
                 ...req.body,
@@ -34,6 +34,7 @@ const CotizacionController = {
 
    async obtenerCotizaciones(req, res) {
         try {
+           
             const cotizaciones = await obtenerCotizaciones(cotizacionRepository); // Llamamos al caso de uso para obtener todos las cotizaciones
            
             res.status(200).json(cotizaciones.respuesta); // 🔥 Siempre devuelve un array, aunque esté vacío
@@ -42,6 +43,19 @@ const CotizacionController = {
             res.status(500).json({ error: error.message }); // Respondemos con un error
         }
     },
+
+    async generarPdfCotizacion(req, res) {
+        try {
+            const idCotizacion = req.body.id;
+
+            const datosCotizacion = await generarPdfCotizacion(idCotizacion, cotizacionRepository ); 
+            res.status(datosCotizacion.codigo).json(datosCotizacion.respuesta); 
+        } catch (error) {
+            console.log('error', error);
+            res.status(500).json({ error: error.message }); // Respondemos con un error
+        }
+    }
+    
 
     /*async obtenerCotizacionPorId(req, res) {
         try {
