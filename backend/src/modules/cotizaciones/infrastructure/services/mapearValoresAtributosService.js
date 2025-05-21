@@ -21,13 +21,14 @@ async function mapearValoresAtributos(
   // 3. Generar los registros a insertar
   let valoresDeAtributosMapeados = [];
 
-  atributos_formulario.forEach((obj) => {
+  atributos_formulario.forEach((obj, index) => {
     for (const [llave, valor] of Object.entries(obj)) {
       if (mapaAtributos.has(llave)) {
         valoresDeAtributosMapeados.push({
           despiece_id,
           atributo_id: mapaAtributos.get(llave),
           valor: valor != null ? valor.toString() : null,
+          numero_formulario_uso: index+1
         });
       }
     }
