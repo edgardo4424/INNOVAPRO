@@ -57,7 +57,10 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
 
   const uso_id = despieceEncontrado.atributos_valors?.[0].atributo.uso_id;
  
-  console.log('cotizacionEncontrado', cotizacionEncontrado);
+  // Para saber la cantidad de usos
+  const ultimoAtributo = despieceEncontrado.atributos_valors[despieceEncontrado.atributos_valors.length - 1];
+  const cantidadUso = ultimoAtributo.numero_formulario_uso
+
   // Mapear los datos generales para todos los usos para generar el pdf
   let datosPdfCotizacion = {
     obra: {
@@ -85,7 +88,7 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
       correo: cotizacionEncontrado.usuario.email,
     },
     cotizacion: {
-      fecha: formatearFechaIsoADMY(cotizacionEncontrado.updatedAt),
+      fecha: formatearFechaIsoADMY(cotizacionEncontrado.createdAt),
       moneda: despieceEncontrado.moneda,
       subtotal_despiece_sin_igv: despieceEncontrado.subtotal,
     },
@@ -117,11 +120,11 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
          // ANDAMIO DE TRABAJO
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
-        cantidad_usos: 1,
+        cantidad_uso: cantidadUso,
         atributos: {
-          longitud_mm: despieceEncontrado?.atributos_valors[0]?.valor,
-          ancho_mm: despieceEncontrado?.atributos_valors[1]?.valor,
-          altura_m: despieceEncontrado?.atributos_valors[2]?.valor,
+          longitud_mm: despieceEncontrado?.atributos_valors?.[0]?.valor || "",
+          ancho_mm: despieceEncontrado?.atributos_valors?.[1]?.valor || "",
+          altura_m: despieceEncontrado?.atributos_valors?.[2]?.valor || "",
         },
       };
       break;
