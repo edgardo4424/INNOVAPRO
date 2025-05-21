@@ -8,6 +8,7 @@ router.use(verificarToken); // Verificamos el token para todas las rutas
 // 📌 Rutas protegidas solo para Gerencia
 router.get("/", cotizacionController.obtenerCotizaciones);
 router.post("/", cotizacionController.crearCotizacion);
+router.post("/generar-pdf", cotizacionController.generarPdfCotizacion);
 
 /* router.put("/:id", cotizacionController.actualizarCotizacion);
 router.delete("/:id", cotizacionController.eliminarCotizacion); */
