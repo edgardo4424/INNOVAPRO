@@ -5,7 +5,6 @@ import * as cotizacionesService from "../services/cotizacionesService";
 
 export function useGestionCotizaciones() {
   const downloadPDF = (cotizacion) => {
-    console.log("siberia",cotizacion)
     const doc = new jsPDF({
       orientation: "portrait",
       unit: "mm",
@@ -121,7 +120,7 @@ export function useGestionCotizaciones() {
 
   const [cotizaciones, setCotizaciones] = useState([]);
   const [paginaActual, setPaginaActual] = useState(1);
-  const cotizacionesPorPagina = 10;
+  const cotizacionesPorPagina = 30;
 
    // 🔄 Cargar cotizaciones al iniciar
    useEffect(() => {
