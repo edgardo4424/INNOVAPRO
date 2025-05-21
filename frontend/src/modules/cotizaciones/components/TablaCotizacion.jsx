@@ -1,4 +1,4 @@
-export default function TablaCotizacion({ cotizaciones, onDownloadPDF }) {
+export default function TablaCotizacion({ cotizaciones, onDownloadPDF, setCotizacionPrevisualizada }) {
   return (
     <div className="table-responsive">
       <table className="custom-table">
@@ -30,8 +30,13 @@ export default function TablaCotizacion({ cotizaciones, onDownloadPDF }) {
                   >
                     PDF
                   </button>
+                  <button
+                    onClick={() => setCotizacionPrevisualizada(cotizacion)}
+                    className="edit-button"
+                  >
+                    Ver PDF
+                  </button>
                   <button className="edit-button">✏️Editar</button>
-                  <button className="btn-eliminar">🗑Eliminar</button>
                 </div>
               </td>
             </tr>

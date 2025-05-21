@@ -1,11 +1,15 @@
 import TablaCotizacion from "../components/TablaCotizacion";
 import { useGestionCotizaciones } from "../hooks/useGestionCotizaciones";
+import { useState } from "react";
+import PrevisualizadorPDF from "../components/PrevisualizadorPDF";
 
 export default function GestionCotizaciones() {
    const {
     cotizacionesPaginados,
       downloadPDF,
     } = useGestionCotizaciones();
+
+    const [cotizacionPrevisualizada, setCotizacionPrevisualizada] = useState(null);
   
 
   return (
@@ -14,7 +18,11 @@ export default function GestionCotizaciones() {
 
       <TablaCotizacion 
       cotizaciones={cotizacionesPaginados}
-        onDownloadPDF={downloadPDF} />
+      onDownloadPDF={downloadPDF} 
+      setCotizacionPrevisualizada={setCotizacionPrevisualizada}
+      />
+
+      {cotizacionPrevisualizada && <PrevisualizadorPDF cotizacion={cotizacionPrevisualizada} />}
     </div>
   );
 }
