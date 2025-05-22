@@ -1,12 +1,12 @@
 // helpers/despieceUtils.js
 
-function agruparPorPieza(todosDespieces, cantidadAndamios) {
+function agruparPorPieza(todosDespieces, cantidadUso) {
     const mapaPiezas = new Map();
   
     todosDespieces.forEach((despiece, i) => {
       despiece.forEach(({ pieza, cantidad }) => {
         if (!mapaPiezas.has(pieza)) {
-          mapaPiezas.set(pieza, { pieza, cantidades: Array(cantidadAndamios).fill(0) });
+          mapaPiezas.set(pieza, { pieza, cantidades: Array(cantidadUso).fill(0) });
         }
         mapaPiezas.get(pieza).cantidades[i] = cantidad;
       });

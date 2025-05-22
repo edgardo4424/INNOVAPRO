@@ -54,6 +54,9 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
       ],
     }
   );
+  
+  if (!despieceEncontrado)
+    return { codigo: 404, respuesta: { mensaje: "Despiece no encontrada" } };
 
   const uso_id = despieceEncontrado.atributos_valors?.[0].atributo.uso_id;
  
