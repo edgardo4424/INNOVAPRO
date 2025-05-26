@@ -1,27 +1,25 @@
 const {
-  generarDespieceAndamioTrabajo,
-} = require("../../infrastructure/services/generarDespieceAndamioTrabajoService");
+  generarDespieceEscalera,
+} = require("../../infrastructure/services/generarDespieceEscaleraService");
 
 module.exports = async (dataParaGenerarDespiece) => {
+
   const atributos = dataParaGenerarDespiece.atributos_formulario;
 
   const atributosFormularioFormateado = atributos.map((atributo) => ({
     ...atributo,
-    longitud: Number(atributo.longitud),
-    ancho: Number(atributo.ancho),
-    altura: Number(atributo.altura),
-    diagonalAncho: Number(atributo.diagonalAncho),
-    tuboAmarre: Number(atributo.tuboAmarre)
+    alturaTotal: Number(atributo.alturaTotal),
+    alturaEscaleraObra: Number(atributo.alturaEscaleraObra),
   }));
 
-  const despieceGenerado = await generarDespieceAndamioTrabajo(
+  const despieceGenerado = await generarDespieceEscalera(
     atributosFormularioFormateado
   );
 
   return {
     codigo: 200,
     respuesta: {
-      mensaje: "Despiece del Uso ANDAMIO DE TRABAJO generado exitosamente",
+      mensaje: "Despiece del Uso ESCALERAS generado exitosamente",
       despieceGenerado: despieceGenerado,
     },
   }; // Retornamos el despiece creado

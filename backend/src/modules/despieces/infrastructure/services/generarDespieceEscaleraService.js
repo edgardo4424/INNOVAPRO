@@ -7,18 +7,15 @@ const {
 } = require("../helpers/despieceUtils");
 
 const db = require("../../../../models");
-const { calcularCantidadesPorCadaPiezaDeAndamioTrabajo } = require("./calcularCantidadesAndamioTrabajo");
+const { calcularCantidadesPorCadaPiezaDeEscalera } = require("./calcularCantidadesEscalera");
 
-const CONST_ID_USO_ANDAMIO_TRABAJO = 2;
+const CONST_ID_USO_ESCALERA = 3;
 
-async function generarDespieceAndamioTrabajo(atributos) {
+async function generarDespieceEscalera(atributos) {
 
-  const datosConCantidadAndamios = atributos.map((d, index) => ({
-    ...d,
-    cantidadAndamios: index + 1,
-  }));
+  const todosDespieces = calcularCantidadesPorCadaPiezaDeEscalera(atributos);
 
-  const todosDespieces = calcularCantidadesPorCadaPiezaDeAndamioTrabajo(datosConCantidadAndamios);
+  console.log('todosDespieces', todosDespieces[0].length);
 
   // Validar que por lo menos tenga piezas en el despiece
   
@@ -26,12 +23,12 @@ async function generarDespieceAndamioTrabajo(atributos) {
 
   const resultadoFinal = agruparPorPieza(
     todosDespieces,
-    datosConCantidadAndamios.length
+    atributos.length
   );
   const subtotales = calcularSubtotales(resultadoFinal);
 
   const piezasBD = await db.piezas_usos.findAll({
-    where: { uso_id: CONST_ID_USO_ANDAMIO_TRABAJO },
+    where: { uso_id: CONST_ID_USO_ESCALERA },
     include: [{ model: db.piezas, as: "pieza" }],
     raw: true,
   });
@@ -62,5 +59,5 @@ async function generarDespieceAndamioTrabajo(atributos) {
 
 
 module.exports = {
-  generarDespieceAndamioTrabajo, // Exporta la función para que pueda ser utilizada en otros módulos
+  generarDespieceEscalera, // Exporta la función para que pueda ser utilizada en otros módulos
 };
