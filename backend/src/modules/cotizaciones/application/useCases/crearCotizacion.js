@@ -127,11 +127,32 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
         return acumulador + (item.peso_kg || 0); // suma solo si existe el campo cantidad
       }, 0);
 
-      const datosParaCualcularCostoTransporte = {
+      let datosParaCualcularCostoTransporte = {
         uso_id: uso_id,
         peso_total_tn: (totalKg/1000).toFixed(2),
         distrito_transporte_id: cotizacion?.distrito_transporte_id,
       };
+
+      switch (uso_id+"") {
+        case "2":
+          
+          break;
+        
+        case "5":
+          // Puntales
+          const subtipo = atributos_formulario[0].tipoPuntal.split("-")[0].trim()
+
+          datosParaCualcularCostoTransporte = {
+            ...datosParaCualcularCostoTransporte,
+            tipo_puntal: subtipo
+          }
+        break;
+      
+        default:
+          break;
+      }
+
+
 
       const datosParaGuardarCotizacionesTransporte =  (await calcularCostoTransporte(datosParaCualcularCostoTransporte)).respuesta;
 
