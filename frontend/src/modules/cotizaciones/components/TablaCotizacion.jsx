@@ -31,7 +31,7 @@ export default function TablaCotizacion({ cotizaciones, onDownloadPDF, setCotiza
                     PDF
                   </button>
                   <button
-                    onClick={() => setCotizacionPrevisualizada(cotizacion)}
+                    onClick={() => setCotizacionPrevisualizada(cotizacion.id)}
                     className="edit-button"
                   >
                     Ver PDF

@@ -67,6 +67,18 @@ export default function PasoUso() {
 
         {errores.tipo_cotizacion && <p className="error-text">{errores.tipo_cotizacion}</p>}
       </div>
+        
+      {formData.tipo_cotizacion === "Alquiler" && (
+        <div className="wizard-section">
+          <label>Duración del alquiler (días):</label>
+          <input
+            type="number"
+            value={formData.duracion_alquiler || ""}
+            onChange={(e) => handleChange("duracion_alquiler", e.target.value)}
+          />
+          {errores.duracion_alquiler && <p className="error-text">{errores.duracion_alquiler}</p>}
+        </div>
+      )}
       
     </div>
   );
