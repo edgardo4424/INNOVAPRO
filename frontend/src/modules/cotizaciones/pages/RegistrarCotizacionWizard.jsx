@@ -117,7 +117,12 @@ const RegistrarCotizacionWizard = () => {
               try {
                 const payload = {
                   uso_id: formData.uso_id,
-                  atributos_formulario: formData.atributos,
+                  atributos_formulario: Array.isArray(formData.atributos)
+                  ? formData.atributos.map((bloque, index) => ({
+                      ...bloque,
+                      numero_formulario_uso: index + 1,
+                    }))
+                  : [],
                   cotizacion: {
                     cliente_id: formData.cliente_id,
                     obra_id: formData.obra_id,
@@ -133,11 +138,11 @@ const RegistrarCotizacionWizard = () => {
                   },
                   despiece: formData.despiece,
                 };
-
+                console.log(payload);
                 await crearCotizacion(payload);
                 setPasoActual(pasos.length);
               } catch (error) {
-                console.error("Error al guardar cotización", error);
+                console.error("Error al guardar cotización", error.response?.data?.message || error.message);
               }
               setGuardando(false);
             }}

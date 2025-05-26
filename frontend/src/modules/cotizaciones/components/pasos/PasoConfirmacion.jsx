@@ -10,7 +10,7 @@ export default function PasoConfirmacion() {
   useEffect(() => {
     const cargarDespiece = async () => {
       try {
-        const data = await generarDespiece(formData.atributos);
+        const data = await generarDespiece(formData.atributos, formData.uso_id);
         console.log("📦 Respuesta despiece:", data);
 
         if (!data?.despiece || !Array.isArray(data.despiece)) {

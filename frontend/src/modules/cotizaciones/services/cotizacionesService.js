@@ -1,14 +1,26 @@
 import api from "@/shared/services/api";
 
 // Obtener atributos de un uso (ej. Andamio de Trabajo)
-export async function obtenerAtributosPorUso(usoId = 2) {
+export async function obtenerAtributosPorUso(usoId) {
   const response = await api.get(`/atributos/usos/${usoId}`);
   return response.data;
 }
 
 // Generar despiece a partir de los atributos ingresados
-export async function generarDespiece(atributos) {
-  const response = await api.post("/despieces/andamio-de-trabajo", {
+export async function generarDespiece(atributos, usoId) {
+  let uso = "";
+  switch (usoId) {
+    case 2: // Andamio de trabajo
+      uso = "andamio-de-trabajo";
+      break;
+    case 5: // Puntales
+      uso = "puntales";
+      break;
+    case 3: // Escalera de acceso
+      uso = "escalera-de-acceso";
+      break;
+  }
+  const response = await api.post(`/despieces/${uso}`, {
     atributos_formulario: atributos,
   });
   return response.data.despieceGenerado;
