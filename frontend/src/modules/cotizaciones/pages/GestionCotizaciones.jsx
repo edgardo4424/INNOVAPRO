@@ -9,9 +9,8 @@ export default function GestionCotizaciones() {
       downloadPDF,
     } = useGestionCotizaciones();
 
-    const [cotizacionPrevisualizada, setCotizacionPrevisualizada] = useState(null);
+    const [cotizacionSeleccionadaId, setCotizacionSeleccionadaId] = useState(null);
   
-
   return (
     <div className="dashboard-main">
       <h2>Gestión de Cotizaciones</h2>
@@ -19,10 +18,10 @@ export default function GestionCotizaciones() {
       <TablaCotizacion 
       cotizaciones={cotizacionesPaginados}
       onDownloadPDF={downloadPDF} 
-      setCotizacionPrevisualizada={setCotizacionPrevisualizada}
+      setCotizacionPrevisualizada={setCotizacionSeleccionadaId}
       />
 
-      {cotizacionPrevisualizada && <PrevisualizadorPDF cotizacion={cotizacionPrevisualizada} />}
+      {cotizacionSeleccionadaId && <PrevisualizadorPDF cotizacionId={cotizacionSeleccionadaId} />}
     </div>
   );
 }

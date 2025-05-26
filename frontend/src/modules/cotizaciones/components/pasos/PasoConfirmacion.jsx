@@ -6,7 +6,7 @@ import Loader from "../../../../shared/components/Loader";
 
 export default function PasoConfirmacion() {
   const { formData, setFormData } = useWizardContext();
-
+  console.log("📦 Datos del formulario:", formData);
   useEffect(() => {
     const cargarDespiece = async () => {
       try {

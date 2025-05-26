@@ -9,7 +9,7 @@ export async function obtenerAtributosPorUso(usoId = 2) {
 // Generar despiece a partir de los atributos ingresados
 export async function generarDespiece(atributos) {
   const response = await api.post("/despieces/andamio-de-trabajo", {
-    atributos_formulario: [atributos],
+    atributos_formulario: atributos,
   });
   return response.data.despieceGenerado;
 }
@@ -23,7 +23,7 @@ export async function crearCotizacion({
 }) {
   const response = await api.post("/cotizaciones", {
     uso_id,
-    atributos_formulario: [atributos_formulario],
+    atributos_formulario,
     cotizacion,
     despiece,
   });
@@ -33,5 +33,11 @@ export async function crearCotizacion({
 // Obtener todas las cotizaciones (o recursos según la entidad)
 export async function obtenerTodos() {
   const response = await api.get("/cotizaciones");
+  return response.data;
+}
+
+//Generar un PDF a partir de una cotización
+export async function  obtenerDatosPDF(id) {
+  const response = await api.post("/cotizaciones/generar-pdf", {id});
   return response.data;
 }

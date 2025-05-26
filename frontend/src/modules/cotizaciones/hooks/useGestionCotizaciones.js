@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { jsPDF } from "jspdf";
 import fondo from "../assets/PlantillaIMG.png"; 
 import * as cotizacionesService from "../services/cotizacionesService";
+import { toast } from "react-toastify";
 
 export function useGestionCotizaciones() {
   const downloadPDF = (cotizacion) => {
