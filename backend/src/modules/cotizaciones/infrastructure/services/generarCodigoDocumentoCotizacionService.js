@@ -1,19 +1,18 @@
 const db = require("../../../../models");
 
 const ID_ESTADO_COTIZACION_CREADO = 1;
-const ID_ESTADO_COTIZACION_APROBADO = 2;
-
+/* const ID_ESTADO_COTIZACION_APROBADO = 2;
+ */
 const ROL_USUARIO_COMERCIAL = "Ventas";
 const ROL_USUARIO_OT = "Oficina Técnica";
 
 async function generarCodigoDocumentoCotizacion({
-  filial_id,
+  uso_id_para_registrar,
   filial_razon_social,
-  usuario_id,
   usuario_rol,
   usuario_nombre,
   anio_cotizacion,
-  estado_cotizacion,
+  cotizacion
 }) {
   // 🔹 Iniciales de la filial (ej. IR)
   const filialAbv = filial_razon_social
@@ -26,13 +25,13 @@ async function generarCodigoDocumentoCotizacion({
 
   let tipoDocumento = "";
 
-  if (estado_cotizacion == ID_ESTADO_COTIZACION_CREADO) {
+  if (cotizacion.estados_cotizacion_id == ID_ESTADO_COTIZACION_CREADO) {
     tipoDocumento = "COT";
   }
 
-  if (estado_cotizacion == ID_ESTADO_COTIZACION_APROBADO) {
+ /*  if (cotizacion.estados_cotizacion_id == ID_ESTADO_COTIZACION_APROBADO) {
     tipoDocumento = "CC";
-  }
+  } */
 
   // 🔹 Rol que registró "COM" comercial , "OFT" OT
 
@@ -59,26 +58,15 @@ async function generarCodigoDocumentoCotizacion({
   // El correlativo cambia si el uso Cambia (Sabiendo que la cotizacion es para el mismo cliente, filial, usuario)
   // Por ejm al inicio hice una cotizacion para andamio de trabajo, luego a puntales. El correlativo cambia de 0001 a 0002
 
-  const new_contacto_id = 21;
-  const new_cliente_id = 1;
-  const new_obra_id = 6;
-  const new_filial_id = 1;
-  const new_usuario_id = 52;
-  const estado_cotizacion_id = 1;
-  const new_tipo_cotizacion = "Venta";
-  const anio_coti = 2025;
-  const uso_id = 2;
-
-  const cotizacionConMismoContactoClienteObraFilial_BD =
+  const cotizacionesConMismoContactoClienteObraFilial_BD =
     await db.cotizaciones.findAll({
       where: {
-        contacto_id: new_contacto_id,
-        cliente_id: new_cliente_id,
-        obra_id: new_obra_id,
-        filial_id: new_filial_id,
-        usuario_id: new_usuario_id,
-        estados_cotizacion_id: estado_cotizacion_id,
-        tipo_cotizacion: new_tipo_cotizacion,
+        contacto_id: cotizacion.contacto_id,
+        cliente_id: cotizacion.cliente_id,
+        obra_id: cotizacion.obra_id,
+        filial_id: cotizacion.filial_id,
+        usuario_id: cotizacion.usuario_id,
+        estados_cotizacion_id: cotizacion.estados_cotizacion_id,
       },
     });
 
@@ -86,29 +74,28 @@ async function generarCodigoDocumentoCotizacion({
   let correlativo = "";
 
   // Aplanar resultados
-  const cotizacionConMismoContactoClienteObraFilial =
-    cotizacionConMismoContactoClienteObraFilial_BD.map((c) =>
+  const cotizacionesConMismoContactoClienteObraFilial =
+    cotizacionesConMismoContactoClienteObraFilial_BD.map((c) =>
       c.get({ plain: true })
     );
 
-  if (cotizacionConMismoContactoClienteObraFilial.length == 0) {
+  if (cotizacionesConMismoContactoClienteObraFilial.length == 0) {
     // Si Es primera cotizacion
     version = "1";
     correlativo = "0001";
   } else {
-    version = cotizacionConMismoContactoClienteObraFilial.length + 1;
-
+    
     // Hallar el correlativo
     console.log(
-      "cotizacionConMismoContactoClienteObraFilial",
-      cotizacionConMismoContactoClienteObraFilial
+      "cotizacionesConMismoContactoClienteObraFilial",
+      cotizacionesConMismoContactoClienteObraFilial
     );
 
     const cantidadCotizaciones =
-      cotizacionConMismoContactoClienteObraFilial.length;
+      cotizacionesConMismoContactoClienteObraFilial.length;
     // Obteniendo el ultimo registro de una cotizacion del mismo contaco, cliente, obra, filial
     const ultimaCotizacion =
-      cotizacionConMismoContactoClienteObraFilial[cantidadCotizaciones - 1];
+      cotizacionesConMismoContactoClienteObraFilial[cantidadCotizaciones - 1];
     const despiece_id = ultimaCotizacion.despiece_id;
 
     const resultado = await db.atributos_valor.findAll({
@@ -130,8 +117,35 @@ async function generarCodigoDocumentoCotizacion({
     );
 
     const { atributo }= listaAtributosValor[listaAtributosValor.length-1];
-    const uso_id = atributo.uso_id
-    console.log('uso_id', uso_id);
+    const ultimo_uso_id = atributo.uso_id
+    
+    console.log('ultimo_uso_id', ultimo_uso_id);
+
+    // Si el ultimo uso de la cotizacion es igual al uso de la nueva cotizacion, el correlativo se mantiene
+    
+    const codigo_documento = ultimaCotizacion?.codigo_documento
+
+    // Formato codigo_documento: EI-COT-COM-JD-0001_3-2025
+
+    if(ultimo_uso_id == uso_id_para_registrar){
+      // Si es igual el uso, se mantiene el correlativo
+      correlativo = codigo_documento.split("-")[4].split("_")[0]
+      
+      let ultimaVersion = codigo_documento.split("-")[4].split("_")[1]
+      version = Number(ultimaVersion)+1
+    }else{
+      // Si no es igual el uso, se suma 1 al ultimo correlativo obteniendo del codigo_documento
+      console.log('codigo_documento',codigo_documento);
+      correlativoAnterior = codigo_documento.split("-")[4].split("_")[0]
+
+      let number = parseInt(correlativoAnterior, 10) + 1; // Suma 1 al número
+      let resultado = number.toString().padStart(correlativoAnterior.length, '0'); // Rellena con ceros
+
+      console.log('correlativo', correlativo);;
+      correlativo = resultado
+
+      version = "1";
+    }
   }
 
   // 🔹 Contador de documentos por filial, usuario, tipo y anio
@@ -149,7 +163,7 @@ async function generarCodigoDocumentoCotizacion({
   const correlativo = (totalDocumentos + 1).toString().padStart(4, "0"); // Ej: 0003 */
 
   // 🔹 Construcción del código
-  const codigo = `${filialAbv}-${tipoDocumento}-${codRolUsuario}-${usuarioAbv}-${correlativo}_${version}-${anio_coti}`;
+  const codigo = `${filialAbv}-${tipoDocumento}-${codRolUsuario}-${usuarioAbv}-${correlativo}_${version}-${anio_cotizacion}`;
 
   return codigo;
 }

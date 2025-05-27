@@ -63,10 +63,19 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
     return { codigo: 404, respuesta: { mensaje: "Despiece no encontrada" } };
 
   const uso_id = despieceEncontrado.atributos_valors?.[0].atributo.uso_id;
- 
+
+  const usoEncontrado = await db.usos.findByPk(uso_id)
+
   // Para saber la cantidad de usos
   const ultimoAtributo = despieceEncontrado.atributos_valors[despieceEncontrado.atributos_valors.length - 1];
   const cantidadUso = ultimoAtributo.numero_formulario_uso
+
+  const tipoServicio = cotizacionEncontrado.tipo_cotizacion;
+  let tiempoAlquilerDias = null;
+
+  if(tipoServicio=="Alquiler"){
+    tiempoAlquilerDias = cotizacionEncontrado?.tiempo_alquiler_dias
+  }
 
   // Obtener el codigo documento
   /* const codigoDocumento = await generarCodigoDocumentoCotizacion({
@@ -110,6 +119,8 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
       fecha: formatearFechaIsoADMY(cotizacionEncontrado.createdAt),
       moneda: despieceEncontrado.moneda,
       subtotal_con_descuento_sin_igv: despieceEncontrado.subtotal_con_descuento,
+      tipo_servicio: tipoServicio,
+      tiempo_alquiler_dias: tiempoAlquilerDias
     },
     tarifa_transporte: {
       /* ...cotizacionEncontrado?.cotizaciones_transportes?.[0]?.dataValues  */
@@ -125,7 +136,11 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
       costo_total_transporte:
         cotizacionEncontrado?.cotizaciones_transportes?.[0]?.costo_total,
     },
-    tipo_servicio: cotizacionEncontrado.tipo_cotizacion
+    
+    uso: {
+      nombre: usoEncontrado.descripcion,
+      cantidad_uso: cantidadUso,
+    }
   };
 
   // Añadir algunos datos particulares para cada uso
@@ -140,7 +155,6 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
          // ANDAMIO DE TRABAJO
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
-        cantidad_uso: cantidadUso,
         atributos: {
           longitud_mm: despieceEncontrado?.atributos_valors?.[0]?.valor || "",
           ancho_mm: despieceEncontrado?.atributos_valors?.[1]?.valor || "",
@@ -158,6 +172,12 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
       break;
 
     case "5":
+      datosPdfCotizacion = {
+        ...datosPdfCotizacion,
+        atributos: {
+          
+        },
+      };
         // PUNTALES
       break;
     

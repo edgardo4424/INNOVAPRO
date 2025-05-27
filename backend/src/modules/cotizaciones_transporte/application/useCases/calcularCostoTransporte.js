@@ -7,9 +7,9 @@ module.exports = async (
   cotizacionesTransporteRepository
 ) => {
 
-  console.log('cotizacionTransporteData', cotizacionTransporteData);
-  const { uso_id, peso_total_tn, distrito_transporte_id, cantidad } =
-    cotizacionTransporteData;
+  const { uso_id, peso_total_tn, distrito_transporte } =  cotizacionTransporteData;
+
+    console.log('cotizacionTransporteData', cotizacionTransporteData);
 
   // 1. Calcular costo tarifa transporte
 
@@ -48,6 +48,7 @@ module.exports = async (
   switch (uso.grupo_tarifa) {
 
     case "andamio_multidireccional":
+
       tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
         where: {
           grupo_tarifa: uso.grupo_tarifa,
@@ -55,8 +56,6 @@ module.exports = async (
           rango_hasta: { [Op.gte]: peso_total_tn },
         },
       });
-
-      console.log('tarifa_transporte_encontrado', tarifa_transporte_encontrado);
 
       costo_tarifas_transporte = Number(
         tarifa_transporte_encontrado.precio_soles
@@ -67,7 +66,7 @@ module.exports = async (
       break;
 
     case "escaleras":
-
+      const { cantidad } = cotizacionTransporteData;
       tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
         where: {
           grupo_tarifa: uso.grupo_tarifa,
@@ -75,8 +74,6 @@ module.exports = async (
           rango_hasta: { [Op.gte]: cantidad },
         },
       });
-
-      console.log("tarifa_transporte_encontrado", tarifa_transporte_encontrado);
 
       costo_tarifas_transporte = Number(tarifa_transporte_encontrado.precio_soles);
        unidad = 'Tramo';
@@ -160,23 +157,25 @@ module.exports = async (
 
   // 2. Calcular costo segun el distrito
 
-  const distrito_transporte_encontrado = await db.distritos_transporte.findOne({
+  const distrito_transporte_encontrado = await db.ubigeos.findOne({
     where: {
-      id: distrito_transporte_id,
+      distrito: distrito_transporte,
     },
   });
+
+  console.log('distrito_transporte_encontrado',distrito_transporte_encontrado);
 
   // Si el distrito se encuentra dentro de la lista, se cobra un adicional. Si no está el costo_distrito_transporte sera 0
   if (distrito_transporte_encontrado) {
     switch (tarifa_transporte_encontrado.tipo_transporte) {
       case "Camioneta":
         costo_distrito_transporte = Number(
-          distrito_transporte_encontrado.extra_camioneta
+          distrito_transporte_encontrado.extra_camioneta_soles
         );
         break;
       case "Camión":
         costo_distrito_transporte = Number(
-          distrito_transporte_encontrado.extra_camion
+          distrito_transporte_encontrado.extra_camion_soles
         );
         break;
       default:
@@ -226,7 +225,7 @@ module.exports = async (
       },
 
       tipo_transporte: tarifa_transporte_encontrado.tipo_transporte,
-      distrito_transporte_id: distrito_transporte_encontrado.id,
+      distrito_transporte: distrito_transporte,
       tarifa_transporte_id: tarifa_transporte_encontrado.id,
       unidad: unidad,
       cantidad: cantidadTotal
