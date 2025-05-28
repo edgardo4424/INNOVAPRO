@@ -1,6 +1,6 @@
 export function renderTextoTransporte(doc, data, currentY) {
-    data.tiene_transporte = true; // Forzar transporte a true para pruebas, eliminar en producción
-  if (!data.tiene_transporte) return currentY;
+
+  if (data.tarifa_transporte && Object.keys(tarifa_transporte).length === 0) return currentY;
 
   const indent = 20;
   const box = 2.5;
@@ -11,8 +11,8 @@ export function renderTextoTransporte(doc, data, currentY) {
   doc.line(indent + box + 3, currentY + 1.5, indent + box + 31, currentY + 1.5);
 
   const transporte = [
-    `Transporte de ENTREGA: S/${data.transporte?.costo_total || "(INDEFINIDO COSTO DE TRANSPORTE)"} + IGV.`,
-    `Transporte de DEVOLUCIÓN: S/${data.transporte?.costo_total || "(INDEFINIDO COSTO DE TRANSPORTE)"} + IGV. (Siempre y cuando el servicio se realice en un solo flete)`
+    `Transporte de ENTREGA: S/${data.tarifa_transporte?.costo_total_transporte || "(INDEFINIDO COSTO DE TRANSPORTE)"} + IGV.`,
+    `Transporte de DEVOLUCIÓN: S/${data.tarifa_transporte?.costo_total_transporte || "(INDEFINIDO COSTO DE TRANSPORTE)"} + IGV. (Siempre y cuando el servicio se realice en un solo flete)`
   ];
 
   currentY += 6;

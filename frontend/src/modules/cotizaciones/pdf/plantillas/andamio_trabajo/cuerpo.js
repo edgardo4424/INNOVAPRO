@@ -4,7 +4,7 @@ export function generarCuerpoAndamioTrabajo(doc, data, startY = 120) {
   // 📌 Título
   doc.setFontSize(11);
   doc.setFont("helvetica", "bold");
-  const titulo = `COTIZACIÓN DE ${data.tipo_servicio} DE MATERIAL`;
+  const titulo = `COTIZACIÓN DE ${data.cotizacion?.tipo_servicio} DE MATERIAL`;
   const textWidth = doc.getTextWidth(titulo);
   const x = (210 - textWidth) / 2;
   doc.text(titulo.toUpperCase(), x, currentY);
@@ -22,21 +22,21 @@ export function generarCuerpoAndamioTrabajo(doc, data, startY = 120) {
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8.5);
   doc.text(
-    "Servicio de " + (data.tipo_servicio || "Alquiler/Venta") + ":",
+    "Servicio de " + (data.cotizacion?.tipo_servicio || "Alquiler/Venta") + ":",
     indent + box + 3,
     currentY + 0.5
   );
   doc.line(indent + box + 3, currentY + 1.5, indent + box + 31, currentY + 1.5);
 
   // 🧮 Cantidad de equipos
-  const cantidad_equipos = data.cantidad_uso === 1 ? "Ud." : "Uds.";
+  const cantidad_equipos = data.uso.cantidad_uso === 1 ? "Ud." : "Uds.";
 
   // 🧮 Días de alquiler
-  const cantidad_dias = data.dias_alquiler === "1" ? "día" : "días";
+  const cantidad_dias = data.cotizacion?.tiempo_alquiler_dias === 1 ? "día" : "días";
 
   // ⚙️ Detalles cotización
   const detalles = data.detalles_alquiler || [
-    `CP${data.cp || "(INDEFINIDO)"}: ${data.cantidad_uso || "(INDEFINIDO NÚMERO DE EQUIPOS)"} ${cantidad_equipos} De ${data.tipo_uso || "(INDEFINIDO USO DE EQUIPO)"} de ${data.atributos?.longitud_mm || "(LONGITUD INDEFINIDA)"} m. de longitud x ${data.atributos?.ancho_mm || "(ANCHO INDEFINIDO)"} m. de ancho x ${data.atributos?.altura_m || "(ALTURA INDEFINIDA)"}.00 m. de altura + 1.00 m de baranda de seguridad: S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV. por ${data.dias_alquiler || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.`
+    `CP${data.cotizacion?.cp || "(INDEFINIDO)"}: ${data.uso.cantidad_uso || "(INDEFINIDO NÚMERO DE EQUIPOS)"} ${cantidad_equipos} De ${data.uso.nombre|| "(INDEFINIDO USO DE EQUIPO)"} de ${data.atributos?.longitud_mm || "(LONGITUD INDEFINIDA)"} m. de longitud x ${data.atributos?.ancho_mm || "(ANCHO INDEFINIDO)"} m. de ancho x ${data.atributos?.altura_m || "(ALTURA INDEFINIDA)"}.00 m. de altura + 1.00 m de baranda de seguridad: S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.`
   ];
 
   currentY += 6;

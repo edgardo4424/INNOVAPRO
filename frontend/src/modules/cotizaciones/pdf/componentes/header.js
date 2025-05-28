@@ -8,7 +8,7 @@ export default function encabezadoCotizacion(doc, data, cotizacionId) {
     doc.setFontSize(7);
         
      // Columna izquierda
-    doc.text(`Ref. cotización: IR-COT-COM-AM-00${cotizacionId}`, colLeftX, currentY); currentY += lh;
+    doc.text(`Ref. cotización: ${data.cotizacion?.codigo_documento}`, colLeftX, currentY); currentY += lh;
     if (data.obra?.direccion) {
         const direccionSplit = doc.splitTextToSize("Dirección obra: " + data.obra.direccion, 55);
         doc.text(direccionSplit, colLeftX, currentY);
