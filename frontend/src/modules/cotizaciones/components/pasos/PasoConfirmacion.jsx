@@ -1,18 +1,17 @@
 // INNOVA PRO+ v1.3.1
 import { useEffect } from "react";
 import { useWizardContext } from "../../hooks/useWizardCotizacion";
-import { generarDespiece } from "../../services/cotizacionesService";
+import { generarDespiece, calcularCostoTransporte } from "../../services/cotizacionesService";
 import Loader from "../../../../shared/components/Loader";
 
 export default function PasoConfirmacion() {
   const { formData, setFormData } = useWizardContext();
-  console.log("📦 Datos del formulario:", formData);
+  console.log(formData)
   useEffect(() => {
     const cargarDespiece = async () => {
       try {
         const data = await generarDespiece(formData.atributos, formData.uso_id);
-        console.log("📦 Respuesta despiece:", data);
-
+    
         if (!data?.despiece || !Array.isArray(data.despiece)) {
           throw new Error("La respuesta del backend no contiene un despiece válido");
         }
@@ -37,6 +36,63 @@ export default function PasoConfirmacion() {
 
     cargarDespiece();
   }, []);
+
+  function extraerDistrito(direccion) {
+        if (!direccion) return "";
+        const partes = direccion.split(",").map(p => p.trim());
+        const posibles = partes.slice().reverse(); // empezamos desde el final
+        for (let parte of posibles) {
+          const sinNumeros = parte.replace(/[0-9]/g, "").trim();
+          if (sinNumeros.length > 3 && !sinNumeros.includes("PERÚ")) {
+            return sinNumeros.toUpperCase();
+          }
+        }
+        return "";
+      }
+
+  useEffect(() => {
+    const calcularTransporte = async () => {
+      if (!formData.tiene_transporte) return;
+
+      const pesoTn = formData.resumenDespiece?.peso_total_ton;
+      const direccion = formData.obra_direccion || "";
+      const distrito = extraerDistrito(direccion);
+
+
+
+      if (!distrito || !pesoTn) return;
+
+      console.log(extraerDistrito(formData.obra_direccion))
+
+      try {
+        console.log("🚀 Enviando datos al backend:");
+        console.log({
+          uso_id: String(formData.uso_id),
+          peso_total_tn: String(pesoTn),
+          distrito_transporte: distrito.toUpperCase().trim()
+        });
+
+        const respuesta = await calcularCostoTransporte({
+          uso_id: formData.uso_id,
+          peso_total_tn: String(pesoTn),
+          distrito_transporte: distrito
+        });
+
+        const costo = respuesta?.costosTransporte?.costo_total || 0;
+
+        setFormData((prev) => ({
+          ...prev,
+          costo_transporte: costo
+        }));
+      } catch (err) {
+        console.error("❌ Error calculando transporte:", err.message);
+        console.error("❌ Error crudo de transporte:", err.response?.data || err.message);
+      }
+    };
+
+    calcularTransporte();
+  }, [formData.tiene_transporte]);
+
 
   const resumen = formData.resumenDespiece;
   const tipo = formData.tipo_cotizacion;
@@ -105,7 +161,33 @@ export default function PasoConfirmacion() {
         <div className="wizard-key-value"><strong>💰 Subtotal venta (S/):</strong> S/ {resumen.precio_subtotal_venta_soles}</div>
         <div className="wizard-key-value"><strong>🛠️ Subtotal alquiler (S/):</strong> S/ {resumen.precio_subtotal_alquiler_soles}</div>
       </div>
+      
+      <div className="wizard-section">
+        <label>¿Requiere servicio de transporte para el siguiente distrito?</label>
+        <p style={{ fontSize: "0.85rem", color: "#666" }}>
+          📍 Distrito detectado: {extraerDistrito(formData.obra_direccion)}
+        </p>
 
+        <select
+          value={formData.tiene_transporte ? "TRUE" : "FALSE"}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              tiene_transporte: e.target.value === "TRUE",
+              costo_transporte: 0
+            }))
+          }
+        >
+          <option value="FALSE">No</option>
+          <option value="TRUE">Sí</option>
+        </select>
+      </div>
+
+      {formData.tiene_transporte && formData.costo_transporte && (
+        <div className="wizard-key-value">
+          <strong>🚛 Costo Transporte:</strong> S/ {formData.costo_transporte}
+        </div>
+      )}
 
       <div className="bloque-descuento">
         <label>🎯 Descuento (%):</label>

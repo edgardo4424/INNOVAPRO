@@ -62,7 +62,7 @@ class SequelizeContactoRepository {
           model: db.obras,
           through: { attributes: [] },
           as: "obras_asociadas",
-          attributes: ["id", "nombre"], // 🔥 Solo obtener los atributos necesarios
+          attributes: ["id", "nombre", "direccion", "ubicacion"], // 🔥 Solo obtener los atributos necesarios
         },
       ],
     }); // Llama al método del repositorio para obtener todos los contactos
