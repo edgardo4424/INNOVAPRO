@@ -17,8 +17,11 @@ const CotizacionesTransporte = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    distrito_transporte_id: {
+    /* distrito_transporte_id: {
       type: DataTypes.INTEGER,
+    }, */
+    distrito_transporte: {
+      type: DataTypes.STRING,
     },
     tarifa_transporte_id: {
       type: DataTypes.INTEGER,
@@ -82,10 +85,10 @@ CotizacionesTransporte.associate = (models) => {
     as: "uso",
   });
 
-  CotizacionesTransporte.belongsTo(models.distritos_transporte, {
+ /*  CotizacionesTransporte.belongsTo(models.distritos_transporte, {
     foreignKey: "distrito_transporte_id",
     as: "distrito_transporte",
-  });
+  }); */
 
 }
 

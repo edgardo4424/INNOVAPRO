@@ -82,6 +82,13 @@ const Cotizacion = sequelize.define(
       type: DataTypes.BOOLEAN,
       allowNull: false,
     },
+    tiempo_alquiler_dias: {
+      type: DataTypes.INTEGER,
+    },
+    codigo_documento: {
+       type: DataTypes.STRING,
+       allowNull: false,
+    }
 
   }, {
     timestamps: true,

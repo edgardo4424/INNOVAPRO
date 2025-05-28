@@ -6,6 +6,7 @@ class Despiece {
         igv_porcentaje, 
         igv_monto, 
         total_final,
+        cp
     }) {
         this.subtotal = subtotal;
         this.porcentaje_descuento = porcentaje_descuento;
@@ -13,6 +14,7 @@ class Despiece {
         this.igv_porcentaje = igv_porcentaje;
         this.igv_monto = igv_monto;
         this.total_final = total_final
+        this.cp = cp
     }
 
     static validarCamposObligatorios(datos, modo = "crear") {
@@ -23,7 +25,7 @@ class Despiece {
         }
  */
         if (modo === "editar") {
-            const tieneAlMenosUnCampoValido = ["subtotal", "porcentaje_descuento", "subtotal_con_descuento", "igv_porcentaje", "igv_monto", "total_final"].some(
+            const tieneAlMenosUnCampoValido = ["subtotal", "porcentaje_descuento", "subtotal_con_descuento", "igv_porcentaje", "igv_monto", "total_final", "cp"].some(
                 (campo) => 
                     datos[campo] !== undefined && 
                     datos[campo] !== null && 

@@ -15,6 +15,9 @@ const {
 } = require("../../infrastructure/services/mapearValoresAtributosService");
 
 const calcularCostoTransporte = require("../../../cotizaciones_transporte/application/useCases/calcularCostoTransporte");
+const { generarCodigoDocumentoCotizacion } = require("../../infrastructure/services/generarCodigoDocumentoCotizacionService");
+
+const ID_ESTADO_COTIZACION_CREADO = 1;
 
 module.exports = async (cotizacionData, cotizacionRepository) => {
   const transaction = await db.sequelize.transaction(); // Iniciar transacción
@@ -42,18 +45,18 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
 
     // 2. Insertar Despiece
 
+    let dataParaDespiece = {
+      ...resultados.dataParaGuardarDespiece,
+      cp: "CP0"
+    }
+
     // Valida los campos del despiece
-    const errorCampos = Despiece.validarCamposObligatorios(
-      resultados.dataParaGuardarDespiece,
-      "crear"
-    );
+    const errorCampos = Despiece.validarCamposObligatorios( dataParaDespiece,"crear");
+
     if (errorCampos)
       return { codigo: 400, respuesta: { mensaje: errorCampos } };
 
-    const nuevoDespiece = await db.despieces.create(
-      resultados.dataParaGuardarDespiece,
-      { transaction }
-    );
+    const nuevoDespiece = await db.despieces.create(dataParaDespiece,{ transaction });
 
     const despiece_id = nuevoDespiece.id;
 
@@ -62,10 +65,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
 
     // Validación de todos los registros de despiece
     for (const data of detalles) {
-      const errorCampos = DespieceDetalle.validarCamposObligatorios(
-        data,
-        "crear"
-      );
+      const errorCampos = DespieceDetalle.validarCamposObligatorios(data, "crear");
       if (errorCampos) {
         return {
           codigo: 400,
@@ -100,15 +100,53 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
     await db.atributos_valor.bulkCreate(atributosValor, { transaction });
 
     // 5. Insertar Cotización
-    const cotizacionFinal = {
+    let cotizacionFinal = {
       ...cotizacion,
       despiece_id,
-      estados_cotizacion_id: 1, // Estado de "Creado"
+      estados_cotizacion_id: ID_ESTADO_COTIZACION_CREADO, // Estado de "Creado"
     };
+
+    console.log('cotizacionFinal.filial_id', cotizacionFinal.filial_id);
+    const filialEncontrado = await db.empresas_proveedoras.findByPk(cotizacionFinal.filial_id)
+    const usuarioEncontrado = await db.usuarios.findByPk(cotizacionFinal.usuario_id)
+
+    const datosParaGenerarCodigoDocumento = {
+
+      uso_id_para_registrar: uso_id,
+      filial_razon_social: filialEncontrado.razon_social,
+      usuario_rol: usuarioEncontrado.rol,
+      usuario_nombre: usuarioEncontrado.nombre,
+      anio_cotizacion: new Date().getFullYear(),
+      estado_cotizacion: cotizacionFinal.estados_cotizacion_id,
+      
+      cotizacion: cotizacionFinal
+    }
+
+    console.log('datosParaGenerarCodigoDocumento', datosParaGenerarCodigoDocumento);
+    const codigoDocumento = await generarCodigoDocumentoCotizacion(datosParaGenerarCodigoDocumento)
+    console.log('codigoDocumento',codigoDocumento);
+
+    cotizacionFinal = {
+      ...cotizacionFinal,
+      codigo_documento: codigoDocumento
+    }
+      
+    // Obtener el codigo documento
+  /* const codigoDocumento = await generarCodigoDocumentoCotizacion({
+        filial_id: cotizacion.filial_id,
+        filial_razon_social: filialEncontrado.razon_social,
+        usuario_id: cotizacion.usuario_id,
+        usuario_rol: usuarioEncontrado.rol,
+        usuario_nombre: usuarioEncontrado.nombre,
+        anio_cotizacion: new Date().getFullYear(),
+        estado_cotizacion: 1, // Creado
+      })
+
+      console.log('codigoDocumento',codigoDocumento); */
 
     // Valida los campos de la Cotizacion
     const errorCamposCotizacion = Cotizacion.validarCamposObligatorios(
-      resultados.dataParaGuardarDespiece,
+      cotizacionFinal,
       "crear"
     );
     if (errorCampos)
@@ -130,12 +168,15 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       let datosParaCualcularCostoTransporte = {
         uso_id: uso_id,
         peso_total_tn: (totalKg/1000).toFixed(2),
-        distrito_transporte_id: cotizacion?.distrito_transporte_id,
+        distrito_transporte: cotizacion?.distrito_transporte,
       };
 
       switch (uso_id+"") {
         case "2":
-          
+          // Andamio de trabajo
+          break;
+        case "3":
+          // Escaleras de acceso
           break;
         
         case "5":
@@ -160,7 +201,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
         cotizacion_id: cotizacionCreada.id,
         uso_id: uso_id, 
         
-        distrito_transporte_id:datosParaGuardarCotizacionesTransporte.distrito_transporte_id,
+        distrito_transporte:datosParaGuardarCotizacionesTransporte.distrito_transporte,
         tarifa_transporte_id: datosParaGuardarCotizacionesTransporte.tarifa_transporte_id,
         tipo_transporte: datosParaGuardarCotizacionesTransporte.tipo_transporte,
         unidad: datosParaGuardarCotizacionesTransporte.unidad,
@@ -170,6 +211,8 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
         costo_distrito_transporte: datosParaGuardarCotizacionesTransporte.costosTransporte.costo_distrito_transporte,
         costo_pernocte_transporte: datosParaGuardarCotizacionesTransporte.costosTransporte.costo_pernocte_transporte,
         costo_total: datosParaGuardarCotizacionesTransporte.costosTransporte.costo_total,
+
+        
       }
 
       await db.cotizaciones_transporte.create(mapeoDataGuardar, { transaction })

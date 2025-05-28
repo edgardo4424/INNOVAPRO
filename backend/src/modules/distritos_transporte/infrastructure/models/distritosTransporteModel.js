@@ -27,9 +27,9 @@ const DistritosTransporte = sequelize.define(
   });
 
   DistritosTransporte.associate = (models) => {
-   DistritosTransporte.hasMany(models.cotizaciones_transporte,{
+   /* DistritosTransporte.hasMany(models.cotizaciones_transporte,{
      foreignKey: "distrito_transporte_id",
-  })
+  }) */
 }
 
 module.exports = { DistritosTransporte }; // Exporta el modelo para que pueda ser utilizado en otros módulos
