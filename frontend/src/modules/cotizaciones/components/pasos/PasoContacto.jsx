@@ -41,10 +41,13 @@ export default function PasoContacto() {
       cliente_id: null,
       cliente_nombre: "",
       obra_id: null,
-      obra_nombre: ""
+      obra_nombre: "",
+      obra_direccion: "",
+      obra_ubicacion: ""
     }));
     setClientesFiltrados(contacto.clientes_asociados || []);
     setObrasFiltradas(contacto.obras_asociadas || []);
+    console.log("🧱 Obras asociadas al contacto:", contacto.obras_asociadas);
   };
 
   const handleChange = (campo, valor) => {
@@ -89,13 +92,15 @@ export default function PasoContacto() {
         <label>Obra:</label>
         <Select
           isDisabled={!formData.contacto_id}
-          options={obrasFiltradas.map(o => ({ label: o.nombre, value: o.id }))}
-          value={obrasFiltradas.find(o => o.id === formData.obra_id)
-            ? { label: obrasFiltradas.find(o => o.id === formData.obra_id).nombre, value: formData.obra_id }
-            : null}
-          onChange={(option) => {
-            handleChange("obra_id", option.value)
-            handleChange("obra_nombre", option.label)
+          options={obrasFiltradas}
+          getOptionLabel={(obra) => obra.nombre}
+          getOptionValue={(obra) => obra.id}
+          value={obrasFiltradas.find((o) => o.id === formData.obra_id) || null}
+          onChange={(obra) => {
+            handleChange("obra_id", obra.id)
+            handleChange("obra_nombre", obra.nombre)
+            handleChange("obra_direccion", obra.direccion || "")
+            handleChange("obra_ubicacion", obra.ubicacion || "")
           }}
           placeholder="Seleccione una obra relacionada..."
         />
