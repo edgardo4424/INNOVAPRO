@@ -17,6 +17,8 @@ const {
 const calcularCostoTransporte = require("../../../cotizaciones_transporte/application/useCases/calcularCostoTransporte");
 const { generarCodigoDocumentoCotizacion } = require("../../infrastructure/services/generarCodigoDocumentoCotizacionService");
 
+const ID_ESTADO_COTIZACION_CREADO = 1;
+
 module.exports = async (cotizacionData, cotizacionRepository) => {
   const transaction = await db.sequelize.transaction(); // Iniciar transacción
 
@@ -43,18 +45,18 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
 
     // 2. Insertar Despiece
 
+    let dataParaDespiece = {
+      ...resultados.dataParaGuardarDespiece,
+      cp: "CP0"
+    }
+
     // Valida los campos del despiece
-    const errorCampos = Despiece.validarCamposObligatorios(
-      resultados.dataParaGuardarDespiece,
-      "crear"
-    );
+    const errorCampos = Despiece.validarCamposObligatorios( dataParaDespiece,"crear");
+
     if (errorCampos)
       return { codigo: 400, respuesta: { mensaje: errorCampos } };
 
-    const nuevoDespiece = await db.despieces.create(
-      resultados.dataParaGuardarDespiece,
-      { transaction }
-    );
+    const nuevoDespiece = await db.despieces.create(dataParaDespiece,{ transaction });
 
     const despiece_id = nuevoDespiece.id;
 
@@ -63,10 +65,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
 
     // Validación de todos los registros de despiece
     for (const data of detalles) {
-      const errorCampos = DespieceDetalle.validarCamposObligatorios(
-        data,
-        "crear"
-      );
+      const errorCampos = DespieceDetalle.validarCamposObligatorios(data, "crear");
       if (errorCampos) {
         return {
           codigo: 400,
@@ -104,7 +103,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
     let cotizacionFinal = {
       ...cotizacion,
       despiece_id,
-      estados_cotizacion_id: 1, // Estado de "Creado"
+      estados_cotizacion_id: ID_ESTADO_COTIZACION_CREADO, // Estado de "Creado"
     };
 
     console.log('cotizacionFinal.filial_id', cotizacionFinal.filial_id);
@@ -124,14 +123,14 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
     }
 
     console.log('datosParaGenerarCodigoDocumento', datosParaGenerarCodigoDocumento);
-const codigoDocumento = await generarCodigoDocumentoCotizacion(datosParaGenerarCodigoDocumento)
-console.log('codigoDocumento',codigoDocumento);
+    const codigoDocumento = await generarCodigoDocumentoCotizacion(datosParaGenerarCodigoDocumento)
+    console.log('codigoDocumento',codigoDocumento);
 
-cotizacionFinal = {
-  ...cotizacionFinal,
-  codigo_documento: codigoDocumento
-}
-   
+    cotizacionFinal = {
+      ...cotizacionFinal,
+      codigo_documento: codigoDocumento
+    }
+      
     // Obtener el codigo documento
   /* const codigoDocumento = await generarCodigoDocumentoCotizacion({
         filial_id: cotizacion.filial_id,

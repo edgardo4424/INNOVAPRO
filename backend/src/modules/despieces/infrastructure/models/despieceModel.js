@@ -41,6 +41,9 @@ const Despiece = sequelize.define(
     total_final: {
       type: DataTypes.DECIMAL(10, 2),
       defaultValue: 0,
+    },
+    cp: {
+      type: DataTypes.STRING(10)
     }
   }, {
     timestamps: false,

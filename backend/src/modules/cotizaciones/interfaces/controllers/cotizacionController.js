@@ -19,7 +19,8 @@ const CotizacionController = {
                 ...req.body,
                 cotizacion: {
                     ...req.body.cotizacion,
-                    usuario_id: req.usuario.id
+                    usuario_id: req.usuario.id,
+                    usuario_rol: req.usuario.rol
                 }
             }
 

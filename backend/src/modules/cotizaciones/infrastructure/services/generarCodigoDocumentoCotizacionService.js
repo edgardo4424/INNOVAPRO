@@ -74,10 +74,7 @@ async function generarCodigoDocumentoCotizacion({
   let correlativo = "";
 
   // Aplanar resultados
-  const cotizacionesConMismoContactoClienteObraFilial =
-    cotizacionesConMismoContactoClienteObraFilial_BD.map((c) =>
-      c.get({ plain: true })
-    );
+  const cotizacionesConMismoContactoClienteObraFilial = cotizacionesConMismoContactoClienteObraFilial_BD.map((c) => c.get({ plain: true }));
 
   if (cotizacionesConMismoContactoClienteObraFilial.length == 0) {
     // Si Es primera cotizacion
@@ -85,17 +82,15 @@ async function generarCodigoDocumentoCotizacion({
     correlativo = "0001";
   } else {
     
-    // Hallar el correlativo
-    console.log(
-      "cotizacionesConMismoContactoClienteObraFilial",
-      cotizacionesConMismoContactoClienteObraFilial
-    );
+    // Hallar el correlativo si ya hubo cotizaciones anteriores con el mismo contacto, cliente,obra, filial
 
-    const cantidadCotizaciones =
-      cotizacionesConMismoContactoClienteObraFilial.length;
-    // Obteniendo el ultimo registro de una cotizacion del mismo contaco, cliente, obra, filial
-    const ultimaCotizacion =
-      cotizacionesConMismoContactoClienteObraFilial[cantidadCotizaciones - 1];
+    const cantidadCotizaciones =  cotizacionesConMismoContactoClienteObraFilial.length;
+
+    // Obteniendo el ultimo registro de una cotizacion del mismo contacto, cliente, obra, filial
+    const ultimaCotizacion =  cotizacionesConMismoContactoClienteObraFilial[cantidadCotizaciones - 1];
+
+    /**** Obtener el uso_id de la ultima cotizacion ****/
+
     const despiece_id = ultimaCotizacion.despiece_id;
 
     const resultado = await db.atributos_valor.findAll({
@@ -119,31 +114,30 @@ async function generarCodigoDocumentoCotizacion({
     const { atributo }= listaAtributosValor[listaAtributosValor.length-1];
     const ultimo_uso_id = atributo.uso_id
     
-    console.log('ultimo_uso_id', ultimo_uso_id);
-
-    // Si el ultimo uso de la cotizacion es igual al uso de la nueva cotizacion, el correlativo se mantiene
+    /**** Fin. Obtener el uso_id de la ultima cotizacion ****/
     
+    // Formato codigo_documento: EI-COT-COM-JD-0001_3-2025
     const codigo_documento = ultimaCotizacion?.codigo_documento
 
-    // Formato codigo_documento: EI-COT-COM-JD-0001_3-2025
-
     if(ultimo_uso_id == uso_id_para_registrar){
-      // Si es igual el uso, se mantiene el correlativo
-      correlativo = codigo_documento.split("-")[4].split("_")[0]
+
+      // Si el ultimo uso de la cotizacion es igual al uso de la nueva cotizacion, el correlativo se mantiene y la version se suma 1
       
+      let ultimoCorrelativo = codigo_documento.split("-")[4].split("_")[0]
       let ultimaVersion = codigo_documento.split("-")[4].split("_")[1]
+
+      correlativo = ultimoCorrelativo
       version = Number(ultimaVersion)+1
     }else{
+      
       // Si no es igual el uso, se suma 1 al ultimo correlativo obteniendo del codigo_documento
-      console.log('codigo_documento',codigo_documento);
-      correlativoAnterior = codigo_documento.split("-")[4].split("_")[0]
+     
+      const correlativoAnterior = codigo_documento.split("-")[4].split("_")[0]
 
       let number = parseInt(correlativoAnterior, 10) + 1; // Suma 1 al número
       let resultado = number.toString().padStart(correlativoAnterior.length, '0'); // Rellena con ceros
 
-      console.log('correlativo', correlativo);;
       correlativo = resultado
-
       version = "1";
     }
   }
