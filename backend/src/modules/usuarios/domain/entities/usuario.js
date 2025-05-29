@@ -4,6 +4,7 @@ class Usuario {
         this.email = email;
         this.password = password;
         this.rol = rol;
+        this.telefono = telefono;
     }
 
     static validar(datos, modo = "crear") {

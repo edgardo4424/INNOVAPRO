@@ -11,6 +11,7 @@ const usuarioRepository = new sequelizeUsuarioRepository(); // Instancia del rep
 const UsuarioController = {
     async crearUsuario(req, res) {
         try {
+          
             const nuevoUsuario = await crearUsuario(req.body, usuarioRepository ); // Llamamos al caso de uso para crear un usuario
             res.status(nuevoUsuario.codigo).json(nuevoUsuario.respuesta); // Respondemos con el usuario creado
         } catch (error) {

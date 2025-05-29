@@ -1,0 +1,36 @@
+Holaaaa. Necesito que me ayudes a obtener las formulas. Quiero que interpretes cada Formula de excel y lo transformes a formulas en js. 
+
+Datos de Entrada:
+E4 - CAPACIDAD
+E5 - ANTIGUEDAD
+E6 - TRASPALETA
+
+1. Pieza: EC.0600 - PLATAFORMA DE DESCARGA - 1.5 TON
+Excel: =SI(E4=1.5;1;0)
+
+2. Pieza: EC.0700 - PLATAFORMA DE DESCARGA - 2.0 TON
+Excel: =SI(E4=2;1;0)
+
+3. Pieza: EC.0710 - PUERTA ACCESO - 1.5 TON
+Excel: =SI(E4=1.5;E10*2;0)
+
+4. Pieza: EC.0711 - PUERTA ACCESO INTERNA - 2 TON
+Excel: =SI(Y(E4=2;E5="NUEVA");E11*2;0)
+
+5. Pieza: EC.0712 - PUERTA ACCESO EXTERNA - 2 TON
+Excel: =SI(Y(E4=2;E5="NUEVA");E11*2;0)
+
+6. Pieza: EC.0713 - BARANDA LATERAL - 1.5 TON
+Excel: =SI(Y(E4=1.5;E5="NUEVA");"ERROR";SI(Y(E4=1.5;E5="ANTIGUA");2;))
+
+7. Pieza: EC.0714 - BARANDA LATERAL - 2 TON
+Excel: =SI(Y(E4=2;E5="NUEVA");2;SI(Y(E4=2;E5="ANTIGUA");0;))
+
+8. Pieza: EC.0720 - BARRA ACCIONADORA DE PUERTAS
+Excel: =SI(Y(E4=2;E5="NUEVA");E11*2;0)
+
+9. Pieza: EC.0730 - PERNO HEXAGONAL G.6.8 - M10 x 30
+Excel: =SI(Y(E4=2;E5="NUEVA");E11*4;0)
+
+10. Pieza: EC.0900 - TRASPALETA MANUAL
+Excel: =SI(E6="SI";1;0)
