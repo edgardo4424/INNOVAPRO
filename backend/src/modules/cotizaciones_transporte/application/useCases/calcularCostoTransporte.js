@@ -209,8 +209,8 @@ module.exports = async (
 
   const costo_total =
     costo_tarifas_transporte +
-    costo_distrito_transporte +
-    costo_pernocte_transporte;
+    costo_distrito_transporte 
+    /* +    costo_pernocte_transporte; */
 
   return {
     codigo: 200,

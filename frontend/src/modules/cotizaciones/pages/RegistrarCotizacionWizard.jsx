@@ -47,6 +47,19 @@ const RegistrarCotizacionWizard = () => {
 
   const exito = pasoActual === pasos.length;
 
+  function extraerDistrito(direccion) {
+        if (!direccion) return "";
+        const partes = direccion.split(",").map(p => p.trim());
+        const posibles = partes.slice().reverse(); // empezamos desde el final
+        for (let parte of posibles) {
+          const sinNumeros = parte.replace(/[0-9]/g, "").trim();
+          if (sinNumeros.length > 3 && !sinNumeros.includes("PERÚ")) {
+            return sinNumeros.toUpperCase();
+          }
+        }
+        return "";
+      }
+
   return (
     <div className="wizard-container">
       <motion.h2
@@ -131,10 +144,12 @@ const RegistrarCotizacionWizard = () => {
                     filial_id: formData.filial_id || 1,
                     estados_cotizacion_id: formData.requiereAprobacion ? 3 : 1,
                     tipo_cotizacion: formData.tipo_cotizacion,
-                    tiene_transporte: false,
+                    tiene_transporte: formData.tiene_transporte,
                     tiene_instalacion: false,
                     porcentaje_descuento: formData.descuento || 0,
                     igv_porcentaje: 18,
+                    tiempo_alquiler_dias: formData.duracion_alquiler,
+                    distrito_transporte: extraerDistrito(formData.obra_direccion)
                   },
                   despiece: formData.despiece,
                 };

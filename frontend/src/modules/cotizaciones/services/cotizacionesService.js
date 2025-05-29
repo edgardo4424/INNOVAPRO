@@ -33,6 +33,7 @@ export async function crearCotizacion({
   cotizacion,
   despiece,
 }) {
+  console.log({uso_id, atributos_formulario, cotizacion, despiece});
   const response = await api.post("/cotizaciones", {
     uso_id,
     atributos_formulario,
