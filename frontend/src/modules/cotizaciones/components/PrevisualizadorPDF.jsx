@@ -30,7 +30,7 @@ export default function PrevisualizadorPDF({ cotizacionId }) {
       const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
 
       try {
-        await generarPDFPorUso({ uso_id: data.uso_id, data, doc }); // 👈 Modular
+        await generarPDFPorUso({ uso_id: data.uso.id, data, doc }); // 👈 Modular
       } catch (err) {
         console.error("❌ Error generando PDF:", err);
         return;

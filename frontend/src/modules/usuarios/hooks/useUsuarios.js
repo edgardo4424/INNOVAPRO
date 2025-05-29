@@ -14,6 +14,7 @@ export default function useUsuarios() {
 
   const [nuevoUsuario, setNuevoUsuario] = useState({
     nombre: "",
+    telefono: "",
     email: "",
     password: "",
     rol: "",
@@ -109,6 +110,7 @@ export default function useUsuarios() {
   const resetNuevoUsuario = () =>
     setNuevoUsuario({
       nombre: "",
+      telefono: "",
       email: "",
       password: "",
       rol: "",
@@ -118,6 +120,7 @@ export default function useUsuarios() {
     const f = (busqueda || "").toLowerCase();
     return (
       u.nombre?.toLowerCase().includes(f) ||
+      u.telefono?.toLowerCase().includes(f) ||
       u.email?.toLowerCase().includes(f) ||
       u.rol?.toLowerCase().includes(f)
     );
