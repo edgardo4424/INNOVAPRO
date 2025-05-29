@@ -1,6 +1,6 @@
 export function renderTextoTransporte(doc, data, currentY) {
 
-  if (data.tarifa_transporte && Object.keys(tarifa_transporte).length === 0) return currentY;
+  if (data.tarifa_transporte && Object.keys(data.tarifa_transporte).length === 0) return currentY;
 
   const indent = 20;
   const box = 2.5;

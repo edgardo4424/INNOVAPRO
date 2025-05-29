@@ -193,8 +193,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
           break;
       }
 
-
-
       const datosParaGuardarCotizacionesTransporte =  (await calcularCostoTransporte(datosParaCualcularCostoTransporte)).respuesta;
 
       const mapeoDataGuardar = {

@@ -88,7 +88,7 @@ const Cotizacion = sequelize.define(
     codigo_documento: {
        type: DataTypes.STRING,
        allowNull: false,
-    }
+    },
 
   }, {
     timestamps: true,

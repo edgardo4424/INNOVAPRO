@@ -121,7 +121,7 @@ export function useGestionCotizaciones() {
 
   const [cotizaciones, setCotizaciones] = useState([]);
   const [paginaActual, setPaginaActual] = useState(1);
-  const cotizacionesPorPagina = 30;
+  const cotizacionesPorPagina = 100;
 
    // 🔄 Cargar cotizaciones al iniciar
    useEffect(() => {

@@ -86,6 +86,7 @@ async function generarCodigoDocumentoCotizacion({
 
     const cantidadCotizaciones =  cotizacionesConMismoContactoClienteObraFilial.length;
 
+    console.log('cotizacionesConMismoContactoClienteObraFilial',cotizacionesConMismoContactoClienteObraFilial);
     // Obteniendo el ultimo registro de una cotizacion del mismo contacto, cliente, obra, filial
     const ultimaCotizacion =  cotizacionesConMismoContactoClienteObraFilial[cantidadCotizaciones - 1];
 
@@ -119,6 +120,14 @@ async function generarCodigoDocumentoCotizacion({
     // Formato codigo_documento: EI-COT-COM-JD-0001_3-2025
     const codigo_documento = ultimaCotizacion?.codigo_documento
 
+    console.log('codigggo documento', codigo_documento);
+
+    if(!codigo_documento){
+      correlativo = "0001"
+      version = "1"
+      return `${filialAbv}-${tipoDocumento}-${codRolUsuario}-${usuarioAbv}-${correlativo}_${version}-${anio_cotizacion}`;
+    }
+
     if(ultimo_uso_id == uso_id_para_registrar){
 
       // Si el ultimo uso de la cotizacion es igual al uso de la nueva cotizacion, el correlativo se mantiene y la version se suma 1
@@ -131,7 +140,7 @@ async function generarCodigoDocumentoCotizacion({
     }else{
       
       // Si no es igual el uso, se suma 1 al ultimo correlativo obteniendo del codigo_documento
-     
+      
       const correlativoAnterior = codigo_documento.split("-")[4].split("_")[0]
 
       let number = parseInt(correlativoAnterior, 10) + 1; // Suma 1 al número
@@ -139,6 +148,7 @@ async function generarCodigoDocumentoCotizacion({
 
       correlativo = resultado
       version = "1";
+     
     }
   }
 

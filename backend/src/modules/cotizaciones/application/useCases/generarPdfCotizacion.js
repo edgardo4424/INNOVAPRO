@@ -89,6 +89,7 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
       }) */
 
   // Mapear los datos generales para todos los usos para generar el pdf
+  console.log('cotizacionEncontrado',cotizacionEncontrado);
   let datosPdfCotizacion = {
     obra: {
       nombre: cotizacionEncontrado.obra.nombre,
@@ -120,7 +121,9 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
       moneda: despieceEncontrado.moneda,
       subtotal_con_descuento_sin_igv: despieceEncontrado.subtotal_con_descuento,
       tipo_servicio: tipoServicio,
-      tiempo_alquiler_dias: tiempoAlquilerDias
+      tiempo_alquiler_dias: tiempoAlquilerDias,
+      codigo_documento: cotizacionEncontrado.codigo_documento,
+      cp: despieceEncontrado.cp
     },
     tarifa_transporte: {
       /* ...cotizacionEncontrado?.cotizaciones_transportes?.[0]?.dataValues  */
@@ -138,6 +141,7 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
     },
     
     uso: {
+      id: usoEncontrado.id,
       nombre: usoEncontrado.descripcion,
       cantidad_uso: cantidadUso,
     }
@@ -172,13 +176,16 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
       break;
 
     case "5":
+      // PUNTALES
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
         atributos: {
-          
+          cantidad: despieceEncontrado?.atributos_valors?.[0]?.valor || "",
+          tipoPuntal: despieceEncontrado?.atributos_valors?.[1]?.valor || "",
+          tripode: despieceEncontrado?.atributos_valors?.[2]?.valor || "",
         },
       };
-        // PUNTALES
+        
       break;
     
     case "6":
@@ -200,6 +207,8 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
     default:
       break;
   }
+
+  console.log(datosPdfCotizacion);
 
   return { codigo: 200, respuesta: datosPdfCotizacion };
 };
