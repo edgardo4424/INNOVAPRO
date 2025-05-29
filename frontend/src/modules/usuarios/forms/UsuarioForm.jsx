@@ -22,6 +22,19 @@ export default function UsuarioForm({
           />
           {errores.nombre && <p className="error-message">{errores.nombre}</p>}
         </div>
+
+        <div className="form-group">
+          <label>Teléfono Celular *</label>
+          <input
+            type="text"
+            value={usuario.telefono}
+            onChange={(e) =>
+              setUsuario((prev) => ({ ...prev, telefono: e.target.value }))
+            }
+            required
+          />
+          {errores.telefono && <p className="error-message">{errores.telefono}</p>}
+        </div>
   
         <div className="form-group">
           <label>Correo *</label>
