@@ -11,6 +11,7 @@ async function prepararUsuarioParaGuardar(datos) {
     email: datos.email,
     password: hashedPassword,
     rol: datos.rol,
+    telefono: datos.telefono
   };
 }
 

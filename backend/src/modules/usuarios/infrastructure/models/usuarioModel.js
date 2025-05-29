@@ -33,6 +33,9 @@ const Usuario = sequelize.define(
       ),
       allowNull: false,
     },
+    telefono: {
+      type: DataTypes.STRING(10),
+    }
   },
   {
     timestamps: false,
