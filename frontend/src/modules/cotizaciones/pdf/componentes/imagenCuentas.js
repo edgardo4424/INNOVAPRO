@@ -1,5 +1,6 @@
 import cuentaIR from "../../assets/cuentas_IR.png";
 import cuentaIA from "../../assets/cuentas_IA.png";
+import { verificarSaltoDePagina } from "./pagina";
 
 export async function renderImagenCuentas(doc, data, currentY) {
    let imagenCuenta;
@@ -14,27 +15,17 @@ export async function renderImagenCuentas(doc, data, currentY) {
        imagenCuenta = cuentaIR;
    }
 
-   return new Promise((resolve) => {
-    const cuentaImg = new Image();
-    cuentaImg.src = imagenCuenta; // Ruta de la imagen según la filial
-    cuentaImg.onload = () => {
-      doc.addImage(cuentaImg, "PNG", 25, currentY + 2, 145, 45);
-      resolve(currentY + 50); // Ajusta si la imagen es más grande
-    };
-    cuentaImg.onerror = () => resolve(currentY); // Si falla, sigue sin imagen
-   })
-}
+   const cuentaImg = new Image();
+   cuentaImg.src = imagenCuenta; // Ruta de la imagen según la filial
 
-// export async function renderImagenCuentas(doc, data, currentY) {
-//   return new Promise((resolve) => {
-//     const cuentasImg = new Image();
-//     const nombreArchivo = data.filial?.nombre_archivo_cuenta || "cuentas_IR"; // Por ahora solo uno
+   await new Promise((resolve) => {
+    cuentaImg.onload = () => resolve();
+    cuentaImg.onerror = () => reject("Error al cargar la imagen de cuentas");
+   });
 
-//     cuentasImg.src = `/src/modules/cotizaciones/assets/${nombreArchivo}.png`; // Ruta base
-//     cuentasImg.onload = () => {
-//       doc.addImage(cuentasImg, "PNG", 25, currentY + 2, 145, 45);
-//       resolve(currentY + 50); // Ajusta si la imagen es más grande
-//     };
-//     cuentasImg.onerror = () => resolve(currentY); // Si falla, sigue sin imagen
-//   });
-// }
+   // 🔁 Validar salto de página antes de insertar la imagen
+   currentY = await verificarSaltoDePagina(doc, currentY, data, 50); // 50 = altura de la imagen
+   doc.addImage(cuentaImg, "PNG", 25, currentY + 2, 145, 45);
+   return currentY + 50; // Ajusta si la imagen es más grande
+};
+

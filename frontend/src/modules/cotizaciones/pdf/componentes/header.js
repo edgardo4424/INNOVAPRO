@@ -15,7 +15,7 @@ export default function encabezadoCotizacion(doc, data, cotizacionId) {
         currentY += direccionSplit.length * lh;
     }
     if (data.obra?.nombre) {
-        const proyectoSplit = doc.splitTextToSize("Dirección obra: " + data.obra.nombre, 55);
+        const proyectoSplit = doc.splitTextToSize("Proyecto: " + data.obra.nombre, 55);
         doc.text(proyectoSplit, colLeftX, currentY);
         currentY += proyectoSplit.length * lh;
     }

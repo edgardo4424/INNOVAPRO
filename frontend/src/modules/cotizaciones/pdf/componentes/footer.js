@@ -1,4 +1,4 @@
-export default function footerCotizacion(doc, data, currentY) {
+export default function footerCotizacion(doc, data, paginaActual, totalPaginas) {
   // ✅ Footer derecho
   doc.setFont("helvetica", "bold");
   doc.setFontSize(8);
@@ -6,7 +6,7 @@ export default function footerCotizacion(doc, data, currentY) {
   doc.text("Comercial: " + (data.usuario?.nombre || "-"), 115, 274);
   doc.text("          Telf.: " + (data.usuario?.telefono || "(INDEFINIDO NÚMERO DE TELÉFONO)"), 115, 278);
   doc.text("       E-mail: " + (data.usuario?.correo || "-"), 115, 282);
-  doc.text("Página 1 | 1", 180, 292);
+  doc.text(`Página ${paginaActual} | ${totalPaginas}`, 180, 292);
 
   // ✅ Footer izquierdo
   doc.setFontSize(12);

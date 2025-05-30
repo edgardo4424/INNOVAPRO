@@ -1,4 +1,6 @@
-export function renderNotas(doc, data, currentY) {
+import { verificarSaltoDePagina } from "../../componentes/pagina.js";
+
+export async function renderNotas(doc, data, currentY) {
   const indent = 20;
 
   currentY += 5;
@@ -21,11 +23,13 @@ export function renderNotas(doc, data, currentY) {
     "10° Relación de cuentas para depósito o transferencia:"
   ];
 
-  condiciones.forEach(linea => {
+  for (const linea of condiciones) {
     const split = doc.splitTextToSize(linea, 170);
+    const alturaEstimado = split.length * 3.25;
+    currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimado);
     doc.text(split, indent + 3, currentY);
-    currentY += split.length * 4;
-  });
+    currentY += alturaEstimado;
+  }
 
   return currentY;
 }

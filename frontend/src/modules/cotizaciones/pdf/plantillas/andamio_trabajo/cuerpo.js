@@ -1,4 +1,6 @@
-export function generarCuerpoAndamioTrabajo(doc, data, startY = 120) {
+import { verificarSaltoDePagina } from "../../componentes/pagina";
+
+export async function generarCuerpoAndamioTrabajo(doc, data, startY = 120) {
   let currentY = startY;
 
   // 📌 Título
@@ -16,6 +18,7 @@ export function generarCuerpoAndamioTrabajo(doc, data, startY = 120) {
   const box = 2.5;
 
   // ✅ Servicio de alquiler
+  currentY = await verificarSaltoDePagina(doc, currentY, 6)
   doc.setDrawColor(0);
   doc.setLineWidth(0.3);
   doc.rect(indent, currentY - box + 0.5, box, box);
@@ -40,11 +43,12 @@ export function generarCuerpoAndamioTrabajo(doc, data, startY = 120) {
   ];
 
   currentY += 6;
-  detalles.forEach(linea => {
+  for (const linea of detalles) {
     const split = doc.splitTextToSize(linea, 170);
+    currentY = await verificarSaltoDePagina(doc, currentY, split.length * 4);
     doc.text(split, indent + box + 3, currentY);
     currentY += split.length * 4;
-  });
+  }
 
   return currentY;
 }
