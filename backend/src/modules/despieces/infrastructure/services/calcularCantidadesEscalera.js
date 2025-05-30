@@ -2,7 +2,6 @@ const { calcularAM0100, calcularAM0300, calcularAM0400, calcularAM0600, calcular
 
 function calcularCantidadesPorCadaPiezaDeEscalera(datosAtributos) {
 
-  console.log(datosAtributos);
     return datosAtributos.map((dato) => {
       const resultados = [
         { pieza: "AM.0100", cantidad: calcularAM0100(dato) },

@@ -182,15 +182,12 @@ class SequelizeTareaRepository {
         return null;
     }
 
-    console.log("ESTADO", tarea.estado);
-
     if(tarea.estado != "Devuelta") return null;
 
     tarea.estado = "Pendiente";
     tarea.correccionComercial = correcion;
     tarea.asignadoA = null;
 
-    console.log('pasara a pendiente');
     return await tarea.save();
   }
   

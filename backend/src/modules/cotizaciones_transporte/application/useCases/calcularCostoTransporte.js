@@ -9,8 +9,6 @@ module.exports = async (
 
   const { uso_id, peso_total_tn, distrito_transporte } =  cotizacionTransporteData;
 
-    console.log('cotizacionTransporteData', cotizacionTransporteData);
-
   // 1. Calcular costo tarifa transporte
 
   const uso = await db.usos.findByPk(uso_id);
@@ -162,8 +160,6 @@ module.exports = async (
       distrito: distrito_transporte,
     },
   });
-
-  console.log('distrito_transporte_encontrado',distrito_transporte_encontrado);
 
   // Si el distrito se encuentra dentro de la lista, se cobra un adicional. Si no está el costo_distrito_transporte sera 0
   if (distrito_transporte_encontrado) {

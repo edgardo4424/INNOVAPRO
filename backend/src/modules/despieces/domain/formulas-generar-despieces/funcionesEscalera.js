@@ -715,11 +715,6 @@ function calcularAM1100() {
 // 9. Pieza: AM.1150 - ESPIGA
 function calcularAM1150(valorCalcularAM0700, valorCalcularAM1000, valorCalcularAM9000) {
 
-  console.log({
-    valorCalcularAM0700,
-    valorCalcularAM1000,
-    valorCalcularAM9000
-  });
   return valorCalcularAM0700 + valorCalcularAM1000 + valorCalcularAM9000; // F17 + F19 + F93
 }
 
@@ -1609,14 +1604,6 @@ function calcularAM8800({
   valorCalcularAM8600 = 0
 }) {
 
-  console.log({
-    alturaEscaleraObra,
-    tipoEscalera,
-    tipoIngreso,
-    tipoAnclaje,
-    valorCalcularAM8500,
-    valorCalcularAM8600
-  });
   const clave = "AM.8800"; // Fila buscada en la tabla
   const fila = apoyo2Despiece[clave] || {};
   const esCampoVacio = (val) => val === "" || val === null || val === undefined;
@@ -1629,13 +1616,11 @@ function calcularAM8800({
 
   // 2. Si tipoAnclaje = "FERMIN" → 0
   if (tipoAnclaje === "FERMIN") {
-    console.log('entre');
     return 0;
   }
 
   // 3. Si tipoAnclaje = "TUBO 0.5" o "TUBO 1.0" → F88 + F89
   if (["TUBO 0.5", "TUBO 1.0"].includes(tipoAnclaje)) {
-    console.log('entre aqui');
     return valorCalcularAM8500 + valorCalcularAM8600;
   }
 
@@ -1647,8 +1632,6 @@ function calcularAM8800({
   // 5. Buscar en la tabla Apoyo2Despiece
   const colKey = `${tipoEscalera}/${tipoIngreso}`; 
   const valor = fila[colKey] || 0;
-
-  console.log(valor);
 
   return valor;
 }
@@ -1844,8 +1827,7 @@ function calcularEA0500(valorCalcularEA0400 = 0) {
 // 91. EA.0600 - FERMIN - ESCALERA DE ACCESO 2M
 function calcularEA0600({ tipoEscalera, alturaTotal, alturaEscaleraObra }) {
   const diff = alturaTotal - alturaEscaleraObra;
-  console.log('diff', diff);
-  console.log('esPar(diff) ? diff * 0.5 : (diff - 1) * 0.5;', esPar(diff) ? diff * 0.5 : (diff - 1) * 0.5);
+  
   if (tipoEscalera === "FERMIN") {
     return esPar(diff) ? diff * 0.5 : (diff - 1) * 0.5;
   }

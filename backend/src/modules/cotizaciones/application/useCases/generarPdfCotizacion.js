@@ -89,7 +89,7 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
       }) */
 
   // Mapear los datos generales para todos los usos para generar el pdf
-  console.log('cotizacionEncontrado',cotizacionEncontrado);
+ 
   let datosPdfCotizacion = {
     obra: {
       nombre: cotizacionEncontrado.obra.nombre,
@@ -176,6 +176,19 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
       break;
 
     case "5":
+
+      const piezaArgolla = await db.piezas.findOne({
+        where: {
+          item: "PU.0900"
+        }
+      })
+
+      const piezaPIN = await db.piezas.findOne({
+        where: {
+          item: "PU.0700"
+        }
+      })
+
       // PUNTALES
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
@@ -183,6 +196,9 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
           cantidad: despieceEncontrado?.atributos_valors?.[0]?.valor || "",
           tipoPuntal: despieceEncontrado?.atributos_valors?.[1]?.valor || "",
           tripode: despieceEncontrado?.atributos_valors?.[2]?.valor || "",
+
+          precio_argolla: piezaArgolla.precio_venta_soles,
+          precio_pasador: piezaPIN.precio_venta_soles
         },
       };
         
@@ -207,8 +223,6 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
     default:
       break;
   }
-
-  console.log(datosPdfCotizacion);
 
   return { codigo: 200, respuesta: datosPdfCotizacion };
 };

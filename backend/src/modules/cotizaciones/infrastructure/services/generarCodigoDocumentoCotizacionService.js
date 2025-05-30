@@ -86,7 +86,6 @@ async function generarCodigoDocumentoCotizacion({
 
     const cantidadCotizaciones =  cotizacionesConMismoContactoClienteObraFilial.length;
 
-    console.log('cotizacionesConMismoContactoClienteObraFilial',cotizacionesConMismoContactoClienteObraFilial);
     // Obteniendo el ultimo registro de una cotizacion del mismo contacto, cliente, obra, filial
     const ultimaCotizacion =  cotizacionesConMismoContactoClienteObraFilial[cantidadCotizaciones - 1];
 
@@ -119,8 +118,6 @@ async function generarCodigoDocumentoCotizacion({
     
     // Formato codigo_documento: EI-COT-COM-JD-0001_3-2025
     const codigo_documento = ultimaCotizacion?.codigo_documento
-
-    console.log('codigggo documento', codigo_documento);
 
     if(!codigo_documento){
       correlativo = "0001"
