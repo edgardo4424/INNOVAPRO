@@ -679,32 +679,69 @@ function calcularAM0900() {
 
 // 7. AM.1000 - VERTICAL 1.00m
 function calcularAM1000({
-  alturaTotal,
-  alturaEscaleraObra,
-  tipoEscalera,
-  tipoIngreso
+  alturaTotal,      // F4
+  alturaEscaleraObra,       // F5
+  tipoEscalera,     // F6
+  tipoIngreso,      // F7
+  anchoDescanso,    // F9
+ 
+  
 }) {
-  const diff = alturaTotal - alturaEscaleraObra;
-  const esImpar = (x) => x % 2 !== 0;
 
-  let parte1 = 0;
-  if (
-    (alturaEscaleraObra === 0 && alturaTotal > 0) ||
-    (alturaEscaleraObra > 0 && alturaTotal > 0)
-  ) {
-    if (
-      esImpar(diff) &&
-      ["FERMIN", "ALUMINIO", "GURSAM 60"].includes(tipoEscalera)
-    ) {
-      parte1 = 4;
-    }
+  let resultado = 0;
+  const  codigoPieza = "AM.1000";
+  const diff = Number(alturaTotal) - Number(alturaEscaleraObra);
+  const esImpar = diff % 2 !== 0;
+
+  // --- Parte 1 ---
+  const parte1Cond1 = (alturaEscaleraObra === 0 && alturaTotal > 0) || (alturaEscaleraObra > 0 && alturaTotal > 0);
+  const parte1Cond2 = esImpar && ["FERMIN", "ALUMINIO", "GURSAM 60"].includes(tipoEscalera);
+  if (parte1Cond1 && parte1Cond2) {
+    resultado += 4;
   }
 
-  const clave = `${tipoEscalera}/${tipoIngreso}`;
-  const valorMatriz = apoyo2Despiece?.["AM.1000"]?.[clave] ?? 0;
+  // --- Parte 2 ---
+  const parte2Cond =
+    tipoEscalera !== "" &&
+    tipoIngreso !== "" &&
+    alturaEscaleraObra === 0 &&
+    tipoEscalera === "GURSAM 120";
 
-  return parte1 + valorMatriz;
+  if (parte2Cond) {
+    const clave = `${tipoEscalera}/${tipoIngreso}/${anchoDescanso}`;
+    const valor = apoyo2Despiece?.[codigoPieza]?.[clave] || 0;
+    resultado += valor;
+  }
+
+  // --- Parte 3 ---
+  const parte3Cond =
+    tipoEscalera !== "" &&
+    tipoIngreso !== "" &&
+    alturaEscaleraObra === 0 &&
+    !["GURSAM 60", "EUROPEA", "FERMIN", "ALUMINIO"].includes(tipoEscalera);
+
+  if (parte3Cond) {
+    const clave = `${tipoEscalera}/${tipoIngreso}/${anchoDescanso}`;
+    const valor = apoyo2Despiece?.[codigoPieza]?.[clave] || 0;
+    resultado += valor;
+  }
+
+  // --- Parte 4 --- Buscar directamente si tipoEscalera está en el grupo limitado
+const parte4Cond =
+  tipoEscalera !== "" &&
+  tipoIngreso !== "" &&
+  alturaEscaleraObra === 0 &&
+  ["FERMIN", "ALUMINIO", "GURSAM 60"].includes(tipoEscalera);
+
+if (parte4Cond) {
+  const clave = `${tipoEscalera}/${tipoIngreso}`;
+  const valor = apoyo2Despiece?.[codigoPieza]?.[clave] || 0;
+  resultado += valor;
 }
+
+  return resultado;
+}
+
 
 // 8. AM.1100 - VERTICAL 0.50m
 function calcularAM1100() {
@@ -1603,24 +1640,20 @@ function calcularAM8800({
   valorCalcularAM8500 = 0,
   valorCalcularAM8600 = 0
 }) {
-
-  const clave = "AM.8800"; // Fila buscada en la tabla
+  const clave = "AM.8800";
   const fila = apoyo2Despiece[clave] || {};
   const esCampoVacio = (val) => val === "" || val === null || val === undefined;
 
-  // 1. Si F5 > 0 → F88 + F89
-
+  // 1. Si alturaEscaleraObra > 0 → F88 + F89
   if (alturaEscaleraObra > 0) {
     return valorCalcularAM8500 + valorCalcularAM8600;
   }
 
   // 2. Si tipoAnclaje = "FERMIN" → 0
+  // 3. Si tipoAnclaje es tubo → F88 + F89
   if (tipoAnclaje === "FERMIN") {
-    return 0;
-  }
-
-  // 3. Si tipoAnclaje = "TUBO 0.5" o "TUBO 1.0" → F88 + F89
-  if (["TUBO 0.5", "TUBO 1.0"].includes(tipoAnclaje)) {
+    // NO RETURN aquí, seguimos a la parte del INDICE
+  } else if (["TUBO 0.5", "TUBO 1.0"].includes(tipoAnclaje)) {
     return valorCalcularAM8500 + valorCalcularAM8600;
   }
 
@@ -1630,11 +1663,12 @@ function calcularAM8800({
   }
 
   // 5. Buscar en la tabla Apoyo2Despiece
-  const colKey = `${tipoEscalera}/${tipoIngreso}`; 
+  const colKey = `${tipoEscalera}/${tipoIngreso}`;
   const valor = fila[colKey] || 0;
 
   return valor;
 }
+
 
 
 // 80. AM.8900 - BRIDA FIJA
