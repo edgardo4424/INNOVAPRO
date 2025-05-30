@@ -1,4 +1,6 @@
-export function renderTextoTransporte(doc, data, currentY) {
+import { verificarSaltoDePagina } from "./pagina";
+
+export async function renderTextoTransporte(doc, data, currentY) {
 
   if (data.tarifa_transporte && Object.keys(data.tarifa_transporte).length === 0) return currentY;
 
@@ -6,6 +8,9 @@ export function renderTextoTransporte(doc, data, currentY) {
   const box = 2.5;
 
   currentY += 6;
+
+  // ⛔ Validar salto antes de dibujar el rectángulo
+  currentY = await verificarSaltoDePagina(doc, currentY, 10);
   doc.rect(indent, currentY - box + 0.5, box, box);
   doc.text("Servicio de Transporte: (OPCIONAL)", indent + box + 3, currentY + 0.5);
   doc.line(indent + box + 3, currentY + 1.5, indent + box + 31, currentY + 1.5);
@@ -16,11 +21,13 @@ export function renderTextoTransporte(doc, data, currentY) {
   ];
 
   currentY += 6;
-  transporte.forEach(linea => {
+  for (const linea of transporte) {
     const split = doc.splitTextToSize(linea, 170);
+    const alturaEstimado = split.length * 4;
+    currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimado);
     doc.text(split, indent + box + 3, currentY);
-    currentY += split.length * 4;
-  });
+    currentY += alturaEstimado;
+  }
 
   return currentY;
 }

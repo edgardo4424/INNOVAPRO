@@ -14,16 +14,22 @@ export default async function generarPDFAndamio(doc, data) {
 
   let currentY = 50;
 
-  currentY = generarCuerpoAndamioTrabajo(doc, data, currentY);
+  currentY = await generarCuerpoAndamioTrabajo(doc, data, currentY);
 
   // ↓ Texto transporte solo si aplica
-  currentY = renderTextoTransporte(doc, data, currentY);
+  currentY = await renderTextoTransporte(doc, data, currentY);
 
   // ↓ Notas dinámicas para andamio
-  currentY = renderNotas(doc, data, currentY);
+  currentY = await renderNotas(doc, data, currentY);
 
   // ↓ Imagen de cuentas según filial
   currentY = await renderImagenCuentas(doc, data, currentY);
 
-  generarFooter(doc, data); // Siempre
+  // Al final del renderizado (después de todo)
+  const totalPaginas = doc.getNumberOfPages();
+  
+   for (let i = 1; i <= totalPaginas; i++) {
+    doc.setPage(i);
+    generarFooter(doc, data, i, totalPaginas);
+  }
 }
