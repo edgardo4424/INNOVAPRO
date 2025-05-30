@@ -64,19 +64,32 @@ export default function PasoConfirmacion() {
 
       console.log(extraerDistrito(formData.obra_direccion))
 
-      try {
-        console.log("🚀 Enviando datos al backend:");
-        console.log({
-          uso_id: String(formData.uso_id),
-          peso_total_tn: String(pesoTn),
-          distrito_transporte: distrito.toUpperCase().trim()
-        });
-
-        const respuesta = await calcularCostoTransporte({
+      try {;
+        
+        let atributos_para_calcular_transporte = {
           uso_id: formData.uso_id,
           peso_total_tn: String(pesoTn),
           distrito_transporte: distrito
-        });
+        }
+        
+        switch (formData.uso_id) {
+          case 1:
+            break;
+          case 2: // Andamios de Trabajo
+            break;
+          case 3:
+            break;
+          case 4:
+            break;
+          case 5: // Puntales
+            atributos_para_calcular_transporte.tipo_puntal = formData.atributos[0].tipoPuntal;
+            break;
+          default:
+            console.warn("⚠️ Uso no soportado para transporte:", formData.uso_id);
+            return;
+        }
+        console.log("🚚 Atributos para calcular transporte:", atributos_para_calcular_transporte);
+        const respuesta = await calcularCostoTransporte(atributos_para_calcular_transporte);
 
         const costo = respuesta?.costosTransporte?.costo_total || 0;
 

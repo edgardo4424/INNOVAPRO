@@ -29,14 +29,14 @@ export function generarCuerpoPuntales(doc, data, startY = 120) {
   doc.line(indent + box + 3, currentY + 1.5, indent + box + 31, currentY + 1.5);
 
   // 🧮 Cantidad de equipos
-  const cantidad_equipos = data.uso.cantidad_uso === 1 ? "Ud." : "Uds.";
+  const cantidad_equipos = data.atributos?.cantidad === 1 ? "Ud." : "Uds.";
 
   // 🧮 Días de alquiler
   const cantidad_dias = data.cotizacion?.tiempo_alquiler_dias === 1 ? "día" : "días";
 
   // ⚙️ Detalles cotización
   const detalles = data.detalles_alquiler || [
-    `CP${data.cotizacion?.cp || "(INDEFINIDO)"}: Alquiler de ${data.atributos?.cantidad || "(INDEFINIDO NÚMERO DE PUNTALES)"} ${cantidad_equipos} De ${data.uso.nombre|| "(INDEFINIDO USO DE EQUIPO)"} de ${data.atributos?.tipoPuntal || "(LONGITUD INDEFINIDA)"} m: S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.
+    `CP${data.cotizacion?.cp || "(INDEFINIDO)"}: Alquiler de ${data.atributos?.cantidad || "(INDEFINIDO NÚMERO DE PUNTALES)"} ${cantidad_equipos} De ${data.uso.nombre|| "(INDEFINIDO USO DE EQUIPO)"} de ${data.atributos?.tipoPuntal || "(LONGITUD INDEFINIDA)"}: S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.
     
     *Cuando los puntales se devuelvan incompletos, se cobrará lo siguiente por el material faltante:
         - Por cada argolla, S/${data.atributos?.precio_argolla || "(PRECIO ARGOLLA INDEFINIDO)"} + IGV.

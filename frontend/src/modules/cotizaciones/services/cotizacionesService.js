@@ -56,11 +56,7 @@ export async function  obtenerDatosPDF(id) {
 }
 
 // Calcular el costo de transporte según uso, peso y distrito
-export async function calcularCostoTransporte({ uso_id, peso_total_tn, distrito_transporte }) {
-  const response = await api.post("/cotizaciones_transporte/costo-transporte", {
-    uso_id,
-    peso_total_tn,
-    distrito_transporte,
-  });
+export async function calcularCostoTransporte(data) {
+  const response = await api.post("/cotizaciones_transporte/costo-transporte", data);
   return response.data;
 }

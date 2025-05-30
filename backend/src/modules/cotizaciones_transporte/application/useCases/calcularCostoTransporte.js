@@ -80,6 +80,7 @@ module.exports = async (
 
     case "puntales":
       const { tipo_puntal } = cotizacionTransporteData;
+      console.log('tipo_puntal', tipo_puntal);
       
       tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
         where: {

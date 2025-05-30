@@ -19,6 +19,7 @@ const CotizacionesTransporteController = {
 
      async calcularCostoTransporte(req, res) {
         try {
+            console.log("🚚 Atributos para calcular transporte:", req.body);
             const costoTransporte = await calcularCostoTransporte(req.body, cotizacionesTransporteRepository); 
            
             res.status(costoTransporte.codigo).json(costoTransporte.respuesta); // Respondemos con el obra creado 

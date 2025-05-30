@@ -47,7 +47,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
 
     let dataParaDespiece = {
       ...resultados.dataParaGuardarDespiece,
-      cp: "CP0"
+      cp: "0"
     }
 
     // Valida los campos del despiece
