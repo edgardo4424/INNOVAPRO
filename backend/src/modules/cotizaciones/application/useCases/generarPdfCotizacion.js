@@ -1,6 +1,5 @@
 const db = require("../../../../models");
 const { formatearFechaIsoADMY } = require("../../infrastructure/helpers/formatearFecha");
-const { generarCodigoDocumentoCotizacion } = require("../../infrastructure/services/generarCodigoDocumentoCotizacionService");
 
 module.exports = async (idCotizacion, cotizacionRepository) => {
   // Buscar la cotizacion incluyendo: obra, cliente, contacto, despiece, filial, usuario, costos de cotizacion de transporte
@@ -76,17 +75,6 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
   if(tipoServicio=="Alquiler"){
     tiempoAlquilerDias = cotizacionEncontrado?.tiempo_alquiler_dias
   }
-
-  // Obtener el codigo documento
-  /* const codigoDocumento = await generarCodigoDocumentoCotizacion({
-        filial_id: cotizacionEncontrado.empresas_proveedora.id,
-        filial_razon_social: cotizacionEncontrado.empresas_proveedora.razon_social,
-        usuario_id: cotizacionEncontrado.usuario.id,
-        usuario_rol: cotizacionEncontrado.usuario.rol,
-        usuario_nombre: cotizacionEncontrado.usuario.nombre,
-        anio_cotizacion: 2025,
-        estado_cotizacion: 1,
-      }) */
 
   // Mapear los datos generales para todos los usos para generar el pdf
  
