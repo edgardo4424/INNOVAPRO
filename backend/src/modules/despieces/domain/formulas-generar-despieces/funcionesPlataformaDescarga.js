@@ -51,3 +51,16 @@ function calcularEC0730({ capacidad, antiguedad, valorCalcularEC0700 }) {
 function calcularEC0900({ traspaleta }) {
   return traspaleta === "SI" ? 1 : 0;
 }
+
+module.exports = { 
+    calcularEC0600,
+    calcularEC0700,
+    calcularEC0710,
+    calcularEC0711,
+    calcularEC0712,
+    calcularEC0713,
+    calcularEC0714,
+    calcularEC0720,
+    calcularEC0730,
+    calcularEC0900
+}

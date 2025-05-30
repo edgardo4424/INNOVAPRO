@@ -310,30 +310,30 @@ function calcularEV6200({ etapaMontaje }) {
   return 0;
 }
 
-// 52. Pieza: EV.6300 - PLACA P/ ARRIOSTRE 350 x 90mm
+// 53. Pieza: EV.6300 - PLACA P/ ARRIOSTRE 350 x 90mm
 function calcularEV6300({ cantidadEV6600 }) {
   return cantidadEV6600 * 2;
 }
 
-// 53. Pieza: EV.6400 - PLACA P/ RESORTE MECANICO
+// 54. Pieza: EV.6400 - PLACA P/ RESORTE MECANICO
 function calcularEV6400({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 2;
   return 0;
 }
 
-// 54. Pieza: EV.6500 - ESCUADRA WINCHA C/ POLEA 2780mm x 1410mm
+// 55. Pieza: EV.6500 - ESCUADRA WINCHA C/ POLEA 2780mm x 1410mm
 function calcularEV6500({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 1;
   return 0;
 }
 
-// 55. Pieza: EV.6600 - MASTIL INICIO 1500mm x 720mm
+// 56. Pieza: EV.6600 - MASTIL INICIO 1500mm x 720mm
 function calcularEV6600({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 1;
   return 0;
 }
 
-// 56. Pieza: EV.6700 - MASTIL DOBLE CREMALLERA 1500mm x 720mm
+// 57. Pieza: EV.6700 - MASTIL DOBLE CREMALLERA 1500mm x 720mm
 function calcularEV6700({
   etapaMontaje,
   nivelUltimaLlegada,
@@ -356,13 +356,13 @@ function calcularEV6700({
   return 0;
 }
 
-// 57. Pieza: EV.6800 - MASTIL SEGURIDAD PARADA S/ CREMALLERA
+// 58. Pieza: EV.6800 - MASTIL SEGURIDAD PARADA S/ CREMALLERA
 function calcularEV6800({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 1;
   return 0;
 }
 
-// 58. Pieza: EV.6900 - ARRIOSTRE P/ MASTIL
+// 59. Pieza: EV.6900 - ARRIOSTRE P/ MASTIL
 function calcularEV6900({
   tipoArriostre,
   etapaMontaje,
@@ -391,185 +391,260 @@ function calcularEV6900({
   return 0;
 }
 
-// 59. Pieza: EV.7000 - TUBO P/ ARRIOSTRE MASTIL - 1300mm
+// 60. Pieza: EV.7000 - TUBO P/ ARRIOSTRE MASTIL - 1300mm
 function calcularEV7000({ valorCalcularEV6900 }) {
   return valorCalcularEV6900 * 2;
 }
 
-// 60. Pieza: EV.7100 - BRAZO PORTA CABLE ELECTRICO 700mm x 11mm / CABINA
+// 61. Pieza: EV.7100 - BRAZO PORTA CABLE ELECTRICO 700mm x 11mm / CABINA
 function calcularEV7100({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 1;
   return 0;
 }
 
-// 61. Pieza: EV.7120 - BRAZO PORTA CABLE ELECTRICO / MASTIL
+// 62. Pieza: EV.7120 - BRAZO PORTA CABLE ELECTRICO / MASTIL
 function calcularEV7120({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 1;
   return 0;
 }
 
-// 62. Pieza: EV.7400 - BRAZO P/ ARRIOSTRE MASTIL TIPO 1
+// 63. Pieza: EV.7400 - BRAZO P/ ARRIOSTRE MASTIL TIPO 1
 function calcularEV7400({ valorCalcularEV6900 }) {
   return valorCalcularEV6900 * 2;
 }
 
-// 63. Pieza: EV.7500 - BRAZO P/ IZAJE MASTIL
+// 64. Pieza: EV.7500 - BRAZO P/ IZAJE MASTIL
 function calcularEV7500({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 1;
   return 0;
 }
 
-// 64. Pieza: EV.7600 - BARRA LIMITADORA - 1980mm
+// 65. Pieza: EV.7600 - BARRA LIMITADORA - 1980mm
 function calcularEV7600({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 2;
   return 0;
 }
 
-// 65. Pieza: EV.7700 - BARRA LIMITADORA - 1660mm
+// 66. Pieza: EV.7700 - BARRA LIMITADORA - 1660mm
 function calcularEV7700({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 2;
   return 0;
 }
 
-// 66. Pieza: EV.7800 - BARRA LIMITADORA - 1570mm
+// 67. Pieza: EV.7800 - BARRA LIMITADORA - 1570mm
 function calcularEV7800({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 2;
   return 0;
 }
 
-// 67. Pieza: EV.8160 - CABLE ELECTRICO VULCANIZADO P/ ELEVADOR DE 70m
+// 68. Pieza: EV.8160 - CABLE ELECTRICO VULCANIZADO P/ ELEVADOR DE 70m
 function calcularEV8160({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 1;
   return 0;
 }
 
-// 68. Pieza: EV.8300 - CABLE ELECTRICO VULCANIZADO P/ ELEVADOR DE 5m
+// 69. Pieza: EV.8300 - CABLE ELECTRICO VULCANIZADO P/ ELEVADOR DE 5m
 function calcularEV8300({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 1;
   return 0;
 }
 
-// 69. Pieza: EV.8400 - CABLE ELECTRICO VULCANIZADO CON PROTECTOR P/ BANCO DE RESISTENCIA 3.20m
+// 70. Pieza: EV.8400 - CABLE ELECTRICO VULCANIZADO CON PROTECTOR P/ BANCO DE RESISTENCIA 3.20m
 function calcularEV8400({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 1;
   return 0;
 }
 
-// 70. Pieza: EV.8500 - TROLER DISTRIBUIDOR DE CABLE ELECTRICO
+// 71. Pieza: EV.8500 - TROLER DISTRIBUIDOR DE CABLE ELECTRICO
 function calcularEV8500({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 1;
   return 0;
 }
 
-// 71. Pieza: EV.8600 - MENNEKE ELEVADOR (24 PINES)
+// 72. Pieza: EV.8600 - MENNEKE ELEVADOR (24 PINES)
 function calcularEV8600({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 1;
   return 0;
 }
 
-// 72. Pieza: EV.8700 - MENNEKE MOTOR (6 PINES)
+// 73. Pieza: EV.8700 - MENNEKE MOTOR (6 PINES)
 function calcularEV8700({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 1;
   return 0;
 }
 
-// 73. Pieza: EV.8800 - MENNEKE BANCO (2 PINES)
+// 74. Pieza: EV.8800 - MENNEKE BANCO (2 PINES)
 function calcularEV8800({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 1;
   return 0;
 }
 
-// 74. Pieza: EV.8900 - MANDO WINCHE
+// 75. Pieza: EV.8900 - MANDO WINCHE
 function calcularEV8900({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 1;
   return 0;
 }
 
-// 75. Pieza: EV.9100 - PERNO HEXAGONAL G.8.8 M24 x 170
+// 76. Pieza: EV.9100 - PERNO HEXAGONAL G.8.8 M24 x 170
 function calcularEV9100({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 4;
   return 0;
 }
 
-// 76. Pieza: EV.9200 - PERNO HEXAGONAL G 8.8 M24 x 25
+// 77. Pieza: EV.9200 - PERNO HEXAGONAL G 8.8 M24 x 25
 function calcularEV9200({ valorCalcularEV6700 }) {
   return valorCalcularEV6700 * 4;
 }
 
-// 77. Pieza: EV.9300 - PERNO HEXAGONAL G.8.8 M24 x 90
+// 78. Pieza: EV.9300 - PERNO HEXAGONAL G.8.8 M24 x 90
 function calcularEV9300({ valorCalcularEV6900 }) {
   return valorCalcularEV6900 * 4;
 }
 
-// 78. Pieza: EV.9400 - PERNO HEXAGONAL G.8.8 M20 x 80
+// 79. Pieza: EV.9400 - PERNO HEXAGONAL G.8.8 M20 x 80
 function calcularEV9400({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 8;
   return 0;
 }
 
-// 79. Pieza: EV.9500 - PERNO HEXAGONAL G.8.8 M16 x 90
+// 80. Pieza: EV.9500 - PERNO HEXAGONAL G.8.8 M16 x 90
 function calcularEV9500({ valorCalcularEV6900 }) {
   return valorCalcularEV6900 * 4;
 }
 
-// 80. Pieza: EV.9600 - PERNO HEXAGONAL G.8.8 M12 x 40
+// 81. Pieza: EV.9600 - PERNO HEXAGONAL G.8.8 M12 x 40
 function calcularEV9600({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 4;
   return 0;
 }
 
-// 81. Pieza: EV.9700 - PERNO HEXAGONAL G.8.8 M12 x 30
+// 82. Pieza: EV.9700 - PERNO HEXAGONAL G.8.8 M12 x 30
 function calcularEV9700({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 4;
   return 0;
 }
 
-// 82. Pieza: EV.9900 - PERNO "J" G.8.8 M10 x 80
+// 83. Pieza: EV.9900 - PERNO "J" G.8.8 M10 x 80
 function calcularEV9900({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 12;
   return 0;
 }
 
-// 83. Pieza: EV.10000 - PERNO HEXAGONAL HILO CORRIDO G.8.8 M10 x 30
+// 84. Pieza: EV.10000 - PERNO HEXAGONAL HILO CORRIDO G.8.8 M10 x 30
 function calcularEV10000({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 6;
   return 0;
 }
 
-// 84. Pieza: EV.10100 - PERNO HEXAGONAL G.8.8 M8 x 70 (BARANDA C/ TUERCA DE NYLON)
+// 85. Pieza: EV.10100 - PERNO HEXAGONAL G.8.8 M8 x 70 (BARANDA C/ TUERCA DE NYLON)
 function calcularEV10100({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 22;
   return 0;
 }
 
-// 85. Pieza: EV.10200 - PERNO HEXAGONAL HILO CORRIDO G.8.8 M8 x 35 (PLACA RIEL C/ TUERCA NYLON)
+// 86. Pieza: EV.10200 - PERNO HEXAGONAL HILO CORRIDO G.8.8 M8 x 35 (PLACA RIEL C/ TUERCA NYLON)
 function calcularEV10200({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 4;
   return 0;
 }
 
-// 86. Pieza: EV.10300 - PERNO HEXAGONAL HILO CORRIDO G.8.8 M8 x 25 (RIEL C/ TUERCA NYLON)
+// 87. Pieza: EV.10300 - PERNO HEXAGONAL HILO CORRIDO G.8.8 M8 x 25 (RIEL C/ TUERCA NYLON)
 function calcularEV10300({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 4;
   return 0;
 }
 
-// 87. Pieza: EV.10500 - ARANDELA CUADRADA 100mm x 100mm x 4.5mm P/ ESPÁRRAGO DE 1"
+// 88. Pieza: EV.10500 - ARANDELA CUADRADA 100mm x 100mm x 4.5mm P/ ESPÁRRAGO DE 1"
 function calcularEV10500({ valorCalcularEV6900 }) {
   return valorCalcularEV6900 * 2;
 }
 
-// 88. Pieza: EV.10600 - PIN SENSOR MOTOR 90mm x 40 mm
+// 89. Pieza: EV.10600 - PIN SENSOR MOTOR 90mm x 40 mm
 function calcularEV10600({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 2;
   return 0;
 }
 
-// 89. Pieza: EV.10700 - PIN BASE WINCHE 86mm x 30mm
+// 90. Pieza: EV.10700 - PIN BASE WINCHE 86mm x 30mm
 function calcularEV10700({ etapaMontaje }) {
   if (etapaMontaje === "NUEVO") return 4;
   return 0;
 }
 
+module.exports = { 
+    calcularEV0100,
+    calcularEV0300,
+    calcularEV0400,
+    calcularEV0500,
+    calcularEV0600,
+    calcularEV0700,
+    calcularEV0800,
+    calcularEV0900,
+    calcularEV1000,
 
+    calcularEV1100,
+    calcularEV1210,
+    calcularEV1300,
+    calcularEV1400,
+    calcularEV1500,
+    calcularEV1600,
+    calcularEV1700,
+    calcularEV1800,
+    calcularEV1900,
+    calcularEV2000,
+
+    calcularEV2100,
+    calcularEV2200,
+    calcularEV2300,
+    calcularEV2400,
+    calcularEV2510,
+    calcularEV2600,
+    calcularEV2700,
+    calcularEV2800,
+    calcularEV2900,
+
+    calcularEV3100,
+    calcularEV3200,
+    calcularEV3300,
+    calcularEV3400,
+    calcularEV3500,
+    calcularEV3600,
+    calcularEV3700,
+    calcularEV3800,
+    calcularEV3900,
+    calcularEV4000,
+
+    calcularEV4100,
+    calcularEV4300,
+    calcularEV4400,
+    calcularEV4600,
+    calcularEV4800,
+    calcularEV5000,
+
+    calcularEV5200,
+    calcularEV5400,
+    calcularEV5500,
+    calcularEV5600,
+    calcularEV5700,
+    calcularEV5900,
+
+    calcularEV6100,
+    calcularEV6200,
+    calcularEV6300,
+    calcularEV6400,
+    calcularEV6500,
+    calcularEV6600,
+    calcularEV6700,
+    calcularEV6800,
+    calcularEV6900,
+    calcularEV7000,
+
+    calcularEV7100,
+    calcularEV7120,
+    calcularEV7400,
+    calcularEV7500,
+    calcularEV7600,
+    calcularEV7700,
+    calcularEV7800
+}
 
