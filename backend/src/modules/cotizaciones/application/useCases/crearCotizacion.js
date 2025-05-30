@@ -106,7 +106,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       estados_cotizacion_id: ID_ESTADO_COTIZACION_CREADO, // Estado de "Creado"
     };
 
-    console.log('cotizacionFinal.filial_id', cotizacionFinal.filial_id);
     const filialEncontrado = await db.empresas_proveedoras.findByPk(cotizacionFinal.filial_id)
     const usuarioEncontrado = await db.usuarios.findByPk(cotizacionFinal.usuario_id)
 
@@ -122,10 +121,8 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       cotizacion: cotizacionFinal
     }
 
-    console.log('datosParaGenerarCodigoDocumento', datosParaGenerarCodigoDocumento);
     const codigoDocumento = await generarCodigoDocumentoCotizacion(datosParaGenerarCodigoDocumento)
-    console.log('codigoDocumento',codigoDocumento);
-
+   
     cotizacionFinal = {
       ...cotizacionFinal,
       codigo_documento: codigoDocumento

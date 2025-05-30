@@ -18,7 +18,7 @@ class DespieceDetalle {
     }
 
     static validarCamposObligatorios(datos, modo = "crear") {
-        console.log({datos});
+       
         if (modo === "crear") {
             if (!datos.despiece_id || !datos.pieza_id || !datos.cantidad || !datos.peso_kg || !datos.precio_venta_dolares || !datos.precio_venta_soles) {
                 return "Faltan campos obligatorios: despiece_id, pieza_id, cantidad, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles.";

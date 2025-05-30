@@ -24,8 +24,6 @@ const CotizacionController = {
                 }
             }
 
-            console.log('datos', datos);
-
             const nuevaCotizacion = await crearCotizacion(datos, cotizacionRepository ); // Llamamos al caso de uso para crear un cotizacion
            
             res.status(nuevaCotizacion.codigo).json(nuevaCotizacion.respuesta); // Respondemos con la cotizacion creada
@@ -49,7 +47,6 @@ const CotizacionController = {
 
     async generarPdfCotizacion(req, res) {
         try {
-            console.log('generando');
             const idCotizacion = req.body.id;
 
             const datosCotizacion = await generarPdfCotizacion(idCotizacion, cotizacionRepository ); 

@@ -3,7 +3,6 @@ const { prepararUsuarioParaGuardar } = require ("../../infrastructure/services/e
 
 module.exports = async (usuarioData, usuarioRepository) => {
 
-  console.log('usuarioData', usuarioData);
   const error = Usuario.validar(usuarioData, "crear");
   if (error) return { codigo: 400, respuesta: { mensaje: error } }; 
 
