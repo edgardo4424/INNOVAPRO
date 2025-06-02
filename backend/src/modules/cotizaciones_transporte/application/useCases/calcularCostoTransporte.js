@@ -79,6 +79,7 @@ module.exports = async (
       break;
 
     case "puntales":
+      console.log('entre', entre);
       const { tipo_puntal } = cotizacionTransporteData;
       console.log('tipo_puntal', tipo_puntal);
       

@@ -14,11 +14,11 @@ class SequelizeCotizacionRepository {
   async obtenerCotizaciones() {
     return await Cotizacion.findAll({
       include: [
-        {
+/*         {
           model: db.contactos,
           as: "contacto",
           attributes: ["id", "nombre"]
-        },
+        }, */
         {
           model: db.clientes,
           as: "cliente",
@@ -29,11 +29,10 @@ class SequelizeCotizacionRepository {
           as: "obra",
           attributes: ["id", "nombre"]
         },
-         {
+/*          {
           model: db.empresas_proveedoras,
-         /*  as: "empresas_proveedoras" */
          attributes: ["id", "razon_social"]
-        },
+        }, */
          {
           model: db.usuarios,
           as: "usuario",
