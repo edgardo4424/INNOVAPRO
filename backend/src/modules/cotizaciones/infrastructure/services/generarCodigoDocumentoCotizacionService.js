@@ -67,6 +67,7 @@ async function generarCodigoDocumentoCotizacion({
         filial_id: cotizacion.filial_id,
         usuario_id: cotizacion.usuario_id,
         estados_cotizacion_id: cotizacion.estados_cotizacion_id,
+        /* tipo_cotizacion: cotizacion.tipo_cotizacion */
       },
     });
 
@@ -77,13 +78,36 @@ async function generarCodigoDocumentoCotizacion({
   const cotizacionesConMismoContactoClienteObraFilial = cotizacionesConMismoContactoClienteObraFilial_BD.map((c) => c.get({ plain: true }));
 
   if (cotizacionesConMismoContactoClienteObraFilial.length == 0) {
+
+    const cotizacionesBD =  await db.cotizaciones.findAll({
+      where: {
+        filial_id: cotizacion.filial_id,
+      },
+    });
+
+    // Aplanar resultados
+    const cotizaciones = cotizacionesBD.map((c) => c.get({ plain: true }));
+
+    //Obtener mayor correlativo
+
+const mayorCorrelativo = cotizaciones
+  .map(c => {
+    const correlativoParte = c.codigo_documento.split("-")[4]?.split("_")[0];
+    return parseInt(correlativoParte, 10);
+  })
+  .filter(num => !isNaN(num))
+  .reduce((max, actual) => Math.max(max, actual), 0);
+
+const siguienteCorrelativo = (mayorCorrelativo + 1).toString().padStart(4, '0');
+
     // Si Es primera cotizacion
     version = "1";
-    correlativo = "0001";
+    correlativo = siguienteCorrelativo;
+ 
+/*     correlativo = "0001"; */
   } else {
     
     // Hallar el correlativo si ya hubo cotizaciones anteriores con el mismo contacto, cliente,obra, filial
-
     const cantidadCotizaciones =  cotizacionesConMismoContactoClienteObraFilial.length;
 
     // Obteniendo el ultimo registro de una cotizacion del mismo contacto, cliente, obra, filial
@@ -125,43 +149,42 @@ async function generarCodigoDocumentoCotizacion({
       return `${filialAbv}-${tipoDocumento}-${codRolUsuario}-${usuarioAbv}-${correlativo}_${version}-${anio_cotizacion}`;
     }
 
-    if(ultimo_uso_id == uso_id_para_registrar){
+    // Extraer correlativo y versión actuales del código_documento
+  const [correlativoActual, versionActual] = codigo_documento.split("-")[4].split("_");
+  const correlativoLength = correlativoActual.length;
 
-      // Si el ultimo uso de la cotizacion es igual al uso de la nueva cotizacion, el correlativo se mantiene y la version se suma 1
-      
-      let ultimoCorrelativo = codigo_documento.split("-")[4].split("_")[0]
-      let ultimaVersion = codigo_documento.split("-")[4].split("_")[1]
+    // Función para incrementar correlativo con padding
+  const incrementarCorrelativo = () => (
+      (parseInt(correlativoActual, 10) + 1).toString().padStart(correlativoLength, '0')
+    );
 
-      correlativo = ultimoCorrelativo
-      version = Number(ultimaVersion)+1
-    }else{
-      
-      // Si no es igual el uso, se suma 1 al ultimo correlativo obteniendo del codigo_documento
-      
-      const correlativoAnterior = codigo_documento.split("-")[4].split("_")[0]
+  if (ultimo_uso_id === uso_id_para_registrar) {
 
-      let number = parseInt(correlativoAnterior, 10) + 1; // Suma 1 al número
-      let resultado = number.toString().padStart(correlativoAnterior.length, '0'); // Rellena con ceros
-
-      correlativo = resultado
+    const resultado = cotizacionesConMismoContactoClienteObraFilial.filter(coti => coti.tipo_cotizacion == cotizacion.tipo_cotizacion)
+ 
+    if(resultado.length == 0){
+      correlativo = incrementarCorrelativo();
       version = "1";
-     
+    }else{
+      const cotizacionUltima = resultado[resultado.length-1]
+
+       // Extraer correlativo y versión actuales del código_documento
+      const [actualCorrelativo, actualVersion] = cotizacionUltima.codigo_documento.split("-")[4].split("_");
+
+    // Caso 1: mismo uso → misma correlativo, incremento versión
+    correlativo = actualCorrelativo
+    version = (parseInt(actualVersion, 10) + 1).toString();
     }
+    
+
+    
+  } else {
+    // Caso 2: uso distinto → nuevo correlativo, versión 1
+    correlativo = incrementarCorrelativo();
+    version = "1";
   }
-
-  // 🔹 Contador de documentos por filial, usuario, tipo y anio
-  /* const totalDocumentos = await db.cotizaciones.count({
-    where: {
-      filial_id: filial_id,
-      usuario_id: usuario_id,
-      estados_cotizacion_id: ID_ESTADO_COTIZACION_CREADO,
-      createdAt: anio_cotizacion,
-    },
-  });
-
-  console.log('TOTALLLLLLLL DOCUMENTOS', totalDocumentos);
-
-  const correlativo = (totalDocumentos + 1).toString().padStart(4, "0"); // Ej: 0003 */
+   
+  }
 
   // 🔹 Construcción del código
   const codigo = `${filialAbv}-${tipoDocumento}-${codRolUsuario}-${usuarioAbv}-${correlativo}_${version}-${anio_cotizacion}`;
