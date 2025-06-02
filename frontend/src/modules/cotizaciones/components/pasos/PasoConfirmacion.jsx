@@ -78,6 +78,13 @@ export default function PasoConfirmacion() {
           case 2: // Andamios de Trabajo
             break;
           case 3:
+            console.log(formData)
+            let numero_tramos = formData.atributos[0].alturaTotal / 2;
+            if (formData.atributos[0].alturaTotal % 2 !== 0) {
+              numero_tramos = numero_tramos + 0.5;
+            }
+            console.log("Número de tramos calculado:", numero_tramos);
+            atributos_para_calcular_transporte.numero_tramos = numero_tramos;
             break;
           case 4:
             break;
