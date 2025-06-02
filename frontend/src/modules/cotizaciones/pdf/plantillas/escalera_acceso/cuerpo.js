@@ -1,4 +1,6 @@
-export function generarCuerpoPuntales(doc, data, startY = 120) {
+import { verificarSaltoDePagina } from "../../componentes/pagina";
+
+export async function generarCuerpoEscaleraAcceso(doc, data, startY = 120) {
   let currentY = startY;
 
   // 📌 Título
@@ -16,6 +18,7 @@ export function generarCuerpoPuntales(doc, data, startY = 120) {
   const box = 2.5;
 
   // Servicio de alquiler
+  currentY = await verificarSaltoDePagina(doc, currentY, 6)
   doc.setDrawColor(0);
   doc.setLineWidth(0.3);
   doc.rect(indent, currentY - box + 0.5, box, box);
@@ -29,30 +32,28 @@ export function generarCuerpoPuntales(doc, data, startY = 120) {
   doc.line(indent + box + 3, currentY + 1.5, indent + box + 31, currentY + 1.5);
 
   // 🧮 Cantidad de equipos
-  const cantidad_equipos = data.atributos?.cantidad === 1 ? "Ud." : "Uds.";
+  const cantidad_equipos = data.uso.cantidad_uso === 1 ? "Ud." : "Uds.";
 
   // 🧮 Días de alquiler
   const cantidad_dias = data.cotizacion?.tiempo_alquiler_dias === 1 ? "día" : "días";
 
   // ⚙️ Detalles cotización
   const detalles = data.detalles_alquiler || [
-    `CP${data.cotizacion?.cp || "(INDEFINIDO)"}: Alquiler de ${data.atributos?.cantidad || "(INDEFINIDO NÚMERO DE PUNTALES)"} ${cantidad_equipos} De ${data.uso.nombre|| "(INDEFINIDO USO DE EQUIPO)"} de ${data.atributos?.tipoPuntal || "(LONGITUD INDEFINIDA)"}: S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.
-    
-    *Cuando los puntales se devuelvan incompletos, se cobrará lo siguiente por el material faltante:
-        - Por cada argolla, S/${data.atributos?.precio_argolla || "(PRECIO ARGOLLA INDEFINIDO)"} + IGV.
-        - Por cada pasador, S/${data.atributos?.precio_pasador || "(PRECIO PASADOR INDEFINIDO)"} + IGV.`
+    `CP${data.cotizacion?.cp || "(INDEFINIDO)"}: ${data.uso.cantidad_uso || "(INDEFINIDO NÚMERO DE EQUIPOS)"} ${cantidad_equipos} De ${data.uso.nombre|| "(INDEFINIDO USO DE EQUIPO)"} de ${data.atributos?.longitud_mm || "(LONGITUD INDEFINIDA)"} m. de longitud x ${data.atributos?.ancho_mm || "(ANCHO INDEFINIDO)"} m. de ancho x ${data.atributos?.altura_m || "(ALTURA INDEFINIDA)"}.00 m. de altura + 1.00 m de baranda de seguridad: S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.`
   ];
 
   currentY += 6;
-  detalles.forEach(linea => {
+  for (const linea of detalles) {
     const split = doc.splitTextToSize(linea, 170);
+    currentY = await verificarSaltoDePagina(doc, currentY, split.length * 4);
     doc.text(split, indent + box + 3, currentY);
-    currentY += split.length * 4;
-  });
+    currentY += spl
+    it.length * 4;
+  }
 
   // ⚙️ PERNOS DE EXPANSIÓN - M16 x 145
   const tiene_pernos_expansion = data.tiene_pernos || [
-    `${data.atributos?.cantidad_pernos_expansion || "(CANTIDAD INDEFINIDA DE PERNOS)"} Uds. ${data.atributos?.tipo_perno_expansion || "(TIPO DE PERNO INDEFINIDO)"}: S/${data.atributos?.precio_perno_expansion || "(PRECIO PERNO INDEFINIDO)"} + IGV.`
+    `${data.atributos?.cantidad_pernos_expansion || "(CANTIDAD INDEFINIDA DE PERNOS)"} Uds. ${data.atributos?.nombre_perno_expansion || "(TIPO DE PERNO INDEFINIDO)"}: S/${data.atributos?.precio_perno_expansion || "(PRECIO PERNO INDEFINIDO)"} + IGV.`
   ];
 
   currentY += 6;

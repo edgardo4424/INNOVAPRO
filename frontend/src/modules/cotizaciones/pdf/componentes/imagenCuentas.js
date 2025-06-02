@@ -1,5 +1,7 @@
 import cuentaIR from "../../assets/cuentas_IR.png";
 import cuentaIA from "../../assets/cuentas_IA.png";
+import cuentaEI from "../../assets/cuentas_EI.png";
+import cuentaAE from "../../assets/cuentas_AE.png";
 import { verificarSaltoDePagina } from "./pagina";
 
 export async function renderImagenCuentas(doc, data, currentY) {
@@ -10,6 +12,12 @@ export async function renderImagenCuentas(doc, data, currentY) {
        break;
      case "INDEK ANDINA E.I.R.L":
        imagenCuenta = cuentaIA;
+       break;
+     case "ENCOFRADOS INNOVA S.A.C":
+       imagenCuenta = cuentaEI;
+       break;
+     case "ANDAMIOS ELECTRICOS INNOVA S.A.C":
+       imagenCuenta = cuentaAE;
        break;
     default:
        imagenCuenta = cuentaIR;
