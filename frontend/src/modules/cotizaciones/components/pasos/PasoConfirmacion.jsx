@@ -28,6 +28,8 @@ export default function PasoConfirmacion() {
             precio_subtotal_alquiler_soles: data.precio_subtotal_alquiler_soles
           },
           requiereAprobacion: false,
+          tiene_transporte: false,
+          tiene_pernos: false,
         }));
       } catch (error) {
         console.error("Error generando despiece:", error.message);
@@ -112,7 +114,7 @@ export default function PasoConfirmacion() {
 
     calcularTransporte();
   }, [formData.tiene_transporte]);
-
+  console.log("🚀 FormData en PasoConfirmacion:", formData);
 
   const resumen = formData.resumenDespiece;
   const tipo = formData.tipo_cotizacion;
@@ -182,6 +184,22 @@ export default function PasoConfirmacion() {
         <div className="wizard-key-value"><strong>🛠️ Subtotal alquiler (S/):</strong> S/ {resumen.precio_subtotal_alquiler_soles}</div>
       </div>
       
+      <div className="wizard-section">
+        <label>¿Desea incluir a la cotización los PERNOS DE EXPANSIÓN?</label>
+        <select
+          value={formData.tiene_pernos ? "TRUE" : "FALSE"}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              tiene_pernos: e.target.value === "TRUE",
+            }))
+          }
+        >
+          <option value="FALSE">No</option>
+          <option value="TRUE">Sí</option>
+        </select>
+      </div>
+
       <div className="wizard-section">
         <label>¿Requiere servicio de transporte para el siguiente distrito?</label>
         <p style={{ fontSize: "0.85rem", color: "#666" }}>
