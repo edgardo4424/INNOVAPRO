@@ -15,7 +15,7 @@ export function generarCuerpoPuntales(doc, data, startY = 120) {
   const indent = 20;
   const box = 2.5;
 
-  // ✅ Servicio de alquiler
+  // Servicio de alquiler
   doc.setDrawColor(0);
   doc.setLineWidth(0.3);
   doc.rect(indent, currentY - box + 0.5, box, box);

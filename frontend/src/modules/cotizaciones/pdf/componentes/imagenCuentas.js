@@ -28,4 +28,3 @@ export async function renderImagenCuentas(doc, data, currentY) {
    doc.addImage(cuentaImg, "PNG", 25, currentY + 2, 145, 45);
    return currentY + 50; // Ajusta si la imagen es más grande
 };
-

@@ -17,7 +17,7 @@ export async function generarCuerpoAndamioTrabajo(doc, data, startY = 120) {
   const indent = 20;
   const box = 2.5;
 
-  // ✅ Servicio de alquiler
+  // Servicio de alquiler
   currentY = await verificarSaltoDePagina(doc, currentY, 6)
   doc.setDrawColor(0);
   doc.setLineWidth(0.3);

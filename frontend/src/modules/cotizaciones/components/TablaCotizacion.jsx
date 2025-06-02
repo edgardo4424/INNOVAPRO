@@ -4,22 +4,22 @@ export default function TablaCotizacion({ cotizaciones, onDownloadPDF, setCotiza
       <table className="custom-table">
         <thead>
           <tr>
-            <th>Razón Social</th>
-            <th>Contacto</th>
-            <th>Tipo</th>
+            <th>Cod. Doc</th>
+            <th>Cliente</th>
             <th>Obra</th>
-            <th>Comercial</th>
+            <th>Tipo</th>
+            <th>Estado</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {cotizaciones?.map((cotizacion, index) => (
             <tr key={cotizacion.id || index}>
+              <td>{cotizacion?.codigo_documento || "—"}</td>
               <td>{cotizacion.cliente?.razon_social || "—"}</td>
-              <td>{cotizacion.contacto?.nombre || "—"}</td>
-              <td>{cotizacion.tipo_cotizacion || "—"}</td>
               <td>{cotizacion.obra?.nombre || "—"}</td>
-              <td>{cotizacion.usuario?.nombre || "—"}</td>
+              <td>{cotizacion.tipo_cotizacion || "—"}</td>
+              <td>{cotizacion.estados_cotizacion?.nombre || "—"}</td>
               <td>
                 <div
                   style={{ display: "flex", gap: "1px", justifyContent: "left" }}
