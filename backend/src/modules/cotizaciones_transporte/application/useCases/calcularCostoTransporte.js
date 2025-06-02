@@ -64,18 +64,18 @@ module.exports = async (
       break;
 
     case "escaleras":
-      const { cantidad } = cotizacionTransporteData;
+      const { numero_tramos } = cotizacionTransporteData;
       tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
         where: {
           grupo_tarifa: uso.grupo_tarifa,
-          rango_desde: { [Op.lt]: cantidad },
-          rango_hasta: { [Op.gte]: cantidad },
+          rango_desde: { [Op.lt]: numero_tramos },
+          rango_hasta: { [Op.gte]: numero_tramos },
         },
       });
 
       costo_tarifas_transporte = Number(tarifa_transporte_encontrado.precio_soles);
        unidad = 'Tramo';
-       cantidadTotal = cantidad;
+       cantidadTotal = numero_tramos;
       break;
 
     case "puntales":
@@ -127,7 +127,7 @@ module.exports = async (
       costo_tarifas_transporte = Number(
         tarifa_transporte_encontrado.precio_soles
       );
-      unidad = 'PD';
+      unidad = 'Pd';
       cantidadTotal = cantidad;
       break;
 
