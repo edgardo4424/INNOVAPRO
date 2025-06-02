@@ -4,12 +4,12 @@ import {renderImagenCuentas} from "../../componentes/imagenCuentas";
 import {renderTextoTransporte} from "../../componentes/textoTransporte";
 import {renderNotas} from "./notas";
 import { generarCuerpoAndamioTrabajo } from "./cuerpo";
-import { renderFondoPDF } from "../../componentes/fondoPDF";
+import { renderFondoPDF  } from "../../componentes/fondoPDF";
 
 export default async function generarPDFAndamio(doc, data) {
-  // Inserta fondo antes de cualquier contenido en cada pagina
-  await renderFondoPDF(doc);
   
+  await renderFondoPDF(doc); // Fondo para la primera página
+
   generarHeader(doc, data); // Siempre fijo arriba en la primera página
 
   let currentY = 50;

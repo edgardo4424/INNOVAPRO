@@ -50,17 +50,5 @@ export function generarCuerpoPuntales(doc, data, startY = 120) {
     currentY += split.length * 4;
   });
 
-  // ⚙️ PERNOS DE EXPANSIÓN - M16 x 145
-  const tiene_pernos_expansion = data.tiene_pernos || [
-    `${data.atributos?.cantidad_pernos_expansion || "(CANTIDAD INDEFINIDA DE PERNOS)"} Uds. ${data.atributos?.tipo_perno_expansion || "(TIPO DE PERNO INDEFINIDO)"}: S/${data.atributos?.precio_perno_expansion || "(PRECIO PERNO INDEFINIDO)"} + IGV.`
-  ];
-
-  currentY += 6;
-  tiene_pernos_expansion.forEach(linea => {
-    const split = doc.splitTextToSize(linea, 170);
-    doc.text(split, indent + box + 3, currentY);
-    currentY += split.length * 4;
-  }); 
-
   return currentY;
 }

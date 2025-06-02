@@ -3,10 +3,10 @@ import generarFooter from "../../componentes/footer";
 import {renderImagenCuentas} from "../../componentes/imagenCuentas";
 import {renderTextoTransporte} from "../../componentes/textoTransporte";
 import {renderNotas} from "./notas";
-import { generarCuerpoAndamioTrabajo } from "./cuerpo";
+import { generarCuerpoEscaleraAcceso } from "./cuerpo";
 import { renderFondoPDF } from "../../componentes/fondoPDF";
 
-export default async function generarPDFAndamio(doc, data) {
+export default async function generarPDFEscalera(doc, data) {
   // Inserta fondo antes de cualquier contenido en cada pagina
   await renderFondoPDF(doc);
   
@@ -14,7 +14,7 @@ export default async function generarPDFAndamio(doc, data) {
 
   let currentY = 50;
 
-  currentY = await generarCuerpoAndamioTrabajo(doc, data, currentY); // Genera el cuerpo del PDF para andamio de trabajo
+  currentY = await generarCuerpoEscaleraAcceso(doc, data, currentY); // Genera el cuerpo del PDF para escalera de acceso
 
   // ↓ Texto transporte solo si aplica
   currentY = await renderTextoTransporte(doc, data, currentY);

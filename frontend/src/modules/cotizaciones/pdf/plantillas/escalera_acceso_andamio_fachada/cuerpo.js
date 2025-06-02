@@ -51,17 +51,37 @@ export async function generarCuerpoEscaleraAcceso(doc, data, startY = 120) {
     it.length * 4;
   }
 
-  // ⚙️ PERNOS DE EXPANSIÓN - M16 x 145
-  const tiene_pernos_expansion = data.tiene_pernos || [
-    `${data.atributos?.cantidad_pernos_expansion || "(CANTIDAD INDEFINIDA DE PERNOS)"} Uds. ${data.atributos?.nombre_perno_expansion || "(TIPO DE PERNO INDEFINIDO)"}: S/${data.atributos?.precio_perno_expansion || "(PRECIO PERNO INDEFINIDO)"} + IGV.`
-  ];
+  if (data.atributos?.tiene_pernos === true) {
+    // ⚙️ PERNOS DE EXPANSIÓN - M16 x 145 / C/Argolla
+    const tiene_pernos_expansion = data.tiene_pernos || [
+      `${data.atributos?.cantidad_pernos_expansion || "(CANTIDAD INDEFINIDA DE PERNOS)"} Uds. ${data.atributos?.nombre_perno_expansion || "(TIPO DE PERNO INDEFINIDO)"}: S/${data.atributos?.precio_perno_expansion || "(PRECIO PERNO INDEFINIDO)"} + IGV.`
+    ];
 
-  currentY += 6;
-  tiene_pernos_expansion.forEach(linea => {
-    const split = doc.splitTextToSize(linea, 170);
-    doc.text(split, indent + box + 3, currentY);
-    currentY += split.length * 4;
-  }); 
+    currentY += 6;
+    tiene_pernos_expansion.forEach(linea => {
+      const split = doc.splitTextToSize(linea, 170);
+      doc.text(split, indent + box + 3, currentY);
+      currentY += split.length * 4;
+    }); 
+  }
+
+  // ⚙️ Si la escalera va en volado llevará puntales
+  if (data.atributos?.tiene_puntales === true) {
+    const puntales_detalles = data.puntales_detalles || [
+      `CP${data.cotizacion?.cp || "(INDEFINIDO)"}: Alquiler de ${data.atributos?.cantidad || "(INDEFINIDO NÚMERO DE PUNTALES)"} ${cantidad_equipos} De ${data.uso.nombre|| "(INDEFINIDO USO DE EQUIPO)"} de ${data.atributos?.tipoPuntal || "(LONGITUD INDEFINIDA)"}: S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.
+      
+      *Cuando los puntales se devuelvan incompletos, se cobrará lo siguiente por el material faltante:
+          - Por cada argolla, S/${data.atributos?.precio_argolla || "(PRECIO ARGOLLA INDEFINIDO)"} + IGV.
+          - Por cada pasador, S/${data.atributos?.precio_pasador || "(PRECIO PASADOR INDEFINIDO)"} + IGV.`
+    ];
+
+    currentY += 6;
+    detalles.forEach(linea => {
+      const split = doc.splitTextToSize(linea, 170);
+      doc.text(split, indent + box + 3, currentY);
+      currentY += split.length * 4;
+    });
+}
 
   return currentY;
 }
