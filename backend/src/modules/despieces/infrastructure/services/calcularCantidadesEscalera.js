@@ -130,8 +130,6 @@ function calcularCantidadesPorCadaPiezaDeEscalera(datosAtributos) {
         { pieza: "AE.11400", cantidad: calcularAE11400(dato) },
 
       ];
-
-  
       return resultados.filter((item) => item.cantidad > 0);
     });
   }

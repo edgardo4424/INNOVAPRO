@@ -42,7 +42,7 @@ function combinarResultados(resultadoFinal, piezaInfoMap) {
       .map(r => {
         const info = piezaInfoMap.get(r.item);
         if (!info) return null;
-  
+
         const peso = parseFloat(info["pieza.peso_kg"]) || 0;
         const ventaSoles = parseFloat(info["pieza.precio_venta_soles"]) || 0;
         const ventaDolares = parseFloat(info["pieza.precio_venta_dolares"]) || 0;

@@ -55,11 +55,12 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
           ],
         },
       ],
-    }
+    },
   );
   
   if (!despieceEncontrado)
     return { codigo: 404, respuesta: { mensaje: "Despiece no encontrada" } };
+
 
   const uso_id = despieceEncontrado.atributos_valors?.[0].atributo.uso_id;
 
@@ -144,6 +145,19 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
       break;
 
     case "2":
+
+    const pernoExpansionConArgolla = await db.piezas.findOne({
+        where: {
+          item: "CON.0100"
+        }
+      })
+
+      const pernoEnElDespiece = await db.despieces_detalle.findOne({
+        where: {
+          pieza_id: pernoExpansionConArgolla.id
+        },
+      })
+
          // ANDAMIO DE TRABAJO
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
@@ -151,12 +165,63 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
           longitud_mm: despieceEncontrado?.atributos_valors?.[0]?.valor || "",
           ancho_mm: despieceEncontrado?.atributos_valors?.[1]?.valor || "",
           altura_m: despieceEncontrado?.atributos_valors?.[2]?.valor || "",
+          nombre_pernos_expansion: pernoExpansionConArgolla.descripcion,
+          precio_pernos_expansion: pernoExpansionConArgolla.precio_venta_soles,
+          cantidad_pernos_expansion: pernoEnElDespiece.cantidad,
         },
       };
       break;
 
     case "3":
         // ESCALERA DE ACCESO
+
+        const  tipoAnclaje = despieceEncontrado.atributos_valors?.[4]?.valor;
+
+        let itemPiezaVenta;
+
+        if(tipoAnclaje=="FERMIN"){
+          itemPiezaVenta = "CON.0200"
+        }else{
+          itemPiezaVenta = "CON.0100"
+        }
+
+         const pernoExpansionArgolla = await db.piezas.findOne({
+        where: {
+          item: itemPiezaVenta
+        }
+      })
+
+      const pernoDespiece = await db.despieces_detalle.findOne({
+        where: {
+          pieza_id: pernoExpansionArgolla.id
+        },
+      })
+
+        const  tipoEscalera = despieceEncontrado.atributos_valors?.[2]?.valor;
+
+        let longitud_mm;
+
+        if(tipoEscalera=="EUROPEA"){
+          longitud_mm = 2072;
+        }else{
+          longitud_mm = 3072;
+        }
+
+        let ancho_mm = 1572;
+
+       datosPdfCotizacion = {
+        ...datosPdfCotizacion,
+        atributos: {
+          longitud_mm: longitud_mm,
+          ancho_mm: ancho_mm,
+          altura_m: despieceEncontrado.atributos_valors?.[0]?.valor,
+
+          nombre_pernos_expansion: pernoExpansionArgolla.descripcion,
+          precio_pernos_expansion: pernoExpansionArgolla.precio_venta_soles,
+          cantidad_pernos_expansion: pernoDespiece.cantidad,
+        }
+       }
+
       break;
 
     case "4":
