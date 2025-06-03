@@ -36,12 +36,14 @@ export default function PrevisualizadorPDF({ cotizacionId }) {
         return;
       }
 
+      // Para previsualización
       const blob = doc.output("blob");
       const url = URL.createObjectURL(blob);
       iframeRef.current.src = url;
     };
     generarPDF();
   }, [data]);
+  
 
   return (
     <div style={{ border: "1px solid #ccc", marginTop: "2rem" }}>
@@ -54,5 +56,6 @@ export default function PrevisualizadorPDF({ cotizacionId }) {
         title="Vista previa del PDF"
       ></iframe>
     </div>
+    
   );
 }

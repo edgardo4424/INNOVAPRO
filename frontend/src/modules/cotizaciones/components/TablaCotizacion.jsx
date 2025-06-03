@@ -21,11 +21,9 @@ export default function TablaCotizacion({ cotizaciones, onDownloadPDF, setCotiza
               <td>{cotizacion.tipo_cotizacion || "—"}</td>
               <td>{cotizacion.estados_cotizacion?.nombre || "—"}</td>
               <td>
-                <div
-                  style={{ display: "flex", gap: "1px", justifyContent: "left" }}
-                >
+                <div style={{ display: "flex", gap: "1px", justifyContent: "left" }}>
                   <button
-                    onClick={() => onDownloadPDF(cotizacion)}
+                    onClick={() => onDownloadPDF(cotizacion.id)}
                     className="edit-button"
                   >
                     PDF

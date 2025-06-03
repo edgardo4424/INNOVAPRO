@@ -53,8 +53,9 @@ const RegistrarCotizacionWizard = () => {
         const posibles = partes.slice().reverse(); // empezamos desde el final
         for (let parte of posibles) {
           const sinNumeros = parte.replace(/[0-9]/g, "").trim();
-          if (sinNumeros.length > 3 && !sinNumeros.includes("PERÚ")) {
+          if (sinNumeros.length > 1 && !sinNumeros.includes("PERÚ")) {
             return sinNumeros.toUpperCase();
+            
           }
         }
         return "";
