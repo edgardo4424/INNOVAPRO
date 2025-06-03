@@ -47,8 +47,7 @@ export async function generarCuerpoEscaleraAcceso(doc, data, startY = 120) {
     const split = doc.splitTextToSize(linea, 170);
     currentY = await verificarSaltoDePagina(doc, currentY, split.length * 4);
     doc.text(split, indent + box + 3, currentY);
-    currentY += spl
-    it.length * 4;
+    currentY += split.length * 4;
   }
 
   if (data.atributos?.tiene_pernos === true) {

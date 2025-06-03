@@ -55,5 +55,23 @@ export async function generarCuerpoAndamioTrabajo(doc, data, startY = 120) {
     currentY = drawJustifiedText(doc, linea, indent + box + 3, currentY, 170, 5.5, 10);
   }
 
+  if (data.atributos?.tiene_pernos === true) {
+    // ⚙️ PERNOS DE EXPANSIÓN - M16 x 145 / C/Argolla
+    const tiene_pernos_expansion = data.tiene_pernos || [
+      `${data.atributos?.cantidad_pernos_expansion || "(CANTIDAD INDEFINIDA DE PERNOS)"} Uds. ${data.atributos?.nombre_perno_expansion || "(TIPO DE PERNO INDEFINIDO)"}: **S/${data.atributos?.precio_perno_expansion || "(PRECIO PERNO INDEFINIDO)"} + IGV.**`
+    ];
+
+    currentY += 6;
+    for (const linea of tiene_pernos_expansion) {
+      const palabras = linea.split(/\s+/);
+      const aproxLineas = Math.ceil(palabras.length / 11);
+      const alturaEstimada = aproxLineas * 5;
+
+      currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimada);
+      currentY = drawJustifiedText(doc, linea, indent + box + 3, currentY, 170, 5.5, 10);
+    }
+    
+  }
+
   return currentY;
 }

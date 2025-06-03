@@ -275,3 +275,38 @@
   color: #009688;
   margin-left: 4px;
 }
+
+/* INNOVA PRO+ v1.2.4 - Botones cantidad de equipos */
+
+.botones-cantidad {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
+
+.btn-cantidad {
+  background-color: #004aad;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s;
+}
+
+.btn-cantidad:hover {
+  background-color: #003b8a;
+  transform: scale(1.1);
+}
+
+.cantidad-label {
+  font-size: 1.2rem;
+  font-weight: bold;
+  min-width: 32px;
+  text-align: center;
+}

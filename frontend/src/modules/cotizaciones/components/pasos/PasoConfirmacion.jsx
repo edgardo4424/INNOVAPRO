@@ -16,6 +16,16 @@ export default function PasoConfirmacion() {
           throw new Error("La respuesta del backend no contiene un despiece válido");
         }
 
+        const hayPernos = data.despiece.some(p => {
+          const desc = p.descripcion?.toUpperCase() || "";
+          return (
+            desc.includes("PERNO DE EXPANSIÓN") || // forma genérica
+            desc.includes("PERNOS DE EXPANSION") || // sin tilde
+            desc.includes("M12 X 80") ||
+            desc.includes("M16 X 145")
+          );
+        });
+
         setFormData((prev) => ({
           ...prev,
           despiece: data.despiece,
@@ -30,6 +40,7 @@ export default function PasoConfirmacion() {
           requiereAprobacion: false,
           tiene_transporte: false,
           tiene_pernos: false,
+          tiene_pernos_disponibles: hayPernos,
         }));
       } catch (error) {
         console.error("Error generando despiece:", error.message);
@@ -139,6 +150,19 @@ export default function PasoConfirmacion() {
       requiereAprobacion,
     }));
   };
+ 
+  const usosInstalables = [
+    "ANDAMIO DE TRABAJO",
+    "ANDAMIO DE FACHADA",
+    "ESCUADRAS",
+    "ESCALERAS DE ACCESO",
+    "ELEVADOR DE CARGA",
+    "ANDAMIOS ELECTRICOS COLGANTES"
+  ];
+
+  const usoNombre = formData.uso_nombre || "";
+  const esInstalable = usosInstalables.includes(usoNombre);
+ 
 
   return (
     <div className="paso-formulario">
@@ -184,21 +208,24 @@ export default function PasoConfirmacion() {
         <div className="wizard-key-value"><strong>🛠️ Subtotal alquiler (S/):</strong> S/ {resumen.precio_subtotal_alquiler_soles}</div>
       </div>
       
-      <div className="wizard-section">
-        <label>¿Desea incluir a la cotización los PERNOS DE EXPANSIÓN?</label>
-        <select
-          value={formData.tiene_pernos ? "TRUE" : "FALSE"}
-          onChange={(e) =>
-            setFormData((prev) => ({
-              ...prev,
-              tiene_pernos: e.target.value === "TRUE",
-            }))
-          }
-        >
-          <option value="FALSE">No</option>
-          <option value="TRUE">Sí</option>
-        </select>
-      </div>
+      {formData.tiene_pernos_disponibles && (
+        <div className="wizard-section">
+          <label>¿Desea incluir a la cotización los PERNOS DE EXPANSIÓN?</label>
+          <select
+            value={formData.tiene_pernos ? "TRUE" : "FALSE"}
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                tiene_pernos: e.target.value === "TRUE",
+              }))
+            }
+          >
+            <option value="FALSE">No</option>
+            <option value="TRUE">Sí</option>
+          </select>
+        </div>
+      )}
+
 
       <div className="wizard-section">
         <label>¿Requiere servicio de transporte para el siguiente distrito?</label>
@@ -226,6 +253,89 @@ export default function PasoConfirmacion() {
           <strong>🚛 Costo Transporte:</strong> S/ {formData.costo_transporte}
         </div>
       )}
+
+      {esInstalable && (
+      <div className="wizard-section">
+        <label>¿Desea incluir el servicio de instalación?</label>
+        <select
+          value={formData.tipo_instalacion || "NINGUNA"}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              tipo_instalacion: e.target.value,
+            }))
+          }
+        >
+          <option value="NINGUNA">No incluir</option>
+          <option value="COMPLETA">Instalación completa</option>
+          <option value="PARCIAL">Instalación parcial</option>
+        </select>
+
+        {formData.tipo_instalacion === "COMPLETA" && (
+          <div style={{ marginTop: "1rem" }}>
+            <label>💸 Precio de instalación completa (S/)</label>
+            <input
+              type="number"
+              min="0"
+              value={formData.precio_instalacion_completa || ""}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  precio_instalacion_completa: parseFloat(e.target.value),
+                  precio_instalacion_parcial: null,
+                  nota_instalacion: "",
+                }))
+              }
+            />
+          </div>
+        )}
+
+        {formData.tipo_instalacion === "PARCIAL" && (
+          <div style={{ marginTop: "1rem" }}>
+            <label>💰 Precio de instalación completa (S/)</label>
+            <input
+              type="number"
+              min="0"
+              value={formData.precio_instalacion_completa || ""}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  precio_instalacion_completa: parseFloat(e.target.value),
+                }))
+              }
+            />
+
+            <label style={{ marginTop: "1rem", display: "block" }}>💵 Precio de instalación parcial (S/)</label>
+            <input
+              type="number"
+              min="0"
+              value={formData.precio_instalacion_parcial || ""}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  precio_instalacion_parcial: parseFloat(e.target.value),
+                }))
+              }
+            />
+
+            <label style={{ marginTop: "1rem", display: "block" }}>📝 Nota sobre instalación parcial</label>
+            <textarea
+              rows="3"
+              placeholder="Ej: El precio de la instalación parcial es hasta 3 cuerpos de andamio."
+              value={formData.nota_instalacion || ""}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  nota_instalacion: e.target.value,
+                }))
+              }
+            />
+          </div>
+        )}
+      </div>
+    )}
+
+
 
       <div className="bloque-descuento">
         <label>🎯 Descuento (%):</label>

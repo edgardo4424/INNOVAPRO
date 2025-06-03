@@ -68,52 +68,83 @@ const PasoAtributos = () => {
     <div className="paso-formulario">
       <h3>Paso 4: Atributos del Uso Seleccionado</h3>
 
-      <div className="wizard-section">
-        <label>Cantidad de Equipos a Cotizar:</label>
-        <input
-          type="number"
-          min={1}
-          value={formData.cantidad_uso || 1}
-          onChange={(e) =>
+      {Array.from({ length: cantidadFormularios }).map((_, index) => (
+      <div key={index} className="bloque-equipo">
+        <h4>Equipo {index + 1}</h4>
+        <div className="atributos-grid">
+          {atributos.map((atrib) => (
+            <div key={atrib.id} className="wizard-section">
+              <label>{atrib.nombre}:</label>
+              {atrib.tipo_dato === "select" ? (
+                <select
+                  value={formData.atributos?.[index]?.[atrib.llave_json] || ""}
+                  onChange={(e) => handleChange(index, atrib.llave_json, e.target.value)}
+                >
+                  <option value="">Seleccione...</option>
+                  {atrib.valores_por_defecto.map((opt, i) => (
+                    <option key={i} value={opt}>{opt}</option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="number"
+                  value={formData.atributos?.[index]?.[atrib.llave_json] || ""}
+                  onChange={(e) => handleChange(index, atrib.llave_json, e.target.value)}
+                  placeholder={`Ingrese ${atrib.nombre.toLowerCase()}`}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    ))}
+
+    {/* ✅ Botones al final del formulario */}
+    <div className="wizard-section" style={{ textAlign: "center", marginTop: "2rem" }}>
+      <p style={{ color: "#ff7b00", fontWeight: "bold", marginBottom: "0.6rem" }}>
+        Haz clic en + para cotizar más equipos similares
+      </p>
+      <div className="botones-cantidad">
+        {formData.cantidad_uso > 1 && (
+          <button
+            type="button"
+            title="Quitar equipo"
+            className="btn-cantidad"
+            onClick={() =>
+              setFormData((prev) => {
+                const nuevaCantidad = Math.max(1, (prev.cantidad_uso || 1) - 1);
+                const nuevosAtributos = Array.isArray(prev.atributos)
+                  ? prev.atributos.slice(0, nuevaCantidad)
+                  : [];
+
+                return {
+                  ...prev,
+                  cantidad_uso: nuevaCantidad,
+                  atributos: nuevosAtributos,
+                };
+              })
+            }
+          >
+            −
+          </button>
+        )}
+        <span className="cantidad-label">{formData.cantidad_uso || 1}</span>
+        <button
+          type="button"
+          title="Agregar equipo a cotizar"
+          className="btn-cantidad"
+          onClick={() =>
             setFormData((prev) => ({
               ...prev,
-              cantidad_uso: parseInt(e.target.value) || 1,
+              cantidad_uso: (prev.cantidad_uso || 1) + 1,
             }))
           }
-        />
+        >
+          +
+        </button>
       </div>
+    </div>
 
-      {Array.from({ length: cantidadFormularios }).map((_, index) => (
-        <div key={index} className="bloque-equipo">
-          <h4>Equipo {index + 1}</h4>
-          <div className="atributos-grid">
-            {atributos.map((atrib) => (
-              <div key={atrib.id} className="wizard-section">
-                <label>{atrib.nombre}:</label>
-                {atrib.tipo_dato === "select" ? (
-                  <select
-                    value={formData.atributos?.[index]?.[atrib.llave_json] || ""}
-                    onChange={(e) => handleChange(index, atrib.llave_json, e.target.value)}
-                  >
-                    <option value="">Seleccione...</option>
-                    {atrib.valores_por_defecto.map((opt, i) => (
-                      <option key={i} value={opt}>{opt}</option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    type="number"
-                    value={formData.atributos?.[index]?.[atrib.llave_json] || ""}
-                    onChange={(e) => handleChange(index, atrib.llave_json, e.target.value)}
-                    placeholder={`Ingrese ${atrib.nombre.toLowerCase()}`}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
-      
       {errores.atributos && <p className="error-text">{errores.atributos}</p>}
     </div>
     

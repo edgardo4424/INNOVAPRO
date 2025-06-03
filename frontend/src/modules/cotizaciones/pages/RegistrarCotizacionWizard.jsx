@@ -142,16 +142,23 @@ const RegistrarCotizacionWizard = () => {
                     obra_id: formData.obra_id,
                     contacto_id: formData.contacto_id,
                     usuario_id: user.id,
-                    filial_id: formData.filial_id || 1,
+                    filial_id: formData.filial_id,
                     estados_cotizacion_id: formData.requiereAprobacion ? 3 : 1,
                     tipo_cotizacion: formData.tipo_cotizacion,
                     tiene_transporte: formData.tiene_transporte,
-                    tiene_instalacion: false,
+                    costo_transporte: formData.costo_transporte || 0,
+                    tiene_pernos: formData.tiene_pernos,
+                    tiene_instalacion: formData.tipo_instalacion !== "NINGUNA",
+                    tipo_instalacion: formData.tipo_instalacion || null,
+                    precio_instalacion_completa: formData.precio_instalacion_completa || 0,
+                    precio_instalacion_parcial: formData.precio_instalacion_parcial || 0,
+                    nota_instalacion: formData.nota_instalacion || "",
                     porcentaje_descuento: formData.descuento || 0,
                     igv_porcentaje: 18,
                     tiempo_alquiler_dias: formData.duracion_alquiler,
                     distrito_transporte: extraerDistrito(formData.obra_direccion)
                   },
+
                   despiece: formData.despiece,
                 };
                 console.log(payload);

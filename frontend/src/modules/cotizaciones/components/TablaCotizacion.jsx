@@ -7,6 +7,7 @@ export default function TablaCotizacion({ cotizaciones, onDownloadPDF, setCotiza
             <th>Cod. Doc</th>
             <th>Cliente</th>
             <th>Obra</th>
+            <th>Uso</th>
             <th>Tipo</th>
             <th>Estado</th>
             <th>Acciones</th>
@@ -18,6 +19,7 @@ export default function TablaCotizacion({ cotizaciones, onDownloadPDF, setCotiza
               <td>{cotizacion?.codigo_documento || "—"}</td>
               <td>{cotizacion.cliente?.razon_social || "—"}</td>
               <td>{cotizacion.obra?.nombre || "—"}</td>
+              <td>{cotizacion.uso.descripcion || "—"}</td>
               <td>{cotizacion.tipo_cotizacion || "—"}</td>
               <td>{cotizacion.estados_cotizacion?.nombre || "—"}</td>
               <td>
