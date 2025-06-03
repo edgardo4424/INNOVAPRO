@@ -125,22 +125,10 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
    
     cotizacionFinal = {
       ...cotizacionFinal,
-      codigo_documento: codigoDocumento
+      codigo_documento: codigoDocumento,
+      uso_id: uso_id
     }
-      
-    // Obtener el codigo documento
-  /* const codigoDocumento = await generarCodigoDocumentoCotizacion({
-        filial_id: cotizacion.filial_id,
-        filial_razon_social: filialEncontrado.razon_social,
-        usuario_id: cotizacion.usuario_id,
-        usuario_rol: usuarioEncontrado.rol,
-        usuario_nombre: usuarioEncontrado.nombre,
-        anio_cotizacion: new Date().getFullYear(),
-        estado_cotizacion: 1, // Creado
-      })
-
-      console.log('codigoDocumento',codigoDocumento); */
-
+    
     // Valida los campos de la Cotizacion
     const errorCamposCotizacion = Cotizacion.validarCamposObligatorios(
       cotizacionFinal,
@@ -162,7 +150,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
         return acumulador + (item.peso_kg || 0); // suma solo si existe el campo cantidad
       }, 0);
 
-      let datosParaCualcularCostoTransporte = {
+      let datosParaCalcularCostoTransporte = {
         uso_id: uso_id,
         peso_total_tn: (totalKg/1000).toFixed(2),
         distrito_transporte: cotizacion?.distrito_transporte,
@@ -174,14 +162,20 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
           break;
         case "3":
           // Escaleras de acceso
+          let numero_tramos = atributos_formulario[0].alturaTotal / 2;
+          if(atributos_formulario[0].alturaTotal % 2 !== 0){
+            numero_tramos = numero_tramos + 0.5
+          }
+          console.log('numero_tramos', numero_tramos);
+          datosParaCalcularCostoTransporte.numero_tramos = numero_tramos
           break;
         
         case "5":
           // Puntales
           const subtipo = atributos_formulario[0].tipoPuntal.split("-")[0].trim()
 
-          datosParaCualcularCostoTransporte = {
-            ...datosParaCualcularCostoTransporte,
+          datosParaCalcularCostoTransporte = {
+            ...datosParaCalcularCostoTransporte,
             tipo_puntal: subtipo
           }
         break;
@@ -190,7 +184,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
           break;
       }
 
-      const datosParaGuardarCotizacionesTransporte =  (await calcularCostoTransporte(datosParaCualcularCostoTransporte)).respuesta;
+      const datosParaGuardarCotizacionesTransporte =  (await calcularCostoTransporte(datosParaCalcularCostoTransporte)).respuesta;
 
       const mapeoDataGuardar = {
         cotizacion_id: cotizacionCreada.id,
@@ -207,7 +201,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
         costo_pernocte_transporte: datosParaGuardarCotizacionesTransporte.costosTransporte.costo_pernocte_transporte,
         costo_total: datosParaGuardarCotizacionesTransporte.costosTransporte.costo_total,
 
-        
       }
 
       await db.cotizaciones_transporte.create(mapeoDataGuardar, { transaction })

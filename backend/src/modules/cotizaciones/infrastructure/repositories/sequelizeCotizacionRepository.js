@@ -42,6 +42,11 @@ class SequelizeCotizacionRepository {
           model: db.estados_cotizacion,
           as: "estados_cotizacion",
           attributes: ["id", "nombre"]
+        },
+        {
+          model: db.usos,
+          as: "uso",
+          attributes: ["id", "descripcion"]
         }
       ]
     });

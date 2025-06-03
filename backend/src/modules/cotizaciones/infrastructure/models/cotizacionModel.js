@@ -89,6 +89,14 @@ const Cotizacion = sequelize.define(
        type: DataTypes.STRING,
        allowNull: false,
     },
+    uso_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "usos",
+        key: "id",
+      },
+    }
 
   }, {
     timestamps: true,
@@ -128,6 +136,9 @@ const Cotizacion = sequelize.define(
   Cotizacion.belongsTo(models.estados_cotizacion, {
     foreignKey: "estados_cotizacion_id",
     /* as: "estado_cotizacion", */
+  });
+   Cotizacion.belongsTo(models.usos, {
+    foreignKey: "uso_id",
   });
   Cotizacion.hasMany(models.cotizaciones_transporte, {
   foreignKey: "cotizacion_id",
