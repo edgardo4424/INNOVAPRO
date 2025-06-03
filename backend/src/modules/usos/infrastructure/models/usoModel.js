@@ -22,11 +22,12 @@ const Uso = sequelize.define(
   });
 
 Uso.associate = (models) => {
-    /* Uso.hasMany(models.piezas_usos, {
-      foreignKey: "uso_id",
-  }); */
 
   Uso.hasMany(models.cotizaciones_transporte,{
+     foreignKey: "uso_id",
+  })
+
+  Uso.hasMany(models.cotizaciones,{
      foreignKey: "uso_id",
   })
 }
