@@ -230,6 +230,8 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
 
     case "5":
 
+     // PUNTALES
+
       const piezaArgolla = await db.piezas.findOne({
         where: {
           item: "PU.0900"
@@ -242,7 +244,7 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
         }
       })
 
-      // PUNTALES
+     
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
         atributos: {
