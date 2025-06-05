@@ -3,17 +3,19 @@
   "version": "1.0.0",
   "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
   "main": "eslint.config.js",
+    "type": "module",
   "scripts": {
-  "dev": "vite",
-  "build": "vite build",
-  "build:prod": "cross-env NODE_ENV=production vite build --mode production",
-  "preview": "vite preview"
+    "dev": "vite",
+    "build": "vite build",
+    "build:prod": "cross-env NODE_ENV=production vite build --mode production",
+    "preview": "vite preview"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@react-google-maps/api": "^2.20.6",
+    "@tailwindcss/vite": "^4.1.8",
     "axios": "^1.8.4",
     "framer-motion": "^12.10.5",
     "jspdf": "^3.0.1",
@@ -25,7 +27,8 @@
     "react-router-dom": "^7.4.0",
     "react-select": "^5.10.1",
     "react-toastify": "^11.0.5",
-    "socket.io-client": "^4.8.1"
+    "socket.io-client": "^4.8.1",
+    "tailwindcss": "^4.1.8"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
