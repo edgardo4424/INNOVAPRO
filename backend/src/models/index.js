@@ -81,7 +81,7 @@ db.tarifas_transporte = TarifasTransporte;
 const { DistritosTransporte } = require('../modules/distritos_transporte/infrastructure/models/distritosTransporteModel')
 db.distritos_transporte = DistritosTransporte;
 
-const { CostosPernocteTransporte } = require('../modules/costos_pernocte_transporte/infrastructure/models/costosPernocteTransporteModel')
+const { CostosPernocteTransporte } = require('../modules/cotizaciones/costos_pernocte_transporte/infrastructure/models/costosPernocteTransporteModel')
 db.costos_pernocte_transporte = CostosPernocteTransporte;
 
 const { CotizacionesTransporte } = require('../modules/cotizaciones_transporte/infrastructure/models/cotizacionesTransporteModel')

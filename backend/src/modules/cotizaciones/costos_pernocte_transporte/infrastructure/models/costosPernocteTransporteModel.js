@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("../../../../config/db"); // Asegúrate de importar correctamente tu instancia de Sequelize
+const sequelize = require("../../../../../config/db"); // Asegúrate de importar correctamente tu instancia de Sequelize
 
 const CostosPernocteTransporte = sequelize.define(
   "costos_pernocte_transporte",

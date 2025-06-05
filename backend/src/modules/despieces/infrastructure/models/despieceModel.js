@@ -44,6 +44,10 @@ const Despiece = sequelize.define(
     },
     cp: {
       type: DataTypes.STRING(10)
+    },
+    tiene_pernos: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     }
   }, {
     timestamps: false,
