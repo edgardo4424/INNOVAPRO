@@ -136,6 +136,8 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
     }
   };
 
+  const tiene_pernos = despieceEncontrado.tiene_pernos
+
   // Añadir algunos datos particulares para cada uso
 
   switch (uso_id+"") {
@@ -146,37 +148,44 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
 
     case "2":
 
-    const pernoExpansionConArgolla = await db.piezas.findOne({
+    // ANDAMIO DE TRABAJO
+
+    let pernoExpansionConArgolla;
+    let pernoEnElDespiece;
+
+    if(tiene_pernos){
+      pernoExpansionConArgolla = await db.piezas.findOne({
         where: {
           item: "CON.0100"
         }
       })
 
-      const pernoEnElDespiece = await db.despieces_detalle.findOne({
+      pernoEnElDespiece = await db.despieces_detalle.findOne({
         where: {
+          despiece_id: despieceEncontrado.id,
           pieza_id: pernoExpansionConArgolla.id
         },
       })
+    }
 
-         // ANDAMIO DE TRABAJO
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
         atributos: {
           longitud_mm: despieceEncontrado?.atributos_valors?.[0]?.valor || "",
           ancho_mm: despieceEncontrado?.atributos_valors?.[1]?.valor || "",
           altura_m: despieceEncontrado?.atributos_valors?.[2]?.valor || "",
-          nombre_pernos_expansion: pernoExpansionConArgolla.descripcion,
-          precio_pernos_expansion: pernoExpansionConArgolla.precio_venta_soles,
-          cantidad_pernos_expansion: pernoEnElDespiece.cantidad,
+          tiene_pernos: tiene_pernos,
+          nombre_perno_expansion: tiene_pernos ? pernoExpansionConArgolla.descripcion : null,
+          precio_perno_expansion: tiene_pernos ? (Number(pernoExpansionConArgolla.precio_venta_soles)*Number(pernoEnElDespiece.cantidad)).toFixed(2) : null,
+          cantidad_pernos_expansion: tiene_pernos ? pernoEnElDespiece.cantidad : null,
         },
       };
       break;
 
     case "3":
+
         // ESCALERA DE ACCESO
-
         const  tipoAnclaje = despieceEncontrado.atributos_valors?.[4]?.valor;
-
         let itemPiezaVenta;
 
         if(tipoAnclaje=="FERMIN"){
@@ -185,29 +194,39 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
           itemPiezaVenta = "CON.0100"
         }
 
-         const pernoExpansionArgolla = await db.piezas.findOne({
+        //const tiene_pernos = despieceEncontrado.tiene_pernos
+
+        let pernoExpansionArgolla;
+        let pernoDespiece;
+
+        if(tiene_pernos){
+          
+         pernoExpansionArgolla = await db.piezas.findOne({
         where: {
           item: itemPiezaVenta
         }
-      })
+        })
 
-      const pernoDespiece = await db.despieces_detalle.findOne({
+        pernoDespiece = await db.despieces_detalle.findOne({
         where: {
+          despiece_id: despieceEncontrado.id,
           pieza_id: pernoExpansionArgolla.id
         },
-      })
+        })
 
-        const  tipoEscalera = despieceEncontrado.atributos_valors?.[2]?.valor;
+        }
+
+        const tipoEscalera = despieceEncontrado.atributos_valors?.[2]?.valor;
 
         let longitud_mm;
 
         if(tipoEscalera=="EUROPEA"){
-          longitud_mm = 2072;
+          longitud_mm = 2072 / 1000;
         }else{
-          longitud_mm = 3072;
+          longitud_mm = 3072 / 1000;
         }
 
-        let ancho_mm = 1572;
+        let ancho_mm = 1572 / 1000;
 
        datosPdfCotizacion = {
         ...datosPdfCotizacion,
