@@ -148,39 +148,39 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
 
     case "2":
 
-    // ANDAMIO DE TRABAJO
+        // ANDAMIO DE TRABAJO
 
-    let pernoExpansionConArgolla;
-    let pernoEnElDespiece;
+        let pernoExpansionConArgolla;
+        let pernoEnElDespiece;
 
-    if(tiene_pernos){
-      pernoExpansionConArgolla = await db.piezas.findOne({
-        where: {
-          item: "CON.0100"
+        if(tiene_pernos){
+          pernoExpansionConArgolla = await db.piezas.findOne({
+            where: {
+              item: "CON.0100"
+            }
+          })
+
+          pernoEnElDespiece = await db.despieces_detalle.findOne({
+            where: {
+              despiece_id: despieceEncontrado.id,
+              pieza_id: pernoExpansionConArgolla.id
+            },
+          })
         }
-      })
 
-      pernoEnElDespiece = await db.despieces_detalle.findOne({
-        where: {
-          despiece_id: despieceEncontrado.id,
-          pieza_id: pernoExpansionConArgolla.id
-        },
-      })
-    }
-
-      datosPdfCotizacion = {
-        ...datosPdfCotizacion,
-        atributos: {
-          longitud_mm: despieceEncontrado?.atributos_valors?.[0]?.valor || "",
-          ancho_mm: despieceEncontrado?.atributos_valors?.[1]?.valor || "",
-          altura_m: despieceEncontrado?.atributos_valors?.[2]?.valor || "",
-          tiene_pernos: tiene_pernos,
-          nombre_perno_expansion: tiene_pernos ? pernoExpansionConArgolla.descripcion : null,
-          precio_perno_expansion: tiene_pernos ? (Number(pernoExpansionConArgolla.precio_venta_soles)*Number(pernoEnElDespiece.cantidad)).toFixed(2) : null,
-          cantidad_pernos_expansion: tiene_pernos ? pernoEnElDespiece.cantidad : null,
-        },
-      };
-      break;
+        datosPdfCotizacion = {
+            ...datosPdfCotizacion,
+            atributos: {
+              longitud_mm: Number(despieceEncontrado?.atributos_valors?.[0]?.valor)/1000 || "",
+              ancho_mm: Number(despieceEncontrado?.atributos_valors?.[1]?.valor)/1000 || "",
+              altura_m: despieceEncontrado?.atributos_valors?.[2]?.valor || "",
+              tiene_pernos: tiene_pernos,
+              nombre_perno_expansion: tiene_pernos ? pernoExpansionConArgolla.descripcion : null,
+              precio_perno_expansion: tiene_pernos ? (Number(pernoExpansionConArgolla.precio_venta_soles)*Number(pernoEnElDespiece.cantidad)).toFixed(2) : null,
+              cantidad_pernos_expansion: tiene_pernos ? pernoEnElDespiece.cantidad : null,
+            },
+        };
+        break;
 
     case "3":
 
@@ -235,9 +235,9 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
           ancho_mm: ancho_mm,
           altura_m: despieceEncontrado.atributos_valors?.[0]?.valor,
 
-          nombre_pernos_expansion: pernoExpansionArgolla.descripcion,
-          precio_pernos_expansion: pernoExpansionArgolla.precio_venta_soles,
-          cantidad_pernos_expansion: pernoDespiece.cantidad,
+          nombre_pernos_expansion: tiene_pernos ? pernoExpansionArgolla.descripcion : null,
+          precio_pernos_expansion: tiene_pernos ? pernoExpansionArgolla.precio_venta_soles : null,
+          cantidad_pernos_expansion: tiene_pernos ? pernoDespiece.cantidad : null,
         }
        }
 
@@ -263,7 +263,6 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
         }
       })
 
-     
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
         atributos: {

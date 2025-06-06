@@ -197,14 +197,68 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
         unidad: datosParaGuardarCotizacionesTransporte.unidad,
         cantidad: datosParaGuardarCotizacionesTransporte.cantidad,
 
-        costo_tarifas_transporte: datosParaGuardarCotizacionesTransporte.costosTransporte.costo_tarifas_transporte,
+        /* costo_tarifas_transporte: datosParaGuardarCotizacionesTransporte.costosTransporte.costo_tarifas_transporte,
         costo_distrito_transporte: datosParaGuardarCotizacionesTransporte.costosTransporte.costo_distrito_transporte,
-        costo_pernocte_transporte: datosParaGuardarCotizacionesTransporte.costosTransporte.costo_pernocte_transporte,
-        costo_total: datosParaGuardarCotizacionesTransporte.costosTransporte.costo_total,
+        costo_pernocte_transporte: datosParaGuardarCotizacionesTransporte.costosTransporte.costo_pernocte_transporte, 
+         costo_total: datosParaGuardarCotizacionesTransporte.costosTransporte.costo_total,
+        */
+
+        costo_tarifas_transporte: cotizacion.costo_tarifas_transporte,
+        costo_distrito_transporte: cotizacion.costo_distrito_transporte,
+        costo_pernocte_transporte: cotizacion.costo_pernocte_transporte,
+
+        costo_total: (Number(cotizacion.costo_tarifas_transporte)+Number(cotizacion.costo_distrito_transporte)).toFixed(2),
 
       }
 
       await db.cotizaciones_transporte.create(mapeoDataGuardar, { transaction })
+    }
+
+    // 7. Insertar precios de instalacion
+
+    console.log('cotizacion', cotizacion);
+    console.log('tiene instalacion', cotizacion.tiene_instalacion);
+
+    let tipo_instalacion;
+
+    if(cotizacion.tiene_instalacion){
+
+      switch (cotizacion.tipo_instalacion) {
+
+        case "COMPLETA":
+          tipo_instalacion = "Completa"
+
+          const dataInstalacionCompleta = {
+            cotizacion_id: cotizacionCreada.id,
+            tipo_instalacion: tipo_instalacion,
+            precio_instalacion_completa_soles: cotizacion.precio_instalacion_completa,
+            precio_instalacion_parcial_soles: 0,
+            /* nota: cotizacion.nota_instalacion */
+          }
+
+          console.log('dataInstalacionCompleta', dataInstalacionCompleta);
+          await db.cotizaciones_instalacion.create(dataInstalacionCompleta, { transaction });
+          
+          break;
+        
+        case "PARCIAL":
+        tipo_instalacion = "Parcial"
+
+        const dataInstalacionParcial = {
+            cotizacion_id: cotizacionCreada.id,
+            tipo_instalacion: tipo_instalacion,
+            precio_instalacion_completa_soles: cotizacion.precio_instalacion_completa,
+            precio_instalacion_parcial_soles: cotizacion.precio_instalacion_parcial,
+            nota: cotizacion.nota_instalacion
+          }
+
+          console.log('dataInstalacionParcial', dataInstalacionParcial);
+          await db.cotizaciones_instalacion.create(dataInstalacionParcial, { transaction });
+          break;
+      
+        default:
+          break;
+      }
     }
 
     await transaction.commit(); // ✔ Confirmar todo
