@@ -24,7 +24,7 @@ export default function DashboardLayout() {
                   sidebarOpen={sidebarOpen}
                   setSidebarOpen={setSidebarOpen}
                />
-               <section className=" p-4">
+               <section className="">
                   <Outlet />
                </section>
             </div>

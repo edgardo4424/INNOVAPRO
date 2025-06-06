@@ -30,10 +30,9 @@ export default function GestionUsuarios() {
   } = useUsuarios();
 
   return (
-    <div className="dashboard-main">
+    <div className="container min-h-full">
       <ModuloNavegacion />
-      <h2>Gestión de Usuarios</h2>
-
+      <div className="mt-16"></div>
       {/* 🔍 Buscador + botón */}
       <div className="top-actions">
         <button className="btn-agregar" onClick={abrirModalAgregar}>
@@ -85,5 +84,6 @@ export default function GestionUsuarios() {
         onPaginarSiguiente={() => setPaginaActual(paginaActual + 1)}
       />
     </div>
+    
   );
 }
