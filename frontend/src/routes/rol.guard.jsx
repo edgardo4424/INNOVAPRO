@@ -6,6 +6,6 @@ function RoleGuard({ roles }) {
    const isAuthorized = roles.includes(user.rol);
    console.log(isAuthorized);
    
-   return isAuthorized ? <Outlet /> : <Navigate replace to="/" />;
+   return isAuthorized ? <Outlet /> : <Navigate to="/" replace/>;
 }
 export default RoleGuard;

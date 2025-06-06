@@ -19,12 +19,12 @@ form {
   gap: 15px;
 }
 
-select, textarea, input {
+/* select, textarea, input {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
-}
+} */
 
 /* button {
   background: #007bff;
