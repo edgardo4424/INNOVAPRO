@@ -143,6 +143,10 @@ const Cotizacion = sequelize.define(
   Cotizacion.hasMany(models.cotizaciones_transporte, {
   foreignKey: "cotizacion_id",
 });
+
+Cotizacion.hasOne(models.cotizaciones_instalacion, {
+  foreignKey: 'cotizacion_id'
+})
 }
 
 module.exports = { Cotizacion }; // Exporta el modelo para que pueda ser utilizado en otros módulos

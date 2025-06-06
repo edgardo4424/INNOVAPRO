@@ -12,7 +12,7 @@ class SequelizeUsuarioRepository extends UsuarioRepository { // La clase Sequeli
 
     async obtenerUsuarios() {
         const usuarios = Usuario.findAll({
-            attributes: ["id", "nombre", "email", "rol"]
+            attributes: ["id", "nombre", "email", "rol", "telefono"]
         });
         return usuarios
     }
