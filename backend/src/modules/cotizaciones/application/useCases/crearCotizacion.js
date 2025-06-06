@@ -207,7 +207,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
         costo_distrito_transporte: cotizacion.costo_distrito_transporte,
         costo_pernocte_transporte: cotizacion.costo_pernocte_transporte,
 
-        costo_total: (Number(cotizacion.costo_tarifas_transporte)+Number(cotizacion.costo_distrito_transporte)).toFixed(2),
+        costo_total: (Number(cotizacion.costo_tarifas_transporte)+Number(cotizacion.costo_distrito_transporte)+Number(cotizacion.costo_pernocte_transporte)).toFixed(2),
 
       }
 

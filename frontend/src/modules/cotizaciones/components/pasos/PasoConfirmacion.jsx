@@ -110,13 +110,17 @@ export default function PasoConfirmacion() {
         }
         console.log("🚚 Atributos para calcular transporte:", atributos_para_calcular_transporte);
         const respuesta = await calcularCostoTransporte(atributos_para_calcular_transporte);
-
-        const costo = respuesta?.costosTransporte?.costo_total || 0;
+        console.log("respuesta de la API TRANSPORTE:", respuesta)
+        const costo = respuesta?.costosTransporte || 0;
 
         setFormData((prev) => ({
           ...prev,
-          costo_transporte: costo
+          costo_tarifas_transporte: costo.costo_tarifas_transporte || 0,
+          costo_distrito_transporte: costo.costo_distrito_transporte || 0,
+          costo_pernocte_transporte: costo.costo_pernocte_transporte || 0,
+
         }));
+
       } catch (err) {
         console.error("❌ Error calculando transporte:", err.message);
         console.error("❌ Error crudo de transporte:", err.response?.data || err.message);
@@ -248,9 +252,51 @@ export default function PasoConfirmacion() {
         </select>
       </div>
 
-      {formData.tiene_transporte && formData.costo_transporte && (
+      {(formData.tiene_transporte) && (
         <div className="wizard-key-value">
           <strong>🚛 Costo Transporte:</strong> S/ {formData.costo_transporte}
+          <div style={{ marginTop: "1rem" }}>
+            <label>💸 Precio de envío/devolución (S/)</label>
+            <input
+              type="text"
+              min="0"
+              value={formData.costo_tarifas_transporte || 0}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  costo_tarifas_transporte: parseFloat(e.target.value)
+                }))
+              }
+            />
+          </div>
+          <div style={{ marginTop: "1rem" }}>
+            <label>💸 Precio en base al distrito (S/)</label>
+            <input
+              type="text"
+              min="0"
+              value={formData.costo_distrito_transporte || 0}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  costo_distrito_transporte: parseFloat(e.target.value)
+                }))
+              }
+            />
+          </div>
+          <div style={{ marginTop: "1rem" }}>
+            <label>💸 Precio del pernocte (S/)</label>
+            <input
+              type="text"
+              min="0"
+              value={formData.costo_pernocte_transporte || 0}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  costo_pernocte_transporte : parseFloat(e.target.value)
+                }))
+              }
+            />
+          </div>
         </div>
       )}
 
