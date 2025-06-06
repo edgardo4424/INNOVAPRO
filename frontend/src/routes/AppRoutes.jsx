@@ -16,6 +16,7 @@ import DashboardLayout from "@/modules/dashboard/pages/DashboardLayout";
 import { WizardProvider } from "@/modules/cotizaciones/hooks/useWizardCotizacion";
 import RegistrarCotizacionWizard from "@/modules/cotizaciones/pages/RegistrarCotizacionWizard";
 import GestionCotizaciones from "../modules/cotizaciones/pages/GestionCotizaciones";
+import RoleGuard from "./rol.guard";
 
 
 
@@ -35,7 +36,9 @@ export default function AppRoutes() {
         <Route path="/" element={<ProtectedRoute />}>
           <Route element={<DashboardLayout />}>
             <Route index element={<DashboardHome />} />
-            <Route path="gestion-usuarios" element={<GestionUsuarios />} />
+            <Route element={<RoleGuard roles={['Gerencia']} />}>
+                    <Route path="gestion-usuarios" element={<GestionUsuarios />} />
+            </Route>
             <Route path="gestion-empresas" element={<GestionEmpresas />} />
             <Route path="gestion-clientes" element={<GestionClientes />} />
             <Route path="gestion-contactos" element={<GestionContactos />} />

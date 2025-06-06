@@ -74,7 +74,6 @@ export function AuthProvider({ children }) {
     setLoading(false);
   
     const LOGIN_URL = process.env.NODE_ENV === "production" ? "/#/login" : "/login";
-    window.location.replace(LOGIN_URL); // siempre redirige por seguridad
   };  
 
   return (

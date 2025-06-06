@@ -26,18 +26,18 @@ select, textarea, input {
   border-radius: 5px;
 }
 
-button {
+/* button {
   background: #007bff;
   color: white;
   padding: 10px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-}
+} */
 
-button:hover {
+/* button:hover {
   background: #0056b3;
-}
+} */
 
 h3 {
   margin-top: 20px;
