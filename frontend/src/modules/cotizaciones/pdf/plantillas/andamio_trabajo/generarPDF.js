@@ -10,8 +10,8 @@ import { generarCuerpoAndamioTrabajoVenta } from "./cuerpo_venta";
 import { renderFondoPDF  } from "../../componentes/fondoPDF";
 
 export default async function generarPDFAndamio(doc, data) {
-  
-  await renderFondoPDF(doc); // Fondo para la primera página
+  // Inserta fondo antes de cualquier contenido en cada pagina
+  await renderFondoPDF(doc); 
 
   generarHeader(doc, data); // Siempre fijo arriba en la primera página
 

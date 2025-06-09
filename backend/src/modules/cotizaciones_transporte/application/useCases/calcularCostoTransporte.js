@@ -91,7 +91,7 @@ module.exports = async (
           rango_hasta: { [Op.gte]: peso_total_tn },
         },
       });
-
+      console.log("Tarifa encontrada:", tarifa_transporte_encontrado)
       costo_tarifas_transporte = Number(
         tarifa_transporte_encontrado.precio_soles
       );

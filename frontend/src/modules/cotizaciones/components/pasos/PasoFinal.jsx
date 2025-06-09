@@ -60,7 +60,7 @@ export default function PasoFinal() {
 
         {formData.tiene_transporte && (
           <div className="wizard-key-value">
-            <strong>🚚 Transporte incluido:</strong> S/ {formData.costo_transporte?.toFixed(2) || "0.00"}
+            <strong>🚚 Transporte incluido:</strong> S/ {(formData.costo_tarifas_transporte + formData.costo_distrito_transporte + formData.costo_pernocte_transporte).toFixed(2) || "0.00"}
           </div>
         )}
 
@@ -99,7 +99,7 @@ export default function PasoFinal() {
           <span style={{ color: "#009688" }}>
             S/ {(
               parseFloat(totalConDescuento) +
-              (formData.tiene_transporte ? (formData.costo_transporte || 0) : 0) +
+              (formData.tiene_transporte ? ((formData.costo_tarifas_transporte + formData.costo_distrito_transporte + formData.costo_pernocte_transporte) || 0) : 0) +
               (formData.tipo_instalacion === "COMPLETA" || formData.tipo_instalacion === "PARCIAL"
                 ? (formData.precio_instalacion_completa || 0)
                 : 0)

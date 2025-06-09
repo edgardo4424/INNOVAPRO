@@ -1,7 +1,7 @@
 import { verificarSaltoDePagina } from "../../componentes/pagina";
 import { drawJustifiedText } from "../../../../../utils/pdf/drawJustifiedText";
 
-export async function generarCuerpoEscuadras(doc, data, startY = 120) {
+export async function generarCuerpoEscaleraAccesoVenta(doc, data, startY = 120) {
   let currentY = startY;
 
   // 📌 Título
@@ -12,7 +12,7 @@ export async function generarCuerpoEscuadras(doc, data, startY = 120) {
   const x = (210 - textWidth) / 2;
   doc.text(titulo.toUpperCase(), x, currentY);
   doc.setLineWidth(0.5);
-  doc.line(x, currentY + 1.2, x + textWidth + 6, currentY + 1.2);
+  doc.line(x, currentY + 1.2, x + textWidth +6, currentY + 1.2);
 
   currentY += 10;
 
@@ -36,14 +36,9 @@ export async function generarCuerpoEscuadras(doc, data, startY = 120) {
   // 🧮 Cantidad de equipos
   const cantidad_equipos = data.uso.cantidad_uso === 1 ? "Ud." : "Uds.";
 
-  // 🧮 Días de alquiler
-  const cantidad_dias = data.cotizacion?.tiempo_alquiler_dias === 1 ? "día" : "días";
-
   // ⚙️ Detalles cotización
-  const detalles = data.detalles_alquiler || [
-    `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** Alquiler de ${data.uso.nombre|| "(INDEFINIDO USO DE EQUIPO)"} de ${data.atributos?.sobrecarga} Kg./m2. 
-    
-    ${cantidad_equipos} De ${data.uso.nombre|| "(INDEFINIDO USO DE EQUIPO)"} de ${data.atributos?.longitud_mm || "(LONGITUD INDEFINIDA)"}m: **S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.**`
+  const detalles = data.detalles_venta || [
+    `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** ${data.uso.cantidad_uso || "(INDEFINIDO NÚMERO DE EQUIPOS)"} ${cantidad_equipos} De ${data.uso.nombre|| "(INDEFINIDO USO DE EQUIPO)"} de ${data.atributos?.longitud_mm || "(LONGITUD INDEFINIDA)"} m. de longitud x ${data.atributos?.ancho_mm || "(ANCHO INDEFINIDO)"} m. de ancho x ${data.atributos?.altura_m || "(ALTURA INDEFINIDA)"}.00 m. de altura + 1.00 m de baranda de seguridad: **S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV.**`
   ];
 
   currentY += 6;
@@ -56,25 +51,8 @@ export async function generarCuerpoEscuadras(doc, data, startY = 120) {
     currentY = drawJustifiedText(doc, linea, indent + box + 3, currentY, 170, 5.5, 10);
   }
 
-  if (data.atributos?.tiene_plataformas === true) {
-    // ⚙️ PLATAFORMAS DE TRABAJO
-    const plataformas_detalles = data.plataformas_detalles || [
-      `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** Alquiler de plataformas según modulación: **S/${data.atributos?.precio_plataformas || "(PRECIO PLATAFORMAS INDEFINIDO)"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.**`
-    ];
-
-    currentY += 6;
-    for (const linea of plataformas_detalles) {
-      const palabras = linea.split(/\s+/);
-      const aproxLineas = Math.ceil(palabras.length / 11);
-      const alturaEstimada = aproxLineas * 5;
-
-      currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimada);
-      currentY = drawJustifiedText(doc, linea, indent + box + 3, currentY, 170, 5.5, 10);
-    } 
-  }
-
-   if (data.atributos?.tiene_pernos === true) {
-    // ⚙️ PERNOS DE EXPANSIÓN - M16 x 145 
+  if (data.atributos?.tiene_pernos === true) {
+    // ⚙️ PERNOS DE EXPANSIÓN - M16 x 145 / C/Argolla
     const tiene_pernos_expansion = data.tiene_pernos || [
       `${data.atributos?.cantidad_pernos_expansion || "(CANTIDAD INDEFINIDA DE PERNOS)"} Uds. ${data.atributos?.nombre_perno_expansion || "(TIPO DE PERNO INDEFINIDO)"}: **S/${data.atributos?.precio_perno_expansion || "(PRECIO PERNO INDEFINIDO)"} + IGV.**`
     ];
@@ -89,6 +67,24 @@ export async function generarCuerpoEscuadras(doc, data, startY = 120) {
       currentY = drawJustifiedText(doc, linea, indent + box + 3, currentY, 170, 5.5, 10);
     } 
   }
+
+  // ⚙️ Si el andamio de fachada va en volado llevará puntales
+  if (data.atributos?.tiene_puntales === true) {
+    const puntales_detalles = data.puntales_detalles || [
+      `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** Venta de ${data.atributos?.cantidad || "(INDEFINIDO NÚMERO DE PUNTALES)"} ${cantidad_equipos} De ${data.uso.nombre|| "(INDEFINIDO USO DE EQUIPO)"} de ${data.atributos?.tipoPuntal || "(LONGITUD INDEFINIDA)"}: **S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV.**`
+    ];
+
+    currentY += 6;
+    for (const linea of puntales_detalles) {
+      const palabras = linea.split(/\s+/);
+      const aproxLineas = Math.ceil(palabras.length / 11);
+      const alturaEstimada = aproxLineas * 5;
+
+      currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimada);
+      currentY = drawJustifiedText(doc, linea, indent + box + 3, currentY, 170, 5.5, 10);
+    }
+
+}
 
   return currentY;
 }

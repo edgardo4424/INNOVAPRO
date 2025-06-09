@@ -16,7 +16,7 @@ export async function renderNotasVenta(doc, data, currentY) {
   const condiciones = data.condiciones || [
     "1° Los precios ofertados NO INCLUYEN I.G.V. (18%).",
     "2° Validez de la oferta: 15 días",
-    "3° Forma de pago POR ADELANTADO.",
+    "3° **Forma de pago POR ADELANTADO.**",
     "4° El horario de atención del Almacén es de lunes a viernes de 8:00 a.m a 12:00 p.m. y de 1:00 p.m. a 5:00 p.m.",
     "5° Relación de cuentas para depósito o transferencia:"
   ];

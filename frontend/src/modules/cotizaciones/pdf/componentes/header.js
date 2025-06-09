@@ -1,3 +1,6 @@
+import { drawJustifiedText } from "../../../../utils/pdf/drawJustifiedText"
+
+
 export default function encabezadoCotizacion(doc, data, cotizacionId) {
     const lh = 3;
     let currentY = 16;
@@ -8,19 +11,17 @@ export default function encabezadoCotizacion(doc, data, cotizacionId) {
     doc.setFontSize(7);
         
      // Columna izquierda
-    doc.text(`Ref. cotización: ${data.cotizacion?.codigo_documento}`, colLeftX, currentY); currentY += lh;
+    currentY = drawJustifiedText(doc, "**Ref. cotización:** " + data.cotizacion?.codigo_documento, colLeftX, currentY, 55, 3, 7);
     if (data.obra?.direccion) {
-        const direccionSplit = doc.splitTextToSize("Dirección obra: " + data.obra.direccion, 55);
-        doc.text(direccionSplit, colLeftX, currentY);
-        currentY += direccionSplit.length * lh;
+        const texto = "**Dirección obra:** " + data.obra.direccion;
+        currentY = drawJustifiedText(doc, texto, colLeftX, currentY, 55, 3, 7);
     }
     if (data.obra?.nombre) {
-        const proyectoSplit = doc.splitTextToSize("Proyecto: " + data.obra.nombre, 55);
-        doc.text(proyectoSplit, colLeftX, currentY);
-        currentY += proyectoSplit.length * lh;
+        const texto = "**Proyecto:** " + data.obra.nombre;
+        currentY = drawJustifiedText(doc, texto, colLeftX, currentY, 55, 3, 7 );
     }
     if (data.cotizacion?.fecha) {
-        doc.text("Fecha: " + data.cotizacion?.fecha, colLeftX, currentY); currentY += lh;
+        currentY = drawJustifiedText(doc, "**Fecha:** " + data.cotizacion?.fecha, colLeftX, currentY, 55, 3, 7);
     }
 
     // Columna derecha
@@ -29,25 +30,22 @@ export default function encabezadoCotizacion(doc, data, cotizacionId) {
     const contacto = data.contacto || {};
 
     if (cliente.razon_social) {
-        const razonSplit = doc.splitTextToSize("Razón Social: " + cliente.razon_social, 55);
-        doc.text(razonSplit, colRightX, yRight);
-        yRight += razonSplit.length * lh;
+        const texto = "**Razón Social:** " + cliente.razon_social;
+        yRight = drawJustifiedText(doc, texto, colRightX, yRight, 55, 3, 7);
     }
     if (cliente.ruc) {
-        doc.text("RUC: " + cliente.ruc, colRightX, yRight); yRight += lh;
+        yRight = drawJustifiedText(doc, "**RUC:** " + cliente.ruc, colRightX, yRight, 55, 3, 7);
     }
     if (contacto.nombre) {
-        doc.text("A/A: " + contacto.nombre, colRightX, yRight); yRight += lh;
+        yRight = drawJustifiedText(doc, "**A/A:** " + contacto.nombre, colRightX, yRight, 55, 3, 7);
     }
     if (cliente.domicilio_fiscal) {
-        const domicilioSplit = doc.splitTextToSize("Domicilio Fiscal: " + cliente.domicilio_fiscal, 55);
-        doc.text(domicilioSplit, colRightX, yRight);
-        yRight += domicilioSplit.length * lh;
+        const texto = "**Domicilio Fiscal:** " + cliente.domicilio_fiscal;
+        yRight = drawJustifiedText(doc, texto, colRightX, yRight, 55, 3, 7);
     }
     if (contacto.correo) {
-        const emailSplit = doc.splitTextToSize("Email: " + contacto.correo, 55);
-        doc.text(emailSplit, colRightX, yRight);
-        yRight += emailSplit.length * lh;
+        const texto = "**Email:** " + contacto.correo;
+        yRight = drawJustifiedText(doc, texto, colRightX, yRight, 55, 3, 7);
     }
 
   return Math.max(currentY, yRight);

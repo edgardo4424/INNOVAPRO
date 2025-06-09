@@ -1,7 +1,7 @@
 import { verificarSaltoDePagina } from "../../componentes/pagina";
 import { drawJustifiedText } from "../../../../../utils/pdf/drawJustifiedText";
 
-export async function generarCuerpoAndamioTrabajoVenta(doc, data, startY = 120) {
+export async function generarCuerpoPuntalesVenta(doc, data, startY = 120) {
   let currentY = startY;
 
   // 📌 Título
@@ -12,7 +12,7 @@ export async function generarCuerpoAndamioTrabajoVenta(doc, data, startY = 120) 
   const x = (210 - textWidth) / 2;
   doc.text(titulo.toUpperCase(), x, currentY);
   doc.setLineWidth(0.5);
-  doc.line(x, currentY + 1.2, x + textWidth +6, currentY + 1.2);
+  doc.line(x, currentY + 1.2, x + textWidth, currentY + 1.2);
 
   currentY += 10;
 
@@ -20,7 +20,7 @@ export async function generarCuerpoAndamioTrabajoVenta(doc, data, startY = 120) 
   const box = 2.5;
 
   // Servicio de alquiler
-  currentY = await verificarSaltoDePagina(doc, currentY, 6)
+  currentY = await verificarSaltoDePagina(doc, currentY, 6);
   doc.setDrawColor(0);
   doc.setLineWidth(0.3);
   doc.rect(indent, currentY - box + 0.5, box, box);
@@ -34,11 +34,11 @@ export async function generarCuerpoAndamioTrabajoVenta(doc, data, startY = 120) 
   doc.line(indent + box + 3, currentY + 1.5, indent + box + 3 + subtituloWidth, currentY + 1.5);
 
   // 🧮 Cantidad de equipos
-  const cantidad_equipos = data.uso.cantidad_uso === 1 ? "Ud." : "Uds.";
+  const cantidad_equipos = data.atributos?.cantidad === 1 ? "Ud." : "Uds.";
 
   // ⚙️ Detalles cotización
-  const detalles = data.detalles_venta || [
-    `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** ${data.uso.cantidad_uso || "(INDEFINIDO NÚMERO DE EQUIPOS)"} ${cantidad_equipos} De ${data.uso.nombre|| "(INDEFINIDO USO DE EQUIPO)"} de ${data.atributos?.longitud_mm || "(LONGITUD INDEFINIDA)"} m. de longitud x ${data.atributos?.ancho_mm || "(ANCHO INDEFINIDO)"} m. de ancho x ${data.atributos?.altura_m || "(ALTURA INDEFINIDA)"}.00 m. de altura + 1.00 m de baranda de seguridad: **S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV.**`
+  const detalles = data.detalles_alquiler || [
+    `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** Venta de ${data.atributos?.cantidad || "(INDEFINIDO NÚMERO DE PUNTALES)"} ${cantidad_equipos} De ${data.uso.nombre|| "(INDEFINIDO USO DE EQUIPO)"} de ${data.atributos?.tipoPuntal || "(LONGITUD INDEFINIDA)"}: **S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV.**`
   ];
 
   currentY += 6;

@@ -1,17 +1,20 @@
 import { verificarSaltoDePagina } from "../../componentes/pagina.js";
+import { renderListaJustificada } from "../../../../../utils/pdf/renderListaJustificada.js";
 
 export async function renderNotas(doc, data, currentY) {
   const indent = 20;
+  const maxWidth = 170;
+  const lineHeight = 4.5;
 
-  currentY += 5;
+  currentY += 10;
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
   doc.text("NOTA:", indent, currentY);
   doc.line(indent, currentY + 1.5, indent + 8, currentY + 1.5);
-  currentY += 5;
+  currentY += 10;
 
   const condiciones = data.condiciones || [
-    "1° CONDICIONES DE ALQUILER SUJETO A EVALUACION CREDITICIA.",
+    "1° **CONDICIONES DE ALQUILER SUJETO A EVALUACION CREDITICIA.**",
     "2° Los precios ofertados NO INCLUYEN I.G.V. (18%).",
     "3° El tiempo mínimo de alquiler es 30 días naturales y no existe la posibilidad de ningún tipo de descuento por no haber utilizado el material durante ese periodo de alquiler. A partir de los 30 días de alquiler, se facturará los días naturales que el material esté en poder del arrendatario.",
     "4° El equipo por suministrar no incluye accesorios consumibles.",
@@ -23,13 +26,16 @@ export async function renderNotas(doc, data, currentY) {
     "10° Relación de cuentas para depósito o transferencia:"
   ];
 
-  for (const linea of condiciones) {
-    const split = doc.splitTextToSize(linea, 170);
-    const alturaEstimado = split.length * 3.25;
-    currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimado);
-    doc.text(split, indent + 3, currentY);
-    currentY += alturaEstimado;
-  }
+  currentY = await renderListaJustificada ({
+    doc,
+    lista: condiciones,
+    x: indent,
+    y: currentY,
+    maxWidth,
+    verificarSaltoDePagina,
+    lineHeight: lineHeight + 0.5,
+    fontSize: 8,
+  })
 
   return currentY;
 }

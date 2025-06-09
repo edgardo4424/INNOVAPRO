@@ -61,7 +61,7 @@ export default function PasoConfirmacion() {
           }
         }
         return "";
-      }
+  }
 
   useEffect(() => {
     const calcularTransporte = async () => {
@@ -77,7 +77,7 @@ export default function PasoConfirmacion() {
 
       console.log(extraerDistrito(formData.obra_direccion))
 
-      try {;
+      try {
         
         let atributos_para_calcular_transporte = {
           uso_id: formData.uso_id,
@@ -118,6 +118,7 @@ export default function PasoConfirmacion() {
           costo_tarifas_transporte: costo.costo_tarifas_transporte || 0,
           costo_distrito_transporte: costo.costo_distrito_transporte || 0,
           costo_pernocte_transporte: costo.costo_pernocte_transporte || 0,
+          tipo_transporte: respuesta?.tipo_transporte || "Desconocido",
 
         }));
 
@@ -252,9 +253,42 @@ export default function PasoConfirmacion() {
         </select>
       </div>
 
-      {(formData.tiene_transporte) && (
-        <div className="wizard-key-value">
-          <strong>🚛 Costo Transporte:</strong> S/ {formData.costo_transporte}
+      {formData.tiene_transporte && (
+        <div className="wizard-section">
+
+          {/* <div style={{ marginTop: "1rem" }}>
+            <label>🛻 Tipo de transporte</label>
+            <input
+              type="select"
+              value={formData.tipo_transporte || "Desconocido"}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  tipo_transporte: e.target.value,
+                }))
+              }
+            />
+          </div> */}
+
+          <div style={{ marginTop: "1rem" }}>
+          <label>🛻 Tipo de transporte</label>
+          <select
+            value={formData.tipo_transporte || ""}
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                tipo_transporte: e.target.value,
+              }))
+            }
+          >
+            <option value="">Seleccionar tipo de transporte</option>
+            <option value="Camión">Camión</option>
+            <option value="Camioneta">Camioneta</option>
+            <option value="Semi camión">Semi camión</option>
+          </select>
+        </div>
+
+
           <div style={{ marginTop: "1rem" }}>
             <label>💸 Precio de envío/devolución (S/)</label>
             <input
@@ -264,11 +298,12 @@ export default function PasoConfirmacion() {
               onChange={(e) =>
                 setFormData((prev) => ({
                   ...prev,
-                  costo_tarifas_transporte: parseFloat(e.target.value)
+                  costo_tarifas_transporte: parseFloat(e.target.value),
                 }))
               }
             />
           </div>
+
           <div style={{ marginTop: "1rem" }}>
             <label>💸 Precio en base al distrito (S/)</label>
             <input
@@ -278,11 +313,12 @@ export default function PasoConfirmacion() {
               onChange={(e) =>
                 setFormData((prev) => ({
                   ...prev,
-                  costo_distrito_transporte: parseFloat(e.target.value)
+                  costo_distrito_transporte: parseFloat(e.target.value),
                 }))
               }
             />
           </div>
+
           <div style={{ marginTop: "1rem" }}>
             <label>💸 Precio del pernocte (S/)</label>
             <input
@@ -292,10 +328,14 @@ export default function PasoConfirmacion() {
               onChange={(e) =>
                 setFormData((prev) => ({
                   ...prev,
-                  costo_pernocte_transporte : parseFloat(e.target.value)
+                  costo_pernocte_transporte: parseFloat(e.target.value),
                 }))
               }
             />
+          </div>
+          
+          <div style={{ marginTop: "1rem" }}>
+            <strong>🚛 Costo Transporte:</strong> S/ {(formData.costo_tarifas_transporte + formData.costo_distrito_transporte + formData.costo_pernocte_transporte) || 0}
           </div>
         </div>
       )}

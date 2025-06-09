@@ -1,6 +1,5 @@
 import {renderFondoPDF} from './fondoPDF.js';
 import generarHeader from './header.js';
-import generarFooter from './footer.js';
 
 export async function verificarSaltoDePagina(doc, currentY, data, alturaBloque = 0, margenInferior = 260) { // Verifica si se necesita un salto de página
   if (currentY + alturaBloque > margenInferior) { // Verifica si el bloque actual supera el margen inferior

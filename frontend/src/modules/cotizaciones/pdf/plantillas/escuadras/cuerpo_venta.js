@@ -1,7 +1,7 @@
 import { verificarSaltoDePagina } from "../../componentes/pagina";
 import { drawJustifiedText } from "../../../../../utils/pdf/drawJustifiedText";
 
-export async function generarCuerpoEscuadras(doc, data, startY = 120) {
+export async function generarCuerpoEscuadrasVenta(doc, data, startY = 120) {
   let currentY = startY;
 
   // 📌 Título
@@ -36,14 +36,11 @@ export async function generarCuerpoEscuadras(doc, data, startY = 120) {
   // 🧮 Cantidad de equipos
   const cantidad_equipos = data.uso.cantidad_uso === 1 ? "Ud." : "Uds.";
 
-  // 🧮 Días de alquiler
-  const cantidad_dias = data.cotizacion?.tiempo_alquiler_dias === 1 ? "día" : "días";
-
   // ⚙️ Detalles cotización
-  const detalles = data.detalles_alquiler || [
-    `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** Alquiler de ${data.uso.nombre|| "(INDEFINIDO USO DE EQUIPO)"} de ${data.atributos?.sobrecarga} Kg./m2. 
+  const detalles = data.detalles_venta || [
+    `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** Venta de ${data.uso.nombre|| "(INDEFINIDO USO DE EQUIPO)"} de ${data.atributos?.sobrecarga} Kg./m2. 
     
-    ${cantidad_equipos} De ${data.uso.nombre|| "(INDEFINIDO USO DE EQUIPO)"} de ${data.atributos?.longitud_mm || "(LONGITUD INDEFINIDA)"}m: **S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.**`
+    ${cantidad_equipos} De ${data.uso.nombre|| "(INDEFINIDO USO DE EQUIPO)"} de ${data.atributos?.longitud_mm || "(LONGITUD INDEFINIDA)"}m: **S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV.**`
   ];
 
   currentY += 6;
@@ -59,7 +56,7 @@ export async function generarCuerpoEscuadras(doc, data, startY = 120) {
   if (data.atributos?.tiene_plataformas === true) {
     // ⚙️ PLATAFORMAS DE TRABAJO
     const plataformas_detalles = data.plataformas_detalles || [
-      `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** Alquiler de plataformas según modulación: **S/${data.atributos?.precio_plataformas || "(PRECIO PLATAFORMAS INDEFINIDO)"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.**`
+      `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** Venta de plataformas según modulación: **S/${data.atributos?.precio_plataformas || "(PRECIO PLATAFORMAS INDEFINIDO)"} + IGV.**`
     ];
 
     currentY += 6;
