@@ -163,6 +163,7 @@ module.exports = async (
     },
   });
 
+  console.log('distrito_transporte_encontrado', distrito_transporte_encontrado);
   // Si el distrito se encuentra dentro de la lista, se cobra un adicional. Si no está el costo_distrito_transporte sera 0
   console.log("TARIFA TRANSPORTE ENCONTRADO", tarifa_transporte_encontrado)
   if (distrito_transporte_encontrado && tarifa_transporte_encontrado) {
@@ -214,6 +215,12 @@ module.exports = async (
     costo_distrito_transporte +
     costo_pernocte_transporte; 
 
+    console.log({costosTransporte: {
+        costo_tarifas_transporte,
+        costo_distrito_transporte,
+        costo_pernocte_transporte,
+        costo_total,
+      }});
   return {
     codigo: 200,
     respuesta: {

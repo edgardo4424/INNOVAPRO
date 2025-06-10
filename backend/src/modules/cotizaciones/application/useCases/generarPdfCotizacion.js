@@ -77,6 +77,17 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
     tiempoAlquilerDias = cotizacionEncontrado?.tiempo_alquiler_dias
   }
 
+  
+  const tiene_pernos = despieceEncontrado.tiene_pernos
+
+  const instalacionEncontrada = await db.cotizaciones_instalacion.findOne({
+    where: {
+      cotizacion_id: cotizacionEncontrado.id
+    }
+  })
+
+  console.log('instalacionEncontrada', instalacionEncontrada);
+
   // Mapear los datos generales para todos los usos para generar el pdf
  
   let datosPdfCotizacion = {
@@ -133,10 +144,17 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
       id: usoEncontrado.id,
       nombre: usoEncontrado.descripcion,
       cantidad_uso: cantidadUso,
+    },
+
+    instalacion: {
+      tiene_instalacion: cotizacionEncontrado.tiene_instalacion,
+      tipo_instalacion: instalacionEncontrada.tipo_instalacion,
+      precio_instalacion_completa_soles: instalacionEncontrada.precio_instalacion_completa_soles,
+      precio_instalacion_parcial_soles: instalacionEncontrada.precio_instalacion_parcial_soles,
+      nota: instalacionEncontrada.nota,
     }
   };
 
-  const tiene_pernos = despieceEncontrado.tiene_pernos
 
   // Añadir algunos datos particulares para cada uso
 
