@@ -146,6 +146,7 @@ const RegistrarCotizacionWizard = () => {
                     
                     tipo_cotizacion: formData.tipo_cotizacion,
                     tiene_transporte: formData.tiene_transporte,
+                    tipo_transporte: formData.tipo_transporte,
                     costo_tarifas_transporte: formData.costo_tarifas_transporte || 0,
                     costo_distrito_transporte: formData.costo_distrito_transporte || 0,
                     costo_pernocte_transporte: formData.costo_pernocte_transporte || 0,

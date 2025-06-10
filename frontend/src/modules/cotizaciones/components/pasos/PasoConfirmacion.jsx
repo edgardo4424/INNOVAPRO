@@ -82,7 +82,8 @@ export default function PasoConfirmacion() {
         let atributos_para_calcular_transporte = {
           uso_id: formData.uso_id,
           peso_total_tn: String(pesoTn),
-          distrito_transporte: distrito
+          distrito_transporte: distrito,
+          tipo_transporte: formData.tipo_transporte || "Desconocido"
         }
         
         switch (formData.uso_id) {
@@ -118,7 +119,7 @@ export default function PasoConfirmacion() {
           costo_tarifas_transporte: costo.costo_tarifas_transporte || 0,
           costo_distrito_transporte: costo.costo_distrito_transporte || 0,
           costo_pernocte_transporte: costo.costo_pernocte_transporte || 0,
-          tipo_transporte: respuesta?.tipo_transporte || "Desconocido",
+          tipo_transporte: formData.tipo_transporte || "Desconocido",
 
         }));
 
@@ -129,7 +130,7 @@ export default function PasoConfirmacion() {
     };
 
     calcularTransporte();
-  }, [formData.tiene_transporte]);
+  }, [formData.tipo_transporte]);
   console.log("🚀 FormData en PasoConfirmacion:", formData);
 
   const resumen = formData.resumenDespiece;

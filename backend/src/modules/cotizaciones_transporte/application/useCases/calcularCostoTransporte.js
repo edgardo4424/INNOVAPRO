@@ -164,7 +164,8 @@ module.exports = async (
   });
 
   // Si el distrito se encuentra dentro de la lista, se cobra un adicional. Si no está el costo_distrito_transporte sera 0
-  if (distrito_transporte_encontrado) {
+  console.log("TARIFA TRANSPORTE ENCONTRADO", tarifa_transporte_encontrado)
+  if (distrito_transporte_encontrado && tarifa_transporte_encontrado) {
     switch (tarifa_transporte_encontrado.tipo_transporte) {
       case "Camioneta":
         costo_distrito_transporte = Number(
