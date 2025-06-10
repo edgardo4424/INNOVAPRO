@@ -12,7 +12,7 @@ export default function useContactos() {
   const [modalAgregar, setModalAgregar] = useState(false);
   const [contactoEditando, setContactoEditando] = useState(null);
   const [paginaActual, setPaginaActual] = useState(1);
-  const contactosPorPagina = 5;
+  const [contactosPorPagina,setContactosPorPagina] = useState( 5);
 
   const [nuevoContacto, setNuevoContacto] = useState({
     nombre: "",
@@ -175,5 +175,7 @@ export default function useContactos() {
     guardarEdicion,
     eliminarContacto,
     setContactoEditando,
+    setContactosPorPagina,
+    contactosPorPagina
   };
 }

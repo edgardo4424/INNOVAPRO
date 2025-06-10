@@ -16,7 +16,7 @@ export default function DashboardLayout() {
    return (
       <SidebarProvider>
          <AppSidebar />
-         <SidebarInset>
+         <SidebarInset className="overflow-hidden">
             <div className="w-full overflow-hidden rounded-md  h-full">
                <Header
                   user={user}
@@ -24,7 +24,7 @@ export default function DashboardLayout() {
                   sidebarOpen={sidebarOpen}
                   setSidebarOpen={setSidebarOpen}
                />
-               <section className="">
+               <section className="h-full">
                   <Outlet />
                </section>
             </div>

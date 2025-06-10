@@ -12,7 +12,7 @@ export default function useEmpresas() {
   const [empresaEditando, setEmpresaEditando] = useState(null);
   const [busqueda, setBusqueda] = useState("");
   const [paginaActual, setPaginaActual] = useState(1);
-  const empresasPorPagina = 5;
+  const [empresasPorPagina,setEmpresasPorPagina] =useState(5);
 
   const [nuevaEmpresa, setNuevaEmpresa] = useState({
     razon_social: "",
@@ -160,5 +160,7 @@ export default function useEmpresas() {
     guardarEdicion,
     eliminarEmpresa,
     setEmpresaEditando,
+    empresasPorPagina,
+    setEmpresasPorPagina
   };
 }

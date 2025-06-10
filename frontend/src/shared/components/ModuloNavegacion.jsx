@@ -76,33 +76,11 @@ export default function ModuloNavegacion() {
       if (moduloSiguiente) navigate(moduloSiguiente.path);
    };
 
-   const volverInicio = () => navigate("/");
    const Icon = iconMap[modules[currentIndex].name] || LayoutDashboard;
    return (
-      // <div className=" flex text-neutral-800 justify-between">
-      //   <p className="text-2xl">
-      //     {
-      //     modules[currentIndex].name
-      //   }
-      //   </p>
-
-      //   <div className="flex gap-8">
-      //       {moduloAnterior && (
-      //     <Button  onClick={irModuloAnterior}>
-      //       ⬅ {moduloAnterior.name}
-      //     </Button>
-      //   )}
-
-      //   {moduloSiguiente && (
-      //     <Button className="" onClick={irModuloSiguiente}>
-      //       {moduloSiguiente.name} ➡
-      //     </Button>
-      //   )}
-      //   </div>
-      // </div>
-      <header className="bg-white shadow-sm border-b border-slate-200 w-full ">
+      <header className=" py-4 md:py-0 shadow-sm border-b border-slate-200 w-full ">
          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col md:flex-row items-center justify-between h-16 gap-4">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between min-h-16 gap-4 ">
                {/* Logo and Title */}
                <div className="flex items-center space-x-3">
                   <div className="flex items-center justify-center w-10 h-10 bg-blue-600 rounded-lg">
