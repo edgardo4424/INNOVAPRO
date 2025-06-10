@@ -56,7 +56,7 @@ module.exports = async (
       });
 
       costo_tarifas_transporte = Number(
-        tarifa_transporte_encontrado.precio_soles
+        tarifa_transporte_encontrado?.precio_soles || 0
       );
 
       unidad = 'Tn';
@@ -73,7 +73,7 @@ module.exports = async (
         },
       });
 
-      costo_tarifas_transporte = Number(tarifa_transporte_encontrado.precio_soles);
+      costo_tarifas_transporte = Number(tarifa_transporte_encontrado?.precio_soles || 0);
        unidad = 'Tramo';
        cantidadTotal = numero_tramos;
       break;
@@ -93,7 +93,7 @@ module.exports = async (
       });
 
       costo_tarifas_transporte = Number(
-        tarifa_transporte_encontrado.precio_soles
+        tarifa_transporte_encontrado?.precio_soles || 0
       );
        unidad = 'Tn';
       cantidadTotal = peso_total_tn;
@@ -110,7 +110,7 @@ module.exports = async (
       });
 
       costo_tarifas_transporte = Number(
-        tarifa_transporte_encontrado.precio_soles
+       tarifa_transporte_encontrado?.precio_soles || 0
       );
       unidad = 'Andamio';
       cantidadTotal = cantidad;
@@ -126,7 +126,7 @@ module.exports = async (
       });
 
       costo_tarifas_transporte = Number(
-        tarifa_transporte_encontrado.precio_soles
+        tarifa_transporte_encontrado?.precio_soles || 0
       );
       unidad = 'Pd';
       cantidadTotal = cantidad;
@@ -145,7 +145,7 @@ module.exports = async (
         },
       });
 
-      costo_tarifas_transporte = Number(tarifa_transporte_encontrado.precio_soles);
+      costo_tarifas_transporte = Number(tarifa_transporte_encontrado?.precio_soles || 0);
       unidad = 'Und';
       cantidadTotal = cantidad;
       break;
@@ -183,6 +183,8 @@ module.exports = async (
 
   // 3. Calcular costo pernocte transporte
 
+  if(tarifa_transporte_encontrado){
+    console.log(tarifa_transporte_encontrado);
   const costos_pernocte_transporte_encontrado =
     await db.costos_pernocte_transporte.findOne({
       where: {
@@ -202,13 +204,14 @@ module.exports = async (
       },
     };
   }
+  }
 
   // 4. Sumar los 3 costos
 
   const costo_total =
     costo_tarifas_transporte +
-    costo_distrito_transporte 
-    /* +    costo_pernocte_transporte; */
+    costo_distrito_transporte +
+    costo_pernocte_transporte; 
 
   return {
     codigo: 200,
@@ -222,11 +225,11 @@ module.exports = async (
         costo_total,
       },
 
-      tipo_transporte: tarifa_transporte_encontrado.tipo_transporte,
+      tipo_transporte: tarifa_transporte_encontrado?.tipo_transporte || "",
       distrito_transporte: distrito_transporte,
-      tarifa_transporte_id: tarifa_transporte_encontrado.id,
-      unidad: unidad,
-      cantidad: cantidadTotal
+      tarifa_transporte_id: tarifa_transporte_encontrado?.id || "",
+      unidad: unidad || "",
+      cantidad: cantidadTotal || 0
     },
   };
 };

@@ -1,10 +1,12 @@
 // 1. Pieza: EC.0600 - PLATAFORMA DE DESCARGA - 1.5 TON
 function calcularEC0600({ capacidad }) {
+  console.log('capacidad', capacidad);
   return capacidad === 1.5 ? 1 : 0;
 }
 
 // 2. Pieza: EC.0700 - PLATAFORMA DE DESCARGA - 2.0 TON
 function calcularEC0700({ capacidad }) {
+  console.log('capacidad', capacidad);
   return capacidad === 2 ? 1 : 0;
 }
 
@@ -20,6 +22,7 @@ function calcularEC0711({ capacidad, antiguedad, valorCalcularEC0700 }) {
 
 // 5. Pieza: EC.0712 - PUERTA ACCESO EXTERNA - 2 TON
 function calcularEC0712({ capacidad, antiguedad, valorCalcularEC0700 }) {
+  console.log({capacidad, antiguedad, valorCalcularEC0700});
   return capacidad === 2 && antiguedad === "NUEVA" ? valorCalcularEC0700 * 2 : 0;
 }
 
@@ -32,6 +35,7 @@ function calcularEC0713({ capacidad, antiguedad }) {
 
 // 7. Pieza: EC.0714 - BARANDA LATERAL - 2 TON
 function calcularEC0714({ capacidad, antiguedad }) {
+  console.log({capacidad, antiguedad});
   if (capacidad === 2 && antiguedad === "NUEVA") return 2;
   if (capacidad === 2 && antiguedad === "ANTIGUA") return 0;
   return 0;
