@@ -251,15 +251,32 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
 
      // PUNTALES
 
+    let piezaVentaPinPresion;
+
+     let piezaVentaArgolla;
+   
+     const tipoPuntal = despieceEncontrado?.atributos_valors?.[1]?.valor;
+
+      if(tipoPuntal=="5m"){
+        piezaVentaPinPresion = "PU.0800"
+          piezaVentaArgolla = "PU.1000"
+          
+        }else{
+          piezaVentaPinPresion = "PU.0700"
+          piezaVentaArgolla = "PU.0900"
+        }
+
+     
+
       const piezaArgolla = await db.piezas.findOne({
         where: {
-          item: "PU.0900"
+          item: piezaVentaArgolla
         }
       })
 
       const piezaPIN = await db.piezas.findOne({
         where: {
-          item: "PU.0700"
+          item: piezaVentaPinPresion
         }
       })
 

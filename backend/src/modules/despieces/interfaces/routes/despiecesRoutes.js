@@ -13,5 +13,7 @@ router.delete("/:id", despieceController.eliminarDespiece);
 router.post("/andamio-de-trabajo", despieceController.generarDespieceAndamioDeTrabajo)
 router.post("/puntales", despieceController.generarDespiecePuntales)
 router.post("/escalera-de-acceso", despieceController.generarDespieceEscalera)
+router.post("/plataforma-de-descarga", despieceController.generarDespiecePlataformaDescarga)
+
 
 module.exports = router;

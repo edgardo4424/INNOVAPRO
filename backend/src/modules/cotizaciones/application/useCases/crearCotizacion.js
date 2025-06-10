@@ -41,6 +41,8 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       despiece,
       tipoCotizacion: cotizacion.tipo_cotizacion,
       cotizacion,
+      uso_id,
+      atributos_formulario
     });
 
     // 2. Insertar Despiece
@@ -135,6 +137,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       cotizacionFinal,
       "crear"
     );
+    
     if (errorCampos)
       return { codigo: 400, respuesta: { mensaje: errorCamposCotizacion } };
 
@@ -187,13 +190,14 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
 
       const datosParaGuardarCotizacionesTransporte =  (await calcularCostoTransporte(datosParaCalcularCostoTransporte)).respuesta;
 
+      console.log('datosParaGuardarCotizacionesTransporte',datosParaGuardarCotizacionesTransporte);
       const mapeoDataGuardar = {
         cotizacion_id: cotizacionCreada.id,
         uso_id: uso_id, 
         
         distrito_transporte:datosParaGuardarCotizacionesTransporte.distrito_transporte,
-        tarifa_transporte_id: datosParaGuardarCotizacionesTransporte.tarifa_transporte_id,
-        tipo_transporte: datosParaGuardarCotizacionesTransporte.tipo_transporte,
+        tarifa_transporte_id: datosParaGuardarCotizacionesTransporte.tarifa_transporte_id ? datosParaGuardarCotizacionesTransporte.tarifa_transporte_id:null,
+        tipo_transporte: datosParaGuardarCotizacionesTransporte.tipo_transporte || cotizacion.tipo_transporte,
         unidad: datosParaGuardarCotizacionesTransporte.unidad,
         cantidad: datosParaGuardarCotizacionesTransporte.cantidad,
 
@@ -210,6 +214,8 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
         costo_total: (Number(cotizacion.costo_tarifas_transporte)+Number(cotizacion.costo_distrito_transporte)+Number(cotizacion.costo_pernocte_transporte)).toFixed(2),
 
       }
+
+      console.log('mapeoDataGuardar', mapeoDataGuardar);
 
       await db.cotizaciones_transporte.create(mapeoDataGuardar, { transaction })
     }

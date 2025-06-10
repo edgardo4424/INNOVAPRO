@@ -7,15 +7,13 @@ const {
 } = require("../helpers/despieceUtils");
 
 const db = require("../../../../models");
-const { calcularCantidadesPorCadaPiezaDeEscalera } = require("./calcularCantidadesEscalera");
+const { calcularCantidadesPorCadaPiezaDePlataformaDescarga } = require("./calcularCantidadesPlataformaDescarga");
 
-const CONST_ID_USO_ESCALERA = 3;
+const CONST_ID_USO_PLATAFORMA_DESCARGA = 7;
 
-async function generarDespieceEscalera(atributos, precio_tramo) {
+async function generarDespiecePlataformaDescarga(atributos) {
 
-  const todosDespieces = calcularCantidadesPorCadaPiezaDeEscalera(atributos);
-
-  console.log('todosDespieces', todosDespieces[0].length);
+  const todosDespieces = calcularCantidadesPorCadaPiezaDePlataformaDescarga(atributos);
 
   // Validar que por lo menos tenga piezas en el despiece
   
@@ -25,10 +23,12 @@ async function generarDespieceEscalera(atributos, precio_tramo) {
     todosDespieces,
     atributos.length
   );
+
+  console.log('resultadoFinal', resultadoFinal);
   const subtotales = calcularSubtotales(resultadoFinal);
 
   const piezasBD = await db.piezas_usos.findAll({
-    where: { uso_id: CONST_ID_USO_ESCALERA },
+    where: { uso_id: CONST_ID_USO_PLATAFORMA_DESCARGA },
     include: [{ model: db.piezas, as: "pieza" }],
     raw: true,
   });
@@ -45,12 +45,6 @@ async function generarDespieceEscalera(atributos, precio_tramo) {
   console.log(`💰 Precio subtotal de venta dolares ($): ${totales.precio_venta_dolares.toFixed(2)}`);
   console.log(`💰 Precio subtotal de venta soles (S/): ${totales.precio_venta_soles.toFixed(2)}`);
   console.log(`📅 Precio subtotal de alquiler soles (S/): ${totales.precio_alquiler_soles.toFixed(2)}`);
-
-   let numero_tramos = atributos[0].alturaTotal / 2;
-        if (atributos[0].alturaTotal % 2 !== 0) {
-          numero_tramos = numero_tramos + 0.5;
-        }
-
   return {
     despiece: resultadosCombinados,
     total_piezas: subtotales.total,
@@ -58,12 +52,12 @@ async function generarDespieceEscalera(atributos, precio_tramo) {
     peso_total_ton: (totales.peso_kg / 1000).toFixed(2),
     precio_subtotal_venta_dolares: totales.precio_venta_dolares.toFixed(2),
     precio_subtotal_venta_soles: totales.precio_venta_soles.toFixed(2),
-    precio_subtotal_alquiler_soles: (Number(precio_tramo) * Number(numero_tramos)).toFixed(2),
+    precio_subtotal_alquiler_soles: totales.precio_alquiler_soles.toFixed(2),
   };
 }
 
 
 
 module.exports = {
-  generarDespieceEscalera, // Exporta la función para que pueda ser utilizada en otros módulos
+  generarDespiecePlataformaDescarga, // Exporta la función para que pueda ser utilizada en otros módulos
 };
