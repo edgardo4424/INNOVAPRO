@@ -183,6 +183,12 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
             tipo_puntal: subtipo
           }
         break;
+
+        case "7":
+          // Plataforma de Descarga
+          datosParaCalcularCostoTransporte.cantidad = atributos_formulario.length
+          
+        break;
       
         default:
           break;

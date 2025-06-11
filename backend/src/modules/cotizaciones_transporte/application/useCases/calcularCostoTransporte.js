@@ -117,6 +117,9 @@ module.exports = async (
       break;
 
     case "plataformas_de_descarga":
+
+      const { cantidad } = cotizacionTransporteData;
+
       tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
         where: {
           grupo_tarifa: uso.grupo_tarifa,
