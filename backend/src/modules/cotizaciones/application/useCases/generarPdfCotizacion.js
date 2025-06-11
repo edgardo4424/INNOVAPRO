@@ -147,11 +147,11 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
     },
 
     instalacion: {
-      tiene_instalacion: cotizacionEncontrado.tiene_instalacion,
-      tipo_instalacion: instalacionEncontrada.tipo_instalacion,
-      precio_instalacion_completa_soles: instalacionEncontrada.precio_instalacion_completa_soles,
-      precio_instalacion_parcial_soles: instalacionEncontrada.precio_instalacion_parcial_soles,
-      nota: instalacionEncontrada.nota,
+      tiene_instalacion: cotizacionEncontrado?.tiene_instalacion,
+      tipo_instalacion: instalacionEncontrada?.tipo_instalacion,
+      precio_instalacion_completa_soles: instalacionEncontrada?.precio_instalacion_completa_soles,
+      precio_instalacion_parcial_soles: instalacionEncontrada?.precio_instalacion_parcial_soles,
+      nota: instalacionEncontrada?.nota,
     }
   };
 

@@ -39,6 +39,7 @@ export default function PasoConfirmacion() {
           },
           requiereAprobacion: false,
           tiene_transporte: false,
+          tiene_instalacion: false,
           tiene_pernos: false,
           tiene_pernos_disponibles: hayPernos,
         }));
@@ -336,7 +337,11 @@ export default function PasoConfirmacion() {
           </div>
           
           <div style={{ marginTop: "1rem" }}>
-            <strong>🚛 Costo Transporte:</strong> S/ {(formData.costo_tarifas_transporte + formData.costo_distrito_transporte + formData.costo_pernocte_transporte) || 0}
+            <strong>🚛 Costo Transporte:</strong> S/ {
+              (Number(formData.costo_tarifas_transporte || 0) +
+              Number(formData.costo_distrito_transporte || 0) +
+              Number(formData.costo_pernocte_transporte || 0)).toFixed(2)
+            }
           </div>
         </div>
       )}
@@ -368,6 +373,7 @@ export default function PasoConfirmacion() {
               onChange={(e) =>
                 setFormData((prev) => ({
                   ...prev,
+                  tiene_instalacion: true,
                   precio_instalacion_completa: parseFloat(e.target.value),
                   precio_instalacion_parcial: null,
                   nota_instalacion: "",
@@ -387,6 +393,7 @@ export default function PasoConfirmacion() {
               onChange={(e) =>
                 setFormData((prev) => ({
                   ...prev,
+                  tiene_instalacion: true,
                   precio_instalacion_completa: parseFloat(e.target.value),
                 }))
               }

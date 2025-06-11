@@ -152,8 +152,10 @@ const RegistrarCotizacionWizard = () => {
                     costo_pernocte_transporte: formData.costo_pernocte_transporte || 0,
 
                     tiene_pernos: formData.tiene_pernos,
-                    tiene_instalacion: formData.tipo_instalacion !== "NINGUNA",
+
+                    tiene_instalacion: formData.tiene_instalacion,
                     tipo_instalacion: formData.tipo_instalacion || null,
+
                     precio_instalacion_completa: formData.precio_instalacion_completa || 0,
                     precio_instalacion_parcial: formData.precio_instalacion_parcial || 0,
                     nota_instalacion: formData.nota_instalacion || "",
