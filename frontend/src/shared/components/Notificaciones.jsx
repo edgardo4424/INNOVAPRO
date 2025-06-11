@@ -4,6 +4,7 @@ import api from "../services/api";
 import "@/styles/notificaciones.css";
 import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 export default function Notificaciones() {
   const { notificaciones, setNotificaciones } = useNotificaciones();
