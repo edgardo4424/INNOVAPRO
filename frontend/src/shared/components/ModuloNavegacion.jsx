@@ -79,7 +79,7 @@ export default function ModuloNavegacion() {
    const Icon = iconMap[modules[currentIndex].name] || LayoutDashboard;
    return (
       <header className=" py-4 md:py-0 shadow-sm border-b border-slate-200 w-full ">
-         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+         <div className="max-w-7xl mx-auto px-4 ">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between min-h-16 gap-4 ">
                {/* Logo and Title */}
                <div className="flex items-center space-x-3">

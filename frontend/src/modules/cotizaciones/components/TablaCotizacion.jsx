@@ -18,23 +18,18 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Edit, Eye, FileDown, Settings } from "lucide-react";
+import { ColumnSelector } from "@/shared/components/ColumnSelector";
 
 // Componente para texto truncado con tooltip
-const TruncatedText = ({ text, maxLength = 20 }) => {
+const TruncatedText = ({ text}) => {
    if (!text) return "—";
-
-   const shouldTruncate = text.length > maxLength;
-   const displayText = shouldTruncate
-      ? `${text.substring(0, maxLength)}...`
-      : text;
-
    return (
       <TooltipProvider>
          <Tooltip>
             <TooltipTrigger asChild>
-               <div className="truncate max-w-[150px]">{displayText}</div>
+               <div className="truncate ">{text}</div>
             </TooltipTrigger>
-            {shouldTruncate && <TooltipContent>{text}</TooltipContent>}
+         <TooltipContent>{text}</TooltipContent>
          </Tooltip>
       </TooltipProvider>
    );
@@ -55,6 +50,15 @@ export default function TablaCotizacion({
       estado: true,
       acciones: true,
    });
+      const columnOptions = [
+      { id: "codigo_documento", label: "Cod. Doc" },
+      { id: "cliente", label: "Cliente" },
+      { id: "obra", label: "Obra" },
+      { id: "uso", label: "Uso" },
+      { id: "tipo_cotizacion", label: "Tipo" },
+      { id: "estado", label: "Estado" },
+      { id: "acciones", label: "Acciones" },
+   ];
 
    // Definición de columnas
    const allColumns = [
@@ -65,6 +69,7 @@ export default function TablaCotizacion({
          cell: (row) => <TruncatedText text={row.codigo_documento} />,
          sortable: true,
          omit: !visibleColumns.codigo_documento,
+         grow:2
       },
       {
          id: "cliente",
@@ -73,6 +78,7 @@ export default function TablaCotizacion({
          cell: (row) => <TruncatedText text={row.cliente?.razon_social} />,
          sortable: true,
          omit: !visibleColumns.cliente,
+         grow:2
       },
       {
          id: "obra",
@@ -81,13 +87,16 @@ export default function TablaCotizacion({
          cell: (row) => <TruncatedText text={row.obra?.nombre} />,
          sortable: true,
          omit: !visibleColumns.obra,
+         grow:2
       },
       {
          id: "uso",
          name: "Uso",
          selector: (row) => row.uso?.descripcion || "—",
+          cell: (row) => <TruncatedText text={row.uso?.descripcion} />,
          sortable: true,
          omit: !visibleColumns.uso,
+         grow:2
       },
       {
          id: "tipo_cotizacion",
@@ -158,6 +167,7 @@ export default function TablaCotizacion({
             <ColumnSelector
                visibleColumns={visibleColumns}
                setVisibleColumns={setVisibleColumns}
+               columnOptions={columnOptions}
             />
          </div>
 
@@ -174,80 +184,3 @@ export default function TablaCotizacion({
 }
 
 // Componente para seleccionar columnas visibles
-function ColumnSelector({ visibleColumns, setVisibleColumns }) {
-   const [open, setOpen] = useState(false);
-   const [tempVisibleColumns, setTempVisibleColumns] = useState(visibleColumns);
-
-   useEffect(() => {
-      setTempVisibleColumns(visibleColumns);
-   }, [visibleColumns]);
-
-   const handleSave = () => {
-      setVisibleColumns(tempVisibleColumns);
-      setOpen(false);
-   };
-
-   const handleCancel = () => {
-      setTempVisibleColumns(visibleColumns);
-      setOpen(false);
-   };
-
-   const toggleColumn = (columnId) => {
-      setTempVisibleColumns((prev) => ({
-         ...prev,
-         [columnId]: !prev[columnId],
-      }));
-   };
-
-   const columnOptions = [
-      { id: "codigo_documento", label: "Cod. Doc" },
-      { id: "cliente", label: "Cliente" },
-      { id: "obra", label: "Obra" },
-      { id: "uso", label: "Uso" },
-      { id: "tipo_cotizacion", label: "Tipo" },
-      { id: "estado", label: "Estado" },
-      { id: "acciones", label: "Acciones" },
-   ];
-
-   return (
-      <Dialog open={open} onOpenChange={setOpen}>
-         <DialogTrigger asChild>
-            <Button variant="outline" size="sm" className="mt-4">
-               <Settings className="h-4 w-4 mr-2 " />
-               Columnas
-            </Button>
-         </DialogTrigger>
-         <DialogContent className="!max-w-80" >
-            <DialogHeader>
-               <DialogTitle>Seleccionar columnas visibles</DialogTitle>
-            </DialogHeader>
-            <div className="py-4">
-               {columnOptions.map((column) => (
-                  <div
-                     key={column.id}
-                     className="flex items-center space-x-2 mb-2"
-                  >
-                     <Checkbox
-                        id={column.id}
-                        checked={tempVisibleColumns[column.id]}
-                        onCheckedChange={() => toggleColumn(column.id)}
-                     />
-                     <label
-                        htmlFor={column.id}
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 !text-neutral-600"
-                     >
-                        {column.label}
-                     </label>
-                  </div>
-               ))}
-            </div>
-            <div className="flex justify-end gap-2">
-               <Button variant="outline" onClick={handleCancel}>
-                  Cancelar
-               </Button>
-               <Button onClick={handleSave}>Guardar</Button>
-            </div>
-         </DialogContent>
-      </Dialog>
-   );
-}

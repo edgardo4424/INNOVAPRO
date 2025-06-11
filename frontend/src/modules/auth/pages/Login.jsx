@@ -62,56 +62,7 @@ export default function Login() {
    }
 
    return (
-      // <div className={styles["login-container"]}>
-      //    <div className={styles["login-box"]}>
-      //       <img
-      //          src="/images/logo_blanco.png"
-      //          alt="Logo Innova"
-      //          className={styles["login-logo"]}
-      //       />
-      //       <form onSubmit={handleSubmit}>
-      //          <Input
-      //             type="email"
-      //             placeholder="Correo"
-      //             value={email}
-      //             onChange={(e) => setEmail(e.target.value)}
-      //             // className={styles["login-input"]}
-      //             className="!placeholder-neutral-700"
-
-      //             required
-      //          />
-      //          <Input
-      //             type="password"
-      //             placeholder="Contraseña"
-      //             value={password}
-      //             onChange={(e) => setPassword(e.target.value)}
-      //             // className={styles["login-input"]}
-      //             className="!placeholder-neutral-700"
-
-      //             required
-      //          />
-      //          <div className="w-[290x] h-[76px] mx-auto mb-4">
-      //             <ReCAPTCHA
-      //                ref={recaptchaRef}
-      //                sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-      //                onChange={handleRecaptcha}
-      //                theme="dark"
-      //                size="normal"
-      //             />
-      //          </div>
-
-      //          <Button
-      //             type="submit"
-      //             disabled={loading}
-      //             // className={styles["login-button"]}
-      //          >
-      //             {loading ? "Cargando..." : "Ingresar"}
-      //          </Button>
-      //       </form>
-      //    </div>
-      //    <p className={styles["login-version"]}>{APP_VERSION}</p>
-      // </div>
-      <div className="min-h-screen relative flex items-center justify-center p-4 overflow-hidden">
+      <div className="min-h-screen relative overflow-hidden bg-sky-950">
          {/* Background Image */}
          <div className="absolute inset-0 z-0 w-full">
             <img
@@ -122,85 +73,83 @@ export default function Login() {
             <div className="absolute inset-0 bg-black/40" />
          </div>
 
-         <Card className="w-full max-w-md relative z-10 bg-white/90 backdrop-blur-sm border-0 shadow-2xl">
-            <CardHeader className=" text-center">
-               <div className="flex items-center justify-center space-x-2">
-                  <img
-                     src="/images/logo_azul.png"
-                     alt="Logo Innova"
-                     className=" w-[60%]"
-                  />
-               </div>
-
-               <div className="space-y-1 ">
-                  <CardTitle className="text-2xl font-bold text-gray-800">
-                     Bienvenido
-                  </CardTitle>
-                  <CardDescription className="text-gray-600">
-                     Ingresa tus credenciales para acceder al sistema
-                  </CardDescription>
-               </div>
-            </CardHeader>
-
-            <CardContent>
-               <form onSubmit={handleSubmit} className="space-y-2 ">
-                  {/* Email Field */}
-                  <div className="space-y-2 ">
-                     <Label
-                        htmlFor="email"
-                        className="text-sm font-medium text-gray-700"
-                     >
-                        Correo Electrónico
-                     </Label>
-                     <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                        <Input
-                           id="email"
-                           type="email"
-                           placeholder="example@grupoinnova.pe"
-                           value={email}
-                           onChange={(e) => setEmail(e.target.value)}
-                           className="pl-10 h-12 border-gray-300 focus:border-orange-500 focus:ring-orange-500"
-                           required
-                        />
-                     </div>
+         <div className="h-screen absolute flex items-center justify-center top-0 left-0 bg-white w-full  sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
+            <Card className="w-full max-w-md relative z-10  backdrop-blur-sm border-0  shadow-none">
+               <CardHeader className=" text-center">
+                  <div className="flex items-center justify-center space-x-2">
+                     <img
+                        src="/images/logo_azul.png"
+                        alt="Logo Innova"
+                        className=" w-[60%]"
+                     />
                   </div>
 
-                  {/* Password Field */}
-                  <div className="space-y-2 ">
-                     <Label
-                        htmlFor="password"
-                        className="text-sm font-medium text-gray-700"
-                     >
-                        Contraseña
-                     </Label>
-                     <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                        <Input
-                           id="password"
-                           type={showPassword ? "text" : "password"}
-                           placeholder="••••••••"
-                           value={password}
-                           onChange={(e) => setPassword(e.target.value)}
-                           className="pl-10 pr-10 h-12 border-gray-300 focus:border-orange-500 focus:ring-orange-500"
-                           required
-                        />
-                        <button
-                           type="button"
-                           onClick={() => setShowPassword(!showPassword)}
-                           className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  <div className="space-y-1 ">
+                     <CardDescription className="text-gray-600">
+                        Ingresa tus credenciales para acceder al sistema
+                     </CardDescription>
+                  </div>
+               </CardHeader>
+
+               <CardContent>
+                  <form onSubmit={handleSubmit} className="space-y-2 ">
+                     {/* Email Field */}
+                     <div className="space-y-2 ">
+                        <Label
+                           htmlFor="email"
+                           className="text-sm font-medium text-gray-700"
                         >
-                           {showPassword ? (
-                              <EyeOff className="h-4 w-4" />
-                           ) : (
-                              <Eye className="h-4 w-4" />
-                           )}
-                        </button>
+                           Correo Electrónico
+                        </Label>
+                        <div className="relative">
+                           <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                           <Input
+                              id="email"
+                              type="email"
+                              placeholder="example@grupoinnova.pe"
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
+                              className="pl-10 h-12 border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                              required
+                           />
+                        </div>
                      </div>
-                  </div>
 
-                  {/* Remember Me & Forgot Password */}
-                  <div className="flex items-center justify-between ">
+                     {/* Password Field */}
+                     <div className="space-y-2 ">
+                        <Label
+                           htmlFor="password"
+                           className="text-sm font-medium text-gray-700"
+                        >
+                           Contraseña
+                        </Label>
+                        <div className="relative">
+                           <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                           <Input
+                              id="password"
+                              type={showPassword ? "text" : "password"}
+                              placeholder="••••••••"
+                              value={password}
+                              onChange={(e) => setPassword(e.target.value)}
+                              className="pl-10 pr-10 h-12 border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                              required
+                           />
+                           <button
+                              type="button"
+                              onClick={() => setShowPassword(!showPassword)}
+                              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                           >
+                              {showPassword ? (
+                                 <EyeOff className="h-4 w-4" />
+                              ) : (
+                                 <Eye className="h-4 w-4" />
+                              )}
+                           </button>
+                        </div>
+                     </div>
+
+                     {/* Remember Me & Forgot Password */}
+                     {/* <div className="flex items-center justify-between ">
                      <div className="flex items-center space-x-2">
                         <Checkbox
                            id="remember"
@@ -223,48 +172,47 @@ export default function Login() {
                      >
                         ¿Olvidaste tu contraseña?
                      </button>
+                  </div> */}
+
+                     {/* reCAPTCHA Placeholder */}
+                     <div className="w-[290x] h-[76px] mx-auto ">
+                        <ReCAPTCHA
+                           ref={recaptchaRef}
+                           sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                           onChange={handleRecaptcha}
+                           size="normal"
+                        />
+                     </div>
+
+                     {/* Login Button */}
+                     <Button
+                        type="submit"
+                        className="w-full h-12 bg-orange-600 hover:bg-orange-700 text-white font-medium text-base transition-all duration-200 shadow-lg hover:shadow-xl"
+                        disabled={loading}
+                     >
+                        {loading ? (
+                           <div className="flex items-center space-x-2">
+                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                              <span>Ingresando...</span>
+                           </div>
+                        ) : (
+                           "Ingresar"
+                        )}
+                     </Button>
+                  </form>
+
+                  {/* Additional Links */}
+                  <div className="mt-6 text-center space-y-2">
+                     <p className="text-xs text-gray-500">
+                        ¿Necesitas ayuda?{" "}
+                        <button className="text-orange-600 hover:text-orange-700 transition-colors">
+                           Contactar soporte
+                        </button>
+                     </p>
                   </div>
-
-                  {/* reCAPTCHA Placeholder */}
-                  <div className="w-[290x] h-[76px] mx-auto ">
-                     <ReCAPTCHA
-                        ref={recaptchaRef}
-                        sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-                        onChange={handleRecaptcha}
-                        theme="dark"
-                        size="normal"
-                     />
-                  </div>
-
-                  {/* Login Button */}
-                  <Button
-                     type="submit"
-                     className="w-full h-12 bg-orange-600 hover:bg-orange-700 text-white font-medium text-base transition-all duration-200 shadow-lg hover:shadow-xl"
-                     disabled={loading}
-                  >
-                     {loading ? (
-                        <div className="flex items-center space-x-2">
-                           <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                           <span>Ingresando...</span>
-                        </div>
-                     ) : (
-                        "Ingresar"
-                     )}
-                  </Button>
-               </form>
-
-               {/* Additional Links */}
-               <div className="mt-6 text-center space-y-2">
-                  <p className="text-xs text-gray-500">
-                     ¿Necesitas ayuda?{" "}
-                     <button className="text-orange-600 hover:text-orange-700 transition-colors">
-                        Contactar soporte
-                     </button>
-                  </p>
-               </div>
-            </CardContent>
-         </Card>
-
+               </CardContent>
+            </Card>
+         </div>
       </div>
    );
 }
