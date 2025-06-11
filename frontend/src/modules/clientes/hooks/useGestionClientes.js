@@ -7,7 +7,7 @@ export function useGestionClientes() {
   const [clientes, setClientes] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const [paginaActual, setPaginaActual] = useState(1);
-  const clientesPorPagina = 5;
+  const [clientesPorPagina,setClientesPorPagina] = useState(5);
 
   const [clienteEditando, setClienteEditando] = useState(null);
   const [modalAgregar, setModalAgregar] = useState(false);
@@ -88,5 +88,7 @@ export function useGestionClientes() {
     agregarCliente,
     actualizarCliente,
     eliminarCliente,
+    setClientesPorPagina,
+    clientesPorPagina
   };
 }

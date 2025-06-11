@@ -10,7 +10,7 @@ export default function useUsuarios() {
   const [usuarioEditando, setUsuarioEditando] = useState(null);
   const [busqueda, setBusqueda] = useState("");
   const [paginaActual, setPaginaActual] = useState(1);
-  const usuariosPorPagina = 5;
+  const [usuariosPorPagina,setUsuariosPorPagina] =useState (5);
 
   const [nuevoUsuario, setNuevoUsuario] = useState({
     nombre: "",
@@ -152,5 +152,7 @@ export default function useUsuarios() {
     busqueda,
     setBusqueda,
     errores,
+    usuariosPorPagina,
+    setUsuariosPorPagina
   };
 }

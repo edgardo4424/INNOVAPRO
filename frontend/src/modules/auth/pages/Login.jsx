@@ -5,84 +5,214 @@ import { useNavigate } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha"; // Importamos reCAPTCHA
 import styles from "./Login.module.css";
 import "@/styles/global.css";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+   Card,
+   CardContent,
+   CardDescription,
+   CardHeader,
+   CardTitle,
+} from "@/components/ui/card";
+import { Building2, Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const recaptchaRef = useRef(null);
-  const [recaptchaToken, setRecaptchaToken] = useState(null); // Guardamos el token del reCAPTCHA
-  const { login } = useAuth();
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false); // ⏳ Estado de carga
+   const [showPassword, setShowPassword] = useState(false);
+   const [rememberMe, setRememberMe] = useState(false);
+   const [email, setEmail] = useState("");
+   const [password, setPassword] = useState("");
+   const recaptchaRef = useRef(null);
+   const [recaptchaToken, setRecaptchaToken] = useState(null); // Guardamos el token del reCAPTCHA
+   const { login } = useAuth();
+   const navigate = useNavigate();
+   const [loading, setLoading] = useState(false); // ⏳ Estado de carga
 
-  useEffect(() => {
-    if (recaptchaRef.current) {
-      recaptchaRef.current.reset(); // 🔹 Reinicia el reCAPTCHA al cargar la página
-    }
-  }, []);
+   useEffect(() => {
+      if (recaptchaRef.current) {
+         recaptchaRef.current.reset(); // 🔹 Reinicia el reCAPTCHA al cargar la página
+      }
+   }, []);
 
-  function handleRecaptcha(value) {
-    setRecaptchaToken(value);
-  }
+   function handleRecaptcha(value) {
+      setRecaptchaToken(value);
+   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+   async function handleSubmit(e) {
+      e.preventDefault();
 
-    if (loading) return; // ⛔ Evitar múltiples clics
+      if (loading) return; // ⛔ Evitar múltiples clics
 
-    if (!recaptchaToken) {
-      alert("❌ Debes completar el reCAPTCHA.");
-      return;
-    }
+      if (!recaptchaToken) {
+         alert("❌ Debes completar el reCAPTCHA.");
+         return;
+      }
 
-    setLoading(true); // 🔥 Desactiva el botón
+      setLoading(true); // 🔥 Desactiva el botón
 
-    const success = await login(email, password, recaptchaToken, navigate);
-    if (success) {
-      console.log("✅ Login exitoso. Redirigiendo al dashboard...");
-      navigate("/");
-    } else {
-      alert("❌ Credenciales incorrectas o fallo en reCAPTCHA.");
-      setLoading(false); // 🔥 Reactiva el botón
-    }
-  }
+      const success = await login(email, password, recaptchaToken, navigate);
+      if (success) {
+         console.log("✅ Login exitoso. Redirigiendo al dashboard...");
+         navigate("/");
+      } else {
+         alert("❌ Credenciales incorrectas o fallo en reCAPTCHA.");
+         setLoading(false); // 🔥 Reactiva el botón
+      }
+   }
 
-  return (
-    <div className={styles["login-container"]}>
-      <div className={styles["login-box"]}>
-      <img src="/images/logo_blanco.png" alt="Logo Innova" className={styles["login-logo"]} />
-        <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            placeholder="Correo"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className={styles["login-input"]}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className={styles["login-input"]}
-            required
-          />
-          <div className={styles["recaptcha-container"]}>
-            <ReCAPTCHA ref={recaptchaRef}
-              sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-              onChange={handleRecaptcha}
-              theme="dark"
-              size="normal"
+   return (
+      <div className="min-h-screen relative overflow-hidden bg-sky-950">
+         {/* Background Image */}
+         <div className="absolute inset-0 z-0 w-full">
+            <img
+               src="/images/wallpaper1.webp"
+               alt="Construction site background"
+               className="object-cover w-full h-full"
             />
-          </div>
+            <div className="absolute inset-0 bg-black/40" />
+         </div>
 
-          <button type="submit" disabled={loading} className={styles["login-button"]}>
-            {loading ? "Cargando..." : "Ingresar"}
-          </button>
-        </form>
+         <div className="h-screen absolute flex items-center justify-center top-0 left-0 bg-white w-full  sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
+            <Card className="w-full max-w-md relative z-10  backdrop-blur-sm border-0  shadow-none">
+               <CardHeader className=" text-center">
+                  <div className="flex items-center justify-center space-x-2">
+                     <img
+                        src="/images/logo_azul.png"
+                        alt="Logo Innova"
+                        className=" w-[60%]"
+                     />
+                  </div>
+
+                  <div className="space-y-1 ">
+                     <CardDescription className="text-gray-600">
+                        Ingresa tus credenciales para acceder al sistema
+                     </CardDescription>
+                  </div>
+               </CardHeader>
+
+               <CardContent>
+                  <form onSubmit={handleSubmit} className="space-y-2 ">
+                     {/* Email Field */}
+                     <div className="space-y-2 ">
+                        <Label
+                           htmlFor="email"
+                           className="text-sm font-medium text-gray-700"
+                        >
+                           Correo Electrónico
+                        </Label>
+                        <div className="relative">
+                           <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                           <Input
+                              id="email"
+                              type="email"
+                              placeholder="example@grupoinnova.pe"
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
+                              className="pl-10 h-12 border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                              required
+                           />
+                        </div>
+                     </div>
+
+                     {/* Password Field */}
+                     <div className="space-y-2 ">
+                        <Label
+                           htmlFor="password"
+                           className="text-sm font-medium text-gray-700"
+                        >
+                           Contraseña
+                        </Label>
+                        <div className="relative">
+                           <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                           <Input
+                              id="password"
+                              type={showPassword ? "text" : "password"}
+                              placeholder="••••••••"
+                              value={password}
+                              onChange={(e) => setPassword(e.target.value)}
+                              className="pl-10 pr-10 h-12 border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                              required
+                           />
+                           <button
+                              type="button"
+                              onClick={() => setShowPassword(!showPassword)}
+                              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                           >
+                              {showPassword ? (
+                                 <EyeOff className="h-4 w-4" />
+                              ) : (
+                                 <Eye className="h-4 w-4" />
+                              )}
+                           </button>
+                        </div>
+                     </div>
+
+                     {/* Remember Me & Forgot Password */}
+                     {/* <div className="flex items-center justify-between ">
+                     <div className="flex items-center space-x-2">
+                        <Checkbox
+                           id="remember"
+                           checked={rememberMe}
+                           onCheckedChange={(checked) =>
+                              setRememberMe(checked === true)
+                           }
+                           className="border-gray-300 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
+                        />
+                        <Label
+                           htmlFor="remember"
+                           className="text-sm text-gray-600 cursor-pointer"
+                        >
+                           Recordarme
+                        </Label>
+                     </div>
+                     <button
+                        type="button"
+                        className="text-sm text-orange-600 hover:text-orange-700 font-medium transition-colors"
+                     >
+                        ¿Olvidaste tu contraseña?
+                     </button>
+                  </div> */}
+
+                     {/* reCAPTCHA Placeholder */}
+                     <div className="w-[290x] h-[76px] mx-auto ">
+                        <ReCAPTCHA
+                           ref={recaptchaRef}
+                           sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                           onChange={handleRecaptcha}
+                           size="normal"
+                        />
+                     </div>
+
+                     {/* Login Button */}
+                     <Button
+                        type="submit"
+                        className="w-full h-12 bg-orange-600 hover:bg-orange-700 text-white font-medium text-base transition-all duration-200 shadow-lg hover:shadow-xl"
+                        disabled={loading}
+                     >
+                        {loading ? (
+                           <div className="flex items-center space-x-2">
+                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                              <span>Ingresando...</span>
+                           </div>
+                        ) : (
+                           "Ingresar"
+                        )}
+                     </Button>
+                  </form>
+
+                  {/* Additional Links */}
+                  <div className="mt-6 text-center space-y-2">
+                     <p className="text-xs text-gray-500">
+                        ¿Necesitas ayuda?{" "}
+                        <button className="text-orange-600 hover:text-orange-700 transition-colors">
+                           Contactar soporte
+                        </button>
+                     </p>
+                  </div>
+               </CardContent>
+            </Card>
+         </div>
       </div>
-      <p className={styles["login-version"]}>{APP_VERSION}</p>
-    </div>
-  );
+   );
 }

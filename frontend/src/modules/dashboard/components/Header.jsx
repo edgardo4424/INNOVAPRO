@@ -1,68 +1,28 @@
 import React, { useRef } from "react";
-import { FaClipboardList, FaExclamationCircle, FaExclamationTriangle, FaInfoCircle, FaCog, FaSignOutAlt } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 import Notificaciones from "@/shared/components/Notificaciones";
+import { SidebarTrigger } from "../../../components/ui/sidebar";
+import { BadgeCheckIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import UserMenu from "./UserMenu";
 
-export default function Header({ user, logout, tareasPendientes = [], notificacionesAbiertas, setNotificacionesAbiertas }) {
-  const navigate = useNavigate();
-  const dropdownRef = useRef(null);
+export default function Header({ user, logout }) {
+   return (
+      <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 shadow-gray-200 shadow-sm  justify-between ">
+         <div className="flex items-center gap-2 px-4">
+            <SidebarTrigger className="" />
 
-  return (
-    <header className="dashboard-header">
-        <div className="header-left">
-            <img src="/images/logo_blanco.png" alt="Logo Innova" className="dashboard-logo" />
-            <div className="welcome-message">Bienvenido, {user?.nombre} 👋</div>
-        </div>
-    
-        <div className="header-right">
-            <Notificaciones />
-            {/* 🔔 Notificaciones (solo Oficina Técnica) */}
-            {user.rol === "Oficina Técnica" && (
-                <div className="notification-container">
-                    <FaClipboardList  className="header-icon" onClick={() => setNotificacionesAbiertas(!notificacionesAbiertas)} />
-                    {tareasPendientes.length > 0 && <span className="notification-badge">{tareasPendientes.length}</span>}
-                </div>
-            )}
-    
-            {notificacionesAbiertas && user.rol === "Oficina Técnica" && (
-            <div ref={dropdownRef} className={`notification-dropdown ${notificacionesAbiertas ? "show" : ""}`}>
-                <h4>📌 Tareas Pendientes</h4>
-                {tareasPendientes.length === 0 ? (
-                    <p className="no-notifications">No hay nuevas tareas pendientes.</p>
-                ) : (
-                    <ul>
-                        {tareasPendientes.map((tarea) => {
-                            let icono;
-                            if (tarea.urgencia === "Prioridad") {
-                                icono = <FaExclamationCircle className="notification-icon icon-prioridad" />;
-                            } else if (tarea.urgencia === "Normal") {
-                                icono = <FaExclamationTriangle className="notification-icon icon-normal" />;
-                            } else {
-                                icono = <FaInfoCircle className="notification-icon icon-baja" />;
-                            }
-    
-                            return (
-                                <li key={tarea.id} onClick={() => {
-                                    navigate("/dashboard", { state: { modulo: "Centro de Atención" } });
-                                    setNotificacionesAbiertas(false);
-                                }}>
-                                {icono} <strong>{tarea.tipoTarea}</strong> - {tarea.cliente?.razon_social}
-                                </li>
-                            );
-                        })}
-                  </ul>
-                )}
+            <div className="flex items-center gap-2  ">
+               <Badge className="bg-[#073c64]">
+                  {" "}
+                  <BadgeCheckIcon />
+                  {user?.rol}
+               </Badge>
             </div>
-        )}
-    
-        <FaCog className="header-icon" />
-        <button className="logout-button" onClick={() => {
-            logout();
-            navigate("/login", { replace: true });
-        }}>
-            <FaSignOutAlt />
-        </button>
-    </div>
-</header>
-);
+         </div>
+         <div className="flex items-center gap-4  px-4">
+            <Notificaciones />
+            <UserMenu names={user.nombre} logout={logout} />
+         </div>
+      </header>
+   );
 }

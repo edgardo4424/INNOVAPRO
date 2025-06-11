@@ -11,7 +11,7 @@ export default function useObras() {
   const [obraEditando, setObraEditando] = useState(null);
   const [busqueda, setBusqueda] = useState("");
   const [paginaActual, setPaginaActual] = useState(1);
-  const obrasPorPagina = 5;
+  const [obrasPorPagina,setObrasPorPagina] = useState(5);
 
   const [nuevaObra, setNuevaObra] = useState({
     nombre: "",
@@ -147,5 +147,7 @@ export default function useObras() {
     setObraEditando,
     busqueda,
     setBusqueda,
+    setObrasPorPagina,
+    obrasPorPagina
   };
 }

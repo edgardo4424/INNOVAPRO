@@ -2,26 +2,27 @@ import TablaCotizacion from "../components/TablaCotizacion";
 import { useGestionCotizaciones } from "../hooks/useGestionCotizaciones";
 import { useState } from "react";
 import PrevisualizadorPDF from "../components/PrevisualizadorPDF";
+import ModuloNavegacion from "@/shared/components/ModuloNavegacion";
 
 export default function GestionCotizaciones() {
-   const {
-    cotizacionesPaginados,
-      downloadPDF,
-    } = useGestionCotizaciones();
+   const { cotizacionesPaginados, downloadPDF } = useGestionCotizaciones();
 
-    const [cotizacionSeleccionadaId, setCotizacionSeleccionadaId] = useState(null);
-  
-  return (
-    <div className="dashboard-main">
-      <h2>Gestión de Cotizaciones</h2>
+   const [cotizacionSeleccionadaId, setCotizacionSeleccionadaId] =
+      useState(null);
 
-      <TablaCotizacion 
-      cotizaciones={cotizacionesPaginados}
-      onDownloadPDF={downloadPDF} 
-      setCotizacionPrevisualizada={setCotizacionSeleccionadaId}
-      />
+   return (
+      <div className="dashboard-main">
+         <ModuloNavegacion />
 
-      {cotizacionSeleccionadaId && <PrevisualizadorPDF cotizacionId={cotizacionSeleccionadaId} />}
-    </div>
-  );
+         <TablaCotizacion
+            cotizaciones={cotizacionesPaginados}
+            onDownloadPDF={downloadPDF}
+            setCotizacionPrevisualizada={setCotizacionSeleccionadaId}
+         />
+
+         {cotizacionSeleccionadaId && (
+            <PrevisualizadorPDF cotizacionId={cotizacionSeleccionadaId} />
+         )}
+      </div>
+   );
 }
