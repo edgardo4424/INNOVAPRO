@@ -27,7 +27,7 @@ export default function GestionClientes() {
       agregarCliente,
       actualizarCliente,
       clientesPorPagina,
-      setClientesPorPagina
+      setClientesPorPagina,
    } = useGestionClientes();
 
    return (
@@ -35,10 +35,15 @@ export default function GestionClientes() {
          <ModuloNavegacion />
 
          <div className="flex flex-row-reverse md:flex-row justify-between px-4 my-4 md:my-8 items-center gap-4">
-            <Button className="btn-agregar" onClick={abrirModalAgregar}>
+            {/* <Button className="btn-agregar" onClick={abrirModalAgregar}>
                <BadgePlus />
                <span className="hidden md:block">Agregar Cliente</span>
-            </Button>
+            </Button> */}
+            <ModalEditarCliente
+               cliente={clienteEditando}
+               onClose={cerrarModalEditar}
+               actualizarCliente={actualizarCliente}
+            />
             <div className="relative flex-1 w-full md:max-w-80 ">
                <Input
                   type="text"
@@ -66,13 +71,13 @@ export default function GestionClientes() {
                agregarCliente={agregarCliente}
             />
          )}
-         {clienteEditando && (
+         {/* {clienteEditando && (
             <ModalEditarCliente
                cliente={clienteEditando}
                onClose={cerrarModalEditar}
                actualizarCliente={actualizarCliente}
             />
-         )}
+         )} */}
 
          <Paginacion
             paginaActual={paginaActual}

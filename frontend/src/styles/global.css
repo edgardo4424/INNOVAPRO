@@ -286,9 +286,9 @@ input.error, select.error, textarea.error {
 }
 
 /* === FORMULARIOS === */
-.form-group {
+/* .form-group {
   margin-bottom: 15px;
-}
+} */
 
 .form-container {
   max-width: 600px;
@@ -315,10 +315,10 @@ input.error, select.error, textarea.error {
 }
 
 label {
-  display: block;
+  /* display: block; */
   margin: 10px 0 5px;
-  font-weight: bold;
-  color: var(--primary-color);
+  /* font-weight: bold;
+  color: var(--primary-color); */
 }
 
 /* === DASHBOARD === */

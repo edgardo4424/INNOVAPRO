@@ -16,18 +16,9 @@ export default function GestionEmpresas() {
       setPaginaActual,
       busqueda,
       setBusqueda,
-      modalAgregar,
-      abrirModalAgregar,
-      cerrarModalAgregar,
-      empresaEditando,
-      abrirModalEditar,
-      cerrarModalEditar,
-      nuevaEmpresa,
-      setNuevaEmpresa,
       agregarEmpresa,
       eliminarEmpresa,
       guardarEdicion,
-      setEmpresaEditando,
       empresasPorPagina,
       setEmpresasPorPagina,
    } = useEmpresas();
@@ -37,10 +28,7 @@ export default function GestionEmpresas() {
          <ModuloNavegacion />
          {/* 🔍 Buscador + botón */}
          <div className="flex flex-row-reverse md:flex-row justify-between px-4 my-4 md:my-8 items-center gap-4">
-            <Button className="btn-agregar" onClick={abrirModalAgregar}>
-               <BadgePlus />
-               <span className="hidden md:block">Agregar Filial</span>
-            </Button>
+            <ModalAgregarEmpresa onSubmit={agregarEmpresa} />
             <div className="relative flex-1 w-full md:max-w-80 ">
                <Input
                   type="text"
@@ -59,29 +47,9 @@ export default function GestionEmpresas() {
          {/* 📋 Tabla */}
          <TablaEmpresas
             empresas={empresasPaginadas}
-            onEditar={abrirModalEditar}
+            onEditar={guardarEdicion}
             onEliminar={eliminarEmpresa}
          />
-
-         {/* 🧾 Modal Agregar */}
-         {modalAgregar && (
-            <ModalAgregarEmpresa
-               empresa={nuevaEmpresa}
-               setEmpresa={setNuevaEmpresa}
-               onCancel={cerrarModalAgregar}
-               onSubmit={agregarEmpresa}
-            />
-         )}
-
-         {/* 🛠 Modal Editar */}
-         {empresaEditando && (
-            <ModalEditarEmpresa
-               empresa={empresaEditando}
-               setEmpresa={setEmpresaEditando}
-               onCancel={cerrarModalEditar}
-               onSubmit={guardarEdicion}
-            />
-         )}
 
          {/* 📌 Paginación */}
          <Paginacion

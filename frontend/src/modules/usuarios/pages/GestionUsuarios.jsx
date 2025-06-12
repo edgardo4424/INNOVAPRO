@@ -17,19 +17,9 @@ export default function GestionUsuarios() {
       setPaginaActual,
       busqueda,
       setBusqueda,
-      abrirModalAgregar,
-      cerrarModalAgregar,
-      modalAgregar,
-      nuevoUsuario,
-      setNuevoUsuario,
       agregarUsuario,
-      usuarioEditando,
-      abrirModalEditar,
-      cerrarModalEditar,
       guardarEdicion,
       eliminarUsuario,
-      setUsuarioEditando,
-      errores,
       usuariosPorPagina,
       setUsuariosPorPagina,
    } = useUsuarios();
@@ -39,10 +29,7 @@ export default function GestionUsuarios() {
          <ModuloNavegacion />
          {/* 🔍 Buscador + botón */}
          <div className="flex flex-row-reverse md:flex-row justify-between px-4 my-4 md:my-8 items-center gap-4">
-            <Button className="btn-agregar" onClick={abrirModalAgregar}>
-               <UserPlus />
-               <span className="hidden md:block">Agregar Usuario</span>
-            </Button>
+            <ModalAgregarUsuario onSubmit={agregarUsuario} />
             <div className="relative flex-1 w-full md:max-w-80 ">
                <Input
                   type="text"
@@ -61,32 +48,9 @@ export default function GestionUsuarios() {
          {/* 📋 Tabla */}
          <TablaUsuarios
             usuarios={usuariosPaginados}
-            onEditar={abrirModalEditar}
             onEliminar={eliminarUsuario}
+            onSubmit={guardarEdicion}
          />
-         
-
-         {/* 🧾 Modal Agregar */}
-         {modalAgregar && (
-            <ModalAgregarUsuario
-               usuario={nuevoUsuario}
-               setUsuario={setNuevoUsuario}
-               onCancel={cerrarModalAgregar}
-               onSubmit={agregarUsuario}
-               errores={errores}
-            />
-         )}
-
-         {/* 🛠 Modal Editar */}
-         {usuarioEditando && (
-            <ModalEditarUsuario
-               usuario={usuarioEditando}
-               setUsuario={setUsuarioEditando}
-               onCancel={cerrarModalEditar}
-               onSubmit={guardarEdicion}
-               errores={errores}
-            />
-         )}
 
          {/* 📌 Paginación */}
          <Paginacion
