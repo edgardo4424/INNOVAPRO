@@ -10,7 +10,7 @@ export default function PasoConfirmacion() {
   useEffect(() => {
     const cargarDespiece = async () => {
       try {
-        const data = await generarDespiece(formData.atributos, formData.uso_id);
+        const data = await generarDespiece(formData.zonas, formData.uso_id);
     
         if (!data?.despiece || !Array.isArray(data.despiece)) {
           throw new Error("La respuesta del backend no contiene un despiece válido");

@@ -1,155 +1,131 @@
-// INNOVA PRO+ v1.2.3 - PasoAtributos dinámico con cantidad_uso
-import { useEffect, useState } from "react";
+// INNOVA PRO+ v1.3.0 - Paso de atributos por zona
+import { useEffect } from "react";
 import { useWizardContext } from "../../hooks/useWizardCotizacion";
 import Loader from "../../../../shared/components/Loader";
-import { obtenerAtributosPorUso } from "../../services/cotizacionesService";
+import { useZonasCotizacion } from "../../hooks/useZonasCotizacion";
 
 const PasoAtributos = () => {
   const { formData, setFormData, errores } = useWizardContext();
-  const [atributos, setAtributos] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    zonas,
+    atributos,
+    loading,
+    handleChange,
+    agregarZona,
+    eliminarZona,
+    agregarEquipo,
+    eliminarEquipo,
+    setZonas
+  } = useZonasCotizacion(formData.uso_id);
 
+  // Almacenar zonas en formData global al avanzar
   useEffect(() => {
-    const cargarAtributos = async () => {
-      if (!formData.uso_id) return;
-      setLoading(true);
-      try {
-        const data = await obtenerAtributosPorUso(formData.uso_id);
+    setFormData((prev) => ({ ...prev, zonas }));
+  }, [zonas]);
 
-        const atributosProcesados = data.map((atrib) => {
-          let valores = [];
-          try {
-            valores = Array.isArray(atrib.valores_por_defecto)
-              ? atrib.valores_por_defecto
-              : JSON.parse(atrib.valores_por_defecto || "[]");
-          } catch (error) {
-            console.warn(`❌ Error parseando valores_por_defecto en '${atrib.nombre}'`, error);
-          }
-          return { ...atrib, valores_por_defecto: valores };
-        });
-
-        setAtributos(atributosProcesados);
-      } catch (error) {
-        console.error("Error al cargar los atributos", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    cargarAtributos();
-  }, [formData.uso_id]);
-
-  const handleChange = (index, llave, valor) => {
-    setFormData((prev) => {
-      const actuales = Array.isArray(prev.atributos) ? prev.atributos : [];
-      const nuevos = [...actuales];
-      if (!nuevos[index]) nuevos[index] = {};
-      nuevos[index][llave] = valor;
-
-      // Propagar cambios del primer bloque si es nuevo
-      if (index === 0) {
-        for (let i = 1; i < (formData.cantidad_uso || 1); i++) {
-          if (!nuevos[i]) nuevos[i] = {};
-          if (!nuevos[i][llave]) nuevos[i][llave] = valor;
-        }
-      }
-
-      return { ...prev, atributos: nuevos };
-    });
-  };
-
-  if (loading || atributos.length === 0) {
-    return <Loader texto="Cargando atributos..." />;
-  }
-
-  const cantidadFormularios = formData.cantidad_uso || 1;
+  if (loading || atributos.length === 0) return <Loader texto="Cargando atributos por zona..." />;
 
   return (
     <div className="paso-formulario">
-      <h3>Paso 4: Atributos del Uso Seleccionado</h3>
+      <h3>Paso 4: Atributos por Zona</h3>
 
-      {Array.from({ length: cantidadFormularios }).map((_, index) => (
-      <div key={index} className="bloque-equipo">
-        <h4>Equipo {index + 1}</h4>
-        <div className="atributos-grid">
-          {atributos.map((atrib) => (
-            <div key={atrib.id} className="wizard-section">
-              <label>{atrib.nombre}:</label>
-              {atrib.tipo_dato === "select" ? (
-                <select
-                  value={formData.atributos?.[index]?.[atrib.llave_json] || ""}
-                  onChange={(e) => handleChange(index, atrib.llave_json, e.target.value)}
-                >
-                  <option value="">Seleccione...</option>
-                  {atrib.valores_por_defecto.map((opt, i) => (
-                    <option key={i} value={opt}>{opt}</option>
-                  ))}
-                </select>
-              ) : (
-                <input
-                  type="number"
-                  value={formData.atributos?.[index]?.[atrib.llave_json] || ""}
-                  onChange={(e) => handleChange(index, atrib.llave_json, e.target.value)}
-                  placeholder={`Ingrese ${atrib.nombre.toLowerCase()}`}
-                />
-              )}
+      <p className="wizard-explicacion">
+        En este paso puedes definir las zonas de trabajo del proyecto y los equipos que se utilizarán en cada una.
+        Esto permitirá una cotización más precisa, ya que cada zona puede tener necesidades distintas.
+      </p>
+
+      {zonas.map((zona, zonaIndex) => (
+        <div key={zonaIndex} className="bloque-zona">
+          <h3>🗂️ Zona {zonaIndex + 1}</h3>
+
+          {zona.atributos_formulario.map((equipo, equipoIndex) => (
+            <div key={equipoIndex} className="bloque-equipo">
+              <h4>Equipo {equipoIndex + 1}</h4>
+              <div className="atributos-grid">
+                {atributos.map((atrib) => (
+                  <div key={atrib.id} className="wizard-section">
+                    <label>{atrib.nombre}:</label>
+                    {atrib.tipo_dato === "select" ? (
+                      <select
+                        value={zonas[zonaIndex].atributos_formulario[equipoIndex]?.[atrib.llave_json] || ""}
+                        onChange={(e) =>
+                          handleChange(zonaIndex, equipoIndex, atrib.llave_json, e.target.value)
+                        }
+                      >
+                        <option value="">Seleccione...</option>
+                        {atrib.valores_por_defecto.map((opt, i) => (
+                          <option key={i} value={opt}>
+                            {opt}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type="number"
+                        value={zonas[zonaIndex].atributos_formulario[equipoIndex]?.[atrib.llave_json] || ""}
+                        onChange={(e) =>
+                          handleChange(zonaIndex, equipoIndex, atrib.llave_json, e.target.value)
+                        }
+                        placeholder={`Ingrese ${atrib.nombre.toLowerCase()}`}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
-        </div>
-      </div>
-    ))}
 
-    {/* ✅ Botones al final del formulario */}
-    <div className="wizard-section" style={{ textAlign: "center", marginTop: "2rem" }}>
-      <p style={{ color: "#ff7b00", fontWeight: "bold", marginBottom: "0.6rem" }}>
-        Haz clic en + para cotizar más equipos similares
-      </p>
-      <div className="botones-cantidad">
-        {formData.cantidad_uso > 1 && (
+          {/* Botones para modificar cantidad de equipos por zona */}
+          <div className="botones-cantidad">
+            <button
+              type="button"
+              className="btn-cantidad"
+              onClick={() => eliminarEquipo(zonaIndex)}
+              disabled={zona.atributos_formulario.length <= 1}
+            >
+              −
+            </button>
+            <span className="cantidad-label">
+              {zona.atributos_formulario.length} equipo(s)
+            </span>
+            <button
+              type="button"
+              className="btn-cantidad"
+              onClick={() => agregarEquipo(zonaIndex)}
+            >
+              +
+            </button>
+          </div>
+
+          <hr style={{ margin: "2rem 0" }} />
+        </div>
+      ))}
+
+      {/* Botones para agregar/eliminar zonas */}
+      <div className="wizard-section" style={{ textAlign: "center", marginTop: "2rem" }}>
+        <p style={{ color: "#ff7b00", fontWeight: "bold", marginBottom: "0.6rem" }}>
+          Agrega todas las zonas necesarias para el proyecto
+        </p>
+        <div className="botones-cantidad">
           <button
             type="button"
-            title="Quitar equipo"
             className="btn-cantidad"
-            onClick={() =>
-              setFormData((prev) => {
-                const nuevaCantidad = Math.max(1, (prev.cantidad_uso || 1) - 1);
-                const nuevosAtributos = Array.isArray(prev.atributos)
-                  ? prev.atributos.slice(0, nuevaCantidad)
-                  : [];
-
-                return {
-                  ...prev,
-                  cantidad_uso: nuevaCantidad,
-                  atributos: nuevosAtributos,
-                };
-              })
-            }
+            onClick={eliminarZona}
+            disabled={zonas.length <= 1}
           >
-            −
+            − Zona
           </button>
-        )}
-        <span className="cantidad-label">{formData.cantidad_uso || 1}</span>
-        <button
-          type="button"
-          title="Agregar equipo a cotizar"
-          className="btn-cantidad"
-          onClick={() =>
-            setFormData((prev) => ({
-              ...prev,
-              cantidad_uso: (prev.cantidad_uso || 1) + 1,
-            }))
-          }
-        >
-          +
-        </button>
+          <span className="cantidad-label">{zonas.length} zona(s)</span>
+          <button type="button" className="btn-cantidad" onClick={agregarZona}>
+            + Zona
+          </button>
+        </div>
       </div>
-    </div>
+      {console.log("Atributos enviados al backend", atributos)}
 
       {errores.atributos && <p className="error-text">{errores.atributos}</p>}
     </div>
-    
   );
-  
 };
 
 export default PasoAtributos;
