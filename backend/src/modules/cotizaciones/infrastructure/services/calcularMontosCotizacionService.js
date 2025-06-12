@@ -52,8 +52,6 @@ function calcularMontosCotizacion({
   );
   const total = subtotalConDescuento + igvMonto;
 
-  console.log('subtotal', subtotal);
-
   return {
     dataParaGuardarDespiece: {
       moneda,
