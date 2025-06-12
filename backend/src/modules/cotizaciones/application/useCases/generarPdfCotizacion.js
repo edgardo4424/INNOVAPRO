@@ -1,5 +1,7 @@
 const db = require("../../../../models");
-const { formatearFechaIsoADMY } = require("../../infrastructure/helpers/formatearFecha");
+const {
+  formatearFechaIsoADMY,
+} = require("../../infrastructure/helpers/formatearFecha");
 
 module.exports = async (idCotizacion, cotizacionRepository) => {
   // Buscar la cotizacion incluyendo: obra, cliente, contacto, despiece, filial, usuario, costos de cotizacion de transporte
@@ -32,8 +34,8 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
         model: db.cotizaciones_transporte,
       },
       {
-        model: db.estados_cotizacion
-      }
+        model: db.estados_cotizacion,
+      },
     ],
   });
 
@@ -55,41 +57,42 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
           ],
         },
       ],
-    },
+    }
   );
-  
+
   if (!despieceEncontrado)
     return { codigo: 404, respuesta: { mensaje: "Despiece no encontrada" } };
 
-
   const uso_id = despieceEncontrado.atributos_valors?.[0].atributo.uso_id;
 
-  const usoEncontrado = await db.usos.findByPk(uso_id)
+  const usoEncontrado = await db.usos.findByPk(uso_id);
 
   // Para saber la cantidad de usos
-  const ultimoAtributo = despieceEncontrado.atributos_valors[despieceEncontrado.atributos_valors.length - 1];
-  const cantidadUso = ultimoAtributo.numero_formulario_uso
+  const ultimoAtributo =
+    despieceEncontrado.atributos_valors[
+      despieceEncontrado.atributos_valors.length - 1
+    ];
+  const cantidadUso = ultimoAtributo.numero_formulario_uso;
 
   const tipoServicio = cotizacionEncontrado.tipo_cotizacion;
   let tiempoAlquilerDias = null;
 
-  if(tipoServicio=="Alquiler"){
-    tiempoAlquilerDias = cotizacionEncontrado?.tiempo_alquiler_dias
+  if (tipoServicio == "Alquiler") {
+    tiempoAlquilerDias = cotizacionEncontrado?.tiempo_alquiler_dias;
   }
 
-  
-  const tiene_pernos = despieceEncontrado.tiene_pernos
+  const tiene_pernos = despieceEncontrado.tiene_pernos;
 
   const instalacionEncontrada = await db.cotizaciones_instalacion.findOne({
     where: {
-      cotizacion_id: cotizacionEncontrado.id
-    }
-  })
+      cotizacion_id: cotizacionEncontrado.id,
+    },
+  });
 
-  console.log('instalacionEncontrada', instalacionEncontrada);
+  console.log("instalacionEncontrada", instalacionEncontrada);
 
   // Mapear los datos generales para todos los usos para generar el pdf
- 
+
   let datosPdfCotizacion = {
     obra: {
       nombre: cotizacionEncontrado.obra.nombre,
@@ -123,7 +126,7 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
       tipo_servicio: tipoServicio,
       tiempo_alquiler_dias: tiempoAlquilerDias,
       codigo_documento: cotizacionEncontrado.codigo_documento,
-      cp: despieceEncontrado.cp
+      cp: despieceEncontrado.cp,
     },
     tarifa_transporte: {
       /* ...cotizacionEncontrado?.cotizaciones_transportes?.[0]?.dataValues  */
@@ -139,7 +142,7 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
       costo_total_transporte:
         cotizacionEncontrado?.cotizaciones_transportes?.[0]?.costo_total,
     },
-    
+
     uso: {
       id: usoEncontrado.id,
       nombre: usoEncontrado.descripcion,
@@ -149,154 +152,232 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
     instalacion: {
       tiene_instalacion: cotizacionEncontrado?.tiene_instalacion,
       tipo_instalacion: instalacionEncontrada?.tipo_instalacion,
-      precio_instalacion_completa_soles: instalacionEncontrada?.precio_instalacion_completa_soles,
-      precio_instalacion_parcial_soles: instalacionEncontrada?.precio_instalacion_parcial_soles,
+      precio_instalacion_completa_soles:
+        instalacionEncontrada?.precio_instalacion_completa_soles,
+      precio_instalacion_parcial_soles:
+        instalacionEncontrada?.precio_instalacion_parcial_soles,
       nota: instalacionEncontrada?.nota,
-    }
+    },
   };
-
 
   // Añadir algunos datos particulares para cada uso
 
-  switch (uso_id+"") {
+  switch (uso_id + "") {
     case "1":
-        // ANDAMIO DE FACHADA
-    
+      // ANDAMIO DE FACHADA
+
       break;
 
     case "2":
+      // ANDAMIO DE TRABAJO
 
-        // ANDAMIO DE TRABAJO
+      let pernoExpansionConArgolla;
+      let pernoEnElDespiece;
 
-        let pernoExpansionConArgolla;
-        let pernoEnElDespiece;
+      if (tiene_pernos) {
+        pernoExpansionConArgolla = await db.piezas.findOne({
+          where: {
+            item: "CON.0100",
+          },
+        });
 
-        if(tiene_pernos){
-          pernoExpansionConArgolla = await db.piezas.findOne({
-            where: {
-              item: "CON.0100"
-            }
-          })
+        pernoEnElDespiece = await db.despieces_detalle.findOne({
+          where: {
+            despiece_id: despieceEncontrado.id,
+            pieza_id: pernoExpansionConArgolla.id,
+          },
+        });
+      }
 
-          pernoEnElDespiece = await db.despieces_detalle.findOne({
-            where: {
-              despiece_id: despieceEncontrado.id,
-              pieza_id: pernoExpansionConArgolla.id
-            },
-          })
+      /* console.log('despieceEncontrado.atributos_valors', despieceEncontrado.atributos_valors); */
+
+      const atributosPlano = despieceEncontrado.atributos_valors.map(
+        (av) => av.dataValues
+      );
+
+      const resultado = [];
+
+      const agrupado = {};
+      const dividirEntre1000Ids = [1, 2]; // Solo estos atributo_id se dividen
+
+      atributosPlano.forEach((av) => {
+        const grupo = av.numero_formulario_uso;
+        if (!agrupado[grupo]) agrupado[grupo] = {};
+
+        const llave_json = av.atributo.dataValues.llave_json;
+        const atributoId = av.atributo_id;
+
+        // Aplicar división solo a atributo_id 1 y 2
+        let valor;
+        if (!isNaN(av.valor)) {
+          let num = parseFloat(av.valor);
+          if (dividirEntre1000Ids.includes(atributoId)) {
+            num = num / 1000;
+          }
+          valor = num;
+        } else {
+          valor = av.valor;
         }
 
-        datosPdfCotizacion = {
-            ...datosPdfCotizacion,
-            atributos: {
-              longitud_mm: Number(despieceEncontrado?.atributos_valors?.[0]?.valor)/1000 || "",
-              ancho_mm: Number(despieceEncontrado?.atributos_valors?.[1]?.valor)/1000 || "",
-              altura_m: despieceEncontrado?.atributos_valors?.[2]?.valor || "",
-              tiene_pernos: tiene_pernos,
-              nombre_perno_expansion: tiene_pernos ? pernoExpansionConArgolla.descripcion : null,
-              precio_perno_expansion: tiene_pernos ? (Number(pernoExpansionConArgolla.precio_venta_soles)*Number(pernoEnElDespiece.cantidad)).toFixed(2) : null,
-              cantidad_pernos_expansion: tiene_pernos ? pernoEnElDespiece.cantidad : null,
-            },
-        };
-        break;
+        agrupado[grupo][llave_json] = valor;
+      });
+
+      Object.keys(agrupado).forEach((grupo) => {
+        resultado.push(agrupado[grupo]);
+      });
+
+      const listaAtributos = resultado.map((atributo) => ({
+        longitud_mm: atributo.longitud,
+        ancho_mm: atributo.ancho,
+        altura_m: atributo.altura,
+      }));
+
+      datosPdfCotizacion = {
+        ...datosPdfCotizacion,
+        atributos: listaAtributos,
+        atributos_opcionales: {
+          tiene_pernos: tiene_pernos,
+          nombre_perno_expansion: tiene_pernos
+            ? pernoExpansionConArgolla.descripcion
+            : null,
+          precio_perno_expansion: tiene_pernos
+            ? (
+                Number(pernoExpansionConArgolla.precio_venta_soles) *
+                Number(pernoEnElDespiece.cantidad)
+              ).toFixed(2)
+            : null,
+          cantidad_pernos_expansion: tiene_pernos
+            ? pernoEnElDespiece.cantidad
+            : null,
+        },
+      };
+      break;
 
     case "3":
+      // ESCALERA DE ACCESO
+      const tipoAnclaje = despieceEncontrado.atributos_valors?.[4]?.valor;
+      let itemPiezaVenta;
 
-        // ESCALERA DE ACCESO
-        const  tipoAnclaje = despieceEncontrado.atributos_valors?.[4]?.valor;
-        let itemPiezaVenta;
+      if (tipoAnclaje == "FERMIN") {
+        itemPiezaVenta = "CON.0200";
+      } else {
+        itemPiezaVenta = "CON.0100";
+      }
 
-        if(tipoAnclaje=="FERMIN"){
-          itemPiezaVenta = "CON.0200"
-        }else{
-          itemPiezaVenta = "CON.0100"
-        }
+      //const tiene_pernos = despieceEncontrado.tiene_pernos
 
-        //const tiene_pernos = despieceEncontrado.tiene_pernos
+      let pernoExpansionArgolla;
+      let pernoDespiece;
 
-        let pernoExpansionArgolla;
-        let pernoDespiece;
-
-        if(tiene_pernos){
-          
-         pernoExpansionArgolla = await db.piezas.findOne({
-        where: {
-          item: itemPiezaVenta
-        }
-        })
+      if (tiene_pernos) {
+        pernoExpansionArgolla = await db.piezas.findOne({
+          where: {
+            item: itemPiezaVenta,
+          },
+        });
 
         pernoDespiece = await db.despieces_detalle.findOne({
-        where: {
-          despiece_id: despieceEncontrado.id,
-          pieza_id: pernoExpansionArgolla.id
-        },
-        })
+          where: {
+            despiece_id: despieceEncontrado.id,
+            pieza_id: pernoExpansionArgolla.id,
+          },
+        });
+      }
 
+      const atributosPlanoEscaleraAcceso =
+        despieceEncontrado.atributos_valors.map((av) => av.dataValues);
+
+      console.log("atributosPlanoEscaleraAcceso", atributosPlanoEscaleraAcceso);
+
+      const resultadoEscaleraAcceso = [];
+
+      const agrupadoEscaleraAcceso = {};
+
+      atributosPlanoEscaleraAcceso.forEach((av) => {
+        const grupo = av.numero_formulario_uso;
+        if (!agrupadoEscaleraAcceso[grupo]) agrupadoEscaleraAcceso[grupo] = {};
+        const llave_json = av.atributo.dataValues.llave_json;
+        agrupadoEscaleraAcceso[grupo][llave_json] = av.valor;
+      });
+
+      Object.keys(agrupadoEscaleraAcceso).forEach((grupo) => {
+        resultadoEscaleraAcceso.push(agrupadoEscaleraAcceso[grupo]);
+      });
+
+      console.log("agrupadoEscaleraAcceso", agrupadoEscaleraAcceso);
+      console.log("resultadoEscaleraAcceso", resultadoEscaleraAcceso);
+
+      const listaAtributosEscaleraAcceso = resultadoEscaleraAcceso.map(
+        (atributo) => {
+          const tipoEscalera = atributo.tipoEscalera;
+          let longitud_mm;
+
+          if (tipoEscalera == "EUROPEA") {
+            longitud_mm = 2072 / 1000;
+          } else {
+            longitud_mm = 3072 / 1000;
+          }
+
+          let ancho_mm = 1572 / 1000;
+
+          return {
+            longitud_mm: longitud_mm,
+            ancho_mm: ancho_mm,
+            altura_m: atributo.alturaTotal,
+          };
         }
+      );
 
-        const tipoEscalera = despieceEncontrado.atributos_valors?.[2]?.valor;
-
-        let longitud_mm;
-
-        if(tipoEscalera=="EUROPEA"){
-          longitud_mm = 2072 / 1000;
-        }else{
-          longitud_mm = 3072 / 1000;
-        }
-
-        let ancho_mm = 1572 / 1000;
-
-       datosPdfCotizacion = {
+      datosPdfCotizacion = {
         ...datosPdfCotizacion,
-        atributos: {
-          longitud_mm: longitud_mm,
-          ancho_mm: ancho_mm,
-          altura_m: despieceEncontrado.atributos_valors?.[0]?.valor,
-
-          nombre_pernos_expansion: tiene_pernos ? pernoExpansionArgolla.descripcion : null,
-          precio_pernos_expansion: tiene_pernos ? pernoExpansionArgolla.precio_venta_soles : null,
-          cantidad_pernos_expansion: tiene_pernos ? pernoDespiece.cantidad : null,
+        atributos: listaAtributosEscaleraAcceso,
+        atributos_opcionales: {
+          nombre_pernos_expansion: tiene_pernos
+            ? pernoExpansionArgolla.descripcion
+            : null,
+          precio_pernos_expansion: tiene_pernos
+            ? pernoExpansionArgolla.precio_venta_soles
+            : null,
+          cantidad_pernos_expansion: tiene_pernos
+            ? pernoDespiece.cantidad
+            : null,
         }
-       }
+      };
 
       break;
 
     case "4":
-        // ESCUADRAS
+      // ESCUADRAS
       break;
 
     case "5":
+      // PUNTALES
 
-     // PUNTALES
+      let piezaVentaPinPresion;
 
-    let piezaVentaPinPresion;
+      let piezaVentaArgolla;
 
-     let piezaVentaArgolla;
-   
-     const tipoPuntal = despieceEncontrado?.atributos_valors?.[1]?.valor;
+      const tipoPuntal = despieceEncontrado?.atributos_valors?.[1]?.valor;
 
-      if(tipoPuntal=="5m"){
-        piezaVentaPinPresion = "PU.0800"
-          piezaVentaArgolla = "PU.1000"
-          
-        }else{
-          piezaVentaPinPresion = "PU.0700"
-          piezaVentaArgolla = "PU.0900"
-        }
-
-     
+      if (tipoPuntal == "5m") {
+        piezaVentaPinPresion = "PU.0800";
+        piezaVentaArgolla = "PU.1000";
+      } else {
+        piezaVentaPinPresion = "PU.0700";
+        piezaVentaArgolla = "PU.0900";
+      }
 
       const piezaArgolla = await db.piezas.findOne({
         where: {
-          item: piezaVentaArgolla
-        }
-      })
+          item: piezaVentaArgolla,
+        },
+      });
 
       const piezaPIN = await db.piezas.findOne({
         where: {
-          item: piezaVentaPinPresion
-        }
-      })
+          item: piezaVentaPinPresion,
+        },
+      });
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
@@ -306,26 +387,26 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
           tripode: despieceEncontrado?.atributos_valors?.[2]?.valor || "",
 
           precio_argolla: piezaArgolla.precio_venta_soles,
-          precio_pasador: piezaPIN.precio_venta_soles
+          precio_pasador: piezaPIN.precio_venta_soles,
         },
       };
-        
+
       break;
-    
+
     case "6":
-        // ENCOFRADO
+      // ENCOFRADO
       break;
-    
+
     case "7":
-        // PLATAFORMAS DE DESCARGA
+      // PLATAFORMAS DE DESCARGA
       break;
-    
+
     case "8":
-        // COLGANTE
+      // COLGANTE
       break;
-    
+
     case "9":
-        // ELEVADOR
+      // ELEVADOR
       break;
 
     default:

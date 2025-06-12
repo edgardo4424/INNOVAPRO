@@ -207,12 +207,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
         unidad: datosParaGuardarCotizacionesTransporte.unidad,
         cantidad: datosParaGuardarCotizacionesTransporte.cantidad,
 
-        /* costo_tarifas_transporte: datosParaGuardarCotizacionesTransporte.costosTransporte.costo_tarifas_transporte,
-        costo_distrito_transporte: datosParaGuardarCotizacionesTransporte.costosTransporte.costo_distrito_transporte,
-        costo_pernocte_transporte: datosParaGuardarCotizacionesTransporte.costosTransporte.costo_pernocte_transporte, 
-         costo_total: datosParaGuardarCotizacionesTransporte.costosTransporte.costo_total,
-        */
-
         costo_tarifas_transporte: cotizacion.costo_tarifas_transporte,
         costo_distrito_transporte: cotizacion.costo_distrito_transporte,
         costo_pernocte_transporte: cotizacion.costo_pernocte_transporte,
