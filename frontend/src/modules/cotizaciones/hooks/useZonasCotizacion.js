@@ -53,22 +53,23 @@ export const useZonasCotizacion = (usoId) => {
   };
 
   const agregarEquipo = (zonaIndex) => {
-    setZonas((prev) => {
-      const nuevasZonas = [...prev];
-      nuevasZonas[zonaIndex].atributos_formulario.push({});
-      return nuevasZonas;
-    });
-  };
+  setZonas((prev) => {
+    const nuevasZonas = JSON.parse(JSON.stringify(prev)); // clonado profundo
+    nuevasZonas[zonaIndex].atributos_formulario.push({});
+    return nuevasZonas;
+  });
+};
 
-  const eliminarEquipo = (zonaIndex) => {
-    setZonas((prev) => {
-      const nuevasZonas = [...prev];
-      if (nuevasZonas[zonaIndex].atributos_formulario.length > 1) {
-        nuevasZonas[zonaIndex].atributos_formulario.pop();
-      }
-      return nuevasZonas;
-    });
-  };
+const eliminarEquipo = (zonaIndex) => {
+  setZonas((prev) => {
+    const nuevasZonas = JSON.parse(JSON.stringify(prev)); // clonado profundo
+    if (nuevasZonas[zonaIndex].atributos_formulario.length > 1) {
+      nuevasZonas[zonaIndex].atributos_formulario.pop();
+    }
+    return nuevasZonas;
+  });
+};
+
 
   return {
     zonas,

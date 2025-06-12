@@ -1,4 +1,4 @@
-// INNOVA PRO+ v1.2.1
+// INNOVA PRO+ v1.3.1
 
 export default function validarCotizacion(paso, datos) {
   const errores = {};
@@ -21,9 +21,13 @@ export default function validarCotizacion(paso, datos) {
     }
   }
 
-  if (paso === 3) {
-    if (!datos.atributos || Object.keys(datos.atributos).length === 0) {
-      errores.atributos = "Debes completar los atributos requeridos.";
+  if (paso === 4) {
+    if (
+      !datos.zonas ||
+      datos.zonas.length === 0 ||
+      datos.zonas.some(z => !Array.isArray(z.atributos_formulario) || z.atributos_formulario.length === 0)
+    ) {
+      errores.atributos = "Cada zona debe tener al menos un equipo configurado.";
     }
   }
 
