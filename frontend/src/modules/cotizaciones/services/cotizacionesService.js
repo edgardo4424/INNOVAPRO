@@ -20,9 +20,9 @@ export async function generarDespiece(atributos, usoId) {
       uso = "escalera-de-acceso";
       break;
   }
-  const response = await api.post(`/despieces/${uso}`, {
-    atributos_formulario: atributos,
-  });
+  const response = await api.post(`/despieces/${uso}`, 
+    atributos,
+  );
   return response.data.despieceGenerado;
 }
 

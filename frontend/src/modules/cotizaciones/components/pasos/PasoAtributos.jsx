@@ -1,4 +1,3 @@
-// INNOVA PRO+ v1.3.0 - Paso de atributos por zona
 import { useEffect } from "react";
 import { useWizardContext } from "../../hooks/useWizardCotizacion";
 import Loader from "../../../../shared/components/Loader";
@@ -29,7 +28,7 @@ const PasoAtributos = () => {
     <div className="paso-formulario">
       <h3>Paso 4: Atributos por Zona</h3>
 
-      <p className="wizard-explicacion">
+      <p className="mensaje-revision-final">
         En este paso puedes definir las zonas de trabajo del proyecto y los equipos que se utilizarán en cada una.
         Esto permitirá una cotización más precisa, ya que cada zona puede tener necesidades distintas.
       </p>

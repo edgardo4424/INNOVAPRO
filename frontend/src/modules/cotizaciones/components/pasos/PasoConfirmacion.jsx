@@ -1,4 +1,3 @@
-// INNOVA PRO+ v1.3.1
 import { useEffect } from "react";
 import { useWizardContext } from "../../hooks/useWizardCotizacion";
 import { generarDespiece, calcularCostoTransporte } from "../../services/cotizacionesService";
