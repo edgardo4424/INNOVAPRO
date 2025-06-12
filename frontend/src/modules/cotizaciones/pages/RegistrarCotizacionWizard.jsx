@@ -131,12 +131,13 @@ const RegistrarCotizacionWizard = () => {
               try {
                 const payload = {
                   uso_id: formData.uso_id,
-                  atributos_formulario: Array.isArray(formData.atributos)
+                  /* atributos_formulario: Array.isArray(formData.atributos)
                   ? formData.atributos.map((bloque, index) => ({
                       ...bloque,
                       numero_formulario_uso: index + 1,
                     }))
-                  : [],
+                  : [], */
+                  zonas: Array.isArray(formData.zonas) ? formData.zonas : [],
                   cotizacion: {
                     cliente_id: formData.cliente_id,
                     obra_id: formData.obra_id,
