@@ -62,18 +62,15 @@ export default function Login() {
    }
 
    return (
-      <div className="min-h-screen relative overflow-hidden bg-sky-950">
-         {/* Background Image */}
-         <div className="absolute inset-0 z-0 w-full">
+      <article className="h-screen flex flex-col md:flex-row overflow-hidden">
+         <section className="w-full lg:w-3/5 h-auto hidden md:flex">
             <img
-               src="/images/wallpaper1.webp"
-               alt="Construction site background"
-               className="object-cover w-full h-full"
+               src="/images/fondo_mesa.webp"
+               alt="Imagen de login"
+               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-black/40" />
-         </div>
-
-         <div className="h-screen absolute flex items-center justify-center top-0 left-0 bg-white w-full  sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
+         </section>
+         <section className="w-full lg:w-2/5 flex items-center justify-center p-6 lg:p-12 bg-white h-screen">
             <Card className="w-full max-w-md relative z-10  backdrop-blur-sm border-0  shadow-none">
                <CardHeader className=" text-center">
                   <div className="flex items-center justify-center space-x-2">
@@ -212,7 +209,7 @@ export default function Login() {
                   </div>
                </CardContent>
             </Card>
-         </div>
-      </div>
+         </section>
+      </article>
    );
 }
