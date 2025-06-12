@@ -75,8 +75,10 @@ console.log(`💰 Precio subtotal venta $: ${resultadoFinal.totales.precio_subto
 console.log(`💰 Precio subtotal venta S/: ${resultadoFinal.totales.precio_subtotal_venta_soles.toFixed(2)}`);
 console.log(`📅 Precio subtotal alquiler S/: ${resultadoFinal.totales.precio_subtotal_alquiler_soles.toFixed(2)}`);
 
-
-  return resultadoFinal;
+  return {
+    despiece: resultadoFinal.despiece,
+    ...resultadoFinal.totales
+  };
 }
 
 module.exports = {
