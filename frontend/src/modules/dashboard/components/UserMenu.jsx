@@ -10,10 +10,7 @@ import {
 import { Bell, LogOut, Settings2, UserCircle } from "lucide-react";
 
 const UserMenu = ({ names, logout }) => {
-   console.log(names);
-
    const letter = names.charAt(0);
-
    return (
       <DropdownMenu>
          <DropdownMenuTrigger className="flex items-center gap-1" asChild>

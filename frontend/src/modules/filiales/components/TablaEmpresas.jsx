@@ -6,6 +6,7 @@ import {
    TooltipContent,
    TooltipTrigger,
 } from "@/components/ui/tooltip";
+import ModalEditarEmpresa from "./ModalEditarEmpresa";
 
 export default function TablaEmpresas({ empresas, onEditar, onEliminar }) {
    if (empresas.length === 0) {
@@ -90,14 +91,10 @@ export default function TablaEmpresas({ empresas, onEditar, onEliminar }) {
          name: "Acciones",
          cell: (row) => (
             <div className="flex gap-2">
-               <Button
-                  variant="outline"
-                  size={"icon"}
-                  onClick={() => onEditar(row)}
-                  className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-600"
-               >
-                  <Edit className="h-4 w-4" />
-               </Button>
+               <ModalEditarEmpresa
+                  empresa={row}
+                  onSubmit={onEditar}
+               />
                <Button
                   variant="outline"
                   size="icon"

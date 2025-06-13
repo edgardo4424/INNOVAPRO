@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Edit, Trash2 } from "lucide-react";
 import { ColumnSelector } from "@/shared/components/ColumnSelector";
 import { useState } from "react";
+import ModalEditarUsuario from "./ModalEditarUsuario";
 
-export default function TablaUsuarios({ usuarios, onEditar, onEliminar }) {
+export default function TablaUsuarios({ usuarios, onEliminar, onSubmit }) {
    const [visibleColumns, setVisibleColumns] = useState({
       nombre: true,
       email: true,
@@ -50,14 +51,8 @@ export default function TablaUsuarios({ usuarios, onEditar, onEliminar }) {
          name: "Acciones",
          cell: (row) => (
             <div className="flex gap-2">
-               <Button
-                  variant="outline"
-                  size={"icon"}
-                  onClick={() => onEditar(row)}
-                  className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-600"
-               >
-                  <Edit className="h-4 w-4" />
-               </Button>
+               {/*Aquí se vera el boton para abrir el modal*/}
+               <ModalEditarUsuario onSubmit={onSubmit} user={row} />
                <Button
                   variant="outline"
                   size="icon"
