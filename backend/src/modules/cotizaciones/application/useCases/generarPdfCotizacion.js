@@ -2,6 +2,7 @@ const db = require("../../../../models");
 const {
   formatearFechaIsoADMY,
 } = require("../../infrastructure/helpers/formatearFecha");
+const { mapearPorAtributos } = require("../../infrastructure/services/mapearAtributosDelPdfService");
 
 module.exports = async (idCotizacion, cotizacionRepository) => {
   // Buscar la cotizacion incluyendo: obra, cliente, contacto, despiece, filial, usuario, costos de cotizacion de transporte
@@ -36,6 +37,9 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
       {
         model: db.estados_cotizacion,
       },
+      {
+        model: db.usos,
+      },
     ],
   });
 
@@ -68,11 +72,18 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
   const usoEncontrado = await db.usos.findByPk(uso_id);
 
   // Para saber la cantidad de usos
-  const ultimoAtributo =
-    despieceEncontrado.atributos_valors[
-      despieceEncontrado.atributos_valors.length - 1
-    ];
-  const cantidadUso = ultimoAtributo.numero_formulario_uso;
+  const cantidadAttributosDelUso = await db.atributos.count({
+    where: {
+      uso_id: cotizacionEncontrado.uso.id,
+    },
+  });
+
+  const cantidadAtributosValor = await db.atributos_valor.count({
+    where: {
+      despiece_id: despieceEncontrado.id,
+    },
+  });
+  const cantidadUso = cantidadAtributosValor / cantidadAttributosDelUso;
 
   const tipoServicio = cotizacionEncontrado.tipo_cotizacion;
   let tiempoAlquilerDias = null;
@@ -108,7 +119,6 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
       correo: cotizacionEncontrado.contacto.email,
     },
     filial: {
-      /* ...cotizacionEncontrado?.empresas_proveedora.dataValues, */
       razon_social: cotizacionEncontrado.empresas_proveedora.razon_social,
       ruc: cotizacionEncontrado.empresas_proveedora.ruc,
       direccion: cotizacionEncontrado.empresas_proveedora.direccion,
@@ -119,7 +129,6 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
       correo: cotizacionEncontrado.usuario.email,
     },
     cotizacion: {
-      /* codigo_documento: codigoDocumento, */
       fecha: formatearFechaIsoADMY(cotizacionEncontrado.createdAt),
       moneda: despieceEncontrado.moneda,
       subtotal_con_descuento_sin_igv: despieceEncontrado.subtotal_con_descuento,
@@ -129,7 +138,6 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
       cp: despieceEncontrado.cp,
     },
     tarifa_transporte: {
-      /* ...cotizacionEncontrado?.cotizaciones_transportes?.[0]?.dataValues  */
       costo_tarifas_transporte:
         cotizacionEncontrado?.cotizaciones_transportes?.[0]
           ?.costo_tarifas_transporte,
@@ -189,48 +197,44 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
         });
       }
 
-      /* console.log('despieceEncontrado.atributos_valors', despieceEncontrado.atributos_valors); */
+      // Obtener la lista de atributos
 
-      const atributosPlano = despieceEncontrado.atributos_valors.map(
-        (av) => av.dataValues
-      );
-
-      const resultado = [];
-
-      const agrupado = {};
-      const dividirEntre1000Ids = [1, 2]; // Solo estos atributo_id se dividen
-
-      atributosPlano.forEach((av) => {
-        const grupo = av.numero_formulario_uso;
-        if (!agrupado[grupo]) agrupado[grupo] = {};
-
-        const llave_json = av.atributo.dataValues.llave_json;
-        const atributoId = av.atributo_id;
-
-        // Aplicar división solo a atributo_id 1 y 2
-        let valor;
-        if (!isNaN(av.valor)) {
-          let num = parseFloat(av.valor);
-          if (dividirEntre1000Ids.includes(atributoId)) {
-            num = num / 1000;
-          }
-          valor = num;
-        } else {
-          valor = av.valor;
-        }
-
-        agrupado[grupo][llave_json] = valor;
+      const atributosDelUso = await db.atributos_valor.findAll({
+        where: {
+          despiece_id: despieceEncontrado.id,
+        },
+        raw: true,
       });
 
-      Object.keys(agrupado).forEach((grupo) => {
-        resultado.push(agrupado[grupo]);
-      });
+      // Obtener del listado los valores de los atributos
+      // 1: es el atributo_id de la tabla atributos_valor
+      // longitud: es la llave del resultado
 
-      const listaAtributos = resultado.map((atributo) => ({
-        longitud_mm: atributo.longitud,
-        ancho_mm: atributo.ancho,
+      // Finalidad obtener:
+      /* 
+            [{
+              longitud: "xxxx",
+              ancho: "yyyy",
+              altura: "z"
+            }] */
+
+      const atributosMap = {
+        1: "longitud",
+        2: "ancho",
+        3: "altura",
+      };
+
+      const resultado = mapearPorAtributos(atributosDelUso, atributosMap);
+
+      console.log('resultado', resultado);
+      
+      const listaAtributos = resultado.map((atributo) => (({
+        longitud_mm: atributo.longitud/1000,
+        ancho_mm: atributo.ancho/1000,
         altura_m: atributo.altura,
-      }));
+        numero_formulario_uso: atributo.numero_formulario_uso,
+        zona: atributo.zona
+      })))
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
@@ -341,7 +345,7 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
           cantidad_pernos_expansion: tiene_pernos
             ? pernoDespiece.cantidad
             : null,
-        }
+        },
       };
 
       break;
