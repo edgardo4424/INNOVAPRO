@@ -6,8 +6,8 @@ module.exports = async (
   cotizacionTransporteData,
   cotizacionesTransporteRepository
 ) => {
-
-  const { uso_id, peso_total_tn, distrito_transporte } =  cotizacionTransporteData;
+  const { uso_id, peso_total_tn, distrito_transporte } =
+    cotizacionTransporteData;
 
   // 1. Calcular costo tarifa transporte
 
@@ -44,9 +44,7 @@ module.exports = async (
   let cantidadTotal;
 
   switch (uso.grupo_tarifa) {
-
     case "andamio_multidireccional":
-
       tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
         where: {
           grupo_tarifa: uso.grupo_tarifa,
@@ -59,7 +57,7 @@ module.exports = async (
         tarifa_transporte_encontrado?.precio_soles || 0
       );
 
-      unidad = 'Tn';
+      unidad = "Tn";
       cantidadTotal = peso_total_tn;
       break;
 
@@ -73,34 +71,46 @@ module.exports = async (
         },
       });
 
-      costo_tarifas_transporte = Number(tarifa_transporte_encontrado?.precio_soles || 0);
-       unidad = 'Tramo';
-       cantidadTotal = numero_tramos;
-      break;
-
-    case "puntales":
-      
-      const { tipo_puntal } = cotizacionTransporteData;
-      console.log('tipo_puntal', tipo_puntal);
-      
-      tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
-        where: {
-          grupo_tarifa: uso.grupo_tarifa,
-          subtipo: tipo_puntal,
-          rango_desde: { [Op.lt]: peso_total_tn },
-          rango_hasta: { [Op.gte]: peso_total_tn },
-        },
-      });
-      console.log("Tarifa encontrada:", tarifa_transporte_encontrado)
       costo_tarifas_transporte = Number(
         tarifa_transporte_encontrado?.precio_soles || 0
       );
-       unidad = 'Tn';
-      cantidadTotal = peso_total_tn;
+      unidad = "Tramo";
+      cantidadTotal = numero_tramos;
+      break;
+
+    case "puntales":
+      const { transporte_puntales } = cotizacionTransporteData;
+
+      const tiposPermitidos = ["3.00", "4.00"];
+
+      const esValido = transporte_puntales.every((tp) =>
+        tiposPermitidos.includes(tp.tipo_puntal)
+      );
+
+      if (esValido) {
+        tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
+          where: {
+            grupo_tarifa: uso.grupo_tarifa,
+            subtipo: transporte_puntales[0].tipo_puntal,
+            rango_desde: { [Op.lt]: peso_total_tn },
+            rango_hasta: { [Op.gte]: peso_total_tn },
+          },
+        });
+      
+        costo_tarifas_transporte = Number(
+          tarifa_transporte_encontrado?.precio_soles || 0
+        );
+        unidad = "Tn";
+        cantidadTotal = peso_total_tn;
+      } else {
+        // ❌ contiene tipo_puntal no permitido
+        costo_tarifas_transporte=0;
+        unidad = "Tn";
+        cantidadTotal = peso_total_tn;
+      }
       break;
 
     case "andamio_electrico":
-
       tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
         where: {
           grupo_tarifa: uso.grupo_tarifa,
@@ -110,14 +120,13 @@ module.exports = async (
       });
 
       costo_tarifas_transporte = Number(
-       tarifa_transporte_encontrado?.precio_soles || 0
+        tarifa_transporte_encontrado?.precio_soles || 0
       );
-      unidad = 'Andamio';
+      unidad = "Andamio";
       cantidadTotal = cantidad;
       break;
 
     case "plataformas_de_descarga":
-
       const { cantidad } = cotizacionTransporteData;
 
       tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
@@ -131,32 +140,40 @@ module.exports = async (
       costo_tarifas_transporte = Number(
         tarifa_transporte_encontrado?.precio_soles || 0
       );
-      unidad = 'Pd';
+      unidad = "Pd";
       cantidadTotal = cantidad;
       break;
 
     case "escuadras":
-    
-      const { tipo_escuadra } = cotizacionTransporteData;
-      
-      tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
-        where: {
-          grupo_tarifa: uso.grupo_tarifa,
-          subtipo: tipo_escuadra,
-          rango_desde: { [Op.lt]: cantidad },
-          rango_hasta: { [Op.gte]: cantidad },
-        },
-      });
+      const { transporte_escuadras } = cotizacionTransporteData;
 
-      costo_tarifas_transporte = Number(tarifa_transporte_encontrado?.precio_soles || 0);
-      unidad = 'Und';
-      cantidadTotal = cantidad;
+      if (transporte_escuadras.length == 1) {
+        // Si hay un tipo de escuadra, el costo de tarifa transporte se calcula automaticamente
+
+        tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
+          where: {
+            grupo_tarifa: uso.grupo_tarifa,
+            subtipo: transporte_escuadras.tipo_escuadras,
+            rango_desde: { [Op.lt]: transporte_escuadras.cantidad },
+            rango_hasta: { [Op.gte]: transporte_escuadras.cantidad },
+          },
+        });
+
+        costo_tarifas_transporte = Number(
+          tarifa_transporte_encontrado?.precio_soles || 0
+        );
+        unidad = "Und";
+        cantidadTotal = cantidadEscuadras;
+      } else {
+        costo_tarifas_transporte = 0;
+        unidad = "Und";
+        cantidadTotal = 0;
+      }
+
       break;
     default:
       break;
   }
-
-
 
   // 2. Calcular costo segun el distrito
 
@@ -166,9 +183,8 @@ module.exports = async (
     },
   });
 
-  console.log('distrito_transporte_encontrado', distrito_transporte_encontrado);
   // Si el distrito se encuentra dentro de la lista, se cobra un adicional. Si no está el costo_distrito_transporte sera 0
-  console.log("TARIFA TRANSPORTE ENCONTRADO", tarifa_transporte_encontrado)
+ 
   if (distrito_transporte_encontrado && tarifa_transporte_encontrado) {
     switch (tarifa_transporte_encontrado.tipo_transporte) {
       case "Camioneta":
@@ -188,27 +204,29 @@ module.exports = async (
 
   // 3. Calcular costo pernocte transporte
 
-  if(tarifa_transporte_encontrado){
-    console.log(tarifa_transporte_encontrado);
-  const costos_pernocte_transporte_encontrado =
-    await db.costos_pernocte_transporte.findOne({
-      where: {
-        tipo_transporte: tarifa_transporte_encontrado.tipo_transporte,
-      },
-    });
+  if (tarifa_transporte_encontrado) {
 
-  if (peso_total_tn <= costos_pernocte_transporte_encontrado.umbral_toneladas) {
-    costo_pernocte_transporte = Number(
-      costos_pernocte_transporte_encontrado.precio_soles
-    );
-  } else {
-    return {
-      codigo: 400,
-      respuesta: {
-        mensaje: "Consultar a gerencia.",
-      },
-    };
-  }
+    const costos_pernocte_transporte_encontrado =
+      await db.costos_pernocte_transporte.findOne({
+        where: {
+          tipo_transporte: tarifa_transporte_encontrado.tipo_transporte,
+        },
+      });
+
+    if (
+      peso_total_tn <= costos_pernocte_transporte_encontrado.umbral_toneladas
+    ) {
+      costo_pernocte_transporte = Number(
+        costos_pernocte_transporte_encontrado.precio_soles
+      );
+    } else {
+      return {
+        codigo: 400,
+        respuesta: {
+          mensaje: "Consultar a gerencia.",
+        },
+      };
+    }
   }
 
   // 4. Sumar los 3 costos
@@ -216,19 +234,13 @@ module.exports = async (
   const costo_total =
     costo_tarifas_transporte +
     costo_distrito_transporte +
-    costo_pernocte_transporte; 
+    costo_pernocte_transporte;
 
-    console.log({costosTransporte: {
-        costo_tarifas_transporte,
-        costo_distrito_transporte,
-        costo_pernocte_transporte,
-        costo_total,
-      }});
   return {
     codigo: 200,
     respuesta: {
       mensaje: "Costo de transporte calculado",
-      
+
       costosTransporte: {
         costo_tarifas_transporte,
         costo_distrito_transporte,
@@ -240,7 +252,7 @@ module.exports = async (
       distrito_transporte: distrito_transporte,
       tarifa_transporte_id: tarifa_transporte_encontrado?.id || "",
       unidad: unidad || "",
-      cantidad: cantidadTotal || 0
+      cantidad: cantidadTotal || 0,
     },
   };
 };

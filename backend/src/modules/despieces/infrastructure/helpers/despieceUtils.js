@@ -82,10 +82,65 @@ function calcularTotalesGenerales(filas) {
     });
   }
 
+function unificarDespiecesConTotales(resultadosPorZona) {
+  const mapaUnificado = {};
+  const totalesGenerales = {
+    total_piezas: 0,
+    peso_total_kg: 0,
+    peso_total_ton: 0,
+    precio_subtotal_venta_dolares: 0,
+    precio_subtotal_venta_soles: 0,
+    precio_subtotal_alquiler_soles: 0,
+  };
+
+  for (const zona of resultadosPorZona) {
+    for (const pieza of zona.despiece) {
+      const id = pieza.pieza_id;
+
+      if (!mapaUnificado[id]) {
+        mapaUnificado[id] = { ...pieza };
+      } else {
+        mapaUnificado[id].total += pieza.total;
+        mapaUnificado[id].peso_kg += pieza.peso_kg;
+        mapaUnificado[id].precio_venta_dolares += pieza.precio_venta_dolares;
+        mapaUnificado[id].precio_venta_soles += pieza.precio_venta_soles;
+        mapaUnificado[id].precio_alquiler_soles += pieza.precio_alquiler_soles;
+      }
+    }
+
+    totalesGenerales.total_piezas += Number(zona.total_piezas);
+    totalesGenerales.peso_total_kg += parseFloat(zona.peso_total_kg);
+    totalesGenerales.precio_subtotal_venta_dolares += parseFloat(zona.precio_subtotal_venta_dolares);
+    totalesGenerales.precio_subtotal_venta_soles += parseFloat(zona.precio_subtotal_venta_soles);
+    totalesGenerales.precio_subtotal_alquiler_soles += parseFloat(zona.precio_subtotal_alquiler_soles);
+  }
+
+  // 🔧 Redondear todos los valores acumulados a 2 decimales
+  Object.values(mapaUnificado).forEach(p => {
+    p.peso_kg = parseFloat(p.peso_kg.toFixed(2));
+    p.precio_venta_dolares = parseFloat(p.precio_venta_dolares.toFixed(2));
+    p.precio_venta_soles = parseFloat(p.precio_venta_soles.toFixed(2));
+    p.precio_alquiler_soles = parseFloat(p.precio_alquiler_soles.toFixed(2));
+  });
+
+  totalesGenerales.peso_total_kg = parseFloat(totalesGenerales.peso_total_kg.toFixed(2));
+  totalesGenerales.peso_total_ton = parseFloat((totalesGenerales.peso_total_kg / 1000).toFixed(2));
+  totalesGenerales.precio_subtotal_venta_dolares = parseFloat(totalesGenerales.precio_subtotal_venta_dolares.toFixed(2));
+  totalesGenerales.precio_subtotal_venta_soles = parseFloat(totalesGenerales.precio_subtotal_venta_soles.toFixed(2));
+  totalesGenerales.precio_subtotal_alquiler_soles = parseFloat(totalesGenerales.precio_subtotal_alquiler_soles.toFixed(2));
+
+  return {
+    despiece: Object.values(mapaUnificado),
+    totales: totalesGenerales,
+  };
+}
+
+
   module.exports = { 
     agruparPorPieza,
     calcularSubtotales,
     mapearPiezasConDatos,
     combinarResultados,
     calcularTotalesGenerales,
+    unificarDespiecesConTotales
    };

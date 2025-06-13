@@ -3,19 +3,23 @@ const {
 } = require("../../infrastructure/services/generarDespieceAndamioTrabajoService");
 
 module.exports = async (dataParaGenerarDespiece) => {
-  const atributos = dataParaGenerarDespiece.atributos_formulario;
-
-  const atributosFormularioFormateado = atributos.map((atributo) => ({
+  console.log("Data para generar despiece: ", dataParaGenerarDespiece)
+  const dataGenerarDespieceAndamioTrabajo = dataParaGenerarDespiece.map((data) => (({
+    ...data,
+    atributos_formulario: data.atributos_formulario.map((atributo) => ({
     ...atributo,
     longitud: Number(atributo.longitud),
     ancho: Number(atributo.ancho),
     altura: Number(atributo.altura),
     diagonalAncho: Number(atributo.diagonalAncho),
     tuboAmarre: Number(atributo.tuboAmarre)
-  }));
+  }))
+  })))
+
+  console.log('dataGenerarDespieceAndamioTrabajo', dataGenerarDespieceAndamioTrabajo);
 
   const despieceGenerado = await generarDespieceAndamioTrabajo(
-    atributosFormularioFormateado
+    dataGenerarDespieceAndamioTrabajo
   );
 
   return {

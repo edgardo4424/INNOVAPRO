@@ -25,7 +25,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
   try {
     const {
       uso_id,
-      atributos_formulario,
+      zonas, // Vienen los atributos por zona
       cotizacion,
       despiece,
     } = cotizacionData;
@@ -42,7 +42,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       tipoCotizacion: cotizacion.tipo_cotizacion,
       cotizacion,
       uso_id,
-      atributos_formulario
+      zonas
     });
 
     // 2. Insertar Despiece
@@ -83,7 +83,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
     const atributosValor = await mapearValoresAtributos({
       uso_id,
       despiece_id,
-      atributos_formulario,
+      zonas, // Vienen los atributos por zona
     });
 
     // Validación de todos los atributos valor
@@ -170,7 +170,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
           if(atributos_formulario[0].alturaTotal % 2 !== 0){
             numero_tramos = numero_tramos + 0.5
           }
-          console.log('numero_tramos', numero_tramos);
+
           datosParaCalcularCostoTransporte.numero_tramos = numero_tramos
           break;
         
@@ -196,7 +196,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
 
       const datosParaGuardarCotizacionesTransporte =  (await calcularCostoTransporte(datosParaCalcularCostoTransporte)).respuesta;
 
-      console.log('datosParaGuardarCotizacionesTransporte',datosParaGuardarCotizacionesTransporte);
       const mapeoDataGuardar = {
         cotizacion_id: cotizacionCreada.id,
         uso_id: uso_id, 
@@ -207,12 +206,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
         unidad: datosParaGuardarCotizacionesTransporte.unidad,
         cantidad: datosParaGuardarCotizacionesTransporte.cantidad,
 
-        /* costo_tarifas_transporte: datosParaGuardarCotizacionesTransporte.costosTransporte.costo_tarifas_transporte,
-        costo_distrito_transporte: datosParaGuardarCotizacionesTransporte.costosTransporte.costo_distrito_transporte,
-        costo_pernocte_transporte: datosParaGuardarCotizacionesTransporte.costosTransporte.costo_pernocte_transporte, 
-         costo_total: datosParaGuardarCotizacionesTransporte.costosTransporte.costo_total,
-        */
-
         costo_tarifas_transporte: cotizacion.costo_tarifas_transporte,
         costo_distrito_transporte: cotizacion.costo_distrito_transporte,
         costo_pernocte_transporte: cotizacion.costo_pernocte_transporte,
@@ -221,15 +214,11 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
 
       }
 
-      console.log('mapeoDataGuardar', mapeoDataGuardar);
 
       await db.cotizaciones_transporte.create(mapeoDataGuardar, { transaction })
     }
 
     // 7. Insertar precios de instalacion
-
-    console.log('cotizacion', cotizacion);
-    console.log('tiene instalacion', cotizacion.tiene_instalacion);
 
     let tipo_instalacion;
 
@@ -248,7 +237,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
             /* nota: cotizacion.nota_instalacion */
           }
 
-          console.log('dataInstalacionCompleta', dataInstalacionCompleta);
           await db.cotizaciones_instalacion.create(dataInstalacionCompleta, { transaction });
           
           break;
@@ -264,7 +252,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
             nota: cotizacion.nota_instalacion
           }
 
-          console.log('dataInstalacionParcial', dataInstalacionParcial);
           await db.cotizaciones_instalacion.create(dataInstalacionParcial, { transaction });
           break;
       

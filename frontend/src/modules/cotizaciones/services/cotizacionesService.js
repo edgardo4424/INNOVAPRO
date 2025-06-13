@@ -20,23 +20,23 @@ export async function generarDespiece(atributos, usoId) {
       uso = "escalera-de-acceso";
       break;
   }
-  const response = await api.post(`/despieces/${uso}`, {
-    atributos_formulario: atributos,
-  });
+  const response = await api.post(`/despieces/${uso}`, 
+    atributos,
+  );
   return response.data.despieceGenerado;
 }
 
 // Crear una cotización completa
 export async function crearCotizacion({
   uso_id,
-  atributos_formulario,
+  zonas,
   cotizacion,
   despiece,
 }) {
-  console.log({uso_id, atributos_formulario, cotizacion, despiece});
+  console.log({uso_id, zonas, cotizacion, despiece});
   const response = await api.post("/cotizaciones", {
     uso_id,
-    atributos_formulario,
+    zonas,
     cotizacion,
     despiece,
   });
