@@ -40,10 +40,11 @@ export default function GestionContactos() {
 
          {/* 🔍 Buscador + botón */}
          <div className="flex flex-row-reverse md:flex-row justify-between px-4 my-4 md:my-8 items-center gap-4">
-            <Button className="btn-agregar" onClick={abrirModalAgregar}>
-               <BadgePlus />
-               <span className="hidden md:block">Agregar Contacto</span>
-            </Button>
+            <ModalAgregarContacto
+               clientes={clientes}
+               obras={obras}
+               onSubmit={agregarContacto}
+            />
             <div className="relative flex-1 w-full md:max-w-80 ">
                <Input
                   type="text"
@@ -78,7 +79,7 @@ export default function GestionContactos() {
          />
 
          {/* 🧾 Modal Agregar */}
-         {modalAgregar && (
+         {/* {modalAgregar && (
             <ModalAgregarContacto
                contacto={nuevoContacto}
                setContacto={setNuevoContacto}
@@ -87,10 +88,10 @@ export default function GestionContactos() {
                onCancel={cerrarModalAgregar}
                onSubmit={agregarContacto}
             />
-         )}
+         )} */}
 
          {/* 🛠 Modal Editar */}
-         {contactoEditando && (
+         {/* {contactoEditando && (
             <ModalEditarContacto
                contacto={contactoEditando}
                setContacto={setContactoEditando}
@@ -99,7 +100,7 @@ export default function GestionContactos() {
                onCancel={cerrarModalEditar}
                onSubmit={guardarEdicion}
             />
-         )}
+         )} */}
       </div>
    );
 }
