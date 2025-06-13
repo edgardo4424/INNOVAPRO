@@ -36,8 +36,6 @@ export default function ModalEditarEmpresa({ onSubmit, empresa }) {
       e.preventDefault();
       setOpen(false);
    };
-
-   console.log('dats empresa',empresa);
    
    const handleClose = () => setOpen(false);
 

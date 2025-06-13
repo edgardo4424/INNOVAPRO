@@ -18,11 +18,10 @@ import {
    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { BadgePlus } from "lucide-react";
+import { BadgePlus, Edit } from "lucide-react";
 
 export default function ModalEditarCliente({
    cliente,
-   onClose,
    actualizarCliente,
 }) {
    const [clienteEditado, setClienteEditado] = useState({ ...cliente });
@@ -31,7 +30,8 @@ export default function ModalEditarCliente({
 
    const handleSubmit = async (e) => {
       e.preventDefault();
-
+       console.log('entrando ala funcions');
+       
       const erroresValidados =
          clienteEditado.tipo === "Persona Jurídica"
             ? validarClienteJuridico(clienteEditado)
@@ -56,7 +56,7 @@ export default function ModalEditarCliente({
          if (res.data && res.data.cliente) {
             actualizarCliente(res.data.cliente);
             toast.success("Cliente actualizado correctamente");
-            onClose();
+            // onClose();
             setOpen(false);
          } else {
             toast.error("Error al actualizar el cliente");
@@ -70,53 +70,35 @@ export default function ModalEditarCliente({
    const handleCancel = (e) => {
       e.preventDefault();
       setOpen(false);
-      onClose();
+      // onClose();
    };
 
    return (
-      // <div className="centro-modal">
-      //   <div className="modal-content">
-      //     <h3>Editar Cliente</h3>
-      //     <ClienteForm
-      //       cliente={clienteEditado}
-      //       setCliente={setClienteEditado}
-      //       errores={errores}
-      //       setErrores={setErrores}
-      //       onCancel={onClose}
-      //       onSubmit={handleSubmit}
-      //     />
-      //   </div>
-      // </div>
       <AlertDialog open={open} onOpenChange={setOpen}>
          <AlertDialogTrigger asChild>
-            <Button className="btn-agregar">
-               <BadgePlus />
-               <span className="hidden md:block">Agregar Cliente</span>
+            <Button
+               variant={"outline"}
+               size={"icon"}
+               className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-600"
+            >
+               <Edit className="h-4 w-4" />
             </Button>
          </AlertDialogTrigger>
          <AlertDialogContent>
             <AlertDialogHeader>
-               <AlertDialogTitle>Crear Cliente</AlertDialogTitle>
+               <AlertDialogTitle>Editar Cliente</AlertDialogTitle>
                <AlertDialogDescription className="text-center">
-                  Complete correctamente los datos para crar el cliente
+                  Complete correctamente los datos para editar el cliente
                </AlertDialogDescription>
             </AlertDialogHeader>
-            <div className="max-h-96 overflow-y-auto px-2">
-               <ClienteForm
-                  cliente={clienteEditado}
-                  setCliente={setClienteEditado}
-                  errores={errores}
-                  setErrores={setErrores}
-               />
-            </div>
-            <AlertDialogFooter>
-               <Button variant="outline" onClick={handleCancel}>
-                  Cancelar
-               </Button>
-               <Button className="bg-sky-950" onClick={handleSubmit}>
-                  Guardar
-               </Button>
-            </AlertDialogFooter>
+            <ClienteForm
+               cliente={clienteEditado}
+               setCliente={setClienteEditado}
+               errores={errores}
+               setErrores={setErrores}
+               handleCancel={handleCancel}
+               handleSubmit={handleSubmit}
+            />
          </AlertDialogContent>
       </AlertDialog>
    );

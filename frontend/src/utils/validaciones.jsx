@@ -32,7 +32,7 @@ export function validarPassword(password) {
 
   // Solo números exactos
 export function validarNumeroExacto(value, longitud) {
-  const regex = new RegExp(`^\\d{${longitud}}$`);
+  const regex = new RegExp(`^\\d{${longitud}}$`);  
   return regex.test(value);
 }
 
