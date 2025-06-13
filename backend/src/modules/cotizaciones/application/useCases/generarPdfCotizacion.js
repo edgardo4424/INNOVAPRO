@@ -71,20 +71,14 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
 
   const usoEncontrado = await db.usos.findByPk(uso_id);
 
-  // Para saber la cantidad de usos
-  const cantidadAttributosDelUso = await db.atributos.count({
-    where: {
-      uso_id: cotizacionEncontrado.uso.id,
-    },
-  });
-
-  const cantidadAtributosValor = await db.atributos_valor.count({
+  const atributosValor = await db.atributos_valor.findAll({
     where: {
       despiece_id: despieceEncontrado.id,
     },
-  });
-  const cantidadUso = cantidadAtributosValor / cantidadAttributosDelUso;
+    raw: true
+  })
 
+  console.log('atributosValor', atributosValor);
   const tipoServicio = cotizacionEncontrado.tipo_cotizacion;
   let tiempoAlquilerDias = null;
 
@@ -154,7 +148,7 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
     uso: {
       id: usoEncontrado.id,
       nombre: usoEncontrado.descripcion,
-      cantidad_uso: cantidadUso,
+      //cantidad_uso: cantidadUso,
     },
 
     instalacion: {
@@ -254,6 +248,7 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
             ? pernoEnElDespiece.cantidad
             : null,
         },
+
       };
       break;
 
