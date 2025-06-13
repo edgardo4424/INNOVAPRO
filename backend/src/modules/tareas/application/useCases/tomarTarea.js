@@ -7,7 +7,7 @@ const {
 
 
 // ✅ Importamos el servicio de envío por WhatsApp
-const enviarMensajeWhatsApp = require("../../infrastructure/services/enviarMensajeService");
+const enviarMensajeWhatsAppTomaTarea = require("../../infrastructure/services/enviarMensajeServiceTomaTarea");
 
 module.exports = async (idTarea, idUsuario, tareaRepository) => {
 
@@ -51,42 +51,40 @@ module.exports = async (idTarea, idUsuario, tareaRepository) => {
 
 
   // ✅ Enviar mensaje por WhatsApp al creador ANTES de notificarlo
-  console.log("Hola como estas 1 ");
-  try {
-    console.log("Hola como estas 2");
-    
-      console.log("Hola como estas 3");
-      /* await enviarMensajeWhatsApp(
-        tarea.usuario_solicitante.telefono, // formato internacional, ejemplo: "51987654321"
-        notiTecnico.usuario.nombre,
-        tarea.id.toString()
-      ); */
 
-      await enviarMensajeWhatsApp(
-        "51946222263", // formato internacional, ejemplo: "51987654321"
-        notiTecnico.usuario.nombre,
+  /* await enviarMensajeWhatsApp(
+    tarea.usuario_solicitante.telefono, // formato internacional, ejemplo: "51987654321"
+    notiTecnico.usuario.nombre,
+    tarea.id.toString()
+  ); */
+  //console.log("noti tecnico: ", notiTecnico.usuario);
+
+
+  try {
+    // ✅ Notificar al creador
+    if (tarea.usuario_solicitante) {
+      const notificacionParaElCreador = {
+        usuarioId: tarea.usuario_solicitante.id,
+        mensaje: `El técnico ${notiTecnico.usuario.nombre} ha tomado tu tarea #${tarea.id}.`,
+        tipo: "tarea",
+      };
+      const notiCreador = await notificacionRepository.crear(
+        notificacionParaElCreador
+      );
+
+      console.log("notiCreador", notiCreador);
+      await enviarMensajeWhatsAppTomaTarea(
+        `51${notiCreador.telefono}`, // formato internacional, ejemplo: "51987654321"
+        notiCreador.usuario.nombre,
         tarea.id
       );
 
-    
+      emitirNotificacionPrivada(notificacionParaElCreador.usuarioId, notiCreador); // 🔥 ENVÍA OBJETO COMPLETO
+    }
   } catch (error) {
     console.error("❌ Error al enviar WhatsApp al creador:", error.response?.data || error.message);
   }
 
-
-  // ✅ Notificar al creador
-  if (tarea.usuario_solicitante) {
-    const notificacionParaElCreador = {
-      usuarioId: tarea.usuario_solicitante.id,
-      mensaje: `El técnico ${notiTecnico.usuario.nombre} ha tomado tu tarea #${tarea.id}.`,
-      tipo: "tarea",
-    };
-    const notiCreador = await notificacionRepository.crear(
-      notificacionParaElCreador
-    );
-
-    emitirNotificacionPrivada(notificacionParaElCreador.usuarioId, notiCreador); // 🔥 ENVÍA OBJETO COMPLETO
-  }
 
   return {
     codigo: 200,
