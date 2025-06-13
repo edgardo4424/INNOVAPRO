@@ -5,6 +5,10 @@ const {
   emitirNotificacionPrivada,
 } = require("../../../notificaciones/infrastructure/services/emisorNotificaciones");
 
+
+// ✅ Importamos el servicio de envío por WhatsApp
+const enviarMensajeWhatsApp = require("../../infrastructure/services/enviarMensajeServiceTomaTarea");
+
 module.exports = async (idTarea, correcion, tareaRepository) => {
   const usuarioIdTecnico = await tareaRepository.obtenerPorId(idTarea);
 
@@ -21,9 +25,8 @@ module.exports = async (idTarea, correcion, tareaRepository) => {
 
   const notificacionAlTecnico = {
     usuarioId: usuarioIdTecnico.asignadoA,
-    mensaje: `La tarea #${tarea.id} ha sido corregida por el comercial ${
-      tarea.usuario_solicitante?.nombre || "desconocido"
-    }.`,
+    mensaje: `La tarea #${tarea.id} ha sido corregida por el comercial ${tarea.usuario_solicitante?.nombre || "desconocido"
+      }.`,
     tipo: "info",
   };
 
@@ -38,20 +41,32 @@ module.exports = async (idTarea, correcion, tareaRepository) => {
 
   // ✅ Notificar al creador
 
-  const notificacionAlCreador = {
-    usuarioId: tarea.usuarioId,
-    mensaje: `La tarea #${tarea.id} ha sido corregida`,
-    tipo: "info",
-  };
+  try {
+    const notificacionAlCreador = {
+      usuarioId: tarea.usuarioId,
+      mensaje: `La tarea #${tarea.id} ha sido corregida`,
+      tipo: "info",
+    };
 
-  const notiRegistradoCreador = await notificacionRepository.crear(
-    notificacionAlCreador
-  );
+    const notiRegistradoCreador = await notificacionRepository.crear(
+      notificacionAlCreador
+    );
 
-  emitirNotificacionPrivada(
-    notificacionAlCreador.usuarioId,
-    notiRegistradoCreador
-  );
+    console.log("notiRegistradoCreador", notiRegistradoCreador);
+    await enviarMensajeWhatsApp(
+      `51${notiRegistradoCreador.telefono}`, // formato internacional, ejemplo: "51987654321"
+      notiRegistradoCreador.usuario.nombre,
+      tarea.id
+    );
+
+    emitirNotificacionPrivada(
+      notificacionAlCreador.usuarioId,
+      notiRegistradoCreador
+    );
+  } catch (error) {
+    console.error("❌ Error al enviar WhatsApp al creador:", error.response?.data || error.message);
+  }
+
 
   return {
     codigo: 200,
