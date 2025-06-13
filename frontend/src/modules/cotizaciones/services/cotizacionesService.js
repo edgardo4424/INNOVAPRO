@@ -29,14 +29,14 @@ export async function generarDespiece(atributos, usoId) {
 // Crear una cotización completa
 export async function crearCotizacion({
   uso_id,
-  atributos_formulario,
+  zonas,
   cotizacion,
   despiece,
 }) {
-  console.log({uso_id, atributos_formulario, cotizacion, despiece});
+  console.log({uso_id, zonas, cotizacion, despiece});
   const response = await api.post("/cotizaciones", {
     uso_id,
-    atributos_formulario,
+    zonas,
     cotizacion,
     despiece,
   });

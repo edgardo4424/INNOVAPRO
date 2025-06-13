@@ -1,7 +1,7 @@
-const db = require("../../../../models");
+const db = require("../../../../models")
 
 async function mapearValoresAtributos({ uso_id, despiece_id, zonas }) {
-
+  console.log("zonas:",zonas)
   const atributos_formulario = zonas.flatMap((zona) => {
     const numero_zona = zona.zona;
 
