@@ -5,8 +5,16 @@ const sunatRepository = new sequelizeSunatRepository();
 
 const sunatController = {
   async buscarPorRUC(req, res) {
-    const resultado = await buscarRUC(req.params.ruc, sunatRepository);
-    res.status(resultado.codigo).json(resultado.respuesta);
+
+    try {
+      const resultado = await buscarRUC(req.params.ruc, sunatRepository);
+     res.status(resultado.codigo).json(resultado.respuesta);
+    } catch (error) {
+      console.error("❌ Error al buscar ruc:", error.message);
+      res.status(500).json({ mensaje: "❌ Error al buscar los datos por ruc." });
+    }
+
+    
   },
 
   async importarPadron(req, res) {
