@@ -36,7 +36,8 @@ async function mapearValoresAtributos({ uso_id, despiece_id, zonas }) {
           atributo_id: mapaAtributos.get(llave),
           valor: valor != null ? valor.toString() : null,
           numero_formulario_uso: obj.numero_formulario_uso,
-          zona: obj.zona
+          zona: obj.zona,
+          nota_zona: obj.nota_zona
         });
       }
     }

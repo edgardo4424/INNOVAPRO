@@ -78,6 +78,15 @@ const Tarea = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: true,
     },
+  /*   usoId: {
+      type: DataTypes.INTEGER,
+      references: { model: "usos", key: "id" },
+    },
+    contactoId: {
+      type: DataTypes.INTEGER,
+       allowNull: false,
+      references: { model: "obras", key: "id" },
+    } */
   },
   {
     timestamps: false,
@@ -106,6 +115,14 @@ Tarea.associate = (models) => {
     foreignKey: "obraId",
     as: "obra",
   });
+/*     Tarea.belongsTo(models.usos, {
+    foreignKey: "usoId",
+    as: "uso",
+  });
+   Tarea.belongsTo(models.contactos, {
+    foreignKey: "contactoId",
+    as: "contacto",
+  }); */
 };
 
 module.exports = { Tarea }; // Exporta el modelo para que pueda ser utilizado en otros módulos

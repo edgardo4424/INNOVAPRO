@@ -221,6 +221,10 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
 
       const listaAtributos = agruparPorZonaYAtributos(resultado);
 
+      listaAtributos.map((atri) => {
+        console.log(atri.atributos);
+      })
+
       const atributosDelPdf = listaAtributos.map((atributo) => (({
         zona: atributo.zona,
         atributos: atributo.atributos.map((at) => (({
@@ -228,7 +232,8 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
           ancho_mm: at.ancho / 1000,
           altura_m: at.altura,
           cantidad_uso: at.cantidad_uso
-        })))
+        }))),
+        nota_zona: atributo.atributos[0].nota_zona
       })))
 
       datosPdfCotizacion = {
