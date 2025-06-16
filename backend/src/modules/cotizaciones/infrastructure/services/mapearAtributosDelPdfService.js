@@ -7,7 +7,8 @@ function mapearPorAtributos(data, atributosMap) {
     if (!agrupado[key]) {
       agrupado[key] = {
         numero_formulario_uso: item.numero_formulario_uso,
-        zona: item.zona
+        zona: item.zona,
+        nota_zona: item.nota_zona
       };
     }
 
@@ -55,6 +56,7 @@ function agruparPorZonaYAtributos(data) {
   }
 
   for (const [zona, atributosMap] of zonasMap.entries()) {
+
     resultado.push({
       zona,
       atributos: Array.from(atributosMap.values())

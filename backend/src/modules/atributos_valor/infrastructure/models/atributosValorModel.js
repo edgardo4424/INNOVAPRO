@@ -33,6 +33,9 @@ const AtributosValor = sequelize.define(
     },
     zona: {
       type: DataTypes.INTEGER
+    },
+    nota_zona: {
+      type: DataTypes.STRING
     }
   }, {
     timestamps: false,
