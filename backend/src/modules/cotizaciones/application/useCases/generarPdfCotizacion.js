@@ -2,9 +2,10 @@ const db = require("../../../../models");
 const {
   formatearFechaIsoADMY,
 } = require("../../infrastructure/helpers/formatearFecha");
-const { mapearPorAtributos } = require("../../infrastructure/services/mapearAtributosDelPdfService");
+const { mapearPorAtributos, agruparPorZonaYAtributos } = require("../../infrastructure/services/mapearAtributosDelPdfService");
 
 module.exports = async (idCotizacion, cotizacionRepository) => {
+
   // Buscar la cotizacion incluyendo: obra, cliente, contacto, despiece, filial, usuario, costos de cotizacion de transporte
   const cotizacionEncontrado = await db.cotizaciones.findByPk(idCotizacion, {
     include: [
@@ -71,14 +72,6 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
 
   const usoEncontrado = await db.usos.findByPk(uso_id);
 
-  const atributosValor = await db.atributos_valor.findAll({
-    where: {
-      despiece_id: despieceEncontrado.id,
-    },
-    raw: true
-  })
-
-  console.log('atributosValor', atributosValor);
   const tipoServicio = cotizacionEncontrado.tipo_cotizacion;
   let tiempoAlquilerDias = null;
 
@@ -93,8 +86,6 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
       cotizacion_id: cotizacionEncontrado.id,
     },
   });
-
-  console.log("instalacionEncontrada", instalacionEncontrada);
 
   // Mapear los datos generales para todos los usos para generar el pdf
 
@@ -216,23 +207,33 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
         1: "longitud",
         2: "ancho",
         3: "altura",
+        4: "tipoApoyo",
+        5: "diagonalLongitud",
+        7: "plataformaAcceso",
+        8: "cantPlataforma",
+        9: "tipoPlataforma",
+        10: "tipoRodapie",
+        11: "tuboAmarre",
+        12: "paraIzaje"
       };
 
       const resultado = mapearPorAtributos(atributosDelUso, atributosMap);
 
-      console.log('resultado', resultado);
-      
-      const listaAtributos = resultado.map((atributo) => (({
-        longitud_mm: atributo.longitud/1000,
-        ancho_mm: atributo.ancho/1000,
-        altura_m: atributo.altura,
-        numero_formulario_uso: atributo.numero_formulario_uso,
-        zona: atributo.zona
+      const listaAtributos = agruparPorZonaYAtributos(resultado);
+
+      const atributosDelPdf = listaAtributos.map((atributo) => (({
+        zona: atributo.zona,
+        atributos: atributo.atributos.map((at) => (({
+          longitud_mm: at.longitud / 1000,
+          ancho_mm: at.ancho / 1000,
+          altura_m: at.altura,
+          cantidad_uso: at.cantidad_uso
+        })))
       })))
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
-        atributos: listaAtributos,
+        zonas: atributosDelPdf,
         atributos_opcionales: {
           tiene_pernos: tiene_pernos,
           nombre_perno_expansion: tiene_pernos
@@ -286,8 +287,6 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
       const atributosPlanoEscaleraAcceso =
         despieceEncontrado.atributos_valors.map((av) => av.dataValues);
 
-      console.log("atributosPlanoEscaleraAcceso", atributosPlanoEscaleraAcceso);
-
       const resultadoEscaleraAcceso = [];
 
       const agrupadoEscaleraAcceso = {};
@@ -302,9 +301,6 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
       Object.keys(agrupadoEscaleraAcceso).forEach((grupo) => {
         resultadoEscaleraAcceso.push(agrupadoEscaleraAcceso[grupo]);
       });
-
-      console.log("agrupadoEscaleraAcceso", agrupadoEscaleraAcceso);
-      console.log("resultadoEscaleraAcceso", resultadoEscaleraAcceso);
 
       const listaAtributosEscaleraAcceso = resultadoEscaleraAcceso.map(
         (atributo) => {

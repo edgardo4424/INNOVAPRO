@@ -20,4 +20,50 @@ function mapearPorAtributos(data, atributosMap) {
   return Object.values(agrupado);
 }
 
-module.exports = { mapearPorAtributos };
+function agruparPorZonaYAtributos(data) {
+  const resultado = [];
+
+  function claveSinFormulario(obj) {
+    const { numero_formulario_uso, ...resto } = obj;
+    const ordenado = Object.keys(resto)
+      .sort()
+      .reduce((acc, key) => {
+        acc[key] = resto[key];
+        return acc;
+      }, {});
+    return JSON.stringify(ordenado);
+  }
+
+  const zonasMap = new Map();
+
+  for (const item of data) {
+    const { zona } = item;
+    if (!zonasMap.has(zona)) {
+      zonasMap.set(zona, new Map());
+    }
+
+    const zonaMap = zonasMap.get(zona);
+    const clave = claveSinFormulario(item);
+
+    if (zonaMap.has(clave)) {
+      const existente = zonaMap.get(clave);
+      existente.cantidad_uso += 1;
+    } else {
+      const nuevo = { ...item, cantidad_uso: 1 };
+      zonaMap.set(clave, nuevo);
+    }
+  }
+
+  for (const [zona, atributosMap] of zonasMap.entries()) {
+    resultado.push({
+      zona,
+      atributos: Array.from(atributosMap.values())
+    });
+  }
+
+  return resultado;
+}
+
+
+
+module.exports = { mapearPorAtributos, agruparPorZonaYAtributos };
