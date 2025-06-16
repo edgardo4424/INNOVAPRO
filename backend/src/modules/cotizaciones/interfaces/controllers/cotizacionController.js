@@ -15,6 +15,7 @@ const CotizacionController = {
     async crearCotizacion(req, res) {
         try {
 
+            console.log('REQ.BODYYYYYYYYYYYYYYYYYYYYYYYY', req.body);
             const datos = {
                 ...req.body,
                 cotizacion: {

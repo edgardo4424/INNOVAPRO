@@ -58,7 +58,7 @@ export async function generarCuerpoAndamioTrabajo(doc, data, startY = 120) {
   currentY += 6;
 
   for (const zona of data.zonas || []) {
-    const zonaTitulo = `Zona ${zona.zona || "1"} - ${zona.nota || "(DESCRIPCIÓN DE ZONA INDEFINIDA)"}`;
+    const zonaTitulo = `Zona ${zona.zona || "1"} - ${zona.nota_zona || "(DESCRIPCIÓN DE ZONA INDEFINIDA)"}`;
     currentY = drawJustifiedText(doc, `**${zonaTitulo}**`, indent + 3, currentY, 170, 5.5, 10);
 
     for (const equipo of zona.atributos || []) {

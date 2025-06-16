@@ -5,12 +5,17 @@ async function mapearValoresAtributos({ uso_id, despiece_id, zonas }) {
   const atributos_formulario = zonas.flatMap((zona) => {
     const numero_zona = zona.zona;
 
+    console.log('AQUIIII', zona.atributos_formulario);
     return zona.atributos_formulario.map((atributo, index) => ({
       ...atributo,
       zona: numero_zona,
-      numero_formulario_uso: index + 1
+      numero_formulario_uso: index + 1,
+      nota_zona: zona.nota_zona
     }));
   });
+
+  console.log('atributos_formulario', atributos_formulario);
+
 
   // 1. Traer los atributos relacionados al uso
   const atributos = await db.atributos.findAll({
@@ -42,6 +47,8 @@ async function mapearValoresAtributos({ uso_id, despiece_id, zonas }) {
       }
     }
   });
+
+  console.log('valoresDeAtributosMapeados', valoresDeAtributosMapeados);
 
   return valoresDeAtributosMapeados;
 }

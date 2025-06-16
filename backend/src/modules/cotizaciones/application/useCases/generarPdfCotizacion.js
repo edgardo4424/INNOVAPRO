@@ -246,8 +246,8 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
             : null,
           precio_perno_expansion: tiene_pernos
             ? (
-                Number(pernoExpansionConArgolla.precio_venta_soles) *
-                Number(pernoEnElDespiece.cantidad)
+                Number(pernoEnElDespiece.precio_venta_soles)
+           
               ).toFixed(2)
             : null,
           cantidad_pernos_expansion: tiene_pernos
