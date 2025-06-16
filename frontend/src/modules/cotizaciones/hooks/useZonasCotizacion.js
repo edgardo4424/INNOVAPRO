@@ -6,6 +6,7 @@ export const useZonasCotizacion = (usoId) => {
   const [atributos, setAtributos] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Cargar atributos por uso
   useEffect(() => {
     const cargarAtributos = async () => {
       if (!usoId) return;
@@ -34,6 +35,26 @@ export const useZonasCotizacion = (usoId) => {
     cargarAtributos();
   }, [usoId]);
 
+  // Inicializar atributos vacíos ("") para cada equipo
+  useEffect(() => {
+    if (atributos.length === 0) return;
+
+    setZonas((zonasPrevias) =>
+      zonasPrevias.map((zona) => ({
+        ...zona,
+        atributos_formulario: zona.atributos_formulario.map((equipo) => {
+          const nuevoEquipo = { ...equipo };
+          atributos.forEach((atrib) => {
+            if (!(atrib.llave_json in nuevoEquipo)) {
+              nuevoEquipo[atrib.llave_json] = "";
+            }
+          });
+          return nuevoEquipo;
+        }),
+      }))
+    );
+  }, [atributos]);
+
   const handleChange = (zonaIndex, equipoIndex, llave, valor) => {
     setZonas((prevZonas) => {
       const nuevasZonas = [...prevZonas];
@@ -53,23 +74,26 @@ export const useZonasCotizacion = (usoId) => {
   };
 
   const agregarEquipo = (zonaIndex) => {
-  setZonas((prev) => {
-    const nuevasZonas = JSON.parse(JSON.stringify(prev)); // clonado profundo
-    nuevasZonas[zonaIndex].atributos_formulario.push({});
-    return nuevasZonas;
-  });
-};
+    setZonas((prev) => {
+      const nuevasZonas = JSON.parse(JSON.stringify(prev)); // clonado profundo
+      const equipoVacio = {};
+      atributos.forEach((atrib) => {
+        equipoVacio[atrib.llave_json] = "";
+      });
+      nuevasZonas[zonaIndex].atributos_formulario.push(equipoVacio);
+      return nuevasZonas;
+    });
+  };
 
-const eliminarEquipo = (zonaIndex) => {
-  setZonas((prev) => {
-    const nuevasZonas = JSON.parse(JSON.stringify(prev)); // clonado profundo
-    if (nuevasZonas[zonaIndex].atributos_formulario.length > 1) {
-      nuevasZonas[zonaIndex].atributos_formulario.pop();
-    }
-    return nuevasZonas;
-  });
-};
-
+  const eliminarEquipo = (zonaIndex) => {
+    setZonas((prev) => {
+      const nuevasZonas = JSON.parse(JSON.stringify(prev)); // clonado profundo
+      if (nuevasZonas[zonaIndex].atributos_formulario.length > 1) {
+        nuevasZonas[zonaIndex].atributos_formulario.pop();
+      }
+      return nuevasZonas;
+    });
+  };
 
   return {
     zonas,
