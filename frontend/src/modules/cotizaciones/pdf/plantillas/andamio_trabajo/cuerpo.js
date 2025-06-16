@@ -41,7 +41,7 @@ export async function generarCuerpoAndamioTrabajo(doc, data, startY = 120) {
   const cantidad_dias = data.cotizacion?.tiempo_alquiler_dias === 1 ? "día" : "días";
 
   // ⚙️ Detalles cotización
-  const detalles = data.detalles_alquiler || [
+  /* const detalles = data.detalles_alquiler || [
     `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** ${data.uso.cantidad_uso || "(INDEFINIDO NÚMERO DE EQUIPOS)"} ${cantidad_equipos} De ${data.uso.nombre|| "(INDEFINIDO USO DE EQUIPO)"} de ${data.atributos?.longitud_mm || "(LONGITUD INDEFINIDA)"} m. de longitud x ${data.atributos?.ancho_mm || "(ANCHO INDEFINIDO)"} m. de ancho x ${data.atributos?.altura_m || "(ALTURA INDEFINIDA)"}.00 m. de altura + 1.00 m de baranda de seguridad: **S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.**`
   ];
 
@@ -53,12 +53,34 @@ export async function generarCuerpoAndamioTrabajo(doc, data, startY = 120) {
 
     currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimada);
     currentY = drawJustifiedText(doc, linea, indent + box + 3, currentY, 170, 5.5, 10);
+  } */
+
+  currentY += 6;
+
+  for (const zona of data.zonas || []) {
+    const zonaTitulo = `Zona ${zona.zona} - ${zona.descripcion || "(DESCRIPCIÓN DE ZONA INDEFINIDA)"}`;
+    currentY = drawJustifiedText(doc, `📍 ${zonaTitulo}`, indent + 3, currentY, 170, 5.5, 10);
+
+    for (const equipo of zona.atributos_formulario || []) {
+      const descripcionEquipo = `**CP${equipo.cp || "(INDEFINIDO)"}:** ${equipo.cantidad || "(CANTIDAD INDEFINIDA)"} ${equipo.cantidad === 1 ? "Ud." : "Uds."} de ${equipo.nombre || "(NOMBRE DE EQUIPO INDEFINIDO)"} de ${equipo.longitud_mm || "(LONGITUD INDEFINIDA)"} m. de longitud x ${equipo.ancho_mm || "(ANCHO INDEFINIDO)"} m. de ancho x ${equipo.altura_m || "(ALTURA INDEFINIDA)"}.00 m. de altura + 1.00 m de baranda de seguridad: **S/${equipo.precio || "(PRECIO SIN IGV INDEFINIDO)"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.**`;
+
+      const palabras = descripcionEquipo.split(/\s+/);
+      const aproxLineas = Math.ceil(palabras.length / 11);
+      const alturaEstimada = aproxLineas * 5;
+
+      currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimada);
+      currentY = drawJustifiedText(doc, descripcionEquipo, indent + box + 3, currentY, 170, 5.5, 10);
+    }
+
+    currentY += 4; // Espacio entre zonas
   }
 
-  if (data.atributos?.tiene_pernos === true) {
+  // Verifica si hay atributos opcionales como pernos de expansión
+
+  if (data.atributos_opcionales?.tiene_pernos === true) {
     // ⚙️ PERNOS DE EXPANSIÓN - M16 x 145 / C/Argolla
     const tiene_pernos_expansion = data.tiene_pernos || [
-      `${data.atributos?.cantidad_pernos_expansion || "(CANTIDAD INDEFINIDA DE PERNOS)"} Uds. ${data.atributos?.nombre_perno_expansion || "(TIPO DE PERNO INDEFINIDO)"}: **S/${data.atributos?.precio_perno_expansion || "(PRECIO PERNO INDEFINIDO)"} + IGV.**`
+      `${data.atributos_opcionales?.cantidad_pernos_expansion || "(CANTIDAD INDEFINIDA DE PERNOS)"} Uds. ${data.atributos_opcionales?.nombre_perno_expansion || "(TIPO DE PERNO INDEFINIDO)"}: **S/${data.atributos_opcionales?.precio_perno_expansion || "(PRECIO PERNO INDEFINIDO)"} + IGV.**`
     ];
 
     currentY += 6;

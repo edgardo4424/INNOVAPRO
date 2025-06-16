@@ -7,6 +7,7 @@ import {renderNotas} from "./notas";
 import { renderNotasVenta } from "../../componentes/notas_venta";
 import { generarCuerpoAndamioTrabajo } from "./cuerpo";
 import { generarCuerpoAndamioTrabajoVenta } from "./cuerpo_venta";
+import { renderInstalacion } from "../../componentes/instalacion";
 import { renderFondoPDF  } from "../../componentes/fondoPDF";
 
 export default async function generarPDFAndamio(doc, data) {
@@ -20,12 +21,14 @@ export default async function generarPDFAndamio(doc, data) {
   if (data.cotizacion?.tipo_servicio === "Venta") {
     // Si es una cotización de venta, usamos el cuerpo específico para venta
     currentY = await generarCuerpoAndamioTrabajoVenta(doc, data, currentY); // Genera el cuerpo del PDF para andamio de trabajo en venta
+    currentY = await renderInstalacion(doc, data, currentY); // Renderiza la sección de instalación si existe
     currentY = await renderTextoTransporteVenta(doc, data, currentY); // Texto transporte específico para venta
     currentY = await renderNotasVenta(doc, data, currentY); // Notas específicas para venta
   }
   else {
     // Si es una cotización normal, usamos el cuerpo estándar
     currentY = await generarCuerpoAndamioTrabajo(doc, data, currentY); // Genera el cuerpo del PDF para andamio de trabajo
+    currentY = await renderInstalacion(doc, data, currentY); // Renderiza la sección de instalación si existe
     currentY = await renderTextoTransporte(doc, data, currentY); // Texto transporte estándar
     currentY = await renderNotas(doc, data, currentY); // Notas estándar
   }
