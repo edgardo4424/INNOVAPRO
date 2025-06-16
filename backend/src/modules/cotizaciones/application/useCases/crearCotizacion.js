@@ -100,6 +100,10 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       }
     }
 
+    
+    console.log('atributosValor', atributosValor);
+ 
+
     await db.atributos_valor.bulkCreate(atributosValor, { transaction });
 
     // 5. Insertar Cotización
