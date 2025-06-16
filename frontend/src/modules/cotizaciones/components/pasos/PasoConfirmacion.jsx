@@ -4,8 +4,8 @@ import { generarDespiece, calcularCostoTransporte } from "../../services/cotizac
 import Loader from "../../../../shared/components/Loader";
 
 export default function PasoConfirmacion() {
-  const { formData, setFormData } = useWizardContext();
-  console.log(formData)
+  const { formData, setFormData } = useWizardContext(); 
+  
   useEffect(() => {
     const cargarDespiece = async () => {
       try {
@@ -25,9 +25,24 @@ export default function PasoConfirmacion() {
           );
         });
 
+        const despieceFiltrado = data.despiece.map((pieza) => {
+          const descripcion = pieza.descripcion?.toUpperCase() || "";
+          const esPerno = descripcion.includes("PERNO DE EXPANSIÓN") ||
+            descripcion.includes("PERNOS DE EXPANSION") ||
+            descripcion.includes("M12 X 80") ||
+            descripcion.includes("M16 X 145");
+        
+        return {
+          ...pieza,
+          esPerno,
+          precio_u_venta_soles: esPerno ? 15 : pieza.precio_u_venta_soles, // Valor inicial para pernos
+          precio_venta_soles: esPerno ? (pieza.total * 15) : pieza.precio_venta_soles,
+        };
+      });
+
         setFormData((prev) => ({
           ...prev,
-          despiece: data.despiece,
+          despiece: despieceFiltrado,
           resumenDespiece: {
             total_piezas: data.total_piezas,
             peso_total_kg: data.peso_total_kg,
@@ -50,6 +65,25 @@ export default function PasoConfirmacion() {
     cargarDespiece();
   }, []);
 
+  // Filtrar despiece si el usuario no desea incluir pernos
+
+  useEffect(() => {
+    if (!formData.despiece?.length) return;
+
+    const despieceActualizado = formData.despiece.filter(pieza => {
+      if (pieza.esPerno && !formData.tiene_pernos) {
+        return false; // ❌ eliminar si no desea incluirlos
+      }
+      return true;
+    });
+
+    setFormData((prev) => ({
+      ...prev,
+      despiece: despieceActualizado
+    }));
+  }, [formData.tiene_pernos]);
+
+
   function extraerDistrito(direccion) {
         if (!direccion) return "";
         const partes = direccion.split(",").map(p => p.trim());
@@ -71,11 +105,9 @@ export default function PasoConfirmacion() {
       const direccion = formData.obra_direccion || "";
       const distrito = extraerDistrito(direccion);
 
-
-
       if (!distrito || !pesoTn) return;
 
-      console.log(extraerDistrito(formData.obra_direccion))
+      console.log("Distrito extraído", extraerDistrito(formData.obra_direccion))
 
       try {
         
@@ -92,7 +124,6 @@ export default function PasoConfirmacion() {
           case 2: // Andamios de Trabajo
             break;
           case 3:
-            console.log(formData)
             let numero_tramos = formData.atributos[0].alturaTotal / 2;
             if (formData.atributos[0].alturaTotal % 2 !== 0) {
               numero_tramos = numero_tramos + 0.5;
@@ -232,6 +263,37 @@ export default function PasoConfirmacion() {
         </div>
       )}
 
+      {/*Si el usuario desea incluir pernos, mostrar el precio unitario y permitir editarlo*/}
+
+      {formData.tiene_pernos && formData.despiece.some(p => p.esPerno) && (
+      <div className="wizard-section">
+        <label>💸 Precio de venta de los PERNOS DE EXPANSIÓN (S/)</label>
+        <input
+          type="number"
+          min="0"
+          value={
+            formData.despiece.find(p => p.esPerno)?.precio_u_venta_soles || 15
+          }
+          onChange={(e) => {
+            const nuevoPrecio = parseFloat(e.target.value);
+            const nuevoDespiece = formData.despiece.map(p =>
+              p.esPerno
+                ? {
+                    ...p,
+                    precio_u_venta_soles: nuevoPrecio,
+                    precio_venta_soles: nuevoPrecio * p.total
+                  }
+                : p
+            );
+
+            setFormData((prev) => ({
+              ...prev,
+              despiece: nuevoDespiece
+            }));
+          }}
+        />
+      </div>
+    )}
 
       <div className="wizard-section">
         <label>¿Requiere servicio de transporte para el siguiente distrito?</label>

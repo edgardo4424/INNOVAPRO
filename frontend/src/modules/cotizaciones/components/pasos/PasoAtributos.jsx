@@ -37,6 +37,24 @@ const PasoAtributos = () => {
         <div key={zonaIndex} className="bloque-zona">
           <h3>🗂️ Zona {zonaIndex + 1}</h3>
 
+          <div className="wizard-section">
+            <label>📝 Nota de zona (Ej: Primera fachada, ducto posterior...)</label>
+            <input
+              type="text"
+              placeholder="Describe brevemente a qué se refiere esta zona"
+              value={zona.nota_zona || ""}
+              onChange={(e) => {
+                const nuevaNota = e.target.value;
+                setZonas((prev) => {
+                  const nuevasZonas = [...prev];
+                  nuevasZonas[zonaIndex].nota_zona = nuevaNota;
+                  return nuevasZonas;
+                });
+              }}
+            />
+          </div>
+
+
           {zona.atributos_formulario.map((equipo, equipoIndex) => (
             <div key={equipoIndex} className="bloque-equipo">
               <h4>Equipo {equipoIndex + 1}</h4>

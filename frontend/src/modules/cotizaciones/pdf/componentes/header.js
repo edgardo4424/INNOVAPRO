@@ -1,7 +1,7 @@
 import { drawJustifiedText } from "../../../../utils/pdf/drawJustifiedText"
 
 
-export default function encabezadoCotizacion(doc, data, cotizacionId) {
+export default function encabezadoCotizacion(doc, data) {
     const lh = 3;
     let currentY = 16;
     let colLeftX = 87;

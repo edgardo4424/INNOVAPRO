@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { obtenerAtributosPorUso } from "../services/cotizacionesService";
 
 export const useZonasCotizacion = (usoId) => {
-  const [zonas, setZonas] = useState([{ zona: 1, atributos_formulario: [{}] }]);
+  const [zonas, setZonas] = useState([{ zona: 1, nota_zona: "", atributos_formulario: [{}] }]);
   const [atributos, setAtributos] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -66,7 +66,7 @@ export const useZonasCotizacion = (usoId) => {
   };
 
   const agregarZona = () => {
-    setZonas((prev) => [...prev, { zona: prev.length + 1, atributos_formulario: [{}] }]);
+    setZonas((prev) => [...prev, { zona: prev.length + 1, nota_zona: "", atributos_formulario: [{}] }]);
   };
 
   const eliminarZona = () => {
@@ -76,11 +76,13 @@ export const useZonasCotizacion = (usoId) => {
   const agregarEquipo = (zonaIndex) => {
     setZonas((prev) => {
       const nuevasZonas = JSON.parse(JSON.stringify(prev)); // clonado profundo
+      const notaZona = nuevasZonas[zonaIndex].nota_zona || "";
       const equipoVacio = {};
       atributos.forEach((atrib) => {
         equipoVacio[atrib.llave_json] = "";
       });
       nuevasZonas[zonaIndex].atributos_formulario.push(equipoVacio);
+      nuevasZonas[zonaIndex].nota_zona = notaZona; // Mantener la nota de la zona
       return nuevasZonas;
     });
   };

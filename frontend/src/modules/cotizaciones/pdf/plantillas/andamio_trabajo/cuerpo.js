@@ -58,11 +58,11 @@ export async function generarCuerpoAndamioTrabajo(doc, data, startY = 120) {
   currentY += 6;
 
   for (const zona of data.zonas || []) {
-    const zonaTitulo = `Zona ${zona.zona} - ${zona.descripcion || "(DESCRIPCIÓN DE ZONA INDEFINIDA)"}`;
-    currentY = drawJustifiedText(doc, `📍 ${zonaTitulo}`, indent + 3, currentY, 170, 5.5, 10);
+    const zonaTitulo = `Zona ${zona.zona || "1"} - ${zona.nota || "(DESCRIPCIÓN DE ZONA INDEFINIDA)"}`;
+    currentY = drawJustifiedText(doc, `**${zonaTitulo}**`, indent + 3, currentY, 170, 5.5, 10);
 
-    for (const equipo of zona.atributos_formulario || []) {
-      const descripcionEquipo = `**CP${equipo.cp || "(INDEFINIDO)"}:** ${equipo.cantidad || "(CANTIDAD INDEFINIDA)"} ${equipo.cantidad === 1 ? "Ud." : "Uds."} de ${equipo.nombre || "(NOMBRE DE EQUIPO INDEFINIDO)"} de ${equipo.longitud_mm || "(LONGITUD INDEFINIDA)"} m. de longitud x ${equipo.ancho_mm || "(ANCHO INDEFINIDO)"} m. de ancho x ${equipo.altura_m || "(ALTURA INDEFINIDA)"}.00 m. de altura + 1.00 m de baranda de seguridad: **S/${equipo.precio || "(PRECIO SIN IGV INDEFINIDO)"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.**`;
+    for (const equipo of zona.atributos || []) {
+      const descripcionEquipo = `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** ${equipo.cantidad_uso || "(CANTIDAD INDEFINIDA)"} ${equipo.cantidad_uso === 1 ? "Ud." : "Uds."} de ${data.uso?.nombre || "(NOMBRE DE EQUIPO INDEFINIDO)"} de ${equipo.longitud_mm || "(LONGITUD INDEFINIDA)"} m. de longitud x ${equipo.ancho_mm || "(ANCHO INDEFINIDO)"} m. de ancho x ${equipo.altura_m || "(ALTURA INDEFINIDA)"}.00 m. de altura + 1.00 m de baranda de seguridad.`;
 
       const palabras = descripcionEquipo.split(/\s+/);
       const aproxLineas = Math.ceil(palabras.length / 11);
@@ -74,6 +74,13 @@ export async function generarCuerpoAndamioTrabajo(doc, data, startY = 120) {
 
     currentY += 4; // Espacio entre zonas
   }
+  
+  currentY += 2 ; // Espacio antes del resumen de cotización
+  // Resumen de cotización
+  const subtituloResumen = `** : 
+
+  **S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.**`;
+  currentY = drawJustifiedText(doc, subtituloResumen, indent + 3, currentY, 170, 5.5, 10);
 
   // Verifica si hay atributos opcionales como pernos de expansión
 
