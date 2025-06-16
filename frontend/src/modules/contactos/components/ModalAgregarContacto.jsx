@@ -23,7 +23,7 @@ export default function ModalAgregarContacto({ clientes, obras, onSubmit }) {
    };
 
    return (
-      <AlertDialog>
+      <AlertDialog open={open} onOpenChange={setOpen}>
          <AlertDialogTrigger asChild>
             <Button className="btn-agregar">
                <UserPlus />

@@ -1,11 +1,11 @@
 import * as yup from "yup";
 
-const obtenerSchemaContacto = () =>
+export const obtenerContactoSchema = () =>
    yup.object({
-      nombre: string().required("El nombre es requerido").min(4, ""),
-      email: string()
-         .required("El emaail es requerido")
-         .email("El email ingresado es invalido."),
-      telefono: string().required("El teléfono es requerido"),
-      cargo: string().required("El cargo es requerido"),
+      nombre: yup.string().required("El campo nombre es requerido").min(3, "Ingrese un nombre con mas de 3 caracteres"),
+      email: yup.string()
+         .required("El campo email es requerido")
+         .email("El email ingresado no es valdido."),
+      telefono: yup.string().required("El campo teléfono es requerido"),
+      cargo: yup.string().required("El campo cargo es requerido"),
    });

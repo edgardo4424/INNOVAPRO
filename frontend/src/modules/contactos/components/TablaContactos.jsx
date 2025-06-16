@@ -6,8 +6,9 @@ import {
 } from "@/components/ui/tooltip";
 import { Edit, Trash2 } from "lucide-react";
 import DataTable from "react-data-table-component";
+import ModalEditarContacto from "./ModalEditarContacto";
 
-export default function TablaContactos({ contactos, onEditar, onEliminar }) {
+export default function TablaContactos({ contactos, onSubmit, onEliminar,clientes,obras }) {
    if (contactos.length === 0) {
       return <p>No hay contactos registrados.</p>;
    }
@@ -142,14 +143,20 @@ export default function TablaContactos({ contactos, onEditar, onEliminar }) {
          name: "Acciones",
          cell: (row) => (
             <div className="flex gap-2">
-               <Button
+               {/* <Button
                   variant="outline"
                   size={"icon"}
                   onClick={() => onEditar(row)}
                   className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-600"
                >
                   <Edit className="h-4 w-4" />
-               </Button>
+               </Button> */}
+               <ModalEditarContacto
+               contacto={row}
+               clientes={clientes}
+               obras={obras}
+               onSubmit={onSubmit}
+               />
                <Button
                   variant="outline"
                   size="icon"

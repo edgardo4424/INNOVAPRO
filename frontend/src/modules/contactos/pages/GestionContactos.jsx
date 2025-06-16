@@ -16,29 +16,20 @@ export default function GestionContactos() {
       setPaginaActual,
       clientes,
       obras,
-      contactoEditando,
-      modalAgregar,
-      nuevoContacto,
-      setNuevoContacto,
-      setContactoEditando,
       busqueda,
       setBusqueda,
       agregarContacto,
       guardarEdicion,
       eliminarContacto,
-      abrirModalEditar,
-      cerrarModalEditar,
-      abrirModalAgregar,
-      cerrarModalAgregar,
       contactosPorPagina,
-      setContactosPorPagina
+      setContactosPorPagina,
    } = useContactos();
 
    return (
       <div className="dashboard-main">
          <ModuloNavegacion />
 
-         {/* 🔍 Buscador + botón */}
+         {/* 🔍 Buscador + Moda de agregar oontacto */}
          <div className="flex flex-row-reverse md:flex-row justify-between px-4 my-4 md:my-8 items-center gap-4">
             <ModalAgregarContacto
                clientes={clientes}
@@ -63,8 +54,10 @@ export default function GestionContactos() {
          {/* 📋 Tabla */}
          <TablaContactos
             contactos={contactosPaginados}
-            onEditar={abrirModalEditar}
             onEliminar={eliminarContacto}
+            clientes={clientes}
+            obras={obras}
+            onSubmit={guardarEdicion}
          />
 
          {/* 📌 Paginación */}
@@ -77,30 +70,6 @@ export default function GestionContactos() {
             setPaginaActual={setPaginaActual}
             usuariosPorPagina={contactosPorPagina}
          />
-
-         {/* 🧾 Modal Agregar */}
-         {/* {modalAgregar && (
-            <ModalAgregarContacto
-               contacto={nuevoContacto}
-               setContacto={setNuevoContacto}
-               clientes={clientes}
-               obras={obras}
-               onCancel={cerrarModalAgregar}
-               onSubmit={agregarContacto}
-            />
-         )} */}
-
-         {/* 🛠 Modal Editar */}
-         {/* {contactoEditando && (
-            <ModalEditarContacto
-               contacto={contactoEditando}
-               setContacto={setContactoEditando}
-               clientes={clientes}
-               obras={obras}
-               onCancel={cerrarModalEditar}
-               onSubmit={guardarEdicion}
-            />
-         )} */}
       </div>
    );
 }
