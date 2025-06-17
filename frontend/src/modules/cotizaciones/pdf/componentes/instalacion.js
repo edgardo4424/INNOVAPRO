@@ -20,21 +20,37 @@ export async function renderInstalacion(doc, data, currentY) {
   const w = doc.getTextWidth(subtitulo);
   doc.line(indent + box + 3, currentY + 1.5, indent + box + 3 + w, currentY + 1.5);
 
-  const instalacion = [
-    `Instalación completa: **S/${data.instalacion?.precio_instalacion_completa_soles || "(INDEFINIDO COSTO DE INSTALACION COMPLETA)"} + IGV.**`,
-    `Instalación parcial: **S/${data.instalacion?.precio_instalacion_parcial_soles || "(INDEFINIDO COSTO DE INSTALACION PARCIAL)"} + IGV.**`,
+  if (data.instalacion.tipo_instalacion === "Parcial") {
+    const instalacion = [
+      `Instalación completa: **S/${data.instalacion?.precio_instalacion_completa_soles || "(INDEFINIDO COSTO DE INSTALACION COMPLETA)"} + IGV.**`,
+      `Instalación parcial: **S/${data.instalacion?.precio_instalacion_parcial_soles || "(INDEFINIDO COSTO DE INSTALACION PARCIAL)"} + IGV.**`,
 
-    `__${data.instalacion?.nota}__`,
-  ];
+      `__${data.instalacion?.nota}__`,
+    ];
 
-  currentY += 6;
-  for (const linea of instalacion) {
-    const palabras = linea.split(/\s+/);
-    const aproxLineas = Math.ceil(palabras.length / 11);
-    const alturaEstimado = aproxLineas * 5;
+    currentY += 6;
+    for (const linea of instalacion) {
+      const palabras = linea.split(/\s+/);
+      const aproxLineas = Math.ceil(palabras.length / 11);
+      const alturaEstimado = aproxLineas * 5;
 
-    currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimado);
-    currentY = drawJustifiedText(doc, linea, indent + box + 3, currentY, 170, 5, 9.5);
+      currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimado);
+      currentY = drawJustifiedText(doc, linea, indent + box + 3, currentY, 170, 5, 9.5);
+    }
+  } else if (data.instalacion.tipo_instalacion === "Completa") {
+    const instalacion = [
+      `Instalación completa: **S/${data.instalacion?.precio_instalacion_completa_soles || "(INDEFINIDO COSTO DE INSTALACION COMPLETA)"} + IGV.**`,
+    ]
+
+    currentY += 6;
+    for (const linea of instalacion) {
+      const palabras = linea.split(/\s+/);
+      const aproxLineas = Math.ceil(palabras.length / 11);
+      const alturaEstimado = aproxLineas * 5;
+
+      currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimado);
+      currentY = drawJustifiedText(doc, linea, indent + box + 3, currentY, 170, 5, 9.5);
+    }
   }
 
   return currentY;

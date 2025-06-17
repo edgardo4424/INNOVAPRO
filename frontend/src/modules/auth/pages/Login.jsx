@@ -172,7 +172,7 @@ export default function Login() {
                   </div> */}
 
                      {/* reCAPTCHA Placeholder */}
-                     <div className="w-[290x] h-[76px] mx-auto ">
+                     <div className="w-[290x] h-[76px] mx-auto flex justify-center ">
                         <ReCAPTCHA
                            ref={recaptchaRef}
                            sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
