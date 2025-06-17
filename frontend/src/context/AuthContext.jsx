@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import api from "../shared/services/api";
 import { loginService } from "@/modules/auth/services/authService";
+import LoaderInnova from "@/shared/components/LoaderInnova";
 
 const AuthContext = createContext();
 
@@ -78,7 +79,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider value={{ user, loading, login, logout }}>
-      {loading ? <h2 style={{ textAlign: "center" }}>Cargando...</h2> : children}
+      {loading ? <LoaderInnova/> : children}
     </AuthContext.Provider>
   );
 }

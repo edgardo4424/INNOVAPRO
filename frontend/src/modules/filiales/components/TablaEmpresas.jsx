@@ -7,11 +7,35 @@ import {
    TooltipTrigger,
 } from "@/components/ui/tooltip";
 import ModalEditarEmpresa from "./ModalEditarEmpresa";
+import { useState } from "react";
+import { ColumnSelector } from "@/shared/components/ColumnSelector";
+import { customStylesTable } from "@/utils/customTableStyle";
 
 export default function TablaEmpresas({ empresas, onEditar, onEliminar }) {
    if (empresas.length === 0) {
       return <p>No hay empresas registradas.</p>;
    }
+
+   const [visibleColumns, setVisibleColumns] = useState({
+      razon_social: true,
+      ruc: true,
+      direccion_fiscal: true,
+      representante_legal: true,
+      tipo_documento: true,
+      cargo_representante: true,
+      telefono: true,
+      acciones: true,
+   });
+   const columnOptions = [
+      { id: "razon_social", label: "Razón social" },
+      { id: "ruc", label: "Ruc" },
+      { id: "direccion_fiscal", label: "Dirección fiscal" },
+      { id: "representante_legal", label: "Representante" },
+      { id: "tipo_documento", label: "Tipo de documento" },
+      { id: "cargo_representante", label: "Cargo" },
+      { id: "telefono", label: "Teléfono" },
+      { id: "acciones", label: "Acciones" },
+   ];
 
    const columns = [
       {
@@ -27,23 +51,26 @@ export default function TablaEmpresas({ empresas, onEditar, onEliminar }) {
                <TooltipContent>{row.razon_social || "—"}</TooltipContent>
             </Tooltip>
          ),
+         omit: !visibleColumns.razon_social,
       },
       {
          name: "Ruc",
          selector: (row) => row.ruc || "-",
          sortable: true,
          grow: 1,
+         omit: !visibleColumns.ruc,
       },
       {
          name: "Dirección Fiscal",
          selector: (row) => row.direccion_fiscal || "-",
          sortable: true,
          grow: 1,
+         omit: !visibleColumns.direccion_fiscal,
       },
       {
          name: "Representante",
          sortable: true,
-           selector: row => row.representante_legal ?? "",
+         selector: (row) => row.representante_legal ?? "",
          grow: 2,
          cell: (row) => (
             <Tooltip>
@@ -53,6 +80,7 @@ export default function TablaEmpresas({ empresas, onEditar, onEliminar }) {
                <TooltipContent>{row.representante_legal || "—"}</TooltipContent>
             </Tooltip>
          ),
+         omit: !visibleColumns.representante_legal,
       },
       {
          name: "Documento",
@@ -60,10 +88,11 @@ export default function TablaEmpresas({ empresas, onEditar, onEliminar }) {
             `${row.tipo_documento || "—"} ${row.numero_documento || "—"}`,
          sortable: true,
          grow: 1,
+         omit: !visibleColumns.tipo_documento,
       },
       {
          name: "Cargo",
-           selector: row => row.cargo_representante ?? "",
+         selector: (row) => row.cargo_representante ?? "",
          sortable: true,
          grow: 1,
          cell: (row) => (
@@ -74,6 +103,7 @@ export default function TablaEmpresas({ empresas, onEditar, onEliminar }) {
                <TooltipContent>{row.cargo_representante || "—"}</TooltipContent>
             </Tooltip>
          ),
+         omit: !visibleColumns.cargo_representante,
       },
       {
          name: "Teléfono",
@@ -86,15 +116,13 @@ export default function TablaEmpresas({ empresas, onEditar, onEliminar }) {
                🏢 {row.telefono_oficina || "—"}
             </p>
          ),
+         omit: !visibleColumns.telefono,
       },
       {
          name: "Acciones",
          cell: (row) => (
             <div className="flex gap-2">
-               <ModalEditarEmpresa
-                  empresa={row}
-                  onSubmit={onEditar}
-               />
+               <ModalEditarEmpresa empresa={row} onSubmit={onEditar} />
                <Button
                   variant="outline"
                   size="icon"
@@ -107,64 +135,27 @@ export default function TablaEmpresas({ empresas, onEditar, onEliminar }) {
          ),
          ignoreRowClick: true,
          width: "120px",
+         omit: !visibleColumns.acciones,
       },
    ];
-   const customStyles = {
-      header: {
-         style: {
-            minHeight: "56px",
-            paddingLeft: "16px",
-            paddingRight: "16px",
-         },
-      },
-      headRow: {
-         style: {
-            borderTopStyle: "solid",
-            borderTopWidth: "1px",
-            borderTopColor: "#e5e7eb",
-            backgroundColor: "#f9fafb",
-            minHeight: "48px",
-         },
-      },
-      headCells: {
-         style: {
-            paddingLeft: "16px",
-            paddingRight: "16px",
-            fontSize: "14px",
-            fontWeight: "600",
-            color: "#374151",
-         },
-      },
-      rows: {
-         style: {
-            minHeight: "56px",
-            "&:hover": {
-               backgroundColor: "#f9fafb",
-            },
-         },
-         stripedStyle: {
-            backgroundColor: "#fafafa",
-         },
-      },
-      cells: {
-         style: {
-            paddingLeft: "16px",
-            paddingRight: "16px",
-            fontSize: "14px",
-            color: "#6b7280",
-         },
-      },
-   };
+   
 
    return (
-      <div className="w-full  px-4">
+      <div className="w-full  px-4 max-w-7xl">
+         <div className="flex justify-end">
+            <ColumnSelector
+               visibleColumns={visibleColumns}
+               setVisibleColumns={setVisibleColumns}
+               columnOptions={columnOptions}
+            />
+         </div>
          <DataTable
             columns={columns}
             data={empresas}
             responsive
             striped
             highlightOnHover
-            customStyles={customStyles}
+            customStyles={customStylesTable}
             noDataComponent={
                <div className="flex items-center justify-center py-12">
                   <p className="text-muted-foreground">

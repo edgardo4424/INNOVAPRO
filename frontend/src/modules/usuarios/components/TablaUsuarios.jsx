@@ -4,6 +4,7 @@ import { Edit, Trash2 } from "lucide-react";
 import { ColumnSelector } from "@/shared/components/ColumnSelector";
 import { useState } from "react";
 import ModalEditarUsuario from "./ModalEditarUsuario";
+import { customStylesTable } from "@/utils/customTableStyle";
 
 export default function TablaUsuarios({ usuarios, onEliminar, onSubmit }) {
    const [visibleColumns, setVisibleColumns] = useState({
@@ -69,56 +70,10 @@ export default function TablaUsuarios({ usuarios, onEliminar, onSubmit }) {
       },
    ];
 
-   const customStyles = {
-      header: {
-         style: {
-            minHeight: "56px",
-            paddingLeft: "16px",
-            paddingRight: "16px",
-         },
-      },
-      headRow: {
-         style: {
-            borderTopStyle: "solid",
-            borderTopWidth: "1px",
-            borderTopColor: "#e5e7eb",
-            backgroundColor: "#f9fafb",
-            minHeight: "48px",
-         },
-      },
-      headCells: {
-         style: {
-            paddingLeft: "16px",
-            paddingRight: "16px",
-            fontSize: "14px",
-            fontWeight: "600",
-            color: "#374151",
-         },
-      },
-      rows: {
-         style: {
-            minHeight: "56px",
-            "&:hover": {
-               backgroundColor: "#f9fafb",
-            },
-         },
-         stripedStyle: {
-            backgroundColor: "#fafafa",
-         },
-      },
-      cells: {
-         style: {
-            paddingLeft: "16px",
-            paddingRight: "16px",
-            fontSize: "14px",
-            color: "#6b7280",
-         },
-      },
-   };
-
+   
    return (
-      <div className="w-full px-4">
-         <div className="flex justify-end mb-4">
+      <div className="w-full px-4 max-w-7xl">
+         <div className="flex justify-end">
             <ColumnSelector
                visibleColumns={visibleColumns}
                setVisibleColumns={setVisibleColumns}
@@ -131,7 +86,7 @@ export default function TablaUsuarios({ usuarios, onEliminar, onSubmit }) {
             responsive
             striped
             highlightOnHover
-            customStyles={customStyles}
+            customStyles={customStylesTable}
             noDataComponent={
                <div className="flex items-center justify-center py-12">
                   <p className="text-muted-foreground">
