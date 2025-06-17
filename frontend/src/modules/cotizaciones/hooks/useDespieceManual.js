@@ -1,0 +1,99 @@
+import { useState, useEffect } from "react";
+
+export default function useDespieceManual({ tipoCotizacion, formData, onResumenChange }) {
+  const [despieceManual, setDespieceManual] = useState([]);
+
+  useEffect(() => {
+    if (typeof onResumenChange === "function") {
+      const resumen = calcularResumen(despieceManual);
+      const nuevoDespiece = formatearDespiece(despieceManual);
+
+      onResumenChange({ nuevoDespiece, resumen });
+    }
+  }, [despieceManual]);
+
+  const agregarPieza = (pieza, cantidad) => {
+    const yaExiste = despieceManual.find(p => p.id === pieza.id);
+    if (yaExiste) return false;
+
+    const precio = tipoCotizacion === "Alquiler"
+      ? parseFloat(pieza.precio_alquiler_soles)
+      : parseFloat(pieza.precio_venta_soles);
+
+    const subtotal = precio * cantidad;
+    const pesoTotal = parseFloat(pieza.peso_kg) * cantidad;
+
+    const nueva = {
+      id: pieza.id,
+      item: pieza.item,
+      descripcion: `${pieza.item} - ${pieza.descripcion}`,
+      cantidad,
+      precio_unitario_alquiler: parseFloat(pieza.precio_alquiler_soles),
+      precio_unitario_venta: parseFloat(pieza.precio_venta_soles),
+      subtotal_alquiler: (pieza.precio_alquiler_soles * cantidad).toFixed(2),
+      subtotal_venta: (pieza.precio_venta_soles * cantidad).toFixed(2),
+      peso_kg_total: pesoTotal
+    };
+
+    setDespieceManual(prev => [...prev, nueva]);
+    return true;
+  };
+
+  const eliminarPieza = (piezaId) => {
+    const nuevaLista = despieceManual.filter(p => p.id !== piezaId);
+    setDespieceManual(nuevaLista);
+
+    const despieceFiltrado = formData.despiece?.filter(p => p.id !== piezaId);
+    const resumen = calcularResumen(despieceFiltrado);
+
+    onResumenChange({
+        nuevoDespiece: nuevaLista,
+        resumen,
+    });
+    };
+
+
+  const calcularResumen = (piezas) => {
+    const total_piezas = piezas.reduce((acc, p) => acc + p.cantidad, 0);
+    const peso_total_kg = piezas.reduce((acc, p) => acc + p.peso_kg_total, 0);
+    const peso_total_ton = (peso_total_kg / 1000).toFixed(2);
+    const precio_subtotal_venta_soles = piezas.reduce((acc, p) => acc + (p.precio_unitario_venta * p.cantidad), 0).toFixed(2);
+    const precio_subtotal_alquiler_soles = piezas.reduce((acc, p) => acc + (p.precio_unitario_alquiler * p.cantidad), 0).toFixed(2);
+
+    return {
+      total_piezas,
+      peso_total_kg: peso_total_kg.toFixed(2),
+      peso_total_ton,
+      precio_subtotal_venta_dolares: 0,
+      precio_subtotal_venta_soles,
+      precio_subtotal_alquiler_soles
+    };
+  };
+
+  const formatearDespiece = (piezas) => {
+    return piezas.map(p => ({
+      pieza_id: p.id,
+      item: p.item,
+      descripcion: p.descripcion,
+      total: p.cantidad,
+      peso_u_kg: (p.peso_kg_total / p.cantidad).toFixed(2),
+      peso_kg: p.peso_kg_total,
+      precio_u_venta_dolares: 0,
+      precio_venta_dolares: 0,
+      precio_u_venta_soles: p.precio_unitario_venta,
+      precio_venta_soles: p.subtotal_venta,
+      precio_u_alquiler_soles: p.precio_unitario_alquiler,
+      precio_alquiler_soles: p.subtotal_alquiler,
+      stock_actual: 0
+    }));
+  };
+
+  return {
+    despieceManual,
+    agregarPieza,
+    eliminarPieza,
+    calcularResumen,
+    formatearDespiece,
+    setDespieceManual
+  };
+}

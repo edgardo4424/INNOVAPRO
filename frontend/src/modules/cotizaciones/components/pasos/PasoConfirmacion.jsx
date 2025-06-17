@@ -7,10 +7,12 @@ import BloquePernos from "../BloquePernos";
 import BloqueTransporte from "../BloqueTransporte";
 import BloqueInstalacion from "../BloqueInstalacion";
 import BloqueDescuento from "../BloqueDescuento";
+import DespieceAdicional from "../DespieceAdicional"
 import Loader from "../../../../shared/components/Loader";
 
+
 export default function PasoConfirmacion() {
-  const { formData, setFormData, errores } = useWizardContext(); 
+  const { formData, setFormData, errores } = useWizardContext();
 
   useGenerarDespiece(formData, setFormData); // Hook personalizado para generar el despiece
   useCalculoTransporte(formData, setFormData); // Hook personalizado para calcular el transporte
@@ -18,8 +20,9 @@ export default function PasoConfirmacion() {
   const datosListos =
     formData.uso_id &&
     formData.zonas?.length &&
-    formData.despiece.length &&
-    formData.resumenDespiece;
+    Array.isArray(formData.despiece) &&
+    formData.resumenDespiece !== undefined;
+
 
   // Si el comercial desactiva los pernos, se eliminan del despiece
 
@@ -33,7 +36,7 @@ export default function PasoConfirmacion() {
     setFormData(prev => ({ ...prev, despiece: despieceActualizado }));
   }, [formData.tiene_pernos]);
 
-  if (!datosListos) return <Loader texto="Generando despiece..." />;
+  if (!datosListos) return <Loader texto="Generando despiece..." />
 
   return (
     <div className="paso-formulario">
@@ -44,6 +47,32 @@ export default function PasoConfirmacion() {
         resumen={formData.resumenDespiece}
         tipo={formData.tipo_cotizacion}
       />
+
+      <div className="wizard-section">
+        <label>¿Desea agregar más piezas al despiece?</label>
+        <select
+          value={formData.agregar_mas_piezas ?? ""}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              agregar_mas_piezas: e.target.value === "true",
+            }))
+          }
+        >
+          <option value="">Seleccione una opción</option>
+          <option value="true">Sí</option>
+          <option value="false">No</option>
+        </select>
+        {errores.agregar_mas_piezas && (
+          <p className="error-text">{errores.agregar_mas_piezas}</p>
+        )}
+      </div>
+
+
+      {formData.agregar_mas_piezas && (
+        <DespieceAdicional formData={formData} setFormData={setFormData} />
+      )}
+
 
       <BloquePernos formData={formData} setFormData={setFormData} errores={errores} />
       <BloqueTransporte formData={formData} setFormData={setFormData} errores={errores} />

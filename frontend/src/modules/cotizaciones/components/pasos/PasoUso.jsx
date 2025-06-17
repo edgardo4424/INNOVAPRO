@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useWizardContext } from "../../hooks/useWizardCotizacion";
+import useDespieceManual  from "../../hooks/useDespieceManual";
 import api from "@/shared/services/api";
 import Loader from "@/shared/components/Loader";
 import { toast } from "react-toastify";
@@ -23,6 +24,21 @@ export default function PasoUso() {
     };
     cargarUsos();
   }, []);
+
+  const {
+    despieceManual,
+    agregarPieza,
+    setDespieceManual,
+  } = useDespieceManual({
+    tipo_cotizacion: formData.tipo_cotizacion,
+    onResumeChange: ({ despiece, resumen }) => {
+      setFormData(prev => ({
+        ...prev,
+        despiece,
+        resumenDespiece: resumen
+      }))
+    }
+  })
  
   const handleChange = (campo, valor) => { // Función para manejar los cambios en los campos del formulario
     setFormData((prev) => ({ ...prev, [campo]: valor }));
