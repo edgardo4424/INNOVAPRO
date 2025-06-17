@@ -72,22 +72,22 @@ const Cotizacion = sequelize.define(
         "Alquiler", 
         "Venta",
       ),
-      allowNull: false,
+      /* allowNull: false, */
     },
     tiene_transporte: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
+      /* allowNull: false, */
     },
     tiene_instalacion: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
+      /* allowNull: false, */
     },
     tiempo_alquiler_dias: {
       type: DataTypes.INTEGER,
     },
     codigo_documento: {
        type: DataTypes.STRING,
-       allowNull: false,
+       /* allowNull: false, */
     },
     uso_id: {
       type: DataTypes.INTEGER,

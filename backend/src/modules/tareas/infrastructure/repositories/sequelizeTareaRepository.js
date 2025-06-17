@@ -7,6 +7,7 @@ class SequelizeTareaRepository {
   }
 
   async crear(tareaData) {
+
     return await db.tareas.create({
       usuarioId: tareaData.usuarioId,
       empresaProveedoraId: tareaData.empresaProveedoraId,
@@ -17,6 +18,8 @@ class SequelizeTareaRepository {
       urgencia: tareaData.urgencia,
       estado: "Pendiente",
       detalles: tareaData.detalles ? tareaData.detalles : {}, // ✅ Aseguramos que `detalles` no sea undefined
+      contactoId: tareaData.contactoId,
+      usoId: tareaData.usoId
     });
   }
 
@@ -49,6 +52,7 @@ class SequelizeTareaRepository {
   }
 
   async obtenerPorId(id) {
+    console.log('id', id);
     return await db.tareas.findByPk(id, {
       include: [
         {
