@@ -233,6 +233,12 @@ export default function TablaTareas({
       },
    };
 
+   const paginationOptions = {
+      rowsPerPageText: "Filas por página",
+      rangeSeparatorText: "de",
+      selectAllRowsItem: true,
+      selectAllRowsItemText: "Todos",
+   };
    return (
       <div className="w-full px-4">
          <DataTable
@@ -242,12 +248,15 @@ export default function TablaTareas({
             striped
             highlightOnHover
             expandableRows
+            pagination={true}
+            paginationComponentOptions={paginationOptions}
             expandableRowsComponent={(props) => (
                <ExpandedComponent
                   {...props}
                   onSeleccionarTarea={onSeleccionarTarea}
                />
             )}
+             paginationRowsPerPageOptions={[5, 10, 15, 20]}
             expandableIcon={{
                collapsed: <ChevronRight className="h-4 w-4" />,
                expanded: <ChevronDown className="h-4 w-4" />,
