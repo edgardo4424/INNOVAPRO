@@ -7,8 +7,9 @@ import {
 import { Edit, Trash2 } from "lucide-react";
 import React from "react";
 import DataTable from "react-data-table-component";
+import ModalEditarCliente from "./ModalEditarCliente";
 
-export default function TablaClientes({ clientes, onEditar, onEliminar }) {
+export default function TablaClientes({ clientes, onEliminar,actualizarCliente }) {
    if (clientes.length === 0) {
       return <p>No hay clientes para mostrar.</p>;
    }
@@ -36,7 +37,7 @@ export default function TablaClientes({ clientes, onEditar, onEliminar }) {
          name: "RUC / DNI",
          selector: (row) => `${row.ruc || row.dni || "—"}`,
          sortable: true,
-         grow: 1,
+         grow: 2,
       },
       {
          name: "Teléfono",
@@ -89,14 +90,7 @@ export default function TablaClientes({ clientes, onEditar, onEliminar }) {
          name: "Acciones",
          cell: (row) => (
             <div className="flex gap-2">
-               <Button
-                  variant="outline"
-                  size={"icon"}
-                  onClick={() => onEditar(row)}
-                  className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-600"
-               >
-                  <Edit className="h-4 w-4" />
-               </Button>
+               <ModalEditarCliente cliente={row} actualizarCliente={actualizarCliente}/>
                <Button
                   variant="outline"
                   size="icon"

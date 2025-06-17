@@ -27,6 +27,10 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
 const statusConfig = {
+   Todas: {
+      label: "Todas",
+      color: "bg-gray-500",
+   },
    Pendiente: {
       label: "Pendiente",
       color: "bg-yellow-500",
@@ -76,18 +80,18 @@ export default function CentroAtencion() {
    const hasActiveFilters =
       fechaFiltroInicio ||
       fechaFiltroFin ||
-      filtroEstado !== "Pendiente" ||
+      filtroEstado !== "Todas" ||
       busqueda;
 
    const clearFilters = () => {
       setFechaFiltroInicio(undefined);
       setFechaFiltroFin(undefined);
-      cambiarFiltro("Pendiente");
+      cambiarFiltro("Todas");
       setBusqueda("");
    };
 
    return (
-      <div className="container min-h-full">
+      <div className="container min-h-full pb-16">
          <ModuloNavegacion />
 
          <div className="w-full max-w-7xl mx-auto px-4">

@@ -21,7 +21,7 @@ import { Edit, Eye, FileDown, Settings } from "lucide-react";
 import { ColumnSelector } from "@/shared/components/ColumnSelector";
 
 // Componente para texto truncado con tooltip
-const TruncatedText = ({ text}) => {
+const TruncatedText = ({ text }) => {
    if (!text) return "—";
    return (
       <TooltipProvider>
@@ -29,7 +29,7 @@ const TruncatedText = ({ text}) => {
             <TooltipTrigger asChild>
                <div className="truncate ">{text}</div>
             </TooltipTrigger>
-         <TooltipContent>{text}</TooltipContent>
+            <TooltipContent>{text}</TooltipContent>
          </Tooltip>
       </TooltipProvider>
    );
@@ -50,7 +50,7 @@ export default function TablaCotizacion({
       estado: true,
       acciones: true,
    });
-      const columnOptions = [
+   const columnOptions = [
       { id: "codigo_documento", label: "Cod. Doc" },
       { id: "cliente", label: "Cliente" },
       { id: "obra", label: "Obra" },
@@ -69,7 +69,7 @@ export default function TablaCotizacion({
          cell: (row) => <TruncatedText text={row.codigo_documento} />,
          sortable: true,
          omit: !visibleColumns.codigo_documento,
-         grow:2
+         grow: 2,
       },
       {
          id: "cliente",
@@ -78,7 +78,7 @@ export default function TablaCotizacion({
          cell: (row) => <TruncatedText text={row.cliente?.razon_social} />,
          sortable: true,
          omit: !visibleColumns.cliente,
-         grow:2
+         grow: 2,
       },
       {
          id: "obra",
@@ -87,16 +87,16 @@ export default function TablaCotizacion({
          cell: (row) => <TruncatedText text={row.obra?.nombre} />,
          sortable: true,
          omit: !visibleColumns.obra,
-         grow:2
+         grow: 2,
       },
       {
          id: "uso",
          name: "Uso",
          selector: (row) => row.uso?.descripcion || "—",
-          cell: (row) => <TruncatedText text={row.uso?.descripcion} />,
+         cell: (row) => <TruncatedText text={row.uso?.descripcion} />,
          sortable: true,
          omit: !visibleColumns.uso,
-         grow:2
+         grow: 2,
       },
       {
          id: "tipo_cotizacion",
@@ -160,9 +160,14 @@ export default function TablaCotizacion({
          },
       },
    };
-
+   const paginationOptions = {
+      rowsPerPageText: "Filas por página",
+      rangeSeparatorText: "de",
+      selectAllRowsItem: true,
+      selectAllRowsItemText: "Todos",
+   };
    return (
-      <div className="w-full px-4">
+      <div className="w-full px-4 pb-8">
          <div className="flex justify-end mb-4">
             <ColumnSelector
                visibleColumns={visibleColumns}
@@ -176,7 +181,10 @@ export default function TablaCotizacion({
             data={cotizaciones || []}
             highlightOnHover
             pointerOnHover
+            pagination
+            paginationRowsPerPageOptions={[5, 10, 15, 20]}
             customStyles={customStyles}
+            paginationComponentOptions={paginationOptions}
             noDataComponent="No hay cotizaciones disponibles"
          />
       </div>

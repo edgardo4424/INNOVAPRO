@@ -13,11 +13,11 @@
   color: #333;
 }
 
-form {
+/* form {
   display: flex;
   flex-direction: column;
   gap: 15px;
-}
+} */
 
 /* select, textarea, input {
   width: 100%;
