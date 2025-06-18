@@ -1,8 +1,5 @@
 const db = require("../../../../models");
 
-const Despiece = require("../../../despieces/domain/entities/despiece");
-const DespieceDetalle = require("../../../despieces_detalles/domain/entities/despieces_detalles");
-
 module.exports = async (dataDespiece, tareaRepository) => {
   const transaction = await db.sequelize.transaction(); // Iniciar transacción
 

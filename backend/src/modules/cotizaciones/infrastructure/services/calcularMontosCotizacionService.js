@@ -3,7 +3,7 @@ function calcularMontosCotizacion({
   tipoCotizacion,
   cotizacion,
   uso_id,
-  atributos_formulario
+  zonas
 }) {
   const igvPorcentaje = parseFloat(cotizacion.igv_porcentaje ?? 0) || 0;
   const porcentajeDescuento =
@@ -21,8 +21,8 @@ function calcularMontosCotizacion({
         // El precio del tramo se mandara desde el front
 
         const { precio_tramo } = cotizacion;
-        let numero_tramos = atributos_formulario[0].alturaTotal / 2;
-        if (atributos_formulario[0].alturaTotal % 2 !== 0) {
+        let numero_tramos = zonas[0].alturaTotal / 2;
+        if (zonas[0].alturaTotal % 2 !== 0) {
           numero_tramos = numero_tramos + 0.5;
         }
         subtotal = (Number(numero_tramos) * Number(precio_tramo));
