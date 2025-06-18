@@ -1,17 +1,55 @@
+import { useState } from "react";
 import ObraForm from "../forms/ObraForm";
 
-export default function ModalEditarObra({ obra, setObra, onCancel, onSubmit }) {
+import { Button } from "@/components/ui/button";
+import { Edit } from "lucide-react";
+
+import {
+   AlertDialog,
+   AlertDialogContent,
+   AlertDialogFooter,
+   AlertDialogHeader,
+   AlertDialogTitle,
+   AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+export default function ModalEditarObra({ obra, onSubmit }) {
+
+  const [open, setOpen] = useState(false);
+
+  const handleCancel = (e) => {
+    e.preventDefault();
+    setOpen(false);
+  };
+
+  const handleClose = () => setOpen(false);
+
+
   return (
-    <div className="centro-modal">
-      <div className="modal-content">
-        <h3>Editar Obra</h3>
+
+
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger asChild>
+        <Button
+          variant="outline"
+          size={"icon"}
+          className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-600"
+        >
+          <Edit className="h-4 w-4" />
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Editar Obra</AlertDialogTitle>
+        </AlertDialogHeader>
         <ObraForm
+          modo="editar"
           obra={obra}
-          setObra={setObra}
-          onCancel={onCancel}
+          closeModal={handleClose}
+          handleCancel={handleCancel}
           onSubmit={onSubmit}
         />
-      </div>
-    </div>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

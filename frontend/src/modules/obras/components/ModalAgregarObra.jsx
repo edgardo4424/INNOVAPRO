@@ -1,17 +1,54 @@
+import { useState } from "react";
 import ObraForm from "../forms/ObraForm";
+import { Button } from "@/components/ui/button";
+import { BadgePlus, X } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogDescription,
+} from "@/components/ui/alert-dialog";
+export default function ModalAgregarObra({  onSubmit }) {
 
-export default function ModalAgregarObra({ obra, setObra, onCancel, onSubmit }) {
+  const [open, setOpen] = useState(false);
+
+  const handleCancel = (e) => {
+    e.preventDefault();
+    setOpen(false);
+  };
+
+  const handleClose = () => setOpen(false)
+
   return (
-    <div className="centro-modal">
-      <div className="modal-content">
-        <h2>Agregar Obra</h2>
+ 
+  
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger asChild>
+        <Button className="btn-agregar">
+           <BadgePlus />
+          <span className="hidden md:block">Agregar Obra</span>
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Crear obra</AlertDialogTitle>
+          <AlertDialogDescription className="text-center">
+            Completa los datos correctamente para crear una obra
+          </AlertDialogDescription>
+        </AlertDialogHeader>
         <ObraForm
-          obra={obra}
-          setObra={setObra}
-          onCancel={onCancel}
+         modo="crear"
+
+          closeModal={handleClose}
+          handleCancel={handleCancel}
           onSubmit={onSubmit}
         />
-      </div>
-    </div>
+      </AlertDialogContent>
+    </AlertDialog>
+
+
   );
 }
