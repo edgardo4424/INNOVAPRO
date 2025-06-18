@@ -7,7 +7,7 @@ const {
 
 
 // ✅ Importamos el servicio de envío por WhatsApp
-const enviarMensajeWhatsAppFinalizaTarea = require("../../infrastructure/services/enviarMensajeServiceTomaTarea");
+const enviarMensajeWhatsAppFinalizaTarea = require("../../infrastructure/services/enviarMensajeFinalizaTarea");
 
 module.exports = async (idTarea, idUsuario, tareaRepository) => {
 
@@ -50,9 +50,10 @@ module.exports = async (idTarea, idUsuario, tareaRepository) => {
     );
 
 
-    console.log("notiCreador", notiCreador);
+    console.log("notiCreador mira esto en finalizar tarea", notiCreador.usuario);
     await enviarMensajeWhatsAppFinalizaTarea(
-      `51${notiCreador.telefono}`, // formato internacional, ejemplo: "51987654321"
+     // `51${notiCreador.usuario.telefono}`, // formato internacional, ejemplo: "51987654321"
+     '51912617842',
       notiCreador.usuario.nombre,
       tarea.id
     );

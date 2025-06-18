@@ -1,7 +1,7 @@
 const axios = require("axios");
 
-const WHATSAPP_TOKEN = 'EAAYlYX2AvjIBO9e9ZCMmqAdNwavZAZC2i4fgkZBZBdnsf4tyJRS2kQnrSoohpIAq1IDh8QU9jcklEjX8oz5KrGy8gjg7wHhvstZAo7SkZCcpNMXTI1sI2XvqDd3buEYCeVQgpNXLnUJ0JikcO6kA1XWIirWTygloXZCfSqZBZBXilK2hZBazQ4JBhmtUR546CunsQScrdvQoqpCSzz5AbSNHZCZA2D7TCd2Nw85ZABp4EZD'; // Tu token real
-const PHONE_NUMBER_ID = '603147202891611';
+const WHATSAPP_TOKEN = 'EACGUQp6htTEBOZCZCPznS5oP6K4Isezy6tuB7zbkdAYQZB4lFvNpEQ3mZCmhNfJerr086WqrlXh2KFa9ZAPlBaivIGB95FhOJrbQRocpof5ui8PScSIZAYtRp9eBkLd0ZAFOaHJFl68nk7fVJiYgl0n5JvwynjhBeBaoneu6ZAi32gUpSZAB4W6zBIVbfNCP3HW6bZCmILuHNdDEMM'; // Tu token real
+const PHONE_NUMBER_ID = '632069853330750';
 
 module.exports = async (to, nombre, tareaN) => {
   console.log("✅ [enviarMensajeService] Iniciando envío de WhatsApp...");

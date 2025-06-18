@@ -38,10 +38,10 @@ export default function UsuarioForm({
             abortEarly: false,
          });
          setErrores({});
-         console.log('usuario',usuario);
-         
+         console.log('usuario', usuario);
+
          onSubmit(datosValidados);
-          closeModal(); 
+         closeModal();
       } catch (err) {
          const nuevosErrores = {};
          err.inner.forEach((e) => {

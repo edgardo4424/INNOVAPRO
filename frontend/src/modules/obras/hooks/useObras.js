@@ -1,4 +1,4 @@
-// INNOVA PRO+ v1.1.1 - useObras.js
+
 import { useEffect, useState } from "react";
 import obrasService from "../services/obrasService";
 import { validarObra } from "../validaciones/validarObra";
@@ -12,15 +12,6 @@ export default function useObras() {
   const [busqueda, setBusqueda] = useState("");
   const [paginaActual, setPaginaActual] = useState(1);
   const [obrasPorPagina,setObrasPorPagina] = useState(5);
-
-  const [nuevaObra, setNuevaObra] = useState({
-    nombre: "",
-    direccion: "",
-    ubicacion: "",
-    estado: "",
-    latitud: "",
-    longitud: "",
-  });
 
   useEffect(() => {
     async function cargarObras() {
@@ -38,7 +29,6 @@ export default function useObras() {
   const abrirModalAgregar = () => setModalAgregar(true);
   const cerrarModalAgregar = () => {
     setModalAgregar(false);
-    resetNuevaObra();
   };
 
   const abrirModalEditar = (obra) => {
@@ -47,16 +37,11 @@ export default function useObras() {
 
   const cerrarModalEditar = () => setObraEditando(null);
 
-  const agregarObra = async (e) => {
-    e.preventDefault();
-    const errores = validarObra(nuevaObra);
-    if (Object.keys(errores).length > 0) {
-      toast.error("Faltan campos obligatorios");
-      return;
-    }
+  const agregarObra = async (obra) => {
+
 
     try {
-      const creada = await obrasService.crearObra(nuevaObra);
+      const creada = await obrasService.crearObra(obra);
       setObras((prev) => [...prev, creada]);
       cerrarModalAgregar();
       toast.success("Obra registrada");
@@ -66,18 +51,12 @@ export default function useObras() {
     }
   };
 
-  const guardarEdicion = async (e) => {
-    e.preventDefault();
-    const errores = validarObra(obraEditando);
-    if (Object.keys(errores).length > 0) {
-      toast.error("Faltan campos obligatorios");
-      return;
-    }
+  const guardarEdicion = async (obra) => {
 
     try {
-      await obrasService.actualizarObra(obraEditando.id, obraEditando);
+      await obrasService.actualizarObra(obra.id, obra);
       setObras((prev) =>
-        prev.map((o) => (o.id === obraEditando.id ? obraEditando : o))
+        prev.map((o) => (o.id === obra.id ? obra : o))
       );
       cerrarModalEditar();
       toast.success("Obra actualizada");
@@ -139,8 +118,7 @@ export default function useObras() {
     obraEditando,
     abrirModalEditar,
     cerrarModalEditar,
-    nuevaObra,
-    setNuevaObra,
+
     agregarObra,
     guardarEdicion,
     eliminarObra,
