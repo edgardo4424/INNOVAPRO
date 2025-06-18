@@ -8,6 +8,7 @@ function mapearDetallesDespiece({despiece, despiece_id}){
     precio_venta_dolares: parseFloat(pieza.precio_venta_dolares),
     precio_venta_soles: parseFloat(pieza.precio_venta_soles),
     precio_alquiler_soles: parseFloat(pieza.precio_alquiler_soles),
+    uuid: pieza?.uuid || null
   }));
 }
 
