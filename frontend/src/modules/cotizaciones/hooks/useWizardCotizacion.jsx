@@ -34,13 +34,14 @@ export const WizardProvider = ({ children }) => {
     costo_distrito_transporte: 0,
     costo_pernocte_transporte: 0,
 
-    tiene_instalacion: false,
-    tipo_instalacion: null,
+    tiene_instalacion: undefined,
+    tipo_instalacion: "",
     precio_instalacion_completa: 0,
     precio_instalacion_parcial: 0,
     nota_instalacion: "",
 
-    tiene_pernos: false,
+    tiene_pernos_disponibles: false,
+    tiene_pernos: undefined,
     duracion_alquiler: 0,
   });
 

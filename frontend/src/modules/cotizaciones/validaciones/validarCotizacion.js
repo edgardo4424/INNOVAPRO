@@ -1,4 +1,4 @@
-// INNOVA PRO+ v1.3.1
+import validarPasoConfirmacion from "./validarPasoConfirmacion";
 
 export default function validarCotizacion(paso, datos) {
   const errores = {};
@@ -27,6 +27,10 @@ export default function validarCotizacion(paso, datos) {
     }
   }
 
+  if (paso === 3) {
+    Object.assign(errores, validarPasoConfirmacion(datos))
+  }
+  
   if (paso === 4) {
     if (
       !datos.zonas ||
