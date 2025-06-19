@@ -21,13 +21,18 @@ export async function renderNotasVenta(doc, data, currentY) {
     "5° Relación de cuentas para depósito o transferencia:"
   ];
 
+  // Esta función es anónima y permite que se puedan pasar los datos a la función del salto de página.
+  // Sin ésta función se tienen problemas de renderizado de encabezado en documentos con más de una página.
+  const saltoConData = async (doc, currentY, alturaBloque, margenInferior) =>
+  await verificarSaltoDePagina(doc, currentY, data, alturaBloque, margenInferior);
+
   currentY = await renderListaJustificada({
       doc,
       lista: condiciones,
       x: indent,
       y: currentY,
       maxWidth,
-      verificarSaltoDePagina,
+      verificarSaltoDePagina: saltoConData,
       lineHeight: lineHeight + 0.5, 
       fontSize: 8,
     })

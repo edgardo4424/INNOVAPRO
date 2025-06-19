@@ -1,38 +1,23 @@
-import { useEffect, useState } from "react";
-import { useWizardContext } from "../../hooks/useWizardCotizacion";
-import api from "@/shared/services/api";
+import { useState } from "react";
+import { useWizardContext } from "../../context/WizardCotizacionContext";
+import usePasoContacto from "../../hooks/usePasoContacto";
 import Loader from "@/shared/components/Loader";
 import Select from "react-select";
-import { toast } from "react-toastify";
+
+// Este componente representa el primer paso del wizard para registrar una cotización.
+// Permite seleccionar un contacto y los datos relacionados como cliente, obra y filial.
+// Utiliza el contexto del wizard para manejar el estado del formulario y los errores.
+// Carga los contactos y filiales desde el API al iniciar y actualiza el estado del formulario según las selecciones del usuario.
+// También maneja la lógica de filtrado de clientes y obras según el contacto seleccionado.
+// Muestra un loader mientras se obtienen los datos iniciales y maneja errores de carga.
+// Este paso es esencial para establecer la relación entre el contacto, cliente y obra antes de continuar con los siguientes pasos del wizard.
 
 export default function PasoContacto() {
   const { formData, setFormData, errores } = useWizardContext(); // Traemos el contexto del wizard donde se maneja el estado del formulario y los errores
+  const { contactos, filiales, loading } = usePasoContacto(); // Usamos el hook personalizado para cargar contactos y filiales
 
-  const [contactos, setContactos] = useState([]); // Guarda los contactos obtenidos del API
   const [clientesFiltrados, setClientesFiltrados] = useState([]); // Guarda los clientes filtrados por el contacto seleccionado
   const [obrasFiltradas, setObrasFiltradas] = useState([]); // Guarda las obras filtradas por el contacto seleccionado
-  const [filiales, setFiliales] = useState([]); // Guarda las filiales obtenidas del API
-  const [loading, setLoading] = useState(true); // Estado de carga para mostrar un loader mientras se obtienen los datos
-
-  useEffect(() => { // Efecto para cargar los datos iniciales de contactos y filiales
-    const cargarDatos = async () => { 
-      try {
-        const [contactosRes, filialesRes] = await Promise.all([ 
-          api.get("/contactos"),
-          api.get("/filiales")
-        ]);
-        setContactos(contactosRes.data);
-        setFiliales(filialesRes.data); 
-      } catch (error) {
-        console.error("Error cargando datos del paso 1", error);
-        toast.error("Error al cargar los datos iniciales. Por favor, intente nuevamente.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    cargarDatos(); 
-  }, []); 
 
   const handleSeleccionContacto = (contactoId) => { 
     const contacto = contactos.find(c => c.id === contactoId);  // Buscamos el contacto seleccionado por su ID
@@ -64,13 +49,13 @@ export default function PasoContacto() {
     <div className="paso-formulario">
       <h3>Paso 1: Selección del Contacto y Datos Relacionados</h3>
 
-      <p style={{ fontSize: "13px", marginTop: "0.4rem", color: "#666" }}>
+      <p className="paso-info">
         <em>  
           En este paso, selecciona el contacto relacionado con la cotización y los datos asociados.
         </em>
       </p>
 
-      <p style={{ fontSize: "13px", marginTop: "0.4rem", color: "#666" }}>
+      <p className="paso-info">
         <em>
           Recuerda que el contacto debe tener al menos un cliente y una obra asociados.
         </em>
@@ -89,7 +74,7 @@ export default function PasoContacto() {
         {errores?.contacto_id && <span className="error-text">⚠ {errores.contacto_id}</span>}
       </div>
 
-      <p style={{ fontSize: "13px", marginTop: "0.4rem", color: "#666" }}>
+      <p className="paso-info">
         <em>
           Si el contacto no tiene clientes u obras asociados, debes crear primero esos registros.
         </em>

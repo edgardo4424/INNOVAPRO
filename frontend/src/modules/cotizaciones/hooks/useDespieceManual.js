@@ -16,22 +16,14 @@ export default function useDespieceManual({ tipoCotizacion, formData, onResumenC
     const yaExiste = despieceManual.find(p => p.id === pieza.id);
     if (yaExiste) return false;
 
-    const precio = tipoCotizacion === "Alquiler"
-      ? parseFloat(pieza.precio_alquiler_soles)
-      : parseFloat(pieza.precio_venta_soles);
-
-    const subtotal = precio * cantidad;
     const pesoTotal = parseFloat(pieza.peso_kg) * cantidad;
 
     const nueva = {
-      id: pieza.id,
-      item: pieza.item,
-      descripcion: `${pieza.item} - ${pieza.descripcion}`,
+      ...pieza,
       cantidad,
-      precio_unitario_alquiler: parseFloat(pieza.precio_alquiler_soles),
-      precio_unitario_venta: parseFloat(pieza.precio_venta_soles),
-      subtotal_alquiler: (pieza.precio_alquiler_soles * cantidad).toFixed(2),
-      subtotal_venta: (pieza.precio_venta_soles * cantidad).toFixed(2),
+      descripcion: `${pieza.item} - ${pieza.descripcion}`,
+      subtotal_alquiler: (parseFloat(pieza.precio_alquiler_soles) * cantidad).toFixed(2),
+      subtotal_venta: (parseFloat(pieza.precio_venta_soles) * cantidad).toFixed(2),
       peso_kg_total: pesoTotal
     };
 
@@ -71,22 +63,25 @@ export default function useDespieceManual({ tipoCotizacion, formData, onResumenC
   };
 
   const formatearDespiece = (piezas) => {
-    return piezas.map(p => ({
-      pieza_id: p.id,
-      item: p.item,
-      descripcion: p.descripcion,
-      total: p.cantidad,
-      peso_u_kg: (p.peso_kg_total / p.cantidad).toFixed(2),
-      peso_kg: p.peso_kg_total,
-      precio_u_venta_dolares: 0,
-      precio_venta_dolares: 0,
-      precio_u_venta_soles: p.precio_unitario_venta,
-      precio_venta_soles: p.subtotal_venta,
-      precio_u_alquiler_soles: p.precio_unitario_alquiler,
-      precio_alquiler_soles: p.subtotal_alquiler,
-      stock_actual: 0
-    }));
-  };
+  return piezas.map(p => {
+        return {
+        pieza_id: p.id,
+        item: p.item,
+        descripcion: p.descripcion,
+        total: p.cantidad,
+        peso_u_kg: parseFloat(p.peso_kg).toFixed(2),
+        peso_kg: p.peso_kg_total,
+        precio_u_venta_dolares: parseFloat(p.precio_venta_dolares).toFixed(2),
+        precio_venta_dolares: (parseFloat(p.precio_venta_dolares) * p.cantidad).toFixed(2),
+        precio_u_venta_soles: parseFloat(p.precio_venta_soles).toFixed(2),
+        precio_venta_soles: (parseFloat(p.precio_venta_soles) * p.cantidad).toFixed(2),
+        precio_u_alquiler_soles: parseFloat(p.precio_alquiler_soles).toFixed(2),
+        precio_alquiler_soles: (parseFloat(p.precio_alquiler_soles) * p.cantidad).toFixed(2),
+        stock_actual: p.stock_actual || 0,
+        };
+    });
+    };
+
 
   return {
     despieceManual,

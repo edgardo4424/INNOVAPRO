@@ -1,5 +1,5 @@
 // INNOVA PRO+ v1.3.1
-import { useWizardContext } from "../../hooks/useWizardCotizacion";
+import { useWizardContext } from "../../context/WizardCotizacionContext";
 
 export default function PasoFinal() {
   const { formData } = useWizardContext();
@@ -52,51 +52,53 @@ export default function PasoFinal() {
       </div>
 
       {/* SERVICIOS ADICIONALES */}
-      <div className="wizard-section">
-        <h4>➕ Servicios adicionales</h4>
+      {(formData.tiene_pernos_disponibles || formData.tiene_transporte || formData.tipo_instalacion !== "NINGUNA") && (
+        <div className="wizard-section">
+          <h4>➕ Servicios adicionales</h4>
 
-        {formData.tiene_pernos_disponibles && (
-          <div className="wizard-key-value">
-            <strong>🔩 Pernos de expansión:</strong> {formData.tiene_pernos ? "Sí, se incluirán" : "No se incluirán"}
-          </div>
-        )}
-
-        {formData.tiene_transporte && (
-          <div className="wizard-key-value">
-          <strong>🚛 Costo Transporte:</strong> S/ {precio_final_transporte}          
-          </div>
-        )}
-
-        {formData.tipo_instalacion === "COMPLETA" && (
-          <div className="wizard-key-value">
-            <strong>🛠️ Instalación completa:</strong> S/ {formData.precio_instalacion_completa?.toFixed(2) || "0.00"}
-          </div>
-        )}
-
-        {formData.tipo_instalacion === "PARCIAL" && (
-          <>
+          {formData.tiene_pernos_disponibles && (
             <div className="wizard-key-value">
-              <strong>🛠️ Instalación completa (referencia):</strong> S/ {formData.precio_instalacion_completa?.toFixed(2) || "0.00"}
+              <strong>🔩 Pernos de expansión:</strong> {formData.tiene_pernos ? "Sí, se incluirán" : "No se incluirán"}
             </div>
+          )}
+
+          {formData.tiene_transporte && (
             <div className="wizard-key-value">
-              <strong>🧰 Instalación parcial:</strong> S/ {formData.precio_instalacion_parcial?.toFixed(2) || "0.00"}
+            <strong>🚛 Costo Transporte:</strong> S/ {precio_final_transporte}          
             </div>
-            <div className="wizard-key-value" style={{ flexDirection: "column", alignItems: "flex-start" }}>
-              <strong>📝 Nota sobre instalación parcial:</strong>
-              <p style={{ marginTop: "0.3rem", color: "#555", fontSize: "14px" }}>
-                {formData.nota_instalacion || "No especificada."}
-              </p>
+          )}
+
+          {formData.tipo_instalacion === "COMPLETA" && (
+            <div className="wizard-key-value">
+              <strong>🛠️ Instalación completa:</strong> S/ {formData.precio_instalacion_completa?.toFixed(2) || "0.00"}
             </div>
-          </>
-        )}
-      </div>
+          )}
+
+          {formData.tipo_instalacion === "PARCIAL" && (
+            <>
+              <div className="wizard-key-value">
+                <strong>🛠️ Instalación completa (referencia):</strong> S/ {formData.precio_instalacion_completa?.toFixed(2) || "0.00"}
+              </div>
+              <div className="wizard-key-value">
+                <strong>🧰 Instalación parcial:</strong> S/ {formData.precio_instalacion_parcial?.toFixed(2) || "0.00"}
+              </div>
+              <div className="wizard-key-value" style={{ flexDirection: "column", alignItems: "flex-start" }}>
+                <strong>📝 Nota sobre instalación parcial:</strong>
+                <p style={{ marginTop: "0.3rem", color: "#555", fontSize: "14px" }}>
+                  {formData.nota_instalacion || "No especificada."}
+                </p>
+              </div>
+            </>
+          )}
+        </div>
+      )}
 
       
       <div className="wizard-total">
         <strong>💰 Total final:</strong> <span> S/ {totalConDescuento}</span>
       </div>
-
-      {(formData.tipo_instalacion || formData.tiene_transporte) && (
+      {console.log("Form Data:", formData)}
+      {(formData.tiene_instalacion !== false && formData.tiene_transporte != false) && (
         <div className="wizard-total" style={{ marginTop: "1rem", color: "#666", fontSize: "15px" }}>
           <strong>🧾 Total referencial con servicios:</strong>{" "}
           <span style={{ color: "#009688" }}>
@@ -108,15 +110,17 @@ export default function PasoFinal() {
                 : 0)
             ).toFixed(2)}
           </span>
+
+          <p style={{ fontSize: "13px", marginTop: "0.4rem", color: "#666" }}>
+            <em>
+              Este monto incluye el total con transporte e instalación completa como referencia. 
+              El precio real a pagar se encuentra en el total final.
+            </em>
+          </p>
         </div>
       )}
 
-      <p style={{ fontSize: "13px", marginTop: "0.4rem", color: "#666" }}>
-        <em>
-          Este monto incluye el total con transporte e instalación completa como referencia. 
-          El precio real a pagar se encuentra en el total final.
-        </em>
-      </p>
+      
 
 
       <div className="mensaje-revision-final">

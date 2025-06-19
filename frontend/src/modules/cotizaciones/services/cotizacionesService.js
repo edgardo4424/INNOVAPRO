@@ -1,5 +1,12 @@
 import api from "@/shared/services/api";
 
+// Obtener todos los usos disponibles
+// Ejemplo: Andamio de Trabajo, Puntales, Escalera de Acceso
+export async function obtenerUsos(){
+  const response = await api.get("/usos");
+  return response.data;
+}
+
 // Obtener atributos de un uso (ej. Andamio de Trabajo)
 export async function obtenerAtributosPorUso(usoId) {
   const response = await api.get(`/atributos/usos/${usoId}`);

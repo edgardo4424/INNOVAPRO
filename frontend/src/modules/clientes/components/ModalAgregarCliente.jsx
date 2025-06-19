@@ -6,7 +6,7 @@ import {
    validarClienteNatural,
 } from "../validaciones/validarCliente";
 import { toast } from "react-toastify";
-import { buscarDatosPorRUC } from "@/shared/services/api";
+import { buscarDatosPorRUC } from "../../sunat/services/sunatService";
 import { useAuth } from "../../../context/AuthContext";
 import { parsearError } from "../../../utils/parsearError";
 import {

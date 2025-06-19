@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useWizardContext } from "../../hooks/useWizardCotizacion";
+import { useWizardContext } from "../../context/WizardCotizacionContext";
 import { useGenerarDespiece } from "../../hooks/useGenerarDespiece";
 import { useCalculoTransporte } from "../../hooks/useCalculoTransporte";
 import ResumenDespiece from "../ResumenDespiece";

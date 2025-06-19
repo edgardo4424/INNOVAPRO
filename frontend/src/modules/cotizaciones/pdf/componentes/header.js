@@ -9,7 +9,7 @@ export default function encabezadoCotizacion(doc, data) {
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(7);
-        
+    
      // Columna izquierda
     currentY = drawJustifiedText(doc, "**Ref. cotización:** " + data.cotizacion?.codigo_documento, colLeftX, currentY, 55, 3, 7);
     if (data.obra?.direccion) {

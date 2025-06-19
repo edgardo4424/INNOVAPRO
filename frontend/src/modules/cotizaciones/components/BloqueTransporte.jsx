@@ -29,8 +29,10 @@ export default function BloqueTransporte({ formData, setFormData, errores }) {
         <option value="TRUE">Sí</option>
         <option value="FALSE">No</option>
     </select>
-
-      {errores?.tiene_transporte && <p className="error-text">{errores.tiene_transporte}</p>}
+      
+      <div style={{ fontSize: "13px", marginTop: "1rem", color: "#666" }}>
+        {errores?.tiene_transporte && <p className="error-text">{errores.tiene_transporte}</p>}
+      </div>
 
       {formData.tiene_transporte && (
         <div style={{ marginTop: "1rem" }}>

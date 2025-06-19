@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import DataTable from "react-data-table-component";
 import {
    Tooltip,
@@ -8,14 +8,6 @@ import {
    TooltipContent,
    TooltipProvider,
 } from "@/components/ui/tooltip";
-import {
-   Dialog,
-   DialogContent,
-   DialogHeader,
-   DialogTitle,
-   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Edit, Eye, FileDown, Settings } from "lucide-react";
 import { ColumnSelector } from "@/shared/components/ColumnSelector";
@@ -190,5 +182,3 @@ export default function TablaCotizacion({
       </div>
    );
 }
-
-// Componente para seleccionar columnas visibles

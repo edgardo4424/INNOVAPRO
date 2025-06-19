@@ -1,7 +1,12 @@
 import { useEffect } from "react";
-import { useWizardContext } from "../../hooks/useWizardCotizacion";
+import { useWizardContext } from "../../context/WizardCotizacionContext";
 import Loader from "../../../../shared/components/Loader";
 import { useZonasCotizacion } from "../../hooks/useZonasCotizacion";
+
+// Este componente representa el tercer paso del wizard para registrar una cotización.
+// Permite describir mediante atributos dinámicos las zonas con sus respectivos equipos.
+// Utiliza el contexto del wizard para manejar el estado del formulario y los errores. 
+// Carga los atributos del uso disponible desde el API al iniciar y actualiza el estado del formulario según la selección del usuario.
 
 const PasoAtributos = () => {
   const { formData, setFormData, errores } = useWizardContext(); // Traemos el contexto del wizard donde se maneja el estado del formulario y los errores
