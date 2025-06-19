@@ -6,14 +6,15 @@ import {
 } from "@/components/ui/tooltip";
 import { Edit, Trash2 } from "lucide-react";
 import DataTable from "react-data-table-component";
-export default function TablaObras({ obras, onEditar, onEliminar }) {
+import ModalEditarObra from "./ModalEditarObra";
+export default function TablaObras({ obras, onSubmit, onEditar, onEliminar }) {
    if (obras.length === 0) {
       return <p>No hay obras registradas.</p>;
    }
    const columns = [
       {
          name: "Nombre",
-           selector: row => row.nombre ?? "",
+         selector: row => row.nombre ?? "",
          sortable: true,
          grow: 2,
          cell: (row) => (
@@ -47,13 +48,14 @@ export default function TablaObras({ obras, onEditar, onEliminar }) {
          name: "Acciones",
          cell: (row) => (
             <div className="flex gap-2">
-               <Button
+               {/* <Button
                   variant="outline"
                   size={"icon"}
                   onClick={() => onEditar(row)}
                >
                   <Edit className="h-4 w-4" />
-               </Button>
+               </Button> */}
+               <ModalEditarObra onSubmit={onSubmit} obra={row} />
                <Button
                   variant="outline"
                   size="icon"

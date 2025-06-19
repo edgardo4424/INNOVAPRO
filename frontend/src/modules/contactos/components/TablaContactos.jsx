@@ -7,58 +7,41 @@ import {
 import { Edit, Trash2 } from "lucide-react";
 import DataTable from "react-data-table-component";
 import ModalEditarContacto from "./ModalEditarContacto";
+import { useState } from "react";
+import { ColumnSelector } from "@/shared/components/ColumnSelector";
+import { customStylesTable } from "@/utils/customTableStyle";
 
-export default function TablaContactos({ contactos, onSubmit, onEliminar,clientes,obras }) {
+export default function TablaContactos({
+   contactos,
+   onSubmit,
+   onEliminar,
+   clientes,
+   obras,
+}) {
    if (contactos.length === 0) {
       return <p>No hay contactos registrados.</p>;
    }
 
-   const customStyles = {
-      header: {
-         style: {
-            minHeight: "56px",
-            paddingLeft: "16px",
-            paddingRight: "16px",
-         },
-      },
-      headRow: {
-         style: {
-            borderTopStyle: "solid",
-            borderTopWidth: "1px",
-            borderTopColor: "#e5e7eb",
-            backgroundColor: "#f9fafb",
-            minHeight: "48px",
-         },
-      },
-      headCells: {
-         style: {
-            paddingLeft: "16px",
-            paddingRight: "16px",
-            fontSize: "14px",
-            fontWeight: "600",
-            color: "#374151",
-         },
-      },
-      rows: {
-         style: {
-            minHeight: "56px",
-            "&:hover": {
-               backgroundColor: "#f9fafb",
-            },
-         },
-         stripedStyle: {
-            backgroundColor: "#fafafa",
-         },
-      },
-      cells: {
-         style: {
-            paddingLeft: "16px",
-            paddingRight: "16px",
-            fontSize: "14px",
-            color: "#6b7280",
-         },
-      },
-   };
+   const [visibleColumns, setVisibleColumns] = useState({
+      nombre: true,
+      email: true,
+      telefono: true,
+      cargo: true,
+      clientes: true,
+      obras: true,
+      acciones: true,
+   });
+   const columnOptions = [
+      { id: "nombre", label: "Nombre" },
+      { id: "email", label: "Email" },
+      { id: "telefono", label: "Teléfono" },
+      { id: "cargo", label: "Cargo" },
+      { id: "clientes", label: "Clientes" },
+      { id: "obras", label: "Obras" },
+      { id: "acciones", label: "Acciones" },
+   ];
+
+   
 
    const columns = [
       {
@@ -74,6 +57,7 @@ export default function TablaContactos({ contactos, onSubmit, onEliminar,cliente
                <TooltipContent>{row.nombre || "—"}</TooltipContent>
             </Tooltip>
          ),
+         omit: !visibleColumns.nombre
       },
       {
          name: "Email",
@@ -88,18 +72,21 @@ export default function TablaContactos({ contactos, onSubmit, onEliminar,cliente
                <TooltipContent>{row.email || "—"}</TooltipContent>
             </Tooltip>
          ),
+         omit: !visibleColumns.email
       },
       {
          name: "Teléfono",
          selector: (row) => row.telefono || "-",
          sortable: true,
          grow: 1,
+         omit: !visibleColumns.telefono
       },
       {
          name: "Cargo",
          selector: (row) => row.cargo || "-",
          sortable: true,
          grow: 1,
+         omit: !visibleColumns.cargo
       },
       {
          name: "Clientes",
@@ -120,10 +107,11 @@ export default function TablaContactos({ contactos, onSubmit, onEliminar,cliente
                }`}</TooltipContent>
             </Tooltip>
          ),
+         omit: !visibleColumns.clientes
       },
       {
          name: "Obras",
-           selector: row => row.obras_asociadas ?? "",
+         selector: (row) => row.obras_asociadas ?? "",
          sortable: true,
          grow: 2,
          cell: (row) => (
@@ -138,24 +126,17 @@ export default function TablaContactos({ contactos, onSubmit, onEliminar,cliente
                }`}</TooltipContent>
             </Tooltip>
          ),
+         omit: !visibleColumns.obras
       },
       {
          name: "Acciones",
          cell: (row) => (
             <div className="flex gap-2">
-               {/* <Button
-                  variant="outline"
-                  size={"icon"}
-                  onClick={() => onEditar(row)}
-                  className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-600"
-               >
-                  <Edit className="h-4 w-4" />
-               </Button> */}
                <ModalEditarContacto
-               contacto={row}
-               clientes={clientes}
-               obras={obras}
-               onSubmit={onSubmit}
+                  contacto={row}
+                  clientes={clientes}
+                  obras={obras}
+                  onSubmit={onSubmit}
                />
                <Button
                   variant="outline"
@@ -169,17 +150,25 @@ export default function TablaContactos({ contactos, onSubmit, onEliminar,cliente
          ),
          ignoreRowClick: true,
          width: "120px",
+         omit: !visibleColumns.acciones
       },
    ];
    return (
-      <div className="w-full  px-4">
+      <div className="w-full  px-4 max-w-7xl">
+         <div className="flex justify-end">
+            <ColumnSelector
+               visibleColumns={visibleColumns}
+               setVisibleColumns={setVisibleColumns}
+               columnOptions={columnOptions}
+            />
+         </div>
          <DataTable
             columns={columns}
             data={contactos}
             responsive
             striped
             highlightOnHover
-            customStyles={customStyles}
+            customStyles={customStylesTable}
             noDataComponent={
                <div className="flex items-center justify-center py-12">
                   <p className="text-muted-foreground">

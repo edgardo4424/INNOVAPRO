@@ -26,11 +26,11 @@ export default function GestionContactos() {
    } = useContactos();
 
    return (
-      <div className="dashboard-main">
+      <div className="min-h-full flex-1  flex flex-col items-center">
          <ModuloNavegacion />
 
          {/* 🔍 Buscador + Moda de agregar oontacto */}
-         <div className="flex flex-row-reverse md:flex-row justify-between px-4 my-4 md:my-8 items-center gap-4">
+         <div className="w-full max-w-7xl flex flex-row-reverse md:flex-row justify-between px-4 my-6 items-center gap-4">
             <ModalAgregarContacto
                clientes={clientes}
                obras={obras}

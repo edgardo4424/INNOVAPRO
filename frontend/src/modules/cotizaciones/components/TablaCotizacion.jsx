@@ -167,8 +167,8 @@ export default function TablaCotizacion({
       selectAllRowsItemText: "Todos",
    };
    return (
-      <div className="w-full px-4 pb-8">
-         <div className="flex justify-end mb-4">
+      <div className="w-full px-4 max-w-7xl">
+         <div className="flex justify-end mt-6">
             <ColumnSelector
                visibleColumns={visibleColumns}
                setVisibleColumns={setVisibleColumns}
@@ -182,6 +182,7 @@ export default function TablaCotizacion({
             highlightOnHover
             pointerOnHover
             pagination
+            paginationPerPage={5}
             paginationRowsPerPageOptions={[5, 10, 15, 20]}
             customStyles={customStyles}
             paginationComponentOptions={paginationOptions}
