@@ -21,7 +21,7 @@ export const NotificacionesProvider = ({ children }) => {
             try {
                 const res = await api.get("/notificaciones");
                 console.log("📩 Notificaciones cargadas:", res.data.notificaciones);
-                setNotificaciones(res.data.notificaciones.filter(noti => !noti.leida));
+                setNotificaciones(res.data.notificaciones);
             } catch (error) {
                 console.error("❌ Error al obtener notificaciones:", error);
             }

@@ -1,40 +1,27 @@
-import { useEffect, useState } from "react";
-import { useWizardContext } from "../../hooks/useWizardCotizacion";
-import api from "@/shared/services/api";
+import { useState } from "react";
+import { useWizardContext } from "../../context/WizardCotizacionContext";
+import usePasoContacto from "../../hooks/usePasoContacto";
 import Loader from "@/shared/components/Loader";
 import Select from "react-select";
 
+// Este componente representa el primer paso del wizard para registrar una cotización.
+// Permite seleccionar un contacto y los datos relacionados como cliente, obra y filial.
+// Utiliza el contexto del wizard para manejar el estado del formulario y los errores.
+// Carga los contactos y filiales desde el API al iniciar y actualiza el estado del formulario según las selecciones del usuario.
+// También maneja la lógica de filtrado de clientes y obras según el contacto seleccionado.
+// Muestra un loader mientras se obtienen los datos iniciales y maneja errores de carga.
+// Este paso es esencial para establecer la relación entre el contacto, cliente y obra antes de continuar con los siguientes pasos del wizard.
+
 export default function PasoContacto() {
-  const { formData, setFormData, errores } = useWizardContext();
+  const { formData, setFormData, errores } = useWizardContext(); // Traemos el contexto del wizard donde se maneja el estado del formulario y los errores
+  const { contactos, filiales, loading } = usePasoContacto(); // Usamos el hook personalizado para cargar contactos y filiales
 
-  const [contactos, setContactos] = useState([]);
-  const [clientesFiltrados, setClientesFiltrados] = useState([]);
-  const [obrasFiltradas, setObrasFiltradas] = useState([]);
-  const [filiales, setFiliales] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [clientesFiltrados, setClientesFiltrados] = useState([]); // Guarda los clientes filtrados por el contacto seleccionado
+  const [obrasFiltradas, setObrasFiltradas] = useState([]); // Guarda las obras filtradas por el contacto seleccionado
 
-  useEffect(() => {
-    const cargarDatos = async () => {
-      try {
-        const [contactosRes, filialesRes] = await Promise.all([
-          api.get("/contactos"),
-          api.get("/filiales")
-        ]);
-        setContactos(contactosRes.data);
-        setFiliales(filialesRes.data);
-      } catch (error) {
-        console.error("Error cargando datos del paso 1", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    cargarDatos();
-  }, []);
-
-  const handleSeleccionContacto = (contactoId) => {
-    const contacto = contactos.find(c => c.id === contactoId);
-    setFormData((prev) => ({
+  const handleSeleccionContacto = (contactoId) => { 
+    const contacto = contactos.find(c => c.id === contactoId);  // Buscamos el contacto seleccionado por su ID
+    setFormData((prev) => ({ // Actualizamos el estado del formulario con los datos del contacto seleccionado
       ...prev,
       contacto_id: contactoId,
       contacto_nombre: contacto?.nombre || "",
@@ -43,34 +30,55 @@ export default function PasoContacto() {
       obra_id: null,
       obra_nombre: "",
       obra_direccion: "",
-      obra_ubicacion: ""
+      obra_ubicacion: "",
+      filial_id: null,
+      filial_nombre: ""
     }));
-    setClientesFiltrados(contacto.clientes_asociados || []);
-    setObrasFiltradas(contacto.obras_asociadas || []);
-    console.log("🧱 Obras asociadas al contacto:", contacto.obras_asociadas);
+    setClientesFiltrados(Array.isArray(contacto?.clientes_asociados) ? contacto.clientes_asociados : []); // Filtramos los clientes asociados al contacto seleccionado
+    setObrasFiltradas(Array.isArray(contacto?.obras_asociadas) ? contacto.obras_asociadas : []); // Filtramos las obras asociadas al contacto seleccionado
   };
 
-  const handleChange = (campo, valor) => {
-    setFormData((prev) => ({ ...prev, [campo]: valor }));
+  const handleChange = (campo, valor) => { // Función para manejar los cambios en los campos del formulario
+    setFormData((prev) => ({ ...prev, [campo]: valor })); // Actualizamos el estado del formulario con el nuevo valor del campo
   };
 
   if (loading) return <Loader texto="Cargando datos del paso 1..." />;
+
 
   return (
     <div className="paso-formulario">
       <h3>Paso 1: Selección del Contacto y Datos Relacionados</h3>
 
+      <p className="paso-info">
+        <em>  
+          En este paso, selecciona el contacto relacionado con la cotización y los datos asociados.
+        </em>
+      </p>
+
+      <p className="paso-info">
+        <em>
+          Recuerda que el contacto debe tener al menos un cliente y una obra asociados.
+        </em>
+      </p>
+
       <div className="wizard-section">
         <label>Contacto:</label>
         <Select
-          options={contactos.map(c => ({ label: `${c.nombre} — ${c.email}`, value: c.id }))}
+          options={contactos.map(c => ({ label: `${c.nombre} — ${c.email}`, value: c.id }))} 
           value={contactos.find(c => c.id === formData.contacto_id)
             ? { label: `${contactos.find(c => c.id === formData.contacto_id).nombre}`, value: formData.contacto_id }
-            : null}
+            : null} 
           onChange={(option) => handleSeleccionContacto(option.value)}
-          placeholder="Seleccione un contacto..."
+          placeholder="— Seleccione un contacto —"
         />
+        {errores?.contacto_id && <span className="error-text">⚠ {errores.contacto_id}</span>}
       </div>
+
+      <p className="paso-info">
+        <em>
+          Si el contacto no tiene clientes u obras asociados, debes crear primero esos registros.
+        </em>
+      </p>
 
       <div className="wizard-section">
         <label>Cliente:</label>
@@ -84,8 +92,9 @@ export default function PasoContacto() {
             handleChange("cliente_id", option.value)
             handleChange("cliente_nombre", option.label)
           }}
-          placeholder="Seleccione un cliente relacionado..."
+          placeholder="— Seleccione un cliente relacionado —"
         />
+        {errores?.cliente_id && <span className="error-text">⚠ {errores.cliente_id}</span>}
       </div>
 
       <div className="wizard-section">
@@ -102,8 +111,9 @@ export default function PasoContacto() {
             handleChange("obra_direccion", obra.direccion || "")
             handleChange("obra_ubicacion", obra.ubicacion || "")
           }}
-          placeholder="Seleccione una obra relacionada..."
+          placeholder="— Seleccione una obra relacionada —"
         />
+        {errores?.obra_id && <span className="error-text">⚠ {errores.obra_id}</span>}
       </div>
 
       <div className="wizard-section">
@@ -117,10 +127,10 @@ export default function PasoContacto() {
             handleChange("filial_id", option.value)
             handleChange("filial_nombre", option.label)
           }}
-          placeholder="Seleccione una filial..."
+          placeholder="— Seleccione una filial —"
         />
+        {errores?.filial_id && <span className="error-text">⚠ {errores.filial_id}</span>}
       </div>
-      
     </div>
   );
 }

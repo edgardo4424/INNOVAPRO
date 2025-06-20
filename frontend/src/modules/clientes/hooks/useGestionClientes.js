@@ -9,8 +9,6 @@ export function useGestionClientes() {
   const [paginaActual, setPaginaActual] = useState(1);
   const [clientesPorPagina,setClientesPorPagina] = useState(5);
 
-  const [clienteEditando, setClienteEditando] = useState(null);
-  const [modalAgregar, setModalAgregar] = useState(false);
 
   // 🔄 Cargar clientes al iniciar
   useEffect(() => {
@@ -26,11 +24,6 @@ export function useGestionClientes() {
     fetchClientes();
   }, []);
 
-  const abrirModalAgregar = () => setModalAgregar(true);
-  const cerrarModalAgregar = () => setModalAgregar(false);
-
-  const abrirModalEditar = (cliente) => setClienteEditando(cliente);
-  const cerrarModalEditar = () => setClienteEditando(null);
 
   const agregarCliente = (clienteNuevo) => {
     setClientes((prev) => [...prev, clienteNuevo]);
@@ -73,22 +66,16 @@ export function useGestionClientes() {
   }, [busqueda]);
 
   return {
-    clientesPaginados,
-    busqueda,
-    setBusqueda,
-    paginaActual,
-    setPaginaActual,
-    totalPaginas,
-    abrirModalAgregar,
-    cerrarModalAgregar,
-    abrirModalEditar,
-    cerrarModalEditar,
-    clienteEditando,
-    modalAgregar,
-    agregarCliente,
-    actualizarCliente,
-    eliminarCliente,
-    setClientesPorPagina,
-    clientesPorPagina
+      clientesPaginados,
+      busqueda,
+      setBusqueda,
+      paginaActual,
+      setPaginaActual,
+      totalPaginas,
+      eliminarCliente,
+      agregarCliente,
+      actualizarCliente,
+      clientesPorPagina,
+      setClientesPorPagina,
   };
 }

@@ -1,122 +1,158 @@
+import { useState } from "react";
+import * as yup from "yup";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+   Select,
+   SelectContent,
+   SelectItem,
+   SelectTrigger,
+   SelectValue,
+} from "@/components/ui/select";
+import { obtenerUsuarioSchema } from "../schema/user.schema";
+import { AlertDialogFooter } from "@/components/ui/alert-dialog";
 
 export default function UsuarioForm({
    modo = "crear",
-   usuario,
-   setUsuario,
+   usuario: usuarioInicial = {},
    onSubmit,
-   onCancel,
-   errores = {},
+   closeModal,
+   handleCancel,
 }) {
    const esCrear = modo === "crear";
 
+   const [usuario, setUsuarioInterno] = useState(usuarioInicial);
+   const [errores, setErrores] = useState({});
+
+   const schema = obtenerUsuarioSchema(esCrear);
+
+   const handleChange = (campo, valor) => {
+      setUsuarioInterno((prev) => ({ ...prev, [campo]: valor }));
+   };
+
+   const handleSubmit = async (e) => {
+      e.preventDefault();
+      try {
+         const datosValidados = await schema.validate(usuario, {
+            abortEarly: false,
+         });
+         setErrores({});
+         console.log('usuario',usuario);
+         
+         onSubmit(datosValidados);
+          closeModal(); 
+      } catch (err) {
+         const nuevosErrores = {};
+         err.inner.forEach((e) => {
+            nuevosErrores[e.path] = e.message;
+         });
+         setErrores(nuevosErrores);
+      }
+   };
+
    return (
-      <form
-         onSubmit={onSubmit}
-         className="gestion-form-global"
-         autoComplete="off"
-      >
-         <div className="form-group">
-            <Label>Nombre *</Label>
-            <Input
-               type="text"
-               value={usuario.nombre}
-               onChange={(e) =>
-                  setUsuario((prev) => ({ ...prev, nombre: e.target.value }))
-               }
-               required
-            />
-            {errores.nombre && (
-               <p className="error-message">{errores.nombre}</p>
-            )}
-         </div>
-
-         <div className="form-group">
-            <Label>Teléfono Celular *</Label>
-            <Input
-               type="text"
-               value={usuario.telefono}
-               onChange={(e) =>
-                  setUsuario((prev) => ({ ...prev, telefono: e.target.value }))
-               }
-               required
-            />
-            {errores.telefono && (
-               <p className="error-message">{errores.telefono}</p>
-            )}
-         </div>
-
-         <div className="form-group">
-            <Label>Correo *</Label>
-            <Input
-               type="email"
-               value={usuario.email}
-               onChange={(e) =>
-                  setUsuario((prev) => ({ ...prev, email: e.target.value }))
-               }
-               required
+      <>
+         <div className="max-h-96 overflow-y-auto px-2">
+            <form
+               id="form-usuario"
+               className="gestion-form-global"
                autoComplete="off"
-            />
-            {errores.email && <p className="error-message">{errores.email}</p>}
-         </div>
-
-         {esCrear && (
-            <div className="form-group">
-               <Label>Contraseña *</Label>
-               <Input
-                  type="password"
-                  value={usuario.password}
-                  onChange={(e) =>
-                     setUsuario((prev) => ({
-                        ...prev,
-                        password: e.target.value,
-                     }))
-                  }
-                  required
-                  autoComplete="new-password"
-               />
-               {errores.password && (
-                  <p className="error-message">{errores.password}</p>
-               )}
-            </div>
-         )}
-
-         <div className="form-group">
-            <Label>Rol *</Label>
-            <Select
-               value={usuario.rol}
-               onValueChange={(value) =>
-                  setUsuario((prev) => ({ ...prev, rol: value }))
-               }
-               required
+               onSubmit={handleSubmit}
             >
-               <SelectTrigger>
-                  <SelectValue placeholder="Seleccione un rol" />
-               </SelectTrigger>
-               <SelectContent>
-                  <SelectItem value="Clientes">Clientes</SelectItem>
-                  <SelectItem value="Gerencia">Gerencia</SelectItem>
-                  <SelectItem value="Ventas">Ventas</SelectItem>
-                  <SelectItem value="Oficina Técnica">
-                     Oficina Técnica
-                  </SelectItem>
-                  <SelectItem value="Almacén">Almacén</SelectItem>
-                  <SelectItem value="Administración">Administración</SelectItem>
-               </SelectContent>
-            </Select>
+               <div className="form-group">
+                  <Label htmlFor="nombre">Nombre *</Label>
+                  <Input
+                     id="nombre"
+                     type="text"
+                     value={usuario.nombre ?? ""}
+                     onChange={(e) => handleChange("nombre", e.target.value)}
+                  />
+                  {errores.nombre && (
+                     <p className="error-message">{errores.nombre}</p>
+                  )}
+               </div>
 
-            {errores.rol && <p className="error-message">{errores.rol}</p>}
+               <div className="form-group">
+                  <Label htmlFor="telefono">Teléfono Celular *</Label>
+                  <Input
+                     id="telefono"
+                     type="text"
+                     value={usuario.telefono ?? ""}
+                     onChange={(e) => handleChange("telefono", e.target.value)}
+                  />
+                  {errores.telefono && (
+                     <p className="error-message">{errores.telefono}</p>
+                  )}
+               </div>
+
+               <div className="form-group">
+                  <Label htmlFor="email">Correo *</Label>
+                  <Input
+                     id="email"
+                     type="email"
+                     value={usuario.email ?? ""}
+                     onChange={(e) => handleChange("email", e.target.value)}
+                  />
+                  {errores.email && (
+                     <p className="error-message">{errores.email}</p>
+                  )}
+               </div>
+
+               {esCrear && (
+                  <div className="form-group">
+                     <Label htmlFor="password">Contraseña *</Label>
+                     <Input
+                        id="password"
+                        type="password"
+                        value={usuario.password ?? ""}
+                        onChange={(e) =>
+                           handleChange("password", e.target.value)
+                        }
+                        autoComplete="new-password"
+                     />
+                     {errores.password && (
+                        <p className="error-message">{errores.password}</p>
+                     )}
+                  </div>
+               )}
+
+               <div className="form-group">
+                  <Label>Rol *</Label>
+                  <Select
+                     value={usuario.rol ?? ""}
+                     onValueChange={(value) => handleChange("rol", value)}
+                  >
+                     <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Seleccione un rol" />
+                     </SelectTrigger>
+                     <SelectContent>
+                        <SelectItem value="Clientes">Clientes</SelectItem>
+                        <SelectItem value="Gerencia">Gerencia</SelectItem>
+                        <SelectItem value="Ventas">Ventas</SelectItem>
+                        <SelectItem value="Oficina Técnica">
+                           Oficina Técnica
+                        </SelectItem>
+                        <SelectItem value="Almacén">Almacén</SelectItem>
+                        <SelectItem value="Administración">
+                           Administración
+                        </SelectItem>
+                     </SelectContent>
+                  </Select>
+                  {errores.rol && (
+                     <p className="error-message">{errores.rol}</p>
+                  )}
+               </div>
+            </form>
          </div>
-
-         <div className="w-full flex justify-between">
-            <Button variant={"outline"} className="" type="button" onClick={onCancel}>
+         <AlertDialogFooter>
+            <Button variant="outline" onClick={handleCancel}>
                Cancelar
             </Button>
-            <Button type="submit">Guardar</Button>
-         </div>
-      </form>
+            <Button className="bg-sky-950" type="submit" form="form-usuario">
+               {esCrear ? "Crear Usuario" : "Actualizar Usuario"}
+            </Button>
+         </AlertDialogFooter>
+      </>
    );
 }

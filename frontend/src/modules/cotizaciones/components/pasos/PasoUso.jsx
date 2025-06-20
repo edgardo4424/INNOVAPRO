@@ -1,31 +1,31 @@
-// INNOVA PRO+ v1.3.1
-import { useEffect, useState } from "react";
-import { useWizardContext } from "../../hooks/useWizardCotizacion";
-import api from "@/shared/services/api";
+import { useWizardContext } from "../../context/WizardCotizacionContext";
+import { usePasoUso } from "../../hooks/usePasoUso";
+import useDespieceManual  from "../../hooks/useDespieceManual";
 import Loader from "@/shared/components/Loader";
 
+// Este componente representa el segundo paso del wizard para registrar una cotización.
+// Permite seleccionar el uso del equipo y el tipo de cotización (alquiler o venta).
+// Utiliza el contexto del wizard para manejar el estado del formulario y los errores. 
+// Carga los usos disponibles desde el API al iniciar y actualiza el estado del formulario según la selección del usuario.
+
 export default function PasoUso() {
-  const { formData, setFormData, errores } = useWizardContext();
-  const [usos, setUsos] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { formData, setFormData, errores } = useWizardContext(); // Traemmos el contexto del wizard donde se maneja el estado del fomrulario y los errores
+  
+  const { usos, loading, handleChange, handleSeleccionUso } = usePasoUso({ // Usamos el hook personalizado para cargar los usos disponibles
+    formData,
+    setFormData
+  })
 
-  useEffect(() => {
-    const cargarUsos = async () => {
-      try {
-        const { data } = await api.get("/usos");
-        setUsos(data);
-      } catch (error) {
-        console.error("Error al cargar usos", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    cargarUsos();
-  }, []);
-
-  const handleChange = (campo, valor) => {
-    setFormData((prev) => ({ ...prev, [campo]: valor }));
-  };
+  useDespieceManual({
+    tipo_cotizacion: formData.tipo_cotizacion,
+    onResumeChange: ({ despiece, resumen }) => {
+      setFormData(prev => ({
+        ...prev,
+        despiece,
+        resumenDespiece: resumen,
+      }))
+    }
+  })
 
   if (loading) return <Loader texto="Cargando usos disponibles..." />;
 
@@ -36,12 +36,8 @@ export default function PasoUso() {
       <div className="wizard-section">
         <label>Uso / Tipo de equipo:</label>
         <select
-          value={formData.uso_id || ""}
-          onChange={(e) => {
-            const selected = usos.find(u => u.id === parseInt(e.target.value))
-            handleChange("uso_id", selected.id)
-            handleChange("uso_nombre", selected.descripcion)
-          }}
+          value={formData.uso_id || ""} 
+          onChange={handleSeleccionUso}
         >
           <option value="">Seleccione un uso...</option>
           {usos.map((u) => (
@@ -50,8 +46,9 @@ export default function PasoUso() {
             </option>
           ))}
         </select>
-
-        {errores.uso_id && <p className="error-text">{errores.uso_id}</p>}
+        <div style={{ marginTop: "1rem" }}>
+          {errores?.uso_id && <p className="error-text">⚠ {errores.uso_id}</p>}
+        </div>
       </div>
 
       <div className="wizard-section">
@@ -64,8 +61,7 @@ export default function PasoUso() {
           <option value="Alquiler">Alquiler</option>
           <option value="Venta">Venta</option>
         </select>
-
-        {errores.tipo_cotizacion && <p className="error-text">{errores.tipo_cotizacion}</p>}
+        {errores?.tipo_cotizacion && <p className="error-text">⚠ {errores.tipo_cotizacion}</p>}
       </div>
         
       {formData.tipo_cotizacion === "Alquiler" && (
@@ -73,10 +69,13 @@ export default function PasoUso() {
           <label>Duración del alquiler (días):</label>
           <input
             type="number"
+            min="1"
             value={formData.duracion_alquiler || ""}
-            onChange={(e) => handleChange("duracion_alquiler", e.target.value)}
+            onChange={(e) => handleChange("duracion_alquiler", parseInt(e.target.value))}
           />
-          {errores.duracion_alquiler && <p className="error-text">{errores.duracion_alquiler}</p>}
+          <div style={{ marginTop: "1rem" }}>
+            {errores?.duracion_alquiler && <p className="error-text">⚠ {errores.duracion_alquiler}</p>}
+          </div>
         </div>
       )}
       

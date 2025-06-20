@@ -7,7 +7,7 @@ export default function useCentroAtencion() {
   const { user } = useAuth();
   const [tareas, setTareas] = useState([]);
   const [tareaSeleccionada, setTareaSeleccionada] = useState(null);
-  const [filtroEstado, setFiltroEstado] = useState("Pendiente");
+  const [filtroEstado, setFiltroEstado] = useState("Todas");
   const [paginaActual, setPaginaActual] = useState(1);
   const [tareasPorPagina] = useState(20);
   const [busqueda, setBusqueda] = useState("");
@@ -68,8 +68,9 @@ export default function useCentroAtencion() {
 
   const indexUltima = paginaActual * tareasPorPagina;
   const indexPrimera = indexUltima - tareasPorPagina;
-  const tareasFiltradas = tareas.filter(t => t.estado === filtroEstado).filter(t => busqueda ? filtrarTareas(t) : true);
-  const totalPaginas = Math.ceil(tareasFiltradas.length / tareasPorPagina);
+  const tareasFiltradas = tareas
+  .filter(t => filtroEstado !== 'Todas' ? t.estado === filtroEstado : true)
+  .filter(t => busqueda ? filtrarTareas(t) : true);  const totalPaginas = Math.ceil(tareasFiltradas.length / tareasPorPagina);
   const tareasPaginadas = tareasFiltradas.slice(indexPrimera, indexUltima);
 
   const handleSeleccionarTarea = (tarea) => setTareaSeleccionada(tarea);

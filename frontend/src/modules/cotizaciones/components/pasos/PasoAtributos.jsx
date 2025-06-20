@@ -1,10 +1,16 @@
 import { useEffect } from "react";
-import { useWizardContext } from "../../hooks/useWizardCotizacion";
+import { useWizardContext } from "../../context/WizardCotizacionContext";
 import Loader from "../../../../shared/components/Loader";
 import { useZonasCotizacion } from "../../hooks/useZonasCotizacion";
 
+// Este componente representa el tercer paso del wizard para registrar una cotización.
+// Permite describir mediante atributos dinámicos las zonas con sus respectivos equipos.
+// Utiliza el contexto del wizard para manejar el estado del formulario y los errores. 
+// Utiliza el hook useZonasCotizacion para la carga de los atributos del uso disponible desde el API al iniciar y 
+// actualiza el estado del formulario según la selección del usuario.
+
 const PasoAtributos = () => {
-  const { formData, setFormData, errores } = useWizardContext();
+  const { formData, setFormData, errores } = useWizardContext(); // Traemos el contexto del wizard donde se maneja el estado del formulario y los errores
   const {
     zonas,
     atributos,
@@ -15,22 +21,62 @@ const PasoAtributos = () => {
     agregarEquipo,
     eliminarEquipo,
     setZonas
-  } = useZonasCotizacion(formData.uso_id);
+  } = useZonasCotizacion(formData.uso_id); // Hook personalizado para manejar zonas y atributos
 
-  // Almacenar zonas en formData global al avanzar
+  // Actualizar zonas en el formData global cada vez que cambian
   useEffect(() => {
     setFormData((prev) => ({ ...prev, zonas }));
   }, [zonas]);
 
   if (loading || atributos.length === 0) return <Loader texto="Cargando atributos por zona..." />;
 
+  const actualizarNotaZona = (zonaIndex, nuevaNota) => {
+    setZonas((prev) => 
+      prev.map((zona, index) =>
+        index === zonaIndex ? { ...zona, nota_zona: nuevaNota } : zona
+      )
+    )
+  }
+
+  const renderCampoAtributo = (atributo, zonaIndex, equipoIndex) => {
+    const valorActual = zonas[zonaIndex].atributos_formulario[equipoIndex]?.[atributo.llave_json] || "";
+
+    if (atributo.tipo_dato === "select") {
+      return (
+        <select 
+          value={valorActual}
+          onChange={(e) =>
+            handleChange(zonaIndex, equipoIndex, atributo.llave_json, e.target.value) // Actualiza el valor del atributo 
+          }
+        >
+          <option value="">Seleccione...</option>
+          {atributo.valores_por_defecto.map((opt, i) => ( // Mapeamos las opciones del select
+            <option key ={i} value={opt}> 
+              {opt}
+            </option>
+          ))}
+          </select>
+      )
+    }
+
+    return ( 
+      <input
+        type="number"
+        value={valorActual}
+        onChange={(e) => 
+          handleChange(zonaIndex, equipoIndex, atributo.llave_json, e.target.value) // Actualiza el valor del atributo
+        }
+        placeholder={`Ingrese ${atributo.nombre.toLowerCase()}`}
+      />
+    )
+  }
+
   return (
     <div className="paso-formulario">
       <h3>Paso 4: Atributos por Zona</h3>
 
       <p className="mensaje-revision-final">
-        En este paso puedes definir las zonas de trabajo del proyecto y los equipos que se utilizarán en cada una.
-        Esto permitirá una cotización más precisa, ya que cada zona puede tener necesidades distintas.
+        Define las zonas del proyecto y los equipos requeridos en cada una para generar una cotización precisa.
       </p>
 
       {zonas.map((zona, zonaIndex) => (
@@ -38,19 +84,12 @@ const PasoAtributos = () => {
           <h3>🗂️ Zona {zonaIndex + 1}</h3>
 
           <div className="wizard-section">
-            <label>📝 Nota de zona (Ej: Primera fachada, ducto posterior...)</label>
+            <label>📝 Nota de zona:</label>
             <input
               type="text"
-              placeholder="Describe brevemente a qué se refiere esta zona"
+              placeholder="Ej: Fachada norte, ducto posterior..."
               value={zona.nota_zona || ""}
-              onChange={(e) => {
-                const nuevaNota = e.target.value;
-                setZonas((prev) => {
-                  const nuevasZonas = [...prev];
-                  nuevasZonas[zonaIndex].nota_zona = nuevaNota;
-                  return nuevasZonas;
-                });
-              }}
+              onChange={(e) => actualizarNotaZona(zonaIndex, e.target.value)}
             />
           </div>
 
@@ -62,30 +101,7 @@ const PasoAtributos = () => {
                 {atributos.map((atrib) => (
                   <div key={atrib.id} className="wizard-section">
                     <label>{atrib.nombre}:</label>
-                    {atrib.tipo_dato === "select" ? (
-                      <select
-                        value={zonas[zonaIndex].atributos_formulario[equipoIndex]?.[atrib.llave_json] || ""}
-                        onChange={(e) =>
-                          handleChange(zonaIndex, equipoIndex, atrib.llave_json, e.target.value)
-                        }
-                      >
-                        <option value="">Seleccione...</option>
-                        {atrib.valores_por_defecto.map((opt, i) => (
-                          <option key={i} value={opt}>
-                            {opt}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <input
-                        type="number"
-                        value={zonas[zonaIndex].atributos_formulario[equipoIndex]?.[atrib.llave_json] || ""}
-                        onChange={(e) =>
-                          handleChange(zonaIndex, equipoIndex, atrib.llave_json, e.target.value)
-                        }
-                        placeholder={`Ingrese ${atrib.nombre.toLowerCase()}`}
-                      />
-                    )}
+                    {renderCampoAtributo(atrib, zonaIndex, equipoIndex)} {/* Renderiza el campo según su tipo */}
                   </div>
                 ))}
               </div>
@@ -121,7 +137,7 @@ const PasoAtributos = () => {
       {/* Botones para agregar/eliminar zonas */}
       <div className="wizard-section" style={{ textAlign: "center", marginTop: "2rem" }}>
         <p style={{ color: "#ff7b00", fontWeight: "bold", marginBottom: "0.6rem" }}>
-          Agrega todas las zonas necesarias para el proyecto
+          Puedes agregar más zonas si el proyecto lo requiere.
         </p>
         <div className="botones-cantidad">
           <button
@@ -138,9 +154,12 @@ const PasoAtributos = () => {
           </button>
         </div>
       </div>
-      {console.log("Atributos enviados al backend", atributos)}
 
-      {errores.atributos && <p className="error-text">{errores.atributos}</p>}
+      {errores?.atributos_formulario && (
+        <p className="error-text" style={{ textAlign: "center" }}>
+          ⚠ {errores.atributos_formulario}
+        </p>
+      )}
     </div>
   );
 };

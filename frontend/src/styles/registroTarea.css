@@ -83,11 +83,11 @@
     box-shadow: var(--shadow-medium);
   }
   
-  .form-group {
+  /* .form-group {
     display: flex;
     flex-direction: column;
     margin-bottom: 0px;
-  }
+  } */
   
   .tarea-detalles {
     grid-column: span 2;

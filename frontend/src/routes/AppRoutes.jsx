@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 import RoleGuard from "./rol.guard";
-import { WizardProvider } from "@/modules/cotizaciones/hooks/useWizardCotizacion";
+import { WizardProvider } from "@/modules/cotizaciones/context/WizardCotizacionContext";
 
 // Lazy load components
 const Login = lazy(() => import("@/modules/auth/pages/Login"));

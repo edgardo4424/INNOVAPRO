@@ -6,21 +6,9 @@ import { confirmToast } from "../../../utils/confirmToast"
 
 export default function useUsuarios() {
   const [usuarios, setUsuarios] = useState([]);
-  const [modalAgregar, setModalAgregar] = useState(false);
-  const [usuarioEditando, setUsuarioEditando] = useState(null);
   const [busqueda, setBusqueda] = useState("");
   const [paginaActual, setPaginaActual] = useState(1);
   const [usuariosPorPagina,setUsuariosPorPagina] =useState (5);
-
-  const [nuevoUsuario, setNuevoUsuario] = useState({
-    nombre: "",
-    telefono: "",
-    email: "",
-    password: "",
-    rol: "",
-  });
-
-  const [errores, setErrores] = useState({});
 
   useEffect(() => {
     async function cargarUsuarios() {
@@ -35,36 +23,10 @@ export default function useUsuarios() {
     cargarUsuarios();
   }, []);
 
-  const abrirModalAgregar = () => setModalAgregar(true);
-  const cerrarModalAgregar = () => {
-    setModalAgregar(false);
-    resetNuevoUsuario();
-    setErrores({});
-  };
-
-  const abrirModalEditar = (usuario) => {
-    setUsuarioEditando({ ...usuario });
-    setErrores({});
-  };
-
-  const cerrarModalEditar = () => {
-    setUsuarioEditando(null);
-    setErrores({});
-  };
-
-  const agregarUsuario = async (e) => {
-    e.preventDefault();
-    const validacion = validarUsuario(nuevoUsuario);
-    setErrores(validacion);
-    if (Object.keys(validacion).length > 0) {
-      toast.error("Corrige los errores antes de continuar");
-      return;
-    }
-
+  const agregarUsuario = async (user) => {
     try {
-      const creado = await usuariosService.crearUsuario(nuevoUsuario);
+      const creado = await usuariosService.crearUsuario(user);
       setUsuarios((prev) => [...prev, creado]);
-      cerrarModalAgregar();
       toast.success("Usuario registrado");
     } catch (error) {
       console.error("❌ Error al crear usuario:", error);
@@ -72,21 +34,12 @@ export default function useUsuarios() {
     }
   };
 
-  const guardarEdicion = async (e) => {
-    e.preventDefault();
-    const validacion = validarUsuario(usuarioEditando, { editar: true });
-    setErrores(validacion);
-    if (Object.keys(validacion).length > 0) {
-      toast.error("Corrige los errores antes de continuar");
-      return;
-    }
-
+  const guardarEdicion = async (user) => {
     try {
-      const actualizado = await usuariosService.actualizarUsuario(usuarioEditando.id, usuarioEditando);
+      const actualizado = await usuariosService.actualizarUsuario(user.id, user);
       setUsuarios((prev) =>
-        prev.map((u) => (u.id === usuarioEditando.id ? actualizado : u))
-      );
-      cerrarModalEditar();
+        prev.map((u) => (u.id === user.id ? actualizado : u))
+      );            
       toast.success("Usuario actualizado");
     } catch (error) {
       console.error("❌ Error al actualizar usuario:", error);
@@ -107,14 +60,7 @@ export default function useUsuarios() {
     });
   };
 
-  const resetNuevoUsuario = () =>
-    setNuevoUsuario({
-      nombre: "",
-      telefono: "",
-      email: "",
-      password: "",
-      rol: "",
-    });
+
 
   const usuariosFiltrados = usuarios.filter((u) => {
     const f = (busqueda || "").toLowerCase();
@@ -137,21 +83,11 @@ export default function useUsuarios() {
     totalPaginas,
     paginaActual,
     setPaginaActual,
-    modalAgregar,
-    abrirModalAgregar,
-    cerrarModalAgregar,
-    usuarioEditando,
-    abrirModalEditar,
-    cerrarModalEditar,
-    nuevoUsuario,
-    setNuevoUsuario,
+    busqueda,
+    setBusqueda,
     agregarUsuario,
     guardarEdicion,
     eliminarUsuario,
-    setUsuarioEditando,
-    busqueda,
-    setBusqueda,
-    errores,
     usuariosPorPagina,
     setUsuariosPorPagina
   };

@@ -53,6 +53,8 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       tiene_pernos: cotizacion.tiene_pernos
     }
 
+    console.log('dataParaDespiece', dataParaDespiece);
+
     // Valida los campos del despiece
     const errorCampos = Despiece.validarCamposObligatorios( dataParaDespiece,"crear");
 
@@ -63,13 +65,17 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
 
     const despiece_id = nuevoDespiece.id;
 
+    console.log('despiece_id', despiece_id);
     // 3. Insertar Detalles del Despiece
     const detalles = mapearDetallesDespiece({ despiece, despiece_id });
+
+    console.log('detalles', detalles);
 
     // Validación de todos los registros de despiece
     for (const data of detalles) {
       const errorCampos = DespieceDetalle.validarCamposObligatorios(data, "crear");
       if (errorCampos) {
+         console.log("Registro inválido", data, "->", errorCampos);
         return {
           codigo: 400,
           respuesta: { mensaje: `Error en un registro: ${errorCampos}` },
@@ -77,7 +83,10 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       }
     }
 
-    await db.despieces_detalle.bulkCreate(detalles, { transaction });
+    console.log('detalles', detalles);
+
+    await db.despieces_detalle.bulkCreate(detalles, { transaction});
+    console.log('pasee');
 
     // 4. Insertar Atributos Valor
     const atributosValor = await mapearValoresAtributos({
@@ -100,11 +109,11 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       }
     }
 
-    
     console.log('atributosValor', atributosValor);
  
-
     await db.atributos_valor.bulkCreate(atributosValor, { transaction });
+
+    console.log('creoooooo');
 
     // 5. Insertar Cotización
     let cotizacionFinal = {
@@ -270,6 +279,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       respuesta: { mensaje: "Cotización creada exitosamente" },
     };
   } catch (error) {
+  
     await transaction.rollback(); // ❌ Deshacer todo si algo falla
     console.error("Error en creación de cotización:", error);
     return {
