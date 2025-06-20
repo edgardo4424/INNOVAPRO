@@ -1,23 +1,24 @@
 const db = require("../../../../models");
 const Despiece = require("../../../despieces/domain/entities/despiece");
-const { calcularMontosCotizacion } = require("../../infrastructure/services/calcularMontosCotizacionService");
+const {
+  calcularMontosCotizacion,
+} = require("../../infrastructure/services/calcularMontosCotizacionService");
 
 const ID_ESTADO_COTIZACION_POR_APROBAR = 3;
+const ID_ESTADO_COTIZACION_CREADO = 1;
 
-const sequelizeDespieceRepository = require('../../../despieces/infrastructure/repositories/sequelizeDespieceRepository');
-const { mapearDetallesDespiece } = require("../../infrastructure/services/mapearDetallesDespieceService");
-const { actualizarPiezasExistentes } = require("../../infrastructure/services/actualizarPiezasExistentesService");
-const despieceRepository = new sequelizeDespieceRepository(); 
+const sequelizeDespieceRepository = require("../../../despieces/infrastructure/repositories/sequelizeDespieceRepository");
+const {
+  mapearDetallesDespiece,
+} = require("../../infrastructure/services/mapearDetallesDespieceService");
+const { generarCodigoDocumentoCotizacion } = require("../../infrastructure/services/generarCodigoDocumentoCotizacionService");
+const despieceRepository = new sequelizeDespieceRepository();
 
 module.exports = async (cotizacionData, cotizacionRepository) => {
   const transaction = await db.sequelize.transaction(); // Iniciar transacción
 
   try {
-    const {
-      uso_id,
-      cotizacion,
-      despiece,
-    } = cotizacionData;
+    const { uso_id, cotizacion, despiece } = cotizacionData;
 
     if (despiece.length == 0)
       return {
@@ -27,55 +28,94 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
 
     // 1. Buscar cotizacion por id con estado Por Aprobar (3)
 
-      const cotizacionEncontrada = await cotizacionRepository.obtenerPorId(cotizacion.id)
+    const cotizacionEncontrada = await cotizacionRepository.obtenerPorId(
+      cotizacion.id
+    );
 
-      console.log('cotizacionEncontrada', cotizacionEncontrada);
+    console.log("cotizacionEncontrada", cotizacionEncontrada);
 
-      if(cotizacionEncontrada.estados_cotizacion_id != ID_ESTADO_COTIZACION_POR_APROBAR){
-         return {
-          codigo: 400,
-          respuesta: { mensaje: "Esta cotización no fue creada con la ayuda de OT" },
-        };
-      }
+    if (
+      cotizacionEncontrada.estados_cotizacion_id !=
+      ID_ESTADO_COTIZACION_POR_APROBAR
+    ) {
+      return {
+        codigo: 400,
+        respuesta: {
+          mensaje: "Esta cotización no fue creada con la ayuda de OT",
+        },
+      };
+    }
 
-      // 1. Actualizar despiece detalles en caso se añada nuevas piezas
-    const detalles = mapearDetallesDespiece({ despiece, despiece_id: cotizacionEncontrada.despiece_id });
+    
+      const filialEncontrado = await db.empresas_proveedoras.findByPk(cotizacionEncontrada.filial_id)
+      const usuarioEncontrado = await db.usuarios.findByPk(cotizacionEncontrada.usuario_id)
 
-      const {insertados, ignorados} = await actualizarPiezasExistentes({
-  detalles,
-  despiece_id: cotizacionEncontrada.despiece_id,
-  transaction
-});
+      const datosParaGenerarCodigoDocumento = {
 
-console.log({insertados, ignorados});
+      uso_id_para_registrar: uso_id,
+      filial_razon_social: filialEncontrado.razon_social,
+      usuario_rol: usuarioEncontrado.rol,
+      usuario_nombre: usuarioEncontrado.nombre,
+      anio_cotizacion: new Date().getFullYear(),
+      estado_cotizacion: cotizacionEncontrada.estados_cotizacion_id,
+      
+      cotizacion: cotizacionEncontrada
+    }
 
-      // 2. Calcular montos
+    const codigoDocumento = await generarCodigoDocumentoCotizacion(datosParaGenerarCodigoDocumento)
+
+    console.log('codigoDocumento', codigoDocumento);
+
+    const dataActualizarCotizacion = {
+      codigo_documento: codigoDocumento,
+      estados_cotizacion_id: ID_ESTADO_COTIZACION_CREADO
+    }
+
+     const cotizacionActualizada = await cotizacionRepository.actualizarCotizacion(cotizacion.id, dataActualizarCotizacion, transaction)
+
+     console.log('cotizacionActualizada', cotizacionActualizada);
+
+
+    // 1. Insertar las piezas nuevas que fueron añadidas por el comercial (piezas con uuid)
+
+    const piezasNuevas = despiece.filter((pieza) => pieza?.esAdicional);
+
+    const detalles = mapearDetallesDespiece({
+      despiece: piezasNuevas,
+      despiece_id: cotizacionEncontrada.despiece_id,
+    });
+
+    await db.despieces_detalle.bulkCreate(detalles);
+
+    // 2. Calcular montos
     const resultados = calcularMontosCotizacion({
       despiece,
       tipoCotizacion: cotizacion.tipo_cotizacion,
       cotizacion,
-      uso_id
+      uso_id,
     });
-
-    console.log('resultados', resultados.dataParaGuardarDespiece);
 
     // 3. Actualizar Despiece
 
     let dataParaDespiece = {
       ...resultados.dataParaGuardarDespiece,
-      tiene_pernos: cotizacion.tiene_pernos
-    }
+      tiene_pernos: cotizacion.tiene_pernos,
+    };
 
-    console.log('dataParaDespiece', dataParaDespiece);
-     // Valida los campos del despiece
-    const errorCampos = Despiece.validarCamposObligatorios( dataParaDespiece,"editar");
+    // Valida los campos del despiece
+    const errorCampos = Despiece.validarCamposObligatorios(
+      dataParaDespiece,
+      "editar"
+    );
 
     if (errorCampos)
       return { codigo: 400, respuesta: { mensaje: errorCampos } };
 
-    const despieceActualizado = await despieceRepository.actualizarDespiece(cotizacionEncontrada.despiece_id, dataParaDespiece, transaction)
-
-    console.log('despieceActualizado', despieceActualizado);
+    await despieceRepository.actualizarDespiece(
+      cotizacionEncontrada.despiece_id,
+      dataParaDespiece,
+      transaction
+    );
 
     await transaction.commit(); // ✔ Confirmar todo
     return {

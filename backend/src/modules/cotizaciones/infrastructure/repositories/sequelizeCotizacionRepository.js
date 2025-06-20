@@ -8,13 +8,13 @@ class SequelizeCotizacionRepository {
   }
 
   async crear(cotizacionData, transaction = null) {
-  return await Cotizacion.create(cotizacionData, { transaction });
-}
-  
+    return await Cotizacion.create(cotizacionData, { transaction });
+  }
+
   async obtenerCotizaciones() {
     return await Cotizacion.findAll({
       include: [
-/*         {
+        /*         {
           model: db.contactos,
           as: "contacto",
           attributes: ["id", "nombre"]
@@ -22,33 +22,33 @@ class SequelizeCotizacionRepository {
         {
           model: db.clientes,
           as: "cliente",
-          attributes: ["id", "razon_social"]
+          attributes: ["id", "razon_social"],
         },
         {
           model: db.obras,
           as: "obra",
-          attributes: ["id", "nombre"]
+          attributes: ["id", "nombre"],
         },
-/*          {
+        /*          {
           model: db.empresas_proveedoras,
          attributes: ["id", "razon_social"]
         }, */
-         {
+        {
           model: db.usuarios,
           as: "usuario",
-           attributes: ["id", "nombre"]
+          attributes: ["id", "nombre"],
         },
         {
           model: db.estados_cotizacion,
           as: "estados_cotizacion",
-          attributes: ["id", "nombre"]
+          attributes: ["id", "nombre"],
         },
         {
           model: db.usos,
           as: "uso",
-          attributes: ["id", "descripcion"]
-        }
-      ]
+          attributes: ["id", "descripcion"],
+        },
+      ],
     });
   }
 
@@ -56,15 +56,21 @@ class SequelizeCotizacionRepository {
     return await Cotizacion.findByPk(id); // Llama al método del repositorio para obtener una cotizacion por ID
   }
 
-  async actualizarCotizacion(id, cotizacionData) {
-    const cotizacion = await Cotizacion.findByPk(id); // Busca la cotizacion por ID
+  async actualizarCotizacion(id, cotizacionData, transaction = null) {
+    const cotizacion = await Cotizacion.findByPk(id, {
+      ...(transaction && { transaction }),
+    });
+
     if (!cotizacion) {
-      // Si no se encuentra el cotizacion, retorna null
       console.log("❌ Cotizacion no encontrado");
       return null;
     }
-    await cotizacion.update(cotizacionData); // Actualiza la cotizacion con los nuevos datos
-    return cotizacion; // Retorna el cotizacion actualizado
+
+    await cotizacion.update(cotizacionData, {
+      ...(transaction && { transaction }),
+    });
+
+    return cotizacion;
   }
 
   async eliminarCotizacion(id) {

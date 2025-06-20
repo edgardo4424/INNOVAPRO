@@ -7,7 +7,7 @@ class DespieceDetalle {
         precio_venta_dolares, 
         precio_venta_soles, 
         precio_alquiler_soles,
-        uuid
+      /*   uuid */
     }) {
         this.despiece_id = despiece_id;
         this.pieza_id = pieza_id;
@@ -16,7 +16,7 @@ class DespieceDetalle {
         this.precio_venta_dolares = precio_venta_dolares;
         this.precio_venta_soles = precio_venta_soles;
         this.precio_alquiler_soles = precio_alquiler_soles;
-        this.uuid = uuid;
+      /*   this.uuid = uuid; */
     }
 
     static validarCamposObligatorios(datos, modo = "crear") {

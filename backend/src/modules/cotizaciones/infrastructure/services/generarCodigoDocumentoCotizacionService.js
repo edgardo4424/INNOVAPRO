@@ -1,8 +1,8 @@
 const db = require("../../../../models");
 
 const ID_ESTADO_COTIZACION_CREADO = 1;
-/* const ID_ESTADO_COTIZACION_APROBADO = 2;
- */
+const ID_ESTADO_COTIZACION_POR_APROBAR = 3;
+
 const ROL_USUARIO_COMERCIAL = "Ventas";
 const ROL_USUARIO_OT = "Oficina Técnica";
 
@@ -25,7 +25,7 @@ async function generarCodigoDocumentoCotizacion({
 
   let tipoDocumento = "";
 
-  if (cotizacion.estados_cotizacion_id == ID_ESTADO_COTIZACION_CREADO) {
+  if (cotizacion.estados_cotizacion_id == ID_ESTADO_COTIZACION_CREADO || cotizacion.estados_cotizacion_id == ID_ESTADO_COTIZACION_POR_APROBAR ) {
     tipoDocumento = "COT";
   }
 
@@ -37,11 +37,11 @@ async function generarCodigoDocumentoCotizacion({
 
   let codRolUsuario = "";
 
-  if (usuario_rol == ROL_USUARIO_COMERCIAL) {
+  if (cotizacion.estados_cotizacion_id == ID_ESTADO_COTIZACION_CREADO) {
     codRolUsuario = "COM";
   }
 
-  if (usuario_rol == ROL_USUARIO_OT) {
+  if (cotizacion.estados_cotizacion_id == ID_ESTADO_COTIZACION_POR_APROBAR) {
     codRolUsuario = "OFT";
   }
 
