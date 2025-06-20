@@ -33,7 +33,7 @@ export function ColumnSelector({ visibleColumns, setVisibleColumns,columnOptions
    return (
       <Dialog open={open} onOpenChange={setOpen}>
          <DialogTrigger asChild>
-            <Button variant="outline" size="sm" className="mt-4">
+            <Button variant="outline" size="sm" className="mb-6">
                <Settings className="h-4 w-4 mr-2 " />
                Columnas
             </Button>

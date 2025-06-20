@@ -240,7 +240,7 @@ export default function TablaTareas({
       selectAllRowsItemText: "Todos",
    };
    return (
-      <div className="w-full px-4">
+      <div className="w-full px-4 max-w-7xl">
          <DataTable
             columns={columns}
             data={tareas}

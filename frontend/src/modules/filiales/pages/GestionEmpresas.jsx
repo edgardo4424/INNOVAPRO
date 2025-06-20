@@ -24,10 +24,10 @@ export default function GestionEmpresas() {
    } = useEmpresas();
 
    return (
-      <div className="container min-h-full ">
+      <div className="min-h-full flex-1  flex flex-col items-center ">
          <ModuloNavegacion />
          {/* 🔍 Buscador + botón */}
-         <div className="flex flex-row-reverse md:flex-row justify-between px-4 my-4 md:my-8 items-center gap-4">
+         <div className="w-full max-w-7xl flex flex-row-reverse md:flex-row justify-between px-4 my-6  items-center gap-4">
             <ModalAgregarEmpresa onSubmit={agregarEmpresa} />
             <div className="relative flex-1 w-full md:max-w-80 ">
                <Input

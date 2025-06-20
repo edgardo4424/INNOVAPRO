@@ -5,57 +5,94 @@ import {
    TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Edit, Trash2 } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import DataTable from "react-data-table-component";
 import ModalEditarCliente from "./ModalEditarCliente";
+import { ColumnSelector } from "@/shared/components/ColumnSelector";
+import { customStylesTable } from "@/utils/customTableStyle";
 
-export default function TablaClientes({ clientes, onEliminar,actualizarCliente }) {
+export default function TablaClientes({
+   clientes,
+   onEliminar,
+   actualizarCliente,
+}) {
    if (clientes.length === 0) {
       return <p>No hay clientes para mostrar.</p>;
    }
+   const [visibleColumns, setVisibleColumns] = useState({
+      razon_social: true,
+      tipo: true,
+      ruc: true,
+      telefono: true,
+      email: true,
+      domicilio_fiscal: true,
+      representante_legal: true,
+      dni_representante: true,
+      acciones: true,
+   });
+   const columnOptions = [
+      { id: "razon_social", label: "Razón social" },
+      { id: "tipo", label: "Tipo" },
+      { id: "ruc", label: "Ruc/Dni" },
+      { id: "telefono", label: "Teléfono" },
+      { id: "email", label: "Email" },
+      { id: "domicilio_fiscal", label: "Dirección fiscal" },
+      { id: "representante_legal", label: "Representante" },
+      { id: "dni_representante", label: "Cargo" },
+      { id: "acciones", label: "Acciones" },
+   ];
 
    const columns = [
       {
          name: "Razón Social / Nombre",
          sortable: true,
-           selector: row => row.razon_social ?? "",
+         selector: (row) => row.razon_social ?? "",
          grow: 3,
          cell: (row) => (
             <Tooltip>
-               <TooltipTrigger className="truncate">{row.razon_social || "—"}</TooltipTrigger>
-               <TooltipContent >{row.razon_social || "—"}</TooltipContent>
+               <TooltipTrigger className="truncate">
+                  {row.razon_social || "—"}
+               </TooltipTrigger>
+               <TooltipContent>{row.razon_social || "—"}</TooltipContent>
             </Tooltip>
          ),
+         omit: !visibleColumns.razon_social,
       },
       {
          name: "Tipo",
          selector: (row) => row.tipo || "—",
          sortable: true,
          grow: 2,
+         omit: !visibleColumns.tipo,
       },
       {
          name: "RUC / DNI",
          selector: (row) => `${row.ruc || row.dni || "—"}`,
          sortable: true,
          grow: 2,
+         omit: !visibleColumns.ruc,
       },
       {
          name: "Teléfono",
          selector: (row) => row.telefono || "—",
          sortable: true,
          grow: 2,
+         omit: !visibleColumns.telefono,
       },
       {
          name: "Email",
-           selector: row => row.email ?? "",
+         selector: (row) => row.email ?? "",
          sortable: true,
          grow: 2,
          cell: (row) => (
             <Tooltip>
-               <TooltipTrigger className="truncate">{row.email || "—"}</TooltipTrigger>
-               <TooltipContent >{row.email || "—"}</TooltipContent>
+               <TooltipTrigger className="truncate">
+                  {row.email || "—"}
+               </TooltipTrigger>
+               <TooltipContent>{row.email || "—"}</TooltipContent>
             </Tooltip>
          ),
+         omit: !visibleColumns.email,
       },
       {
          name: "Domicilio fiscal",
@@ -63,34 +100,44 @@ export default function TablaClientes({ clientes, onEliminar,actualizarCliente }
          grow: 2,
          cell: (row) => (
             <Tooltip>
-               <TooltipTrigger className="truncate">{row.domicilio_fiscal|| "—"}</TooltipTrigger>
-               <TooltipContent >{row.domicilio_fiscal || "—"}</TooltipContent>
+               <TooltipTrigger className="truncate">
+                  {row.domicilio_fiscal || "—"}
+               </TooltipTrigger>
+               <TooltipContent>{row.domicilio_fiscal || "—"}</TooltipContent>
             </Tooltip>
          ),
+         omit: !visibleColumns.domicilio_fiscal,
       },
       {
          name: "Representante Legal",
-           selector: row => row.representante_legal ?? "",
+         selector: (row) => row.representante_legal ?? "",
          sortable: true,
          grow: 2,
          cell: (row) => (
             <Tooltip>
-               <TooltipTrigger className="truncate">{row.representante_legal || "—"}</TooltipTrigger>
-               <TooltipContent >{row.representante_legal || "—"}</TooltipContent>
+               <TooltipTrigger className="truncate">
+                  {row.representante_legal || "—"}
+               </TooltipTrigger>
+               <TooltipContent>{row.representante_legal || "—"}</TooltipContent>
             </Tooltip>
          ),
+         omit: !visibleColumns.representante_legal,
       },
       {
          name: "Dni Representante",
          selector: (row) => row.dni_representante || "—",
          sortable: true,
          grow: 2,
+         omit: !visibleColumns.dni_representante,
       },
       {
          name: "Acciones",
          cell: (row) => (
             <div className="flex gap-2">
-               <ModalEditarCliente cliente={row} actualizarCliente={actualizarCliente}/>
+               <ModalEditarCliente
+                  cliente={row}
+                  actualizarCliente={actualizarCliente}
+               />
                <Button
                   variant="outline"
                   size="icon"
@@ -102,66 +149,28 @@ export default function TablaClientes({ clientes, onEliminar,actualizarCliente }
             </div>
          ),
          ignoreRowClick: true,
-         // button: true,
          width: "120px",
+         omit: !visibleColumns.acciones,
       },
    ];
 
-   const customStyles = {
-      header: {
-         style: {
-            minHeight: "56px",
-            paddingLeft: "16px",
-            paddingRight: "16px",
-         },
-      },
-      headRow: {
-         style: {
-            borderTopStyle: "solid",
-            borderTopWidth: "1px",
-            borderTopColor: "#e5e7eb",
-            backgroundColor: "#f9fafb",
-            minHeight: "48px",
-         },
-      },
-      headCells: {
-         style: {
-            paddingLeft: "16px",
-            paddingRight: "16px",
-            fontSize: "14px",
-            fontWeight: "600",
-            color: "#374151",
-         },
-      },
-      rows: {
-         style: {
-            minHeight: "56px",
-            "&:hover": {
-               backgroundColor: "#f9fafb",
-            },
-         },
-         stripedStyle: {
-            backgroundColor: "#fafafa",
-         },
-      },
-      cells: {
-         style: {
-            paddingLeft: "16px",
-            paddingRight: "16px",
-            fontSize: "14px",
-            color: "#6b7280",
-         },
-      },
-   };
+   
    return (
-      <div className="w-full px-4">
+      <div className="w-full px-4 max-w-7xl">
+         <div className="flex justify-end">
+            <ColumnSelector
+               visibleColumns={visibleColumns}
+               setVisibleColumns={setVisibleColumns}
+               columnOptions={columnOptions}
+            />
+         </div>
          <DataTable
             columns={columns}
             data={clientes}
             responsive
             striped
             highlightOnHover
-            customStyles={customStyles}
+            customStyles={customStylesTable}
             noDataComponent={
                <div className="flex items-center justify-center py-12">
                   <p className="text-muted-foreground">

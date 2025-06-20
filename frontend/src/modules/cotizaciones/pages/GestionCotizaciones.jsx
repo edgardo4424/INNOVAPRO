@@ -23,7 +23,7 @@ export default function GestionCotizaciones() {
       useState(null);
 
    return (
-      <div className="dashboard-main">
+      <div className="min-h-full flex-1  flex flex-col items-center">
          <ModuloNavegacion />
 
          <TablaCotizacion

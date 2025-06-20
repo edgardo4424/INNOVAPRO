@@ -72,13 +72,13 @@ module.exports = async (idTarea, idUsuario, tareaRepository) => {
         notificacionParaElCreador
       );
 
-      console.log("notiCreador", notiCreador);
-      await enviarMensajeWhatsAppTomaTarea(
-        `51${notiCreador.telefono}`, // formato internacional, ejemplo: "51987654321"
+     // console.log("notiCreador", notiCreador);
+     /*  await enviarMensajeWhatsAppTomaTarea(
+        `51${notiCreador.usuario.telefono}`, // formato internacional, ejemplo: "51987654321"
         notiCreador.usuario.nombre,
         tarea.id
       );
-
+ */
       emitirNotificacionPrivada(notificacionParaElCreador.usuarioId, notiCreador); // 🔥 ENVÍA OBJETO COMPLETO
     }
   } catch (error) {

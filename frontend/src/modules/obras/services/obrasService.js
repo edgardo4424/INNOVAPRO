@@ -8,7 +8,7 @@ const obrasService = {
 
   obtenerClientes: async () => {
     const res = await api.get("/clientes");
-    return res.data.filter((c) => c.ruc); // solo clientes con RUC
+    return res.data.filter((c) => c.ruc);
   },
 
   crearObra: async (data) => {

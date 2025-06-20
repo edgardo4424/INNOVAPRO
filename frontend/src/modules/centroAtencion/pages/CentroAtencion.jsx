@@ -91,7 +91,7 @@ export default function CentroAtencion() {
    };
 
    return (
-      <div className="container min-h-full pb-16">
+      <div className="min-h-full flex-1  flex flex-col items-center">
          <ModuloNavegacion />
 
          <div className="w-full max-w-7xl mx-auto px-4">

@@ -9,6 +9,7 @@ import {
 import ProtectedRoute from "./ProtectedRoute";
 import RoleGuard from "./rol.guard";
 import { WizardProvider } from "@/modules/cotizaciones/context/WizardCotizacionContext";
+import LoaderInnova from "@/shared/components/LoaderInnova";
 
 // Lazy load components
 const Login = lazy(() => import("@/modules/auth/pages/Login"));
@@ -55,7 +56,7 @@ export default function AppRoutes() {
    return (
       <Router>
          {/* Suspense para mostrar fallback mientras carga */}
-         <Suspense fallback={<div>Cargando...</div>}>
+         <Suspense fallback={<LoaderInnova/>}>
             <Routes>
                {/* Ruta pública */}
                <Route path="/login" element={<Login />} />

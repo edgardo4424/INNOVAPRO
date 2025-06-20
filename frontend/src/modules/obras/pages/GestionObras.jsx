@@ -4,8 +4,7 @@ import ModalAgregarObra from "../components/ModalAgregarObra";
 import ModalEditarObra from "../components/ModalEditarObra";
 import ModuloNavegacion from "@/shared/components/ModuloNavegacion";
 import Paginacion from "@/shared/components/Paginacion";
-import { Button } from "@/components/ui/button";
-import { BadgePlus, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 export default function GestionObras() {
@@ -36,13 +35,11 @@ export default function GestionObras() {
    return (
       <div className="dashboard-main">
          <ModuloNavegacion />
-
-         {/* 🔍 Buscador + botón */}
          <div className="flex flex-row-reverse md:flex-row justify-between px-4 my-4 md:my-8 items-center gap-4">
-            <Button className="btn-agregar" onClick={abrirModalAgregar}>
-               <BadgePlus />
-               <span className="hidden md:block">Agregar Obra</span>
-            </Button>
+            <ModalAgregarObra
+               onSubmit={agregarObra}
+            />
+
             <div className="relative flex-1 w-full md:max-w-80 ">
                <Input
                   type="text"
@@ -57,43 +54,20 @@ export default function GestionObras() {
                />
             </div>
          </div>
-
-         {/* 📋 Tabla */}
          <TablaObras
             obras={obrasPaginadas}
+            onSubmit={guardarEdicion}
             onEditar={abrirModalEditar}
             onEliminar={eliminarObra}
+
          />
 
-         {/* 🧾 Modal Agregar */}
-         {modalAgregar && (
-            <ModalAgregarObra
-               obra={nuevaObra}
-               setObra={setNuevaObra}
-               clientes={clientes}
-               onCancel={cerrarModalAgregar}
-               onSubmit={agregarObra}
-            />
-         )}
-
-         {/* 🛠 Modal Editar */}
-         {obraEditando && (
-            <ModalEditarObra
-               obra={obraEditando}
-               setObra={setObraEditando}
-               clientes={clientes}
-               onCancel={cerrarModalEditar}
-               onSubmit={guardarEdicion}
-            />
-         )}
-
-         {/* 📌 Paginación */}
          <Paginacion
             paginaActual={paginaActual}
             totalPaginas={totalPaginas}
             onPaginarAnterior={() => setPaginaActual(paginaActual - 1)}
             onPaginarSiguiente={() => setPaginaActual(paginaActual + 1)}
-             usuariosPorPagina={obrasPorPagina}
+            usuariosPorPagina={obrasPorPagina}
             setUsuariosPorPagina={setObrasPorPagina}
             setPaginaActual={setPaginaActual}
          />
