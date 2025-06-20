@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { obtenerAtributosPorUso } from "../services/cotizacionesService";
+import { obtenerAtributosPorUso } from "../../services/cotizacionesService";
 
 // Este hook permite la carga de los atributos del uso mediante un "usoId".
 // También inicializa todos los valores por defecto a "" para que sean enviados a validar al backend.

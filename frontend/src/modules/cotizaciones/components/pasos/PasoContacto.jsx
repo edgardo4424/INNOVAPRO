@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useWizardContext } from "../../context/WizardCotizacionContext";
-import usePasoContacto from "../../hooks/usePasoContacto";
+import usePasoContacto from "../../hooks/paso-contacto/usePasoContacto";
 import Loader from "@/shared/components/Loader";
 import Select from "react-select";
 

@@ -1,8 +1,10 @@
-import { extraerDistrito } from "../utils/cotizacionUtils";
+import { extraerDistrito } from "../../../utils/cotizacionUtils";
+
+// Este componente permite al comercial si requiere transporte o no, seleccionar el tipo de transporte y personalizar los costos
+// recibidos automáticamente.
 
 export default function BloqueTransporte({ formData, setFormData, errores }) {
   const distrito = extraerDistrito(formData.obra_direccion);
-  const seleccion = formData.tiene_tranpsorte === true ? "TRUE" : formData.tiene_transporte === false ? "FALSE" : "";
 
   return (
     <div className="wizard-section">

@@ -1,10 +1,15 @@
-// INNOVA PRO+ v1.3.4
 import { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import api from "@/shared/services/api";
-import useDespieceManual from "../hooks/useDespieceManual";
+import useDespieceManual from "../../../hooks/useDespieceManual";
+
+// Este componente permite al comercial agregar manualmente piezas adicionales al despiece generado automáticamente, 
+// en caso de requerir piezas extras con cantidades personalizadas. Consulta las piezas disponibles desde la API, 
+// permite buscarlas por código o descripción, ingresar cantidad y agregarlas al resumen general. 
+// También permite eliminarlas dinámicamente y recalcula el resumen del despiece con cada cambio.
 
 export default function DespieceAdicional({ formData, setFormData }) {
+
+  // En éstos estados del componente manejamos las piezas de la API, las pieza que escribe el comercial y la cantidad.
   const [piezasDisponibles, setPiezasDisponibles] = useState([]);
   const [piezaSeleccionada, setPiezaSeleccionada] = useState(null);
   const [cantidad, setCantidad] = useState("");
@@ -12,21 +17,18 @@ export default function DespieceAdicional({ formData, setFormData }) {
   const {
     despieceManual,
     agregarPieza,
-    eliminarPieza,
-    formatearDespiece,
-    calcularResumen
+    eliminarPieza
   } = useDespieceManual({
     tipoCotizacion: formData.tipo_cotizacion,
     formData,
     onResumenChange: ({ nuevoDespiece, resumen }) => {
       const despieceOriginal = formData.despiece || [];
 
-      const despieceFinal = [
-        ...despieceOriginal.filter((p) => !p.esAdicional),
-        ...nuevoDespiece.map((p) => ({
+      const despieceFinal = [ // Reconstruímos el despiece
+        ...despieceOriginal.filter((p) => !p.esAdicional), //protegiendo todo el despiece original
+        ...nuevoDespiece.map((p) => ({ //agregamos solo las piezas adicionales con su propiedad 'esAdicional'
           ...p,
-          esAdicional: true,
-          uuid: uuidv4() // única clave para React
+          esAdicional: true
         }))
       ];
 
@@ -46,6 +48,9 @@ export default function DespieceAdicional({ formData, setFormData }) {
       }));
     }
   });
+  console.log("despiece: ", formData.despiece)
+
+  // Carga inicial de piezas desde la API
 
   useEffect(() => {
     const cargarPiezas = async () => {
@@ -58,6 +63,9 @@ export default function DespieceAdicional({ formData, setFormData }) {
     };
     cargarPiezas();
   }, []);
+
+  // Lógica para agregar cada pieza: validamos si existe y hay una cantidad válida.
+  // Luego la agregamos con el helper del hook DespieceManual
 
   const handleAgregar = () => {
     const piezaEncontrada = piezasDisponibles.find(
@@ -72,27 +80,6 @@ export default function DespieceAdicional({ formData, setFormData }) {
         setPiezaSeleccionada(null);
       }
     }
-  };
-
-  const handleEliminar = (uuid) => {
-    const nuevas = (formData.despiece || []).filter(
-      (p) => p.uuid !== uuid
-    );
-
-    const resumenFinal = {
-      total_piezas: nuevas.reduce((acc, p) => acc + (parseFloat(p.total) || 0), 0),
-      peso_total_kg: nuevas.reduce((acc, p) => acc + parseFloat(p.peso_kg || 0), 0).toFixed(2),
-      peso_total_ton: (nuevas.reduce((acc, p) => acc + parseFloat(p.peso_kg || 0), 0) / 1000).toFixed(2),
-      precio_subtotal_venta_soles: nuevas.reduce((acc, p) => acc + parseFloat(p.precio_venta_soles || 0), 0).toFixed(2),
-      precio_subtotal_alquiler_soles: nuevas.reduce((acc, p) => acc + parseFloat(p.precio_alquiler_soles || 0), 0).toFixed(2),
-      precio_subtotal_venta_dolares: 0
-    };
-
-    setFormData((prev) => ({
-      ...prev,
-      despiece: nuevas,
-      resumenDespiece: resumenFinal
-    }));
   };
 
   const piezasVisuales = (formData.despiece || []).filter(p => p.esAdicional);

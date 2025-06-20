@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useWizardContext } from "../../context/WizardCotizacionContext";
 import Loader from "../../../../shared/components/Loader";
-import { useZonasCotizacion } from "../../hooks/useZonasCotizacion";
+import { useZonasCotizacion } from "../../hooks/paso-atributos/useZonasCotizacion";
 
 // Este componente representa el tercer paso del wizard para registrar una cotización.
 // Permite describir mediante atributos dinámicos las zonas con sus respectivos equipos.

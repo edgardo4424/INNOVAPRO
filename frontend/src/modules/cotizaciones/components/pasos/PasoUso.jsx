@@ -1,5 +1,5 @@
 import { useWizardContext } from "../../context/WizardCotizacionContext";
-import { usePasoUso } from "../../hooks/usePasoUso";
+import { usePasoUso } from "../../hooks/paso-uso/usePasoUso";
 import useDespieceManual  from "../../hooks/useDespieceManual";
 import Loader from "@/shared/components/Loader";
 

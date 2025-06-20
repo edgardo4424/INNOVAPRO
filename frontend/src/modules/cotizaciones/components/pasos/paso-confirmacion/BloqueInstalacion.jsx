@@ -1,3 +1,8 @@
+// Este componente le permite al comercial decidir si desea incluir instalación o no en la cotización y en caso afirmativo,
+// decidir si será parcial o completa. Si es completa, indica el precio personalizado. Si es parcial, aparte de indicar el 
+// precio de la instalación completa deberá indicar el precio de la instalación parcial añadiendo una nota para que especifique
+// a qué se está refiriendo con "parcial"
+
 export default function BloqueInstalacion({ formData, setFormData, errores }) {
   const tipo = formData.tipo_instalacion || "";
 
@@ -82,20 +87,38 @@ export default function BloqueInstalacion({ formData, setFormData, errores }) {
             />
           </div>
 
-          <div style={{ marginTop: "1rem" }}>
-            <label>📝 Nota sobre instalación parcial</label>
-            <textarea
-              rows="3"
-              placeholder="Ej: Hasta 3 cuerpos de andamio..."
-              value={formData.nota_instalacion || ""}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  nota_instalacion: e.target.value,
-                }))
-              }
-            />
-          </div>
+          <div className="wizard-section">
+          <label htmlFor="nota_instalacion" style={{ fontWeight: 600, marginBottom: "0.5rem", display: "block" }}>
+            📝 Nota sobre instalación parcial
+          </label>
+          <textarea
+            id="nota_instalacion"
+            rows="4"
+            placeholder="Ej: El precio es referente a 3 cuerpos de andamios"
+            value={formData.nota_instalacion || ""}
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                nota_instalacion: e.target.value,
+              }))
+            }
+            style={{
+              width: "100%",
+              padding: "0.75rem",
+              fontSize: "14px",
+              lineHeight: "1.6",
+              border: "1px solid #ccc",
+              borderRadius: "8px",
+              resize: "vertical",
+              boxShadow: "inset 0 1px 3px rgba(0,0,0,0.05)",
+              backgroundColor: "#f9f9f9",
+              transition: "border-color 0.2s ease-in-out",
+            }}
+            onFocus={(e) => (e.target.style.borderColor = "#007bff")}
+            onBlur={(e) => (e.target.style.borderColor = "#ccc")}
+          />
+        </div>
+
         </>
       )}
       

@@ -1,3 +1,5 @@
+// Este componente le permite al comercial aplicar un descuento sobre todo el despiece.
+
 export default function BloqueDescuento({ formData, setFormData, errores }) {
   const subtotal = parseFloat(
     formData.tipo_cotizacion === "Alquiler"

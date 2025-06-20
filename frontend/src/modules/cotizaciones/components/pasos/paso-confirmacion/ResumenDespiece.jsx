@@ -1,3 +1,8 @@
+// Éste componente muestra una tabla detallada del despiece generado, incluyendo descripción,
+// cantidad y precios según el tipo de cotización (alquiler o venta). Además, presenta un resumen visual claro
+// con totales de piezas, peso y subtotales monetarios. El objetivo es que el comercial pueda visualizar
+// claramente el despiece de lo que está cotizando.
+
 export default function ResumenDespiece({ despiece, resumen, tipo }) {
   if (!Array.isArray(despiece) || despiece.length === 0 || !resumen) {
     return <p>No se pudo generar el despiece correctamente.</p>;

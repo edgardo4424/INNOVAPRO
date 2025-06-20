@@ -21,7 +21,7 @@ export default function useDespieceManual({ tipoCotizacion, formData, onResumenC
     const nueva = {
       ...pieza,
       cantidad,
-      descripcion: `${pieza.item} - ${pieza.descripcion}`,
+      descripcion: `${pieza.descripcion}`,
       subtotal_alquiler: (parseFloat(pieza.precio_alquiler_soles) * cantidad).toFixed(2),
       subtotal_venta: (parseFloat(pieza.precio_venta_soles) * cantidad).toFixed(2),
       peso_kg_total: pesoTotal
@@ -32,11 +32,11 @@ export default function useDespieceManual({ tipoCotizacion, formData, onResumenC
   };
 
   const eliminarPieza = (piezaId) => {
-    const nuevaLista = despieceManual.filter(p => p.id !== piezaId);
-    setDespieceManual(nuevaLista);
+    const nuevaLista = despieceManual.filter(p => p.id !== piezaId); 
+    setDespieceManual(nuevaLista); // Acá vamos a ir guardando las piezas adicionales que nosotros ingresamos
 
     const despieceFiltrado = formData.despiece?.filter(p => p.id !== piezaId);
-    const resumen = calcularResumen(despieceFiltrado);
+    const resumen = calcularResumen(despieceFiltrado); //Acá filtramos el despiece para eliminar cualquier pieza con ese id
 
     onResumenChange({
         nuevoDespiece: nuevaLista,

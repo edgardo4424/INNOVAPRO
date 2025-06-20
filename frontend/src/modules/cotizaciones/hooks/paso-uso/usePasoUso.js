@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { obtenerUsos } from "../services/cotizacionesService";
+import { obtenerUsos } from "../../services/cotizacionesService";
 import { toast } from "react-toastify";
 
 // Este hook se encarga de cargar los usos disponibles desde el API al iniciar el componente.

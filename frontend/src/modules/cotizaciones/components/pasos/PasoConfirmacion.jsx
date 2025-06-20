@@ -1,21 +1,28 @@
 import { useEffect } from "react";
 import { useWizardContext } from "../../context/WizardCotizacionContext";
-import { useGenerarDespiece } from "../../hooks/useGenerarDespiece";
-import { useCalculoTransporte } from "../../hooks/useCalculoTransporte";
-import ResumenDespiece from "../ResumenDespiece";
-import BloquePernos from "../BloquePernos";
-import BloqueTransporte from "../BloqueTransporte";
-import BloqueInstalacion from "../BloqueInstalacion";
-import BloqueDescuento from "../BloqueDescuento";
-import DespieceAdicional from "../DespieceAdicional"
+import { useGenerarDespiece } from "../../hooks/paso-confirmacion/useGenerarDespiece";
+import { useCalculoTransporte } from "../../hooks/paso-confirmacion/useCalculoTransporte";
+import ResumenDespiece from "./paso-confirmacion/ResumenDespiece";
+import BloquePernos from "./paso-confirmacion/BloquePernos";
+import BloqueTransporte from "./paso-confirmacion/BloqueTransporte";
+import BloqueInstalacion from "./paso-confirmacion/BloqueInstalacion";
+import BloqueDescuento from "./paso-confirmacion/BloqueDescuento";
+import DespieceAdicional from "./paso-confirmacion/DespieceAdicional"
 import Loader from "../../../../shared/components/Loader";
 
+// Este componente representa el quinto paso del Wizard. Muestra el resumen del despiece generado automáticamente.
+// Le permite al comercial confirmar las piezas calculadas, agregar piezas adicionales, incluir o excluir pernos,
+// configurar transporte, instalación y descuentos.
+// Utiliza la lógica separada en hooks para generar el despiece y realizar el cálculo del transporte automático.
+// Desacoplado los componentes que se van a renderizar de manera condicional con sus lógicas separadas.
 
 export default function PasoConfirmacion() {
   const { formData, setFormData, errores } = useWizardContext();
 
   useGenerarDespiece(formData, setFormData); // Hook personalizado para generar el despiece
   useCalculoTransporte(formData, setFormData); // Hook personalizado para calcular el transporte
+
+  // Validación básica para determinar si todos los datos mínimos están listos 
   
   const datosListos =
     formData.uso_id &&
