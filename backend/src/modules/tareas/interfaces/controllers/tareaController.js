@@ -12,7 +12,8 @@ const liberarTarea = require('../../application/useCases/liberarTarea')
 const finalizarTarea = require('../../application/useCases/finalizarTarea')
 const cancelarTarea = require('../../application/useCases/cancelarTarea')
 const devolverTarea = require('../../application/useCases/devolverTarea')
-const corregirTarea = require('../../application/useCases/corregirTarea')
+const corregirTarea = require('../../application/useCases/corregirTarea');
+const crearDespieceOT = require('../../application/useCases/crearDespieceOT');
 
 const tareaRepository = new sequelizeTareaRepository(); 
 
@@ -125,6 +126,18 @@ const TareaController = {
             let correccion = req.body.correccion
             const tarea = await corregirTarea(req.params.id, correccion, tareaRepository);
             res.status(200).json(tarea.respuesta);
+        } catch (error) {
+            console.log('error',error);
+            res.status(500).json({ error: error.message }); 
+        }
+    },
+
+    async crearDespieceOT(req, res) {
+        try {
+
+            const despieceCreado = await crearDespieceOT(req.body, tareaRepository );
+           
+            res.status(despieceCreado.codigo).json(despieceCreado.respuesta);
         } catch (error) {
             console.log('error',error);
             res.status(500).json({ error: error.message }); 

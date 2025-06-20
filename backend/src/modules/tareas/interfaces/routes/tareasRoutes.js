@@ -30,4 +30,7 @@ router.put("/:id/corregir", tareaController.corregirTarea);
 // 📌 Eliminar una tarea
 router.delete("/:id", tareaController.eliminarTarea);
 
+// Crear despiece por OT
+router.post("/crear-despiece-ot", tareaController.crearDespieceOT);
+
 module.exports = router;

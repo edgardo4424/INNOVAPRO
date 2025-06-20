@@ -3,6 +3,7 @@ const sequelizeCotizacionRepository = require('../../infrastructure/repositories
 const crearCotizacion = require('../../application/useCases/crearCotizacion'); 
 const obtenerCotizaciones = require('../../application/useCases/obtenerCotizaciones'); 
 const generarPdfCotizacion = require('../../application/useCases/generarPdfCotizacion');
+const crearCotizacionConOT = require('../../application/useCases/crearCotizacionConOT');
 
 /* const obtenerCotizacionPorId = require('../../application/useCases/obtenerCotizacionPorId'); // Importamos el caso de uso para obtener un cotizacion por ID
 const actualizarCotizacion = require('../../application/useCases/actualizarCotizacion'); // Importamos el caso de uso para actualizar un cotizacion
@@ -24,7 +25,7 @@ const CotizacionController = {
                 }
                 
             }
-           
+
             const nuevaCotizacion = await crearCotizacion(datos, cotizacionRepository ); // Llamamos al caso de uso para crear un cotizacion
            
             res.status(nuevaCotizacion.codigo).json(nuevaCotizacion.respuesta); // Respondemos con la cotizacion creada
@@ -56,7 +57,26 @@ const CotizacionController = {
             console.log('error', error);
             res.status(500).json({ error: error.message }); // Respondemos con un error
         }
-    }
+    },
+
+    async crearCotizacionConOT(req, res) {
+        try {
+            const datos = {
+                ...req.body,
+                cotizacion: {
+                    ...req.body.cotizacion,
+                    usuario_id: req.usuario.id,
+                }
+                
+            }
+            const nuevaCotizacion = await crearCotizacionConOT(datos, cotizacionRepository ); // Llamamos al caso de uso para crear un cotizacion
+           
+            res.status(nuevaCotizacion.codigo).json(nuevaCotizacion.respuesta); // Respondemos con la cotizacion creada
+        } catch (error) {
+            console.log('error', error);
+            res.status(500).json({ error: error.message }); // Respondemos con un error
+        }
+    },
     
 
     /*async obtenerCotizacionPorId(req, res) {

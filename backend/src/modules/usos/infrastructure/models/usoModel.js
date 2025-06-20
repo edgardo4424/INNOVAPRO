@@ -31,13 +31,10 @@ Uso.associate = (models) => {
      foreignKey: "uso_id",
   })
 
-/*   Uso.hasMany(models.usos,{
+ Uso.hasMany(models.tareas,{
      foreignKey: "usoId",
   })
 
-  Uso.hasMany(models.contactos,{
-     foreignKey: "contactoId",
-  }) */
 }
 
 module.exports = { Uso }; // Exporta el modelo para que pueda ser utilizado en otros módulos
