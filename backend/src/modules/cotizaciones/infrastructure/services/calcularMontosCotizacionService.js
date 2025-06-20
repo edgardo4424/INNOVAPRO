@@ -29,7 +29,7 @@ function calcularMontosCotizacion({
 
       } else {
         subtotal = despiece.reduce(
-          (acc, p) => acc + parseFloat(p.precio_alquiler_soles || 0),
+          (acc, p) => acc + (p.total * parseFloat(p.precio_u_alquiler_soles || 0)),
           0
         );
       }
@@ -37,7 +37,7 @@ function calcularMontosCotizacion({
       break;
     case "Venta":
       subtotal = despiece.reduce(
-          (acc, p) => acc + parseFloat(p.precio_venta_soles || 0),
+          (acc, p) => acc + (p.total * parseFloat(p.precio_u_venta_soles || 0)),
           0
         );
       moneda = "PEN";

@@ -1,5 +1,5 @@
 class Tarea {
-  constructor({usuarioId, empresaProveedoraId, clienteId, obraId, ubicacion, tipoTarea, urgencia, estado, detalles, fecha_creacion, asignadoA, motivoDevolucion, correccionComercial, contactoId, usoId}) {
+  constructor({usuarioId, empresaProveedoraId, clienteId, obraId, ubicacion, tipoTarea, urgencia, estado, detalles, fecha_creacion, asignadoA, motivoDevolucion, correccionComercial, contactoId, usoId, atributos_valor_zonas}) {
     this.usuarioId = usuarioId;
     this.empresaProveedoraId = empresaProveedoraId;
     this.clienteId = clienteId;
@@ -15,10 +15,11 @@ class Tarea {
     this.correccionComercial = correccionComercial;
     this.contactoId = contactoId;
     this.usoId = usoId;
+    this.atributos_valor_zonas = atributos_valor_zonas;
   }
 
   static validarCamposObligatorios(datos, modo = "crear") {
-    const camposValidos = ["usuarioId", "empresaProveedoraId", "clienteId", "obraId", "tipoTarea", "urgencia", "estado", "detalles","fecha_creacion", "asignadoA", "motivoDevolucion", "correccionComercial", "contactoId", "usoId"];
+    const camposValidos = ["usuarioId", "empresaProveedoraId", "clienteId", "obraId", "tipoTarea", "urgencia", "estado", "detalles","fecha_creacion", "asignadoA", "motivoDevolucion", "correccionComercial", "contactoId", "usoId", "atributos_valor_zonas"];
     
     if (modo === "crear") {
 

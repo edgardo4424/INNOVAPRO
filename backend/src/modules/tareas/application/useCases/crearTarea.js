@@ -12,14 +12,15 @@ module.exports = async (tareaData, tareaRepository) => {
   const obra = await obraRepository.obtenerPorId(tareaData.obraId)
   if(!obra) return { codigo: 404, respuesta: { mensaje: "Obra no encontrada." } }
 
+  
   const tarea = {
     ...tareaData,
-    ubicacion: obra.ubicacion
+    ubicacion: obra.ubicacion,
+    atributos_valor_zonas: tareaData.zonas
   }
 
-  console.log('tarea', tarea);
-
   const nuevaTareaData = new Tarea(tarea); // Creamos una nueva instancia de la clase Tarea con los datos proporcionados
+
   const nuevoTarea = await tareaRepository.crear(nuevaTareaData); // Creamos el nuevo tarea con todos sus datos en la base de datos
 
   return {

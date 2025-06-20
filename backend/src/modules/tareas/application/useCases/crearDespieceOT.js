@@ -1,4 +1,8 @@
 const db = require("../../../../models");
+const AtributosValor = require("../../../atributos_valor/domain/entities/atributos_valor");
+const {
+  mapearValoresAtributos,
+} = require("../../../cotizaciones/infrastructure/services/mapearValoresAtributosService");
 
 module.exports = async (dataDespiece, tareaRepository) => {
   const transaction = await db.sequelize.transaction(); // Iniciar transacción
@@ -8,7 +12,16 @@ module.exports = async (dataDespiece, tareaRepository) => {
     if (!tarea)
       return { codigo: 404, respuesta: { mensaje: "Tarea no encontrado" } };
 
+    console.log("tarea", tarea);
+
     if (tarea.detalles?.apoyoTecnico == "Despiece") {
+      if (dataDespiece.despiece.length == 0) {
+        return {
+          codigo: 400,
+          respuesta: { mensaje: "No hay piezas en el despiece" },
+        };
+      }
+
       const despieceGuardar = {
         cp: "1.1",
         moneda: "PEN",
@@ -19,18 +32,36 @@ module.exports = async (dataDespiece, tareaRepository) => {
         transaction,
       });
 
-      console.log("nuevoDespiece", nuevoDespiece);
-
       const despiece_id = nuevoDespiece.id;
 
-      // Insertar el despiece manual brindado por OT
+      console.log(tarea.atributos_valor_zonas);
 
-      if (dataDespiece.despiece.length == 0) {
-        return {
-          codigo: 400,
-          respuesta: { mensaje: "No hay piezas en el despiece" },
-        };
+      // Insertar Atributos Valor
+      const atributosValor = await mapearValoresAtributos({
+        uso_id: tarea.usoId,
+        despiece_id,
+        zonas: tarea.atributos_valor_zonas, // Vienen los atributos por zona
+      });
+
+      // Validación de todos los atributos valor
+      for (const data of atributosValor) {
+        const errorCampos = AtributosValor.validarCamposObligatorios(
+          data,
+          "crear"
+        );
+        if (errorCampos) {
+          return {
+            codigo: 400,
+            respuesta: { mensaje: `Error en un registro: ${errorCampos}` },
+          };
+        }
       }
+
+      console.log("atributosValor", atributosValor);
+
+      await db.atributos_valor.bulkCreate(atributosValor, { transaction });
+
+      // Insertar el despiece manual brindado por OT
 
       const despieceManual = dataDespiece.despiece.map((pieza) => ({
         ...pieza,
@@ -53,7 +84,7 @@ module.exports = async (dataDespiece, tareaRepository) => {
         uso_id: tarea.usoId,
       };
 
-      console.log('dataCotizacion', dataCotizacion);
+      console.log("dataCotizacion", dataCotizacion);
 
       await db.cotizaciones.create(dataCotizacion, { transaction });
     } else {
@@ -62,6 +93,7 @@ module.exports = async (dataDespiece, tareaRepository) => {
         respuesta: { mensaje: "No se solicitó un despiece para la tarea" },
       };
     }
+
 
     await transaction.commit(); // ✔ Confirmar todo
     return { codigo: 201, respuesta: tarea };

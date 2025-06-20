@@ -87,6 +87,10 @@ const Tarea = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: { model: "usos", key: "id" },
+    },
+    atributos_valor_zonas: {
+       type: DataTypes.JSON,
+      defaultValue: [],
     }
   },
   {

@@ -7,7 +7,7 @@ class SequelizeTareaRepository {
   }
 
   async crear(tareaData) {
-
+    console.log('aquiiiiiiii', tareaData);
     return await db.tareas.create({
       usuarioId: tareaData.usuarioId,
       empresaProveedoraId: tareaData.empresaProveedoraId,
@@ -19,7 +19,8 @@ class SequelizeTareaRepository {
       estado: "Pendiente",
       detalles: tareaData.detalles ? tareaData.detalles : {}, // ✅ Aseguramos que `detalles` no sea undefined
       contactoId: tareaData.contactoId,
-      usoId: tareaData.usoId
+      usoId: tareaData.usoId,
+      atributos_valor_zonas: tareaData.atributos_valor_zonas
     });
   }
 

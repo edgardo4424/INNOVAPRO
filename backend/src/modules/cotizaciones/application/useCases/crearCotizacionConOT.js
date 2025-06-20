@@ -5,6 +5,8 @@ const { calcularMontosCotizacion } = require("../../infrastructure/services/calc
 const ID_ESTADO_COTIZACION_POR_APROBAR = 3;
 
 const sequelizeDespieceRepository = require('../../../despieces/infrastructure/repositories/sequelizeDespieceRepository');
+const { mapearDetallesDespiece } = require("../../infrastructure/services/mapearDetallesDespieceService");
+const { actualizarPiezasExistentes } = require("../../infrastructure/services/actualizarPiezasExistentesService");
 const despieceRepository = new sequelizeDespieceRepository(); 
 
 module.exports = async (cotizacionData, cotizacionRepository) => {
@@ -36,7 +38,18 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
         };
       }
 
-      // 1. Calcular montos
+      // 1. Actualizar despiece detalles en caso se añada nuevas piezas
+    const detalles = mapearDetallesDespiece({ despiece, despiece_id: cotizacionEncontrada.despiece_id });
+
+      const {insertados, ignorados} = await actualizarPiezasExistentes({
+  detalles,
+  despiece_id: cotizacionEncontrada.despiece_id,
+  transaction
+});
+
+console.log({insertados, ignorados});
+
+      // 2. Calcular montos
     const resultados = calcularMontosCotizacion({
       despiece,
       tipoCotizacion: cotizacion.tipo_cotizacion,
@@ -44,24 +57,26 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       uso_id
     });
 
-    console.log('resultados', resultados);
+    console.log('resultados', resultados.dataParaGuardarDespiece);
 
-    // 2. Actualizar Despiece
+    // 3. Actualizar Despiece
 
     let dataParaDespiece = {
       ...resultados.dataParaGuardarDespiece,
       tiene_pernos: cotizacion.tiene_pernos
     }
+
+    console.log('dataParaDespiece', dataParaDespiece);
      // Valida los campos del despiece
     const errorCampos = Despiece.validarCamposObligatorios( dataParaDespiece,"editar");
 
     if (errorCampos)
       return { codigo: 400, respuesta: { mensaje: errorCampos } };
 
-    const despieceActualizado = await despieceRepository.actualizarDespiece(cotizacionEncontrada.despiece_id, dataParaDespiece)
+    const despieceActualizado = await despieceRepository.actualizarDespiece(cotizacionEncontrada.despiece_id, dataParaDespiece, transaction)
 
     console.log('despieceActualizado', despieceActualizado);
-asd
+
     await transaction.commit(); // ✔ Confirmar todo
     return {
       codigo: 201,
