@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 import RoleGuard from "./rol.guard";
-import { WizardProvider } from "@/modules/cotizaciones/hooks/useWizardCotizacion";
+import { WizardProvider } from "@/modules/cotizaciones/context/WizardCotizacionContext";
 import LoaderInnova from "@/shared/components/LoaderInnova";
 
 // Lazy load components

@@ -45,6 +45,10 @@ const DespieceDetalle = sequelize.define(
       type: DataTypes.DECIMAL(10, 2),
       defaultValue: 0,
     },
+/*     uuid: {
+    type: DataTypes.STRING,
+    allowNull: true, // solo aplica a piezas adicionales
+    }, */
   },
   {
     timestamps: false,

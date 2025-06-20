@@ -4,7 +4,7 @@ const {
 } = require("../../infrastructure/helpers/formatearFecha");
 const { mapearPorAtributos, agruparPorZonaYAtributos } = require("../../infrastructure/services/mapearAtributosDelPdfService");
 
-module.exports = async (idCotizacion, cotizacionRepository) => {
+module.exports = async (idCotizacion) => {
 
   // Buscar la cotizacion incluyendo: obra, cliente, contacto, despiece, filial, usuario, costos de cotizacion de transporte
   const cotizacionEncontrado = await db.cotizaciones.findByPk(idCotizacion, {
@@ -68,7 +68,8 @@ module.exports = async (idCotizacion, cotizacionRepository) => {
   if (!despieceEncontrado)
     return { codigo: 404, respuesta: { mensaje: "Despiece no encontrada" } };
 
-  const uso_id = despieceEncontrado.atributos_valors?.[0].atributo.uso_id;
+  /* const uso_id = despieceEncontrado.atributos_valors?.[0].atributo.uso_id; */
+  const uso_id = cotizacionEncontrado.uso_id
 
   const usoEncontrado = await db.usos.findByPk(uso_id);
 

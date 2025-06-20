@@ -1,3 +1,7 @@
+// Este componente le permite al comercial decidir si desea incluir pernos o no en la cotización y en caso afirmativo,
+// asignarle un precio de venta personalizado. Si se habilitan, se actualiza dinámicamente el despiece del formData
+// con los valores ingresados. Ésto cumpliendo con la lógica de INNOVA y solicitud de Gerencia.
+
 export default function BloquePernos({ formData, setFormData, errores }) {
   const incluirPernos = formData.tiene_pernos;
   const perno = formData.despiece.find(p => p.esPerno);
@@ -38,7 +42,7 @@ export default function BloquePernos({ formData, setFormData, errores }) {
           <input
             type="number"
             min="0"
-            value={perno.precio_u_venta_soles || 15}
+            value={perno.precio_u_venta_soles || 0}
             onChange={(e) => {
               const nuevoPrecio = parseFloat(e.target.value);
               if (isNaN(nuevoPrecio) || nuevoPrecio < 0) return;

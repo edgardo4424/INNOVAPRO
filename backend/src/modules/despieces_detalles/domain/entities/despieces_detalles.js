@@ -7,6 +7,7 @@ class DespieceDetalle {
         precio_venta_dolares, 
         precio_venta_soles, 
         precio_alquiler_soles,
+      /*   uuid */
     }) {
         this.despiece_id = despiece_id;
         this.pieza_id = pieza_id;
@@ -14,12 +15,14 @@ class DespieceDetalle {
         this.peso_kg = peso_kg;
         this.precio_venta_dolares = precio_venta_dolares;
         this.precio_venta_soles = precio_venta_soles;
-        this.precio_alquiler_soles = precio_alquiler_soles
+        this.precio_alquiler_soles = precio_alquiler_soles;
+      /*   this.uuid = uuid; */
     }
 
     static validarCamposObligatorios(datos, modo = "crear") {
        
         if (modo === "crear") {
+            
             if (!datos.despiece_id || !datos.pieza_id || !datos.cantidad || !datos.peso_kg || !datos.precio_venta_dolares || !datos.precio_venta_soles) {
                 return "Faltan campos obligatorios: despiece_id, pieza_id, cantidad, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles.";
             }

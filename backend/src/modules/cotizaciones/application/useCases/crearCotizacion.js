@@ -30,6 +30,8 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       despiece,
     } = cotizacionData;
 
+    console.log('DESPIECEEEEEEEEEEEEE', despiece);
+
     if (despiece.length == 0)
       return {
         codigo: 400,
@@ -64,20 +66,22 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
     const despiece_id = nuevoDespiece.id;
 
     // 3. Insertar Detalles del Despiece
+
     const detalles = mapearDetallesDespiece({ despiece, despiece_id });
 
     // Validación de todos los registros de despiece
     for (const data of detalles) {
       const errorCampos = DespieceDetalle.validarCamposObligatorios(data, "crear");
       if (errorCampos) {
+         console.log("Registro inválido", data, "->", errorCampos);
         return {
           codigo: 400,
           respuesta: { mensaje: `Error en un registro: ${errorCampos}` },
         };
       }
     }
-
-    await db.despieces_detalle.bulkCreate(detalles, { transaction });
+console.log('detalles', detalles);
+    await db.despieces_detalle.bulkCreate(detalles, { transaction});
 
     // 4. Insertar Atributos Valor
     const atributosValor = await mapearValoresAtributos({
@@ -99,10 +103,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
         };
       }
     }
-
-    
-    console.log('atributosValor', atributosValor);
- 
 
     await db.atributos_valor.bulkCreate(atributosValor, { transaction });
 
@@ -270,6 +270,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       respuesta: { mensaje: "Cotización creada exitosamente" },
     };
   } catch (error) {
+  
     await transaction.rollback(); // ❌ Deshacer todo si algo falla
     console.error("Error en creación de cotización:", error);
     return {

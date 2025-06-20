@@ -1,46 +1,31 @@
-import { useEffect, useState } from "react";
-import { useWizardContext } from "../../hooks/useWizardCotizacion";
-import api from "@/shared/services/api";
+import { useWizardContext } from "../../context/WizardCotizacionContext";
+import { usePasoUso } from "../../hooks/paso-uso/usePasoUso";
+import useDespieceManual  from "../../hooks/useDespieceManual";
 import Loader from "@/shared/components/Loader";
-import { toast } from "react-toastify";
+
+// Este componente representa el segundo paso del wizard para registrar una cotización.
+// Permite seleccionar el uso del equipo y el tipo de cotización (alquiler o venta).
+// Utiliza el contexto del wizard para manejar el estado del formulario y los errores. 
+// Carga los usos disponibles desde el API al iniciar y actualiza el estado del formulario según la selección del usuario.
 
 export default function PasoUso() {
   const { formData, setFormData, errores } = useWizardContext(); // Traemmos el contexto del wizard donde se maneja el estado del fomrulario y los errores
-  const [usos, setUsos] = useState([]); // Guarda los usos obtenidos del API
-  const [loading, setLoading] = useState(true); // Estado de carga para mostrar un loader mientras se obtienen los datos
+  
+  const { usos, loading, handleChange, handleSeleccionUso } = usePasoUso({ // Usamos el hook personalizado para cargar los usos disponibles
+    formData,
+    setFormData
+  })
 
-  useEffect(() => { // Efecto para cargar los usos disponibles desde el API
-    const cargarUsos = async () => {
-      try {
-        const { data } = await api.get("/usos"); 
-        setUsos(data);
-      } catch (error) {
-        console.error("Error al cargar usos", error);
-        toast.error("Error al cargar los usos disponibles. Por favor, intenta más tarde.")
-      } finally {
-        setLoading(false);
-      }
-    };
-    cargarUsos();
-  }, []);
- 
-  const handleChange = (campo, valor) => { // Función para manejar los cambios en los campos del formulario
-    setFormData((prev) => ({ ...prev, [campo]: valor }));
-  };
-
-  const handleSeleccionUso = (e) => { // Función para manejar la selección de un uso del equipo
-    const idSeleccionado = parseInt(e.target.value);
-    const uso = usos.find(u => u.id === idSeleccionado);
-
-    if (!uso) { // Si no se encuentra el uso seleccionado, limpiamos los campos relacionados
-      handleChange("uso_id", null);
-      handleChange("uso_nombre", "");
-      return;
+  useDespieceManual({
+    tipo_cotizacion: formData.tipo_cotizacion,
+    onResumeChange: ({ despiece, resumen }) => {
+      setFormData(prev => ({
+        ...prev,
+        despiece,
+        resumenDespiece: resumen,
+      }))
     }
-
-    handleChange("uso_id", uso.id);
-    handleChange("uso_nombre", uso.descripcion);
-  };
+  })
 
   if (loading) return <Loader texto="Cargando usos disponibles..." />;
 
