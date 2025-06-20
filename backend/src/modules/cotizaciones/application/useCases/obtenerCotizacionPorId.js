@@ -3,7 +3,9 @@ const {
   mapearPorAtributos,
   agruparPorZonaYAtributos,
 } = require("../../infrastructure/services/mapearAtributosDelPdfService");
-const { mapearAtributosValor } = require("../../infrastructure/services/mapearAtributosValorService");
+const {
+  mapearAtributosValor,
+} = require("../../infrastructure/services/mapearAtributosValorService");
 
 module.exports = async (id, cotizacionRepository) => {
   const cotizacion = await cotizacionRepository.obtenerPorId(id); // Llama al método del repositorio para obtener un cotizacion por ID
@@ -13,19 +15,18 @@ module.exports = async (id, cotizacionRepository) => {
   // Obtener la lista de atributos
 
   const atributosDelUso = await db.atributos_valor.findAll({
-  where: {
-    despiece_id: cotizacion.despiece_id,
-  },
-  include: [
-    {
-      model: db.atributos,
-      as: "atributo",
-    }
-  ]
-});
+    where: {
+      despiece_id: cotizacion.despiece_id,
+    },
+    include: [
+      {
+        model: db.atributos,
+        as: "atributo",
+      },
+    ],
+  });
 
-
- const resultado = mapearAtributosValor(atributosDelUso);
+  const resultado = mapearAtributosValor(atributosDelUso);
 
   const listaAtributos = agruparPorZonaYAtributos(resultado);
 
@@ -37,18 +38,18 @@ module.exports = async (id, cotizacionRepository) => {
 
   // Obtener despiece
   const despieceDetalle = await db.despieces_detalle.findAll({
-     where: {
-    despiece_id: cotizacion.despiece_id,
-  },
-  include: [
-    {
+    where: {
+      despiece_id: cotizacion.despiece_id,
+    },
+    include: [
+      {
         model: db.piezas,
-        as: "pieza"
-    }
-  ]
-  })
+        as: "pieza",
+      },
+    ],
+  });
 
-  const despieceFormateado = despieceDetalle.map((pieza) => (({
+  const despieceFormateado = despieceDetalle.map((pieza) => ({
     pieza_id: pieza.pieza_id,
     item: pieza.pieza.item,
     descripcion: pieza.pieza.descripcion,
@@ -61,13 +62,27 @@ module.exports = async (id, cotizacionRepository) => {
     precio_venta_soles: pieza.precio_venta_soles,
     precio_u_alquiler_soles: pieza.pieza.precio_alquiler_soles,
     precio_alquiler_soles: pieza.precio_alquiler_soles,
-    stock_actual: pieza.pieza.stock_actual
-  })))
+    stock_actual: pieza.pieza.stock_actual,
+  }));
+
+  // Obtener cotizacion
+
+  const dataCotizacion = {
+    contacto_id: cotizacion.contacto_id,
+    cliente_id: cotizacion.cliente_id,
+    obra_id: cotizacion.obra_id,
+    filial_id: cotizacion.filial_id,
+    tipo_cotizacion: cotizacion.tipo_cotizacion,
+    porcentaje_descuento: cotizacion.porcentaje_descuento,
+    tiempo_alquiler_dias: cotizacion.tiempo_alquiler_dias,
+    igv_porcentaje: cotizacion.igv_porcentaje,
+  };
 
   const respuesta = {
     uso_id: cotizacion.uso_id,
     zonas: listaAtributosFormateado,
-    despiece: despieceFormateado
+    despiece: despieceFormateado,
+    cotizacion: dataCotizacion,
   };
   return { codigo: 200, respuesta: respuesta }; // Retorna el cotizacion encontrado
 }; // Exporta la función para que pueda ser utilizada en otros módulos
