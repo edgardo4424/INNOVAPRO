@@ -8,9 +8,12 @@ import {
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Bell, LogOut, Settings2, UserCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const UserMenu = ({ names, logout }) => {
    const letter = names.charAt(0);
+      const navigate = useNavigate();
+
    return (
       <DropdownMenu>
          <DropdownMenuTrigger className="flex items-center gap-1" asChild>
