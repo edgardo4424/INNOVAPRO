@@ -8,7 +8,26 @@ const {
 } = require("../../infrastructure/services/mapearAtributosValorService");
 
 module.exports = async (id, cotizacionRepository) => {
-  const cotizacion = await cotizacionRepository.obtenerPorId(id); // Llama al método del repositorio para obtener un cotizacion por ID
+  const cotizacion = await db.cotizaciones.findByPk(id, {
+    include: [
+        {
+            model: db.contactos,
+            as: "contacto"
+        },
+         {
+            model: db.clientes,
+            as: "cliente"
+        },
+        {
+            model: db.obras,
+            as: "obra"
+        },
+        {
+            model: db.empresas_proveedoras
+        }
+    ]
+  }); 
+
   if (!cotizacion)
     return { codigo: 404, respuesta: { mensaje: "Cotizacion no encontrado" } }; // Si no se encuentra el cotizacion, retorna un error 404
 
@@ -56,11 +75,11 @@ module.exports = async (id, cotizacionRepository) => {
     total: pieza.cantidad,
     peso_u_kg: pieza.pieza.peso_kg,
     peso_kg: pieza.peso_kg,
-    precio_u_venta_dolares: pieza.pieza.precio_venta_dolares,
+    precio_u_venta_dolares: (pieza.precio_venta_dolares/pieza.cantidad).toFixed(2),
     precio_venta_dolares: pieza.precio_venta_dolares,
-    precio_u_venta_soles: pieza.pieza.precio_venta_soles,
+    precio_u_venta_soles: (pieza.precio_venta_soles/pieza.cantidad).toFixed(2),
     precio_venta_soles: pieza.precio_venta_soles,
-    precio_u_alquiler_soles: pieza.pieza.precio_alquiler_soles,
+    precio_u_alquiler_soles: (pieza.precio_alquiler_soles/pieza.cantidad).toFixed(2),
     precio_alquiler_soles: pieza.precio_alquiler_soles,
     stock_actual: pieza.pieza.stock_actual,
   }));
@@ -69,9 +88,13 @@ module.exports = async (id, cotizacionRepository) => {
 
   const dataCotizacion = {
     contacto_id: cotizacion.contacto_id,
+    contacto_nombre: cotizacion.contacto.nombre,
     cliente_id: cotizacion.cliente_id,
+    cliente_razon_social: cotizacion.cliente.razon_social,
     obra_id: cotizacion.obra_id,
+    obra_nombre: cotizacion.obra.nombre,
     filial_id: cotizacion.filial_id,
+    filial_razon_social: cotizacion.empresas_proveedora.razon_social,
     tipo_cotizacion: cotizacion.tipo_cotizacion,
     porcentaje_descuento: cotizacion.porcentaje_descuento,
     tiempo_alquiler_dias: cotizacion.tiempo_alquiler_dias,

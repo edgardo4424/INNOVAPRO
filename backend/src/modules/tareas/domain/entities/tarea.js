@@ -23,7 +23,7 @@ class Tarea {
     if (modo === "crear") {
 
       if (!datos.usuarioId || !datos.tipoTarea) {
-        return "Los campos usuarioId, tipoTarea y urgencia son obligatorios";
+        return "Los campos usuarioId, tipoTarea son obligatorios";
     }
     }
     if (modo === "editar") {
