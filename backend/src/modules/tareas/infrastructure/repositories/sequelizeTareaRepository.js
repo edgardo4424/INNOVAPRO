@@ -52,7 +52,7 @@ class SequelizeTareaRepository {
   }
 
   async obtenerPorId(id) {
-    console.log('id', id);
+    
     return await db.tareas.findByPk(id, {
       include: [
         {
