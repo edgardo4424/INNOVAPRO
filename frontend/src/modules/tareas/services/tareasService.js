@@ -1,6 +1,11 @@
 import api from "@/shared/services/api";
 
 const tareasService = {
+  obtenerContactos: async () => {
+    const res = await api.get("/contactos");
+    return res.data || [];
+  },
+
   obtenerFiliales: async () => {
     const res = await api.get("/filiales");
     return res.data || [];
