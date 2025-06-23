@@ -75,7 +75,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
 
      console.log('cotizacionActualizada', cotizacionActualizada);
 
-
     // 1. Insertar las piezas nuevas que fueron añadidas por el comercial (piezas con uuid)
 
     const piezasNuevas = despiece.filter((pieza) => pieza?.esAdicional);

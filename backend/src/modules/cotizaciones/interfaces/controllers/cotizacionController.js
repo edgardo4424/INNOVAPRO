@@ -4,6 +4,7 @@ const crearCotizacion = require('../../application/useCases/crearCotizacion');
 const obtenerCotizaciones = require('../../application/useCases/obtenerCotizaciones'); 
 const generarPdfCotizacion = require('../../application/useCases/generarPdfCotizacion');
 const crearCotizacionConOT = require('../../application/useCases/crearCotizacionConOT');
+const obtenerCotizacionPorId = require('../../application/useCases/obtenerCotizacionPorId');
 
 /* const obtenerCotizacionPorId = require('../../application/useCases/obtenerCotizacionPorId'); // Importamos el caso de uso para obtener un cotizacion por ID
 const actualizarCotizacion = require('../../application/useCases/actualizarCotizacion'); // Importamos el caso de uso para actualizar un cotizacion
@@ -80,7 +81,7 @@ const CotizacionController = {
     },
     
 
-    /*async obtenerCotizacionPorId(req, res) {
+    async obtenerCotizacionPorId(req, res) {
         try {
             const cotizacion = await obtenerCotizacionPorId(req.params.id, cotizacionRepository); // Llamamos al caso de uso para obtener una cotizacion por ID
             res.status(cotizacion.codigo).json(cotizacion.respuesta); 
@@ -89,7 +90,7 @@ const CotizacionController = {
         }
     },
 
-    async actualizarCotizacion(req, res) {
+    /* async actualizarCotizacion(req, res) {
         try {
             const cotizacionActualizada = await actualizarCotizacion(req.params.id, req.body, cotizacionRepository); // Llamamos al caso de uso para actualizar un cotizacion
             
