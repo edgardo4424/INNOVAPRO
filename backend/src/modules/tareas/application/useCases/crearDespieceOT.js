@@ -4,6 +4,8 @@ const {
   mapearValoresAtributos,
 } = require("../../../cotizaciones/infrastructure/services/mapearValoresAtributosService");
 
+const ESTADO_TAREA_EN_PROCESO = "En proceso";
+
 module.exports = async (dataDespiece, tareaRepository) => {
   const transaction = await db.sequelize.transaction(); // Iniciar transacción
 
@@ -12,9 +14,14 @@ module.exports = async (dataDespiece, tareaRepository) => {
     if (!tarea)
       return { codigo: 404, respuesta: { mensaje: "Tarea no encontrado" } };
 
-    console.log("tarea", tarea);
+    if(tarea.estado != ESTADO_TAREA_EN_PROCESO){
+      return {
+        codigo: 400,
+        respuesta: { mensaje: "La tarea debe estar 'En proceso' y debe ser tomada por OT" },
+      };
+    }
 
-    if (tarea.detalles?.apoyoTecnico == "Despiece") {
+    if (tarea.detalles?.apoyoTecnico.includes("Despiece")) {
       if (dataDespiece.despiece.length == 0) {
         return {
           codigo: 400,
@@ -33,8 +40,6 @@ module.exports = async (dataDespiece, tareaRepository) => {
       });
 
       const despiece_id = nuevoDespiece.id;
-
-      console.log(tarea.atributos_valor_zonas);
 
       // Insertar Atributos Valor
       const atributosValor = await mapearValoresAtributos({
@@ -56,8 +61,6 @@ module.exports = async (dataDespiece, tareaRepository) => {
           };
         }
       }
-
-      console.log("atributosValor", atributosValor);
 
       await db.atributos_valor.bulkCreate(atributosValor, { transaction });
 
@@ -84,9 +87,11 @@ module.exports = async (dataDespiece, tareaRepository) => {
         uso_id: tarea.usoId,
       };
 
-      console.log("dataCotizacion", dataCotizacion);
-
       await db.cotizaciones.create(dataCotizacion, { transaction });
+
+      tarea.estado = "Finalizada";
+      await tarea.save({ transaction });
+
     } else {
       return {
         codigo: 400,
@@ -94,9 +99,8 @@ module.exports = async (dataDespiece, tareaRepository) => {
       };
     }
 
-
     await transaction.commit(); // ✔ Confirmar todo
-    return { codigo: 201, respuesta: tarea };
+    return { codigo: 201, respuesta: { mensaje: "Despiece creado por OT correctamente."} };
   } catch (error) {
     await transaction.rollback(); // ❌ Deshacer todo si algo falla
     console.error("Error en registrar despiece manual:", error);
