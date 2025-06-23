@@ -21,6 +21,7 @@ module.exports = async (tareaData, tareaRepository) => {
 
   const nuevaTareaData = new Tarea(tarea); // Creamos una nueva instancia de la clase Tarea con los datos proporcionados
 
+  console.log("Nueva Tarea Data:",nuevaTareaData)
   const nuevoTarea = await tareaRepository.crear(nuevaTareaData); // Creamos el nuevo tarea con todos sus datos en la base de datos
 
   return {

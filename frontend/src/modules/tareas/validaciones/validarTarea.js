@@ -1,52 +1,46 @@
-export function validarTarea(tarea, tipoTarea) {
-    const errores = {};
-  
-    if (!tarea.empresaProveedoraId) {
-      errores.empresaProveedoraId = "Debes seleccionar una filial";
+// src/utils/validaciones/validarTarea.js
+
+export function validarTarea(formData) {
+  const errores = {
+    formData: {},
+    detalles: {},
+  };
+
+  // Validaciones generales
+  if (!formData.contactoId) errores.formData.contactoId = "Seleccione un contacto";
+  if (!formData.clienteId) errores.formData.clienteId = "Seleccione un cliente";
+  if (!formData.obraId) errores.formData.obraId = "Seleccione una obra";
+  if (!formData.empresaProveedoraId) errores.formData.empresaProveedoraId = "Seleccione una filial";
+  if (!formData.tipoTarea) errores.formData.tipoTarea = "Seleccione el tipo de tarea";
+
+  // Validaciones específicas para Apoyo Técnico con Despiece
+  const despiece = formData.tipoTarea === "Apoyo Técnico" && formData.detalles?.apoyoTecnico?.includes("Despiece");
+
+  if (despiece) {
+    if (!formData.usoId || formData.usoId === "") {
+      errores.formData.usoId = "Seleccione el uso de equipo";
     }
-  
-    if (!tarea.clienteId) {
-      errores.clienteId = "Debes seleccionar un cliente";
+
+
+    if (!formData.zonas || formData.zonas.length === 0) {
+      errores.formData.zonas = "Debe agregar al menos una zona con equipos";
+    } else {
+      formData.zonas.forEach((zona, index) => {
+        if (!zona.atributos_formulario || zona.atributos_formulario.length === 0) {
+          errores.formData[`zona${index}`] = `La zona ${index + 1} no tiene equipos asignados`;
+        }
+      });
     }
-  
-    if (!tarea.obraId) {
-      errores.obraId = "Debes seleccionar una obra";
+
+    if (!formData.detalles?.tipo_cotizacion || formData.detalles.tipo_cotizacion === "")
+
+    if (formData.detalles.tipo_cotizacion === "Alquiler" &&
+      (!formData.detalles.dias_alquiler || isNaN(formData.detalles.dias_alquiler))
+    ) {
+      errores.detalles.dias_alquiler = "Ingrese los días de alquiler";
     }
-  
-    if (!tarea.urgencia) {
-      errores.urgencia = "Debes seleccionar el nivel de urgencia";
-    }
-  
-    if (!tipoTarea) {
-      errores.tipoTarea = "Debes seleccionar el tipo de tarea";
-    }
-  
-    if (tipoTarea === "Apoyo Técnico" && !tarea.detalles.apoyoTecnico) {
-      errores.apoyoTecnico = "Debes seleccionar el tipo de apoyo técnico";
-    }
-  
-    if (tipoTarea === "Apoyo Administrativo" && !tarea.detalles.apoyoAdministrativo) {
-      errores.apoyoAdministrativo = "Debes seleccionar el tipo de apoyo administrativo";
-    }
-  
-    if (tipoTarea === "Servicios Adicionales" && !tarea.detalles.tipoServicio) {
-      errores.tipoServicio = "Debes indicar el tipo de servicio";
-    }
-  
-    if (tipoTarea === "Pase de Pedido") {
-      if (!tarea.detalles.estadoPasePedido) {
-        errores.estadoPasePedido = "Debes seleccionar el estado del pedido";
-      }
-      if (!tarea.detalles.numeroVersionContrato) {
-        errores.numeroVersionContrato = "Debes indicar el número de contrato";
-      }
-      if (!tarea.detalles.fechaEntrega) {
-        errores.fechaEntrega = "Debes seleccionar la fecha de entrega";
-      }
-      if (!tarea.detalles.horaEntrega) {
-        errores.horaEntrega = "Debes seleccionar la hora de entrega";
-      }
-    }
-  
-    return errores;
-  }  
+
+  }
+
+  return errores;
+}
