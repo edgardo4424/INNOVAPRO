@@ -4,8 +4,8 @@ const {
   calcularMontosCotizacion,
 } = require("../../infrastructure/services/calcularMontosCotizacionService");
 
+const ID_ESTADO_COTIZACION_DESPIECE_GENERADO= 2;
 const ID_ESTADO_COTIZACION_POR_APROBAR = 3;
-const ID_ESTADO_COTIZACION_CREADO = 1;
 
 const sequelizeDespieceRepository = require("../../../despieces/infrastructure/repositories/sequelizeDespieceRepository");
 const {
@@ -36,7 +36,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
 
     if (
       cotizacionEncontrada.estados_cotizacion_id !=
-      ID_ESTADO_COTIZACION_POR_APROBAR
+      ID_ESTADO_COTIZACION_DESPIECE_GENERADO
     ) {
       return {
         codigo: 400,
@@ -68,13 +68,12 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
 
     const dataActualizarCotizacion = {
       codigo_documento: codigoDocumento,
-      estados_cotizacion_id: ID_ESTADO_COTIZACION_CREADO
+      estados_cotizacion_id: ID_ESTADO_COTIZACION_POR_APROBAR
     }
 
      const cotizacionActualizada = await cotizacionRepository.actualizarCotizacion(cotizacion.id, dataActualizarCotizacion, transaction)
 
      console.log('cotizacionActualizada', cotizacionActualizada);
-
 
     // 1. Insertar las piezas nuevas que fueron añadidas por el comercial (piezas con uuid)
 
@@ -90,10 +89,12 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
     // 2. Calcular montos
     const resultados = calcularMontosCotizacion({
       despiece,
-      tipoCotizacion: cotizacion.tipo_cotizacion,
+      tipoCotizacion: cotizacionEncontrada.tipo_cotizacion,
       cotizacion,
       uso_id,
     });
+
+    console.log('resultados', resultados.dataParaGuardarDespiece);
 
     // 3. Actualizar Despiece
 

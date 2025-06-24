@@ -4,9 +4,15 @@ import CheckEscaleraAcceso from "./checklists/CheckEscaleraAcceso";
 import CheckEscuadras from "./checklists/CheckEscuadras";
 import CheckEncofrado from "./checklists/CheckEncofrado";
 import CheckElevador from "./checklists/CheckElevador";
+import Select from "react-select";
+import { usePasoUso } from "../../cotizaciones/hooks/paso-uso/usePasoUso";
 
 export default function DetallesApoyoTecnico({ detalles, onChange }) {
   const { tipoEquipo } = detalles;
+  const { usos, handleChange: handleTipoEquipoChange } = usePasoUso({
+    formData: { uso_id: detalles.tipoEquipo }, // uso_id como tipoEquipo
+  });
+
 
   const renderChecklist = () => {
     switch (tipoEquipo) {
@@ -27,24 +33,28 @@ export default function DetallesApoyoTecnico({ detalles, onChange }) {
     }
   };
 
+  const opcionesApoyoTecnico = [
+    { label: "Modulación", value: "Modulación" },
+    { label: "Despiece", value: "Despiece" },
+    { label: "Memoria de cálculo", value: "Memoria de cálculo" },
+    { label: "Certificado de operatividad", value: "Certificado de operatividad" },
+    { label: "Otro", value: "Otro" },
+  ];
+
   return (
     <div className="tarea-detalles">
       <h3>Detalles de Apoyo Técnico</h3>
 
       <label>Requiere apoyo técnico con:</label>
-      <select
-        value={detalles.apoyoTecnico || ""}
-        onChange={(e) => onChange("apoyoTecnico", e.target.value)}
-      >
-        <option value="">Seleccione...</option>
-        <option value="Modulación">Modulación</option>
-        <option value="Despiece">Despiece</option>
-        <option value="Memoria de cálculo">Memoria de cálculo</option>
-        <option value="Certificado de operatividad">Certificado de operatividad</option>
-        <option value="Otro">Otro</option>
-      </select>
+      <Select
+        isMulti
+        options={opcionesApoyoTecnico}
+        value={(detalles.apoyoTecnico || []).map((v) => ({ label: v, value: v }))}
+        onChange={(selected) => onChange("apoyoTecnico", selected.map((opt) => opt.value))}
+        placeholder="Seleccione uno o más..."
+      />
 
-      {detalles.apoyoTecnico === "Modulación" && (
+      {(detalles.apoyoTecnico || []).includes("Modulación") && (
         <>
           <label>Tipo de Modulación:</label>
           <select
@@ -60,28 +70,57 @@ export default function DetallesApoyoTecnico({ detalles, onChange }) {
 
       <label>Tipo de Equipo:</label>
       <select
-        value={tipoEquipo || ""}
-        onChange={(e) => onChange("tipoEquipo", e.target.value)}
+        value={detalles.usoId || ""}
+        onChange={(e) => {
+          onChange("usoId", e.target.value)
+        }}
       >
         <option value="">Seleccione...</option>
-        <option value="AT - And. TRABAJO">AT - And. TRABAJO</option>
-        <option value="AF - And. FACHADA">AF - And. FACHADA</option>
-        <option value="EA - Escalera Acceso">EA - Escalera Acceso</option>
-        <option value="EC - Escuadras">EC - Escuadras</option>
-        <option value="PU - Puntales">PU - Puntales</option>
-        <option value="EN - Encofrado">EN - Encofrado</option>
-        <option value="EV - Elevador">EV - Elevador</option>
+        {usos.map((u) => (
+          <option key={u.id} value={u.id}>
+            {u.descripcion}
+          </option>
+        ))}
       </select>
+
 
       {renderChecklist()}
 
-      <label>📝 Nota:</label>
-      <textarea
-        className="nota-textarea"
-        value={detalles.nota || ""}
-        onChange={(e) => onChange("nota", e.target.value)}
-        placeholder="Escribe aquí los detalles adicionales..."
-      />
+      {(detalles.apoyoTecnico || []).includes("Despiece") && (
+        <>
+          {/* Tipo de cotización */}
+          <label>Tipo de Cotización:</label>
+          <select
+            value={detalles.tipoCotizacion || ""}
+            onChange={(e) => onChange("tipoCotizacion", e.target.value)}
+          >
+            <option value="">Seleccione...</option>
+            <option value="Alquiler">Alquiler</option>
+            <option value="Venta">Venta</option>
+          </select>
+
+          {/* Días de alquiler */}
+          {detalles.tipoCotizacion === "Alquiler" && (
+            <>
+              <label>Días de Alquiler:</label>
+              <input
+                type="number"
+                min="1"
+                value={detalles.diasAlquiler || ""}
+                onChange={(e) => onChange("diasAlquiler", parseInt(e.target.value))}
+              />
+            </>
+          )}
+
+          {/* Nota */}
+          <label>📝 Nota de tarea:</label>
+          <textarea
+            value={detalles.notaDespiece || ""}
+            onChange={(e) => onChange("notaDespiece", e.target.value)}
+            placeholder="Escriba detalles relevantes del despiece"
+          />
+        </>
+      )}
     </div>
   );
 }

@@ -1,9 +1,9 @@
+import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
-   Anchor,
    Building2,
    Calendar,
    Check,
@@ -12,19 +12,18 @@ import {
    Edit,
    FileText,
    Hand,
-   Home,
    MapPin,
-   Package,
    RotateCcw,
-   Settings,
-   Undo2,
    Unlock,
    User,
    Wrench,
    X,
 } from "lucide-react";
-import React from "react";
+
 import { DetallesEspecificos } from "./DetallesEspecificos";
+import ImportadorDespiece from "./despiece-ot/ImportadorDespiece";
+import DespieceOT from "./despiece-ot/DespieceOT";
+import DespieceAdicional from "./despiece-ot/DespieceAdicional";
 
 export default function DetalleTarea({
    tarea,
@@ -36,7 +35,16 @@ export default function DetalleTarea({
    handleDevolverTarea,
    handleCancelarTarea,
    handleCorregirTarea,
-}) {
+}) 
+{
+   const [mostrarDespiece, setMostrarDespiece] = useState(false);
+
+   const puedeGenerarDespiece =
+    user?.rol === "Oficina Técnica" &&
+    tarea.estado === "En proceso" &&
+    tarea.tipoTarea === "Apoyo Técnico" &&
+    tarea.detalles?.apoyoTecnico?.includes("Despiece");
+
    return (
       <div className="centro-modal">
          <article className="max-w-4xl w-full max-h-[90vh] h-auto flex flex-col p-0  bg-white rounded-lg ">
@@ -211,8 +219,17 @@ export default function DetalleTarea({
                      </div>
                   </>
                )}
-            </div>
 
+                {/* Sección Despiece */}
+               {mostrarDespiece && (
+               <>
+                  <ImportadorDespiece tarea={tarea} />
+                  <DespieceOT tarea={tarea} onDespieceCreado={() => setMostrarDespiece(false)}/>
+               </>
+               )}
+            </div>
+            
+            {/* Footer - Acciones */}
             <section className="px-6 py-4 bg-gray-50 border-t grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 rounded-b-lg flex-shrink-0">
                {user.rol === "Oficina Técnica" && (
                   <>
@@ -278,6 +295,17 @@ export default function DetalleTarea({
                         Corregir Tarea
                      </Button>
                   )}
+                  {console.log("tarea data:", tarea)}
+               
+               {puedeGenerarDespiece && (
+                  <Button 
+                     onClick={() => setMostrarDespiece(true)}
+                     className="flex-1 gap-2 bg-red-500 hover:bg-red-500/80 text-white"
+                  >
+                     Generar Despiece
+                  </Button>
+                  )}
+
             </section>
          </article>
       </div>

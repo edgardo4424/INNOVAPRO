@@ -17,7 +17,7 @@ const {
 const calcularCostoTransporte = require("../../../cotizaciones_transporte/application/useCases/calcularCostoTransporte");
 const { generarCodigoDocumentoCotizacion } = require("../../infrastructure/services/generarCodigoDocumentoCotizacionService");
 
-const ID_ESTADO_COTIZACION_CREADO = 1;
+const ID_ESTADO_COTIZACION_POR_APROBAR = 1;
 
 module.exports = async (cotizacionData, cotizacionRepository) => {
   const transaction = await db.sequelize.transaction(); // Iniciar transacción
@@ -29,8 +29,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       cotizacion,
       despiece,
     } = cotizacionData;
-
-    console.log('DESPIECEEEEEEEEEEEEE', despiece);
 
     if (despiece.length == 0)
       return {
@@ -110,7 +108,7 @@ console.log('detalles', detalles);
     let cotizacionFinal = {
       ...cotizacion,
       despiece_id,
-      estados_cotizacion_id: ID_ESTADO_COTIZACION_CREADO, // Estado de "Creado"
+      estados_cotizacion_id: ID_ESTADO_COTIZACION_POR_APROBAR, // Estado de "Por aprobar"
     };
 
     const filialEncontrado = await db.empresas_proveedoras.findByPk(cotizacionFinal.filial_id)

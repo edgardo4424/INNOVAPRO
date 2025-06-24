@@ -2,7 +2,8 @@ const db = require("../../../../models");
 const {
   formatearFechaIsoADMY,
 } = require("../../infrastructure/helpers/formatearFecha");
-const { mapearPorAtributos, agruparPorZonaYAtributos } = require("../../infrastructure/services/mapearAtributosDelPdfService");
+const { agruparPorZonaYAtributos } = require("../../infrastructure/services/mapearAtributosDelPdfService");
+const { mapearAtributosValor } = require("../../infrastructure/services/mapearAtributosValorService");
 
 module.exports = async (idCotizacion) => {
 
@@ -185,46 +186,21 @@ module.exports = async (idCotizacion) => {
 
       // Obtener la lista de atributos
 
-      const atributosDelUso = await db.atributos_valor.findAll({
+       const atributosDelUso = await db.atributos_valor.findAll({
         where: {
           despiece_id: despieceEncontrado.id,
         },
-        raw: true,
+        include: [
+          {
+            model: db.atributos,
+            as: "atributo",
+          }
+        ]
       });
 
-      // Obtener del listado los valores de los atributos
-      // 1: es el atributo_id de la tabla atributos_valor
-      // longitud: es la llave del resultado
-
-      // Finalidad obtener:
-      /* 
-            [{
-              longitud: "xxxx",
-              ancho: "yyyy",
-              altura: "z"
-            }] */
-
-      const atributosMap = {
-        1: "longitud",
-        2: "ancho",
-        3: "altura",
-        4: "tipoApoyo",
-        5: "diagonalLongitud",
-        7: "plataformaAcceso",
-        8: "cantPlataforma",
-        9: "tipoPlataforma",
-        10: "tipoRodapie",
-        11: "tuboAmarre",
-        12: "paraIzaje"
-      };
-
-      const resultado = mapearPorAtributos(atributosDelUso, atributosMap);
-
+      const resultado = mapearAtributosValor(atributosDelUso);
+  
       const listaAtributos = agruparPorZonaYAtributos(resultado);
-
-      listaAtributos.map((atri) => {
-        console.log(atri.atributos);
-      })
 
       const atributosDelPdf = listaAtributos.map((atributo) => (({
         zona: atributo.zona,
@@ -247,12 +223,12 @@ module.exports = async (idCotizacion) => {
             : null,
           precio_perno_expansion: tiene_pernos
             ? (
-                Number(pernoEnElDespiece.precio_venta_soles)
+                Number(pernoEnElDespiece?.precio_venta_soles)
            
               ).toFixed(2)
             : null,
           cantidad_pernos_expansion: tiene_pernos
-            ? pernoEnElDespiece.cantidad
+            ? pernoEnElDespiece?.cantidad
             : null,
         },
 

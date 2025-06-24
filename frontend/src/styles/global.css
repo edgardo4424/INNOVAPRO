@@ -87,37 +87,6 @@ body {
 }
 
 /* === BOTONES GLOBALES === */
-/* button {
-  font-family: 'Poppins', sans-serif;
-  font-weight: bold;
-  padding: 10px 16px;
-  border-radius: var(--border-radius);
-  font-size: 16px;
-  cursor: pointer;
-  border: none;
-  transition: all var(--transition-speed) ease-in-out;
-  box-shadow: var(--shadow-light);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-transform: uppercase;
-} */
-
-/* button:hover {
-  background: linear-gradient(90deg, #007BFF, #6A0DAD); 
-  color: white;
-  border: 2px solid #FFFFFF;
-  transform: scale(1.05);
-  box-shadow: 0px 5px 12px rgba(0, 123, 255, 0.4);
-} */
-/* 
-button:active {
-    background: white;
-    color: #FF8C00;
-    border: 2px solid #FF8C00;
-    transform: scale(0.98);
-    box-shadow: 0px 2px 5px rgba(255, 140, 0, 0.5);
-} */
 
 @keyframes buttonPress {
   from { transform: scale(1.05); }
@@ -234,25 +203,6 @@ button:active {
 }
 
 /* === INPUTS GLOBALES === */
-/* input, select, textarea {
-  width: 100%;
-  padding: 12px;
-  margin-top: 1px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: var(--border-radius);
-  background: rgba(255, 255, 255, 0.15);
-  color: var(--secondary-color);
-  font-size: 16px;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-speed);
-} */
-
-/* 🔹 Efecto al enfocar */
-/* input:focus, select:focus, textarea:focus {
-  border-color: var(--accent-color);
-  box-shadow: 0px 0px 10px rgba(240, 138, 36, 0.7);
-  outline: none;
-  transform: scale(1.02);
-} */
 
 /* 🔹 Estilo para inputs con error */
 input.error, select.error, textarea.error {
@@ -286,9 +236,6 @@ input.error, select.error, textarea.error {
 }
 
 /* === FORMULARIOS === */
-/* .form-group {
-  margin-bottom: 15px;
-} */
 
 .form-container {
   max-width: 600px;
@@ -618,13 +565,6 @@ font-size: 12px;
 .busqueda-input {
   margin-left: 5px;
 }
-/* 
-label {
-  display: block;
-  margin: 5px 0px 0px;
-  font-weight: bold;
-  color: var(--tertiary-color);
-} */
 
 /* === DASHBOARD === */
 .dashboard-container {
