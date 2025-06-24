@@ -49,7 +49,7 @@ export const useZonasCotizacion = (usoId) => {
         atributos_formulario: zona.atributos_formulario.map((equipo) => {
           const nuevoEquipo = { ...equipo };
           atributos.forEach((atrib) => {
-            if (!(atrib.llave_json in nuevoEquipo)) {
+            if (nuevoEquipo[atrib.llave_json] === undefined) {
               nuevoEquipo[atrib.llave_json] = "";
             }
           });

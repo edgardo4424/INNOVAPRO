@@ -4,7 +4,9 @@ const crearCotizacion = require('../../application/useCases/crearCotizacion');
 const obtenerCotizaciones = require('../../application/useCases/obtenerCotizaciones'); 
 const generarPdfCotizacion = require('../../application/useCases/generarPdfCotizacion');
 const crearCotizacionConOT = require('../../application/useCases/crearCotizacionConOT');
+
 const mostrarCotizacionPorId = require('../../application/useCases/mostrarCotizacionPorId')
+
 
 /* const obtenerCotizacionPorId = require('../../application/useCases/obtenerCotizacionPorId'); // Importamos el caso de uso para obtener un cotizacion por ID
 const actualizarCotizacion = require('../../application/useCases/actualizarCotizacion'); // Importamos el caso de uso para actualizar un cotizacion

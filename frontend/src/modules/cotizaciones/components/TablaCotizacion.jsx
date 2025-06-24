@@ -31,6 +31,7 @@ export default function TablaCotizacion({
    cotizaciones = [],
    onDownloadPDF,
    setCotizacionPrevisualizada,
+   onContinuarWizard,
 }) {
    // Estado para las columnas visibles
    const [visibleColumns, setVisibleColumns] = useState({
@@ -123,9 +124,17 @@ export default function TablaCotizacion({
                >
                   <Eye />
                </Button>
-               <Button variant="outline" size="icon">
-                  <Edit />
-               </Button>
+               
+               {row.estados_cotizacion.nombre === "Por Aprobar" && (
+                  <Button 
+                     variant="outline" 
+                     size="icon"
+                     onClick={() => onContinuarWizard(row.id)}
+                  >
+                     <Edit />
+                  </Button>
+               )}
+               
             </div>
          ),
          omit: !visibleColumns.acciones,

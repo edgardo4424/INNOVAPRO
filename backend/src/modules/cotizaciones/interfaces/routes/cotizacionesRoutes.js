@@ -12,6 +12,7 @@ router.post("/generar-pdf", cotizacionController.generarPdfCotizacion);
 router.post("/ot", cotizacionController.crearCotizacionConOT)
 router.get("/:id", cotizacionController.mostrarCotizacionPorId);
 
+
 /* router.put("/:id", cotizacionController.actualizarCotizacion);
 router.delete("/:id", cotizacionController.eliminarCotizacion); */
 

@@ -33,7 +33,6 @@ module.exports = async (dataDespiece, tareaRepository) => {
         respuesta: { mensaje: "La tarea debe estar 'En proceso' y debe ser tomada por OT" },
       };
     }
-
     if (tarea.detalles?.apoyoTecnico && tarea.detalles?.apoyoTecnico.includes("Despiece")) {
       if (dataDespiece.despiece.length == 0) {
         return {

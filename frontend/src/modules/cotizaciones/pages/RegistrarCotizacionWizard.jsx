@@ -6,6 +6,7 @@ import PasoFinal from "../components/pasos/PasoFinal.jsx";
 import ExitoCotizacion from "../components/ExitoCotizacion";
 import WizardLayout from "../components/WizardLayout.jsx";
 import { useRegistrarCotizacion } from "../hooks/useRegistrarCotizacion.js";
+import { useWizardContext } from "../context/WizardCotizacionContext";
 import "../styles/wizard.css";
 import "../styles/exito.css";
 
@@ -28,15 +29,21 @@ const pasos = [
 ];
 
 export default function RegistrarCotizacionWizard() {
+  const { formData } = useWizardContext();
+
   const {
     pasoActual,
     setPasoActual,
     avanzarPaso,
     retrocederPaso,
     guardarCotizacion,
+    guardarCotizacionDesdeOT,
     guardando,
     exito,
   } = useRegistrarCotizacion(pasos.length);
+
+  // Detectamos si es cotización con despiece de OT
+  const cotizacionConDespieceOT = !!formData?.id && (!formData?.zonas || formData?.zonas.length === 0);
 
 
   return (
@@ -47,7 +54,7 @@ export default function RegistrarCotizacionWizard() {
       onPasoClick={setPasoActual}
       onAtras={retrocederPaso}
       onSiguiente={avanzarPaso}
-      onGuardar={guardarCotizacion}
+      onGuardar={cotizacionConDespieceOT ? guardarCotizacionDesdeOT : guardarCotizacion}
       guardando={guardando}
       exito={exito}
     >

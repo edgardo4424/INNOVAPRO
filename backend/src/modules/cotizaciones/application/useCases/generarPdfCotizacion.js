@@ -2,7 +2,9 @@ const db = require("../../../../models");
 const {
   formatearFechaIsoADMY,
 } = require("../../infrastructure/helpers/formatearFecha");
+
 const { agruparPorZonaYAtributos } = require("../../infrastructure/services/mapearAtributosDelPdfService");
+ 
 const { mapearAtributosValor } = require("../../infrastructure/services/mapearAtributosValorService");
 
 module.exports = async (idCotizacion) => {

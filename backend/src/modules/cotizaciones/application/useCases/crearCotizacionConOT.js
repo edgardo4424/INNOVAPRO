@@ -71,10 +71,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       datosParaGenerarCodigoDocumento
     );
 
-    console.log("codigoDocumento", codigoDocumento);
-
-    // Insertar las piezas nuevas que fueron añadidas por el comercial (piezas con uuid)
-
     const piezasNuevas = despiece.filter((pieza) => pieza?.esAdicional);
 
     const detalles = mapearDetallesDespiece({
