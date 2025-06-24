@@ -4,15 +4,28 @@ const {
   mapearValoresAtributos,
 } = require("../../../cotizaciones/infrastructure/services/mapearValoresAtributosService");
 
+const sequelizeCotizacionRepository = require("../../../cotizaciones/infrastructure/repositories/sequelizeCotizacionRepository"); // Importamos el repositorio de cotizaciones
+const cotizacionRepository = new sequelizeCotizacionRepository(); // Instancia del repositorio de cotizaciones
+
+
 const ESTADO_TAREA_EN_PROCESO = "En proceso";
 
+// Crear la cotizacion pero en estado
+const ID_ESTADO_COTIZACION_DESPIECE_GENERADO= 2; // Estado por aprobar por el comercial
+
 module.exports = async (dataDespiece, tareaRepository) => {
+
+  console.log('dataaaaaDespiece', dataDespiece);
+
   const transaction = await db.sequelize.transaction(); // Iniciar transacción
 
   try {
+
     const tarea = await tareaRepository.obtenerPorId(dataDespiece.idTarea);
     if (!tarea)
       return { codigo: 404, respuesta: { mensaje: "Tarea no encontrado" } };
+
+    console.log('tarea', tarea);
 
     if(tarea.estado != ESTADO_TAREA_EN_PROCESO){
       return {
@@ -20,8 +33,7 @@ module.exports = async (dataDespiece, tareaRepository) => {
         respuesta: { mensaje: "La tarea debe estar 'En proceso' y debe ser tomada por OT" },
       };
     }
-
-    if (tarea.detalles?.apoyoTecnico.includes("Despiece")) {
+    if (tarea.detalles?.apoyoTecnico && tarea.detalles?.apoyoTecnico.includes("Despiece")) {
       if (dataDespiece.despiece.length == 0) {
         return {
           codigo: 400,
@@ -73,24 +85,17 @@ module.exports = async (dataDespiece, tareaRepository) => {
 
       await db.despieces_detalle.bulkCreate(despieceManual, { transaction });
 
-      // Crear la cotizacion pero en estado
-      const ESTADO_COTIZACION_POR_APROBAR = 3; // Estado por aprobar por el comercial
-
-      const dataCotizacion = {
+      const dataCotizacionActualizar = {
         despiece_id: despiece_id,
-        contacto_id: tarea.contactoId,
-        cliente_id: tarea.clienteId,
-        obra_id: tarea.obraId,
-        filial_id: tarea.empresaProveedoraId,
-        usuario_id: tarea.usuarioId,
-        estados_cotizacion_id: ESTADO_COTIZACION_POR_APROBAR,
-        uso_id: tarea.usoId,
+        estados_cotizacion_id: ID_ESTADO_COTIZACION_DESPIECE_GENERADO,
       };
 
-      await db.cotizaciones.create(dataCotizacion, { transaction });
+      console.log('dataCotizacionActualiuzar', dataCotizacionActualizar);
+      await cotizacionRepository.actualizarCotizacion(tarea.cotizacionId, dataCotizacionActualizar, transaction);
 
       tarea.estado = "Finalizada";
       await tarea.save({ transaction });
+      console.log('ready');
 
     } else {
       return {

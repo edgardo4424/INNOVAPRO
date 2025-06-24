@@ -19,7 +19,8 @@ class SequelizeTareaRepository {
       detalles: tareaData.detalles ? tareaData.detalles : {}, // ✅ Aseguramos que `detalles` no sea undefined
       contactoId: tareaData.contactoId,
       usoId: tareaData.usoId,
-      atributos_valor_zonas: tareaData.atributos_valor_zonas
+      atributos_valor_zonas: tareaData.atributos_valor_zonas,
+      cotizacionId: tareaData.cotizacionId
     });
   }
 

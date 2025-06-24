@@ -91,6 +91,10 @@ const Tarea = sequelize.define(
     atributos_valor_zonas: {
        type: DataTypes.JSON,
       defaultValue: [],
+    },
+    cotizacionId:{
+    type: DataTypes.INTEGER,
+    allowNull: true
     }
   },
   {

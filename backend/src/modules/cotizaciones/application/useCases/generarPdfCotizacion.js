@@ -2,7 +2,9 @@ const db = require("../../../../models");
 const {
   formatearFechaIsoADMY,
 } = require("../../infrastructure/helpers/formatearFecha");
-const { mapearPorAtributos, agruparPorZonaYAtributos } = require("../../infrastructure/services/mapearAtributosDelPdfService");
+
+const { agruparPorZonaYAtributos } = require("../../infrastructure/services/mapearAtributosDelPdfService");
+ 
 const { mapearAtributosValor } = require("../../infrastructure/services/mapearAtributosValorService");
 
 module.exports = async (idCotizacion) => {
@@ -116,7 +118,7 @@ module.exports = async (idCotizacion) => {
       correo: cotizacionEncontrado.usuario.email,
     },
     cotizacion: {
-      fecha: formatearFechaIsoADMY(cotizacionEncontrado.createdAt),
+      fecha: formatearFechaIsoADMY(cotizacionEncontrado.updatedAt),
       moneda: despieceEncontrado.moneda,
       subtotal_con_descuento_sin_igv: despieceEncontrado.subtotal_con_descuento,
       tipo_servicio: tipoServicio,
@@ -223,12 +225,12 @@ module.exports = async (idCotizacion) => {
             : null,
           precio_perno_expansion: tiene_pernos
             ? (
-                Number(pernoEnElDespiece.precio_venta_soles)
+                Number(pernoEnElDespiece?.precio_venta_soles)
            
               ).toFixed(2)
             : null,
           cantidad_pernos_expansion: tiene_pernos
-            ? pernoEnElDespiece.cantidad
+            ? pernoEnElDespiece?.cantidad
             : null,
         },
 
