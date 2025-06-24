@@ -23,6 +23,10 @@ module.exports = async (id, cotizacionRepository) => {
         },
         {
             model: db.empresas_proveedoras
+        },
+        {
+          model: db.usos,
+          as: "uso"
         }
     ]
   }); 
@@ -102,6 +106,7 @@ module.exports = async (id, cotizacionRepository) => {
 
   const respuesta = {
     uso_id: cotizacion.uso_id,
+    uso_nombre: cotizacion.uso.descripcion,
     zonas: listaAtributosFormateado,
     despiece: despieceFormateado,
     cotizacion: dataCotizacion,
