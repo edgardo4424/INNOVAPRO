@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useWizardContext } from "../../context/WizardCotizacionContext";
 import usePasoContacto from "../../hooks/paso-contacto/usePasoContacto";
 import Loader from "@/shared/components/Loader";
@@ -37,6 +37,18 @@ export default function PasoContacto() {
     setClientesFiltrados(Array.isArray(contacto?.clientes_asociados) ? contacto.clientes_asociados : []); // Filtramos los clientes asociados al contacto seleccionado
     setObrasFiltradas(Array.isArray(contacto?.obras_asociadas) ? contacto.obras_asociadas : []); // Filtramos las obras asociadas al contacto seleccionado
   };
+
+  // En caso de que vengan datos pre cargados de la cotización: Por tarea de Oficina Técnica
+  // Se cargarán los datos automáticamente gracias a el siguiente useEffect:
+  useEffect(() => {
+    if (formData.contacto_id) {
+      const contacto = contactos.find(c => c.id === formData.contacto_id);
+      if (contacto) {
+        setClientesFiltrados(Array.isArray(contacto.clientes_asociados) ? contacto.clientes_asociados : []);
+        setObrasFiltradas(Array.isArray(contacto.obras_asociadas) ? contacto.obras_asociadas : []); 
+      }
+    }
+  }, [contactos, formData.contacto_id]);
 
   const handleChange = (campo, valor) => { // Función para manejar los cambios en los campos del formulario
     setFormData((prev) => ({ ...prev, [campo]: valor })); // Actualizamos el estado del formulario con el nuevo valor del campo

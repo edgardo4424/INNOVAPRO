@@ -33,7 +33,34 @@ const mapearPieza = (pieza) => {
 export function useGenerarDespiece(formData, setFormData) {
   useEffect(() => {
     const cargarDespiece = async () => {
-      const {uso_id, zonas } = formData;
+      const {uso_id, zonas, despiece, resumenDespiece } = formData;
+      console.log("📦 Despiece:", formData.despiece);
+console.log("📊 Resumen generado:", formData.resumenDespiece);
+
+
+      // Si ya hay un despiece registrado (DESPIECE DE OFICINA TÉCNICA), que no haga nada
+      // Si hay despiece pero no un resumen, solo calcula el resumen
+      if (Array.isArray(despiece) && despiece.length > 0) {
+        const resumenCalculado = calcularResumen(despiece);
+
+        // Si el resumen está incompleto, puede que falte el total de piezas lo forzamos
+        if (
+          !resumenDespiece ||
+          !resumenDespiece.total_piezas ||
+          !resumenDespiece.peso_total_kg
+        ) {
+          setFormData((prev) => ({
+            ...prev,
+            resumenDespiece: resumenCalculado,
+          }))
+        }
+        return;
+      } 
+
+      // Si ya tenemos despiece y resumen, no hacemos nada más
+      if (Array.isArray(despiece) && despiece.length > 0 && resumenDespiece) return;
+
+      // Generar nuevo despiece desde zonas
       if (!uso_id || !zonas?.length) return;
 
       try {
@@ -62,6 +89,34 @@ export function useGenerarDespiece(formData, setFormData) {
       }
     };
 
-    cargarDespiece();
-  }, [formData.uso_id, formData.zonas]);
+    if (formData && (formData.despiece || formData.zonas)){
+      cargarDespiece();
+
+    }
+  }, [formData.despiece, formData.uso_id, formData.zonas]);
+}
+
+function calcularResumen(despiece) {
+  let peso_total_kg = 0;
+  let total_piezas = 0;
+  let precio_subtotal_venta_soles = 0;
+  let precio_subtotal_venta_dolares = 0;
+  let precio_subtotal_alquiler_soles = 0;
+
+  for (const pieza of despiece) {
+    total_piezas += parseFloat(pieza.total || pieza.cantidad || 0);
+    peso_total_kg += parseFloat(pieza.peso_kg || 0);
+    precio_subtotal_venta_soles += parseFloat(pieza.precio_venta_soles || 0);
+    precio_subtotal_venta_dolares += parseFloat(pieza.precio_venta_dolares || 0);
+    precio_subtotal_alquiler_soles += parseFloat(pieza.precio_alquiler_soles || 0);
+  }
+
+  return {
+    total_piezas,
+    peso_total_kg,
+    peso_total_ton: (peso_total_kg / 1000).toFixed(2),
+    precio_subtotal_venta_soles: precio_subtotal_venta_soles.toFixed(2),
+    precio_subtotal_venta_dolares: precio_subtotal_venta_dolares.toFixed(2),
+    precio_subtotal_alquiler_soles: precio_subtotal_alquiler_soles.toFixed(2),
+  };
 }

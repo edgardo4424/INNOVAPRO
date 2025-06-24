@@ -67,3 +67,20 @@ export async function calcularCostoTransporte(data) {
   const response = await api.post("/cotizaciones_transporte/costo-transporte", data);
   return response.data;
 }
+
+// Cargar datos de una cotización desde "DESPIECE DE OT"
+export async function obtenerCotizacionPorId(id) {
+  const response = await api.get(`/cotizaciones/${id}`);
+  return response.data;
+}
+
+// Crear una cotización con datos desde "DESPIECE DE OT"
+export async function crearCotizacionDesdeOT(data) {
+  try {
+    const response = await api.post("/cotizaciones/ot", data);
+    return response.data;
+  } catch (error) {
+    console.error(" Error al crear cotización desde OT: ", error);
+    throw error.response?.data || error;
+  }
+}
