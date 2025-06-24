@@ -96,6 +96,7 @@ module.exports = async (id, cotizacionRepository) => {
     cliente_razon_social: cotizacion.cliente.razon_social,
     obra_id: cotizacion.obra_id,
     obra_nombre: cotizacion.obra.nombre,
+    obra_direccion: cotizacion.obra.direccion,
     filial_id: cotizacion.filial_id,
     filial_razon_social: cotizacion.empresas_proveedora.razon_social,
     tipo_cotizacion: cotizacion.tipo_cotizacion,
