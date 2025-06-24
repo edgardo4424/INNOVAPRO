@@ -116,7 +116,7 @@ module.exports = async (idCotizacion) => {
       correo: cotizacionEncontrado.usuario.email,
     },
     cotizacion: {
-      fecha: formatearFechaIsoADMY(cotizacionEncontrado.createdAt),
+      fecha: formatearFechaIsoADMY(cotizacionEncontrado.updatedAt),
       moneda: despieceEncontrado.moneda,
       subtotal_con_descuento_sin_igv: despieceEncontrado.subtotal_con_descuento,
       tipo_servicio: tipoServicio,

@@ -54,7 +54,7 @@ async function generarCodigoDocumentoCotizacion({
   // El correlativo cambia si el uso Cambia (Sabiendo que la cotizacion es para el mismo cliente, filial, usuario)
   // Por ejm al inicio hice una cotizacion para andamio de trabajo, luego a puntales. El correlativo cambia de 0001 a 0002
 
-  const cotizacionesConMismoContactoClienteObraFilial_BD =
+  /* const cotizacionesConMismoContactoClienteObraFilial_BD =
     await db.cotizaciones.findAll({
       where: {
         contacto_id: cotizacion.contacto_id,
@@ -63,9 +63,36 @@ async function generarCodigoDocumentoCotizacion({
         filial_id: cotizacion.filial_id,
         usuario_id: cotizacion.usuario_id,
         estados_cotizacion_id: cotizacion.estados_cotizacion_id,
-        /* tipo_cotizacion: cotizacion.tipo_cotizacion */
+      
       },
-    });
+    }); */
+
+    const cotizacionesConMismoContactoClienteObraFilial_BD =
+  await db.cotizaciones.findAll({
+    where: {
+      contacto_id: cotizacion.contacto_id,
+      cliente_id: cotizacion.cliente_id,
+      obra_id: cotizacion.obra_id,
+      filial_id: cotizacion.filial_id,
+      usuario_id: cotizacion.usuario_id,
+      estados_cotizacion_id: cotizacion.estados_cotizacion_id,
+    },
+    include: [
+      {
+        model: db.despieces,
+        as: "despiece", // usa el alias correcto en tu modelo
+        where: {
+          // 🔸 Filtro dinámico para la columna cp de la tabla despieces:
+          // - Si el rol es "COM" (Comercial), solo se consideran despieces donde cp = 0
+          // - Si el rol es "OFT" (Oficina Técnica) u otro, se consideran despieces donde cp ≠ 0
+          cp: codRolUsuario === "COM" ? 0 : { [db.Sequelize.Op.ne]: 0 },
+        },
+        attributes: [], // No quiero traer campos de despieces, solo filtrar
+        required: true, // Para que haga INNER JOIN (sólo traiga los que cumplan)
+      },
+    ],
+  });
+
 
   let version = "";
   let correlativo = "";
@@ -73,6 +100,7 @@ async function generarCodigoDocumentoCotizacion({
   // Aplanar resultados
   const cotizacionesConMismoContactoClienteObraFilial = cotizacionesConMismoContactoClienteObraFilial_BD.map((c) => c.get({ plain: true }));
 
+  console.log('aquiiiiiiiiiii', cotizacionesConMismoContactoClienteObraFilial);
   if (cotizacionesConMismoContactoClienteObraFilial.length == 0) {
 
     const cotizacionesBD =  await db.cotizaciones.findAll({
