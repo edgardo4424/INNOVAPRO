@@ -29,10 +29,8 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
   const transaction = await db.sequelize.transaction(); // Iniciar transacción
 
   try {
-    console.log('cotizacionData', cotizacionData);
+   
     const { uso_id, cotizacion, despiece, zonas } = cotizacionData;
-
-    console.log('ZONAAAAAAAAAS', zonas);
 
     if (despiece.length == 0)
       return {
@@ -45,8 +43,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
     const cotizacionEncontrada = await cotizacionRepository.obtenerPorId(
       cotizacion.id
     );
-
-    console.log("cotizacionEncontrada", cotizacionEncontrada);
 
     if (
       cotizacionEncontrada.estados_cotizacion_id !=
@@ -75,15 +71,11 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       }
     })
 
-    console.log('tareaEncontrada.atributos_valor_zonas', tareaEncontrada.atributos_valor_zonas);
-
     const atributosValor = await mapearValoresAtributos({
       uso_id,
       despiece_id: cotizacionEncontrada.despiece_id,
       zonas, // Vienen los atributos por zona
     });
-
-    console.log('atributosValor', atributosValor);
 
     // Validación de todos los atributos valor
     for (const data of atributosValor) {
@@ -134,8 +126,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       cotizacion,
       uso_id,
     });
-
-    console.log("resultados", resultados.dataParaGuardarDespiece);
 
     // Actualizar Despiece
 
@@ -294,12 +284,16 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
 
     // Actualizar la cotizacion, que ya fue creada al crear la tarea
 
+    console.log('cotizacion', cotizacion);
+    console.log('cotizacion.tiene_transporte', cotizacion.tiene_transporte);
     const dataActualizarCotizacion = {
       codigo_documento: codigoDocumento,
       estados_cotizacion_id: ID_ESTADO_COTIZACION_POR_APROBAR,
-      tiene_transporte: cotizacion?.tiene_transporte || null,
-      tiene_instalacion: cotizacion?.tiene_instalacion || null,
+      tiene_transporte: cotizacion.tiene_transporte,
+      tiene_instalacion: cotizacion.tiene_instalacion,
     };
+
+    console.log('dataActualizarCotizacion', dataActualizarCotizacion);
 
     const cotizacionActualizada =
       await cotizacionRepository.actualizarCotizacion(
@@ -307,8 +301,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
         dataActualizarCotizacion,
         transaction
       );
-
-    console.log("cotizacionActualizada", cotizacionActualizada);
+      console.log('cotizacionActualizada',cotizacionActualizada);
 
     await transaction.commit(); // ✔ Confirmar todo
     return {

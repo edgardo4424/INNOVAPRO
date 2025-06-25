@@ -4,6 +4,7 @@ import { extraerDistrito } from "../utils/cotizacionUtils";
 import { crearCotizacion, obtenerCotizacionPorId, crearCotizacionDesdeOT } from "../services/cotizacionesService";
 import { useParams } from "react-router-dom";
 import ResumenDespiece from "../components/pasos/paso-confirmacion/ResumenDespiece";
+import { esPernoExpansion, mapearPieza } from "./paso-confirmacion/useGenerarDespiece"
 
 // Este hook maneja la lógica del wizard para registrar una cotización.
 // Permite avanzar y retroceder entre pasos, validar datos y guardar la cotización final.
@@ -30,6 +31,32 @@ export function useRegistrarCotizacion(pasosLength) {
       try {
         const data = await obtenerCotizacionPorId(id);
         console.log("Data del backend", data)
+        
+        const despieceFormateado = data.despiece?.map(mapearPieza)
+
+          const hayPernos = despieceFormateado.some(p => p.esPerno); 
+
+          console.log({
+          ...data,
+          id: id,
+          contacto_id: data.cotizacion.contacto_id,
+          contacto_nombre: data.cotizacion.contacto_nombre,
+          cliente_id: data.cotizacion.cliente_id,
+          cliente_nombre: data.cotizacion.cliente_razon_social,
+          obra_id: data.cotizacion.obra_id,
+          obra_nombre: data.cotizacion.obra_nombre,
+          obra_direccion: data.cotizacion.obra_direccion,
+          filial_id: data.cotizacion.filial_id,
+          filial_nombre: data.cotizacion.filial_razon_social,
+          uso_id: data.uso_id,
+          uso_nombre: data.uso_nombre,
+          tipo_cotizacion: data.cotizacion.tipo_cotizacion,
+          duracion_alquiler: data.cotizacion.tiempo_alquiler_dias,
+          zonas: data.zonas,
+          despiece: despieceFormateado,
+          tiene_pernos_disponibles: hayPernos,
+          resumenDespiece: calcularResumenDespiece(data.despiece),
+        });
         setFormData({
           ...data,
           id: id,
@@ -47,10 +74,11 @@ export function useRegistrarCotizacion(pasosLength) {
           tipo_cotizacion: data.cotizacion.tipo_cotizacion,
           duracion_alquiler: data.cotizacion.tiempo_alquiler_dias,
           zonas: data.zonas,
-          despiece: data.despiece,
+          despiece: despieceFormateado,
+          tiene_pernos_disponibles: hayPernos,
           resumenDespiece: calcularResumenDespiece(data.despiece),
         })
-        console.log("Form Data después del seteo", formData)
+        
         setPasoActual(3); // Acá definimos desde qué paso vamos a comenzar: El tercero es el paso confirmación
       } catch (error) {
         console.error("Error al cargar la cotización: ", error);
@@ -124,6 +152,7 @@ export function useRegistrarCotizacion(pasosLength) {
 
     try {
       const payload = construirPayloadOT(formData);
+      console.log("Payload enviado al backend", payload)
       await crearCotizacionDesdeOT(payload);
       setExito(true);
       setPasoActual(pasosLength);
@@ -134,7 +163,7 @@ export function useRegistrarCotizacion(pasosLength) {
     }
   }
 
-  function construirPayloadOT(formData) {
+  function construirPayloadOT(formData) { 
   return {
     uso_id: formData.uso_id,
     zonas: Array.isArray(formData.zonas) ? formData.zonas : [],
@@ -160,12 +189,15 @@ export function useRegistrarCotizacion(pasosLength) {
 
       tipo_transporte: formData.tipo_transporte || "",
     },
-    despiece: formData.despiece?.map((pieza) => ({
+    despiece: (formData.despiece || [])
+      .filter((pieza) => pieza.incluido !== false)
+      .map((pieza) => ({
       pieza_id: pieza.pieza_id,
       item: pieza.item,
       descripcion: pieza.descripcion,
       total: pieza.total,
       esAdicional: pieza.esAdicional || false,
+      esPerno: pieza.esPerno || false,
       peso_u_kg: parseFloat(pieza.peso_u_kg),
       peso_kg: parseFloat(pieza.peso_kg),
       precio_u_venta_dolares: parseFloat(pieza.precio_u_venta_dolares),

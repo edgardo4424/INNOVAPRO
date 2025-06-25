@@ -99,7 +99,6 @@ async function generarCodigoDocumentoCotizacion({
   // Aplanar resultados
   const cotizacionesConMismoContactoClienteObraFilial = cotizacionesConMismoContactoClienteObraFilial_BD.map((c) => c.get({ plain: true }));
 
-  console.log('cotizacionesConMismoContactoCliente', cotizacionesConMismoContactoClienteObraFilial);
   if (cotizacionesConMismoContactoClienteObraFilial.length == 0) {
 
     const cotizacionesBD =  await db.cotizaciones.findAll({

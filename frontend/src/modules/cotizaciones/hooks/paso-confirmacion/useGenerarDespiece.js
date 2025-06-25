@@ -7,8 +7,9 @@ import { generarDespiece } from "../../services/cotizacionesService";
 
 
 // Detecta si una pieza es un perno según su descripción
-const esPernoExpansion = (descripcion = "") => {
+export const esPernoExpansion = (descripcion = "") => {
   const desc = descripcion.toUpperCase();
+  console.log('desc', desc);
   return (
     desc.includes("PERNO DE EXPANSIÓN") ||
     desc.includes("PERNOS DE EXPANSION") ||
@@ -18,7 +19,7 @@ const esPernoExpansion = (descripcion = "") => {
 };
 
 // Formatea una pieza según si es perno o no
-const mapearPieza = (pieza) => {
+export const mapearPieza = (pieza) => {
   const descripcion = pieza.descripcion?.toUpperCase() || "";
   const esPerno = esPernoExpansion(descripcion);
 
