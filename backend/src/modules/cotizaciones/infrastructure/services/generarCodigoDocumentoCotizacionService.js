@@ -99,6 +99,7 @@ async function generarCodigoDocumentoCotizacion({
   // Aplanar resultados
   const cotizacionesConMismoContactoClienteObraFilial = cotizacionesConMismoContactoClienteObraFilial_BD.map((c) => c.get({ plain: true }));
 
+  console.log('cotizacionesConMismoContactoCliente', cotizacionesConMismoContactoClienteObraFilial);
   if (cotizacionesConMismoContactoClienteObraFilial.length == 0) {
 
     const cotizacionesBD =  await db.cotizaciones.findAll({
@@ -137,7 +138,9 @@ const siguienteCorrelativo = (mayorCorrelativo + 1).toString().padStart(4, '0');
 
     /**** Obtener el uso_id de la ultima cotizacion ****/
 
-    const despiece_id = ultimaCotizacion.despiece_id;
+    /* const despiece_id = ultimaCotizacion.despiece_id;
+
+    console.log('despiece_id', despiece_id);
 
     const resultado = await db.atributos_valor.findAll({
       where: {
@@ -152,13 +155,18 @@ const siguienteCorrelativo = (mayorCorrelativo + 1).toString().padStart(4, '0');
       ],
     });
 
+    console.log('resultado', resultado);
+
      const listaAtributosValor =
     resultado.map((c) =>
       c.get({ plain: true })
     );
 
     const { atributo }= listaAtributosValor[listaAtributosValor.length-1];
-    const ultimo_uso_id = atributo.uso_id
+    const ultimo_uso_id = atributo.uso_id */
+
+    const ultimo_uso_id = ultimaCotizacion.uso_id
+
     
     /**** Fin. Obtener el uso_id de la ultima cotizacion ****/
     

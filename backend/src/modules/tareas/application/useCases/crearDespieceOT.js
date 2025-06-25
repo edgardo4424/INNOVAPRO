@@ -94,6 +94,7 @@ module.exports = async (dataDespiece, tareaRepository) => {
       await cotizacionRepository.actualizarCotizacion(tarea.cotizacionId, dataCotizacionActualizar, transaction);
 
       tarea.estado = "Finalizada";
+
       await tarea.save({ transaction });
       console.log('ready');
 

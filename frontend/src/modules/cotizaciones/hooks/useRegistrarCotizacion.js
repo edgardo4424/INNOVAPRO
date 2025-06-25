@@ -137,6 +137,7 @@ export function useRegistrarCotizacion(pasosLength) {
   function construirPayloadOT(formData) {
   return {
     uso_id: formData.uso_id,
+    zonas: Array.isArray(formData.zonas) ? formData.zonas : [],
     cotizacion: {
       id: formData.id, // En caso estés editando, opcional
       porcentaje_descuento: formData.descuento || 0,
@@ -164,6 +165,7 @@ export function useRegistrarCotizacion(pasosLength) {
       item: pieza.item,
       descripcion: pieza.descripcion,
       total: pieza.total,
+      esAdicional: pieza.esAdicional || false,
       peso_u_kg: parseFloat(pieza.peso_u_kg),
       peso_kg: parseFloat(pieza.peso_kg),
       precio_u_venta_dolares: parseFloat(pieza.precio_u_venta_dolares),

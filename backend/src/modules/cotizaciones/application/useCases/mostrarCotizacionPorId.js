@@ -1,6 +1,7 @@
 const db = require("../../../../models");
 const {
   agruparPorZonaYAtributos,
+  agruparPorZona,
 } = require("../../infrastructure/services/mapearAtributosDelPdfService");
 const {
   mapearAtributosValor,
@@ -42,34 +43,46 @@ module.exports = async (id, cotizacionRepository) => {
     let atributosDelUso = [];
   
     if(cotizacion.estados_cotizacion_id == ID_ESTADO_COTIZACION_DESPIECE_GENERADO){
-      const tareaEncontrada = await db.tareas.findByPk(cotizacion.id);
+      const tareaEncontrada = await db.tareas.findOne({
+        where: {
+          cotizacionId: cotizacion.id
+        }
+      });
+      console.log('tareaEncontrada', tareaEncontrada);
   
       atributosDelUso = tareaEncontrada?.atributos_valor_zonas || []
   
     }else{
   
-    atributosDelUso = await db.atributos_valor.findAll({
-        where: {
-          despiece_id: cotizacion.despiece_id,
-        },
-        include: [
-          {
-            model: db.atributos,
-            as: "atributo",
-          },
-        ],
-      });
+     // Obtener la lista de atributos
+    
+           const atributosValorBD = await db.atributos_valor.findAll({
+            where: {
+              despiece_id: cotizacion.despiece_id,
+            },
+            include: [
+              {
+                model: db.atributos,
+                as: "atributo",
+              }
+            ]
+          });
+    
+      const resultado = mapearAtributosValor(atributosValorBD);
+  
+      const listaAtributos = agruparPorZona(resultado);
+
+      atributosDelUso = listaAtributos.map((atributo) => (({
+        zona: atributo.zona,
+         nota_zona: atributo.atributos[0].nota_zona,
+        atributos_formulario: atributo.atributos.map((at) => (({
+          ...at
+        }))),
+       
+      })))
     }
 
-  const resultado = mapearAtributosValor(atributosDelUso);
-
-  const listaAtributos = agruparPorZonaYAtributos(resultado);
-
-  const listaAtributosFormateado = listaAtributos.map((atributo) => ({
-    zona: atributo.zona,
-    atributos_formulario: atributo.atributos,
-    nota_zona: atributo.atributos[0].nota_zona,
-  }));
+  console.log('atributosDelUso', atributosDelUso);
 
   // Obtener despiece
   const despieceDetalle = await db.despieces_detalle.findAll({
@@ -121,9 +134,12 @@ module.exports = async (id, cotizacionRepository) => {
   const respuesta = {
     uso_id: cotizacion.uso_id,
     uso_nombre: cotizacion.uso.descripcion,
-    zonas: listaAtributosFormateado,
+    zonas: atributosDelUso,
     despiece: despieceFormateado,
     cotizacion: dataCotizacion,
   };
+
+  console.log('respuesta', respuesta);
+  
   return { codigo: 200, respuesta: respuesta }; // Retorna el cotizacion encontrado
 }; // Exporta la función para que pueda ser utilizada en otros módulos

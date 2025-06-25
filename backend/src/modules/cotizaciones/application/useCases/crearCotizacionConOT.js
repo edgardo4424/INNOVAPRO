@@ -29,7 +29,10 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
   const transaction = await db.sequelize.transaction(); // Iniciar transacción
 
   try {
+    console.log('cotizacionData', cotizacionData);
     const { uso_id, cotizacion, despiece, zonas } = cotizacionData;
+
+    console.log('ZONAAAAAAAAAS', zonas);
 
     if (despiece.length == 0)
       return {
@@ -64,6 +67,40 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       cotizacionEncontrada.usuario_id
     );
 
+      // Insertar Atributos Valor
+
+    const tareaEncontrada = await db.tareas.findOne({
+      where: {
+       cotizacionId:  cotizacionEncontrada.id
+      }
+    })
+
+    console.log('tareaEncontrada.atributos_valor_zonas', tareaEncontrada.atributos_valor_zonas);
+
+    const atributosValor = await mapearValoresAtributos({
+      uso_id,
+      despiece_id: cotizacionEncontrada.despiece_id,
+      zonas, // Vienen los atributos por zona
+    });
+
+    console.log('atributosValor', atributosValor);
+
+    // Validación de todos los atributos valor
+    for (const data of atributosValor) {
+      const errorCampos = AtributoValor.validarCamposObligatorios(
+        data,
+        "crear"
+      );
+      if (errorCampos) {
+        return {
+          codigo: 400,
+          respuesta: { mensaje: `Error en un registro: ${errorCampos}` },
+        };
+      }
+    }
+
+    await db.atributos_valor.bulkCreate(atributosValor, { transaction });
+
     const datosParaGenerarCodigoDocumento = {
       uso_id_para_registrar: uso_id,
       filial_razon_social: filialEncontrado.razon_social,
@@ -88,28 +125,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       transaction,
     });
 
-    // Insertar Atributos Valor
-    const atributosValor = await mapearValoresAtributos({
-      uso_id,
-      despiece_id: cotizacionEncontrada.despiece_id,
-      zonas, // Vienen los atributos por zona
-    });
-
-    // Validación de todos los atributos valor
-    for (const data of atributosValor) {
-      const errorCampos = AtributoValor.validarCamposObligatorios(
-        data,
-        "crear"
-      );
-      if (errorCampos) {
-        return {
-          codigo: 400,
-          respuesta: { mensaje: `Error en un registro: ${errorCampos}` },
-        };
-      }
-    }
-
-    await db.atributos_valor.bulkCreate(atributosValor, { transaction });
+  
 
     // Calcular montos
     const resultados = calcularMontosCotizacion({
