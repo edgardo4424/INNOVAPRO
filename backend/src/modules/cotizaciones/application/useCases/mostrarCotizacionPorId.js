@@ -6,6 +6,9 @@ const {
   mapearAtributosValor,
 } = require("../../infrastructure/services/mapearAtributosValorService");
 
+
+const ID_ESTADO_COTIZACION_DESPIECE_GENERADO = 2;
+
 module.exports = async (id, cotizacionRepository) => {
   const cotizacion = await db.cotizaciones.findByPk(id, {
     include: [
@@ -34,19 +37,29 @@ module.exports = async (id, cotizacionRepository) => {
   if (!cotizacion)
     return { codigo: 404, respuesta: { mensaje: "Cotizacion no encontrado" } }; // Si no se encuentra el cotizacion, retorna un error 404
 
-  // Obtener la lista de atributos
-
-  const atributosDelUso = await db.atributos_valor.findAll({
-    where: {
-      despiece_id: cotizacion.despiece_id,
-    },
-    include: [
-      {
-        model: db.atributos,
-        as: "atributo",
-      },
-    ],
-  });
+   // Obtener la lista de atributos
+  
+    let atributosDelUso = [];
+  
+    if(cotizacion.estados_cotizacion_id == ID_ESTADO_COTIZACION_DESPIECE_GENERADO){
+      const tareaEncontrada = await db.tareas.findByPk(cotizacion.id);
+  
+      atributosDelUso = tareaEncontrada?.atributos_valor_zonas || []
+  
+    }else{
+  
+    atributosDelUso = await db.atributos_valor.findAll({
+        where: {
+          despiece_id: cotizacion.despiece_id,
+        },
+        include: [
+          {
+            model: db.atributos,
+            as: "atributo",
+          },
+        ],
+      });
+    }
 
   const resultado = mapearAtributosValor(atributosDelUso);
 

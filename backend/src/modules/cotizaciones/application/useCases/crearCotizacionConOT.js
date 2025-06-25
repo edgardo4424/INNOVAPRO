@@ -17,11 +17,19 @@ const {
 const calcularCostoTransporte = require("../../../cotizaciones_transporte/application/useCases/calcularCostoTransporte");
 const despieceRepository = new sequelizeDespieceRepository();
 
+const AtributoValor = require("../../../atributos_valor/domain/entities/atributos_valor");
+const {
+  actualizarDespiecesDetalle,
+} = require("../../infrastructure/services/actualizarDespiecesDetalleService");
+const {
+  mapearValoresAtributos,
+} = require("../../infrastructure/services/mapearValoresAtributosService");
+
 module.exports = async (cotizacionData, cotizacionRepository) => {
   const transaction = await db.sequelize.transaction(); // Iniciar transacción
 
   try {
-    const { uso_id, cotizacion, despiece } = cotizacionData;
+    const { uso_id, cotizacion, despiece, zonas } = cotizacionData;
 
     if (despiece.length == 0)
       return {
@@ -71,14 +79,37 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       datosParaGenerarCodigoDocumento
     );
 
-    const piezasNuevas = despiece.filter((pieza) => pieza?.esAdicional);
+    // Actualizar las piezas en despieces_detalle, porque puede suceder que el comercial añada nuevas piezas
+    // o quite piezas
 
-    const detalles = mapearDetallesDespiece({
-      despiece: piezasNuevas,
+    await actualizarDespiecesDetalle({
       despiece_id: cotizacionEncontrada.despiece_id,
+      despiece: despiece,
+      transaction,
     });
 
-    await db.despieces_detalle.bulkCreate(detalles);
+    // Insertar Atributos Valor
+    const atributosValor = await mapearValoresAtributos({
+      uso_id,
+      despiece_id: cotizacionEncontrada.despiece_id,
+      zonas, // Vienen los atributos por zona
+    });
+
+    // Validación de todos los atributos valor
+    for (const data of atributosValor) {
+      const errorCampos = AtributoValor.validarCamposObligatorios(
+        data,
+        "crear"
+      );
+      if (errorCampos) {
+        return {
+          codigo: 400,
+          respuesta: { mensaje: `Error en un registro: ${errorCampos}` },
+        };
+      }
+    }
+
+    await db.atributos_valor.bulkCreate(atributosValor, { transaction });
 
     // Calcular montos
     const resultados = calcularMontosCotizacion({

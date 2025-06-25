@@ -53,6 +53,12 @@ const DespieceDetalle = sequelize.define(
   {
     timestamps: false,
     tableName: "despieces_detalle",
+     indexes: [
+      {
+        unique: true,
+        fields: ["despiece_id", "pieza_id", "esAdicional"],
+      },
+    ],
   }
 );
 

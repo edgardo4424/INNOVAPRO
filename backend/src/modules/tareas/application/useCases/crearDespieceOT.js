@@ -1,5 +1,5 @@
 const db = require("../../../../models");
-const AtributosValor = require("../../../atributos_valor/domain/entities/atributos_valor");
+
 const {
   mapearValoresAtributos,
 } = require("../../../cotizaciones/infrastructure/services/mapearValoresAtributosService");
@@ -53,7 +53,7 @@ module.exports = async (dataDespiece, tareaRepository) => {
 
       const despiece_id = nuevoDespiece.id;
 
-      // Insertar Atributos Valor
+      /* // Insertar Atributos Valor
       const atributosValor = await mapearValoresAtributos({
         uso_id: tarea.usoId,
         despiece_id,
@@ -74,7 +74,7 @@ module.exports = async (dataDespiece, tareaRepository) => {
         }
       }
 
-      await db.atributos_valor.bulkCreate(atributosValor, { transaction });
+      await db.atributos_valor.bulkCreate(atributosValor, { transaction }); */
 
       // Insertar el despiece manual brindado por OT
 
