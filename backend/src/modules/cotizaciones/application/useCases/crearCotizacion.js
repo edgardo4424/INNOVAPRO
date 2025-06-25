@@ -17,7 +17,7 @@ const {
 const calcularCostoTransporte = require("../../../cotizaciones_transporte/application/useCases/calcularCostoTransporte");
 const { generarCodigoDocumentoCotizacion } = require("../../infrastructure/services/generarCodigoDocumentoCotizacionService");
 
-const ID_ESTADO_COTIZACION_POR_APROBAR = 1;
+const ID_ESTADO_COTIZACION_POR_APROBAR = 3;
 
 module.exports = async (cotizacionData, cotizacionRepository) => {
   const transaction = await db.sequelize.transaction(); // Iniciar transacción

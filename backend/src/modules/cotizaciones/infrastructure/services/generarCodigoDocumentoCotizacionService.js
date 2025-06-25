@@ -31,17 +31,16 @@ async function generarCodigoDocumentoCotizacion({
 
   // 🔹 Rol que registró "COM" comercial , "OFT" OT
 
-  let codRolUsuario = "";
+  let codRolUsuario = "COM";
 
-  if (cotizacion.estados_cotizacion_id == ID_ESTADO_COTIZACION_POR_APROBAR) {
+ /*  if (cotizacion.estados_cotizacion_id == ID_ESTADO_COTIZACION_POR_APROBAR) {
     codRolUsuario = "COM";
   }
 
   if (cotizacion.estados_cotizacion_id == ID_ESTADO_COTIZACION_DESPIECE_GENERADO) {
     codRolUsuario = "OFT";
-  }
+  } */
 
-  /* const version = 1; */
 
   // 🔹 Iniciales del usuario (ej. AM)
   const usuarioAbv = usuario_nombre
@@ -54,7 +53,7 @@ async function generarCodigoDocumentoCotizacion({
   // El correlativo cambia si el uso Cambia (Sabiendo que la cotizacion es para el mismo cliente, filial, usuario)
   // Por ejm al inicio hice una cotizacion para andamio de trabajo, luego a puntales. El correlativo cambia de 0001 a 0002
 
-  /* const cotizacionesConMismoContactoClienteObraFilial_BD =
+  const cotizacionesConMismoContactoClienteObraFilial_BD =
     await db.cotizaciones.findAll({
       where: {
         contacto_id: cotizacion.contacto_id,
@@ -62,12 +61,12 @@ async function generarCodigoDocumentoCotizacion({
         obra_id: cotizacion.obra_id,
         filial_id: cotizacion.filial_id,
         usuario_id: cotizacion.usuario_id,
-        estados_cotizacion_id: cotizacion.estados_cotizacion_id,
-      
+        /* estados_cotizacion_id: cotizacion.estados_cotizacion_id, */
+        
       },
-    }); */
+    });
 
-    const cotizacionesConMismoContactoClienteObraFilial_BD =
+   /*  const cotizacionesConMismoContactoClienteObraFilial_BD =
   await db.cotizaciones.findAll({
     where: {
       contacto_id: cotizacion.contacto_id,
@@ -92,7 +91,7 @@ async function generarCodigoDocumentoCotizacion({
       },
     ],
   });
-
+ */
 
   let version = "";
   let correlativo = "";
@@ -100,7 +99,6 @@ async function generarCodigoDocumentoCotizacion({
   // Aplanar resultados
   const cotizacionesConMismoContactoClienteObraFilial = cotizacionesConMismoContactoClienteObraFilial_BD.map((c) => c.get({ plain: true }));
 
-  console.log('aquiiiiiiiiiii', cotizacionesConMismoContactoClienteObraFilial);
   if (cotizacionesConMismoContactoClienteObraFilial.length == 0) {
 
     const cotizacionesBD =  await db.cotizaciones.findAll({
