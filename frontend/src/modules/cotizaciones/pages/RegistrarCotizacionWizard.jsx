@@ -43,8 +43,9 @@ export default function RegistrarCotizacionWizard() {
   } = useRegistrarCotizacion(pasos.length);
 
   // Detectamos si es cotización con despiece de OT
-  const cotizacionConDespieceOT = !!formData?.id && (!formData?.zonas || formData?.zonas.length === 0);
-
+  const cotizacionConDespieceOT = formData.id ? true : false;
+  console.log("validacion para guardar por OT", cotizacionConDespieceOT)
+  console.log("Id de la cotizacion:", formData.id)
 
   return (
     <WizardLayout

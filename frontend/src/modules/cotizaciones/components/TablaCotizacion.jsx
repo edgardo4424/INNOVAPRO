@@ -125,7 +125,7 @@ export default function TablaCotizacion({
                   <Eye />
                </Button>
                
-               {row.estados_cotizacion.nombre === "Por Aprobar" && (
+               {row.estados_cotizacion.nombre === "Despiece generado" && (
                   <Button 
                      variant="outline" 
                      size="icon"

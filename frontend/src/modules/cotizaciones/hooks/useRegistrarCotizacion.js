@@ -32,6 +32,7 @@ export function useRegistrarCotizacion(pasosLength) {
         console.log("Data del backend", data)
         setFormData({
           ...data,
+          id: id,
           contacto_id: data.cotizacion.contacto_id,
           contacto_nombre: data.cotizacion.contacto_nombre,
           cliente_id: data.cotizacion.cliente_id,
@@ -125,6 +126,7 @@ export function useRegistrarCotizacion(pasosLength) {
       const payload = construirPayloadOT(formData);
       await crearCotizacionDesdeOT(payload);
       setExito(true);
+      setPasoActual(pasosLength);
     } catch (error) {
       toast.error("Error al guardar la cotización");
     } finally {

@@ -2,6 +2,7 @@
 // que se utilizarán en el wizard de registro de cotizaciones.
 
 const formDataInicial = {
+  cotizacionId: "",
   contacto_id: "",
   contacto_nombre: "",
   cliente_id: "",
