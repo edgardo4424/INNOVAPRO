@@ -66,6 +66,30 @@ function agruparPorZonaYAtributos(data) {
   return resultado;
 }
 
+function agruparPorZona(data) {
+  const resultado = [];
 
+  const zonasMap = new Map();
 
-module.exports = { mapearPorAtributos, agruparPorZonaYAtributos };
+  for (const item of data) {
+    const { zona } = item;
+    if (!zonasMap.has(zona)) {
+      zonasMap.set(zona, []);
+    }
+
+    // Añadir el item tal cual está, sin agrupar
+    zonasMap.get(zona).push(item);
+  }
+
+  // Convertir el map a array
+  for (const [zona, atributos] of zonasMap.entries()) {
+    resultado.push({
+      zona,
+      atributos
+    });
+  }
+
+  return resultado;
+}
+
+module.exports = { mapearPorAtributos, agruparPorZonaYAtributos, agruparPorZona };

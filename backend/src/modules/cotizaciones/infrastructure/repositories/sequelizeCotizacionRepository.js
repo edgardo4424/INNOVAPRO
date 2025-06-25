@@ -57,6 +57,8 @@ class SequelizeCotizacionRepository {
   }
 
   async actualizarCotizacion(id, cotizacionData, transaction = null) {
+
+    console.log('cotizacccccccccccc', cotizacionData);
     const cotizacion = await Cotizacion.findByPk(id, {
       ...(transaction && { transaction }),
     });

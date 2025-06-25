@@ -29,6 +29,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
   const transaction = await db.sequelize.transaction(); // Iniciar transacción
 
   try {
+   
     const { uso_id, cotizacion, despiece, zonas } = cotizacionData;
 
     if (despiece.length == 0)
@@ -42,8 +43,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
     const cotizacionEncontrada = await cotizacionRepository.obtenerPorId(
       cotizacion.id
     );
-
-    console.log("cotizacionEncontrada", cotizacionEncontrada);
 
     if (
       cotizacionEncontrada.estados_cotizacion_id !=
@@ -63,6 +62,36 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
     const usuarioEncontrado = await db.usuarios.findByPk(
       cotizacionEncontrada.usuario_id
     );
+
+      // Insertar Atributos Valor
+
+    const tareaEncontrada = await db.tareas.findOne({
+      where: {
+       cotizacionId:  cotizacionEncontrada.id
+      }
+    })
+
+    const atributosValor = await mapearValoresAtributos({
+      uso_id,
+      despiece_id: cotizacionEncontrada.despiece_id,
+      zonas, // Vienen los atributos por zona
+    });
+
+    // Validación de todos los atributos valor
+    for (const data of atributosValor) {
+      const errorCampos = AtributoValor.validarCamposObligatorios(
+        data,
+        "crear"
+      );
+      if (errorCampos) {
+        return {
+          codigo: 400,
+          respuesta: { mensaje: `Error en un registro: ${errorCampos}` },
+        };
+      }
+    }
+
+    await db.atributos_valor.bulkCreate(atributosValor, { transaction });
 
     const datosParaGenerarCodigoDocumento = {
       uso_id_para_registrar: uso_id,
@@ -88,28 +117,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       transaction,
     });
 
-    // Insertar Atributos Valor
-    const atributosValor = await mapearValoresAtributos({
-      uso_id,
-      despiece_id: cotizacionEncontrada.despiece_id,
-      zonas, // Vienen los atributos por zona
-    });
-
-    // Validación de todos los atributos valor
-    for (const data of atributosValor) {
-      const errorCampos = AtributoValor.validarCamposObligatorios(
-        data,
-        "crear"
-      );
-      if (errorCampos) {
-        return {
-          codigo: 400,
-          respuesta: { mensaje: `Error en un registro: ${errorCampos}` },
-        };
-      }
-    }
-
-    await db.atributos_valor.bulkCreate(atributosValor, { transaction });
+  
 
     // Calcular montos
     const resultados = calcularMontosCotizacion({
@@ -118,8 +126,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       cotizacion,
       uso_id,
     });
-
-    console.log("resultados", resultados.dataParaGuardarDespiece);
 
     // Actualizar Despiece
 
@@ -278,12 +284,16 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
 
     // Actualizar la cotizacion, que ya fue creada al crear la tarea
 
+    console.log('cotizacion', cotizacion);
+    console.log('cotizacion.tiene_transporte', cotizacion.tiene_transporte);
     const dataActualizarCotizacion = {
       codigo_documento: codigoDocumento,
       estados_cotizacion_id: ID_ESTADO_COTIZACION_POR_APROBAR,
-      tiene_transporte: cotizacion?.tiene_transporte || null,
-      tiene_instalacion: cotizacion?.tiene_instalacion || null,
+      tiene_transporte: cotizacion.tiene_transporte,
+      tiene_instalacion: cotizacion.tiene_instalacion,
     };
+
+    console.log('dataActualizarCotizacion', dataActualizarCotizacion);
 
     const cotizacionActualizada =
       await cotizacionRepository.actualizarCotizacion(
@@ -291,8 +301,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
         dataActualizarCotizacion,
         transaction
       );
-
-    console.log("cotizacionActualizada", cotizacionActualizada);
+      console.log('cotizacionActualizada',cotizacionActualizada);
 
     await transaction.commit(); // ✔ Confirmar todo
     return {
