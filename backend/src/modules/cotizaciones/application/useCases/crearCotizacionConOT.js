@@ -93,6 +93,9 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
 
     await db.atributos_valor.bulkCreate(atributosValor, { transaction });
 
+    // Conseguir el cp del despiece 
+    const despieceEncontrado = await db.despieces.findByPk(cotizacionEncontrada.despiece_id)
+
     const datosParaGenerarCodigoDocumento = {
       uso_id_para_registrar: uso_id,
       filial_razon_social: filialEncontrado.razon_social,
@@ -102,6 +105,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       estado_cotizacion: cotizacionEncontrada.estados_cotizacion_id,
 
       cotizacion: cotizacionEncontrada,
+      cp: despieceEncontrado.cp
     };
 
     const codigoDocumento = await generarCodigoDocumentoCotizacion(
@@ -213,9 +217,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
           datosParaGuardarCotizacionesTransporte.tarifa_transporte_id
             ? datosParaGuardarCotizacionesTransporte.tarifa_transporte_id
             : null,
-        tipo_transporte:
-          datosParaGuardarCotizacionesTransporte.tipo_transporte ||
-          cotizacion.tipo_transporte,
+        tipo_transporte: cotizacion.tipo_transporte,
         unidad: datosParaGuardarCotizacionesTransporte.unidad,
         cantidad: datosParaGuardarCotizacionesTransporte.cantidad,
 
@@ -284,8 +286,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
 
     // Actualizar la cotizacion, que ya fue creada al crear la tarea
 
-    console.log('cotizacion', cotizacion);
-    console.log('cotizacion.tiene_transporte', cotizacion.tiene_transporte);
     const dataActualizarCotizacion = {
       codigo_documento: codigoDocumento,
       estados_cotizacion_id: ID_ESTADO_COTIZACION_POR_APROBAR,
@@ -293,15 +293,13 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       tiene_instalacion: cotizacion.tiene_instalacion,
     };
 
-    console.log('dataActualizarCotizacion', dataActualizarCotizacion);
-
     const cotizacionActualizada =
       await cotizacionRepository.actualizarCotizacion(
         cotizacion.id,
         dataActualizarCotizacion,
         transaction
       );
-      console.log('cotizacionActualizada',cotizacionActualizada);
+
 
     await transaction.commit(); // ✔ Confirmar todo
     return {

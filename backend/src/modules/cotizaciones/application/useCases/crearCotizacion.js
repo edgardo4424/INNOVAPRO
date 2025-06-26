@@ -71,14 +71,14 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
     for (const data of detalles) {
       const errorCampos = DespieceDetalle.validarCamposObligatorios(data, "crear");
       if (errorCampos) {
-         console.log("Registro inválido", data, "->", errorCampos);
+         /* console.log("Registro inválido", data, "->", errorCampos); */
         return {
           codigo: 400,
           respuesta: { mensaje: `Error en un registro: ${errorCampos}` },
         };
       }
     }
-console.log('detalles', detalles);
+
     await db.despieces_detalle.bulkCreate(detalles, { transaction});
 
     // 4. Insertar Atributos Valor
@@ -123,7 +123,8 @@ console.log('detalles', detalles);
       anio_cotizacion: new Date().getFullYear(),
       estado_cotizacion: cotizacionFinal.estados_cotizacion_id,
       
-      cotizacion: cotizacionFinal
+      cotizacion: cotizacionFinal,
+      cp: nuevoDespiece.cp,
     }
 
     const codigoDocumento = await generarCodigoDocumentoCotizacion(datosParaGenerarCodigoDocumento)
@@ -204,7 +205,7 @@ console.log('detalles', detalles);
         
         distrito_transporte:datosParaGuardarCotizacionesTransporte.distrito_transporte,
         tarifa_transporte_id: datosParaGuardarCotizacionesTransporte.tarifa_transporte_id ? datosParaGuardarCotizacionesTransporte.tarifa_transporte_id:null,
-        tipo_transporte: datosParaGuardarCotizacionesTransporte.tipo_transporte || cotizacion.tipo_transporte,
+        tipo_transporte: cotizacion.tipo_transporte,
         unidad: datosParaGuardarCotizacionesTransporte.unidad,
         cantidad: datosParaGuardarCotizacionesTransporte.cantidad,
 

@@ -5,7 +5,7 @@ module.exports = async (cotizacionRepository) => {
     
     const listaCotizaciones = cotizaciones.map((cotizacion) => {
 
-        const {id, cliente, estados_cotizacion, obra, usuario, uso, tipo_cotizacion, codigo_documento, ...resto} = cotizacion;
+        const {id, cliente, estados_cotizacion, obra, usuario, uso, tipo_cotizacion, codigo_documento, despiece, ...resto} = cotizacion;
 
         return {
             id,
@@ -15,7 +15,8 @@ module.exports = async (cotizacionRepository) => {
             usuario,
             tipo_cotizacion,
             codigo_documento,
-            uso
+            uso,
+            despiece
         }
     })
 

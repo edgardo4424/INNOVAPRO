@@ -48,6 +48,11 @@ class SequelizeCotizacionRepository {
           as: "uso",
           attributes: ["id", "descripcion"],
         },
+        {
+          model: db.despieces,
+          as: "despiece",
+          attributes: ["id", "cp"],
+        }
       ],
     });
   }
@@ -58,7 +63,6 @@ class SequelizeCotizacionRepository {
 
   async actualizarCotizacion(id, cotizacionData, transaction = null) {
 
-    console.log('cotizacccccccccccc', cotizacionData);
     const cotizacion = await Cotizacion.findByPk(id, {
       ...(transaction && { transaction }),
     });
