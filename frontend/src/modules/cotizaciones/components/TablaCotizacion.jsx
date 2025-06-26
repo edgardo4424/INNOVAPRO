@@ -36,6 +36,7 @@ export default function TablaCotizacion({
    // Estado para las columnas visibles
    const [visibleColumns, setVisibleColumns] = useState({
       codigo_documento: true,
+      cp: true,
       cliente: true,
       obra: true,
       uso: true,
@@ -45,6 +46,7 @@ export default function TablaCotizacion({
    });
    const columnOptions = [
       { id: "codigo_documento", label: "Cod. Doc" },
+      { id: "cp", label: "CP" },
       { id: "cliente", label: "Cliente" },
       { id: "obra", label: "Obra" },
       { id: "uso", label: "Uso" },
@@ -63,6 +65,15 @@ export default function TablaCotizacion({
          sortable: true,
          omit: !visibleColumns.codigo_documento,
          grow: 2,
+      },
+      {
+         id: "cp",
+         name: "CP",
+         selector: (row) => row.despiece?.cp || "—",
+         cell: (row) => <TruncatedText text={row.despiece?.cp} />,
+         sortable: true,
+         omit: !visibleColumns.cp,
+         grow: 1,
       },
       {
          id: "cliente",
@@ -167,6 +178,8 @@ export default function TablaCotizacion({
       selectAllRowsItem: true,
       selectAllRowsItemText: "Todos",
    };
+
+
    return (
       <div className="w-full px-4 max-w-7xl">
          <div className="flex justify-end mt-6">
@@ -176,7 +189,7 @@ export default function TablaCotizacion({
                columnOptions={columnOptions}
             />
          </div>
-
+         
          <DataTable
             columns={allColumns.filter((col) => !col.omit)}
             data={cotizaciones || []}
