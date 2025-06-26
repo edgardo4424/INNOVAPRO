@@ -33,27 +33,8 @@ export async function generarCuerpoAndamioTrabajo(doc, data, startY = 120) {
   doc.setLineWidth(0.3);
   doc.line(indent + box + 3, currentY + 1.5, indent + box + 3 + subtituloWidth, currentY + 1.5);
 
-
-  // 🧮 Cantidad de equipos
-  const cantidad_equipos = data.uso.cantidad_uso === 1 ? "Ud." : "Uds.";
-
   // 🧮 Días de alquiler
   const cantidad_dias = data.cotizacion?.tiempo_alquiler_dias === 1 ? "día" : "días";
-
-  // ⚙️ Detalles cotización
-  /* const detalles = data.detalles_alquiler || [
-    `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** ${data.uso.cantidad_uso || "(INDEFINIDO NÚMERO DE EQUIPOS)"} ${cantidad_equipos} De ${data.uso.nombre|| "(INDEFINIDO USO DE EQUIPO)"} de ${data.atributos?.longitud_mm || "(LONGITUD INDEFINIDA)"} m. de longitud x ${data.atributos?.ancho_mm || "(ANCHO INDEFINIDO)"} m. de ancho x ${data.atributos?.altura_m || "(ALTURA INDEFINIDA)"}.00 m. de altura + 1.00 m de baranda de seguridad: **S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.**`
-  ];
-
-  currentY += 6;
-  for (const linea of detalles) {
-    const palabras = linea.split(/\s+/);
-    const aproxLineas = Math.ceil(palabras.length / 11);
-    const alturaEstimada = aproxLineas * 5;
-
-    currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimada);
-    currentY = drawJustifiedText(doc, linea, indent + box + 3, currentY, 170, 5.5, 10);
-  } */
 
   currentY += 6;
 
