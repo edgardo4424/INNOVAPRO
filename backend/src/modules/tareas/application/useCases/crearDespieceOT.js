@@ -7,6 +7,10 @@ const {
 const sequelizeCotizacionRepository = require("../../../cotizaciones/infrastructure/repositories/sequelizeCotizacionRepository"); // Importamos el repositorio de cotizaciones
 const cotizacionRepository = new sequelizeCotizacionRepository(); // Instancia del repositorio de cotizaciones
 
+const SequelizeNotificacionesRepository = require("../../../notificaciones/infrastructure/repositories/SequelizeNotificacionesRepository"); // Importamos el repositorio de notificaciones
+const notificacionRepository = new SequelizeNotificacionesRepository(); // Instancia del repositorio de notificaciones
+
+const { emitirNotificacionPrivada } = require("../../../notificaciones/infrastructure/services/emisorNotificaciones");
 
 const ESTADO_TAREA_EN_PROCESO = "En proceso";
 
@@ -15,8 +19,6 @@ const ID_ESTADO_COTIZACION_DESPIECE_GENERADO= 2; // Estado por aprobar por el co
 
 module.exports = async (dataDespiece, tareaRepository) => {
 
-  console.log('dataaaaaDespiece', dataDespiece);
-
   const transaction = await db.sequelize.transaction(); // Iniciar transacción
 
   try {
@@ -24,8 +26,6 @@ module.exports = async (dataDespiece, tareaRepository) => {
     const tarea = await tareaRepository.obtenerPorId(dataDespiece.idTarea);
     if (!tarea)
       return { codigo: 404, respuesta: { mensaje: "Tarea no encontrado" } };
-
-    console.log('tarea', tarea);
 
     if(tarea.estado != ESTADO_TAREA_EN_PROCESO){
       return {
@@ -53,29 +53,6 @@ module.exports = async (dataDespiece, tareaRepository) => {
 
       const despiece_id = nuevoDespiece.id;
 
-      /* // Insertar Atributos Valor
-      const atributosValor = await mapearValoresAtributos({
-        uso_id: tarea.usoId,
-        despiece_id,
-        zonas: tarea.atributos_valor_zonas, // Vienen los atributos por zona
-      });
-
-      // Validación de todos los atributos valor
-      for (const data of atributosValor) {
-        const errorCampos = AtributosValor.validarCamposObligatorios(
-          data,
-          "crear"
-        );
-        if (errorCampos) {
-          return {
-            codigo: 400,
-            respuesta: { mensaje: `Error en un registro: ${errorCampos}` },
-          };
-        }
-      }
-
-      await db.atributos_valor.bulkCreate(atributosValor, { transaction }); */
-
       // Insertar el despiece manual brindado por OT
 
       const despieceManual = dataDespiece.despiece.map((pieza) => ({
@@ -90,14 +67,24 @@ module.exports = async (dataDespiece, tareaRepository) => {
         estados_cotizacion_id: ID_ESTADO_COTIZACION_DESPIECE_GENERADO,
       };
 
-      console.log('dataCotizacionActualiuzar', dataCotizacionActualizar);
       await cotizacionRepository.actualizarCotizacion(tarea.cotizacionId, dataCotizacionActualizar, transaction);
 
       tarea.estado = "Finalizada";
 
       await tarea.save({ transaction });
-      console.log('ready');
+    
+      // Notificar al comercial que solicitó la tarea
 
+      const notificacionParaElCreador = {
+        usuarioId: tarea.usuario_solicitante.id,
+        mensaje: `Se generó el despiece para la cotizacion de la empresa: ${tarea.cliente.razon_social}`,
+        tipo: "exito",
+      };
+      const notiCreador = await notificacionRepository.crear(
+        notificacionParaElCreador
+      );
+      emitirNotificacionPrivada(notificacionParaElCreador.usuarioId, notiCreador);
+    
     } else {
       return {
         codigo: 400,

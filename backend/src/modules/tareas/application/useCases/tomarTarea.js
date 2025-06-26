@@ -71,14 +71,6 @@ module.exports = async (idTarea, idUsuario, tareaRepository) => {
       const notiCreador = await notificacionRepository.crear(
         notificacionParaElCreador
       );
-
-     // console.log("notiCreador", notiCreador);
-     /*  await enviarMensajeWhatsAppTomaTarea(
-        `51${notiCreador.usuario.telefono}`, // formato internacional, ejemplo: "51987654321"
-        notiCreador.usuario.nombre,
-        tarea.id
-      );
- */
       emitirNotificacionPrivada(notificacionParaElCreador.usuarioId, notiCreador); // 🔥 ENVÍA OBJETO COMPLETO
     }
   } catch (error) {
