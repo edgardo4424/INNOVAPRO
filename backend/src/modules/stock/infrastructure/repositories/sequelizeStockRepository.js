@@ -1,34 +1,30 @@
-const { where } = require("sequelize");
 const sequelize = require("../../../../config/db");
-const { Stock } = require("../models/sotckModel");
+const { Stock } = require("../models/stockModel");
 const { MovimientoStock } = require("../models/movimientoStockModel");
 
 const query = `SELECT 
   p.id AS pieza_id,
   p.item,
   p.descripcion,
-  p.stock_actual,
-  SUM(CASE WHEN ec.nombre = 'En proceso' THEN dd.cantidad ELSE 0 END) AS 'En proceso',
-  SUM(CASE WHEN ec.nombre = 'Despiece generado' THEN dd.cantidad ELSE 0 END) AS 'Despiece generado',
+  s.stock_fijo,
+  s.stock_disponible,
   SUM(CASE WHEN ec.nombre = 'Por aprobar' THEN dd.cantidad ELSE 0 END) AS 'Por aprobar'
 FROM piezas p
+LEFT JOIN stock s ON p.id = s.pieza_id
 LEFT JOIN despieces_detalle dd ON p.id = dd.pieza_id
 LEFT JOIN despieces d ON d.id = dd.despiece_id
 LEFT JOIN cotizaciones c ON c.despiece_id = d.id
 LEFT JOIN estados_cotizacion ec ON ec.id = c.estados_cotizacion_id
-GROUP BY p.id;;
+GROUP BY p.id, p.item, p.descripcion, s.stock_disponible;
 `;
 
 class SequelizeStockRepository {
+   // funcionalidad lista
    async obtenerStockPiezasPorEstado() {
       const piezas = await sequelize.query(query, {
          type: sequelize.QueryTypes.SELECT,
       });
       return piezas;
-   }
-
-   async crear(stockData) {
-      return await Stock.create(stockData);
    }
    async obtenerStockPorId(piezaId) {
       return await Stock.findOne({
@@ -37,7 +33,45 @@ class SequelizeStockRepository {
          },
       });
    }
+   async crear(stockData) {
+      const t = await sequelize.transaction();
+      try {
+         const stock = await Stock.create(stockData, { transaction: t });
+         await MovimientoStock.create(
+            {
+               stock_id: stock.id,
+               tipo: "Ingreso",
+               cantidad: stock.stock_fijo,
+               stock_pre_movimiento: 0,
+               stock_post_movimiento: stock.stock_fijo,
+               tipo_stock: "fijo",
+               motivo: "Primer ingreso de stock para la pieza",
+               fecha: new Date(),
+            },
+            { transaction: t }
+         );
+         await MovimientoStock.create(
+            {
+               stock_id: stock.id,
+               tipo: "Ajuste ingreso",
+               cantidad: stock.stock_disponible,
+               stock_pre_movimiento: 0,
+               stock_post_movimiento: stock.stock_disponible,
+               tipo_stock: "disponible",
+               motivo: "Primer ingreso de stock para la pieza",
+               fecha: new Date(),
+            },
+            { transaction: t }
+         );
+         await t.commit();
+         return stock;
+      } catch (error) {
+         await t.rollback();
+         throw new Error(error.message);
+      }
+   }
 
+   // tipos de movimiento stock disponible: Alquiler, Devolucion, Ajuste ingreso, Ajuste salida
    async actualizarStockDisponible(piezaId, cantidad, tipoMovimiento, motivo) {
       const t = await sequelize.transaction();
 
@@ -46,8 +80,6 @@ class SequelizeStockRepository {
             where: { pieza_id: piezaId },
             transaction: t,
          });
-         // console.log(stock);
-
          if (!stock) {
             throw new Error("Stock no encontrado");
          }
@@ -91,7 +123,7 @@ class SequelizeStockRepository {
          throw new Error(error.message);
       }
    }
-
+   //Tipos de movimiento stock fijo: Ingreso, Baja, Venta, Ingreso reparacion, Ingreso salida
    async actualizarStockFijo(piezaId, cantidad, tipoMovimientoFijo, motivo) {
       const t = await sequelize.transaction();
 
@@ -111,7 +143,7 @@ class SequelizeStockRepository {
          let esIngreso = false;
          if (
             tipoMovimientoFijo === "Ingreso" ||
-            tipoMovimientoFijo === "Ingreso reparacion"
+            tipoMovimientoFijo === "Ingreso-reparacion"
          ) {
             esIngreso = true;
             stock.stock_fijo += cantidad;
@@ -119,7 +151,7 @@ class SequelizeStockRepository {
          } else if (
             tipoMovimientoFijo === "Baja" ||
             tipoMovimientoFijo === "Venta" ||
-            tipoMovimientoFijo === "Salida reparacion"
+            tipoMovimientoFijo === "Salida-reparacion"
          ) {
             esIngreso = false;
             stock.stock_fijo -= cantidad;
@@ -144,7 +176,7 @@ class SequelizeStockRepository {
 
          // Determinar tipo de movimiento para disponible
          const tipoMovimientoDisponible = esIngreso
-            ? "Ajuste Ingreso"
+            ? "Ajuste ingreso"
             : "Ajuste salida";
 
          // Crear movimiento para stock fijo
@@ -184,4 +216,4 @@ class SequelizeStockRepository {
    }
 }
 
-module.exports = SequelizeStockRepository; // Exporta la clase para que pueda ser utilizada en otros módulos
+module.exports = SequelizeStockRepository;

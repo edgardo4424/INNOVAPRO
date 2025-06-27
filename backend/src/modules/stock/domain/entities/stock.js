@@ -28,13 +28,8 @@ class Stock {
       this.errors = [];
 
       this.validarCampo(this.pieza_id, "pieza_id");
-      this.validarCampo(this.stock_fijo, "stock_fijo", { nonNegative: true });
-      this.validarCampo(this.stock_disponible, "stock_disponible", {
-         nonNegative: true,
-      });
-      // console.log(this.errors);
-      // console.log(this.errors.length === 0);
-      
+      this.validarCampo(this.stock_fijo, "stock_fijo");
+      this.validarCampo(this.stock_disponible, "stock_disponible");
       return this.errors.length === 0;
    }
 

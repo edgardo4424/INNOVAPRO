@@ -1,6 +1,6 @@
-const sequelizeStockRepository = require("../../infrastructure/repositories/sequelizeStockRepository"); // Importamos el repositorio de usuarios
+const sequelizeStockRepository = require("../../infrastructure/repositories/sequelizeStockRepository"); 
 
-const stockRepository = new sequelizeStockRepository(); // Instancia del repositorio de usuarios
+const stockRepository = new sequelizeStockRepository(); 
 
 const obtenerStockPiezasPorEstado = require("../../application/usesCases/obtenerStockPiezasPorEstado");
 const crearStock = require("../../application/usesCases/crearStock");
@@ -11,7 +11,7 @@ const actualizarStockFijo = require("../../application/usesCases/actualizarStock
 const StockController = {
    async obtenerStockPiezasPorEstado(req, res) {
       try {
-         const stockPiezas = await obtenerStockPiezasPorEstado(stockRepository); // Llamamos al caso de uso para obtener
+         const stockPiezas = await obtenerStockPiezasPorEstado(stockRepository); 
          res.status(stockPiezas.codigo).json({ piezas: stockPiezas.respuesta || [] }); // 🔥 Siempre devuelve un array, aunque esté vacío
       } catch (error) {
          res.status(500).json({ error: error.message }); // Respondemos con un error

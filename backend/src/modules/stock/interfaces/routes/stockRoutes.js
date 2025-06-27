@@ -5,13 +5,17 @@ const {
    verificarToken,
 } = require("../../../../shared/middlewares/authMiddleware");
 
-router.use(verificarToken); // Middleware para verificar el token JWT
+router.use(verificarToken);
 
-// 📌 Rutas protegidas solo para Gerencia
-router.get("/", stockController.obtenerStockPiezasPorEstado);
-router.post("/", stockController.crearStock);
-router.get("/:id", stockController.obtenerStockPorId);
-router.put("/disponible", stockController.actualizarStockDisponible); //ruta para actualizar el stock Disponible
-router.put("/fijo", stockController.actualizarStockFijo); //ruta para actualizar el stock Fijo
+router.get("/", stockController.obtenerStockPiezasPorEstado); //Listado de los tipos piezas con su stock fijo disponible, items cotizados, items en contrato
+router.get("/:id", stockController.obtenerStockPorId);   
+
+
+
+router.post("/", stockController.crearStock);//crea el primer registro de stock para una pieza y registra los dos movimientos inciales
+
+
+router.put("/disponible", stockController.actualizarStockDisponible); 
+router.put("/fijo", stockController.actualizarStockFijo); 
 
 module.exports = router;
