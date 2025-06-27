@@ -16,6 +16,7 @@ const {
 
 const calcularCostoTransporte = require("../../../cotizaciones_transporte/application/useCases/calcularCostoTransporte");
 const { generarCodigoDocumentoCotizacion } = require("../../infrastructure/services/generarCodigoDocumentoCotizacionService");
+const { enviarNotificacionTelegram } = require("../../../notificaciones/infrastructure/services/enviarNotificacionTelegram");
 
 const ID_ESTADO_COTIZACION_POR_APROBAR = 3;
 
@@ -179,12 +180,13 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
         
         case "5":
           // Puntales
-          const subtipo = atributos_formulario[0].tipoPuntal.split("-")[0].trim()
+          const { transporte_puntales } = cotizacionTransporteData;
 
           datosParaCalcularCostoTransporte = {
             ...datosParaCalcularCostoTransporte,
-            tipo_puntal: subtipo
+            transporte_puntales: transporte_puntales
           }
+          
         break;
 
         case "7":
@@ -262,6 +264,8 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
           break;
       }
     }
+
+   
 
     await transaction.commit(); // ✔ Confirmar todo
     return {

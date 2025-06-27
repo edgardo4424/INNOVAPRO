@@ -13,6 +13,7 @@ function emitirNotificacionPrivada(usuarioId, notificacion) {
 
     const io = getIo();
     io.emit(`notificacion_usuario_${usuarioId}`, notificacion);
+   
 }
 
 module.exports = {

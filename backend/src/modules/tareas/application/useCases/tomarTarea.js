@@ -4,6 +4,7 @@ const notificacionRepository = new SequelizeNotificacionesRepository(); // Insta
 const {
   emitirNotificacionPrivada,
 } = require("../../../notificaciones/infrastructure/services/emisorNotificaciones");
+const { enviarNotificacionTelegram } = require("../../../notificaciones/infrastructure/services/enviarNotificacionTelegram");
 
 
 // ✅ Importamos el servicio de envío por WhatsApp
@@ -71,7 +72,14 @@ module.exports = async (idTarea, idUsuario, tareaRepository) => {
       const notiCreador = await notificacionRepository.crear(
         notificacionParaElCreador
       );
-      emitirNotificacionPrivada(notificacionParaElCreador.usuarioId, notiCreador); // 🔥 ENVÍA OBJETO COMPLETO
+      emitirNotificacionPrivada(notificacionParaElCreador.usuarioId, notiCreador); 
+
+       // Notificar al comercial que solicitó la tarea (TELEGRAM)
+      const usuario = await db.usuarios.findByPk(tarea.usuarioId);
+
+      if(usuario.id_chat){
+        enviarNotificacionTelegram(usuario.id_chat, notificacionParaElCreador.mensaje)
+      }
     }
   } catch (error) {
     console.error("❌ Error al enviar WhatsApp al creador:", error.response?.data || error.message);
