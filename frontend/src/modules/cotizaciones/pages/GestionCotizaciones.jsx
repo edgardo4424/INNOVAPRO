@@ -1,6 +1,7 @@
 import TablaCotizacion from "../components/TablaCotizacion";
 import { useGestionCotizaciones } from "../hooks/useGestionCotizaciones";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import PrevisualizadorPDF from "../components/PrevisualizadorPDF";
 import ModuloNavegacion from "@/shared/components/ModuloNavegacion";
 import { AlertDialog, AlertDialogTrigger, AlertDialogTitle, AlertDialogDescription, AlertDialogContent, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
@@ -10,6 +11,7 @@ import { AlertDialog, AlertDialogTrigger, AlertDialogTitle, AlertDialogDescripti
 // También maneja el estado de la cotización seleccionada para previsualizar.
 
 export default function GestionCotizaciones() {
+   const navigate = useNavigate();
 
    const {
       cotizacionesPaginados,
@@ -22,6 +24,10 @@ export default function GestionCotizaciones() {
    const [cotizacionSeleccionadaId, setCotizacionSeleccionadaId] =
       useState(null);
 
+   const continuarCotizacion = (idCotizacion) => {
+      navigate(`/cotizaciones/wizard/${idCotizacion}`);
+   }
+
    return (
       <div className="min-h-full flex-1  flex flex-col items-center">
          <ModuloNavegacion />
@@ -30,6 +36,7 @@ export default function GestionCotizaciones() {
             cotizaciones={cotizacionesPaginados}
             onDownloadPDF={confirmarDescargaPDF}
             setCotizacionPrevisualizada={setCotizacionSeleccionadaId}
+            onContinuarWizard={continuarCotizacion}
          />
 
           <AlertDialog open={modalConfirmacion.abierto} onOpenChange={cerrarModal}>

@@ -154,8 +154,17 @@ export default function AppRoutes() {
                         element={<RoleGuard roles={["Gerencia", "Ventas"]} />}
                      >
                         <Route
+
                            path="stock/piezas"
                            element={<GestionStockPiezas />}
+
+                           path="/cotizaciones/wizard/:id"
+                           element={
+                              <WizardProvider>
+                                 <RegistrarCotizacionWizard />
+                              </WizardProvider>
+                           }
+
                         />
                      </Route>
                   </Route>

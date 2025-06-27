@@ -4,16 +4,18 @@ const {
 
 module.exports = async (dataParaGenerarDespiece) => {
 
-  const atributos = dataParaGenerarDespiece.atributos_formulario;
-
-  const atributosFormularioFormateado = atributos.map((atributo) => ({
+  const dataGenerarDespiecePuntales = dataParaGenerarDespiece.map((data) => (({
+    ...data,
+    atributos_formulario: data.atributos_formulario.map((atributo) => ({
     ...atributo,
     cantidad: Number(atributo.cantidad),
-  }));
+  }))
+  })))
 
   const despieceGenerado = await generarDespiecePuntales(
-    atributosFormularioFormateado
+    dataGenerarDespiecePuntales
   );
+
 
   return {
     codigo: 200,

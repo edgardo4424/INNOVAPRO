@@ -1,20 +1,39 @@
 const db = require("../../../../models");
-const AtributosValor = require("../../../atributos_valor/domain/entities/atributos_valor");
+
 const {
   mapearValoresAtributos,
 } = require("../../../cotizaciones/infrastructure/services/mapearValoresAtributosService");
 
+const sequelizeCotizacionRepository = require("../../../cotizaciones/infrastructure/repositories/sequelizeCotizacionRepository"); // Importamos el repositorio de cotizaciones
+const cotizacionRepository = new sequelizeCotizacionRepository(); // Instancia del repositorio de cotizaciones
+
+const SequelizeNotificacionesRepository = require("../../../notificaciones/infrastructure/repositories/SequelizeNotificacionesRepository"); // Importamos el repositorio de notificaciones
+const notificacionRepository = new SequelizeNotificacionesRepository(); // Instancia del repositorio de notificaciones
+
+const { emitirNotificacionPrivada } = require("../../../notificaciones/infrastructure/services/emisorNotificaciones");
+
+const ESTADO_TAREA_EN_PROCESO = "En proceso";
+
+// Crear la cotizacion pero en estado
+const ID_ESTADO_COTIZACION_DESPIECE_GENERADO= 2; // Estado por aprobar por el comercial
+
 module.exports = async (dataDespiece, tareaRepository) => {
+
   const transaction = await db.sequelize.transaction(); // Iniciar transacción
 
   try {
+
     const tarea = await tareaRepository.obtenerPorId(dataDespiece.idTarea);
     if (!tarea)
       return { codigo: 404, respuesta: { mensaje: "Tarea no encontrado" } };
 
-    console.log("tarea", tarea);
-
-    if (tarea.detalles?.apoyoTecnico == "Despiece") {
+    if(tarea.estado != ESTADO_TAREA_EN_PROCESO){
+      return {
+        codigo: 400,
+        respuesta: { mensaje: "La tarea debe estar 'En proceso' y debe ser tomada por OT" },
+      };
+    }
+    if (tarea.detalles?.apoyoTecnico && tarea.detalles?.apoyoTecnico.includes("Despiece")) {
       if (dataDespiece.despiece.length == 0) {
         return {
           codigo: 400,
@@ -34,33 +53,6 @@ module.exports = async (dataDespiece, tareaRepository) => {
 
       const despiece_id = nuevoDespiece.id;
 
-      console.log(tarea.atributos_valor_zonas);
-
-      // Insertar Atributos Valor
-      const atributosValor = await mapearValoresAtributos({
-        uso_id: tarea.usoId,
-        despiece_id,
-        zonas: tarea.atributos_valor_zonas, // Vienen los atributos por zona
-      });
-
-      // Validación de todos los atributos valor
-      for (const data of atributosValor) {
-        const errorCampos = AtributosValor.validarCamposObligatorios(
-          data,
-          "crear"
-        );
-        if (errorCampos) {
-          return {
-            codigo: 400,
-            respuesta: { mensaje: `Error en un registro: ${errorCampos}` },
-          };
-        }
-      }
-
-      console.log("atributosValor", atributosValor);
-
-      await db.atributos_valor.bulkCreate(atributosValor, { transaction });
-
       // Insertar el despiece manual brindado por OT
 
       const despieceManual = dataDespiece.despiece.map((pieza) => ({
@@ -70,23 +62,29 @@ module.exports = async (dataDespiece, tareaRepository) => {
 
       await db.despieces_detalle.bulkCreate(despieceManual, { transaction });
 
-      // Crear la cotizacion pero en estado
-      const ESTADO_COTIZACION_POR_APROBAR = 3; // Estado por aprobar por el comercial
-
-      const dataCotizacion = {
+      const dataCotizacionActualizar = {
         despiece_id: despiece_id,
-        contacto_id: tarea.contactoId,
-        cliente_id: tarea.clienteId,
-        obra_id: tarea.obraId,
-        filial_id: tarea.empresaProveedoraId,
-        usuario_id: tarea.usuarioId,
-        estados_cotizacion_id: ESTADO_COTIZACION_POR_APROBAR,
-        uso_id: tarea.usoId,
+        estados_cotizacion_id: ID_ESTADO_COTIZACION_DESPIECE_GENERADO,
       };
 
-      console.log("dataCotizacion", dataCotizacion);
+      await cotizacionRepository.actualizarCotizacion(tarea.cotizacionId, dataCotizacionActualizar, transaction);
 
-      await db.cotizaciones.create(dataCotizacion, { transaction });
+      tarea.estado = "Finalizada";
+
+      await tarea.save({ transaction });
+    
+      // Notificar al comercial que solicitó la tarea
+
+      const notificacionParaElCreador = {
+        usuarioId: tarea.usuario_solicitante.id,
+        mensaje: `Se generó el despiece para la cotizacion de la empresa: ${tarea.cliente.razon_social}`,
+        tipo: "exito",
+      };
+      const notiCreador = await notificacionRepository.crear(
+        notificacionParaElCreador
+      );
+      emitirNotificacionPrivada(notificacionParaElCreador.usuarioId, notiCreador);
+    
     } else {
       return {
         codigo: 400,
@@ -94,9 +92,8 @@ module.exports = async (dataDespiece, tareaRepository) => {
       };
     }
 
-
     await transaction.commit(); // ✔ Confirmar todo
-    return { codigo: 201, respuesta: tarea };
+    return { codigo: 201, respuesta: { mensaje: "Despiece creado por OT correctamente."} };
   } catch (error) {
     await transaction.rollback(); // ❌ Deshacer todo si algo falla
     console.error("Error en registrar despiece manual:", error);

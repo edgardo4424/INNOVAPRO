@@ -23,6 +23,13 @@ const PasoAtributos = () => {
     setZonas
   } = useZonasCotizacion(formData.uso_id); // Hook personalizado para manejar zonas y atributos
 
+  useEffect(() => {
+  if (formData.zonas?.length > 0) {
+      setZonas(formData.zonas);
+    }
+  }, []);
+
+
   // Actualizar zonas en el formData global cada vez que cambian
   useEffect(() => {
     setFormData((prev) => ({ ...prev, zonas }));

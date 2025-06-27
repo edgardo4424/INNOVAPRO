@@ -54,7 +54,7 @@ export default function PrevisualizadorPDF({ cotizacionId }) {
   
 
   return (
-    <div style={{ border: "1px solid #ccc", marginTop: "2rem" }}>
+    <div style={{ border: "1px solid #ccc", marginTop: "2rem", width: "80%" }}>
       <h4 style={{ textAlign: "center" }}>Previsualización del PDF</h4>
       <iframe
         ref={iframeRef}

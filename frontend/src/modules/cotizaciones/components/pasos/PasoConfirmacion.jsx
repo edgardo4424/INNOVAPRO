@@ -80,7 +80,9 @@ export default function PasoConfirmacion() {
         <DespieceAdicional formData={formData} setFormData={setFormData} />
       )}
 
-
+      {
+          console.log('formData.tiene_pernos_disponibles', formData.tiene_pernos_disponibles)
+      }
       <BloquePernos formData={formData} setFormData={setFormData} errores={errores} />
       <BloqueTransporte formData={formData} setFormData={setFormData} errores={errores} />
       <BloqueInstalacion formData={formData} setFormData={setFormData} errores={errores} />

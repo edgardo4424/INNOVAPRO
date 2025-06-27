@@ -5,6 +5,9 @@ const obtenerCotizaciones = require('../../application/useCases/obtenerCotizacio
 const generarPdfCotizacion = require('../../application/useCases/generarPdfCotizacion');
 const crearCotizacionConOT = require('../../application/useCases/crearCotizacionConOT');
 
+const mostrarCotizacionPorId = require('../../application/useCases/mostrarCotizacionPorId')
+
+
 /* const obtenerCotizacionPorId = require('../../application/useCases/obtenerCotizacionPorId'); // Importamos el caso de uso para obtener un cotizacion por ID
 const actualizarCotizacion = require('../../application/useCases/actualizarCotizacion'); // Importamos el caso de uso para actualizar un cotizacion
 const eliminarCotizacion = require('../../application/useCases/eliminarCotizacion'); // Importamos el caso de uso para eliminar un cotizacion
@@ -80,16 +83,16 @@ const CotizacionController = {
     },
     
 
-    /*async obtenerCotizacionPorId(req, res) {
+    async mostrarCotizacionPorId(req, res) {
         try {
-            const cotizacion = await obtenerCotizacionPorId(req.params.id, cotizacionRepository); // Llamamos al caso de uso para obtener una cotizacion por ID
+            const cotizacion = await mostrarCotizacionPorId(req.params.id, cotizacionRepository); // Llamamos al caso de uso para obtener una cotizacion por ID
             res.status(cotizacion.codigo).json(cotizacion.respuesta); 
         } catch (error) {
             res.status(500).json({ error: error.message }); // Respondemos con un error
         }
     },
 
-    async actualizarCotizacion(req, res) {
+    /* async actualizarCotizacion(req, res) {
         try {
             const cotizacionActualizada = await actualizarCotizacion(req.params.id, req.body, cotizacionRepository); // Llamamos al caso de uso para actualizar un cotizacion
             

@@ -3,6 +3,8 @@
 // con los valores ingresados. Ésto cumpliendo con la lógica de INNOVA y solicitud de Gerencia.
 
 export default function BloquePernos({ formData, setFormData, errores }) {
+
+
   const incluirPernos = formData.tiene_pernos;
   const perno = formData.despiece.find(p => p.esPerno);
 
