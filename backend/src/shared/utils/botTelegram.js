@@ -1,21 +1,22 @@
-const {
-  enviarNotificacionDeAutenticacionTelegram,
-} = require("../../modules/notificaciones/infrastructure/services/enviarNotificacionDeAutenticacionTelegram");
+
 
 //https://t.me/innovaproBot?start=52
 
 require("dotenv").config();
 
+const {
+  enviarNotificacionDeAutenticacionTelegram,
+} = require("../../modules/notificaciones/infrastructure/services/enviarNotificacionDeAutenticacionTelegram");
+
 const sequelizeUsuarioRepository = require("../../modules/usuarios/infrastructure/repositories/sequelizeUsuarioRepository");
 const usuarioRepository = new sequelizeUsuarioRepository();
-const SequelizeNotificacionesRepository = require("../../modules/notificaciones/infrastructure/repositories/SequelizeNotificacionesRepository");
-const notificacionRepository = new SequelizeNotificacionesRepository();
 
 const TelegramBot = require("node-telegram-bot-api");
 
 const bot = new TelegramBot(process.env.TELEGRAM_SECRET_KEY, { polling: true });
 
 bot.onText(/^\/start(?:\s+(\d+))?$/, async (msg, match) => {
+   
   const param = match[1]; // '45' ó undefined
   const chatId = msg.chat.id;
 
@@ -76,3 +77,5 @@ bot.onText(/^\/start(?:\s+(\d+))?$/, async (msg, match) => {
 
   enviarNotificacionDeAutenticacionTelegram(userId, notificacionParaElCreador);
 });
+
+module.exports = { bot };
