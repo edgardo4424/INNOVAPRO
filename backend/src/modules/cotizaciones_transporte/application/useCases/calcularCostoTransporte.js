@@ -13,6 +13,8 @@ module.exports = async (
 
   const uso = await db.usos.findByPk(uso_id);
 
+  console.log('uso', uso);
+
   if (!uso) {
     return {
       codigo: 400,
@@ -81,6 +83,25 @@ module.exports = async (
     case "puntales":
       const { transporte_puntales } = cotizacionTransporteData;
 
+      if(transporte_puntales.length == 1){
+
+        console.log('transporte_piuntales', transporte_puntales);
+        tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
+          where: {
+            grupo_tarifa: uso.grupo_tarifa,
+            subtipo: transporte_puntales[0].tipo_puntal,
+            rango_desde: { [Op.lt]: peso_total_tn },
+            rango_hasta: { [Op.gte]: peso_total_tn },
+          },
+        });
+      
+        costo_tarifas_transporte = Number(
+          tarifa_transporte_encontrado?.precio_soles || 0
+        );
+        unidad = "Tn";
+        cantidadTotal = peso_total_tn;
+      }else{
+        
       const tiposPermitidos = ["3.00", "4.00"];
 
       const esValido = transporte_puntales.every((tp) =>
@@ -108,6 +129,8 @@ module.exports = async (
         unidad = "Tn";
         cantidadTotal = peso_total_tn;
       }
+      }
+
       break;
 
     case "andamio_electrico":

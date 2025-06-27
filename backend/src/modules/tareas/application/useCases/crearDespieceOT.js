@@ -11,6 +11,7 @@ const SequelizeNotificacionesRepository = require("../../../notificaciones/infra
 const notificacionRepository = new SequelizeNotificacionesRepository(); // Instancia del repositorio de notificaciones
 
 const { emitirNotificacionPrivada } = require("../../../notificaciones/infrastructure/services/emisorNotificaciones");
+const { enviarNotificacionTelegram } = require("../../../notificaciones/infrastructure/services/enviarNotificacionTelegram");
 
 const ESTADO_TAREA_EN_PROCESO = "En proceso";
 
@@ -73,7 +74,7 @@ module.exports = async (dataDespiece, tareaRepository) => {
 
       await tarea.save({ transaction });
     
-      // Notificar al comercial que solicitó la tarea
+      // Notificar al comercial que solicitó la tarea (ERP)
 
       const notificacionParaElCreador = {
         usuarioId: tarea.usuario_solicitante.id,
@@ -84,6 +85,14 @@ module.exports = async (dataDespiece, tareaRepository) => {
         notificacionParaElCreador
       );
       emitirNotificacionPrivada(notificacionParaElCreador.usuarioId, notiCreador);
+
+      // Notificar al comercial que solicitó la tarea (TELEGRAM)
+      const usuario = await db.usuarios.findByPk(tarea.usuarioId);
+
+      if(usuario.id_chat){
+        enviarNotificacionTelegram(usuario.id_chat, notificacionParaElCreador.mensaje)
+      }
+      
     
     } else {
       return {
