@@ -46,6 +46,9 @@ const RegistrarCotizacionWizard = lazy(() =>
 const GestionCotizaciones = lazy(() =>
    import("../modules/cotizaciones/pages/GestionCotizaciones")
 );
+const GestionStockPiezas = lazy(() =>
+   import("../modules/stockPiezas/pages/GestionStockPiezas")
+);
 
 export default function AppRoutes() {
    const Router =
@@ -56,7 +59,7 @@ export default function AppRoutes() {
    return (
       <Router>
          {/* Suspense para mostrar fallback mientras carga */}
-         <Suspense fallback={<LoaderInnova/>}>
+         <Suspense fallback={<LoaderInnova />}>
             <Routes>
                {/* Ruta pública */}
                <Route path="/login" element={<Login />} />
@@ -151,12 +154,17 @@ export default function AppRoutes() {
                         element={<RoleGuard roles={["Gerencia", "Ventas"]} />}
                      >
                         <Route
+
+                           path="stock/piezas"
+                           element={<GestionStockPiezas />}
+
                            path="/cotizaciones/wizard/:id"
                            element={
                               <WizardProvider>
                                  <RegistrarCotizacionWizard />
                               </WizardProvider>
                            }
+
                         />
                      </Route>
                   </Route>
