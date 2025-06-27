@@ -121,20 +121,24 @@ export default function TablaCotizacion({
          name: "Acciones",
          cell: (row) => (
             <div className="flex gap-1 justify-start">
-               <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => onDownloadPDF(row.id)}
-               >
-                  <FileDown />
-               </Button>
-               <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => setCotizacionPrevisualizada(row.id)}
-               >
-                  <Eye />
-               </Button>
+               {row.estados_cotizacion.nombre === "Por Aprobar" && (
+               <>
+                  <Button
+                     variant="outline"
+                     size="icon"
+                     onClick={() => onDownloadPDF(row.id)}
+                  >
+                     <FileDown />
+                  </Button>
+                  <Button
+                     variant="outline"
+                     size="icon"
+                     onClick={() => setCotizacionPrevisualizada(row.id)}
+                  >
+                     <Eye />
+                  </Button>
+               </>
+               )}
                
                {row.estados_cotizacion.nombre === "Despiece generado" && (
                   <Button 

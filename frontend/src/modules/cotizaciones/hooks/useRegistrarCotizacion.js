@@ -3,8 +3,9 @@ import { useWizardContext } from "../context/WizardCotizacionContext";
 import { extraerDistrito } from "../utils/cotizacionUtils";
 import { crearCotizacion, obtenerCotizacionPorId, crearCotizacionDesdeOT } from "../services/cotizacionesService";
 import { useParams } from "react-router-dom";
-import ResumenDespiece from "../components/pasos/paso-confirmacion/ResumenDespiece";
+import { toast } from "react-toastify";
 import { esPernoExpansion, mapearPieza } from "./paso-confirmacion/useGenerarDespiece"
+import { validarAtributosPorUso } from "../validaciones/validarAtributosPorUso";
 
 // Este hook maneja la lógica del wizard para registrar una cotización.
 // Permite avanzar y retroceder entre pasos, validar datos y guardar la cotización final.
@@ -106,6 +107,13 @@ export function useRegistrarCotizacion(pasosLength) {
   };
 
   const guardarCotizacion = async () => {
+    const resultado = validarAtributosPorUso(formData);
+    if (!resultado.valido) {
+      toast.error(`⚠️ Faltan datos mínimos para generar la cotización:\n${resultado.errores.join("\n")}`);
+      setGuardando(false);
+      return;
+    }
+
     setGuardando(true);
     try {
       const payload = {
@@ -148,6 +156,13 @@ export function useRegistrarCotizacion(pasosLength) {
   // Funciones para guardar las cotizaciones que vienen con despiece de OT
 
   const guardarCotizacionDesdeOT = async () => {
+    const resultado = validarAtributosPorUso(formData);
+    if (!resultado.valido) {
+      toast.error(`⚠️ Atributos incompletos:\n${resultado.errores.join("\n")}`);
+      setGuardando(false);
+      return;
+    }
+
     setGuardando(true);
 
     try {

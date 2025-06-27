@@ -65,9 +65,11 @@ const modulesByRole = {
       { name: "Centro de Atención", path: "/centro-atencion" },
       { name: "Cotizaciones", path: "/cotizaciones" },
       { name: "Registrar Cotización", path: "/cotizaciones/registrar" },
+      { name: "Stock de Piezas", path: "/stock/piezas" },
    ],
    "Oficina Técnica": [
       { name: "Centro de Atención", path: "/centro-atencion" },
+      { name: "Stock de Piezas", path: "/stock/piezas" },
    ],
    Almacén: [],
    Administración: [],
