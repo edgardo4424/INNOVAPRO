@@ -1,4 +1,3 @@
-// INNOVA PRO+ v1.3.4
 import React from "react";
 
 export default function FilaPiezaManual({ pieza, actualizarPieza, eliminarPieza }) {

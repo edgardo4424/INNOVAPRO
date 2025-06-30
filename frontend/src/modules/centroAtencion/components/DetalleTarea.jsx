@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,6 +24,11 @@ import { DetallesEspecificos } from "./DetallesEspecificos";
 import ImportadorDespiece from "./despiece-ot/ImportadorDespiece";
 import DespieceOT from "./despiece-ot/DespieceOT";
 import DespieceAdicional from "./despiece-ot/DespieceAdicional";
+import ResumenDespiece from "@/modules/cotizaciones/components/pasos/paso-confirmacion/ResumenDespiece";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { toast } from "react-toastify";
+import { crearDespieceOT } from "../services/centroAtencionService";
+
 
 export default function DetalleTarea({
    tarea,
@@ -38,6 +43,13 @@ export default function DetalleTarea({
 }) 
 {
    const [mostrarDespiece, setMostrarDespiece] = useState(false);
+   const despieceRef = useRef(null);
+   const [formData, setFormData] = useState({
+      despiece: [],
+      ResumenDespiece: {}
+   })
+   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+
 
    const puedeGenerarDespiece =
     user?.rol === "Oficina Técnica" &&
@@ -184,7 +196,10 @@ export default function DetalleTarea({
 
                {/* Detalles Específicos */}
                <DetallesEspecificos
-                  detalles={tarea.detalles}
+                  detalles={{
+                     ...tarea.detalles,
+                     atributos_valor_zonas: tarea.atributos_valor_zonas
+                  }}
                   motivoDevolucion={tarea.motivoDevolucion}
                />
                {tarea.motivoDevolucion && (
@@ -223,10 +238,68 @@ export default function DetalleTarea({
                 {/* Sección Despiece */}
                {mostrarDespiece && (
                <>
-                  <ImportadorDespiece tarea={tarea} />
-                  <DespieceOT tarea={tarea} onDespieceCreado={() => setMostrarDespiece(false)}/>
+               <div ref={despieceRef}>
+                  <ImportadorDespiece tarea={tarea} formData={formData} setFormData={setFormData} />
+                  <DespieceOT tarea={tarea} formData={formData} setFormData={setFormData} onDespieceCreado={() => setMostrarDespiece(false)}/>
+               </div>
                </>
                )}
+
+               {formData.despiece.length > 0 && (
+                  <div className="mt-4 flex justify-end">
+                     <Button
+                        className="bg-green-600 text-white"
+                        onClick={() => setMostrarConfirmacion(true)}
+                     >
+                        Guardar Despiece
+                     </Button>
+                  </div>
+                  )}
+
+               {mostrarConfirmacion && (
+               <Dialog open={true} onOpenChange={setMostrarConfirmacion}>
+                  <DialogContent>
+                     <DialogHeader>
+                     <DialogTitle>¿Guardar despiece?</DialogTitle>
+                     <DialogDescription>Confirma que los datos son correctos antes de enviar el despiece al sistema.</DialogDescription>
+                     </DialogHeader>
+                     <div className="flex justify-end gap-2 mt-4">
+                     <Button variant="outline" onClick={() => setMostrarConfirmacion(false)}>
+                        Cancelar
+                     </Button>
+                     <Button
+                        onClick={async () => {
+                           try {
+                           const payload = {
+                              idTarea: tarea.id,
+                              despiece: formData.despiece.map(p => ({
+                                 pieza_id: p.pieza_id,
+                                 cantidad: p.cantidad,
+                                 peso_kg: p.peso_kg,
+                                 precio_venta_dolares: 0,
+                                 precio_venta_soles: 0,
+                                 precio_alquiler_soles: p.precio_alquiler_soles,
+                              }))
+                           };
+                           const response = await crearDespieceOT(payload);
+                           toast.success("Despiece guardado correctamente");
+                           setMostrarConfirmacion(false);
+                           setFormData({ despiece: [], resumenDespiece: {} });
+                           setMostrarDespiece(false);
+                           } catch (error) {
+                           console.error("Error al guardar despiece:", error);
+                           toast.error("Error al guardar el despiece");
+                           }
+                        }}
+                        className="bg-green-600 text-white"
+                     >
+                        Confirmar y guardar
+                     </Button>
+                     </div>
+                  </DialogContent>
+               </Dialog>
+               )}
+
             </div>
             
             {/* Footer - Acciones */}
@@ -299,7 +372,12 @@ export default function DetalleTarea({
                
                {puedeGenerarDespiece && (
                   <Button 
-                     onClick={() => setMostrarDespiece(true)}
+                     onClick={() => {
+                        setMostrarDespiece(true)
+                        setTimeout(() => {
+                           despieceRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                        }, 100);
+                     }}
                      className="flex-1 gap-2 bg-red-500 hover:bg-red-500/80 text-white"
                   >
                      Generar Despiece

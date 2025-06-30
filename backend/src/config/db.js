@@ -18,10 +18,10 @@ const sequelize = new Sequelize(
         collate: "utf8mb4_general_ci" 
       },
       pool: {
-            max: isProduction ? 5 : 2, // Ajustamos según el entorno
-            min: 0,
-            acquire: 10000, // Tiempo máximo para obtener una conexión
-            idle: 5000 // Tiempo antes de liberar una conexión inactiva
+            max: isProduction ? 30 : 20, // Ajustamos según el entorno
+            min: 5,
+            acquire: 30000, // Tiempo máximo para obtener una conexión
+            idle: 10000 // Tiempo antes de liberar una conexión inactiva
       }
     }
   );

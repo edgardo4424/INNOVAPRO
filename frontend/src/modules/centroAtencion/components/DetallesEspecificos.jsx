@@ -25,8 +25,7 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
-export const DetallesEspecificos = ({detalles}) => {
-
+export const DetallesEspecificos = ({ detalles }) => {
   if (typeof detalles === "string") {
     try {
       detalles = JSON.parse(detalles);
@@ -63,7 +62,59 @@ export const DetallesEspecificos = ({detalles}) => {
     "uso",
     "infoAdicional",
     "nota",
+    "usoId",
+    "tipo_cotizacion",
+    "notaDespiece",
+    "dias_alquiler",
+    "atributos_valor_zonas",
   ];
+
+  const labels = {
+    apoyoTecnico: "Apoyo Técnico",
+    apoyoAdministrativo: "Apoyo Administrativo",
+    tipoServicio: "Tipo de Servicio",
+    estadoPasePedido: "Estado Pase Pedido",
+    numeroVersionContrato: "Versión de Contrato",
+    despacho: "Despacho",
+    tipoOperacion: "Tipo de Operación",
+    estadoHabilitacion: "Estado de Habilitación",
+    obraNueva: "Obra Nueva",
+    valorizacionAdelantada: "Valorización Adelantada",
+    transporte: "Transporte",
+    fechaEntrega: "Fecha de Entrega",
+    horaEntrega: "Hora de Entrega",
+    adaptarMotor: "Adaptar Motor",
+    tipoServicioColgante: "Servicio Colgante",
+    valorizacion: "Valorización",
+    envioCliente: "Envío al Cliente",
+    tipoModulacion: "Tipo de Modulación",
+    tipoEquipo: "Tipo de Equipo",
+    plataformado: "Plataformado",
+    anclajes: "Anclajes",
+    uso: "Uso",
+    infoAdicional: "Información Adicional",
+    nota: "Nota",
+    usoId: "Uso Asociado",
+    tipo_cotizacion: "Tipo de Cotización",
+    notaDespiece: "Nota del Despiece",
+    dias_alquiler: "Días de alquiler",
+    atributos_valor_zonas: "Zonas y Atributos",
+  };
+
+  const atributosLabels = {
+    ancho: "Ancho (mm)",
+    altura: "Altura (m)",
+    longitud: "Longitud (mm)",
+    paraIzaje: "¿Es para izaje?",
+    tipoApoyo: "Tipo de Apoyo",
+    tuboAmarre: "¿Tubo de Amarre?",
+    tipoRodapie: "Tipo de Rodapié",
+    cantPlataforma: "Cantidad de Plataformas",
+    tipoPlataforma: "Tipo de Plataforma",
+    diagonalLongitud: "Diagonal de Longitud",
+    plataformaAcceso: "Plataforma de Acceso",
+  };
+
 
   const iconos = {
     apoyoTecnico: <Settings className="h-4 w-4 text-purple-500" />,
@@ -90,11 +141,22 @@ export const DetallesEspecificos = ({detalles}) => {
     uso: <Home className="h-4 w-4 text-purple-500" />,
     infoAdicional: <FileText className="h-4 w-4 text-purple-500" />,
     nota: <FileText className="h-4 w-4 text-yellow-600" />,
+    tipo_cotizacion: <Settings className="h-4 w-4 text-purple-500" />,
+    dias_alquiler: <Clock className="h-4 w-4 text-purple-500" />,
+    atributos_valor_zonas: <Package className="h-4 w-4 text-purple-500" />,
   };
 
-  const detallesFiltrados = Object.entries(detalles).filter(
-    ([key]) => key !== "nota"
-  );
+  const detallesOrdenados = Object.entries(detalles)
+    .filter(([key]) => key !== "nota")
+    .sort(([a], [b]) => {
+      const ia = orden.indexOf(a);
+      const ib = orden.indexOf(b);
+      if (ia === -1 && ib === -1) return a.localeCompare(b);
+      if (ia === -1) return 1;
+      if (ib === -1) return -1;
+      return ia - ib;
+  });
+
 
   return (
     <Card className="border-l-4 border-l-purple-500 gap-3">
@@ -109,35 +171,59 @@ export const DetallesEspecificos = ({detalles}) => {
         <div className="grid md:grid-cols-2 gap-6">
           {[0, 1].map((col) => (
             <div className="space-y-4" key={col}>
-              {detallesFiltrados
-                .sort(([a], [b]) => {
-                  const ia = orden.indexOf(a);
-                  const ib = orden.indexOf(b);
-                  if (ia === -1 && ib === -1) return a.localeCompare(b);
-                  if (ia === -1) return 1;
-                  if (ib === -1) return -1;
-                  return ia - ib;
-                })
+              {detallesOrdenados
                 .filter((_, i) => i % 2 === col)
                 .map(([key, value], idx) => (
-                  <div
-                    key={idx}
-                    className="bg-gray-50 p-4 rounded-lg"
-                  >
+                  <div key={idx} className="bg-gray-50 p-4 rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
-                      {iconos[key] || (
-                        <Settings className="h-4 w-4 text-purple-500" />
-                      )}
+                      {iconos[key] || <Settings className="h-4 w-4 text-purple-500" />}
                       <span className="font-medium text-gray-700">
-                        {key
-                          .replace(/([A-Z])/g, " $1")
-                          .replace(/^./, (s) => s.toUpperCase())}
+                        {labels[key] ||
+                          key.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase())}
                         :
                       </span>
                     </div>
-                    <p className="text-gray-900 font-semibold">
-                      {Array.isArray(value) ? value.join(", ") : value}
-                    </p>
+                    {key === "atributos_valor_zonas" ? (
+                      value.map((zona, index) => (
+                        <div key={index} className="mb-4">
+                          <p className="font-bold text-purple-700 mb-2">📍 Zona {zona.zona}</p>
+                          <table className="w-full text-sm border">
+                            <thead>
+                              <tr className="bg-purple-50 text-purple-800 border-b">
+                                <th className="text-left p-2">Atributo</th>
+                                <th className="text-left p-2">Valor</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {zona.atributos_formulario &&
+                                zona.atributos_formulario.map((grupo, i) =>
+                                  Object.entries(grupo).map(([k, v], j) => (
+                                    <tr key={`${i}-${j}`} className="border-t">
+                                      <td className="p-2 text-gray-700">
+                                        {atributosLabels[k] || k}
+                                      </td>
+                                      <td className="p-2 text-gray-900 font-medium">{v || "—"}</td>
+                                    </tr>
+                                  ))
+                                )}
+                            </tbody>
+                          </table>
+                        </div>
+                      ))
+                    ) : typeof value === "object" && !Array.isArray(value) ? (
+                      value.map((v, i) => (
+                        <pre
+                          key={i}
+                          className="text-xs text-gray-700 bg-gray-100 p-2 rounded mb-2 overflow-x-auto"
+                        >
+                          {JSON.stringify(v, null, 2)}
+                        </pre>
+                      ))
+                    ) : (
+                      <p className="text-gray-900 font-semibold">
+                        {Array.isArray(value) ? value.join(", ") : value}
+                      </p>
+                    )}
                   </div>
                 ))}
             </div>

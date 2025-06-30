@@ -35,10 +35,12 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "fast-xml-parser": "^5.2.5",
     "framer-motion": "^12.10.5",
     "jspdf": "^3.0.1",
     "lucide-react": "^0.513.0",
     "qrcode.react": "^4.2.0",
+    "papaparse": "^5.5.3",
     "react": "^19.0.0",
     "react-data-table-component": "^7.7.0",
     "react-datepicker": "^8.2.1",
@@ -52,6 +54,7 @@
     "socket.io-client": "^4.8.1",
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "^4.1.8",
+    "xlsx": "^0.18.5",
     "yup": "^1.6.1"
   },
   "devDependencies": {
