@@ -23,7 +23,6 @@ import {
    X,
 } from "lucide-react";
 import api from "../services/api";
-import TelegramValidator from "./TelegramValidator";
 
 export default function Notificaciones () {
    const { notificaciones, setNotificaciones } = useNotificaciones();
@@ -113,7 +112,6 @@ export default function Notificaciones () {
                   </Button>
                )}
             </div>
-            <TelegramValidator />
             {notificaciones.length > 0 ? (
                <div className="divide-y ">
                   {notificaciones.map((notification) => (
