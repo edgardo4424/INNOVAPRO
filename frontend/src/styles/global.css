@@ -53,7 +53,7 @@
    --chart-3: oklch(0.398 0.07 227.392);
    --chart-4: oklch(0.828 0.189 84.429);
    --chart-5: oklch(0.769 0.188 70.08);
-   --sidebar: oklch(25.62% 0.118 264.75);
+   --sidebar: oklch(28.2% 16.75% 267.753);
    --sidebar-foreground: oklch(97% 0 0);
    --sidebar-primary: oklch(0.205 0 0);
    --sidebar-primary-foreground: oklch(0.985 0 0);
@@ -616,40 +616,40 @@ label {
 }
 
 @media (max-width: 480px) {
-  /* === GLOBALIZACIÓN Y OPTIMIZACIÓN DE ESTILOS MOVILES === */
+   /* === GLOBALIZACIÓN Y OPTIMIZACIÓN DE ESTILOS MOVILES === */
 
-/* === BOTONES GLOBALES === */
-button {
-  font-size: 14px;
-}
+   /* === BOTONES GLOBALES === */
+   button {
+      font-size: 14px;
+   }
 
-/* === BOTÓN ATRÁS === */
-  /* 🔹 Botón de cierre */
-  .back-button {
-    padding: 10px;
-    border-radius: 5px;
-    width: 50%;
-    height: 50%;
-    margin-top: 0px;
-    font-size: 12px;
-  }
+   /* === BOTÓN ATRÁS === */
+   /* 🔹 Botón de cierre */
+   .back-button {
+      padding: 10px;
+      border-radius: 5px;
+      width: 50%;
+      height: 50%;
+      margin-top: 0px;
+      font-size: 12px;
+   }
 
-/* === BOTÓN SIGUIENTE === */
-.next-button {
-  padding: 10px;
-  border-radius: 5px;
-  height: 50%;
-  width: 50%;
-  margin-top: 0px;
-font-size: 12px;
-}
+   /* === BOTÓN SIGUIENTE === */
+   .next-button {
+      padding: 10px;
+      border-radius: 5px;
+      height: 50%;
+      width: 50%;
+      margin-top: 0px;
+      font-size: 12px;
+   }
 
-/* === INPUTS GLOBALES === */
+   /* === INPUTS GLOBALES === */
 
-/* 🔹 Input de búsqueda */
-.busqueda-input {
-  margin-left: 5px;
-}
+   /* 🔹 Input de búsqueda */
+   .busqueda-input {
+      margin-left: 5px;
+   }
 
    /* === DASHBOARD === */
    .dashboard-container {
@@ -736,11 +736,11 @@ font-size: 12px;
       justify-content: center;
    }
 }
-.ag-theme-alpine{
-  margin-bottom: 18px;
+.ag-theme-alpine {
+   margin-bottom: 18px;
 }
-.ag-header-cell-comp-wrapper{
-  justify-content: center;
+.ag-header-cell-comp-wrapper {
+   justify-content: center;
 }
 
 .pac-container {
