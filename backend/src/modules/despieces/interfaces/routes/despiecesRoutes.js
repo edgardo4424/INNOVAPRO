@@ -15,5 +15,6 @@ router.post("/puntales", despieceController.generarDespiecePuntales)
 router.post("/escalera-de-acceso", despieceController.generarDespieceEscalera)
 router.post("/plataforma-de-descarga", despieceController.generarDespiecePlataformaDescarga)
 router.post("/escuadras", despieceController.generarDespieceEscuadras)
+router.post("/andamio-fachada", despieceController.generarDespiecePuntales)
 
 module.exports = router;
