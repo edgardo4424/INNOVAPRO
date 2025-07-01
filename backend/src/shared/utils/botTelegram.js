@@ -1,3 +1,4 @@
+
 /* 
 
 //https://t.me/innovaproBot?start=52
@@ -17,15 +18,12 @@ const bot = new TelegramBot(process.env.TELEGRAM_SECRET_KEY, { polling: true });
 
 bot.onText(/^\/start(?:\s+(\d+))?$/, async (msg, match) => {
    
-  const param = match[1]; // '45' ó undefined
-  const chatId = msg.chat.id;
-
-  console.log("chatId", chatId);
+  const param = match[1];//obtenemos el Id del usuario en el ERP
+  const chatId = msg.chat.id;//obtenmoes el id_chat del usuario en telegram
 
   const userId = param;
 
-  console.log("➡️  Llego /start con param:", userId);
-
+  // Si no existe el 
   if (!param) {
     return bot.sendMessage(
       chatId,
@@ -49,7 +47,7 @@ bot.onText(/^\/start(?:\s+(\d+))?$/, async (msg, match) => {
     const notificacionParaElCreador = {
       usuarioId: usuario.id,
       mensaje: mensaje,
-      succes: false,
+      succes: null,
     };
     enviarNotificacionDeAutenticacionTelegram(
       userId,
@@ -71,7 +69,7 @@ bot.onText(/^\/start(?:\s+(\d+))?$/, async (msg, match) => {
   const notificacionParaElCreador = {
     usuarioId: usuario.id,
     mensaje: mensaje,
-    succes: true,
+    succes: chatId,
   };
 
 

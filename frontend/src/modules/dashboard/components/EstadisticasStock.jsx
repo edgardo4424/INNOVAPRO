@@ -31,7 +31,6 @@ const EstadisticasStock = () => {
       fetchData();
    }, []);
 
-   console.log(data);
 
    const summaryStats = {
       totalItems: data.length,
