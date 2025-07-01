@@ -3,12 +3,15 @@ const {
   formatearFechaIsoADMY,
 } = require("../../infrastructure/helpers/formatearFecha");
 
-const { agruparPorZonaYAtributos } = require("../../infrastructure/services/mapearAtributosDelPdfService");
- 
-const { mapearAtributosValor } = require("../../infrastructure/services/mapearAtributosValorService");
+const {
+  agruparPorZonaYAtributos,
+} = require("../../infrastructure/services/mapearAtributosDelPdfService");
+
+const {
+  mapearAtributosValor,
+} = require("../../infrastructure/services/mapearAtributosValorService");
 
 module.exports = async (idCotizacion) => {
-
   // Buscar la cotizacion incluyendo: obra, cliente, contacto, despiece, filial, usuario, costos de cotizacion de transporte
   const cotizacionEncontrado = await db.cotizaciones.findByPk(idCotizacion, {
     include: [
@@ -72,7 +75,7 @@ module.exports = async (idCotizacion) => {
     return { codigo: 404, respuesta: { mensaje: "Despiece no encontrada" } };
 
   /* const uso_id = despieceEncontrado.atributos_valors?.[0].atributo.uso_id; */
-  const uso_id = cotizacionEncontrado.uso_id
+  const uso_id = cotizacionEncontrado.uso_id;
 
   const usoEncontrado = await db.usos.findByPk(uso_id);
 
@@ -188,7 +191,7 @@ module.exports = async (idCotizacion) => {
 
       // Obtener la lista de atributos
 
-       const atributosDelUso = await db.atributos_valor.findAll({
+      const atributosDelUso = await db.atributos_valor.findAll({
         where: {
           despiece_id: despieceEncontrado.id,
         },
@@ -196,24 +199,24 @@ module.exports = async (idCotizacion) => {
           {
             model: db.atributos,
             as: "atributo",
-          }
-        ]
+          },
+        ],
       });
 
       const resultado = mapearAtributosValor(atributosDelUso);
-  
+
       const listaAtributos = agruparPorZonaYAtributos(resultado);
 
-      const atributosDelPdf = listaAtributos.map((atributo) => (({
+      const atributosDelPdf = listaAtributos.map((atributo) => ({
         zona: atributo.zona,
-        atributos: atributo.atributos.map((at) => (({
+        atributos: atributo.atributos.map((at) => ({
           longitud_mm: at.longitud / 1000,
           ancho_mm: at.ancho / 1000,
           altura_m: at.altura,
-          cantidad_uso: at.cantidad_uso
-        }))),
-        nota_zona: atributo.atributos[0].nota_zona
-      })))
+          cantidad_uso: at.cantidad_uso,
+        })),
+        nota_zona: atributo.atributos[0].nota_zona,
+      }));
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
@@ -224,16 +227,12 @@ module.exports = async (idCotizacion) => {
             ? pernoExpansionConArgolla.descripcion
             : null,
           precio_perno_expansion: tiene_pernos
-            ? (
-                Number(pernoEnElDespiece?.precio_venta_soles)
-           
-              ).toFixed(2)
+            ? Number(pernoEnElDespiece?.precio_venta_soles).toFixed(2)
             : null,
           cantidad_pernos_expansion: tiene_pernos
             ? pernoEnElDespiece?.cantidad
             : null,
         },
-
       };
       break;
 
@@ -332,44 +331,115 @@ module.exports = async (idCotizacion) => {
     case "5":
       // PUNTALES
 
-      let piezaVentaPinPresion;
+      // Obtener la lista de atributos
 
-      let piezaVentaArgolla;
-
-      const tipoPuntal = despieceEncontrado?.atributos_valors?.[1]?.valor;
-
-      if (tipoPuntal == "5m") {
-        piezaVentaPinPresion = "PU.0800";
-        piezaVentaArgolla = "PU.1000";
-      } else {
-        piezaVentaPinPresion = "PU.0700";
-        piezaVentaArgolla = "PU.0900";
-      }
-
-      const piezaArgolla = await db.piezas.findOne({
+      const atributosDelUsoPuntales = await db.atributos_valor.findAll({
         where: {
-          item: piezaVentaArgolla,
+          despiece_id: despieceEncontrado.id,
         },
+        include: [
+          {
+            model: db.atributos,
+            as: "atributo",
+          },
+        ],
       });
 
-      const piezaPIN = await db.piezas.findOne({
-        where: {
-          item: piezaVentaPinPresion,
-        },
-      });
+      const resultadoPuntales = mapearAtributosValor(atributosDelUsoPuntales);
+
+      console.log("resultadoPuntales", resultadoPuntales);
+
+      const listaAtributosPuntales =
+        agruparPorZonaYAtributos(resultadoPuntales);
+
+      console.dir(listaAtributosPuntales, { depth: null, colors: true });
+
+      const atributosPuntalesDelPdf = listaAtributosPuntales.map(
+        (atributo) => ({
+          zona: atributo.zona,
+          atributos: atributo.atributos.map((at) => ({
+            cantidad: at.cantidad,
+            tipoPuntal: at.tipoPuntal,
+            tripode: at.tripode,
+            cantidad_uso: at.cantidad_uso,
+          })),
+          nota_zona: atributo.atributos[0].nota_zona,
+        })
+      );
+
+      // Averiguar que tipos de puntales se registraron en la cotizacion
+
+      const tiposPuntalUnicos = [
+        // Convertimos a un array los valores únicos usando Set
+        ...new Set(
+          // Recorremos cada zona con flatMap para aplanar los resultados
+          listaAtributosPuntales.flatMap((item) =>
+            // De cada zona, accedemos al array "atributos" y sacamos el campo tipoPuntal
+            item.atributos.map((attr) => attr.tipoPuntal)
+          )
+        ),
+      ];
+
+      const piezasVenta = await Promise.all(
+        tiposPuntalUnicos.map(async (tipo, i) => {
+          console.log(`👉 (${i}) tipo: ${tipo}`);
+
+          const itemPiezaPinPresion = tipo === "5.00 m" ? "PU.0800" : "PU.0700";
+          const itemArgolla = tipo === "5.00 m" ? "PU.1000" : "PU.0900";
+
+          const piezaPinPresion = await db.piezas.findOne({
+            where: { item: itemPiezaPinPresion },
+          });
+          const piezaArgolla = await db.piezas.findOne({
+            where: { item: itemArgolla },
+          });
+
+          if (!piezaPinPresion || !piezaArgolla) {
+            //console.warn(`⚠️ (${i}) No se encontraron piezas con item ${itemPiezaPinPresion} o ${itemArgolla}`);
+            return {
+              tipo,
+              piezaVentaPinPresion: null,
+              piezaVentaArgolla: null,
+            };
+          }
+
+          const pinPresion = await db.despieces_detalle.findOne({
+            where: {
+              despiece_id: Number(despieceEncontrado.id),
+              pieza_id: Number(piezaPinPresion.id),
+            },
+          });
+
+          const argolla = await db.despieces_detalle.findOne({
+            where: {
+              despiece_id: Number(despieceEncontrado.id),
+              pieza_id: Number(piezaArgolla.id),
+            },
+          });
+
+          //console.log(`✅ (${i}) IDs buscados: pin=${piezaPinPresion.id}, argolla=${piezaArgolla.id}`);
+          //console.log(`✅ (${i}) Encontrado: pin=${!!pinPresion}, argolla=${!!argolla}`);
+
+          const ventaPin = pinPresion
+            ? (pinPresion.precio_venta_soles / pinPresion.cantidad).toFixed(2)
+            : null;
+          const ventaArg = argolla
+            ? (argolla.precio_venta_soles / argolla.cantidad).toFixed(2)
+            : null;
+
+          return {
+            tipo,
+            piezaVentaPinPresion: ventaPin,
+            piezaVentaArgolla: ventaArg,
+          };
+        })
+      );
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
-        atributos: {
-          cantidad: despieceEncontrado?.atributos_valors?.[0]?.valor || "",
-          tipoPuntal: despieceEncontrado?.atributos_valors?.[1]?.valor || "",
-          tripode: despieceEncontrado?.atributos_valors?.[2]?.valor || "",
-
-          precio_argolla: piezaArgolla.precio_venta_soles,
-          precio_pasador: piezaPIN.precio_venta_soles,
-        },
+        zonas: atributosPuntalesDelPdf,
+        atributos_opcionales: piezasVenta,
       };
-
       break;
 
     case "6":

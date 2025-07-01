@@ -17,7 +17,7 @@ const db = require("./models"); // Importa Sequelize para la conexión
 const routes = require("./routes"); // Importa rutas
 
 // Iniciar el bot de telegram
-require('./shared/utils/botTelegram');      
+//require('./shared/utils/botTelegram');      
 
 const app = express();
 const server = http.createServer(app);

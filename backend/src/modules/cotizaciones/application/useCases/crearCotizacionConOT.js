@@ -181,15 +181,14 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
           break;
 
         case "5":
+          
           // Puntales
-          const subtipo = atributos_formulario[0].tipoPuntal
-            .split("-")[0]
-            .trim();
+          const { transporte_puntales } = cotizacion;
 
           datosParaCalcularCostoTransporte = {
             ...datosParaCalcularCostoTransporte,
-            tipo_puntal: subtipo,
-          };
+            transporte_puntales: transporte_puntales
+          }
           break;
 
         case "7":

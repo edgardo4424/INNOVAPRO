@@ -2,14 +2,13 @@ const { bot } = require("../../../../shared/utils/botTelegram");
 
 /* const TelegramBot = require("node-telegram-bot-api");
  */
-function enviarNotificacionTelegram(id_chat, mensaje) {
-    
-    /* const bot = new TelegramBot(
-         process.env.TELEGRAM_SECRET_KEY
-      ); */
-     
-      bot.sendMessage(id_chat, mensaje);
-   
+async function enviarNotificacionTelegram(id_chat, mensaje) {
+  try {
+    if (!id_chat) return;
+    return await bot.sendMessage(id_chat, mensaje);
+  } catch (error) {
+    console.error("Error al enviar mensaje por Telegram:", error.message);
+  }
 }
 
 module.exports = {

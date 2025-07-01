@@ -1,15 +1,15 @@
 // 1. PU.0100 - PUNTAL 3.00m - VERDE CLARO
 function calcularPU0100({ tipoPuntal, cantidad }) {
-  return tipoPuntal === "3.00 m" ? cantidad : 0;
+  return tipoPuntal == "3.00 m" ? cantidad : 0;
 }
 
 // 5. PU.0400 - PUNTAL 4.00m - VERDE
 function calcularPU0400({ tipoPuntal, cantidad }) {
-  return tipoPuntal === "4.00 m" ? cantidad : 0;
+  return tipoPuntal == "4.00 m" ? cantidad : 0;
 }
 // 7. PU.0600 - PUNTAL 5.00m
 function calcularPU0600({ tipoPuntal, cantidad }) {
-  return tipoPuntal === "5.00 m" ? cantidad : 0;
+  return tipoPuntal == "5.00 m" ? cantidad : 0;
 }
 
 // 8. PU.0700 - PIN PRESION - 11mm
