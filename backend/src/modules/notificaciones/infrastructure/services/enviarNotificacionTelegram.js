@@ -9,6 +9,7 @@ async function enviarNotificacionTelegram(id_chat, mensaje) {
   } catch (error) {
     console.error("Error al enviar mensaje por Telegram:", error.message);
   }
+}
 
 module.exports = {
    enviarNotificacionTelegram,
