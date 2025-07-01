@@ -33,7 +33,7 @@ export default function EmpresaForm({
             abortEarly: false,
          });
          setErrores({});
-         console.log("datos validados", datosValidados);
+         
          onSubmit(datosValidados)
          closeModal();
       } catch (err) {
@@ -41,7 +41,7 @@ export default function EmpresaForm({
          err.inner.forEach((e) => {
             nuevosErrores[e.path] = e.message;
          });
-         console.log("nuevos errores", nuevosErrores);
+         
 
          setErrores(nuevosErrores);
       }

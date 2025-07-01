@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useWizardContext } from "../../context/WizardCotizacionContext";
 import { useGenerarDespiece } from "../../hooks/paso-confirmacion/useGenerarDespiece";
 import { useCalculoTransporte } from "../../hooks/paso-confirmacion/useCalculoTransporte";
+import { USOS_INSTALABLES } from "../../constants/usos";
 import ResumenDespiece from "./paso-confirmacion/ResumenDespiece";
 import BloquePernos from "./paso-confirmacion/BloquePernos";
 import BloqueTransporte from "./paso-confirmacion/BloqueTransporte";
@@ -80,12 +81,11 @@ export default function PasoConfirmacion() {
         <DespieceAdicional formData={formData} setFormData={setFormData} />
       )}
 
-      {
-          console.log('formData.tiene_pernos_disponibles', formData.tiene_pernos_disponibles)
-      }
       <BloquePernos formData={formData} setFormData={setFormData} errores={errores} />
       <BloqueTransporte formData={formData} setFormData={setFormData} errores={errores} />
-      <BloqueInstalacion formData={formData} setFormData={setFormData} errores={errores} />
+      {USOS_INSTALABLES.includes(formData.uso_id) && (
+        <BloqueInstalacion formData={formData} setFormData={setFormData} errores={errores} />
+      )}
       <BloqueDescuento formData={formData} setFormData={setFormData} errores={errores} />
     </div>
   );

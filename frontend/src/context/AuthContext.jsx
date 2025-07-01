@@ -27,7 +27,6 @@ export function AuthProvider({ children }) {
         if (res.data.valid) {
           const storedUser = JSON.parse(localStorage.getItem("user"));
           setUser(storedUser);
-          console.log("✅ Sesión válida, usuario:", storedUser);
         } else {
           console.warn("⚠️ Sesión inválida. Cerrando sesión...");
           logout(); 

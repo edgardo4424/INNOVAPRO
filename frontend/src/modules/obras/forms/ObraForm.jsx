@@ -59,7 +59,7 @@ export default function ObraForm({
    const schema = obraSchema(esCrear);
 
    const handleSubmit = async (e) => {
-      console.log("enviando datos");
+      
 
       e.preventDefault();
       try {
@@ -70,13 +70,13 @@ export default function ObraForm({
          onSubmit(datosValidados);
          closeModal();
       } catch (error) {
-         console.log("error", error);
+         
 
          const nuevosErrores = {};
          error.inner.forEach((e) => {
             nuevosErrores[e.path] = e.message;
          });
-         console.log("nuevos errores", nuevosErrores);
+         
 
          setErrores(nuevosErrores);
       }

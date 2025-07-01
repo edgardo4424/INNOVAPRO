@@ -9,6 +9,7 @@ import { useRegistrarCotizacion } from "../hooks/useRegistrarCotizacion.js";
 import { useWizardContext } from "../context/WizardCotizacionContext";
 import "../styles/wizard.css";
 import "../styles/exito.css";
+import { toast } from "react-toastify";
 
 // Este componente es un wizard para registrar una cotización, dividido en varios pasos.
 // Cada paso es un componente separado que se renderiza según el estado actual del wizard.
@@ -29,7 +30,7 @@ const pasos = [
 ];
 
 export default function RegistrarCotizacionWizard() {
-  const { formData } = useWizardContext();
+  const { formData, validarPaso, setErrores } = useWizardContext();
 
   const {
     pasoActual,
@@ -54,7 +55,17 @@ export default function RegistrarCotizacionWizard() {
       pasoActual={pasoActual}
       onPasoClick={setPasoActual}
       onAtras={retrocederPaso}
-      onSiguiente={avanzarPaso}
+      onSiguiente={() => {
+        const erroresValidacion = validarPaso();
+        setErrores(erroresValidacion);
+
+        if (Object.keys(erroresValidacion).length > 0) {
+          toast.error("Completa los campos obligatorios antes de continuar.");
+          return;
+        }
+
+        avanzarPaso();
+      }}
       onGuardar={cotizacionConDespieceOT ? guardarCotizacionDesdeOT : guardarCotizacion}
       guardando={guardando}
       exito={exito}

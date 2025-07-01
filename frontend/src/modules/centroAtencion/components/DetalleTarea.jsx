@@ -368,7 +368,6 @@ export default function DetalleTarea({
                         Corregir Tarea
                      </Button>
                   )}
-                  {console.log("tarea data:", tarea)}
                
                {puedeGenerarDespiece && (
                   <Button 

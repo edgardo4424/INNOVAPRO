@@ -37,6 +37,14 @@ export const DetallesEspecificos = ({ detalles }) => {
 
   if (!detalles || Object.keys(detalles).length === 0) return null;
 
+  const USOS_NOMBRE = {
+    1: "ANDAMIO DE FACHADA",
+    2: "ANDAMIO DE TRABAJO",
+    3: "ESCALERA DE ACCESO",
+    4: "ESCUADRAS",
+    5: "PUNTALES"
+  }
+
   const orden = [
     "apoyoTecnico",
     "apoyoAdministrativo",
@@ -113,6 +121,9 @@ export const DetallesEspecificos = ({ detalles }) => {
     tipoPlataforma: "Tipo de Plataforma",
     diagonalLongitud: "Diagonal de Longitud",
     plataformaAcceso: "Plataforma de Acceso",
+    tripode: "¿Incluye trípode?",
+    cantidad: "Cantidad",
+    tipoPuntal: "Tipo de puntal"
   };
 
 
@@ -221,7 +232,11 @@ export const DetallesEspecificos = ({ detalles }) => {
                       ))
                     ) : (
                       <p className="text-gray-900 font-semibold">
-                        {Array.isArray(value) ? value.join(", ") : value}
+                        {key === "usoId"
+                          ? USOS_NOMBRE[value] || `Uso #${value}`
+                          : Array.isArray(value)
+                          ? value.join(", ")
+                          : value}
                       </p>
                     )}
                   </div>

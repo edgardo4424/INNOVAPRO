@@ -9,7 +9,6 @@ import { generarDespiece } from "../../services/cotizacionesService";
 // Detecta si una pieza es un perno según su descripción
 export const esPernoExpansion = (descripcion = "") => {
   const desc = descripcion.toUpperCase();
-  console.log('desc', desc);
   return (
     desc.includes("PERNO DE EXPANSIÓN") ||
     desc.includes("PERNOS DE EXPANSION") ||
@@ -35,9 +34,6 @@ export function useGenerarDespiece(formData, setFormData) {
   useEffect(() => {
     const cargarDespiece = async () => {
       const {uso_id, zonas, despiece, resumenDespiece } = formData;
-      console.log("📦 Despiece:", formData.despiece);
-console.log("📊 Resumen generado:", formData.resumenDespiece);
-
 
       // Si ya hay un despiece registrado (DESPIECE DE OFICINA TÉCNICA), que no haga nada
       // Si hay despiece pero no un resumen, solo calcula el resumen

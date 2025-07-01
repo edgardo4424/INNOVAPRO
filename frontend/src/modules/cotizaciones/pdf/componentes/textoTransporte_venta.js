@@ -19,7 +19,7 @@ export async function renderTextoTransporteVenta(doc, data, currentY) {
   doc.text(subtitulo, indent + box + 3, currentY + 0.5);
   const w = doc.getTextWidth(subtitulo);
   doc.line(indent + box + 3, currentY + 1.5, indent + box + 3 + w, currentY + 1.5);
-  console.log("Texto Transporte", data.tarifa_transporte);
+  
   const transporte = [
     `Transporte de ENTREGA: **S/${data.tarifa_transporte?.costo_total_transporte || "(INDEFINIDO COSTO DE TRANSPORTE)"} + IGV.**`,
   ];

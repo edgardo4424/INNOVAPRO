@@ -142,8 +142,6 @@ export default function useRegistrarTarea() {
         
       };
 
-      console.log("Payload enviado al backend:", payload)
-
       await tareasService.crearTarea(payload, user.token);
       toast.success("✅ Tarea registrada con éxito");
 

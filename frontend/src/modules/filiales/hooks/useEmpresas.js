@@ -28,10 +28,8 @@ export default function useEmpresas() {
 
    const agregarEmpresa = async (empresa) => {
       try {
-         console.log('empresa recibida',empresa);
-         const empresaNew ={...empresa,"creado_por": user?.id || null}
-         console.log('empresa despues de aumntar el id ',empresaNew);
          
+         const empresaNew ={...empresa,"creado_por": user?.id || null}
          
          const creada = await empresasService.crearEmpresa(empresaNew);
          setEmpresas((prev) => [...prev, creada]);

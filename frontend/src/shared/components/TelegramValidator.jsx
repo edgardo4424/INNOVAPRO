@@ -52,7 +52,7 @@ export default function TelegramValidator() {
    const [success, setSuccess] = useState("");
    const [chatId, setChatId] = useState(null);
    const [enviado, setEnviado] = useState(false);
-   const tipo = "developer";
+   const tipo = "produccion";
    const produccion = "innovaproBot";
    const developer = "innovaproDevBot";
    const telegramBotUrl = `https://t.me/${
@@ -107,7 +107,6 @@ export default function TelegramValidator() {
       if (!user) return;
       const canal = `notificacion_telegram_usuario_${user.id}`;
       socket.on(canal, (data) => {
-         console.log("data del socket", data.succes);
 
          if (!data.succes) return;
 

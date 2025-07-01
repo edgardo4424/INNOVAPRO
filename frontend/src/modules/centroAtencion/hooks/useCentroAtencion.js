@@ -8,8 +8,7 @@ export default function useCentroAtencion() {
   const [tareas, setTareas] = useState([]);
   const [tareaSeleccionada, setTareaSeleccionada] = useState(null);
   const [filtroEstado, setFiltroEstado] = useState("Todas");
-  const [paginaActual, setPaginaActual] = useState(1);
-  const [tareasPorPagina] = useState(20);
+  
   const [busqueda, setBusqueda] = useState("");
   const [orden, setOrden] = useState("asc");
   const [columnaOrdenada, setColumnaOrdenada] = useState(null);
@@ -46,7 +45,6 @@ export default function useCentroAtencion() {
 
   const cambiarFiltro = (estado) => {
     setFiltroEstado(estado);
-    setPaginaActual(1);
   };
 
   const filtrarTareas = (tarea) => {
@@ -61,17 +59,15 @@ export default function useCentroAtencion() {
     if (!tarea.fecha_creacion) return coincideTexto || coincideID;
     const f = (fecha) => fecha?.toISOString().split("T")[0];
     const fechaTarea = new Date(tarea.fecha_creacion).toISOString().split("T")[0];
-    const coincideFecha = (!fechaFiltroInicio || fechaTarea >= f(fechaFiltroInicio)) &&
-                          (!fechaFiltroFin || fechaTarea <= f(fechaFiltroFin));
+    const coincideFecha =
+      (!fechaFiltroInicio || fechaTarea >= f(fechaFiltroInicio)) &&
+      (!fechaFiltroFin || fechaTarea <= f(fechaFiltroFin));
     return (coincideTexto || coincideID) && coincideFecha;
   };
 
-  const indexUltima = paginaActual * tareasPorPagina;
-  const indexPrimera = indexUltima - tareasPorPagina;
   const tareasFiltradas = tareas
-  .filter(t => filtroEstado !== 'Todas' ? t.estado === filtroEstado : true)
-  .filter(t => busqueda ? filtrarTareas(t) : true);  const totalPaginas = Math.ceil(tareasFiltradas.length / tareasPorPagina);
-  const tareasPaginadas = tareasFiltradas.slice(indexPrimera, indexUltima);
+    .filter((t) => filtroEstado !== "Todas" ? t.estado === filtroEstado : true)
+    .filter((t) => busqueda ? filtrarTareas(t) : true)
 
   const handleSeleccionarTarea = (tarea) => setTareaSeleccionada(tarea);
   const handleCerrarDetalle = () => setTareaSeleccionada(null);
@@ -80,10 +76,7 @@ export default function useCentroAtencion() {
 
   return {
     tareas,
-    tareasFiltradas: tareasPaginadas,
-    paginaActual,
-    totalPaginas,
-    cambiarPagina: setPaginaActual,
+    tareasFiltradas,
     filtroEstado,
     cambiarFiltro,
     busqueda,
