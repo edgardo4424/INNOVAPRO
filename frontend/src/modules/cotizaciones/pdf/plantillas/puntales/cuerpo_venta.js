@@ -41,7 +41,7 @@ export async function generarCuerpoPuntalesVenta(doc, data, startY = 120) {
     currentY = drawJustifiedText(doc, `**${zonaTitulo}**`, indent + 3, currentY, 170, 5.5, 10);
 
     for (const equipo of zona.atributos || []) {
-      const descripcionEquipo = `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** Venta de ${equipo.cantidad_uso || "(INDEFINIDO NÚMERO DE PUNTALES) en Zona: " + zona.zona} ${equipo.cantidad_uso === 1 ? "Ud." : "Uds."} de ${data.uso?.nombre || "(NOMBRE DE EQUIPO INDEFINIDO)"} de ${equipo.tipoPuntal || "(LONGITUD INDEFINIDA)"}`;
+      const descripcionEquipo = `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** Venta de ${equipo.cantidad || "(INDEFINIDO NÚMERO DE PUNTALES) en Zona: " + zona.zona} ${equipo.cantidad === 1 ? "Ud." : "Uds."} de ${data.uso?.nombre || "(NOMBRE DE EQUIPO INDEFINIDO)"} de ${equipo.tipoPuntal || "(LONGITUD INDEFINIDA)"}`;
 
       const palabras = descripcionEquipo.split(/\s+/);
       const aproxLineas = Math.ceil(palabras.length / 11);
