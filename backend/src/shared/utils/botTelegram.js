@@ -1,3 +1,8 @@
+
+/* 
+
+//https://t.me/innovaproBot?start=52
+
 require("dotenv").config();
 
 const {
@@ -71,4 +76,4 @@ bot.onText(/^\/start(?:\s+(\d+))?$/, async (msg, match) => {
   enviarNotificacionDeAutenticacionTelegram(userId, notificacionParaElCreador);
 });
 
-module.exports = { bot };
+module.exports = { bot }; */

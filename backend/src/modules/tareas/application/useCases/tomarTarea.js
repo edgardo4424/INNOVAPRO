@@ -4,14 +4,14 @@ const notificacionRepository = new SequelizeNotificacionesRepository(); // Insta
 const {
   emitirNotificacionPrivada,
 } = require("../../../notificaciones/infrastructure/services/emisorNotificaciones");
-const { enviarNotificacionTelegram } = require("../../../notificaciones/infrastructure/services/enviarNotificacionTelegram");
-
+const {
+  enviarNotificacionTelegram,
+} = require("../../../notificaciones/infrastructure/services/enviarNotificacionTelegram");
 
 // ✅ Importamos el servicio de envío por WhatsApp
 const enviarMensajeWhatsAppTomaTarea = require("../../infrastructure/services/enviarMensajeServiceTomaTarea");
 
 module.exports = async (idTarea, idUsuario, tareaRepository) => {
-
   // id de la tarea e id del usuario del middleware (idUsuario)
 
   const tarea = await tareaRepository.obtenerPorId(idTarea);
@@ -50,7 +50,6 @@ module.exports = async (idTarea, idUsuario, tareaRepository) => {
 
   /*  console.log(`El técnico ${notiTecnico.usuario.nombre} ha tomado tu tarea #${tarea.id}.`); */
 
-
   // ✅ Enviar mensaje por WhatsApp al creador ANTES de notificarlo
 
   /* await enviarMensajeWhatsApp(
@@ -59,7 +58,6 @@ module.exports = async (idTarea, idUsuario, tareaRepository) => {
     tarea.id.toString()
   ); */
   //console.log("noti tecnico: ", notiTecnico.usuario);
-
 
   try {
     // ✅ Notificar al creador
@@ -72,19 +70,35 @@ module.exports = async (idTarea, idUsuario, tareaRepository) => {
       const notiCreador = await notificacionRepository.crear(
         notificacionParaElCreador
       );
-      emitirNotificacionPrivada(notificacionParaElCreador.usuarioId, notiCreador); 
+      emitirNotificacionPrivada(
+        notificacionParaElCreador.usuarioId,
+        notiCreador
+      );
 
-       // Notificar al comercial que solicitó la tarea (TELEGRAM)
+      // Notificar al comercial que solicitó la tarea (TELEGRAM)
       const usuario = await db.usuarios.findByPk(tarea.usuarioId);
 
-      if(usuario.id_chat){
-        enviarNotificacionTelegram(usuario.id_chat, notificacionParaElCreador.mensaje)
+      if (usuario.id_chat) {
+        try {
+          await enviarNotificacionTelegram(
+            usuario.id_chat,
+            notificacionParaElCreador.mensaje
+          );
+        } catch (error) {
+          console.error(
+            "❌ Error al intentar enviar notificación por Telegram:",
+            error.message
+          );
+          // Continúa normalmente
+        }
       }
     }
   } catch (error) {
-    console.error("❌ Error al enviar WhatsApp al creador:", error.response?.data || error.message);
+    console.error(
+      "❌ Error al enviar notificacion al creador:",
+      error.response?.data || error.message
+    );
   }
-
 
   return {
     codigo: 200,

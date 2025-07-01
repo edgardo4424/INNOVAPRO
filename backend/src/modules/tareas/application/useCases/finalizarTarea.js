@@ -60,7 +60,7 @@ module.exports = async (idTarea, idUsuario, tareaRepository) => {
 
     emitirNotificacionPrivada(notificacionParaElCreador.usuarioId, notiCreador);
   } catch (error) {
-    console.error("❌ Error al enviar WhatsApp al creador:", error.response?.data || error.message);
+    console.error("❌ Error al enviar notificación al creador:", error.response?.data || error.message);
   }
   const notificacionParaElCreador = {
     usuarioId: tarea.usuarioId, // id del creador de tarea

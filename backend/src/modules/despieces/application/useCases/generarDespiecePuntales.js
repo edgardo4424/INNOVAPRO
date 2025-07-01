@@ -4,6 +4,8 @@ const {
 
 module.exports = async (dataParaGenerarDespiece) => {
 
+  console.log('dataParaGenerarDespiece', dataParaGenerarDespiece);
+
   const dataGenerarDespiecePuntales = dataParaGenerarDespiece.map((data) => (({
     ...data,
     atributos_formulario: data.atributos_formulario.map((atributo) => ({
@@ -15,7 +17,6 @@ module.exports = async (dataParaGenerarDespiece) => {
   const despieceGenerado = await generarDespiecePuntales(
     dataGenerarDespiecePuntales
   );
-
 
   return {
     codigo: 200,

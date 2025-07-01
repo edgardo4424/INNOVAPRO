@@ -102,7 +102,7 @@ module.exports = async (
         cantidadTotal = peso_total_tn;
       }else{
         
-      const tiposPermitidos = ["3.00", "4.00"];
+      const tiposPermitidos = ["3.00 m", "4.00 m"];
 
       const esValido = transporte_puntales.every((tp) =>
         tiposPermitidos.includes(tp.tipo_puntal)
@@ -273,7 +273,7 @@ module.exports = async (
 
       tipo_transporte: tarifa_transporte_encontrado?.tipo_transporte || "",
       distrito_transporte: distrito_transporte,
-      tarifa_transporte_id: tarifa_transporte_encontrado?.id || "",
+      tarifa_transporte_id: tarifa_transporte_encontrado?.id || null,
       unidad: unidad || "",
       cantidad: cantidadTotal || 0,
     },

@@ -64,7 +64,7 @@ module.exports = async (idTarea, correcion, tareaRepository) => {
       notiRegistradoCreador
     );
   } catch (error) {
-    console.error("❌ Error al enviar WhatsApp al creador:", error.response?.data || error.message);
+    console.error("❌ Error al enviar notificación al creador:", error.response?.data || error.message);
   }
 
 
