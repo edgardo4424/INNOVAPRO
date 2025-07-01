@@ -12,7 +12,7 @@ export async function generarCuerpoAndamioTrabajo(doc, data, startY = 120) {
   const x = (210 - textWidth) / 2;
   doc.text(titulo.toUpperCase(), x, currentY);
   doc.setLineWidth(0.5);
-  doc.line(x, currentY + 1.2, x + textWidth +6, currentY + 1.2);
+  doc.line(x, currentY + 1.2, x + textWidth + 6, currentY + 1.2);
 
   currentY += 10;
 

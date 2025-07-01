@@ -19,7 +19,7 @@ export async function generarCuerpoAndamioTrabajoVenta(doc, data, startY = 120) 
   const indent = 20;
   const box = 2.5;
 
-  // Servicio de alquiler
+  // Título y subtitulo
   currentY = await verificarSaltoDePagina(doc, currentY, 6)
   doc.setDrawColor(0);
   doc.setLineWidth(0.3);
@@ -35,6 +35,7 @@ export async function generarCuerpoAndamioTrabajoVenta(doc, data, startY = 120) 
 
   currentY += 6;
 
+  // ⚙️ Detalles cotización
   for (const zona of data.zonas || []) {
     const zonaTitulo = `Zona ${zona.zona || "1"} - ${zona.nota_zona || "(DESCRIPCIÓN DE ZONA INDEFINIDA)"}`;
     currentY = drawJustifiedText(doc, `**${zonaTitulo}**`, indent + 3, currentY, 170, 5.5, 10);
