@@ -238,7 +238,43 @@ module.exports = async (idCotizacion) => {
 
     case "3":
       // ESCALERA DE ACCESO
-      const tipoAnclaje = despieceEncontrado.atributos_valors?.[4]?.valor;
+
+      // Obtener la lista de atributos
+
+      const atributosDelUsoEscaleraAcceso = await db.atributos_valor.findAll({
+        where: {
+          despiece_id: despieceEncontrado.id,
+        },
+        include: [
+          {
+            model: db.atributos,
+            as: "atributo",
+          },
+        ],
+      });
+
+      const resultadoEscaleraAcceso = mapearAtributosValor(atributosDelUsoEscaleraAcceso);
+
+      const listaAtributosEscaleraAcceso = agruparPorZonaYAtributos(resultadoEscaleraAcceso);
+
+      console.dir(listaAtributosPuntales, { depth: null, colors: true });
+
+      const atributosEscaleraAccesoDelPdf = listaAtributosPuntales.map(
+        (atributo) => ({
+          zona: atributo.zona,
+          atributos: atributo.atributos.map((at) => ({
+            cantidad: at.cantidad,
+            tipoPuntal: at.tipoPuntal,
+            tripode: at.tripode,
+            cantidad_uso: at.cantidad_uso,
+          })),
+          nota_zona: atributo.atributos[0].nota_zona,
+        })
+      );
+
+      console.log('atributosEscaleraAccesoDelPdf',atributosEscaleraAccesoDelPdf)
+
+      /* const tipoAnclaje = despieceEncontrado.atributos_valors?.[4]?.valor;
       let itemPiezaVenta;
 
       if (tipoAnclaje == "FERMIN") {
@@ -304,12 +340,12 @@ module.exports = async (idCotizacion) => {
             altura_m: atributo.alturaTotal,
           };
         }
-      );
+      ); */
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
         atributos: listaAtributosEscaleraAcceso,
-        atributos_opcionales: {
+       /*  atributos_opcionales: {
           nombre_pernos_expansion: tiene_pernos
             ? pernoExpansionArgolla.descripcion
             : null,
@@ -319,7 +355,7 @@ module.exports = async (idCotizacion) => {
           cantidad_pernos_expansion: tiene_pernos
             ? pernoDespiece.cantidad
             : null,
-        },
+        }, */
       };
 
       break;

@@ -4,27 +4,29 @@ const {
 
 module.exports = async (dataParaGenerarDespiece) => {
 
-  const atributos = dataParaGenerarDespiece.atributos_formulario;
+  const zonas = dataParaGenerarDespiece.zonas;
   const precio_tramo = dataParaGenerarDespiece.precio_tramo
 
-  const atributosFormularioFormateado = atributos.map((atributo) => ({
+  const dataGenerarDespieceEscaleraAcceso = zonas.map((data) => (({
+    ...data,
+    atributos_formulario: data.atributos_formulario.map((atributo) => ({
     ...atributo,
     alturaTotal: Number(atributo.alturaTotal),
     alturaEscaleraObra: Number(atributo.alturaEscaleraObra),
-  }));
+  }))
+  })))
 
   const despieceGenerado = await generarDespieceEscalera(
-    atributosFormularioFormateado,
+    dataGenerarDespieceEscaleraAcceso,
     precio_tramo
   );
 
-  console.log('despieceGenerado', despieceGenerado);
 
   return {
     codigo: 200,
     respuesta: {
-      mensaje: "Despiece del Uso ESCALERAS generado exitosamente",
+      mensaje: "Despiece del Uso ESCALERA DE ACCESO generado exitosamente",
       despieceGenerado: despieceGenerado,
     },
-  }; // Retornamos el despiece creado
+  }; // Retornamos el despiece creado */
 }; // Exporta la función para que pueda ser utilizada en otros módulos
