@@ -1,6 +1,6 @@
 function calcularHusilloNivelacion({ tipoServicio, longitud, ancho }) {
-   if (tipoServicio === "VOLADO") return 0;
-   if (longitud > 0 && ancho === 0) return 4;
+   if (tipoServicio == "VOLADO") return 0;
+   if (longitud > 0 && ancho == 0) return 4;
    if (longitud > 0 && ancho > 0) return 2;
    return 0;
 }
@@ -11,7 +11,7 @@ function calcularPiezaInicio(valorHusilloNivelacion, valorPerfilMetalico) {
 
 function calcularPerfilMetalicoUPN({ tipoServicio, longitud, ancho }) {
    if (tipoServicio !== "VOLADO") return 0;
-   if (longitud > 0 && ancho === 0) return 2;
+   if (longitud > 0 && ancho == 0) return 2;
    if (longitud > 0 && ancho > 0) return 1;
    return 0;
 }
@@ -20,13 +20,13 @@ function calcularMarcoCombi200(
    { ancho, tipoVertical, altura, valor1 },
    valorPiezaInicio
 ) {
-   const anchoInvalido = ancho === 1020 || ancho === 1090;
+   const anchoInvalido = ancho == 1020 || ancho == 1090;
 
-   if (anchoInvalido && tipoVertical === "COMBI") return "ERROR";
+   if (anchoInvalido && tipoVertical == "COMBI") return "ERROR";
 
    if (tipoVertical !== "COMBI") return 0;
 
-   if (altura % 2 === 0) {
+   if (altura % 2 == 0) {
       return valor1 * altura * 0.25;
    } else {
       return valor1 * (altura - 1) * 0.25;
@@ -36,8 +36,8 @@ function calcularMarcoCombi200(
 function calcularVertical200({ tipoVertical, longitud, ancho, altura }) {
    if (tipoVertical !== "MULTI") return 0;
 
-   if (longitud > 0 && ancho === 0) {
-      return altura % 2 === 0 ? altura * 2 : (altura + 1) * 2;
+   if (longitud > 0 && ancho == 0) {
+      return altura % 2 == 0 ? altura * 2 : (altura + 1) * 2;
    }
 
    if (longitud > 0 && ancho > 0) {
@@ -52,19 +52,19 @@ function calcularVertical150() {
 }
 
 function calcularVertical100({ altura, longitud, ancho, tipoVertical }) {
-   if (altura === undefined || altura === null) return 0;
+   if (altura == undefined || altura == null) return 0;
 
-   if (longitud > 0 && ancho === 0) {
-      return altura % 2 === 0
+   if (longitud > 0 && ancho == 0) {
+      return altura % 2 == 0
          ? 4
-         : tipoVertical === "COMBI" && altura % 2 === 1
+         : tipoVertical == "COMBI" && altura % 2 == 1
          ? 8
          : 0;
    }
 
    if (longitud > 0 && ancho > 0) {
-      if (tipoVertical === "MULTI") return 1;
-      return altura % 2 === 1 ? 3 : 1;
+      if (tipoVertical == "MULTI") return 1;
+      return altura % 2 == 1 ? 3 : 1;
    }
 
    return 0;
@@ -107,36 +107,36 @@ function calcularHorizontalMulti3072({
 }) {
    const valor1 = 3072;
    const invalidos = [2572, 1572, 1090, 1020, 732];
-   const esPar = altura % 2 === 0;
+   const esPar = altura % 2 == 0;
 
-   if (invalidos.includes(longitud) && barandillaSI === "SI") {
+   if (invalidos.includes(longitud) && barandillaSI == "SI") {
       return "ERROR";
    }
 
-   if (longitud === valor1) {
-      if (ubicacion === "LIMA") {
-         if (tipoServicio === "NORMAL") {
-            if (barandillaSI === "SI") {
+   if (longitud == valor1) {
+      if (ubicacion == "LIMA") {
+         if (tipoServicio == "NORMAL") {
+            if (barandillaSI == "SI") {
                return esPar ? altura + 2 : altura + 3;
             } else {
                return esPar ? 1.5 * altura + 3 : 1.5 * altura + 3.5;
             }
          } else {
-            if (barandillaSI === "SI") {
+            if (barandillaSI == "SI") {
                return esPar ? altura + 2 : "NE/NA1";
             } else {
                return esPar ? 1.5 * altura + 4 : "NE/NA2";
             }
          }
       } else {
-         if (tipoServicio === "NORMAL") {
-            if (barandillaSI === "SI") {
+         if (tipoServicio == "NORMAL") {
+            if (barandillaSI == "SI") {
                return esPar ? altura + 2 : altura + 3;
             } else {
                return 2 * altura + 2;
             }
          } else {
-            if (barandillaSI === "SI") {
+            if (barandillaSI == "SI") {
                return esPar ? altura + 2 : "NE/NA3";
             } else {
                return esPar ? 2 * altura + 4 : "NE/NA4";
@@ -157,34 +157,34 @@ function calcularHorizontalMulti2572({
 }) {
    const valor1 = 2572;
    const conflictivos = [2572, 1572, 1090, 1020, 732];
-   const esPar = altura % 2 === 0;
+   const esPar = altura % 2 == 0;
 
-   if (conflictivos.includes(longitud) && barandillaSI === "SI") return "ERROR";
+   if (conflictivos.includes(longitud) && barandillaSI == "SI") return "ERROR";
 
-   if (longitud === valor1) {
-      if (ubicacion === "LIMA") {
-         if (tipoServicio === "NORMAL") {
-            if (barandillaSI === "SI") {
+   if (longitud == valor1) {
+      if (ubicacion == "LIMA") {
+         if (tipoServicio == "NORMAL") {
+            if (barandillaSI == "SI") {
                return esPar ? altura + 2 : altura + 3;
             } else {
                return esPar ? 1.5 * altura + 3 : 1.5 * altura + 3.5;
             }
          } else {
-            if (barandillaSI === "SI") {
+            if (barandillaSI == "SI") {
                return esPar ? altura + 2 : "NE/NA1";
             } else {
                return esPar ? 1.5 * altura + 4 : "NE/NA2";
             }
          }
       } else {
-         if (tipoServicio === "NORMAL") {
-            if (barandillaSI === "SI") {
+         if (tipoServicio == "NORMAL") {
+            if (barandillaSI == "SI") {
                return esPar ? altura + 2 : altura + 3;
             } else {
                return 2 * altura + 2;
             }
          } else {
-            if (barandillaSI === "SI") {
+            if (barandillaSI == "SI") {
                return esPar ? altura + 2 : "NE/NA3";
             } else {
                return esPar ? 2 * altura + 4 : "NE/NA4";
@@ -205,34 +205,34 @@ function calcularHorizontalMulti2072({
 }) {
    const valor1 = 2072;
    const conflictivos = [2572, 1572, 1090, 1020, 732];
-   const esPar = altura % 2 === 0;
+   const esPar = altura % 2 == 0;
 
-   if (conflictivos.includes(longitud) && barandillaSI === "SI") return "ERROR";
+   if (conflictivos.includes(longitud) && barandillaSI == "SI") return "ERROR";
 
-   if (longitud === valor1) {
-      if (ubicacion === "LIMA") {
-         if (tipoServicio === "NORMAL") {
-            if (barandillaSI === "SI") {
+   if (longitud == valor1) {
+      if (ubicacion == "LIMA") {
+         if (tipoServicio == "NORMAL") {
+            if (barandillaSI == "SI") {
                return esPar ? altura + 2 : altura + 3;
             } else {
                return esPar ? 1.5 * altura + 3 : 1.5 * altura + 3.5;
             }
          } else {
-            if (barandillaSI === "SI") {
+            if (barandillaSI == "SI") {
                return esPar ? altura + 2 : "NE/NA1";
             } else {
                return esPar ? 1.5 * altura + 4 : "NE/NA2";
             }
          }
       } else {
-         if (tipoServicio === "NORMAL") {
-            if (barandillaSI === "SI") {
+         if (tipoServicio == "NORMAL") {
+            if (barandillaSI == "SI") {
                return esPar ? altura + 2 : altura + 3;
             } else {
                return 2 * altura + 2;
             }
          } else {
-            if (barandillaSI === "SI") {
+            if (barandillaSI == "SI") {
                return esPar ? altura + 2 : "NE/NA3";
             } else {
                return esPar ? 2 * altura + 4 : "NE/NA4";
@@ -253,34 +253,34 @@ function calcularHorizontalMulti1572({
 }) {
    const valor1 = 1572;
    const conflictivos = [2572, 1572, 1090, 1020, 732];
-   const esPar = altura % 2 === 0;
+   const esPar = altura % 2 == 0;
 
-   if (conflictivos.includes(longitud) && barandillaSI === "SI") return "ERROR";
+   if (conflictivos.includes(longitud) && barandillaSI == "SI") return "ERROR";
 
-   if (longitud === valor1) {
-      if (ubicacion === "LIMA") {
-         if (tipoServicio === "NORMAL") {
-            if (barandillaSI === "SI") {
+   if (longitud == valor1) {
+      if (ubicacion == "LIMA") {
+         if (tipoServicio == "NORMAL") {
+            if (barandillaSI == "SI") {
                return esPar ? altura + 2 : altura + 3;
             } else {
                return esPar ? 1.5 * altura + 3 : 1.5 * altura + 3.5;
             }
          } else {
-            if (barandillaSI === "SI") {
+            if (barandillaSI == "SI") {
                return esPar ? altura + 2 : "NE/NA1";
             } else {
                return esPar ? 1.5 * altura + 4 : "NE/NA2";
             }
          }
       } else {
-         if (tipoServicio === "NORMAL") {
-            if (barandillaSI === "SI") {
+         if (tipoServicio == "NORMAL") {
+            if (barandillaSI == "SI") {
                return esPar ? altura + 2 : altura + 3;
             } else {
                return 2 * altura + 2;
             }
          } else {
-            if (barandillaSI === "SI") {
+            if (barandillaSI == "SI") {
                return esPar ? altura + 2 : "NE/NA3";
             } else {
                return esPar ? 2 * altura + 4 : "NE/NA4";
@@ -303,17 +303,17 @@ function calcularHorizontalMulti1090({
 }) {
    const valor1 = 1090;
    const conflictivos = [2572, 1572, 1090, 1020, 732];
-   const esPar = altura % 2 === 0;
+   const esPar = altura % 2 == 0;
 
-   if (conflictivos.includes(longitud) && barandillaSI === "SI") return "ERROR";
+   if (conflictivos.includes(longitud) && barandillaSI == "SI") return "ERROR";
 
    let resultado = 0;
 
-   if (longitud === valor1) {
-      if (ubicacion === "LIMA") {
-         if (tipoServicio === "NORMAL") {
+   if (longitud == valor1) {
+      if (ubicacion == "LIMA") {
+         if (tipoServicio == "NORMAL") {
             resultado =
-               barandillaSI === "SI"
+               barandillaSI == "SI"
                   ? esPar
                      ? altura + 2
                      : altura + 3
@@ -322,7 +322,7 @@ function calcularHorizontalMulti1090({
                   : 1.5 * altura + 3.5;
          } else {
             resultado =
-               barandillaSI === "SI"
+               barandillaSI == "SI"
                   ? esPar
                      ? altura + 2
                      : "NE/NA1"
@@ -331,16 +331,16 @@ function calcularHorizontalMulti1090({
                   : "NE/NA2";
          }
       } else {
-         if (tipoServicio === "NORMAL") {
+         if (tipoServicio == "NORMAL") {
             resultado =
-               barandillaSI === "SI"
+               barandillaSI == "SI"
                   ? esPar
                      ? altura + 2
                      : altura + 3
                   : 2 * altura + 2;
          } else {
             resultado =
-               barandillaSI === "SI"
+               barandillaSI == "SI"
                   ? esPar
                      ? altura + 2
                      : "NE/NA3"
@@ -354,15 +354,15 @@ function calcularHorizontalMulti1090({
    // Validación adicional
    const errorCondicion =
       [1090, 1020].includes(ancho) &&
-      (tipoServicio === "VOLADO" || tipoVertical === "COMBI");
+      (tipoServicio == "VOLADO" || tipoVertical == "COMBI");
 
    if (errorCondicion) return "ERROR";
 
-   if (valor1 === ancho) {
+   if (valor1 == ancho) {
       const largoYAncho = longitud > 0 && ancho > 0;
 
-      if (tipoVertical === "MULTI") {
-         if (tipoServicio === "NORMAL") {
+      if (tipoVertical == "MULTI") {
+         if (tipoServicio == "NORMAL") {
             return largoYAncho
                ? esPar
                   ? 0.5 * altura + 1
@@ -380,7 +380,7 @@ function calcularHorizontalMulti1090({
                : "NE/NA";
          }
       } else {
-         if (tipoServicio === "NORMAL") {
+         if (tipoServicio == "NORMAL") {
             return largoYAncho
                ? esPar
                   ? 1
@@ -414,17 +414,17 @@ function calcularHorizontalMulti1020({
 }) {
    const valor1 = 1020;
    const conflictivos = [2572, 1572, 1090, 1020, 732];
-   const esPar = altura % 2 === 0;
+   const esPar = altura % 2 == 0;
 
-   if (conflictivos.includes(longitud) && barandillaSI === "SI") return "ERROR";
+   if (conflictivos.includes(longitud) && barandillaSI == "SI") return "ERROR";
 
    let resultado = 0;
 
-   if (longitud === valor1) {
-      if (ubicacion === "LIMA") {
-         if (tipoServicio === "NORMAL") {
+   if (longitud == valor1) {
+      if (ubicacion == "LIMA") {
+         if (tipoServicio == "NORMAL") {
             resultado =
-               barandillaSI === "SI"
+               barandillaSI == "SI"
                   ? esPar
                      ? altura + 2
                      : altura + 3
@@ -433,7 +433,7 @@ function calcularHorizontalMulti1020({
                   : 1.5 * altura + 3.5;
          } else {
             resultado =
-               barandillaSI === "SI"
+               barandillaSI == "SI"
                   ? esPar
                      ? altura + 2
                      : "NE/NA1"
@@ -442,16 +442,16 @@ function calcularHorizontalMulti1020({
                   : "NE/NA2";
          }
       } else {
-         if (tipoServicio === "NORMAL") {
+         if (tipoServicio == "NORMAL") {
             resultado =
-               barandillaSI === "SI"
+               barandillaSI == "SI"
                   ? esPar
                      ? altura + 2
                      : altura + 3
                   : 2 * altura + 2;
          } else {
             resultado =
-               barandillaSI === "SI"
+               barandillaSI == "SI"
                   ? esPar
                      ? altura + 2
                      : "NE/NA3"
@@ -464,15 +464,15 @@ function calcularHorizontalMulti1020({
 
    const errorCondicion =
       [1090, 1020].includes(ancho) &&
-      (tipoServicio === "VOLADO" || tipoVertical === "COMBI");
+      (tipoServicio == "VOLADO" || tipoVertical == "COMBI");
 
    if (errorCondicion) return "ERROR";
 
-   if (valor1 === ancho) {
+   if (valor1 == ancho) {
       const largoYAncho = longitud > 0 && ancho > 0;
 
-      if (tipoVertical === "MULTI") {
-         if (tipoServicio === "NORMAL") {
+      if (tipoVertical == "MULTI") {
+         if (tipoServicio == "NORMAL") {
             return largoYAncho
                ? esPar
                   ? 0.5 * altura + 1
@@ -490,7 +490,7 @@ function calcularHorizontalMulti1020({
                : "NE/NA";
          }
       } else {
-         if (tipoServicio === "NORMAL") {
+         if (tipoServicio == "NORMAL") {
             return largoYAncho
                ? esPar
                   ? 1
@@ -527,17 +527,17 @@ function calcularHorizontalMulti0732(
 ) {
    const valor1 = 732;
    const conflictivos = [2572, 1572, 1090, 1020, 732];
-   const esPar = altura % 2 === 0;
+   const esPar = altura % 2 == 0;
 
-   if (conflictivos.includes(longitud) && barandillaSI === "SI") return "ERROR";
+   if (conflictivos.includes(longitud) && barandillaSI == "SI") return "ERROR";
 
    let resultado = 0;
 
-   if (longitud === valor1) {
-      if (ubicacion === "LIMA") {
-         if (tipoServicio === "NORMAL") {
+   if (longitud == valor1) {
+      if (ubicacion == "LIMA") {
+         if (tipoServicio == "NORMAL") {
             resultado =
-               barandillaSI === "SI"
+               barandillaSI == "SI"
                   ? esPar
                      ? altura + 2
                      : altura + 3
@@ -546,7 +546,7 @@ function calcularHorizontalMulti0732(
                   : 1.5 * altura + 3.5;
          } else {
             resultado =
-               barandillaSI === "SI"
+               barandillaSI == "SI"
                   ? esPar
                      ? altura + 2
                      : "NE/NA1"
@@ -555,16 +555,16 @@ function calcularHorizontalMulti0732(
                   : "NE/NA2";
          }
       } else {
-         if (tipoServicio === "NORMAL") {
+         if (tipoServicio == "NORMAL") {
             resultado =
-               barandillaSI === "SI"
+               barandillaSI == "SI"
                   ? esPar
                      ? altura + 2
                      : altura + 3
                   : 2 * altura + 2;
          } else {
             resultado =
-               barandillaSI === "SI"
+               barandillaSI == "SI"
                   ? esPar
                      ? altura + 2
                      : "NE/NA3"
@@ -576,16 +576,16 @@ function calcularHorizontalMulti0732(
    }
 
    const errorCondicion =
-      ([1090, 1020].includes(ancho) && tipoServicio === "VOLADO") ||
-      ([1090, 1020].includes(ancho) && tipoVertical === "COMBI");
+      ([1090, 1020].includes(ancho) && tipoServicio == "VOLADO") ||
+      ([1090, 1020].includes(ancho) && tipoVertical == "COMBI");
 
    if (errorCondicion) return "ERROR";
 
-   if (valor1 === ancho) {
+   if (valor1 == ancho) {
       const largoYAncho = longitud > 0 && ancho > 0;
 
-      if (tipoVertical === "MULTI") {
-         if (tipoServicio === "NORMAL") {
+      if (tipoVertical == "MULTI") {
+         if (tipoServicio == "NORMAL") {
             resultado += largoYAncho
                ? esPar
                   ? 0.5 * altura + 1
@@ -603,7 +603,7 @@ function calcularHorizontalMulti0732(
                : "NE/NA";
          }
       } else {
-         if (tipoServicio === "NORMAL") {
+         if (tipoServicio == "NORMAL") {
             resultado += largoYAncho
                ? esPar
                   ? 1
@@ -623,7 +623,7 @@ function calcularHorizontalMulti0732(
       }
    }
 
-   if (typeof resultado === "number") {
+   if (typeof resultado == "number") {
       return resultado - 2 * valor2;
    }
 
@@ -646,12 +646,12 @@ function calcularBarandillasCombi3072({
 }) {
    const valor1 = 3072;
    const conflictivos = [2572, 1572, 1500, 1090, 1020];
-   const esPar = altura % 2 === 0;
+   const esPar = altura % 2 == 0;
 
-   if (barandillaSI === "SI" && conflictivos.includes(longitud)) return "ERROR";
+   if (barandillaSI == "SI" && conflictivos.includes(longitud)) return "ERROR";
 
-   if (longitud === valor1 && barandillaSI === "SI") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && barandillaSI == "SI") {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura - 0.5;
       } else {
          return esPar ? 0.5 * altura + 1 : "NA/NE";
@@ -669,12 +669,12 @@ function calcularBarandillasCombi2072({
 }) {
    const valor1 = 2072;
    const conflictivos = [2572, 1572, 1500, 1090, 1020];
-   const esPar = altura % 2 === 0;
+   const esPar = altura % 2 == 0;
 
-   if (barandillaSI === "SI" && conflictivos.includes(longitud)) return "ERROR";
+   if (barandillaSI == "SI" && conflictivos.includes(longitud)) return "ERROR";
 
-   if (longitud === valor1 && barandillaSI === "SI") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && barandillaSI == "SI") {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura - 0.5;
       } else {
          return esPar ? 0.5 * altura + 1 : "NA/NE";
@@ -691,16 +691,16 @@ function calcularBarandillasCombi0732({
    longitud,
    altura,
 }) {
-   const esPar = altura % 2 === 0;
+   const esPar = altura % 2 == 0;
 
-   if (barandilla732SI === "SI" && (ancho === 1090 || ancho === 1020)) {
+   if (barandilla732SI == "SI" && (ancho == 1090 || ancho == 1020)) {
       return "ERROR";
    }
 
-   if (ancho === 732 && barandilla732SI === "SI") {
+   if (ancho == 732 && barandilla732SI == "SI") {
       const largoYAncho = longitud > 0 && ancho > 0;
 
-      if (tipoServicio === "NORMAL") {
+      if (tipoServicio == "NORMAL") {
          if (!largoYAncho) {
             return esPar ? altura : altura - 1;
          }
@@ -729,17 +729,17 @@ function calcularMensula300() {
 // aqui 5:13 pm
 function calcularRodapie3072E({ longitud, tipoRodapie, tipoServicio, altura }) {
    const valor1 = 3072;
-   const esPar = altura % 2 === 0;
+   const esPar = altura % 2 == 0;
 
    const esError =
-      (longitud === 1090 && tipoRodapie === "ESP") ||
-      (longitud === 1020 && tipoRodapie === "CHI") ||
-      (longitud === 1020 && tipoRodapie === "NEO");
+      (longitud == 1090 && tipoRodapie == "ESP") ||
+      (longitud == 1020 && tipoRodapie == "CHI") ||
+      (longitud == 1020 && tipoRodapie == "NEO");
 
    if (esError) return "ERROR";
 
-   if (longitud === valor1 && tipoRodapie === "ESP") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && tipoRodapie == "ESP") {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          return esPar ? 0.5 * altura + 1 : "NA/NE";
@@ -749,24 +749,18 @@ function calcularRodapie3072E({ longitud, tipoRodapie, tipoServicio, altura }) {
    return 0;
 }
 
-function calcularRodapie2572E({
-   longitud,
-   tipoRodapie,
-   tipoServicio,
-   altura,
-   valor1, // B46
-}) {
-   const esPar = altura % 2 === 0;
-
+function calcularRodapie2572E({ longitud, tipoRodapie, tipoServicio, altura }) {
+   const esPar = altura % 2 == 0;
+   const valor1 = 2572;
    const esError =
-      (longitud === 1090 && tipoRodapie === "ESP") ||
-      (longitud === 1020 && tipoRodapie === "CHI") ||
-      (longitud === 1020 && tipoRodapie === "NEO");
+      (longitud == 1090 && tipoRodapie == "ESP") ||
+      (longitud == 1020 && tipoRodapie == "CHI") ||
+      (longitud == 1020 && tipoRodapie == "NEO");
 
    if (esError) return "ERROR";
 
-   if (longitud === valor1 && tipoRodapie === "ESP") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && tipoRodapie == "ESP") {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          return esPar ? 0.5 * altura + 1 : "NA/NE";
@@ -776,24 +770,18 @@ function calcularRodapie2572E({
    return 0;
 }
 
-function calcularRodapie2072E({
-   longitud,
-   tipoRodapie,
-   tipoServicio,
-   altura,
-   valor1, // B47
-}) {
-   const esPar = altura % 2 === 0;
-
+function calcularRodapie2072E({ longitud, tipoRodapie, tipoServicio, altura }) {
+   const esPar = altura % 2 == 0;
+   const valor1 = 2072;
    const esError =
-      (longitud === 1090 && tipoRodapie === "ESP") ||
-      (longitud === 1020 && tipoRodapie === "CHI") ||
-      (longitud === 1020 && tipoRodapie === "NEO");
+      (longitud == 1090 && tipoRodapie == "ESP") ||
+      (longitud == 1020 && tipoRodapie == "CHI") ||
+      (longitud == 1020 && tipoRodapie == "NEO");
 
    if (esError) return "ERROR";
 
-   if (longitud === valor1 && tipoRodapie === "ESP") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && tipoRodapie == "ESP") {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          return esPar ? 0.5 * altura + 1 : "NA/NE";
@@ -809,36 +797,36 @@ function calcularRodapie1020E({
    tipoRodapie,
    tipoServicio,
    altura,
-   valor1, // B48
 }) {
-   const esPar = altura % 2 === 0;
+   const valor1 = 1020;
+   const esPar = altura % 2 == 0;
 
    const error1 =
-      (longitud === 1090 && tipoRodapie === "ESP") ||
-      (longitud === 1020 && tipoRodapie === "CHI") ||
-      (longitud === 1020 && tipoRodapie === "NEO");
+      (longitud == 1090 && tipoRodapie == "ESP") ||
+      (longitud == 1020 && tipoRodapie == "CHI") ||
+      (longitud == 1020 && tipoRodapie == "NEO");
 
    const error2 =
-      (ancho === 1090 && tipoRodapie === "ESP") ||
-      (ancho === 1020 && tipoRodapie === "CHI") ||
-      (ancho === 1020 && tipoRodapie === "NEO");
+      (ancho == 1090 && tipoRodapie == "ESP") ||
+      (ancho == 1020 && tipoRodapie == "CHI") ||
+      (ancho == 1020 && tipoRodapie == "NEO");
 
    if (error1 || error2) return "ERROR";
 
    let resultado = 0;
 
-   if (longitud === valor1 && tipoRodapie === "ESP") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && tipoRodapie == "ESP") {
+      if (tipoServicio == "NORMAL") {
          resultado = esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          resultado = esPar ? 0.5 * altura + 1 : "NA/NE";
       }
    }
 
-   if (ancho === valor1 && tipoRodapie === "ESP") {
+   if (ancho == valor1 && tipoRodapie == "ESP") {
       const largoYAncho = longitud > 0 && ancho > 0;
 
-      if (tipoServicio === "NORMAL") {
+      if (tipoServicio == "NORMAL") {
          if (!largoYAncho) {
             resultado += esPar ? altura : altura - 1;
          }
@@ -858,36 +846,36 @@ function calcularRodapie0732E({
    tipoRodapie,
    tipoServicio,
    altura,
-   valor1, // B49
 }) {
-   const esPar = altura % 2 === 0;
+   const valor1 = 732;
+   const esPar = altura % 2 == 0;
 
    const error1 =
-      (longitud === 1090 && tipoRodapie === "ESP") ||
-      (longitud === 1020 && tipoRodapie === "CHI") ||
-      (longitud === 1020 && tipoRodapie === "NEO");
+      (longitud == 1090 && tipoRodapie == "ESP") ||
+      (longitud == 1020 && tipoRodapie == "CHI") ||
+      (longitud == 1020 && tipoRodapie == "NEO");
 
    const error2 =
-      (ancho === 1090 && tipoRodapie === "ESP") ||
-      (ancho === 1020 && tipoRodapie === "CHI") ||
-      (ancho === 1020 && tipoRodapie === "NEO");
+      (ancho == 1090 && tipoRodapie == "ESP") ||
+      (ancho == 1020 && tipoRodapie == "CHI") ||
+      (ancho == 1020 && tipoRodapie == "NEO");
 
    if (error1 || error2) return "ERROR";
 
    let resultado = 0;
 
-   if (longitud === valor1 && tipoRodapie === "ESP") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && tipoRodapie == "ESP") {
+      if (tipoServicio == "NORMAL") {
          resultado = esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          resultado = esPar ? 0.5 * altura + 1 : "NA/NE";
       }
    }
 
-   if (ancho === valor1 && tipoRodapie === "ESP") {
+   if (ancho == valor1 && tipoRodapie == "ESP") {
       const largoYAncho = longitud > 0 && ancho > 0;
 
-      if (tipoServicio === "NORMAL") {
+      if (tipoServicio == "NORMAL") {
          if (!largoYAncho) {
             resultado += esPar ? altura : altura - 1;
          }
@@ -901,24 +889,19 @@ function calcularRodapie0732E({
    return resultado;
 }
 
-function calcularRodapie3072C({
-   longitud,
-   tipoRodapie,
-   tipoServicio,
-   altura,
-   valor1, // B50
-}) {
-   const esPar = altura % 2 === 0;
+function calcularRodapie3072C({ longitud, tipoRodapie, tipoServicio, altura }) {
+   const valor1 = 3072;
+   const esPar = altura % 2 == 0;
 
    const esError =
-      (longitud === 1090 && tipoRodapie === "ESP") ||
-      (longitud === 1020 && tipoRodapie === "CHI") ||
-      (longitud === 1020 && tipoRodapie === "NEO");
+      (longitud == 1090 && tipoRodapie == "ESP") ||
+      (longitud == 1020 && tipoRodapie == "CHI") ||
+      (longitud == 1020 && tipoRodapie == "NEO");
 
    if (esError) return "ERROR";
 
-   if (longitud === valor1 && tipoRodapie === "CHI") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && tipoRodapie == "CHI") {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          return esPar ? 0.5 * altura + 1 : "NA/NE";
@@ -928,24 +911,19 @@ function calcularRodapie3072C({
    return 0;
 }
 
-function calcularRodapie2572C({
-   longitud,
-   tipoRodapie,
-   tipoServicio,
-   altura,
-   valor1, // B51
-}) {
-   const esPar = altura % 2 === 0;
+function calcularRodapie2572C({ longitud, tipoRodapie, tipoServicio, altura }) {
+   const valor1 = 2572;
+   const esPar = altura % 2 == 0;
 
    const esError =
-      (longitud === 1090 && tipoRodapie === "ESP") ||
-      (longitud === 1020 && tipoRodapie === "CHI") ||
-      (longitud === 1020 && tipoRodapie === "NEO");
+      (longitud == 1090 && tipoRodapie == "ESP") ||
+      (longitud == 1020 && tipoRodapie == "CHI") ||
+      (longitud == 1020 && tipoRodapie == "NEO");
 
    if (esError) return "ERROR";
 
-   if (longitud === valor1 && tipoRodapie === "CHI") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && tipoRodapie == "CHI") {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          return esPar ? 0.5 * altura + 1 : "NA/NE";
@@ -955,24 +933,19 @@ function calcularRodapie2572C({
    return 0;
 }
 
-function calcularRodapie2072C({
-   longitud,
-   tipoRodapie,
-   tipoServicio,
-   altura,
-   valor1, // B52
-}) {
-   const esPar = altura % 2 === 0;
+function calcularRodapie2072C({ longitud, tipoRodapie, tipoServicio, altura }) {
+   const valor1 = 2072;
+   const esPar = altura % 2 == 0;
 
    const esError =
-      (longitud === 1090 && tipoRodapie === "ESP") ||
-      (longitud === 1020 && tipoRodapie === "CHI") ||
-      (longitud === 1020 && tipoRodapie === "NEO");
+      (longitud == 1090 && tipoRodapie == "ESP") ||
+      (longitud == 1020 && tipoRodapie == "CHI") ||
+      (longitud == 1020 && tipoRodapie == "NEO");
 
    if (esError) return "ERROR";
 
-   if (longitud === valor1 && tipoRodapie === "CHI") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && tipoRodapie == "CHI") {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          return esPar ? 0.5 * altura + 1 : "NA/NE";
@@ -982,24 +955,19 @@ function calcularRodapie2072C({
    return 0;
 }
 
-function calcularRodapie1572C({
-   longitud,
-   tipoRodapie,
-   tipoServicio,
-   altura,
-   valor1, // B53
-}) {
-   const esPar = altura % 2 === 0;
+function calcularRodapie1572C({ longitud, tipoRodapie, tipoServicio, altura }) {
+   valor1 = 1572;
+   const esPar = altura % 2 == 0;
 
    const esError =
-      (longitud === 1090 && tipoRodapie === "ESP") ||
-      (longitud === 1020 && tipoRodapie === "CHI") ||
-      (longitud === 1020 && tipoRodapie === "NEO");
+      (longitud == 1090 && tipoRodapie == "ESP") ||
+      (longitud == 1020 && tipoRodapie == "CHI") ||
+      (longitud == 1020 && tipoRodapie == "NEO");
 
    if (esError) return "ERROR";
 
-   if (longitud === valor1 && tipoRodapie === "CHI") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && tipoRodapie == "CHI") {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          return esPar ? 0.5 * altura + 1 : "NA/NE";
@@ -1015,36 +983,36 @@ function calcularRodapie1090C({
    tipoRodapie,
    tipoServicio,
    altura,
-   valor1, // B54
 }) {
-   const esPar = altura % 2 === 0;
+   const valor1 = 1090;
+   const esPar = altura % 2 == 0;
 
    const error1 =
-      (longitud === 1090 && tipoRodapie === "ESP") ||
-      (longitud === 1020 && tipoRodapie === "CHI") ||
-      (longitud === 1020 && tipoRodapie === "NEO");
+      (longitud == 1090 && tipoRodapie == "ESP") ||
+      (longitud == 1020 && tipoRodapie == "CHI") ||
+      (longitud == 1020 && tipoRodapie == "NEO");
 
    const error2 =
-      (ancho === 1090 && tipoRodapie === "ESP") ||
-      (ancho === 1020 && tipoRodapie === "CHI") ||
-      (ancho === 1020 && tipoRodapie === "NEO");
+      (ancho == 1090 && tipoRodapie == "ESP") ||
+      (ancho == 1020 && tipoRodapie == "CHI") ||
+      (ancho == 1020 && tipoRodapie == "NEO");
 
    if (error1 || error2) return "ERROR";
 
    let resultado = 0;
 
-   if (longitud === valor1 && tipoRodapie === "CHI") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && tipoRodapie == "CHI") {
+      if (tipoServicio == "NORMAL") {
          resultado = esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          resultado = esPar ? 0.5 * altura + 1 : "NA/NE";
       }
    }
 
-   if (ancho === valor1 && tipoRodapie === "CHI") {
+   if (ancho == valor1 && tipoRodapie == "CHI") {
       const largoYAncho = longitud > 0 && ancho > 0;
 
-      if (tipoServicio === "NORMAL") {
+      if (tipoServicio == "NORMAL") {
          if (!largoYAncho) {
             resultado += esPar ? altura : altura - 1;
          }
@@ -1064,36 +1032,35 @@ function calcularRodapie0732C({
    tipoRodapie,
    tipoServicio,
    altura,
-   valor1, // B55
 }) {
-   const esPar = altura % 2 === 0;
-
+   const esPar = altura % 2 == 0;
+   const valor1 = 732;
    const error1 =
-      (longitud === 1090 && tipoRodapie === "ESP") ||
-      (longitud === 1020 && tipoRodapie === "CHI") ||
-      (longitud === 1020 && tipoRodapie === "NEO");
+      (longitud == 1090 && tipoRodapie == "ESP") ||
+      (longitud == 1020 && tipoRodapie == "CHI") ||
+      (longitud == 1020 && tipoRodapie == "NEO");
 
    const error2 =
-      (ancho === 1090 && tipoRodapie === "ESP") ||
-      (ancho === 1020 && tipoRodapie === "CHI") ||
-      (ancho === 1020 && tipoRodapie === "NEO");
+      (ancho == 1090 && tipoRodapie == "ESP") ||
+      (ancho == 1020 && tipoRodapie == "CHI") ||
+      (ancho == 1020 && tipoRodapie == "NEO");
 
    if (error1 || error2) return "ERROR";
 
    let resultado = 0;
 
-   if (longitud === valor1 && tipoRodapie === "CHI") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && tipoRodapie == "CHI") {
+      if (tipoServicio == "NORMAL") {
          resultado = esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          resultado = esPar ? 0.5 * altura + 1 : "NA/NE";
       }
    }
 
-   if (ancho === valor1 && tipoRodapie === "CHI") {
+   if (ancho == valor1 && tipoRodapie == "CHI") {
       const largoYAncho = longitud > 0 && ancho > 0;
 
-      if (tipoServicio === "NORMAL") {
+      if (tipoServicio == "NORMAL") {
          if (!largoYAncho) {
             resultado += esPar ? altura : altura - 1;
          }
@@ -1107,24 +1074,19 @@ function calcularRodapie0732C({
    return resultado;
 }
 
-function calcularRodapie3072N({
-   longitud,
-   tipoRodapie,
-   tipoServicio,
-   altura,
-   valor1, // B56
-}) {
-   const esPar = altura % 2 === 0;
+function calcularRodapie3072N({ longitud, tipoRodapie, tipoServicio, altura }) {
+   const valor1 = 3072;
+   const esPar = altura % 2 == 0;
 
    const esError =
-      (longitud === 1090 && tipoRodapie === "ESP") ||
-      (longitud === 1020 && tipoRodapie === "CHI") ||
-      (longitud === 1020 && tipoRodapie === "NEO");
+      (longitud == 1090 && tipoRodapie == "ESP") ||
+      (longitud == 1020 && tipoRodapie == "CHI") ||
+      (longitud == 1020 && tipoRodapie == "NEO");
 
    if (esError) return "ERROR";
 
-   if (longitud === valor1 && tipoRodapie === "NEO") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && tipoRodapie == "NEO") {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          return esPar ? 0.5 * altura + 1 : "NA/NE";
@@ -1134,24 +1096,19 @@ function calcularRodapie3072N({
    return 0;
 }
 
-function calcularRodapie2572N({
-   longitud,
-   tipoRodapie,
-   tipoServicio,
-   altura,
-   valor1, // B57
-}) {
-   const esPar = altura % 2 === 0;
+function calcularRodapie2572N({ longitud, tipoRodapie, tipoServicio, altura }) {
+   const valor1 = 2572;
+   const esPar = altura % 2 == 0;
 
    const esError =
-      (longitud === 1090 && tipoRodapie === "ESP") ||
-      (longitud === 1020 && tipoRodapie === "CHI") ||
-      (longitud === 1020 && tipoRodapie === "NEO");
+      (longitud == 1090 && tipoRodapie == "ESP") ||
+      (longitud == 1020 && tipoRodapie == "CHI") ||
+      (longitud == 1020 && tipoRodapie == "NEO");
 
    if (esError) return "ERROR";
 
-   if (longitud === valor1 && tipoRodapie === "NEO") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && tipoRodapie == "NEO") {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          return esPar ? 0.5 * altura + 1 : "NA/NE";
@@ -1161,24 +1118,19 @@ function calcularRodapie2572N({
    return 0;
 }
 
-function calcularRodapie2072N({
-   longitud,
-   tipoRodapie,
-   tipoServicio,
-   altura,
-   valor1, // B58
-}) {
-   const esPar = altura % 2 === 0;
+function calcularRodapie2072N({ longitud, tipoRodapie, tipoServicio, altura }) {
+   const valor1 = 2072;
+   const esPar = altura % 2 == 0;
 
    const esError =
-      (longitud === 1090 && tipoRodapie === "ESP") ||
-      (longitud === 1020 && tipoRodapie === "CHI") ||
-      (longitud === 1020 && tipoRodapie === "NEO");
+      (longitud == 1090 && tipoRodapie == "ESP") ||
+      (longitud == 1020 && tipoRodapie == "CHI") ||
+      (longitud == 1020 && tipoRodapie == "NEO");
 
    if (esError) return "ERROR";
 
-   if (longitud === valor1 && tipoRodapie === "NEO") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && tipoRodapie == "NEO") {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          return esPar ? 0.5 * altura + 1 : "NA/NE";
@@ -1188,24 +1140,19 @@ function calcularRodapie2072N({
    return 0;
 }
 
-function calcularRodapie1572N({
-   longitud,
-   tipoRodapie,
-   tipoServicio,
-   altura,
-   valor1, // B59
-}) {
-   const esPar = altura % 2 === 0;
+function calcularRodapie1572N({ longitud, tipoRodapie, tipoServicio, altura }) {
+   const valor1 = 1572;
+   const esPar = altura % 2 == 0;
 
    const esError =
-      (longitud === 1090 && tipoRodapie === "ESP") ||
-      (longitud === 1020 && tipoRodapie === "CHI") ||
-      (longitud === 1020 && tipoRodapie === "NEO");
+      (longitud == 1090 && tipoRodapie == "ESP") ||
+      (longitud == 1020 && tipoRodapie == "CHI") ||
+      (longitud == 1020 && tipoRodapie == "NEO");
 
    if (esError) return "ERROR";
 
-   if (longitud === valor1 && tipoRodapie === "NEO") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && tipoRodapie == "NEO") {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          return esPar ? 0.5 * altura + 1 : "NA/NE";
@@ -1221,36 +1168,36 @@ function calcularRodapie1090N({
    tipoRodapie,
    tipoServicio,
    altura,
-   valor1, // B60
 }) {
-   const esPar = altura % 2 === 0;
+   const valor1 = 1090;
+   const esPar = altura % 2 == 0;
 
    const error1 =
-      (longitud === 1090 && tipoRodapie === "ESP") ||
-      (longitud === 1020 && tipoRodapie === "CHI") ||
-      (longitud === 1020 && tipoRodapie === "NEO");
+      (longitud == 1090 && tipoRodapie == "ESP") ||
+      (longitud == 1020 && tipoRodapie == "CHI") ||
+      (longitud == 1020 && tipoRodapie == "NEO");
 
    const error2 =
-      (ancho === 1090 && tipoRodapie === "ESP") ||
-      (ancho === 1020 && tipoRodapie === "CHI") ||
-      (ancho === 1020 && tipoRodapie === "NEO");
+      (ancho == 1090 && tipoRodapie == "ESP") ||
+      (ancho == 1020 && tipoRodapie == "CHI") ||
+      (ancho == 1020 && tipoRodapie == "NEO");
 
    if (error1 || error2) return "ERROR";
 
    let resultado = 0;
 
-   if (longitud === valor1 && tipoRodapie === "NEO") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && tipoRodapie == "NEO") {
+      if (tipoServicio == "NORMAL") {
          resultado = esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          resultado = esPar ? 0.5 * altura + 1 : "NA/NE";
       }
    }
 
-   if (ancho === valor1 && tipoRodapie === "NEO") {
+   if (ancho == valor1 && tipoRodapie == "NEO") {
       const largoYAncho = longitud > 0 && ancho > 0;
 
-      if (tipoServicio === "NORMAL") {
+      if (tipoServicio == "NORMAL") {
          if (!largoYAncho) {
             resultado += esPar ? altura : altura - 1;
          }
@@ -1270,36 +1217,36 @@ function calcularRodapie0732N({
    tipoRodapie,
    tipoServicio,
    altura,
-   valor1, // B61
 }) {
-   const esPar = altura % 2 === 0;
+   const valor1 = 732;
+   const esPar = altura % 2 == 0;
 
    const error1 =
-      (longitud === 1090 && tipoRodapie === "ESP") ||
-      (longitud === 1020 && tipoRodapie === "CHI") ||
-      (longitud === 1020 && tipoRodapie === "NEO");
+      (longitud == 1090 && tipoRodapie == "ESP") ||
+      (longitud == 1020 && tipoRodapie == "CHI") ||
+      (longitud == 1020 && tipoRodapie == "NEO");
 
    const error2 =
-      (ancho === 1090 && tipoRodapie === "ESP") ||
-      (ancho === 1020 && tipoRodapie === "CHI") ||
-      (ancho === 1020 && tipoRodapie === "NEO");
+      (ancho == 1090 && tipoRodapie == "ESP") ||
+      (ancho == 1020 && tipoRodapie == "CHI") ||
+      (ancho == 1020 && tipoRodapie == "NEO");
 
    if (error1 || error2) return "ERROR";
 
    let resultado = 0;
 
-   if (longitud === valor1 && tipoRodapie === "NEO") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && tipoRodapie == "NEO") {
+      if (tipoServicio == "NORMAL") {
          resultado = esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          resultado = esPar ? 0.5 * altura + 1 : "NA/NE";
       }
    }
 
-   if (ancho === valor1 && tipoRodapie === "NEO") {
+   if (ancho == valor1 && tipoRodapie == "NEO") {
       const largoYAncho = longitud > 0 && ancho > 0;
 
-      if (tipoServicio === "NORMAL") {
+      if (tipoServicio == "NORMAL") {
          if (!largoYAncho) {
             resultado += esPar ? altura : altura - 1;
          }
@@ -1315,15 +1262,15 @@ function calcularRodapie0732N({
 
 function calcularDiagonal3072({
    diagonalesSI,
-   valor1, // B62
    longitud,
    tipoServicio,
    altura,
 }) {
-   const esPar = altura % 2 === 0;
+   const valor1 = 3072;
+   const esPar = altura % 2 == 0;
 
-   if (diagonalesSI === "SI" && valor1 === longitud) {
-      if (tipoServicio === "NORMAL") {
+   if (diagonalesSI == "SI" && valor1 == longitud) {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          return esPar ? 0.5 * altura : "NA/NE";
@@ -1335,15 +1282,15 @@ function calcularDiagonal3072({
 
 function calcularDiagonal2572({
    diagonalesSI,
-   valor1, // B63
    longitud,
    tipoServicio,
    altura,
 }) {
-   const esPar = altura % 2 === 0;
+   const valor1 = 2572;
+   const esPar = altura % 2 == 0;
 
-   if (diagonalesSI === "SI" && valor1 === longitud) {
-      if (tipoServicio === "NORMAL") {
+   if (diagonalesSI == "SI" && valor1 == longitud) {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          return esPar ? 0.5 * altura : "NA/NE";
@@ -1355,15 +1302,15 @@ function calcularDiagonal2572({
 
 function calcularDiagonal2072({
    diagonalesSI,
-   valor1, // B64
    longitud,
    tipoServicio,
    altura,
 }) {
-   const esPar = altura % 2 === 0;
+   const valor1 = 2072;
+   const esPar = altura % 2 == 0;
 
-   if (diagonalesSI === "SI" && valor1 === longitud) {
-      if (tipoServicio === "NORMAL") {
+   if (diagonalesSI == "SI" && valor1 == longitud) {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          return esPar ? 0.5 * altura : "NA/NE";
@@ -1375,15 +1322,15 @@ function calcularDiagonal2072({
 
 function calcularDiagonal1572({
    diagonalesSI,
-   valor1, // B65
    longitud,
    tipoServicio,
    altura,
 }) {
-   const esPar = altura % 2 === 0;
+   const valor1 = 1572;
+   const esPar = altura % 2 == 0;
 
-   if (diagonalesSI === "SI" && valor1 === longitud) {
-      if (tipoServicio === "NORMAL") {
+   if (diagonalesSI == "SI" && valor1 == longitud) {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          return esPar ? 0.5 * altura : "NA/NE";
@@ -1395,15 +1342,15 @@ function calcularDiagonal1572({
 
 function calcularDiagonal1090({
    diagonalesSI,
-   valor1, // B66
    longitud,
    tipoServicio,
    altura,
 }) {
-   const esPar = altura % 2 === 0;
+   const valor1 = 1090;
+   const esPar = altura % 2 == 0;
 
-   if (diagonalesSI === "SI" && valor1 === longitud) {
-      if (tipoServicio === "NORMAL") {
+   if (diagonalesSI == "SI" && valor1 == longitud) {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          return esPar ? 0.5 * altura : "NA/NE";
@@ -1415,15 +1362,15 @@ function calcularDiagonal1090({
 
 function calcularDiagonal1020({
    diagonalesSI,
-   valor1, // B67
    longitud,
    tipoServicio,
    altura,
 }) {
-   const esPar = altura % 2 === 0;
+   const valor1 = 1020;
+   const esPar = altura % 2 == 0;
 
-   if (diagonalesSI === "SI" && valor1 === longitud) {
-      if (tipoServicio === "NORMAL") {
+   if (diagonalesSI == "SI" && valor1 == longitud) {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          return esPar ? 0.5 * altura : "NA/NE";
@@ -1433,37 +1380,39 @@ function calcularDiagonal1020({
    return 0;
 }
 
-function calcularPlataforma3072E({
-   longitud,
-   ancho,
-   tipoPlataforma,
-   plataformaAccesoSI,
-   tipoServicio,
-   altura,
-   valor1, // B68
-   valor2, // F87
-}) {
-   const esPar = altura % 2 === 0;
+function calcularPlataforma3072E(
+   {
+      longitud,
+      ancho,
+      tipoPlataforma,
+      plataformaAccesoSI,
+      tipoServicio,
+      altura,
+   },
+   valor2 // F87
+) {
+   const valor1 = 3072;
+   const esPar = altura % 2 == 0;
 
    if (
-      (longitud === 1020 && tipoPlataforma === "CHI") ||
-      (longitud === 1090 && tipoPlataforma === "ESP")
+      (longitud == 1020 && tipoPlataforma == "CHI") ||
+      (longitud == 1090 && tipoPlataforma == "ESP")
    ) {
       return "ERROR";
    }
 
    let cantidad = 0;
 
-   if (longitud === valor1 && tipoPlataforma === "ESP") {
+   if (longitud == valor1 && tipoPlataforma == "ESP") {
       const base =
-         tipoPlataforma === "ESP"
-            ? ancho === 732
+         tipoPlataforma == "ESP"
+            ? ancho == 732
                ? 2
                : [1020, 1090].includes(ancho)
                ? 3
                : 0
-            : tipoPlataforma === "CHI"
-            ? ancho === 1090
+            : tipoPlataforma == "CHI"
+            ? ancho == 1090
                ? 3
                : [1020, 732].includes(ancho)
                ? 2
@@ -1471,7 +1420,7 @@ function calcularPlataforma3072E({
             : 0;
 
       const factor =
-         tipoServicio === "NORMAL"
+         tipoServicio == "NORMAL"
             ? esPar
                ? 0.5 * altura
                : 0.5 * altura + 0.5
@@ -1483,56 +1432,58 @@ function calcularPlataforma3072E({
    }
 
    if (
-      tipoPlataforma === "ESP" &&
-      plataformaAccesoSI === "SI" &&
-      valor1 === longitud
+      tipoPlataforma == "ESP" &&
+      plataformaAccesoSI == "SI" &&
+      valor1 == longitud
    ) {
       const resta =
-         tipoServicio === "NORMAL"
+         tipoServicio == "NORMAL"
             ? esPar
                ? 2 * valor2 - 2
                : 2 * valor2
-            : tipoServicio === "VOLADO"
+            : tipoServicio == "VOLADO"
             ? 2 * valor2
             : 0;
 
-      cantidad = typeof cantidad === "number" ? cantidad - resta : cantidad;
+      cantidad = typeof cantidad == "number" ? cantidad - resta : cantidad;
    }
 
    return cantidad;
 }
 
-function calcularPlataforma2572E({
-   longitud,
-   ancho,
-   tipoPlataforma,
-   plataformaAccesoSI,
-   tipoServicio,
-   altura,
-   valor1, // B69
-   valor2, // F88
-}) {
-   const esPar = altura % 2 === 0;
+function calcularPlataforma2572E(
+   {
+      longitud,
+      ancho,
+      tipoPlataforma,
+      plataformaAccesoSI,
+      tipoServicio,
+      altura,
+   },
+   valor2 // F88
+) {
+   const valor1 = 2572;
+   const esPar = altura % 2 == 0;
 
    if (
-      (longitud === 1020 && tipoPlataforma === "CHI") ||
-      (longitud === 1090 && tipoPlataforma === "ESP")
+      (longitud == 1020 && tipoPlataforma == "CHI") ||
+      (longitud == 1090 && tipoPlataforma == "ESP")
    ) {
       return "ERROR";
    }
 
    let cantidad = 0;
 
-   if (longitud === valor1 && tipoPlataforma === "ESP") {
+   if (longitud == valor1 && tipoPlataforma == "ESP") {
       const base =
-         tipoPlataforma === "ESP"
-            ? ancho === 732
+         tipoPlataforma == "ESP"
+            ? ancho == 732
                ? 2
                : [1020, 1090].includes(ancho)
                ? 3
                : 0
-            : tipoPlataforma === "CHI"
-            ? ancho === 1090
+            : tipoPlataforma == "CHI"
+            ? ancho == 1090
                ? 3
                : [1020, 732].includes(ancho)
                ? 2
@@ -1540,7 +1491,7 @@ function calcularPlataforma2572E({
             : 0;
 
       const factor =
-         tipoServicio === "NORMAL"
+         tipoServicio == "NORMAL"
             ? esPar
                ? 0.5 * altura
                : 0.5 * altura + 0.5
@@ -1552,56 +1503,58 @@ function calcularPlataforma2572E({
    }
 
    if (
-      tipoPlataforma === "ESP" &&
-      plataformaAccesoSI === "SI" &&
-      valor1 === longitud
+      tipoPlataforma == "ESP" &&
+      plataformaAccesoSI == "SI" &&
+      valor1 == longitud
    ) {
       const resta =
-         tipoServicio === "NORMAL"
+         tipoServicio == "NORMAL"
             ? esPar
                ? 2 * valor2 - 2
                : 2 * valor2
-            : tipoServicio === "VOLADO"
+            : tipoServicio == "VOLADO"
             ? 2 * valor2
             : 0;
 
-      cantidad = typeof cantidad === "number" ? cantidad - resta : cantidad;
+      cantidad = typeof cantidad == "number" ? cantidad - resta : cantidad;
    }
 
    return cantidad;
 }
 
-function calcularPlataforma2072E({
-   longitud,
-   ancho,
-   tipoPlataforma,
-   plataformaAccesoSI,
-   tipoServicio,
-   altura,
-   valor1, // B70
-   valor2, // F89
-}) {
-   const esPar = altura % 2 === 0;
+function calcularPlataforma2072E(
+   {
+      longitud,
+      ancho,
+      tipoPlataforma,
+      plataformaAccesoSI,
+      tipoServicio,
+      altura,
+   },
+   valor2 // F89
+) {
+   const valor1 = 2072;
+   const esPar = altura % 2 == 0;
 
    if (
-      (longitud === 1020 && tipoPlataforma === "CHI") ||
-      (longitud === 1090 && tipoPlataforma === "ESP")
+      (longitud == 1020 && tipoPlataforma == "CHI") ||
+      (longitud == 1090 && tipoPlataforma == "ESP")
    ) {
       return "ERROR";
    }
 
    let cantidad = 0;
 
-   if (longitud === valor1 && tipoPlataforma === "ESP") {
+   if (longitud == valor1 && tipoPlataforma == "ESP") {
       const base =
-         tipoPlataforma === "ESP"
-            ? ancho === 732
+         tipoPlataforma == "ESP"
+            ? ancho == 732
                ? 2
                : [1020, 1090].includes(ancho)
                ? 3
                : 0
-            : tipoPlataforma === "CHI"
-            ? ancho === 1090
+            : tipoPlataforma == "CHI"
+            ? ancho == 1090
                ? 3
                : [1020, 732].includes(ancho)
                ? 2
@@ -1609,7 +1562,7 @@ function calcularPlataforma2072E({
             : 0;
 
       const factor =
-         tipoServicio === "NORMAL"
+         tipoServicio == "NORMAL"
             ? esPar
                ? 0.5 * altura
                : 0.5 * altura + 0.5
@@ -1621,57 +1574,59 @@ function calcularPlataforma2072E({
    }
 
    if (
-      tipoPlataforma === "ESP" &&
-      plataformaAccesoSI === "SI" &&
-      valor1 === longitud
+      tipoPlataforma == "ESP" &&
+      plataformaAccesoSI == "SI" &&
+      valor1 == longitud
    ) {
       const resta =
-         tipoServicio === "NORMAL"
+         tipoServicio == "NORMAL"
             ? esPar
                ? 2 * valor2 - 2
                : 2 * valor2
-            : tipoServicio === "VOLADO"
+            : tipoServicio == "VOLADO"
             ? 2 * valor2
             : 0;
 
-      cantidad = typeof cantidad === "number" ? cantidad - resta : cantidad;
+      cantidad = typeof cantidad == "number" ? cantidad - resta : cantidad;
    }
 
    return cantidad;
 }
 
-function calcularPlataforma290x1572E({
-   longitud,
-   ancho,
-   tipoPlataforma,
-   plataformaAccesoSI,
-   tipoServicio,
-   altura,
-   valor1, // B71
-   valor2, // F90
-}) {
-   const esPar = altura % 2 === 0;
+function calcularPlataforma290x1572E(
+   {
+      longitud,
+      ancho,
+      tipoPlataforma,
+      plataformaAccesoSI,
+      tipoServicio,
+      altura,
+   },
+   valor2 // F90
+) {
+   const valor1 = 1572;
+   const esPar = altura % 2 == 0;
 
    if (
-      (longitud === 1020 && tipoPlataforma === "CHI") ||
-      (longitud === 1090 && tipoPlataforma === "ESP")
+      (longitud == 1020 && tipoPlataforma == "CHI") ||
+      (longitud == 1090 && tipoPlataforma == "ESP")
    )
       return "ERROR";
 
    let base = 0;
 
-   if (tipoPlataforma === "ESP") {
-      if (ancho === 732) base = 2;
+   if (tipoPlataforma == "ESP") {
+      if (ancho == 732) base = 2;
       else if ([1020, 1090].includes(ancho)) base = 3;
    }
 
-   if (tipoPlataforma === "CHI") {
-      if (ancho === 1090) base = 3;
+   if (tipoPlataforma == "CHI") {
+      if (ancho == 1090) base = 3;
       else if ([1020, 732].includes(ancho)) base = 2;
    }
 
    let factor =
-      tipoServicio === "NORMAL"
+      tipoServicio == "NORMAL"
          ? esPar
             ? 0.5 * altura
             : 0.5 * altura + 0.5
@@ -1680,22 +1635,22 @@ function calcularPlataforma290x1572E({
          : "NA/NE";
 
    let cantidad =
-      longitud === valor1 && tipoPlataforma === "ESP" ? base * factor : 0;
+      longitud == valor1 && tipoPlataforma == "ESP" ? base * factor : 0;
 
    if (
-      tipoPlataforma === "ESP" &&
-      plataformaAccesoSI === "SI" &&
-      valor1 === longitud
+      tipoPlataforma == "ESP" &&
+      plataformaAccesoSI == "SI" &&
+      valor1 == longitud
    ) {
       const resta =
-         tipoServicio === "NORMAL"
+         tipoServicio == "NORMAL"
             ? esPar
                ? 2 * valor2 - 2
                : 2 * valor2
-            : tipoServicio === "VOLADO"
+            : tipoServicio == "VOLADO"
             ? 2 * valor2
             : 0;
-      cantidad = typeof cantidad === "number" ? cantidad - resta : cantidad;
+      cantidad = typeof cantidad == "number" ? cantidad - resta : cantidad;
    }
 
    return cantidad;
@@ -1707,30 +1662,30 @@ function calcularPlataforma290x1020E({
    tipoPlataforma,
    tipoServicio,
    altura,
-   valor1, // B72
 }) {
-   const esPar = altura % 2 === 0;
+   const valor1 = 1020;
+   const esPar = altura % 2 == 0;
 
    if (
-      (longitud === 1020 && tipoPlataforma === "CHI") ||
-      (longitud === 1090 && tipoPlataforma === "ESP")
+      (longitud == 1020 && tipoPlataforma == "CHI") ||
+      (longitud == 1090 && tipoPlataforma == "ESP")
    )
       return "ERROR";
 
    let base = 0;
 
-   if (tipoPlataforma === "ESP") {
-      if (ancho === 732) base = 2;
+   if (tipoPlataforma == "ESP") {
+      if (ancho == 732) base = 2;
       else if ([1020, 1090].includes(ancho)) base = 3;
    }
 
-   if (tipoPlataforma === "CHI") {
-      if (ancho === 1090) base = 3;
+   if (tipoPlataforma == "CHI") {
+      if (ancho == 1090) base = 3;
       else if ([1020, 732].includes(ancho)) base = 2;
    }
 
    const factor =
-      tipoServicio === "NORMAL"
+      tipoServicio == "NORMAL"
          ? esPar
             ? 0.5 * altura
             : 0.5 * altura + 0.5
@@ -1738,7 +1693,7 @@ function calcularPlataforma290x1020E({
          ? 0.5 * altura + 1
          : "NA/NE";
 
-   return longitud === valor1 && tipoPlataforma === "ESP" ? base * factor : 0;
+   return longitud == valor1 && tipoPlataforma == "ESP" ? base * factor : 0;
 }
 
 function calcularPlataforma290x0732E({
@@ -1747,30 +1702,30 @@ function calcularPlataforma290x0732E({
    tipoPlataforma,
    tipoServicio,
    altura,
-   valor1, // B73
 }) {
-   const esPar = altura % 2 === 0;
+   const valor1 = 732;
+   const esPar = altura % 2 == 0;
 
    if (
-      (longitud === 1020 && tipoPlataforma === "CHI") ||
-      (longitud === 1090 && tipoPlataforma === "ESP")
+      (longitud == 1020 && tipoPlataforma == "CHI") ||
+      (longitud == 1090 && tipoPlataforma == "ESP")
    )
       return "ERROR";
 
    let base = 0;
 
-   if (tipoPlataforma === "ESP") {
-      if (ancho === 732) base = 2;
+   if (tipoPlataforma == "ESP") {
+      if (ancho == 732) base = 2;
       else if ([1020, 1090].includes(ancho)) base = 3;
    }
 
-   if (tipoPlataforma === "CHI") {
-      if (ancho === 1090) base = 3;
+   if (tipoPlataforma == "CHI") {
+      if (ancho == 1090) base = 3;
       else if ([1020, 732].includes(ancho)) base = 2;
    }
 
    const factor =
-      tipoServicio === "NORMAL"
+      tipoServicio == "NORMAL"
          ? esPar
             ? 0.5 * altura
             : 0.5 * altura + 0.5
@@ -1778,41 +1733,43 @@ function calcularPlataforma290x0732E({
          ? 0.5 * altura + 1
          : "NA/NE";
 
-   return longitud === valor1 && tipoPlataforma === "ESP" ? base * factor : 0;
+   return longitud == valor1 && tipoPlataforma == "ESP" ? base * factor : 0;
 }
 
-function calcularPlataforma320x3072C({
-   longitud,
-   ancho,
-   tipoPlataforma,
-   plataformaAccesoSI,
-   tipoServicio,
-   altura,
-   valor1, // B74
-   valor2, // F87
-}) {
-   const esPar = altura % 2 === 0;
+function calcularPlataforma320x3072C(
+   {
+      longitud,
+      ancho,
+      tipoPlataforma,
+      plataformaAccesoSI,
+      tipoServicio,
+      altura,
+   },
+   valor2 // F87
+) {
+   const valor1 = 3072;
+   const esPar = altura % 2 == 0;
 
    if (
-      (longitud === 1020 && tipoPlataforma === "CHI") ||
-      (longitud === 1090 && tipoPlataforma === "ESP")
+      (longitud == 1020 && tipoPlataforma == "CHI") ||
+      (longitud == 1090 && tipoPlataforma == "ESP")
    )
       return "ERROR";
 
    let base = 0;
 
-   if (tipoPlataforma === "ESP") {
-      if (ancho === 732) base = 2;
+   if (tipoPlataforma == "ESP") {
+      if (ancho == 732) base = 2;
       else if ([1020, 1090].includes(ancho)) base = 3;
    }
 
-   if (tipoPlataforma === "CHI") {
-      if (ancho === 1090) base = 3;
+   if (tipoPlataforma == "CHI") {
+      if (ancho == 1090) base = 3;
       else if ([1020, 732].includes(ancho)) base = 2;
    }
 
    let factor =
-      tipoServicio === "NORMAL"
+      tipoServicio == "NORMAL"
          ? esPar
             ? 0.5 * altura
             : 0.5 * altura + 0.5
@@ -1821,59 +1778,61 @@ function calcularPlataforma320x3072C({
          : "NA/NE";
 
    let cantidad =
-      longitud === valor1 && tipoPlataforma === "CHI" ? base * factor : 0;
+      longitud == valor1 && tipoPlataforma == "CHI" ? base * factor : 0;
 
    if (
-      tipoPlataforma === "CHI" &&
-      plataformaAccesoSI === "SI" &&
-      valor1 === longitud
+      tipoPlataforma == "CHI" &&
+      plataformaAccesoSI == "SI" &&
+      valor1 == longitud
    ) {
       const resta =
-         tipoServicio === "NORMAL"
+         tipoServicio == "NORMAL"
             ? esPar
                ? 2 * valor2 - 2
                : 2 * valor2
-            : tipoServicio === "VOLADO"
+            : tipoServicio == "VOLADO"
             ? 2 * valor2
             : 0;
-      cantidad = typeof cantidad === "number" ? cantidad - resta : cantidad;
+      cantidad = typeof cantidad == "number" ? cantidad - resta : cantidad;
    }
 
    return cantidad;
 }
 
-function calcularPlataforma320x2572C({
-   longitud,
-   ancho,
-   tipoPlataforma,
-   plataformaAccesoSI,
-   tipoServicio,
-   altura,
-   valor1, // B75
-   valor2, // F88
-}) {
-   const esPar = altura % 2 === 0;
+function calcularPlataforma320x2572C(
+   {
+      longitud,
+      ancho,
+      tipoPlataforma,
+      plataformaAccesoSI,
+      tipoServicio,
+      altura,
+   },
+   valor2 // F88
+) {
+   const valor1 = 2572;
+   const esPar = altura % 2 == 0;
 
    if (
-      (longitud === 1020 && tipoPlataforma === "CHI") ||
-      (longitud === 1090 && tipoPlataforma === "ESP")
+      (longitud == 1020 && tipoPlataforma == "CHI") ||
+      (longitud == 1090 && tipoPlataforma == "ESP")
    )
       return "ERROR";
 
    let base = 0;
 
-   if (tipoPlataforma === "ESP") {
-      if (ancho === 732) base = 2;
+   if (tipoPlataforma == "ESP") {
+      if (ancho == 732) base = 2;
       else if ([1020, 1090].includes(ancho)) base = 3;
    }
 
-   if (tipoPlataforma === "CHI") {
-      if (ancho === 1090) base = 3;
+   if (tipoPlataforma == "CHI") {
+      if (ancho == 1090) base = 3;
       else if ([1020, 732].includes(ancho)) base = 2;
    }
 
    let factor =
-      tipoServicio === "NORMAL"
+      tipoServicio == "NORMAL"
          ? esPar
             ? 0.5 * altura
             : 0.5 * altura + 0.5
@@ -1882,132 +1841,136 @@ function calcularPlataforma320x2572C({
          : "NA/NE";
 
    let cantidad =
-      longitud === valor1 && tipoPlataforma === "CHI" ? base * factor : 0;
+      longitud == valor1 && tipoPlataforma == "CHI" ? base * factor : 0;
 
    if (
-      tipoPlataforma === "CHI" &&
-      plataformaAccesoSI === "SI" &&
-      valor1 === longitud
+      tipoPlataforma == "CHI" &&
+      plataformaAccesoSI == "SI" &&
+      valor1 == longitud
    ) {
       const resta =
-         tipoServicio === "NORMAL"
+         tipoServicio == "NORMAL"
             ? esPar
                ? 2 * valor2 - 2
                : 2 * valor2
-            : tipoServicio === "VOLADO"
+            : tipoServicio == "VOLADO"
             ? 2 * valor2
             : 0;
-      cantidad = typeof cantidad === "number" ? cantidad - resta : cantidad;
+      cantidad = typeof cantidad == "number" ? cantidad - resta : cantidad;
    }
 
    return cantidad;
 }
 
-function calcularPlataforma320x2072C({
-   longitud,
-   ancho,
-   tipoPlataforma,
-   plataformaAccesoSI,
-   tipoServicio,
-   altura,
-   valor1, // B76
-   valor2, // F89
-}) {
-   const esPar = altura % 2 === 0;
+function calcularPlataforma320x2072C(
+   {
+      longitud,
+      ancho,
+      tipoPlataforma,
+      plataformaAccesoSI,
+      tipoServicio,
+      altura,
+   },
+   valor2 // F89
+) {
+   const valor1 = 2072;
+   const esPar = altura % 2 == 0;
 
    if (
-      (longitud === 1020 && tipoPlataforma === "CHI") ||
-      (longitud === 1090 && tipoPlataforma === "ESP")
+      (longitud == 1020 && tipoPlataforma == "CHI") ||
+      (longitud == 1090 && tipoPlataforma == "ESP")
    ) {
       return "ERROR";
    }
 
    let base = 0;
-   if (tipoPlataforma === "ESP") {
-      base = ancho === 732 ? 2 : [1020, 1090].includes(ancho) ? 3 : 0;
-   } else if (tipoPlataforma === "CHI") {
-      base = ancho === 1090 ? 3 : [1020, 732].includes(ancho) ? 2 : 0;
+   if (tipoPlataforma == "ESP") {
+      base = ancho == 732 ? 2 : [1020, 1090].includes(ancho) ? 3 : 0;
+   } else if (tipoPlataforma == "CHI") {
+      base = ancho == 1090 ? 3 : [1020, 732].includes(ancho) ? 2 : 0;
    }
 
    let factor;
-   if (tipoServicio === "NORMAL") {
+   if (tipoServicio == "NORMAL") {
       factor = esPar ? 0.5 * altura : 0.5 * altura + 0.5;
    } else {
       factor = esPar ? 0.5 * altura + 1 : "NA/NE";
    }
 
    let cantidad =
-      longitud === valor1 && tipoPlataforma === "CHI" ? base * factor : 0;
+      longitud == valor1 && tipoPlataforma == "CHI" ? base * factor : 0;
 
    if (
-      tipoPlataforma === "CHI" &&
-      plataformaAccesoSI === "SI" &&
-      longitud === valor1
+      tipoPlataforma == "CHI" &&
+      plataformaAccesoSI == "SI" &&
+      longitud == valor1
    ) {
       const resta =
-         tipoServicio === "NORMAL"
+         tipoServicio == "NORMAL"
             ? esPar
                ? 2 * valor2 - 2
                : 2 * valor2
-            : tipoServicio === "VOLADO"
+            : tipoServicio == "VOLADO"
             ? 2 * valor2
             : 0;
-      cantidad = typeof cantidad === "number" ? cantidad - resta : cantidad;
+      cantidad = typeof cantidad == "number" ? cantidad - resta : cantidad;
    }
 
    return cantidad;
 }
 
-function calcularPlataforma320x1572C({
-   longitud,
-   ancho,
-   tipoPlataforma,
-   plataformaAccesoSI,
-   tipoServicio,
-   altura,
-   valor1, // B77
-   valor2, // F90
-}) {
-   const esPar = altura % 2 === 0;
+function calcularPlataforma320x1572C(
+   {
+      longitud,
+      ancho,
+      tipoPlataforma,
+      plataformaAccesoSI,
+      tipoServicio,
+      altura,
+   },
+   valor2 // F90
+) {
+   const valor1 = 1572;
+   const esPar = altura % 2 == 0;
 
    if (
-      (longitud === 1020 && tipoPlataforma === "CHI") ||
-      (longitud === 1090 && tipoPlataforma === "ESP")
+      (longitud == 1020 && tipoPlataforma == "CHI") ||
+      (longitud == 1090 && tipoPlataforma == "ESP")
    ) {
       return "ERROR";
    }
 
    let base = 0;
-   if (tipoPlataforma === "ESP") {
-      base = ancho === 732 ? 2 : [1020, 1090].includes(ancho) ? 3 : 0;
-   } else if (tipoPlataforma === "CHI") {
-      base = ancho === 1090 ? 3 : [1020, 732].includes(ancho) ? 2 : 0;
+   if (tipoPlataforma == "ESP") {
+      base = ancho == 732 ? 2 : [1020, 1090].includes(ancho) ? 3 : 0;
+   } else if (tipoPlataforma == "CHI") {
+      base = ancho == 1090 ? 3 : [1020, 732].includes(ancho) ? 2 : 0;
    }
 
    let factor;
-   if (tipoServicio === "NORMAL") {
+   if (tipoServicio == "NORMAL") {
       factor = esPar ? 0.5 * altura : 0.5 * altura + 0.5;
    } else {
       factor = esPar ? 0.5 * altura + 1 : "NA/NE";
    }
 
    let cantidad =
-      longitud === valor1 && tipoPlataforma === "CHI" ? base * factor : 0;
+      longitud == valor1 && tipoPlataforma == "CHI" ? base * factor : 0;
 
    if (
-      tipoPlataforma === "CHI" &&
-      plataformaAccesoSI === "SI" &&
-      longitud === valor1
+      tipoPlataforma == "CHI" &&
+      plataformaAccesoSI == "SI" &&
+      longitud == valor1
    ) {
       const resta =
-         tipoServicio === "NORMAL"
+         tipoServicio == "NORMAL"
             ? esPar
                ? 2 * valor2 - 2
                : 2 * valor2
-            : tipoServicio === "VOLADO"
+            : tipoServicio == "VOLADO"
             ? 2 * valor2
             : 0;
-      cantidad = typeof cantidad === "number" ? cantidad - resta : cantidad;
+      cantidad = typeof cantidad == "number" ? cantidad - resta : cantidad;
    }
 
    return cantidad;
@@ -2019,26 +1982,26 @@ function calcularPlataforma320x1090C({
    tipoPlataforma,
    tipoServicio,
    altura,
-   valor1, // B78
 }) {
-   const esPar = altura % 2 === 0;
+   const valor1 = 1090;
+   const esPar = altura % 2 == 0;
 
    if (
-      (longitud === 1020 && tipoPlataforma === "CHI") ||
-      (longitud === 1090 && tipoPlataforma === "ESP")
+      (longitud == 1020 && tipoPlataforma == "CHI") ||
+      (longitud == 1090 && tipoPlataforma == "ESP")
    ) {
       return "ERROR";
    }
 
    let base = 0;
-   if (tipoPlataforma === "ESP") {
-      base = ancho === 732 ? 2 : [1020, 1090].includes(ancho) ? 3 : 0;
-   } else if (tipoPlataforma === "CHI") {
-      base = ancho === 1090 ? 3 : [1020, 732].includes(ancho) ? 2 : 0;
+   if (tipoPlataforma == "ESP") {
+      base = ancho == 732 ? 2 : [1020, 1090].includes(ancho) ? 3 : 0;
+   } else if (tipoPlataforma == "CHI") {
+      base = ancho == 1090 ? 3 : [1020, 732].includes(ancho) ? 2 : 0;
    }
 
    const factor =
-      tipoServicio === "NORMAL"
+      tipoServicio == "NORMAL"
          ? esPar
             ? 0.5 * altura
             : 0.5 * altura + 0.5
@@ -2046,7 +2009,7 @@ function calcularPlataforma320x1090C({
          ? 0.5 * altura + 1
          : "NA/NE";
 
-   return longitud === valor1 && tipoPlataforma === "CHI" ? base * factor : 0;
+   return longitud == valor1 && tipoPlataforma == "CHI" ? base * factor : 0;
 }
 
 function calcularPlataforma320x0732C({
@@ -2055,26 +2018,26 @@ function calcularPlataforma320x0732C({
    tipoPlataforma,
    tipoServicio,
    altura,
-   valor1, // B79
 }) {
-   const esPar = altura % 2 === 0;
+   const valor1 = 732;
+   const esPar = altura % 2 == 0;
 
    if (
-      (longitud === 1020 && tipoPlataforma === "CHI") ||
-      (longitud === 1090 && tipoPlataforma === "ESP")
+      (longitud == 1020 && tipoPlataforma == "CHI") ||
+      (longitud == 1090 && tipoPlataforma == "ESP")
    ) {
       return "ERROR";
    }
 
    let base = 0;
-   if (tipoPlataforma === "ESP") {
-      base = ancho === 732 ? 2 : [1020, 1090].includes(ancho) ? 3 : 0;
-   } else if (tipoPlataforma === "CHI") {
-      base = ancho === 1090 ? 3 : [1020, 732].includes(ancho) ? 2 : 0;
+   if (tipoPlataforma == "ESP") {
+      base = ancho == 732 ? 2 : [1020, 1090].includes(ancho) ? 3 : 0;
+   } else if (tipoPlataforma == "CHI") {
+      base = ancho == 1090 ? 3 : [1020, 732].includes(ancho) ? 2 : 0;
    }
 
    const factor =
-      tipoServicio === "NORMAL"
+      tipoServicio == "NORMAL"
          ? esPar
             ? 0.5 * altura
             : 0.5 * altura + 0.5
@@ -2082,7 +2045,7 @@ function calcularPlataforma320x0732C({
          ? 0.5 * altura + 1
          : "NA/NE";
 
-   return longitud === valor1 && tipoPlataforma === "CHI" ? base * factor : 0;
+   return longitud == valor1 && tipoPlataforma == "CHI" ? base * factor : 0;
 }
 
 function calcularPlataforma190x3072C({
@@ -2091,19 +2054,19 @@ function calcularPlataforma190x3072C({
    tipoPlataforma,
    tipoServicio,
    altura,
-   valor1, // B80
 }) {
-   const esPar = altura % 2 === 0;
+   const valor1 = 3072;
+   const esPar = altura % 2 == 0;
 
    if (
-      (longitud === 1020 && tipoPlataforma === "CHI") ||
-      (longitud === 1090 && tipoPlataforma === "ESP")
+      (longitud == 1020 && tipoPlataforma == "CHI") ||
+      (longitud == 1090 && tipoPlataforma == "ESP")
    ) {
       return "ERROR";
    }
 
    const factor =
-      tipoServicio === "NORMAL"
+      tipoServicio == "NORMAL"
          ? esPar
             ? 0.5 * altura
             : 0.5 * altura + 0.5
@@ -2111,7 +2074,7 @@ function calcularPlataforma190x3072C({
          ? 0.5 * altura + 1
          : "NA/NE";
 
-   return longitud === valor1 && ancho === 1020 && tipoPlataforma === "CHI"
+   return longitud == valor1 && ancho == 1020 && tipoPlataforma == "CHI"
       ? factor
       : 0;
 }
@@ -2122,19 +2085,19 @@ function calcularPlataforma190x2572C({
    tipoPlataforma,
    tipoServicio,
    altura,
-   valor1,
 }) {
-   const esPar = altura % 2 === 0;
+   const valor1 = 2572;
+   const esPar = altura % 2 == 0;
 
    if (
-      (longitud === 1020 && tipoPlataforma === "CHI") ||
-      (longitud === 1090 && tipoPlataforma === "ESP")
+      (longitud == 1020 && tipoPlataforma == "CHI") ||
+      (longitud == 1090 && tipoPlataforma == "ESP")
    ) {
       return "ERROR";
    }
 
-   if (longitud === valor1 && ancho === 1020 && tipoPlataforma === "CHI") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && ancho == 1020 && tipoPlataforma == "CHI") {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          return esPar ? 0.5 * altura + 1 : "NA/NE";
@@ -2150,19 +2113,19 @@ function calcularPlataforma190x2072C({
    tipoPlataforma,
    tipoServicio,
    altura,
-   valor1,
 }) {
-   const esPar = altura % 2 === 0;
+   const valor1 = 2072;
+   const esPar = altura % 2 == 0;
 
    if (
-      (longitud === 1020 && tipoPlataforma === "CHI") ||
-      (longitud === 1090 && tipoPlataforma === "ESP")
+      (longitud == 1020 && tipoPlataforma == "CHI") ||
+      (longitud == 1090 && tipoPlataforma == "ESP")
    ) {
       return "ERROR";
    }
 
-   if (longitud === valor1 && ancho === 1020 && tipoPlataforma === "CHI") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && ancho == 1020 && tipoPlataforma == "CHI") {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          return esPar ? 0.5 * altura + 1 : "NA/NE";
@@ -2178,19 +2141,19 @@ function calcularPlataformaAM7410({
    tipoPlataforma,
    tipoServicio,
    altura,
-   valor1,
 }) {
-   const esPar = altura % 2 === 0;
+   const valor1 = 1572;
+   const esPar = altura % 2 == 0;
 
    if (
-      (longitud === 1020 && tipoPlataforma === "CHI") ||
-      (longitud === 1090 && tipoPlataforma === "ESP")
+      (longitud == 1020 && tipoPlataforma == "CHI") ||
+      (longitud == 1090 && tipoPlataforma == "ESP")
    ) {
       return "ERROR";
    }
 
-   if (longitud === valor1 && ancho === 1020 && tipoPlataforma === "CHI") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && ancho == 1020 && tipoPlataforma == "CHI") {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          return esPar ? 0.5 * altura + 1 : "NA/NE";
@@ -2206,19 +2169,19 @@ function calcularPlataforma190x1090C({
    tipoPlataforma,
    tipoServicio,
    altura,
-   valor1,
 }) {
-   const esPar = altura % 2 === 0;
+   const valor1 = 1090;
+   const esPar = altura % 2 == 0;
 
    if (
-      (longitud === 1020 && tipoPlataforma === "CHI") ||
-      (longitud === 1090 && tipoPlataforma === "ESP")
+      (longitud == 1020 && tipoPlataforma == "CHI") ||
+      (longitud == 1090 && tipoPlataforma == "ESP")
    ) {
       return "ERROR";
    }
 
-   if (longitud === valor1 && ancho === 1020 && tipoPlataforma === "CHI") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && ancho == 1020 && tipoPlataforma == "CHI") {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          return esPar ? 0.5 * altura + 1 : "NA/NE";
@@ -2234,19 +2197,19 @@ function calcularPlataforma190x1020C({
    tipoPlataforma,
    tipoServicio,
    altura,
-   valor1,
 }) {
-   const esPar = altura % 2 === 0;
+   const valor1 = 1020;
+   const esPar = altura % 2 == 0;
 
    if (
-      (longitud === 1020 && tipoPlataforma === "CHI") ||
-      (longitud === 1090 && tipoPlataforma === "ESP")
+      (longitud == 1020 && tipoPlataforma == "CHI") ||
+      (longitud == 1090 && tipoPlataforma == "ESP")
    ) {
       return "ERROR";
    }
 
-   if (longitud === valor1 && ancho === 1020 && tipoPlataforma === "CHI") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && ancho == 1020 && tipoPlataforma == "CHI") {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          return esPar ? 0.5 * altura + 1 : "NA/NE";
@@ -2262,19 +2225,19 @@ function calcularPlataforma190x0732C({
    tipoPlataforma,
    tipoServicio,
    altura,
-   valor1,
 }) {
-   const esPar = altura % 2 === 0;
+   const valor1 = 732;
+   const esPar = altura % 2 == 0;
 
    if (
-      (longitud === 1020 && tipoPlataforma === "CHI") ||
-      (longitud === 1090 && tipoPlataforma === "ESP")
+      (longitud == 1020 && tipoPlataforma == "CHI") ||
+      (longitud == 1090 && tipoPlataforma == "ESP")
    ) {
       return "ERROR";
    }
 
-   if (longitud === valor1 && ancho === 1020 && tipoPlataforma === "CHI") {
-      if (tipoServicio === "NORMAL") {
+   if (longitud == valor1 && ancho == 1020 && tipoPlataforma == "CHI") {
+      if (tipoServicio == "NORMAL") {
          return esPar ? 0.5 * altura : 0.5 * altura + 0.5;
       } else {
          return esPar ? 0.5 * altura + 1 : "NA/NE";
@@ -2284,68 +2247,72 @@ function calcularPlataforma190x0732C({
    return 0;
 }
 
-function calcularPlataformaAcceso3072({ longitud, acceso, altura, valor1 }) {
-   const esPar = altura % 2 === 0;
+function calcularPlataformaAcceso3072({ longitud, acceso, altura }) {
+   const esPar = altura % 2 == 0;
+   const valor1 = 3072;
 
    if (
-      acceso === "SI" &&
-      (longitud === 1090 || longitud === 1020 || longitud === 732)
+      acceso == "SI" &&
+      (longitud == 1090 || longitud == 1020 || longitud == 732)
    ) {
       return "ERROR";
    }
 
-   if (acceso === "SI" && longitud === valor1) {
+   if (acceso == "SI" && longitud == valor1) {
       return esPar ? 0.5 * altura : 0.5 * altura - 0.5;
    }
 
    return 0;
 }
 
-function calcularPlataformaAcceso2572({ longitud, acceso, altura, valor1 }) {
-   const esPar = altura % 2 === 0;
+function calcularPlataformaAcceso2572({ longitud, acceso, altura }) {
+   const valor1 = 2572;
+   const esPar = altura % 2 == 0;
 
    if (
-      acceso === "SI" &&
-      (longitud === 1090 || longitud === 1020 || longitud === 732)
+      acceso == "SI" &&
+      (longitud == 1090 || longitud == 1020 || longitud == 732)
    ) {
       return "ERROR";
    }
 
-   if (acceso === "SI" && longitud === valor1) {
+   if (acceso == "SI" && longitud == valor1) {
       return esPar ? 0.5 * altura : 0.5 * altura - 0.5;
    }
 
    return 0;
 }
 
-function calcularPlataformaAcceso2072({ longitud, acceso, altura, valor1 }) {
-   const esPar = altura % 2 === 0;
+function calcularPlataformaAcceso2072({ longitud, acceso, altura }) {
+   const valor1 = 2072;
+   const esPar = altura % 2 == 0;
 
    if (
-      acceso === "SI" &&
-      (longitud === 1090 || longitud === 1020 || longitud === 732)
+      acceso == "SI" &&
+      (longitud == 1090 || longitud == 1020 || longitud == 732)
    ) {
       return "ERROR";
    }
 
-   if (acceso === "SI" && longitud === valor1) {
+   if (acceso == "SI" && longitud == valor1) {
       return esPar ? 0.5 * altura : 0.5 * altura - 0.5;
    }
 
    return 0;
 }
 
-function calcularPlataformaAcceso1572({ longitud, acceso, altura, valor1 }) {
-   const esPar = altura % 2 === 0;
+function calcularPlataformaAcceso1572({ longitud, acceso, altura }) {
+   const valor1 = 1572;
+   const esPar = altura % 2 == 0;
 
    if (
-      acceso === "SI" &&
-      (longitud === 1090 || longitud === 1020 || longitud === 732)
+      acceso == "SI" &&
+      (longitud == 1090 || longitud == 1020 || longitud == 732)
    ) {
       return "ERROR";
    }
 
-   if (acceso === "SI" && longitud === valor1) {
+   if (acceso == "SI" && longitud == valor1) {
       return esPar ? 0.5 * altura : 0.5 * altura - 0.5;
    }
 
@@ -2360,11 +2327,12 @@ function calcularPlataformaMixtaAcceso2572() {
    return 0;
 }
 
-function calcularTuboGancho1m({ tipoTubo, longitud, ancho, altura, valor1 }) {
+function calcularTuboGancho1m({ tipoTubo, longitud, ancho, altura }) {
+   const valor1 = 1;
    if (tipoTubo !== valor1) return 0;
 
    const ambosLaterales = longitud > 0 && ancho > 0;
-   const unLateral = longitud > 0 && ancho === 0;
+   const unLateral = longitud > 0 && ancho == 0;
 
    if (unLateral) {
       return 2 * Math.ceil(altura / (2 * ancho));
@@ -2377,11 +2345,12 @@ function calcularTuboGancho1m({ tipoTubo, longitud, ancho, altura, valor1 }) {
    return 0;
 }
 
-function calcularTuboGancho05m({ tipoTubo, longitud, ancho, altura, valor1 }) {
+function calcularTuboGancho05m({ tipoTubo, longitud, ancho, altura }) {
+   const valor1=1;
    if (tipoTubo !== valor1) return 0;
 
    const ambosLaterales = longitud > 0 && ancho > 0;
-   const unLateral = longitud > 0 && ancho === 0;
+   const unLateral = longitud > 0 && ancho == 0;
 
    if (unLateral) {
       return 2 * Math.ceil(altura / (2 * ancho));

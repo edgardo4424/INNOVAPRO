@@ -73,7 +73,7 @@ const {
    calcularArgolla4840mm,
 } = require("../../domain/formulas-generar-despieces/funcionesAndamioFachada");
 
-function calcularCantidadesPorCadaPiezaDeAndamioFachada(datosAtributos) {
+function calcularCantidadesPorCadaPiezaDeAndamioFachada(datosAtributos) {      
    return datosAtributos.map((dato) => {
       const valorHusilloNivelacion = calcularHusilloNivelacion(dato);
       const valorPerfilMetalicoUPN = calcularPerfilMetalicoUPN(dato);
@@ -89,6 +89,14 @@ function calcularCantidadesPorCadaPiezaDeAndamioFachada(datosAtributos) {
       const mensula300 = dato.mensula300 ? dato.mensula300 : 0;
       const acopladorMulti = dato.acopladorMulti ? dato.acopladorMulti : 0;
       const valorBarandillasCombi0732 = calcularBarandillasCombi0732(dato);
+      const valorPlataformaAcceso3072 = calcularPlataformaAcceso3072(dato);
+      const valorPlataformaAcceso2572 = calcularPlataformaAcceso2572(dato);
+      const valorPlataformaAcceso2072 = calcularPlataformaAcceso2072(dato);
+      const valorPlataformaAcceso1572 = calcularPlataformaAcceso1572(dato);
+      const valorTuboGancho1m = calcularTuboGancho1m(dato);
+      const valorTuboGancho05m = calcularTuboGancho05m(dato);
+      const valorPuntal3mAzul = calcularPuntal3mAzul(dato);
+
       const resultados = [
          {
             pieza: "AM.0100",
@@ -155,7 +163,10 @@ function calcularCantidadesPorCadaPiezaDeAndamioFachada(datosAtributos) {
          },
          {
             pieza: "AM.2000",
-            cantidad: calcularHorizontalMulti0732(dato,valorBarandillasCombi0732),
+            cantidad: calcularHorizontalMulti0732(
+               dato,
+               valorBarandillasCombi0732
+            ),
          },
          {
             pieza: "AM.2800",
@@ -263,19 +274,22 @@ function calcularCantidadesPorCadaPiezaDeAndamioFachada(datosAtributos) {
          },
          {
             pieza: "AM.6000",
-            cantidad: calcularPlataforma3072E(dato),
+            cantidad: calcularPlataforma3072E(dato, valorPlataformaAcceso3072),
          },
          {
             pieza: "AM.6100",
-            cantidad: calcularPlataforma2572E(dato),
+            cantidad: calcularPlataforma2572E(dato, valorPlataformaAcceso2572),
          },
          {
             pieza: "AM.6200",
-            cantidad: calcularPlataforma2072E(dato),
+            cantidad: calcularPlataforma2072E(dato, valorPlataformaAcceso2072),
          },
          {
             pieza: "AM.6300",
-            cantidad: calcularPlataforma290x1572E(dato),
+            cantidad: calcularPlataforma290x1572E(
+               dato,
+               valorPlataformaAcceso1572
+            ),
          },
          {
             pieza: "AM.6400",
@@ -287,19 +301,31 @@ function calcularCantidadesPorCadaPiezaDeAndamioFachada(datosAtributos) {
          },
          {
             pieza: "AM.6600",
-            cantidad: calcularPlataforma320x3072C(dato),
+            cantidad: calcularPlataforma320x3072C(
+               dato,
+               valorPlataformaAcceso3072
+            ),
          },
          {
             pieza: "AM.6700",
-            cantidad: calcularPlataforma320x2572C(dato),
+            cantidad: calcularPlataforma320x2572C(
+               dato,
+               valorPlataformaAcceso2572
+            ),
          },
          {
             pieza: "AM.6800",
-            cantidad: calcularPlataforma320x2072C(dato),
+            cantidad: calcularPlataforma320x2072C(
+               dato,
+               valorPlataformaAcceso2072
+            ),
          },
          {
             pieza: "AM.6900",
-            cantidad: calcularPlataforma320x1572C(dato),
+            cantidad: calcularPlataforma320x1572C(
+               dato,
+               valorPlataformaAcceso1572
+            ),
          },
          {
             pieza: "AM.7000",
@@ -339,49 +365,54 @@ function calcularCantidadesPorCadaPiezaDeAndamioFachada(datosAtributos) {
          },
          {
             pieza: "AM.7450",
-            cantidad: calcularPlataformaAcceso3072(dato),
+            cantidad: valorPlataformaAcceso3072,
          },
          {
             pieza: "AM.7451",
-            cantidad: calcularPlataformaAcceso2572(dato),
+            cantidad: valorPlataformaAcceso2572,
          },
          {
             pieza: "AM.7452",
-            cantidad: calcularPlataformaAcceso2072(dato),
+            cantidad: valorPlataformaAcceso2072,
          },
          {
             pieza: "AM.7453",
-            cantidad: calcularPlataformaAcceso1572(dato),
+            cantidad: valorPlataformaAcceso1572,
          },
          {
             pieza: "AM.8500",
-            cantidad: calcularTuboGancho1m(dato),
+            cantidad: valorTuboGancho1m,
          },
          {
             pieza: "AM.8600",
-            cantidad: calcularTuboGancho05m(dato),
+            cantidad: valorTuboGancho05m,
          },
          {
             pieza: "AM.8800",
-            cantidad: calcularBridaGiratoria(dato),
+            cantidad: calcularBridaGiratoria(
+               valorTuboGancho1m + valorTuboGancho05m
+            ),
          },
          {
             pieza: "CON.0100",
-            cantidad: calcularPernosExpansionM12x80(dato),
+            cantidad: calcularPernosExpansionM12x80(
+               valorTuboGancho1m + valorTuboGancho05m
+            ),
          },
          {
             pieza: "PU.0300",
-            cantidad: calcularPuntal3mAzul(dato),
+            cantidad: valorPuntal3mAzul,
          },
          {
             pieza: "PU.0700",
-            cantidad: calcularPinPresion11mm(dato),
+            cantidad: valorPuntal3mAzul,
          },
          {
             pieza: "PU.0900",
-            cantidad: calcularArgolla4840mm(dato),
+            cantidad: valorPuntal3mAzul,
          },
       ];
+
       return resultados.filter((item) => item.cantidad > 0);
    });
 }
