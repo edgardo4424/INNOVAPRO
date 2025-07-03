@@ -30,7 +30,6 @@ export default function ModalEditarCliente({
 
    const handleSubmit = async (e) => {
       e.preventDefault();
-       console.log('entrando ala funcions');
        
       const erroresValidados =
          clienteEditado.tipo === "Persona Jurídica"

@@ -7,13 +7,11 @@ const usuariosService = {
   },
 
   crearUsuario: async (data) => {
-    console.log("📤 Enviando nuevo usuario:", data);
     const res = await api.post("/usuarios", data);
     return res.data.usuario;
   },
 
   actualizarUsuario: async (id, data) => {
-    console.log("✏️ Actualizando usuario:", data);
     const res = await api.put(`/usuarios/${id}`, data);
     return res.data.usuario;
   },

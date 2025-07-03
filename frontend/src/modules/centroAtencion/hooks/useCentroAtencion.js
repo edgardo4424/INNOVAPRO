@@ -4,6 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import useTareaActions from "./useTareaActions";
 
 export default function useCentroAtencion() {
+
    const { user } = useAuth();
    const [tareas, setTareas] = useState([]);
    const [tareaSeleccionada, setTareaSeleccionada] = useState(null);
@@ -11,6 +12,7 @@ export default function useCentroAtencion() {
    const [busqueda, setBusqueda] = useState("");
    const [fechaFiltroInicio, setFechaFiltroInicio] = useState(null);
    const [fechaFiltroFin, setFechaFiltroFin] = useState(null);
+
 
    useEffect(() => {
       async function fetchTareas() {
@@ -26,8 +28,6 @@ export default function useCentroAtencion() {
       const intervalo = setInterval(fetchTareas, 10000);
       return () => clearInterval(intervalo);
    }, [filtroEstado]);
-
-
 
    const cambiarFiltro = (estado) => {
       setFiltroEstado(estado);

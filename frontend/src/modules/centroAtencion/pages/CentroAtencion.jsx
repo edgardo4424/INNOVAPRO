@@ -59,8 +59,8 @@ const statusConfig = {
 
 export default function CentroAtencion() {
    const {
-      tareasFiltradas,
       filtroEstado,
+      tareasFiltradas,
       cambiarFiltro,
       busqueda,
       setBusqueda,
@@ -270,24 +270,7 @@ export default function CentroAtencion() {
                {...acciones}
             />
          )}
-
-         {/* Paginación */}
-         {/* totalPaginas > 1 && (
-            <div className="pagination">
-               {[...Array(totalPaginas)].map((_, index) => (
-                  <button
-                     key={index}
-                     className={`page-button ${
-                        paginaActual === index + 1 ? "active" : ""
-                     }`}
-                     onClick={() => cambiarPagina(index + 1)}
-                  >
-                     {index + 1}
-                  </button>
-               ))}
-            </div>
-         ) */}
+         
       </div>
    );
 }
-//

@@ -19,12 +19,12 @@ const getStockLevel = (stock) => {
    else if (value <= 100) level = "low";
    else if (value <= 200) level = "medium";
    else level = "high";
-   console.log("getStockLevel:", { stock, value, level });
+   
    return level;
 };
 
 export default function StockLevelFilter({ model, onModelChange, getValue }) {
-   console.log("StockLevelFilter RENDER", { model, getValue });
+   
 
    const levels = [
       {
@@ -59,7 +59,7 @@ export default function StockLevelFilter({ model, onModelChange, getValue }) {
 
    const handleChange = useCallback(
       (checked, value) => {
-         console.log("se entro al use callback");
+         
 
          let newModel;
          if (checked) {
@@ -68,7 +68,7 @@ export default function StockLevelFilter({ model, onModelChange, getValue }) {
             newModel = model ? model.filter((item) => item !== value) : [];
          }
 
-         console.log("handleChange:", { options: newModel });
+         
          onModelChange(newModel.length > 0 ? newModel : null);
       },
       [model, onModelChange]
@@ -78,18 +78,16 @@ export default function StockLevelFilter({ model, onModelChange, getValue }) {
       ({ data, node }) => {
          const stock = getValue(node);
          const level = getStockLevel(stock);
-         console.log("doesFilterPass:", { data, node, stock, level, model });
+         
          // Si model es null/undefined, pasan todos
          const result = !model || model.includes(level);
-         console.log("doesFilterPass RESULT:", result);
+         
          return result;
       },
       [model, getValue]
    );
 
-   console.log("ANTES useGridFilter");
    useGridFilter({ doesFilterPass });
-   console.log("DESPUES useGridFilter");
 
    const selectedCount = model ? model.length : 0;
 

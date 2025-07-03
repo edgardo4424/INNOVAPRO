@@ -21,8 +21,6 @@ export default function DespieceTarea({ formData, setFormData }) {
     setFormData((prev) => ({ ...prev, zonas }));
   }, [zonas]);
 
-  console.log(formData)
-
   if (!usoId || !atributos.length) 
     return <p>Seleccione un tipo de equipo para ver los atributos.</p>;
 

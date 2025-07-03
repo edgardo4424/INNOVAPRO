@@ -53,7 +53,6 @@ export default function Login() {
 
       const success = await login(email, password, recaptchaToken, navigate);
       if (success) {
-         console.log("✅ Login exitoso. Redirigiendo al dashboard...");
          navigate("/");
       } else {
          alert("❌ Credenciales incorrectas o fallo en reCAPTCHA.");

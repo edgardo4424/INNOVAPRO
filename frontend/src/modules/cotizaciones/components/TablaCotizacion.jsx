@@ -1,6 +1,4 @@
-"use client";
-
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 import {
    Tooltip,
@@ -11,6 +9,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Edit, Eye, FileDown, Settings } from "lucide-react";
 import { ColumnSelector } from "@/shared/components/ColumnSelector";
+import { Input } from "@/components/ui/input";
+
+import { AgGridReact } from "ag-grid-react";
+import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
+ModuleRegistry.registerModules([AllCommunityModule]);
+import "ag-grid-community/styles/ag-theme-quartz.css";
+import { Label } from "@radix-ui/react-dropdown-menu";
 
 // Componente para texto truncado con tooltip
 const TruncatedText = ({ text }) => {
@@ -28,11 +33,17 @@ const TruncatedText = ({ text }) => {
 };
 
 export default function TablaCotizacion({
-   cotizaciones = [],
+   data = [],
    onDownloadPDF,
    setCotizacionPrevisualizada,
    onContinuarWizard,
 }) {
+   const [text, setText] = useState("");
+   const [cotizaciones, setCotizaciones] = useState([]);
+   useEffect(() => {
+      setCotizaciones(data);
+   }, [data]);
+
    // Estado para las columnas visibles
    const [visibleColumns, setVisibleColumns] = useState({
       codigo_documento: true,
@@ -56,155 +67,181 @@ export default function TablaCotizacion({
    ];
 
    // Definición de columnas
-   const allColumns = [
-      {
-         id: "codigo_documento",
-         name: "Cod. Doc",
-         selector: (row) => row.codigo_documento || "—",
-         cell: (row) => <TruncatedText text={row.codigo_documento} />,
-         sortable: true,
-         omit: !visibleColumns.codigo_documento,
-         grow: 2,
-      },
-      {
-         id: "cp",
-         name: "CP",
-         selector: (row) => row.despiece?.cp || "—",
-         cell: (row) => <TruncatedText text={row.despiece?.cp} />,
-         sortable: true,
-         omit: !visibleColumns.cp,
-         grow: 1,
-      },
-      {
-         id: "cliente",
-         name: "Cliente",
-         selector: (row) => row.cliente?.razon_social || "—",
-         cell: (row) => <TruncatedText text={row.cliente?.razon_social} />,
-         sortable: true,
-         omit: !visibleColumns.cliente,
-         grow: 2,
-      },
-      {
-         id: "obra",
-         name: "Obra",
-         selector: (row) => row.obra?.nombre || "—",
-         cell: (row) => <TruncatedText text={row.obra?.nombre} />,
-         sortable: true,
-         omit: !visibleColumns.obra,
-         grow: 2,
-      },
-      {
-         id: "uso",
-         name: "Uso",
-         selector: (row) => row.uso?.descripcion || "—",
-         cell: (row) => <TruncatedText text={row.uso?.descripcion} />,
-         sortable: true,
-         omit: !visibleColumns.uso,
-         grow: 2,
-      },
-      {
-         id: "tipo_cotizacion",
-         name: "Tipo",
-         selector: (row) => row.tipo_cotizacion || "—",
-         sortable: true,
-         omit: !visibleColumns.tipo_cotizacion,
-      },
-      {
-         id: "estado",
-         name: "Estado",
-         selector: (row) => row.estados_cotizacion?.nombre || "—",
-         sortable: true,
-         omit: !visibleColumns.estado,
-      },
-      {
-         id: "acciones",
-         name: "Acciones",
-         cell: (row) => (
-            <div className="flex gap-1 justify-start">
-               {row.estados_cotizacion.nombre === "Por Aprobar" && (
-               <>
-                  <Button
-                     variant="outline"
-                     size="icon"
-                     onClick={() => onDownloadPDF(row.id)}
-                  >
-                     <FileDown />
-                  </Button>
-                  <Button
-                     variant="outline"
-                     size="icon"
-                     onClick={() => setCotizacionPrevisualizada(row.id)}
-                  >
-                     <Eye />
-                  </Button>
-               </>
-               )}
-               
-               {row.estados_cotizacion.nombre === "Despiece generado" && (
-                  <Button 
-                     variant="outline" 
-                     size="icon"
-                     onClick={() => onContinuarWizard(row.id)}
-                  >
-                     <Edit />
-                  </Button>
-               )}
-               
-            </div>
-         ),
-         omit: !visibleColumns.acciones,
-         ignoreRowClick: true,
-         width: "150px",
-      },
-   ];
 
-   // Estilos personalizados para DataTable
-   const customStyles = {
-      headRow: {
-         style: {
-            backgroundColor: "#f9fafb",
-            borderBottomWidth: "1px",
-         },
-      },
-      rows: {
-         style: {
-            minHeight: "60px",
-            fontSize: "14px",
-         },
-         highlightOnHoverStyle: {
-            backgroundColor: "#f3f4f6",
-         },
-      },
-   };
-   const paginationOptions = {
-      rowsPerPageText: "Filas por página",
-      rangeSeparatorText: "de",
-      selectAllRowsItem: true,
-      selectAllRowsItemText: "Todos",
-   };
+   const columns = useMemo(
+      () =>
+         [
+            visibleColumns.codigo_documento && {
+               field: "codigo_documento",
+               headerName: "Cod. Doc",
+               cellRendererFramework: (params) => (
+                  <TruncatedText text={params.codigo_documento} />
+               ),
+            },
+            visibleColumns.cp && {
+               field: "despiece.cp",
+               headerName: "CP",
+               cellRendererFramework: (params) => (
+                  <TruncatedText text={params.despiece?.cp} />
+               ),
+               sortable: true,
+            },
+            visibleColumns.cliente && {
+               field: "cliente.razon_social",
+               headerName: "Cliente",
+               cellRendererFramework: (params) => (
+                  <TruncatedText text={params.cliente?.razon_social} />
+               ),
+            },
 
+            visibleColumns.obra && {
+               field: "obra.nombre",
+               headerName: "Obra",
+               cellRendererFramework: (params) => (
+                  <TruncatedText text={params.obra?.nombre} />
+               ),
+               sortable: true,
+            },
+            visibleColumns.uso && {
+               field: "uso.descripcion",
+               headerName: "Uso",
+               cellRendererFramework: (params) => (
+                  <TruncatedText text={params.uso?.descripcion} />
+               ),
+               sortable: true,
+            },
+            visibleColumns.tipo_cotizacion && {
+               field: "tipo_cotizacion",
+               headerName: "Tipo",
+               sortable: true,
+            },
+            visibleColumns.estado && {
+               field: "estados_cotizacion.nombre",
+               headerName: "Estado",
+               sortable: true,
+            },
+            {
+               headerName: "Accioness",
+               sortable: false,
+               cellRenderer: (params) => {
+                  const row = params.data;
+
+                  return (
+                     <div className="flex gap-1 justify-start">
+                        {row.estados_cotizacion.nombre === "Por Aprobar" && (
+                           <>
+                              <Button
+                                 variant="outline"
+                                 size="icon"
+                                 onClick={() => onDownloadPDF(row.id)}
+                              >
+                                 <FileDown />
+                              </Button>
+                              <Button
+                                 variant="outline"
+                                 size="icon"
+                                 onClick={() =>
+                                    setCotizacionPrevisualizada(row.id)
+                                 }
+                              >
+                                 <Eye />
+                              </Button>
+                           </>
+                        )}
+                        {row.estados_cotizacion.nombre ===
+                           "Despiece generado" && (
+                           <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => onContinuarWizard(row.id)}
+                           >
+                              <Edit />
+                           </Button>
+                        )}
+                     </div>
+                  );
+               },
+            },
+         ].filter(Boolean),
+      [visibleColumns]
+   );
+
+   useEffect(() => {
+      if (!text) {
+         setCotizaciones(data);
+      } else {
+         const lowerText = text.toLowerCase();
+
+         const filtro = data.filter((item) => {
+            const codigo = (item.codigo_documento ?? "")
+               .toString()
+               .toLowerCase();
+            const cliente = (item.cliente.razon_social ?? "")
+               .toString()
+               .toLowerCase();
+            const obra = (item.obra.nombre ?? "").toString().toLowerCase();
+
+            // Devuelve true si coincide en alguno de los campos
+            return (
+               codigo.includes(lowerText) ||
+               cliente.includes(lowerText) ||
+               obra.includes(lowerText)
+            );
+         });
+
+         setCotizaciones(filtro);
+      }
+   }, [text]);
 
    return (
       <div className="w-full px-4 max-w-7xl">
-         <div className="flex justify-end mt-6">
+         <article className="flex flex-col md:flex-row justify-between mt-6">
+            <section className="relative flex-1 w-full md:max-w-80 ">
+               {/* <Label className="text-xs text-neutral-600 bg-white absolute -top-2 px-2 ml-2">Filtra por código, cliente o obra</Label> */}
+               <Input
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  placeholder="Filtra por código, cliente o obra"
+                  className="w-full"
+               />
+            </section>
             <ColumnSelector
                visibleColumns={visibleColumns}
                setVisibleColumns={setVisibleColumns}
                columnOptions={columnOptions}
             />
-         </div>
-         
-         <DataTable
-            columns={allColumns.filter((col) => !col.omit)}
-            data={cotizaciones || []}
-            highlightOnHover
-            pointerOnHover
-            pagination
-            paginationPerPage={5}
-            paginationRowsPerPageOptions={[5, 10, 15, 20]}
-            customStyles={customStyles}
-            paginationComponentOptions={paginationOptions}
-            noDataComponent="No hay cotizaciones disponibles"
+         </article>
+
+         <AgGridReact
+            rowData={cotizaciones}
+            columnDefs={columns}
+            overlayLoadingTemplate={
+               '<span class="ag-overlay-loading-center">Cargando...</span>'
+            }
+            overlayNoRowsTemplate="<span>No hay registros para mostrar</span>"
+            pagination={true}
+            paginationPageSize={20}
+            loadingOverlayComponentParams={{ loadingMessage: "Cargando..." }}
+            domLayout="autoHeight"
+            rowHeight={50}
+            headerHeight={50}
+            animateRows={true}
+            enableCellTextSelection={true}
+            suppressCellFocus={true}
+            paginationAutoPageSize={false}
+            localeText={{
+               page: "Página",
+               more: "más",
+               to: "a",
+               of: "de",
+               next: "Siguiente",
+               last: "Última",
+               first: "Primera",
+               previous: "Anterior",
+               loadingOoo: "Cargando...",
+               noRowsToShow: "No hay registros para mostrar",
+               pageSizeSelectorLabel: "N° de filas",
+            }}
          />
       </div>
    );

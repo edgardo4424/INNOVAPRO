@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { generarDespiece } from "../../services/cotizacionesService";
 
 // Este hook es la función para generar despiece a partir de las "zonas" generadas en el PasoAtributos del Wizard
@@ -9,7 +9,6 @@ import { generarDespiece } from "../../services/cotizacionesService";
 // Detecta si una pieza es un perno según su descripción
 export const esPernoExpansion = (descripcion = "") => {
   const desc = descripcion.toUpperCase();
-  console.log('desc', desc);
   return (
     desc.includes("PERNO DE EXPANSIÓN") ||
     desc.includes("PERNOS DE EXPANSION") ||
@@ -31,57 +30,71 @@ export const mapearPieza = (pieza) => {
   };
 };
 
+// Convierte zonas a string para detectar cambios profundos
+// Para poder generar nuevos despieces si se cambia cualquier cosa dentro de cada zona
+const zonasToString = (zonas) =>
+  JSON.stringify(zonas.map(z => ({
+    zona: z.zona,
+    nota_zona: z.nota_zona,
+    atributos_formulario: z.atributos_formulario
+  })));
+
 export function useGenerarDespiece(formData, setFormData) {
+  const zonasStringRef = useRef("");
+
   useEffect(() => {
+    const { uso_id, zonas, despiece_editado_manualmente, id } = formData;
+
+    // Generar nuevo despiece desde zonas
+    if (!uso_id || !zonas?.length) return;
+
+    // Si el despiece viene desde OT, no hacer nada
+    if (id) return; 
+
+    const zonasActual = zonasToString(zonas);
+    if (zonasStringRef.current === zonasActual && !despiece_editado_manualmente) return;
+
+    // Si cambió zonas, actualizamos referencia
+    zonasStringRef.current = zonasActual;
+
+    // Si había modificaciones manuales de precios, las descartamos aquí
+    if (despiece_editado_manualmente) {
+      setFormData(prev => ({ ...prev, despiece_editado_manualmente: false }));
+      return; // esperamos al siguiente render para generar
+    }
+
     const cargarDespiece = async () => {
-      const {uso_id, zonas, despiece, resumenDespiece } = formData;
-      console.log("📦 Despiece:", formData.despiece);
-console.log("📊 Resumen generado:", formData.resumenDespiece);
-
-
-      // Si ya hay un despiece registrado (DESPIECE DE OFICINA TÉCNICA), que no haga nada
-      // Si hay despiece pero no un resumen, solo calcula el resumen
-      if (Array.isArray(despiece) && despiece.length > 0) {
-        const resumenCalculado = calcularResumen(despiece);
-
-        // Si el resumen está incompleto, puede que falte el total de piezas lo forzamos
-        if (
-          !resumenDespiece ||
-          !resumenDespiece.total_piezas ||
-          !resumenDespiece.peso_total_kg
-        ) {
-          setFormData((prev) => ({
-            ...prev,
-            resumenDespiece: resumenCalculado,
-          }))
-        }
-        return;
-      } 
-
-      // Si ya tenemos despiece y resumen, no hacemos nada más
-      if (Array.isArray(despiece) && despiece.length > 0 && resumenDespiece) return;
-
-      // Generar nuevo despiece desde zonas
-      if (!uso_id || !zonas?.length) return;
-
       try {
+        const despieceAnterior = formData.despiece;
+
         const data = await generarDespiece(zonas, uso_id);
         if (!Array.isArray(data?.despiece)) throw new Error ("Respuesta sin despiece válido");
 
-        const despieceFormateado = data.despiece.map(mapearPieza);
-        const hayPernos = despieceFormateado.some(p => p.esPerno);
+        const despieceOriginal = data.despiece.map(mapearPieza);
+
+        // Replicamos los precios anteriores personalizados si existen
+        const despieceFusionado = despieceOriginal.map(p => {
+          const previo = despieceAnterior?.find(prev => prev.pieza_id === p.pieza_id);
+          if (previo?.precio_diario_manual !== undefined) {
+            const diario = parseFloat(previo.precio_diario_manual);
+            return {
+              ...p,
+              precio_diario_manual: diario,
+              precio_u_alquiler_soles: parseFloat((diario * 30).toFixed(2)),
+              precio_alquiler_soles: parseFloat((diario * 30 * p.total).toFixed(2))
+            }
+          }
+          return p;
+        })
+
+        const hayPernos = despieceFusionado.some(p => p.esPerno);
+
+        const resumen = calcularResumen(despieceFusionado)
 
         setFormData((prev) => ({
           ...prev,
-          despiece: despieceFormateado,
-          resumenDespiece: {
-            total_piezas: data.total_piezas,
-            peso_total_kg: data.peso_total_kg,
-            peso_total_ton: data.peso_total_ton,
-            precio_subtotal_venta_dolares: data.precio_subtotal_venta_dolares,
-            precio_subtotal_venta_soles: data.precio_subtotal_venta_soles,
-            precio_subtotal_alquiler_soles: data.precio_subtotal_alquiler_soles
-          },
+          despiece: despieceFusionado,
+          resumenDespiece: resumen,
           requiereAprobacion: false,
           tiene_pernos_disponibles: hayPernos,          
         }));
@@ -90,11 +103,9 @@ console.log("📊 Resumen generado:", formData.resumenDespiece);
       }
     };
 
-    if (formData && (formData.despiece || formData.zonas)){
-      cargarDespiece();
+    cargarDespiece();
 
-    }
-  }, [formData.despiece, formData.uso_id, formData.zonas]);
+  }, [formData.uso_id, formData.zonas, formData.despiece_editado_manualmente, formData.id]);
 }
 
 function calcularResumen(despiece) {

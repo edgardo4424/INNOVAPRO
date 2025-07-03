@@ -48,7 +48,6 @@ export default function DespieceAdicional({ formData, setFormData }) {
       }));
     }
   });
-  console.log("despiece: ", formData.despiece)
 
   // Carga inicial de piezas desde la API
 

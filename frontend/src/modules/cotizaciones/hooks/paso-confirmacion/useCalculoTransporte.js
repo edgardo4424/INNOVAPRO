@@ -15,10 +15,19 @@ const obtenerParametrosExtra = {
     if (attr.alturaTotal % 2 !== 0) numero_tramos += 0.5;
     return { numero_tramos };
   },
-  5: (atributos) => { // Puntales
-    const attr = atributos?.[0];
-    if (!attr?.tipoPuntal) return null;
-    return { tipo_puntal: attr.tipoPuntal };
+  5: (formData) => { // Puntales
+
+    if (!Array.isArray(formData.zonas)) return null;
+
+    const transporte_puntales = formData.zonas
+      .flatMap(zona => zona.atributos_formulario || [])
+      .map(attr => {
+        if(!attr?.tipoPuntal) return null;
+        return { tipo_puntal: attr.tipoPuntal };
+      })
+      .filter(Boolean) // esto elimina nulos
+    
+    return transporte_puntales.length > 0 ? { transporte_puntales } : null;
   },
 };
 
@@ -26,6 +35,7 @@ const obtenerParametrosExtra = {
 export function useCalculoTransporte(formData, setFormData) {
   useEffect(() => {
     const calcular = async () => {
+      
       if (!formData.tiene_transporte) return;
 
       const pesoTn = formData.resumenDespiece?.peso_total_ton;
@@ -41,19 +51,20 @@ export function useCalculoTransporte(formData, setFormData) {
           tipo_transporte: formData.tipo_transporte || "Desconocido"
         };
         
-        const extras = obtenerParametrosExtra[formData.uso_id]?.(formData.atributos);
+        const extras = obtenerParametrosExtra[formData.uso_id]?.(formData);
+        
         if (formData.uso_id in obtenerParametrosExtra && !extras) return;
 
         const payload = { ...basePayload, ...extras }; 
-
-        const { costosTransporte = {} } = await calcularCostoTransporte(payload);
-
+        
+        const { costosTransporte = {}, tipo_transporte = ""} = await calcularCostoTransporte(payload);
+        
         setFormData((prev) => ({
           ...prev,
           costo_tarifas_transporte: costosTransporte.costo_tarifas_transporte || 0,
           costo_distrito_transporte: costosTransporte.costo_distrito_transporte || 0,
           costo_pernocte_transporte: costosTransporte.costo_pernocte_transporte || 0,
-          tipo_transporte: basePayload.tipo_transporte
+          tipo_transporte: tipo_transporte
         }));
       } catch (err) {
         console.error("❌ Error calculando transporte:", err.message);

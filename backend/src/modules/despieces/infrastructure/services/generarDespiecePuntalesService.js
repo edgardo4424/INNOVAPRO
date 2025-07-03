@@ -28,7 +28,8 @@ async function generarDespiecePuntales(data) {
       if (todosDespieces[0].length === 0)
         throw new Error("No hay piezas en la modulación. Ingrese bien los atributos");
 
-      const resultadoFinal = agruparPorPieza(todosDespieces, dataPorZona.length);
+      console.log('todosDespieces', todosDespieces);
+      const resultadoFinal = agruparPorPieza(todosDespieces,  dataPorZona.atributos_formulario.length);
       const subtotales = calcularSubtotales(resultadoFinal);
 
       const piezasBD = await db.piezas_usos.findAll({

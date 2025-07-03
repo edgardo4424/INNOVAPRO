@@ -170,17 +170,18 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
           break;
         case "3":
           // Escaleras de acceso
-          let numero_tramos = atributos_formulario[0].alturaTotal / 2;
-          if(atributos_formulario[0].alturaTotal % 2 !== 0){
-            numero_tramos = numero_tramos + 0.5
+          const { numero_tramos } = cotizacion;
+
+          datosParaCalcularCostoTransporte = {
+            ...datosParaCalcularCostoTransporte,
+            numero_tramos: numero_tramos
           }
 
-          datosParaCalcularCostoTransporte.numero_tramos = numero_tramos
           break;
         
         case "5":
           // Puntales
-          const { transporte_puntales } = cotizacionTransporteData;
+          const { transporte_puntales } = cotizacion;
 
           datosParaCalcularCostoTransporte = {
             ...datosParaCalcularCostoTransporte,
@@ -218,6 +219,8 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
         costo_total: (Number(cotizacion.costo_tarifas_transporte)+Number(cotizacion.costo_distrito_transporte)+Number(cotizacion.costo_pernocte_transporte)).toFixed(2),
 
       }
+      
+      console.log('mapeoDataGuardar', mapeoDataGuardar);
 
 
       await db.cotizaciones_transporte.create(mapeoDataGuardar, { transaction })
@@ -264,8 +267,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
           break;
       }
     }
-
-   
 
     await transaction.commit(); // ✔ Confirmar todo
     return {

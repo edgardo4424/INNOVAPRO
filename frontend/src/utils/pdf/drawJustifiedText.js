@@ -117,3 +117,31 @@ function parseStyledWords(text) {
 
   return words;
 }
+
+export function renderTextoConNegrita(doc, texto, x, y, fontSize = 10) {
+  doc.setFontSize(fontSize);
+
+  // Detectar espacios o tabulaciones al inicio
+  const espaciosIniciales = texto.match(/^(\s*)/)?.[0] || "";
+  const textoSinEspacios = texto.slice(espaciosIniciales.length);
+  const indentExtra = doc.getTextWidth(" ") * espaciosIniciales.length;
+
+  let cursorX = x + indentExtra;
+
+  const partes = textoSinEspacios.split(/(\*\*[^*]+\*\*)/);
+
+  for (let parte of partes) {
+    if (!parte) continue;
+
+    if (/^\*\*.+\*\*$/.test(parte)) {
+      const textoNegrita = parte.replace(/\*\*/g, "");
+      doc.setFont("helvetica", "bold");
+      doc.text(textoNegrita, cursorX, y);
+      cursorX += doc.getTextWidth(textoNegrita);
+    } else {
+      doc.setFont("helvetica", "normal");
+      doc.text(parte, cursorX, y);
+      cursorX += doc.getTextWidth(parte);
+    }
+  }
+}

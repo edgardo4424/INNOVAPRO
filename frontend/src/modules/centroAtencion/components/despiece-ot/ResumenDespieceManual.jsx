@@ -32,9 +32,18 @@ export default function ResumenDespieceManual({ despiece = [], resumen = {} }) {
               <td style={{ padding: "0.4rem", borderBottom: "1px solid #eee" }}>{i + 1}</td>
               <td style={{ padding: "0.4rem", borderBottom: "1px solid #eee" }}>{pieza.descripcion}</td>
               <td style={{ padding: "0.4rem", textAlign: "center" }}>{pieza.cantidad}</td>
-              <td style={{ padding: "0.4rem", textAlign: "right" }}>{formatear(pieza.precio_unitario)}</td>
               <td style={{ padding: "0.4rem", textAlign: "right" }}>
-                {formatear(pieza.precio_unitario * pieza.cantidad)}
+                {formatear(
+                  pieza.precio_unitario ??
+                  pieza.precio_venta_soles ??
+                  pieza.precio_u_venta_soles ??
+                  pieza.precio_alquiler_soles
+                )}
+              </td>
+              <td style={{ padding: "0.4rem", textAlign: "right" }}>
+                {formatear(
+                  (pieza.precio_unitario ?? pieza.precio_venta_soles ?? pieza.precio_u_venta_soles ?? pieza.precio_alquiler_soles) * pieza.cantidad
+                )}              
               </td>
             </tr>
           ))}

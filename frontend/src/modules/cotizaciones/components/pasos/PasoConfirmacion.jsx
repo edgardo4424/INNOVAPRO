@@ -2,8 +2,10 @@ import { useEffect } from "react";
 import { useWizardContext } from "../../context/WizardCotizacionContext";
 import { useGenerarDespiece } from "../../hooks/paso-confirmacion/useGenerarDespiece";
 import { useCalculoTransporte } from "../../hooks/paso-confirmacion/useCalculoTransporte";
+import { USOS_INSTALABLES, USOS_SIN_DESCUENTO} from "../../constants/usos";
 import ResumenDespiece from "./paso-confirmacion/ResumenDespiece";
 import BloquePernos from "./paso-confirmacion/BloquePernos";
+import BloquePuntales from "./paso-confirmacion/BloquePuntales";
 import BloqueTransporte from "./paso-confirmacion/BloqueTransporte";
 import BloqueInstalacion from "./paso-confirmacion/BloqueInstalacion";
 import BloqueDescuento from "./paso-confirmacion/BloqueDescuento";
@@ -49,6 +51,10 @@ export default function PasoConfirmacion() {
     <div className="paso-formulario">
       <h3>Paso 5: Confirmación Final</h3>
 
+      {formData.uso_id === 5 && (
+        <BloquePuntales formData={formData} setFormData={setFormData} />
+      )}
+
       <ResumenDespiece
         despiece={formData.despiece}
         resumen={formData.resumenDespiece}
@@ -80,13 +86,14 @@ export default function PasoConfirmacion() {
         <DespieceAdicional formData={formData} setFormData={setFormData} />
       )}
 
-      {
-          console.log('formData.tiene_pernos_disponibles', formData.tiene_pernos_disponibles)
-      }
       <BloquePernos formData={formData} setFormData={setFormData} errores={errores} />
       <BloqueTransporte formData={formData} setFormData={setFormData} errores={errores} />
-      <BloqueInstalacion formData={formData} setFormData={setFormData} errores={errores} />
-      <BloqueDescuento formData={formData} setFormData={setFormData} errores={errores} />
+      {USOS_INSTALABLES.includes(formData.uso_id) && (
+        <BloqueInstalacion formData={formData} setFormData={setFormData} errores={errores} />
+      )}
+      {!USOS_SIN_DESCUENTO.includes(formData.uso_id) && (
+        <BloqueDescuento formData={formData} setFormData={setFormData} errores={errores} />
+      )}
     </div>
   );
 }

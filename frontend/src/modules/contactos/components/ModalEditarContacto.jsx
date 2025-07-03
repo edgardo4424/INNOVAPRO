@@ -27,9 +27,7 @@ export default function ModalEditarContacto({
    const closeModal = () => {
       setOpen(false);
    };
-   //  useEffect(() => {
-   //     console.log(contacto,obras,clientes);
-   //  }, [contacto,open]);
+
    return (
       <AlertDialog open={open} onOpenChange={setOpen}>
          <AlertDialogTrigger asChild>

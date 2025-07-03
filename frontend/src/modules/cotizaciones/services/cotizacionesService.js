@@ -40,7 +40,7 @@ export async function crearCotizacion({
   cotizacion,
   despiece,
 }) {
-  console.log({uso_id, zonas, cotizacion, despiece});
+ 
   const response = await api.post("/cotizaciones", {
     uso_id,
     zonas,

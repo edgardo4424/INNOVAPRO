@@ -21,7 +21,6 @@ export default function Paginacion({
 }) {
 
      const handleChange=(e)=>{
-      console.log(e)
       setPaginaActual(1)
       setUsuariosPorPagina(Number(e))
     }

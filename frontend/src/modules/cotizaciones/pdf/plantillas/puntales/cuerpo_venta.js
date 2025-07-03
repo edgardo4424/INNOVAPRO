@@ -12,14 +12,14 @@ export async function generarCuerpoPuntalesVenta(doc, data, startY = 120) {
   const x = (210 - textWidth) / 2;
   doc.text(titulo.toUpperCase(), x, currentY);
   doc.setLineWidth(0.5);
-  doc.line(x, currentY + 1.2, x + textWidth, currentY + 1.2);
+  doc.line(x, currentY + 1.2, x + textWidth + 6, currentY + 1.2);
 
   currentY += 10;
 
   const indent = 20;
   const box = 2.5;
 
-  // Servicio de alquiler
+  // Título y subtitulo
   currentY = await verificarSaltoDePagina(doc, currentY, 6);
   doc.setDrawColor(0);
   doc.setLineWidth(0.3);
@@ -33,23 +33,33 @@ export async function generarCuerpoPuntalesVenta(doc, data, startY = 120) {
   doc.setLineWidth(0.3);
   doc.line(indent + box + 3, currentY + 1.5, indent + box + 3 + subtituloWidth, currentY + 1.5);
 
-  // 🧮 Cantidad de equipos
-  const cantidad_equipos = data.atributos?.cantidad === 1 ? "Ud." : "Uds.";
+  currentY += 6;
 
   // ⚙️ Detalles cotización
-  const detalles = data.detalles_alquiler || [
-    `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** Venta de ${data.atributos?.cantidad || "(INDEFINIDO NÚMERO DE PUNTALES)"} ${cantidad_equipos} De ${data.uso.nombre|| "(INDEFINIDO USO DE EQUIPO)"} de ${data.atributos?.tipoPuntal || "(LONGITUD INDEFINIDA)"}: **S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV.**`
-  ];
+  for (const zona of data.zonas || []) {
+    const zonaTitulo = `Zona ${zona.zona || "1"} - ${zona.nota_zona || "(DESCRIPCIÓN DE ZONA INDEFINIDA)"}`;
+    currentY = drawJustifiedText(doc, `**${zonaTitulo}**`, indent + 3, currentY, 170, 5.5, 10);
 
-  currentY += 6;
-  for (const linea of detalles) {
-    const palabras = linea.split(/\s+/);
-    const aproxLineas = Math.ceil(palabras.length / 11);
-    const alturaEstimada = aproxLineas * 5;
+    for (const equipo of zona.atributos || []) {
+      const descripcionEquipo = `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** Venta de ${equipo.cantidad || "(INDEFINIDO NÚMERO DE PUNTALES) en Zona: " + zona.zona} ${equipo.cantidad === 1 ? "Ud." : "Uds."} de ${data.uso?.nombre || "(NOMBRE DE EQUIPO INDEFINIDO)"} de ${equipo.tipoPuntal || "(LONGITUD INDEFINIDA)"}`;
 
-    currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimada);
-    currentY = drawJustifiedText(doc, linea, indent + box + 3, currentY, 170, 5.5, 10);
+      const palabras = descripcionEquipo.split(/\s+/);
+      const aproxLineas = Math.ceil(palabras.length / 11);
+      const alturaEstimada = aproxLineas * 5;
+
+      currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimada);
+      currentY = drawJustifiedText(doc, descripcionEquipo, indent + box + 3, currentY, 170, 5.5, 10);
+    }
+
+    currentY += 4; // Espacio entre zonas
   }
+
+  currentY += 2 ; // Espacio antes del resumen de cotización
+  // Resumen de cotización
+  const subtituloResumen = `** : 
+
+  **S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV.**`;
+  currentY = drawJustifiedText(doc, subtituloResumen, indent + 3, currentY, 170, 5.5, 10);
 
   return currentY;
 }

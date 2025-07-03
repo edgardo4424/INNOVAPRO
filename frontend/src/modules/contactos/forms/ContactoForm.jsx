@@ -48,7 +48,6 @@ export default function ContactoForm({
          err.inner.forEach((e) => {
             nuevosErrores[e.path] = e.message;
          });
-         console.log("nuevos errores", nuevosErrores);
 
          setErrores(nuevosErrores);
          toast.error("Faltan campos obligatorios");

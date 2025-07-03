@@ -145,8 +145,6 @@ const TablaStockPiezas = ({ visibleColumns }) => {
       );
    }
 
-   console.log("ColumnDefs:", columns);
-
    return (
       <>
          <SummaryStats data={data} />

@@ -11,8 +11,8 @@ import generarPDFPorUso from "../pdf/generadorPDFModular";
 
 export function useGestionCotizaciones() {
   const [cotizaciones, setCotizaciones] = useState([]);
-  const [paginaActual] = useState(1);
-  const cotizacionesPorPagina = 9999999;
+  console.log('cotizaciones en el hook',cotizaciones);
+  
 
   // Este estado controla si el modal de confirmación está abierto y qué cotización se va a descargar.
   // `abierto` indica si el modal está visible, y `cotizacionId` es el ID de la cotización seleccionada para descargar el PDF.
@@ -76,13 +76,8 @@ export function useGestionCotizaciones() {
     fetchCotizaciones();
   }, []);
 
-  const cotizacionesPaginados = cotizaciones.slice(
-    (paginaActual - 1) * cotizacionesPorPagina,
-    paginaActual * cotizacionesPorPagina
-  );
-
   return {
-    cotizacionesPaginados,
+    cotizaciones,
     confirmarDescargaPDF,
     modalConfirmacion,
     cerrarModal,

@@ -1,3 +1,5 @@
+import { USOS_INSTALABLES } from "../constants/usos";
+
 export default function validarPasoConfirmacion(formData) {
   const errores = {};
 
@@ -34,18 +36,20 @@ export default function validarPasoConfirmacion(formData) {
     }
   }
 
-  // 🔹 Validación INSTALACIÓN
-  if (!formData.tipo_instalacion || formData.tipo_instalacion === "") {
-    errores.instalacion = "Debes indicar si deseas incluir instalación.";
-  }
-
-  if (formData.tipo_instalacion && formData.tipo_instalacion !== "NINGUNA") {
-    if (formData.tipo_instalacion === "COMPLETA" && !formData.precio_instalacion_completa) {
-      errores.instalacion = "Debes ingresar el precio de instalación completa.";
+  // 🔹 Validación INSTALACIÓN (solo si el uso lo permite)
+  if (USOS_INSTALABLES.includes(formData.uso_id)){
+    if (!formData.tipo_instalacion || formData.tipo_instalacion === "") {
+      errores.instalacion = "Debes indicar si deseas incluir instalación.";
     }
-    if (formData.tipo_instalacion === "PARCIAL") {
-      if (!formData.precio_instalacion_completa || !formData.precio_instalacion_parcial) {
-        errores.instalacion = "Debes ingresar precios válidos para instalación parcial y completa.";
+
+    if (formData.tipo_instalacion && formData.tipo_instalacion !== "NINGUNA") {
+      if (formData.tipo_instalacion === "COMPLETA" && !formData.precio_instalacion_completa) {
+        errores.instalacion = "Debes ingresar el precio de instalación completa.";
+      }
+      if (formData.tipo_instalacion === "PARCIAL") {
+        if (!formData.precio_instalacion_completa || !formData.precio_instalacion_parcial) {
+          errores.instalacion = "Debes ingresar precios válidos para instalación parcial y completa.";
+        }
       }
     }
   }

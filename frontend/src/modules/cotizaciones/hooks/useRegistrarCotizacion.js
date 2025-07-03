@@ -25,39 +25,42 @@ export function useRegistrarCotizacion(pasosLength) {
     setErrores, 
   } = useWizardContext();
 
+  function obtenerParametrosExtraCotizacion(formData) {
+    const extras = {};
+
+    if (formData.uso_id === 5) {
+      // Puntales
+      const transporte_puntales = formData.zonas
+        ?.flatMap(zona => zona.atributos_formulario || [])
+        .map(attr => attr?.tipoPuntal)
+        .filter(Boolean)
+        .map(tipo => ({ tipo_puntal: tipo }));
+
+      if (transporte_puntales?.length) {
+        extras.transporte_puntales = transporte_puntales;
+      }
+    }
+
+    if (formData.uso_id === 3) {
+      // Escalera de Acceso
+      extras.precio_tramo = formData.precio_tramo || 0;
+    }
+
+    return extras;
+  }
+
+
   // Cargar la cotización "En progreso" al entrar al Wizard
   useEffect(() => {
     if (!id) return;
     (async () => {
       try {
         const data = await obtenerCotizacionPorId(id);
-        console.log("Data del backend", data)
-        
+           
         const despieceFormateado = data.despiece?.map(mapearPieza)
 
-          const hayPernos = despieceFormateado.some(p => p.esPerno); 
+        const hayPernos = despieceFormateado.some(p => p.esPerno); 
 
-          console.log({
-          ...data,
-          id: id,
-          contacto_id: data.cotizacion.contacto_id,
-          contacto_nombre: data.cotizacion.contacto_nombre,
-          cliente_id: data.cotizacion.cliente_id,
-          cliente_nombre: data.cotizacion.cliente_razon_social,
-          obra_id: data.cotizacion.obra_id,
-          obra_nombre: data.cotizacion.obra_nombre,
-          obra_direccion: data.cotizacion.obra_direccion,
-          filial_id: data.cotizacion.filial_id,
-          filial_nombre: data.cotizacion.filial_razon_social,
-          uso_id: data.uso_id,
-          uso_nombre: data.uso_nombre,
-          tipo_cotizacion: data.cotizacion.tipo_cotizacion,
-          duracion_alquiler: data.cotizacion.tiempo_alquiler_dias,
-          zonas: data.zonas,
-          despiece: despieceFormateado,
-          tiene_pernos_disponibles: hayPernos,
-          resumenDespiece: calcularResumenDespiece(data.despiece),
-        });
         setFormData({
           ...data,
           id: id,
@@ -140,6 +143,7 @@ export function useRegistrarCotizacion(pasosLength) {
           igv_porcentaje: 18,
           tiempo_alquiler_dias: formData.duracion_alquiler,
           distrito_transporte: extraerDistrito(formData.obra_direccion),
+          ...obtenerParametrosExtraCotizacion(formData)
         },
         despiece: formData.despiece,
       };
@@ -167,7 +171,6 @@ export function useRegistrarCotizacion(pasosLength) {
 
     try {
       const payload = construirPayloadOT(formData);
-      console.log("Payload enviado al backend", payload)
       await crearCotizacionDesdeOT(payload);
       setExito(true);
       setPasoActual(pasosLength);
@@ -203,6 +206,7 @@ export function useRegistrarCotizacion(pasosLength) {
       nota_instalacion: formData.nota_instalacion || "",
 
       tipo_transporte: formData.tipo_transporte || "",
+      ...obtenerParametrosExtraCotizacion(formData)
     },
     despiece: (formData.despiece || [])
       .filter((pieza) => pieza.incluido !== false)

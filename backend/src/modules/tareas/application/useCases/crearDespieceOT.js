@@ -20,6 +20,8 @@ const ID_ESTADO_COTIZACION_DESPIECE_GENERADO= 2; // Estado por aprobar por el co
 
 module.exports = async (dataDespiece, tareaRepository) => {
 
+  console.log('dataDespiece', dataDespiece);
+
   const transaction = await db.sequelize.transaction(); // Iniciar transacción
 
   try {
@@ -89,9 +91,14 @@ module.exports = async (dataDespiece, tareaRepository) => {
       // Notificar al comercial que solicitó la tarea (TELEGRAM)
       const usuario = await db.usuarios.findByPk(tarea.usuarioId);
 
-      if(usuario.id_chat){
-        enviarNotificacionTelegram(usuario.id_chat, notificacionParaElCreador.mensaje)
-      }
+     if (usuario.id_chat) {
+  try {
+    await enviarNotificacionTelegram(usuario.id_chat, notificacionParaElCreador.mensaje);
+  } catch (error) {
+    console.error("❌ Error al intentar enviar notificación por Telegram:", error.message);
+    // Continúa normalmente
+  }
+}
       
     
     } else {
@@ -100,6 +107,7 @@ module.exports = async (dataDespiece, tareaRepository) => {
         respuesta: { mensaje: "No se solicitó un despiece para la tarea" },
       };
     }
+
 
     await transaction.commit(); // ✔ Confirmar todo
     return { codigo: 201, respuesta: { mensaje: "Despiece creado por OT correctamente."} };

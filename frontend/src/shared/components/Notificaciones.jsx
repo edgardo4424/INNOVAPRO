@@ -67,7 +67,6 @@ export default function Notificaciones () {
       for (const notificacion of notificaciones) {
          if (notificacion.leida == 0) {
             await api.put(`/notificaciones/${notificacion.id}/leida`);
-            console.log(notificacion.mensaje);
             
          }
       }
@@ -75,7 +74,6 @@ export default function Notificaciones () {
    };
 
    const elimiarNotificacion = (id) => {
-      console.log("Funcion para eliminar la notificaion");
       setNotificaciones(notificaciones.filter((n) => n.id != id));
    };
 
