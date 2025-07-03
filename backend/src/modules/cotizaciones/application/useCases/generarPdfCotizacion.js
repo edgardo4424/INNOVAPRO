@@ -204,6 +204,8 @@ module.exports = async (idCotizacion) => {
         ],
       });
 
+      // Obtener atributos
+
       const resultado = mapearAtributosValor(atributosDelUso);
 
       const listaAtributos = agruparPorZonaYAtributos(resultado);
@@ -218,6 +220,20 @@ module.exports = async (idCotizacion) => {
         })),
         nota_zona: atributo.atributos[0].nota_zona,
       }));
+
+      // Obtener las piezas adicionales
+
+      const piezasDetalleAdicionalesAndamioTrabajo = await db.despieces_detalle.findAll({
+        where: {
+          despiece_id: despieceEncontrado.id,
+          esAdicional: true
+        },
+        include: [{
+          model: db.piezas,
+          as: "pieza",
+          attributes: ["id", "item", "descripcion"]
+        }]
+      })
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
@@ -234,6 +250,7 @@ module.exports = async (idCotizacion) => {
             ? pernoEnElDespiece?.cantidad
             : null,
         },
+        piezasAdicionales: piezasDetalleAdicionalesAndamioTrabajo
       };
       break;
 
@@ -533,10 +550,25 @@ module.exports = async (idCotizacion) => {
         })
       );
 
+      // Obtener las piezas adicionales
+
+      const piezasDetalleAdicionalesPuntales = await db.despieces_detalle.findAll({
+        where: {
+          despiece_id: despieceEncontrado.id,
+          esAdicional: true
+        },
+        include: [{
+          model: db.piezas,
+          as: "pieza",
+          attributes: ["id", "item", "descripcion"]
+        }]
+      })
+
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
         zonas: atributosPuntalesConPreciosDelPdf,
         atributos_opcionales: piezasVenta,
+        piezasAdicionales: piezasDetalleAdicionalesPuntales
       };
       break;
 
