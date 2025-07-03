@@ -7,7 +7,7 @@ class DespieceDetalle {
         precio_venta_dolares, 
         precio_venta_soles, 
         precio_alquiler_soles,
-      /*   uuid */
+      esAdicional
     }) {
         this.despiece_id = despiece_id;
         this.pieza_id = pieza_id;
@@ -16,7 +16,7 @@ class DespieceDetalle {
         this.precio_venta_dolares = precio_venta_dolares;
         this.precio_venta_soles = precio_venta_soles;
         this.precio_alquiler_soles = precio_alquiler_soles;
-      /*   this.uuid = uuid; */
+        this.esAdicional = esAdicional;
     }
 
     static validarCamposObligatorios(datos, modo = "crear") {
@@ -30,7 +30,7 @@ class DespieceDetalle {
         }
 
         if (modo === "editar") {
-            const tieneAlMenosUnCampoValido = ["despiece_id", "pieza_id", "cantidad", "peso_kg", "precio_venta_dolares", "precio_venta_soles", "precio_alquiler_soles"].some(
+            const tieneAlMenosUnCampoValido = ["despiece_id", "pieza_id", "cantidad", "peso_kg", "precio_venta_dolares", "precio_venta_soles", "precio_alquiler_soles", "esAdicional"].some(
                 (campo) => 
                     datos[campo] !== undefined && 
                     datos[campo] !== null && 
