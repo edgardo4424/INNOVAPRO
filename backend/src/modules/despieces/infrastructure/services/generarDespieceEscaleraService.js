@@ -57,8 +57,13 @@ async function generarDespieceEscalera(zonas) {
 
       let numero_tramos = sumarTotalAlturas / 2;
     
+      let tramos_2m = numero_tramos;
+      let tramos_1m = 0;
       if (sumarTotalAlturas % 2 !== 0) {
+        tramos_2m = numero_tramos - 0.5; //5
+        tramos_1m = 1
         numero_tramos = numero_tramos + 0.5;
+        
       }
       const precioSubtotalAlquilerSoles = numero_tramos * precio_por_tramo_alquiler;
     
@@ -71,6 +76,8 @@ async function generarDespieceEscalera(zonas) {
         precio_subtotal_venta_soles: totales.precio_venta_soles.toFixed(2),
         precio_subtotal_alquiler_soles: precioSubtotalAlquilerSoles,
         altura_total_general: sumarTotalAlturas,
+        tramos_2m,
+        tramos_1m
       };
     })
   );
@@ -79,6 +86,17 @@ async function generarDespieceEscalera(zonas) {
 
   const totalAlturaGeneral = obtenerAlturasPorZona.reduce((total, altura) => total + altura, 0);
 
+  const totalTramos2mPorZona = resultadosPorZona.map(zona => zona.tramos_2m)
+  const totalTramos1mPorZona = resultadosPorZona.map(zona => zona.tramos_1m)
+
+  console.log({
+    totalTramos2mPorZona,
+    totalTramos1mPorZona
+  });
+
+   const totalTramos2m = totalTramos2mPorZona.reduce((total, tramos_2m) => total + tramos_2m, 0);
+ const totalTramos1m = totalTramos1mPorZona.reduce((total, tramos_1m) => total + tramos_1m, 0);
+ 
   const resultadoFinal = unificarDespiecesConTotales(resultadosPorZona);
 
   console.table(resultadoFinal.despiece);
@@ -94,9 +112,11 @@ console.log(`📅 Precio subtotal alquiler S/: ${resultadoFinal.totales.precio_s
   return {
     despiece: resultadoFinal.despiece,
     ...resultadoFinal.totales,
-    atributos_opcionales: {
+    detalles_escaleras: {
       precio_por_tramo_alquiler: precio_por_tramo_alquiler,
-      altura_total_general: totalAlturaGeneral
+      altura_total_general: totalAlturaGeneral,
+      tramos_2m: totalTramos2m,
+      tramos_1m: totalTramos1m
     }
   };
 
