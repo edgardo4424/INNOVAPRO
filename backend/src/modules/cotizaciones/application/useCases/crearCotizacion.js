@@ -170,12 +170,13 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
           break;
         case "3":
           // Escaleras de acceso
-          let numero_tramos = atributos_formulario[0].alturaTotal / 2;
-          if(atributos_formulario[0].alturaTotal % 2 !== 0){
-            numero_tramos = numero_tramos + 0.5
+          const { numero_tramos } = cotizacion;
+
+          datosParaCalcularCostoTransporte = {
+            ...datosParaCalcularCostoTransporte,
+            numero_tramos: numero_tramos
           }
 
-          datosParaCalcularCostoTransporte.numero_tramos = numero_tramos
           break;
         
         case "5":
