@@ -35,8 +35,8 @@ export default function ImportadorDespiece({ tarea, formData, setFormData }) {
         pieza_id: p.pieza_id,
         cantidad: p.cantidad,
         peso_kg: p.peso_kg,
-        precio_venta_dolares: 0,
-        precio_venta_soles: 0,
+        precio_venta_dolares: p.precio_venta_dolares,
+        precio_venta_soles: p.precio_venta_soles,
         precio_alquiler_soles: p.precio_alquiler_soles,
       })),
     };

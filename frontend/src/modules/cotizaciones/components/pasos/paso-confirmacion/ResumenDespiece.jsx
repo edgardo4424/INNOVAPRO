@@ -12,6 +12,7 @@ export default function ResumenDespiece({ despiece, resumen, tipo }) {
     const num = parseFloat(valor);
     return isNaN(num) ? "—" : num.toFixed(2);
   };
+  
 
   return (
     <>
@@ -31,10 +32,23 @@ export default function ResumenDespiece({ despiece, resumen, tipo }) {
           {despiece
             .filter(pieza => pieza.incluido !== false)
             .map((pieza, i) => {
-              const precioUnitario =
-                tipo === "Alquiler" ? pieza.precio_u_alquiler_soles : pieza.precio_u_venta_soles;
-              const precioTotal =
-                tipo === "Alquiler" ? pieza.precio_alquiler_soles : pieza.precio_venta_soles;
+              let precioUnitario = 0;
+              let precioTotal = 0;
+
+              if (tipo === "Alquiler") {
+                const precioDiario = 
+                  pieza.precio_diario_manual !== undefined
+                    ? parseFloat(pieza.precio_diario_manual)
+                    : parseFloat(pieza.precio_u_alquiler_soles) / 30;
+
+                precioUnitario = (precioDiario * 30).toFixed(2);
+                precioTotal = (precioDiario * 30 * parseFloat(pieza.total)).toFixed(2);
+              } else {
+                precioUnitario = parseFloat(pieza.precio_u_venta_soles).toFixed(2);
+                precioTotal = parseFloat(pieza.precio_venta_soles).toFixed(2);
+              }
+
+
 
               return (
                 <tr key={`${pieza.pieza_id || pieza.id}-${i}`}>
