@@ -14,13 +14,13 @@ export default function GestionCotizaciones() {
    const navigate = useNavigate();
 
    const {
-      cotizacionesPaginados,
+      cotizaciones,
       confirmarDescargaPDF,
       modalConfirmacion,
       cerrarModal,
       ejecutarDescarga,
    } = useGestionCotizaciones();
-
+   
    const [cotizacionSeleccionadaId, setCotizacionSeleccionadaId] =
       useState(null);
 
@@ -28,12 +28,14 @@ export default function GestionCotizaciones() {
       navigate(`/cotizaciones/wizard/${idCotizacion}`);
    }
 
+   console.log('cotizaciones en gstion',cotizaciones);
+   
    return (
       <div className="min-h-full flex-1  flex flex-col items-center">
          <ModuloNavegacion />
 
          <TablaCotizacion
-            cotizaciones={cotizacionesPaginados}
+            data={cotizaciones}   
             onDownloadPDF={confirmarDescargaPDF}
             setCotizacionPrevisualizada={setCotizacionSeleccionadaId}
             onContinuarWizard={continuarCotizacion}
