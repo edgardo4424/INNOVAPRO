@@ -92,4 +92,43 @@ function agruparPorZona(data) {
   return resultado;
 }
 
-module.exports = { mapearPorAtributos, agruparPorZonaYAtributos, agruparPorZona };
+function agruparPuntalesPorZonaYAtributos(data) {
+  const resultado = [];
+
+  const zonasMap = new Map();
+
+  for (const item of data) {
+    const { zona, tipoPuntal, tripode, cantidad, nota_zona } = item;
+    if (!zonasMap.has(zona)) {
+      zonasMap.set(zona, {
+        nota_zona,
+        atributosMap: new Map(),
+      });
+    }
+
+    const zonaObj = zonasMap.get(zona);
+    const clave = `${tipoPuntal}|${tripode}`;
+
+    if (zonaObj.atributosMap.has(clave)) {
+      zonaObj.atributosMap.get(clave).cantidad += cantidad;
+    } else {
+      zonaObj.atributosMap.set(clave, {
+        tipoPuntal,
+        tripode,
+        cantidad,
+      });
+    }
+  }
+
+  for (const [zona, { nota_zona, atributosMap }] of zonasMap.entries()) {
+    resultado.push({
+      zona,
+      nota_zona,
+      atributos: Array.from(atributosMap.values()),
+    });
+  }
+
+  return resultado;
+}
+
+module.exports = { mapearPorAtributos, agruparPorZonaYAtributos, agruparPorZona, agruparPuntalesPorZonaYAtributos };

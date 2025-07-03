@@ -5,6 +5,7 @@ const {
 
 const {
   agruparPorZonaYAtributos,
+  agruparPuntalesPorZonaYAtributos,
 } = require("../../infrastructure/services/mapearAtributosDelPdfService");
 
 const {
@@ -253,9 +254,13 @@ module.exports = async (idCotizacion) => {
         ],
       });
 
-      const resultadoEscaleraAcceso = mapearAtributosValor(atributosDelUsoEscaleraAcceso);
+      const resultadoEscaleraAcceso = mapearAtributosValor(
+        atributosDelUsoEscaleraAcceso
+      );
 
-      const listaAtributosEscaleraAcceso = agruparPorZonaYAtributos(resultadoEscaleraAcceso);
+      const listaAtributosEscaleraAcceso = agruparPorZonaYAtributos(
+        resultadoEscaleraAcceso
+      );
 
       console.dir(listaAtributosPuntales, { depth: null, colors: true });
 
@@ -272,7 +277,10 @@ module.exports = async (idCotizacion) => {
         })
       );
 
-      console.log('atributosEscaleraAccesoDelPdf',atributosEscaleraAccesoDelPdf)
+      console.log(
+        "atributosEscaleraAccesoDelPdf",
+        atributosEscaleraAccesoDelPdf
+      );
 
       /* const tipoAnclaje = despieceEncontrado.atributos_valors?.[4]?.valor;
       let itemPiezaVenta;
@@ -345,7 +353,7 @@ module.exports = async (idCotizacion) => {
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
         atributos: listaAtributosEscaleraAcceso,
-       /*  atributos_opcionales: {
+        /*  atributos_opcionales: {
           nombre_pernos_expansion: tiene_pernos
             ? pernoExpansionArgolla.descripcion
             : null,
@@ -385,31 +393,85 @@ module.exports = async (idCotizacion) => {
 
       console.log("resultadoPuntales", resultadoPuntales);
 
-      const listaAtributosPuntales =
-        agruparPorZonaYAtributos(resultadoPuntales);
+      const atributosPuntalesDelPdf =
+        agruparPuntalesPorZonaYAtributos(resultadoPuntales);
 
-      console.dir(listaAtributosPuntales, { depth: null, colors: true });
+      console.log("atributosPuntalesDelPdf", atributosPuntalesDelPdf);
 
-      const atributosPuntalesDelPdf = listaAtributosPuntales.map(
-        (atributo) => ({
-          zona: atributo.zona,
-          atributos: atributo.atributos.map((at) => ({
-            cantidad: at.cantidad,
-            tipoPuntal: at.tipoPuntal,
-            tripode: at.tripode,
-            cantidad_uso: at.cantidad_uso,
-          })),
-          nota_zona: atributo.atributos[0].nota_zona,
+      const atributosPuntalesConPreciosDelPdf = await Promise.all(
+        atributosPuntalesDelPdf.map(async (zona) => {
+          const atributosConPrecios = await Promise.all(
+            zona.atributos.map(async (atributo) => {
+              const tipoPuntal = atributo.tipoPuntal;
+      
+              let puntal;
+              if (tipoPuntal === "3.00 m") puntal = "PU.0100";
+              else if (tipoPuntal === "4.00 m") puntal = "PU.0400";
+              else if (tipoPuntal === "5.00 m") puntal = "PU.0600";
+      
+              const piezaPuntal = await db.piezas.findOne({
+                where: { item: puntal },
+              });
+      
+              if (!piezaPuntal) {
+                throw new Error(`No se encontró la pieza con item ${puntal}`);
+              }
+      
+              const piezaPuntalDespiece = await db.despieces_detalle.findOne({
+                where: {
+                  despiece_id: despieceEncontrado.id,
+                  pieza_id: piezaPuntal.id,
+                },
+              });
+      
+              if (!piezaPuntalDespiece) {
+                throw new Error(
+                  `No se encontró despiece para pieza_id ${piezaPuntal.id}`
+                );
+              }
+      
+              let precioUnitarioPuntal;
+      
+              if (cotizacionEncontrado.tipo_cotizacion === "Venta") {
+                precioUnitarioPuntal = (
+                  piezaPuntalDespiece.precio_venta_soles /
+                  piezaPuntalDespiece.cantidad
+                ).toFixed(2);
+              } else if (cotizacionEncontrado.tipo_cotizacion === "Alquiler") {
+                precioUnitarioPuntal = (
+                  piezaPuntalDespiece.precio_alquiler_soles /
+                  piezaPuntalDespiece.cantidad
+                ).toFixed(2);
+              }
+      
+              const subtotal = (
+                precioUnitarioPuntal * atributo.cantidad
+              ).toFixed(2);
+      
+              return {
+                ...atributo,
+                precio_unitario: precioUnitarioPuntal,
+                subtotal,
+              };
+            })
+          );
+      
+          // 👇 este return es lo que FALTABA
+          return {
+            zona: zona.zona,
+            nota_zona: zona.nota_zona,
+            atributos: atributosConPrecios,
+          };
         })
       );
-
+      
       // Averiguar que tipos de puntales se registraron en la cotizacion
 
       const tiposPuntalUnicos = [
         // Convertimos a un array los valores únicos usando Set
         ...new Set(
           // Recorremos cada zona con flatMap para aplanar los resultados
-          listaAtributosPuntales.flatMap((item) =>
+          atributosPuntalesDelPdf.flatMap((item) =>
             // De cada zona, accedemos al array "atributos" y sacamos el campo tipoPuntal
             item.atributos.map((attr) => attr.tipoPuntal)
           )
@@ -473,7 +535,7 @@ module.exports = async (idCotizacion) => {
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
-        zonas: atributosPuntalesDelPdf,
+        zonas: atributosPuntalesConPreciosDelPdf,
         atributos_opcionales: piezasVenta,
       };
       break;

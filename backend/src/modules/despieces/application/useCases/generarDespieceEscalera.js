@@ -4,10 +4,7 @@ const {
 
 module.exports = async (dataParaGenerarDespiece) => {
 
-  const zonas = dataParaGenerarDespiece.zonas;
-  const precio_tramo = dataParaGenerarDespiece.precio_tramo
-
-  const dataGenerarDespieceEscaleraAcceso = zonas.map((data) => (({
+  const dataGenerarDespieceEscaleraAcceso = dataParaGenerarDespiece.map((data) => (({
     ...data,
     atributos_formulario: data.atributos_formulario.map((atributo) => ({
     ...atributo,
@@ -17,8 +14,7 @@ module.exports = async (dataParaGenerarDespiece) => {
   })))
 
   const despieceGenerado = await generarDespieceEscalera(
-    dataGenerarDespieceEscaleraAcceso,
-    precio_tramo
+    dataGenerarDespieceEscaleraAcceso
   );
 
 

@@ -12,7 +12,9 @@ const { calcularCantidadesPorCadaPiezaDeEscalera } = require("./calcularCantidad
 
 const CONST_ID_USO_ESCALERA = 3;
 
-async function generarDespieceEscalera(zonas, precio_tramo) {
+async function generarDespieceEscalera(zonas) {
+
+  const precio_por_tramo_alquiler = 300; // Precio por tramo de escalera en soles
 
   const resultadosPorZona = await Promise.all(
     zonas.map(async (dataPorZona) => {
@@ -51,25 +53,15 @@ async function generarDespieceEscalera(zonas, precio_tramo) {
 
       const alturasPorZona = dataPorZona.atributos_formulario.map(atributo => atributo.alturaTotal);
 
-      console.log('alturasPorZona', alturasPorZona);
+      const sumarTotalAlturas = alturasPorZona.reduce((total, altura) => total + altura, 0);
 
-      // Calcular cada precio en base a la altura de cada zona
-      const preciosSubtotalAlquilerSolesPorZona = alturasPorZona.map(altura => {
-        let numero_tramos = altura / 2;
-        console.log('numero_tramos', numero_tramos);
-        if (altura % 2 !== 0) {
-          numero_tramos = numero_tramos + 0.5;
-        }
-        return (Number(precio_tramo) * Number(numero_tramos)).toFixed(2);
-      })
-
-      console.log('preciosSubtotalAlquilerSolesPorZona', preciosSubtotalAlquilerSolesPorZona);
-
-      // Sumar todos los precios de alquiler por zona
-      const precioSubtotalAlquilerSoles = preciosSubtotalAlquilerSolesPorZona.reduce((total, precio) => total + Number(precio), 0);
-      
-      console.log('precioSubtotalAlquilerSoles', precioSubtotalAlquilerSoles);
-
+      let numero_tramos = sumarTotalAlturas / 2;
+    
+      if (sumarTotalAlturas % 2 !== 0) {
+        numero_tramos = numero_tramos + 0.5;
+      }
+      const precioSubtotalAlquilerSoles = numero_tramos * precio_por_tramo_alquiler;
+    
       return {
         despiece: resultadosCombinados,
         total_piezas: subtotales.total,
@@ -77,10 +69,15 @@ async function generarDespieceEscalera(zonas, precio_tramo) {
         peso_total_ton: (totales.peso_kg / 1000).toFixed(2),
         precio_subtotal_venta_dolares: totales.precio_venta_dolares.toFixed(2),
         precio_subtotal_venta_soles: totales.precio_venta_soles.toFixed(2),
-        precio_subtotal_alquiler_soles: precioSubtotalAlquilerSoles.toFixed(2),
+        precio_subtotal_alquiler_soles: precioSubtotalAlquilerSoles,
+        altura_total_general: sumarTotalAlturas,
       };
     })
   );
+
+  const obtenerAlturasPorZona = resultadosPorZona.map(zona => zona.altura_total_general);
+
+  const totalAlturaGeneral = obtenerAlturasPorZona.reduce((total, altura) => total + altura, 0);
 
   const resultadoFinal = unificarDespiecesConTotales(resultadosPorZona);
 
@@ -97,6 +94,10 @@ console.log(`📅 Precio subtotal alquiler S/: ${resultadoFinal.totales.precio_s
   return {
     despiece: resultadoFinal.despiece,
     ...resultadoFinal.totales,
+    atributos_opcionales: {
+      precio_por_tramo_alquiler: precio_por_tramo_alquiler,
+      altura_total_general: totalAlturaGeneral
+    }
   };
 
 }
