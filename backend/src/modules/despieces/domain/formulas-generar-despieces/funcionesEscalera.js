@@ -663,13 +663,14 @@ function calcularAM0600() {
 // 5. Pieza: AM.0700 - VERTICAL 2.00m
 function calcularAM0700({ alturaTotal, alturaEscaleraObra, tipoEscalera }) {
   const diff = alturaTotal - alturaEscaleraObra;
+
   if (["FERMIN", "ALUMINIO", "GURSAM 60"].includes(tipoEscalera)) {
     return esPar(diff) ? 2 * diff : 2 * diff - 2;
-  }
-  if (["EUROPEA", "GURSAM 120"].includes(tipoEscalera)) {
+  } else if (["EUROPEA", "GURSAM 120"].includes(tipoEscalera)) {
     return esPar(diff) ? 4 * diff : "NE";
+  } else {
+    return 0;
   }
-  return 0;
 }
 
 // 6. AM.0900 - VERTICAL 1.50m
