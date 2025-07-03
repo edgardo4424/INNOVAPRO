@@ -89,6 +89,8 @@ async function generarCodigoDocumentoCotizacion({
       c.get({ plain: true })
     );
 
+    console.log('cotizacionesConMismoContactoClienteObraFilial', cotizacionesConMismoContactoClienteObraFilial);
+
   if (cotizacionesConMismoContactoClienteObraFilial.length == 0) {
     const cotizacionesBD = await db.cotizaciones.findAll({
       where: {
@@ -99,17 +101,23 @@ async function generarCodigoDocumentoCotizacion({
     // Aplanar resultados
     const cotizaciones = cotizacionesBD.map((c) => c.get({ plain: true }));
 
+    console.log('cotizaciones', cotizaciones);
+
+
     //Obtener mayor correlativo
 
     const mayorCorrelativo = cotizaciones
-      .map((c) => {
-        const correlativoParte = c.codigo_documento
-          .split("-")[4]
-          ?.split("_")[0];
-        return parseInt(correlativoParte, 10);
-      })
-      .filter((num) => !isNaN(num))
-      .reduce((max, actual) => Math.max(max, actual), 0);
+  .map((c) => {
+    if (!c.codigo_documento) return null;
+
+    const correlativoParte = c.codigo_documento
+      .split("-")[4]
+      ?.split("_")[0];
+    
+    return parseInt(correlativoParte, 10);
+  })
+  .filter((num) => !isNaN(num))
+  .reduce((max, actual) => Math.max(max, actual), 0);
 
     const siguienteCorrelativo = (mayorCorrelativo + 1)
       .toString()
