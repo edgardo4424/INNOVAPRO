@@ -20,6 +20,8 @@ const ID_ESTADO_COTIZACION_DESPIECE_GENERADO= 2; // Estado por aprobar por el co
 
 module.exports = async (dataDespiece, tareaRepository) => {
 
+  console.log('dataDespiece', dataDespiece);
+
   const transaction = await db.sequelize.transaction(); // Iniciar transacción
 
   try {
@@ -105,6 +107,7 @@ module.exports = async (dataDespiece, tareaRepository) => {
         respuesta: { mensaje: "No se solicitó un despiece para la tarea" },
       };
     }
+
 
     await transaction.commit(); // ✔ Confirmar todo
     return { codigo: 201, respuesta: { mensaje: "Despiece creado por OT correctamente."} };
