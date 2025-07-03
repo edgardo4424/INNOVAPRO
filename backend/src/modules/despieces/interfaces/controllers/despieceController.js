@@ -29,6 +29,17 @@ const DespieceController = {
         }
     },
 
+    async generarDespieceAndamioDeFachada(req, res) {
+        try {
+
+            const despieceGenerado = await generarDespieceAndamioDeTrabajo(req.body, despieceRepository ); // Llamamos al caso de uso para crear un despiece
+           
+            res.status(despieceGenerado.codigo).json(despieceGenerado.respuesta); // Respondemos con el despiece creado
+        } catch (error) {
+            console.log('error', error);
+            res.status(500).json({ error: error.message }); // Respondemos con un error
+        }
+    },
     async generarDespieceAndamioDeTrabajo(req, res) {
         try {
 

@@ -10,6 +10,7 @@ router.get("/", despieceController.obtenerDespieces);
 router.post("/", despieceController.crearDespiece);
 router.put("/:id", despieceController.actualizarDespiece);
 router.delete("/:id", despieceController.eliminarDespiece);
+router.post("/andamio-de-fachada", despieceController.generarDespieceAndamioDeFachada)
 router.post("/andamio-de-trabajo", despieceController.generarDespieceAndamioDeTrabajo)
 router.post("/puntales", despieceController.generarDespiecePuntales)
 router.post("/escalera-de-acceso", despieceController.generarDespieceEscalera)
