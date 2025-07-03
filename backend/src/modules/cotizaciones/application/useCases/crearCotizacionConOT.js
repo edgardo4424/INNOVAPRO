@@ -20,7 +20,7 @@ const despieceRepository = new sequelizeDespieceRepository();
 const AtributoValor = require("../../../atributos_valor/domain/entities/atributos_valor");
 const {
   actualizarDespiecesDetalle,
-} = require("../../infrastructure/services/actualizarDespiecesDetalleService");
+} = require("../../infrastructure/services/actualizarDespiecesDetalleService2");
 const {
   mapearValoresAtributos,
 } = require("../../infrastructure/services/mapearValoresAtributosService");
