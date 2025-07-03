@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import DataTable from "react-data-table-component";
+
 import {
    Tooltip,
    TooltipTrigger,
@@ -15,7 +15,6 @@ import { AgGridReact } from "ag-grid-react";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 ModuleRegistry.registerModules([AllCommunityModule]);
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import { Label } from "@radix-ui/react-dropdown-menu";
 
 // Componente para texto truncado con tooltip
 const TruncatedText = ({ text }) => {
@@ -197,7 +196,6 @@ export default function TablaCotizacion({
       <div className="w-full px-4 max-w-7xl">
          <article className="flex flex-col md:flex-row justify-between mt-6">
             <section className="relative flex-1 w-full md:max-w-80 ">
-               {/* <Label className="text-xs text-neutral-600 bg-white absolute -top-2 px-2 ml-2">Filtra por código, cliente o obra</Label> */}
                <Input
                   value={text}
                   onChange={(e) => setText(e.target.value)}
