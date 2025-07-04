@@ -56,6 +56,7 @@ export default function PasoConfirmacion() {
       )}
 
       <ResumenDespiece
+        duracion_alquiler={formData.duracion_alquiler}
         despiece={formData.despiece}
         resumen={formData.resumenDespiece}
         tipo={formData.tipo_cotizacion}

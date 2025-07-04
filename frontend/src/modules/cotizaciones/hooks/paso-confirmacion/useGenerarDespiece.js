@@ -43,7 +43,7 @@ export function useGenerarDespiece(formData, setFormData) {
   const zonasStringRef = useRef("");
 
   useEffect(() => {
-    const { uso_id, zonas, despiece_editado_manualmente, id } = formData;
+    const { uso_id, zonas, despiece_editado_manualmente, id, duracion_alquiler } = formData;
 
     // Generar nuevo despiece desde zonas
     if (!uso_id || !zonas?.length) return;
@@ -80,8 +80,8 @@ export function useGenerarDespiece(formData, setFormData) {
             return {
               ...p,
               precio_diario_manual: diario,
-              precio_u_alquiler_soles: parseFloat((diario * 30).toFixed(2)),
-              precio_alquiler_soles: parseFloat((diario * 30 * p.total).toFixed(2))
+              precio_u_alquiler_soles: parseFloat((diario * duracion_alquiler).toFixed(2)),
+              precio_alquiler_soles: parseFloat((diario * duracion_alquiler * p.total).toFixed(2))
             }
           }
           return p;
@@ -105,7 +105,7 @@ export function useGenerarDespiece(formData, setFormData) {
 
     cargarDespiece();
 
-  }, [formData.uso_id, formData.zonas, formData.despiece_editado_manualmente, formData.id]);
+  }, [formData.uso_id, formData.zonas, formData.despiece_editado_manualmente, formData.id, formData.duracion_alquiler]);
 }
 
 function calcularResumen(despiece) {

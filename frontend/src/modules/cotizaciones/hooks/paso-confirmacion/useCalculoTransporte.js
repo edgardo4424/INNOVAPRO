@@ -23,7 +23,11 @@ const obtenerParametrosExtra = {
       .flatMap(zona => zona.atributos_formulario || [])
       .map(attr => {
         if(!attr?.tipoPuntal) return null;
-        return { tipo_puntal: attr.tipoPuntal };
+
+        // Limpia el tipo de puntal del formulario (ej "3.00 m" => "3.00")
+        const tipoPuntalLimpio = String(attr.tipoPuntal).replace(" m", "").trim();
+
+        return { tipo_puntal: tipoPuntalLimpio };
       })
       .filter(Boolean) // esto elimina nulos
     
@@ -64,7 +68,9 @@ export function useCalculoTransporte(formData, setFormData) {
           costo_tarifas_transporte: costosTransporte.costo_tarifas_transporte || 0,
           costo_distrito_transporte: costosTransporte.costo_distrito_transporte || 0,
           costo_pernocte_transporte: costosTransporte.costo_pernocte_transporte || 0,
-          tipo_transporte: prev.tipo_transporte || tipo_transporte || ""
+
+          tipo_transporte: prev.tipo_transporte || tipo_transporte || "", // Solo si no está definido
+
         }));
       } catch (err) {
         console.error("❌ Error calculando transporte:", err.message);
