@@ -55,6 +55,8 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       tiene_pernos: cotizacion.tiene_pernos
     }
 
+    console.log('dataParaDespiece', dataParaDespiece);
+
     // Valida los campos del despiece
     const errorCampos = Despiece.validarCamposObligatorios( dataParaDespiece,"crear");
 
