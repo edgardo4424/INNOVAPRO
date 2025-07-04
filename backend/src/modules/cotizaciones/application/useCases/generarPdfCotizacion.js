@@ -5,7 +5,7 @@ const {
 
 const {
   agruparPorZonaYAtributos,
-  agruparPuntalesPorTipo,
+  agruparPuntalesPorZonaYTipo,
   agruparPuntalesPorZonaYAtributos,
 } = require("../../infrastructure/services/mapearAtributosDelPdfService");
 
@@ -412,17 +412,9 @@ module.exports = async (idCotizacion) => {
 
       const resultadoPuntales = mapearAtributosValor(atributosDelUsoPuntales);
 
-      console.log("resultadoPuntales", resultadoPuntales);
+      const atributosPuntalesDelPdf = agruparPuntalesPorZonaYAtributos(resultadoPuntales)
+     // const atributosPuntalesDelPdf = agruparPuntalesPorZonaYTipo(resultadoPuntales);
 
-      const atributosPuntalesDelPdfZonas =
-        agruparPuntalesPorZonaYAtributos(resultadoPuntales);
-
-      const atributosPuntalesDelPdf =
-        agruparPuntalesPorTipo(resultadoPuntales);
-
-        console.log('atributosPuntalesDelPdfZonas', atributosPuntalesDelPdfZonas);
-
-      console.log("atributosPuntalesDelPdf", atributosPuntalesDelPdf);
 
       const atributosPuntalesConPreciosDelPdf = await Promise.all(
         atributosPuntalesDelPdf.map(async (zona) => {
@@ -577,6 +569,21 @@ module.exports = async (idCotizacion) => {
         })
       );
 
+      // Obtener la cantidad de tripode
+
+      const piezaTripodeEncontrado = await db.piezas.findOne({
+        where: {
+          item: "PU.1100"
+        }
+      })
+
+      const piezaTripodeDespieceDetalle = await db.despieces_detalle.findOne({
+        where: {
+          despiece_id : despieceEncontrado.id,
+          pieza_id: piezaTripodeEncontrado.id
+        },
+      })
+
       // Obtener las piezas adicionales
 
       const piezasDetalleAdicionalesPuntales =
@@ -597,8 +604,17 @@ module.exports = async (idCotizacion) => {
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
         zonas: atributosPuntalesConPreciosDelPdf,
+        tripode: {
+          nombre: piezaTripodeEncontrado.descripcion,
+          total: piezaTripodeDespieceDetalle.cantidad,
+          precio_venta_dolares: piezaTripodeDespieceDetalle.precio_venta_dolares,
+          precio_venta_soles: piezaTripodeDespieceDetalle.precio_venta_soles,
+          precio_alquiler_soles: piezaTripodeDespieceDetalle.precio_alquiler_soles,
+
+        },
         atributos_opcionales: piezasVenta,
         piezasAdicionales: piezasDetalleAdicionalesPuntales,
+        
       };
       break;
 
