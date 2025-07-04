@@ -223,17 +223,20 @@ module.exports = async (idCotizacion) => {
 
       // Obtener las piezas adicionales
 
-      const piezasDetalleAdicionalesAndamioTrabajo = await db.despieces_detalle.findAll({
-        where: {
-          despiece_id: despieceEncontrado.id,
-          esAdicional: true
-        },
-        include: [{
-          model: db.piezas,
-          as: "pieza",
-          attributes: ["id", "item", "descripcion"]
-        }]
-      })
+      const piezasDetalleAdicionalesAndamioTrabajo =
+        await db.despieces_detalle.findAll({
+          where: {
+            despiece_id: despieceEncontrado.id,
+            esAdicional: true,
+          },
+          include: [
+            {
+              model: db.piezas,
+              as: "pieza",
+              attributes: ["id", "item", "descripcion"],
+            },
+          ],
+        });
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
@@ -250,7 +253,7 @@ module.exports = async (idCotizacion) => {
             ? pernoEnElDespiece?.cantidad
             : null,
         },
-        piezasAdicionales: piezasDetalleAdicionalesAndamioTrabajo
+        piezasAdicionales: piezasDetalleAdicionalesAndamioTrabajo,
       };
       break;
 
@@ -420,35 +423,35 @@ module.exports = async (idCotizacion) => {
           const atributosConPrecios = await Promise.all(
             zona.atributos.map(async (atributo) => {
               const tipoPuntal = atributo.tipoPuntal;
-      
+
               let puntal;
               if (tipoPuntal === "3.00 m") puntal = "PU.0100";
               else if (tipoPuntal === "4.00 m") puntal = "PU.0400";
               else if (tipoPuntal === "5.00 m") puntal = "PU.0600";
-      
+
               const piezaPuntal = await db.piezas.findOne({
                 where: { item: puntal },
               });
-      
+
               if (!piezaPuntal) {
                 throw new Error(`No se encontró la pieza con item ${puntal}`);
               }
-      
+
               const piezaPuntalDespiece = await db.despieces_detalle.findOne({
                 where: {
                   despiece_id: despieceEncontrado.id,
                   pieza_id: piezaPuntal.id,
                 },
               });
-      
+
               if (!piezaPuntalDespiece) {
                 throw new Error(
                   `No se encontró despiece para pieza_id ${piezaPuntal.id}`
                 );
               }
-      
+
               let precioUnitarioPuntal;
-      
+
               if (cotizacionEncontrado.tipo_cotizacion === "Venta") {
                 precioUnitarioPuntal = (
                   piezaPuntalDespiece.precio_venta_soles /
@@ -460,11 +463,11 @@ module.exports = async (idCotizacion) => {
                   piezaPuntalDespiece.cantidad
                 ).toFixed(2);
               }
-      
+
               const subtotal = (
                 precioUnitarioPuntal * atributo.cantidad
               ).toFixed(2);
-      
+
               return {
                 ...atributo,
                 precio_unitario: precioUnitarioPuntal,
@@ -472,7 +475,7 @@ module.exports = async (idCotizacion) => {
               };
             })
           );
-      
+
           // 👇 este return es lo que FALTABA
           return {
             zona: zona.zona,
@@ -481,7 +484,7 @@ module.exports = async (idCotizacion) => {
           };
         })
       );
-      
+
       // Averiguar que tipos de puntales se registraron en la cotizacion
 
       const tiposPuntalUnicos = [
@@ -499,8 +502,26 @@ module.exports = async (idCotizacion) => {
         tiposPuntalUnicos.map(async (tipo, i) => {
           console.log(`👉 (${i}) tipo: ${tipo}`);
 
-          const itemPiezaPinPresion = tipo === "5.00 m" ? "PU.0800" : "PU.0700";
-          const itemArgolla = tipo === "5.00 m" ? "PU.1000" : "PU.0900";
+          let itemPiezaPinPresion;
+          let itemArgolla;
+          switch (tipo) {
+            case "5.00 m":
+              itemPiezaPinPresion = "PU.0800";
+              itemArgolla = "PU.1000";
+              break;
+
+            case "4.00 m":
+              itemPiezaPinPresion = "PU.0700";
+              itemArgolla = "PU.0900";
+              break;
+            case "3.00 m":
+              itemPiezaPinPresion = "PU.0700";
+              itemArgolla = "PU.0900";
+              break;
+            default:
+              console.warn("❌ Tipo de puntal no reconocido:", tipo);
+              return null;
+          }
 
           const piezaPinPresion = await db.piezas.findOne({
             where: { item: itemPiezaPinPresion },
@@ -552,23 +573,26 @@ module.exports = async (idCotizacion) => {
 
       // Obtener las piezas adicionales
 
-      const piezasDetalleAdicionalesPuntales = await db.despieces_detalle.findAll({
-        where: {
-          despiece_id: despieceEncontrado.id,
-          esAdicional: true
-        },
-        include: [{
-          model: db.piezas,
-          as: "pieza",
-          attributes: ["id", "item", "descripcion"]
-        }]
-      })
+      const piezasDetalleAdicionalesPuntales =
+        await db.despieces_detalle.findAll({
+          where: {
+            despiece_id: despieceEncontrado.id,
+            esAdicional: true,
+          },
+          include: [
+            {
+              model: db.piezas,
+              as: "pieza",
+              attributes: ["id", "item", "descripcion"],
+            },
+          ],
+        });
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
         zonas: atributosPuntalesConPreciosDelPdf,
         atributos_opcionales: piezasVenta,
-        piezasAdicionales: piezasDetalleAdicionalesPuntales
+        piezasAdicionales: piezasDetalleAdicionalesPuntales,
       };
       break;
 

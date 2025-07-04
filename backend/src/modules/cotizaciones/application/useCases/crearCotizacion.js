@@ -21,6 +21,9 @@ const { enviarNotificacionTelegram } = require("../../../notificaciones/infrastr
 const ID_ESTADO_COTIZACION_POR_APROBAR = 3;
 
 module.exports = async (cotizacionData, cotizacionRepository) => {
+
+  console.log('cotizacionData', cotizacionData);
+
   const transaction = await db.sequelize.transaction(); // Iniciar transacción
 
   try {
@@ -267,7 +270,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
           break;
       }
     }
-
+    asd
     await transaction.commit(); // ✔ Confirmar todo
     return {
       codigo: 201,
