@@ -167,7 +167,7 @@ export const DetallesEspecificos = ({ detalles }) => {
       if (ib === -1) return -1;
       return ia - ib;
   });
-
+console.log('detallesOrdenados', detallesOrdenados);
 
   return (
     <Card className="border-l-4 border-l-purple-500 gap-3">

@@ -42,6 +42,7 @@ async function generarCodigoDocumentoCotizacion({
     obra_id: cotizacion.obra_id,
     filial_id: cotizacion.filial_id,
     usuario_id: cotizacion.usuario_id,
+    uso_id: uso_id_para_registrar
   };
 
   // 🧠 Si la cotización actual tiene ID (es decir, ya existe en BD),
