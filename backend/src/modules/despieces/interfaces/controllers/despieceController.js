@@ -11,6 +11,7 @@ const obtenerDespieces = require('../../application/useCases/obtenerDespieces');
 const obtenerDespiecePorId = require('../../application/useCases/obtenerDespiecePorId'); // Importamos el caso de uso para obtener un despiece por ID
 const actualizarDespiece = require('../../application/useCases/actualizarDespiece'); // Importamos el caso de uso para actualizar un despiece
 const eliminarDespiece = require('../../application/useCases/eliminarDespiece'); // Importamos el caso de uso para eliminar un despiece
+const generarDespieceAndamioDeFachada = require('../../application/useCases/generarDespieceAndamioDeFachada');
 
 
 const despieceRepository = new sequelizeDespieceRepository(); // Instancia del repositorio de despieces
@@ -32,9 +33,9 @@ const DespieceController = {
     async generarDespieceAndamioDeFachada(req, res) {
         try {
 
-            const despieceGenerado = await generarDespieceAndamioDeTrabajo(req.body, despieceRepository ); // Llamamos al caso de uso para crear un despiece
-           
-            res.status(despieceGenerado.codigo).json(despieceGenerado.respuesta); // Respondemos con el despiece creado
+            const despieceGenerado = await generarDespieceAndamioDeFachada(req.body );             
+            res.status(201).json({message:'Corecto'}); 
+            // Respondemos con el despiece creado
         } catch (error) {
             console.log('error', error);
             res.status(500).json({ error: error.message }); // Respondemos con un error
@@ -43,7 +44,7 @@ const DespieceController = {
     async generarDespieceAndamioDeTrabajo(req, res) {
         try {
 
-            const despieceGenerado = await generarDespieceAndamioDeTrabajo(req.body, despieceRepository ); // Llamamos al caso de uso para crear un despiece
+            const despieceGenerado = await generarDespieceAndamioDeTrabajo(req.body ); // Llamamos al caso de uso para crear un despiece
            
             res.status(despieceGenerado.codigo).json(despieceGenerado.respuesta); // Respondemos con el despiece creado
         } catch (error) {

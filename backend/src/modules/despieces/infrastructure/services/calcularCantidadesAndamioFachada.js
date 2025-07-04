@@ -73,7 +73,7 @@ const {
    calcularArgolla4840mm,
 } = require("../../domain/formulas-generar-despieces/funcionesAndamioFachada");
 
-function calcularCantidadesPorCadaPiezaDeAndamioFachada(datosAtributos) {      
+function calcularCantidadesPorCadaPiezaDeAndamioFachada(datosAtributos) {
    return datosAtributos.map((dato) => {
       const valorHusilloNivelacion = calcularHusilloNivelacion(dato);
       const valorPerfilMetalicoUPN = calcularPerfilMetalicoUPN(dato);
@@ -81,7 +81,7 @@ function calcularCantidadesPorCadaPiezaDeAndamioFachada(datosAtributos) {
          valorHusilloNivelacion,
          valorPerfilMetalicoUPN
       );
-      const valorMarcoCombi200 = (dato, valorPiezaInicio);
+      const valorMarcoCombi200 = calcularMarcoCombi200(dato, valorPiezaInicio);
       const vertical150 = dato.vertical150 ? dato.vertical150 : 0;
       const vertical050 = dato.vertical050 ? dato.vertical050 : 0;
       const mensula1090 = dato.mensula1090 ? dato.mensula1090 : 0;
@@ -95,7 +95,7 @@ function calcularCantidadesPorCadaPiezaDeAndamioFachada(datosAtributos) {
       const valorPlataformaAcceso1572 = calcularPlataformaAcceso1572(dato);
       const valorTuboGancho1m = calcularTuboGancho1m(dato);
       const valorTuboGancho05m = calcularTuboGancho05m(dato);
-      const valorPuntal3mAzul = calcularPuntal3mAzul(dato);
+      const valorPuntal3mAzul = calcularPuntal3mAzul(dato,valorPerfilMetalicoUPN);
 
       const resultados = [
          {
@@ -125,16 +125,15 @@ function calcularCantidadesPorCadaPiezaDeAndamioFachada(datosAtributos) {
          {
             pieza: "AM.1150",
             cantidad: calcularEspiga(
-               valorMarcoCombi200,
-               calcularVertical200(dato),
-               vertical150,
-               calcularVertical100(dato),
-               vertical050,
-               calcularDiagonal3072(dato),
-               mensula1090,
-               mensula700,
-               mensula300,
-               acopladorMulti
+               valorMarcoCombi200, //f24
+               calcularVertical200(dato), //f25
+               vertical150, //f26
+               calcularVertical100(dato), //f27
+               vertical050, //f28
+               mensula1090, //f42
+               mensula700, //f43
+               mensula300, //f44
+               acopladorMulti //f97
             ),
          },
          {
@@ -390,13 +389,15 @@ function calcularCantidadesPorCadaPiezaDeAndamioFachada(datosAtributos) {
          {
             pieza: "AM.8800",
             cantidad: calcularBridaGiratoria(
-               valorTuboGancho1m + valorTuboGancho05m
+               valorTuboGancho1m,
+               valorTuboGancho05m
             ),
          },
          {
             pieza: "CON.0100",
             cantidad: calcularPernosExpansionM12x80(
-               valorTuboGancho1m + valorTuboGancho05m
+               valorTuboGancho1m,
+               valorTuboGancho05m
             ),
          },
          {
