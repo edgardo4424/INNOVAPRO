@@ -34,7 +34,9 @@ export function useRegistrarCotizacion(pasosLength) {
         ?.flatMap(zona => zona.atributos_formulario || [])
         .map(attr => attr?.tipoPuntal)
         .filter(Boolean)
-        .map(tipo => ({ tipo_puntal: tipo }));
+        .map(tipo => ({ 
+          tipo_puntal: String(tipo).replace(" m", "").trim()
+        }));
 
       if (transporte_puntales?.length) {
         extras.transporte_puntales = transporte_puntales;

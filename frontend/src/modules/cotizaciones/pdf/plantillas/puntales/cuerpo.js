@@ -39,7 +39,7 @@ export async function generarCuerpoPuntales(doc, data, startY = 120) {
   currentY += 6;
 
   // ⚙️ Detalles cotización
-  for (const zona of data.zonas || []) {
+  /* for (const zona of data.zonas || []) {
     const zonaTitulo = `Zona ${zona.zona || "1"} - ${zona.nota_zona || "(DESCRIPCIÓN DE ZONA INDEFINIDA)"}`;
     currentY = drawJustifiedText(doc, `**${zonaTitulo}**`, indent + 3, currentY, 170, 5.5, 10);
 
@@ -55,7 +55,67 @@ export async function generarCuerpoPuntales(doc, data, startY = 120) {
     }
 
     currentY += 4; // Espacio entre zonas
+  } */
+
+  for (const zona of data.zonas || []) {
+    const zonaTitulo = `Zona ${zona.zona || "1"} - ${zona.nota_zona || "(DESCRIPCIÓN DE ZONA INDEFINIDA)"}`;
+    currentY = drawJustifiedText(doc, `**${zonaTitulo}**`, indent + 3, currentY, 170, 5.5, 10);
+
+    // 📋 Encabezado de tabla
+    const headerAltura = 6;
+    currentY = await verificarSaltoDePagina(doc, currentY, headerAltura);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.text("Tipo Puntal", indent + 4, currentY);
+    doc.text("Cantidad", indent + 50, currentY);
+    doc.text("Precio unitario (S/)", indent + 95, currentY);
+    doc.text("Subtotal (S/)", indent + 145, currentY);
+    
+
+    // 📦 Cuerpo de la tabla
+    doc.setFont("helvetica", "normal");
+    let subtotalZona = 0;
+
+    for (const equipo of zona.atributos || []) {
+      currentY += 5;
+      const tipo = equipo.tipoPuntal || "—";
+      const cantidad = equipo.cantidad || 0;
+      const precio = equipo.precio_unitario ? parseFloat(equipo.precio_unitario) : 0;
+      const subtotal = equipo.subtotal ? parseFloat(equipo.subtotal) : (precio * cantidad);
+
+      subtotalZona += subtotal;
+
+      currentY = await verificarSaltoDePagina(doc, currentY, 5);
+      doc.text(tipo.toString(), indent + 4, currentY);
+      doc.text(cantidad.toString(), indent + 50, currentY);
+      doc.text(`S/ ${precio.toFixed(2)}`, indent + 95, currentY);
+      doc.text(`S/ ${subtotal.toFixed(2)}`, indent + 145, currentY);
+    }
+
+    // ✅ Subtotal por zona
+    currentY += 5;
+    doc.setFont("helvetica", "bold");
+    doc.text(`Subtotal Zona ${zona.zona}: S/ ${subtotalZona.toFixed(2)}`, indent + 4, currentY);
+    currentY += 6;
   }
+
+  // ✅ Total general de todas las zonas
+  const totalGeneral = (data.zonas || []).reduce((acc, zona) => {
+    const sub = (zona.atributos || []).reduce((sum, eq) => {
+      const cantidad = eq.cantidad || 0;
+      const precio = eq.precio_unitario ? parseFloat(eq.precio_unitario) : 0;
+      return sum + (precio * cantidad);
+    }, 0);
+    return acc + sub;
+  }, 0);
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  currentY = await verificarSaltoDePagina(doc, currentY, 8);
+  doc.text(`Total general de alquiler de puntales: S/ ${totalGeneral.toFixed(2)} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.`, indent + 3, currentY);
+  currentY += 10;
+
+
 
   const detalles = data.detalles_alquiler || [
     `*Cuando los puntales se devuelvan incompletos, se cobrará lo siguiente por el material faltante:
@@ -73,13 +133,5 @@ export async function generarCuerpoPuntales(doc, data, startY = 120) {
     }
   }
   
-  currentY += 6 ; // Espacio antes del resumen de cotización
-  // Resumen de cotización
-  const subtituloResumen = `** : 
-
-  **S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.**`;
-  currentY = drawJustifiedText(doc, subtituloResumen, indent + 3, currentY, 170, 5.5, 10);
-
-
   return currentY;
 }

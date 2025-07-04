@@ -3,7 +3,9 @@
 // con totales de piezas, peso y subtotales monetarios. El objetivo es que el comercial pueda visualizar
 // claramente el despiece de lo que está cotizando.
 
-export default function ResumenDespiece({ despiece, resumen, tipo }) {
+export default function ResumenDespiece({ duracion_alquiler, despiece, resumen, tipo }) {
+  const dias = duracion_alquiler || 30;
+
   if (!Array.isArray(despiece) || despiece.length === 0 || !resumen) {
     return <p>No se pudo generar el despiece correctamente.</p>;
   }
@@ -41,8 +43,8 @@ export default function ResumenDespiece({ despiece, resumen, tipo }) {
                     ? parseFloat(pieza.precio_diario_manual)
                     : parseFloat(pieza.precio_u_alquiler_soles) / 30;
 
-                precioUnitario = (precioDiario * 30).toFixed(2);
-                precioTotal = (precioDiario * 30 * parseFloat(pieza.total)).toFixed(2);
+                precioUnitario = (precioDiario * dias).toFixed(2);
+                precioTotal = (precioDiario * dias * parseFloat(pieza.total)).toFixed(2);
               } else {
                 precioUnitario = parseFloat(pieza.precio_u_venta_soles).toFixed(2);
                 precioTotal = parseFloat(pieza.precio_venta_soles).toFixed(2);

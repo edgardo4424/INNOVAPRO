@@ -1,6 +1,8 @@
 import { useState } from "react";
 
 export default function BloquePuntales({ formData, setFormData }) {
+  const dias = formData.duracion_alquiler || 30;
+  
   const puntales = formData.despiece.filter(p =>
     p.descripcion?.toUpperCase().includes("PUNTAL")
   );
@@ -44,13 +46,13 @@ export default function BloquePuntales({ formData, setFormData }) {
     if (isNaN(valor)) return;
 
     const despieceActualizado = formData.despiece.map(p => {
-      if (p.pieza_id === pieza.pieza_id) {
-        const precioMensual = parseFloat((valor * 30).toFixed(2));
-        const subtotal = parseFloat((precioMensual * p.total).toFixed(2));
+      if (p.pieza_id === pieza.pieza_id) {        
+        //const precioMensual = parseFloat((valor * 30).toFixed(2));
+        const subtotal = parseFloat((valor * dias * p.total).toFixed(2));
         return {
           ...p,
           precio_diario_manual: valor,
-          precio_u_alquiler_soles: precioMensual,
+          precio_u_alquiler_soles: parseFloat((valor * dias).toFixed(2)),
           precio_alquiler_soles: subtotal
         };
       }
@@ -79,7 +81,7 @@ export default function BloquePuntales({ formData, setFormData }) {
       {puntales.map((pieza) => {
         const tipo = pieza.descripcion?.match(/PUNTAL (\d+\.\d+)/i)?.[1] || "—";
         const precioLocal = preciosLocales[pieza.pieza_id] ?? "0.00";
-        const subtotal = (parseFloat(precioLocal) * 30 * pieza.total).toFixed(2);
+        const subtotal = (parseFloat(precioLocal) * dias * pieza.total).toFixed(2);
 
         return (
           <div key={pieza.pieza_id} className="mb-3">
