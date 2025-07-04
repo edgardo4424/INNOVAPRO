@@ -131,4 +131,24 @@ function agruparPuntalesPorZonaYAtributos(data) {
   return resultado;
 }
 
-module.exports = { mapearPorAtributos, agruparPorZonaYAtributos, agruparPorZona, agruparPuntalesPorZonaYAtributos };
+function agruparPuntalesPorTipo(data) {
+  const tipoMap = new Map();
+
+  for (const item of data) {
+    const { tipoPuntal, cantidad } = item;
+
+    if (tipoMap.has(tipoPuntal)) {
+      tipoMap.get(tipoPuntal).cantidad += cantidad;
+    } else {
+      tipoMap.set(tipoPuntal, {
+        tipoPuntal,
+        cantidad,
+      });
+    }
+  }
+
+  return Array.from(tipoMap.values());
+}
+
+
+module.exports = { mapearPorAtributos, agruparPorZonaYAtributos, agruparPorZona, agruparPuntalesPorZonaYAtributos, agruparPuntalesPorTipo };

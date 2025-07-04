@@ -5,6 +5,7 @@ const {
 
 const {
   agruparPorZonaYAtributos,
+  agruparPuntalesPorTipo,
   agruparPuntalesPorZonaYAtributos,
 } = require("../../infrastructure/services/mapearAtributosDelPdfService");
 
@@ -413,8 +414,13 @@ module.exports = async (idCotizacion) => {
 
       console.log("resultadoPuntales", resultadoPuntales);
 
-      const atributosPuntalesDelPdf =
+      const atributosPuntalesDelPdfZonas =
         agruparPuntalesPorZonaYAtributos(resultadoPuntales);
+
+      const atributosPuntalesDelPdf =
+        agruparPuntalesPorTipo(resultadoPuntales);
+
+        console.log('atributosPuntalesDelPdfZonas', atributosPuntalesDelPdfZonas);
 
       console.log("atributosPuntalesDelPdf", atributosPuntalesDelPdf);
 
