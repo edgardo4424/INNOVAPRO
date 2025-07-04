@@ -77,7 +77,9 @@ export default function PasoFinal() {
         <h4>⚙️ Cotización</h4>
         <div className="wizard-key-value"><strong>⚙️ Uso:</strong> {uso_nombre || `ID #${uso_id}`}</div>
         <div className="wizard-key-value"><strong>📦 Tipo de cotización:</strong> {tipo_cotizacion}</div>
-        <div className="wizard-key-value"><strong>Descuento:</strong> {descuento || 0}%</div>
+        {descuento !== 0 && (
+          <div className="wizard-key-value"><strong>Descuento:</strong> {descuento}%</div>
+        )}
         {requiereAprobacion && (
           <div className="wizard-key-value" style={{ color: "#e74c3c" }}>
             ⚠️ Esta cotización requiere aprobación de Gerencia por el descuento aplicado.
