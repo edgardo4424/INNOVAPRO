@@ -34,7 +34,7 @@ const DespieceController = {
         try {
 
             const despieceGenerado = await generarDespieceAndamioDeFachada(req.body );             
-            res.status(201).json({message:'Corecto'}); 
+            res.status(despieceGenerado.codigo).json(despieceGenerado.respuesta);
             // Respondemos con el despiece creado
         } catch (error) {
             console.log('error', error);

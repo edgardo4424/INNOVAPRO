@@ -13,6 +13,10 @@ module.exports = async (dataParaGenerarDespice) => {
             alturaAndamio: Number(atributo.alturaAndamio),
             alturaEntrepiso: Number(atributo.alturaEntrepiso),
             tuboAmarre: Number(atributo.tuboAmarre),
+            barandilla3072_2072:atributo.barandilla3072_2072=="SI"?true:false,
+            barandilla732:atributo.barandilla732=="SI"?true:false,
+            diagonales:atributo.diagonales=="SI"?true:false,
+            plataformaAcceso:atributo.plataformaAcceso=="SI"?true:false
          })),
       })
    );
@@ -25,7 +29,7 @@ module.exports = async (dataParaGenerarDespice) => {
       codigo: 200,
       respuesta: {
          mensaje: "Despiece del Uso ANDAMIO DE FACHADA generado exitosamente",
-         despieceGenerado: "despieceGenerado",
+         despieceGenerado: despieceGenerado,
       },
    };
 };
