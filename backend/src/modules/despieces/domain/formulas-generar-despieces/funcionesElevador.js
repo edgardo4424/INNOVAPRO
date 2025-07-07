@@ -338,14 +338,14 @@ function calcularEV6700({
   etapaMontaje,
   nivelUltimaLlegada,
   nivelInicialLlegada,
-  cantidadInicio,
-  cantidadSeguridad
+  valorCalcularEV6600,
+  valorCalcularEV6800
 }) {
   const calcularCantidad = (nivel) =>
     Math.floor((nivel + 3.5 - 0.1) / 1.5);
 
   if (etapaMontaje === "NUEVO") {
-    return calcularCantidad(nivelUltimaLlegada) + 2 - cantidadInicio - cantidadSeguridad;
+    return calcularCantidad(nivelUltimaLlegada) + 2 - valorCalcularEV6600 - valorCalcularEV6800;
   }
   if (etapaMontaje === "RECRECIMIENTO") {
     return (
