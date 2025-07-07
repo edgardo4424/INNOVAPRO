@@ -605,11 +605,11 @@ module.exports = async (idCotizacion) => {
         ...datosPdfCotizacion,
         zonas: atributosPuntalesConPreciosDelPdf,
         tripode: {
-          nombre: piezaTripodeEncontrado.descripcion,
-          total: piezaTripodeDespieceDetalle.cantidad,
-          precio_venta_dolares: piezaTripodeDespieceDetalle.precio_venta_dolares,
-          precio_venta_soles: piezaTripodeDespieceDetalle.precio_venta_soles,
-          precio_alquiler_soles: piezaTripodeDespieceDetalle.precio_alquiler_soles,
+          nombre: piezaTripodeEncontrado.descripcion || "",
+          total: piezaTripodeDespieceDetalle?.cantidad || 0,
+          precio_venta_dolares: piezaTripodeDespieceDetalle?.precio_venta_dolares || 0,
+          precio_venta_soles: piezaTripodeDespieceDetalle?.precio_venta_soles || 0,
+          precio_alquiler_soles: piezaTripodeDespieceDetalle?.precio_alquiler_soles || 0,
 
         },
         atributos_opcionales: piezasVenta,

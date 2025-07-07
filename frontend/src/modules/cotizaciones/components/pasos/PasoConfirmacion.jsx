@@ -51,7 +51,7 @@ export default function PasoConfirmacion() {
     <div className="paso-formulario">
       <h3>Paso 5: Confirmación Final</h3>
 
-      {formData.uso_id === 5 && (
+      {formData.uso_id === 5 && formData.tipo_cotizacion === "Alquiler" && (
         <BloquePuntales formData={formData} setFormData={setFormData} />
       )}
 
@@ -93,6 +93,11 @@ export default function PasoConfirmacion() {
         <BloqueInstalacion formData={formData} setFormData={setFormData} errores={errores} />
       )}
       {!USOS_SIN_DESCUENTO.includes(formData.uso_id) && (
+        <BloqueDescuento formData={formData} setFormData={setFormData} errores={errores} />
+      )}
+
+      {/* Para el caso en que sea cotización de venta de puntales si se puede aplicar descuento */}
+      {formData.uso_id === 5 && formData.tipo_cotizacion === "Venta" && (
         <BloqueDescuento formData={formData} setFormData={setFormData} errores={errores} />
       )}
     </div>
