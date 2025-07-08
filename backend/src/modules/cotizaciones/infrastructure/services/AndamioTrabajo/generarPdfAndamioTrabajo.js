@@ -3,6 +3,7 @@ const { agruparPorZonaYAtributos } = require("../mapearAtributosDelPdfService");
 const { mapearAtributosValor } = require("../mapearAtributosValorService");
 
 async function generarPdfAndamioTrabajo({idDespiece, tiene_pernos}) {
+      
       let pernoExpansionConArgolla;
       let pernoEnElDespiece;
 

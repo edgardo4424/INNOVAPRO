@@ -3,6 +3,7 @@ const {
   formatearFechaIsoADMY,
 } = require("../../infrastructure/helpers/formatearFecha");
 const { generarPdfAndamioTrabajo } = require("../../infrastructure/services/AndamioTrabajo/generarPdfAndamioTrabajo");
+const { generarPdfEscaleraAcceso } = require("../../infrastructure/services/EscaleraAcceso/generarPdfEscaleraAcceso");
 
 const {
   agruparPorZonaYAtributos,
@@ -14,6 +15,7 @@ const {
 const { generarPdfPuntales } = require("../../infrastructure/services/Puntales/generarPdfPuntales");
 
 module.exports = async (idCotizacion) => {
+
   // Buscar la cotizacion incluyendo: obra, cliente, contacto, despiece, filial, usuario, costos de cotizacion de transporte
   const cotizacionEncontrado = await db.cotizaciones.findByPk(idCotizacion, {
     include: [
@@ -185,130 +187,11 @@ module.exports = async (idCotizacion) => {
     case "3":
       // ESCALERA DE ACCESO
 
-      // Obtener la lista de atributos
-
-      const atributosDelUsoEscaleraAcceso = await db.atributos_valor.findAll({
-        where: {
-          despiece_id: despieceEncontrado.id,
-        },
-        include: [
-          {
-            model: db.atributos,
-            as: "atributo",
-          },
-        ],
-      });
-
-      const resultadoEscaleraAcceso = mapearAtributosValor(
-        atributosDelUsoEscaleraAcceso
-      );
-
-      const listaAtributosEscaleraAcceso = agruparPorZonaYAtributos(
-        resultadoEscaleraAcceso
-      );
-
-      console.dir(listaAtributosEscaleraAcceso, { depth: null, colors: true });
-
-      const atributosEscaleraAccesoDelPdf = listaAtributosEscaleraAcceso.map(
-        (atributo) => ({
-          zona: atributo.zona,
-          atributos: atributo.atributos.map((at) => ({
-            cantidad: at.cantidad,
-            tipoPuntal: at.tipoPuntal,
-            tripode: at.tripode,
-            cantidad_uso: at.cantidad_uso,
-          })),
-          nota_zona: atributo.atributos[0].nota_zona,
-        })
-      );
-
-      console.log(
-        "atributosEscaleraAccesoDelPdf",
-        atributosEscaleraAccesoDelPdf
-      );
-
-      /* const tipoAnclaje = despieceEncontrado.atributos_valors?.[4]?.valor;
-      let itemPiezaVenta;
-
-      if (tipoAnclaje == "FERMIN") {
-        itemPiezaVenta = "CON.0200";
-      } else {
-        itemPiezaVenta = "CON.0100";
-      }
-
-      //const tiene_pernos = despieceEncontrado.tiene_pernos
-
-      let pernoExpansionArgolla;
-      let pernoDespiece;
-
-      if (tiene_pernos) {
-        pernoExpansionArgolla = await db.piezas.findOne({
-          where: {
-            item: itemPiezaVenta,
-          },
-        });
-
-        pernoDespiece = await db.despieces_detalle.findOne({
-          where: {
-            despiece_id: despieceEncontrado.id,
-            pieza_id: pernoExpansionArgolla.id,
-          },
-        });
-      }
-
-      const atributosPlanoEscaleraAcceso =
-        despieceEncontrado.atributos_valors.map((av) => av.dataValues);
-
-      const resultadoEscaleraAcceso = [];
-
-      const agrupadoEscaleraAcceso = {};
-
-      atributosPlanoEscaleraAcceso.forEach((av) => {
-        const grupo = av.numero_formulario_uso;
-        if (!agrupadoEscaleraAcceso[grupo]) agrupadoEscaleraAcceso[grupo] = {};
-        const llave_json = av.atributo.dataValues.llave_json;
-        agrupadoEscaleraAcceso[grupo][llave_json] = av.valor;
-      });
-
-      Object.keys(agrupadoEscaleraAcceso).forEach((grupo) => {
-        resultadoEscaleraAcceso.push(agrupadoEscaleraAcceso[grupo]);
-      });
-
-      const listaAtributosEscaleraAcceso = resultadoEscaleraAcceso.map(
-        (atributo) => {
-          const tipoEscalera = atributo.tipoEscalera;
-          let longitud_mm;
-
-          if (tipoEscalera == "EUROPEA") {
-            longitud_mm = 2072 / 1000;
-          } else {
-            longitud_mm = 3072 / 1000;
-          }
-
-          let ancho_mm = 1572 / 1000;
-
-          return {
-            longitud_mm: longitud_mm,
-            ancho_mm: ancho_mm,
-            altura_m: atributo.alturaTotal,
-          };
-        }
-      ); */
+      const pdfEscaleraAcceso = await generarPdfEscaleraAcceso({idDespiece: despieceEncontrado.id, tiene_pernos: tiene_pernos})
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
-        atributos: listaAtributosEscaleraAcceso,
-        /*  atributos_opcionales: {
-          nombre_pernos_expansion: tiene_pernos
-            ? pernoExpansionArgolla.descripcion
-            : null,
-          precio_pernos_expansion: tiene_pernos
-            ? pernoExpansionArgolla.precio_venta_soles
-            : null,
-          cantidad_pernos_expansion: tiene_pernos
-            ? pernoDespiece.cantidad
-            : null,
-        }, */
+        ...pdfEscaleraAcceso,
       };
 
       break;
