@@ -48,6 +48,9 @@ const Despiece = sequelize.define(
     tiene_pernos: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
+    },
+    detalles_opcionales: {
+      type: DataTypes.JSON,
     }
   }, {
     timestamps: false,

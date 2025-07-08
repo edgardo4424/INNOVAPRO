@@ -6,7 +6,7 @@ module.exports = async (
   cotizacionTransporteData,
   cotizacionesTransporteRepository
 ) => {
-  const { uso_id, peso_total_tn, distrito_transporte } =
+  const { uso_id, distrito_transporte } =
     cotizacionTransporteData;
 
   // 1. Calcular costo tarifa transporte
@@ -47,6 +47,9 @@ module.exports = async (
 
   switch (uso.grupo_tarifa) {
     case "andamio_multidireccional":
+
+    const { peso_total_tn } = cotizacionTransporteData;
+
       tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
         where: {
           grupo_tarifa: uso.grupo_tarifa,
@@ -81,28 +84,28 @@ module.exports = async (
       break;
 
     case "puntales":
-      const { transporte_puntales } = cotizacionTransporteData;
+      const { peso_total_tn: peso_total_tn_puntales, transporte_puntales } = cotizacionTransporteData;
 
+      console.log('transporte_puntales', transporte_puntales);
       if(transporte_puntales.length == 1){
 
-        console.log('transporte_piuntales', transporte_puntales);
         tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
           where: {
             grupo_tarifa: uso.grupo_tarifa,
             subtipo: transporte_puntales[0].tipo_puntal,
-            rango_desde: { [Op.lt]: peso_total_tn },
-            rango_hasta: { [Op.gte]: peso_total_tn },
+            rango_desde: { [Op.lt]: peso_total_tn_puntales },
+            rango_hasta: { [Op.gte]: peso_total_tn_puntales },
           },
         });
-      
+
         costo_tarifas_transporte = Number(
           tarifa_transporte_encontrado?.precio_soles || 0
         );
         unidad = "Tn";
-        cantidadTotal = peso_total_tn;
+        cantidadTotal = peso_total_tn_puntales;
       }else{
         
-      const tiposPermitidos = ["3.00 m", "4.00 m"];
+      const tiposPermitidos = ["3.00", "4.00"];
 
       const esValido = transporte_puntales.every((tp) =>
         tiposPermitidos.includes(tp.tipo_puntal)
@@ -113,21 +116,21 @@ module.exports = async (
           where: {
             grupo_tarifa: uso.grupo_tarifa,
             subtipo: transporte_puntales[0].tipo_puntal,
-            rango_desde: { [Op.lt]: peso_total_tn },
-            rango_hasta: { [Op.gte]: peso_total_tn },
+            rango_desde: { [Op.lt]: peso_total_tn_puntales },
+            rango_hasta: { [Op.gte]: peso_total_tn_puntales },
           },
         });
-      
+         console.log('tarifa_transporte_encontrado', tarifa_transporte_encontrado);
         costo_tarifas_transporte = Number(
           tarifa_transporte_encontrado?.precio_soles || 0
         );
         unidad = "Tn";
-        cantidadTotal = peso_total_tn;
+        cantidadTotal = peso_total_tn_puntales;
       } else {
         // ❌ contiene tipo_puntal no permitido
         costo_tarifas_transporte=0;
         unidad = "Tn";
-        cantidadTotal = peso_total_tn;
+        cantidadTotal = peso_total_tn_puntales;
       }
       }
 
@@ -186,7 +189,7 @@ module.exports = async (
           tarifa_transporte_encontrado?.precio_soles || 0
         );
         unidad = "Und";
-        cantidadTotal = cantidadEscuadras;
+        cantidadTotal = transporte_escuadras.cantidad;
       } else {
         costo_tarifas_transporte = 0;
         unidad = "Und";
@@ -227,7 +230,7 @@ module.exports = async (
 
   // 3. Calcular costo pernocte transporte
 
-  if (tarifa_transporte_encontrado) {
+ /*  if (tarifa_transporte_encontrado) {
 
     const costos_pernocte_transporte_encontrado =
       await db.costos_pernocte_transporte.findOne({
@@ -251,7 +254,7 @@ module.exports = async (
       };
     }
   }
-
+ */
   // 4. Sumar los 3 costos
 
   const costo_total =

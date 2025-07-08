@@ -54,7 +54,12 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
     let dataParaDespiece = {
       ...resultados.dataParaGuardarDespiece,
       cp: "0",
-      tiene_pernos: cotizacion.tiene_pernos
+      tiene_pernos: cotizacion.tiene_pernos,
+    }
+
+    if(uso_id == "3"){
+      // Si es escalera de acceso, se añade detalles_opcionales
+      dataParaDespiece.detalles_opcionales = cotizacion.detalles_escaleras
     }
 
     console.log('dataParaDespiece', dataParaDespiece);
