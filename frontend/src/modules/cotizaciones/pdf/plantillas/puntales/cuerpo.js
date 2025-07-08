@@ -67,7 +67,8 @@ export async function generarCuerpoPuntales(doc, data, startY = 120) {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(9);
     doc.text("Tipo Puntal", indent + 4, currentY);
-    doc.text("Cantidad", indent + 50, currentY);
+    doc.text("Trípode", indent + 40, currentY);
+    doc.text("Cantidad", indent + 65, currentY);
     doc.text("Precio unitario (S/)", indent + 95, currentY);
     doc.text("Subtotal (S/)", indent + 145, currentY);
     
@@ -79,6 +80,7 @@ export async function generarCuerpoPuntales(doc, data, startY = 120) {
     for (const equipo of zona.atributos || []) {
       currentY += 5;
       const tipo = equipo.tipoPuntal || "—";
+      const tripode = equipo.tripode || "—";
       const cantidad = equipo.cantidad || 0;
       const precio = equipo.precio_unitario ? parseFloat(equipo.precio_unitario) : 0;
       const subtotal = equipo.subtotal ? parseFloat(equipo.subtotal) : (precio * cantidad);
@@ -87,7 +89,8 @@ export async function generarCuerpoPuntales(doc, data, startY = 120) {
 
       currentY = await verificarSaltoDePagina(doc, currentY, 5);
       doc.text(tipo.toString(), indent + 4, currentY);
-      doc.text(cantidad.toString(), indent + 50, currentY);
+      doc.text(tripode.toString(), indent + 40, currentY);
+      doc.text(cantidad.toString(), indent + 65, currentY);
       doc.text(`S/ ${precio.toFixed(2)}`, indent + 95, currentY);
       doc.text(`S/ ${subtotal.toFixed(2)}`, indent + 145, currentY);
     }
@@ -115,7 +118,42 @@ export async function generarCuerpoPuntales(doc, data, startY = 120) {
   doc.text(`Total general de alquiler de puntales: S/ ${totalGeneral.toFixed(2)} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.`, indent + 3, currentY);
   currentY += 10;
 
+  // Si hay trípodes en la cotización renderizamos el siguiente bloque:
 
+  if (data.tripode.total !== 0) {
+    currentY = await verificarSaltoDePagina(doc, currentY, 20);
+
+    // Encabezado
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10);
+    doc.text("Trípodes incluidos en esta cotización:", indent + 3, currentY);
+    currentY += 6;
+
+    // Tabla
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.text("Descripción", indent + 4, currentY);
+    doc.text("Cantidad", indent + 85, currentY);
+    doc.text("Subtotal (S/)", indent + 130, currentY);
+    currentY += 5;
+
+    doc.setFont("helvetica", "normal");
+    doc.text("Trípodes utilizados en todas las zonas", indent + 4, currentY);
+    doc.text(`${data.tripode.total}`, indent + 90, currentY);
+    doc.text(`S/ ${parseFloat(data.tripode.precio_alquiler_soles).toFixed(2)} + IGV`, indent + 130, currentY);
+    currentY += 8;
+
+    // Mensaje aclaratorio
+    doc.setFontSize(8);
+    const mensaje =
+      "*Estos trípodes se consideran parte integral del sistema de apuntalamiento para asegurar la estabilidad estructural. La cantidad total representa la suma utilizada en todas las zonas del proyecto.*";
+    currentY = drawJustifiedText(doc, mensaje, indent + 4, currentY, 170, 4.2, 8) + 4;
+  }
+
+
+
+
+  // Condiciones para las devoluciones
 
   const detalles = data.detalles_alquiler || [
     `*Cuando los puntales se devuelvan incompletos, se cobrará lo siguiente por el material faltante:
