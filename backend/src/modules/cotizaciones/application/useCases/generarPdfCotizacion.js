@@ -187,7 +187,7 @@ module.exports = async (idCotizacion) => {
     case "3":
       // ESCALERA DE ACCESO
 
-      const pdfEscaleraAcceso = await generarPdfEscaleraAcceso({idDespiece: despieceEncontrado.id, tiene_pernos: tiene_pernos})
+      const pdfEscaleraAcceso = await generarPdfEscaleraAcceso({dataDespiece: despieceEncontrado, tiene_pernos: tiene_pernos})
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,

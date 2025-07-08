@@ -3,7 +3,7 @@ const { agruparPorZonaYAtributos } = require("../mapearAtributosDelPdfService");
 
 const { mapearAtributosValor } = require("../mapearAtributosValorService");
 
-async function generarPdfEscaleraAcceso({ idDespiece, tiene_pernos }) {
+async function generarPdfEscaleraAcceso({ dataDespiece, tiene_pernos }) {
   let pernoExpansionConArgolla;
   let pernoExpansionConArgollaEnElDespiece;
 
@@ -23,7 +23,7 @@ async function generarPdfEscaleraAcceso({ idDespiece, tiene_pernos }) {
       pernoExpansionConArgollaEnElDespiece = await db.despieces_detalle.findOne(
         {
           where: {
-            despiece_id: idDespiece,
+            despiece_id: dataDespiece.id,
             pieza_id: pernoExpansionConArgolla.id,
           },
         }
@@ -43,7 +43,7 @@ async function generarPdfEscaleraAcceso({ idDespiece, tiene_pernos }) {
       pernoExpansionSinArgollaEnElDespiece = await db.despieces_detalle.findOne(
         {
           where: {
-            despiece_id: idDespiece,
+            despiece_id: dataDespiece.id,
             pieza_id: pernoExpansionSinArgolla.id,
           },
         }
@@ -57,7 +57,7 @@ async function generarPdfEscaleraAcceso({ idDespiece, tiene_pernos }) {
 
   const atributosDelUso = await db.atributos_valor.findAll({
     where: {
-      despiece_id: idDespiece,
+      despiece_id: dataDespiece.id,
     },
     include: [
       {
@@ -103,7 +103,7 @@ async function generarPdfEscaleraAcceso({ idDespiece, tiene_pernos }) {
   const piezasDetalleAdicionalesAndamioTrabajo =
     await db.despieces_detalle.findAll({
       where: {
-        despiece_id: idDespiece,
+        despiece_id: dataDespiece.id,
         esAdicional: true,
       },
       include: [
@@ -122,7 +122,10 @@ async function generarPdfEscaleraAcceso({ idDespiece, tiene_pernos }) {
   */
 
   // Calcular los tramos de 2m y 1m
+
+  console.log('dataDespiece', dataDespiece.detalles_opcionales);
     
+  const { detalles_opcionales } = dataDespiece
 
   return {
     zonas: atributosDelPdf,
@@ -140,6 +143,9 @@ async function generarPdfEscaleraAcceso({ idDespiece, tiene_pernos }) {
       precio_venta_dolares: pernoExpansionSinArgollaEnElDespiece?.precio_venta_dolares || 0,
       precio_venta_soles: pernoExpansionSinArgollaEnElDespiece?.precio_venta_soles || 0,
       precio_alquiler_soles: pernoExpansionSinArgollaEnElDespiece?.precio_alquiler_soles || 0,
+    },
+    detalles_escaleras: {
+      ...detalles_opcionales
     }
   };
 }
