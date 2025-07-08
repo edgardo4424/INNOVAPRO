@@ -43,9 +43,14 @@ export function useRegistrarCotizacion(pasosLength) {
       }
     }
 
-    if (formData.uso_id === 3) {
+    if (formData.uso_id === 3 && formData.detalles_escaleras) {
       // Escalera de Acceso
-      extras.precio_tramo = formData.precio_tramo || 0;
+      extras.detalles_escaleras = {
+        precio_por_tramo_alquiler: Number(formData.detalles_escaleras.precio_tramo || 0),
+        altura_total_general: Number(formData.detalles_escaleras.altura_total_general || 0),
+        tramos_2m: Number(formData.detalles_escaleras.tramos_2m || 0),
+        tramos_1m: Number(formData.detalles_escaleras.tramos_1m || 0)
+      }
     }
 
     return extras;
@@ -112,7 +117,8 @@ export function useRegistrarCotizacion(pasosLength) {
   };
 
   const guardarCotizacion = async () => {
-    const resultado = validarAtributosPorUso(formData);
+    const formDataAjustado = ajustarResumenParaEscalera(formData);
+    const resultado = validarAtributosPorUso(formDataAjustado);
     if (!resultado.valido) {
       toast.error(`⚠️ Faltan datos mínimos para generar la cotización:\n${resultado.errores.join("\n")}`);
       setGuardando(false);
@@ -121,35 +127,43 @@ export function useRegistrarCotizacion(pasosLength) {
 
     setGuardando(true);
     try {
+      let cotizacionExtras = obtenerParametrosExtraCotizacion(formDataAjustado);
+      if (formDataAjustado.uso_id === 3) {
+        const totales = calcularTotalesParaEscalera(formDataAjustado);
+        cotizacionExtras = {
+          ...cotizacionExtras,
+          ...totales,
+        }
+      }
       const payload = {
-        uso_id: formData.uso_id,
-        zonas: Array.isArray(formData.zonas) ? formData.zonas : [],
+        uso_id: formDataAjustado.uso_id,
+        zonas: Array.isArray(formDataAjustado.zonas) ? formDataAjustado.zonas : [],
         cotizacion: {
-          cliente_id: formData.cliente_id,
-          obra_id: formData.obra_id,
-          contacto_id: formData.contacto_id,
-          filial_id: formData.filial_id,
-          tipo_cotizacion: formData.tipo_cotizacion,
-          tiene_transporte: formData.tiene_transporte,
-          tipo_transporte: formData.tipo_transporte,
-          costo_tarifas_transporte: formData.costo_tarifas_transporte || 0,
-          costo_distrito_transporte: formData.costo_distrito_transporte || 0,
-          costo_pernocte_transporte: formData.costo_pernocte_transporte || 0,
-          tiene_pernos: formData.tiene_pernos,
-          tiene_instalacion: formData.tiene_instalacion,
-          tipo_instalacion: formData.tipo_instalacion || null,
-          precio_instalacion_completa: formData.precio_instalacion_completa || 0,
-          precio_instalacion_parcial: formData.precio_instalacion_parcial || 0,
-          nota_instalacion: formData.nota_instalacion || "",
-          porcentaje_descuento: formData.descuento || 0,
+          cliente_id: formDataAjustado.cliente_id,
+          obra_id: formDataAjustado.obra_id,
+          contacto_id: formDataAjustado.contacto_id,
+          filial_id: formDataAjustado.filial_id,
+          tipo_cotizacion: formDataAjustado.tipo_cotizacion,
+          tiene_transporte: formDataAjustado.tiene_transporte,
+          tipo_transporte: formDataAjustado.tipo_transporte,
+          costo_tarifas_transporte: formDataAjustado.costo_tarifas_transporte || 0,
+          costo_distrito_transporte: formDataAjustado.costo_distrito_transporte || 0,
+          costo_pernocte_transporte: formDataAjustado.costo_pernocte_transporte || 0,
+          tiene_pernos: formDataAjustado.tiene_pernos,
+          tiene_instalacion: formDataAjustado.tiene_instalacion,
+          tipo_instalacion: formDataAjustado.tipo_instalacion || null,
+          precio_instalacion_completa: formDataAjustado.precio_instalacion_completa || 0,
+          precio_instalacion_parcial: formDataAjustado.precio_instalacion_parcial || 0,
+          nota_instalacion: formDataAjustado.nota_instalacion || "",
+          porcentaje_descuento: formDataAjustado.descuento || 0,
           igv_porcentaje: 18,
-          tiempo_alquiler_dias: formData.duracion_alquiler,
-          distrito_transporte: extraerDistrito(formData.obra_direccion),
-          ...obtenerParametrosExtraCotizacion(formData)
+          tiempo_alquiler_dias: formDataAjustado.duracion_alquiler,
+          distrito_transporte: extraerDistrito(formDataAjustado.obra_direccion),
+          ...cotizacionExtras
         },
-        despiece: formData.despiece,
+        despiece: formDataAjustado.despiece,
       };
-
+      console.log("Payload enviado por wizard:", payload)
       await crearCotizacion(payload);
       setPasoActual(pasosLength);
     } catch (error) {
@@ -162,7 +176,8 @@ export function useRegistrarCotizacion(pasosLength) {
   // Funciones para guardar las cotizaciones que vienen con despiece de OT
 
   const guardarCotizacionDesdeOT = async () => {
-    const resultado = validarAtributosPorUso(formData);
+    const formDataAjustado = ajustarResumenParaEscalera(formData)
+    const resultado = validarAtributosPorUso(formDataAjustado);
     if (!resultado.valido) {
       toast.error(`⚠️ Atributos incompletos:\n${resultado.errores.join("\n")}`);
       setGuardando(false);
@@ -172,7 +187,7 @@ export function useRegistrarCotizacion(pasosLength) {
     setGuardando(true);
 
     try {
-      const payload = construirPayloadOT(formData);
+      const payload = construirPayloadOT(formDataAjustado);
       await crearCotizacionDesdeOT(payload);
       setExito(true);
       setPasoActual(pasosLength);
@@ -184,6 +199,14 @@ export function useRegistrarCotizacion(pasosLength) {
   }
 
   function construirPayloadOT(formData) { 
+    let cotizacionExtras = obtenerParametrosExtraCotizacion(formData);
+      if (formData.uso_id === 3) {
+        const totales = calcularTotalesParaEscalera(formData);
+        cotizacionExtras = {
+          ...cotizacionExtras,
+          ...totales,
+        }
+      }
   return {
     uso_id: formData.uso_id,
     zonas: Array.isArray(formData.zonas) ? formData.zonas : [],
@@ -208,7 +231,7 @@ export function useRegistrarCotizacion(pasosLength) {
       nota_instalacion: formData.nota_instalacion || "",
 
       tipo_transporte: formData.tipo_transporte || "",
-      ...obtenerParametrosExtraCotizacion(formData)
+      ...cotizacionExtras
     },
     despiece: (formData.despiece || [])
       .filter((pieza) => pieza.incluido !== false)
@@ -231,6 +254,57 @@ export function useRegistrarCotizacion(pasosLength) {
     })),
   };
 }
+
+// Ajustamos el resumen del despiece para enviar al backend si es escalera de acceso
+// con su lógica por tramos y no por despiece
+
+function ajustarResumenParaEscalera(formData) {
+  if (formData.uso_id !== 3 || !formData.detalles_escaleras) return formData;
+
+  const { precio_tramo, tramos_2m, tramos_1m } = formData.detalles_escaleras;
+  const tramosTotales = Number(tramos_2m || 0) + Number(tramos_1m || 0);
+  const subtotal = parseFloat((Number(precio_tramo || 0) * tramosTotales).toFixed(2));
+
+  if (isNaN(subtotal)) return formData;
+
+  const subtotal_venta = formData.resumenDespiece?.precio_subtotal_venta_soles || 0;
+  const peso_total_kg = formData.resumenDespiece?.peso_total_kg || 0;
+
+  return {
+    ...formData,
+    resumenDespiece: {
+      ...formData.resumenDespiece,
+      precio_subtotal_alquiler_soles: subtotal.toFixed(2),
+      precio_subtotal_venta_soles: subtotal_venta,
+      peso_total_kg,
+      peso_total_ton: (peso_total_kg / 1000).toFixed(2),
+    }
+  };
+}
+
+
+// Para enviar al backend cuando es escalera de acceso:
+
+function calcularTotalesParaEscalera(formData) {
+  const precio_tramo = Number(formData.detalles_escaleras.precio_tramo || 0);
+  const tramos = Number(formData.detalles_escaleras.tramos_2m || 0) + Number(formData.detalles_escaleras.tramos_1m || 0);
+  const subtotal = parseFloat((precio_tramo * tramos).toFixed(2));
+  const descuento = Number(formData.descuento || 0);
+  const subtotal_con_descuento = parseFloat((subtotal * (1 - descuento / 100)).toFixed(2));
+  const igv_porcentaje = 18;
+  const igv_monto = parseFloat((subtotal_con_descuento * igv_porcentaje / 100).toFixed(2));
+  const total_final = parseFloat((subtotal_con_descuento + igv_monto).toFixed(2));
+
+  return {
+    subtotal,
+    subtotal_con_descuento,
+    igv_porcentaje,
+    igv_monto,
+    total_final
+  };
+}
+
+
 
 
   return {

@@ -8,11 +8,8 @@ import { extraerDistrito } from "../../utils/cotizacionUtils";
 
 // Map de funciones por uso_id extensible para cuando tengamos todos los usos
 const obtenerParametrosExtra = {
-  3: (atributos) => { // Escalera de acceso
-    const attr = atributos?.[0];
-    if (!attr?.alturaTotal) return null;
-    let numero_tramos = attr.alturaTotal / 2;
-    if (attr.alturaTotal % 2 !== 0) numero_tramos += 0.5;
+  3: (formData) => { // Escalera de acceso
+    const numero_tramos = (formData.tramos_1m || 0) + (formData.tramos_2m || 0);
     return { numero_tramos };
   },
   5: (formData) => { // Puntales

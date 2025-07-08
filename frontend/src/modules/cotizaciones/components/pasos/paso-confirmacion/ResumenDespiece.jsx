@@ -3,7 +3,20 @@
 // con totales de piezas, peso y subtotales monetarios. El objetivo es que el comercial pueda visualizar
 // claramente el despiece de lo que está cotizando.
 
-export default function ResumenDespiece({ duracion_alquiler, despiece, resumen, tipo }) {
+export default function ResumenDespiece({ formData }) {
+
+  if (!formData) return <p>No se pudo cargar la información del despiece.</p>;
+
+  const { 
+    duracion_alquiler, 
+    despiece, 
+    resumenDespiece, 
+    tipo_cotizacion, 
+    uso_id, 
+    detalles_escaleras
+  } = formData;
+
+  const resumen = resumenDespiece;
   const dias = duracion_alquiler || 30;
 
   if (!Array.isArray(despiece) || despiece.length === 0 || !resumen) {
@@ -37,20 +50,18 @@ export default function ResumenDespiece({ duracion_alquiler, despiece, resumen, 
               let precioUnitario = 0;
               let precioTotal = 0;
 
-              if (tipo === "Alquiler") {
+              if (tipo_cotizacion === "Alquiler") {
                 const precioDiario = 
-                  pieza.precio_diario_manual !== undefined
-                    ? parseFloat(pieza.precio_diario_manual)
-                    : parseFloat(pieza.precio_u_alquiler_soles) / 30;
+                    pieza.precio_diario_manual !== undefined
+                      ? parseFloat(pieza.precio_diario_manual)
+                      : parseFloat(pieza.precio_u_alquiler_soles) / 30;
 
-                precioUnitario = (precioDiario * dias).toFixed(2);
-                precioTotal = (precioDiario * dias * parseFloat(pieza.total)).toFixed(2);
-              } else {
-                precioUnitario = parseFloat(pieza.precio_u_venta_soles).toFixed(2);
-                precioTotal = parseFloat(pieza.precio_venta_soles).toFixed(2);
+                  precioUnitario = (precioDiario * dias).toFixed(2);
+                  precioTotal = (precioDiario * dias * parseFloat(pieza.total)).toFixed(2);
+                } else { // Venta
+                  precioUnitario = parseFloat(pieza.precio_u_venta_soles).toFixed(2);
+                  precioTotal = parseFloat(pieza.precio_venta_soles).toFixed(2);
               }
-
-
 
               return (
                 <tr key={`${pieza.pieza_id || pieza.id}-${i}`}>
@@ -70,7 +81,16 @@ export default function ResumenDespiece({ duracion_alquiler, despiece, resumen, 
         <div className="wizard-key-value"><strong>⚖️ Peso total (kg):</strong> {formatear(resumen.peso_total_kg)}</div>
         <div className="wizard-key-value"><strong>🚚 Peso total (ton):</strong> {formatear(resumen.peso_total_ton)}</div>
         <div className="wizard-key-value"><strong>💰 Subtotal venta (S/):</strong> S/ {formatear(resumen.precio_subtotal_venta_soles)}</div>
-        <div className="wizard-key-value"><strong>🛠️ Subtotal alquiler (S/):</strong> S/ {formatear(resumen.precio_subtotal_alquiler_soles)}</div>
+        {uso_id === 3 && detalles_escaleras.precio_tramo ? (
+          <div className="wizard-key-value">
+            <strong>🛠️ Subtotal alquiler (S/):</strong> S/{" "}
+            {formatear((detalles_escaleras.precio_tramo || 0) * ((detalles_escaleras.tramos_1m || 0) + (detalles_escaleras.tramos_2m || 0)))}
+          </div>
+        ) : (
+          <div className="wizard-key-value">
+            <strong>🛠️ Subtotal alquiler (S/):</strong> S/ {formatear(resumen.precio_subtotal_alquiler_soles)}
+          </div>
+        )}
       </div>
     </>
   );

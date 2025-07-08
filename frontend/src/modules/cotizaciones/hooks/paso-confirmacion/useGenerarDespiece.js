@@ -91,13 +91,24 @@ export function useGenerarDespiece(formData, setFormData) {
 
         const resumen = calcularResumen(despieceFusionado)
 
-        setFormData((prev) => ({
-          ...prev,
+        const nuevoEstado = {
+          ...formData,
           despiece: despieceFusionado,
           resumenDespiece: resumen,
           requiereAprobacion: false,
-          tiene_pernos_disponibles: hayPernos,          
-        }));
+          tiene_pernos_disponibles: hayPernos,
+        }
+
+        if (uso_id === 3 && data.detalles_escaleras) {
+          nuevoEstado.detalles_escaleras = {
+            precio_tramo: data.detalles_escaleras.precio_por_tramo_alquiler,
+            altura_total_general: data.detalles_escaleras.altura_total_general,
+            tramos_2m: data.detalles_escaleras.tramos_2m,
+            tramos_1m: data.detalles_escaleras.tramos_1m
+          }
+        }
+
+        setFormData(nuevoEstado);
       } catch (error) {
         console.error("❌ Error generando despiece:", error.message);
       }

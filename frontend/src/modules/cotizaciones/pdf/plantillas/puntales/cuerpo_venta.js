@@ -89,7 +89,7 @@ export async function generarCuerpoPuntalesVenta(doc, data, startY = 120) {
   currentY += 10;
 
   // Trípodes (venta)
-  if (data.tripode) {
+  if (data.tripode.total !== 0) {
     currentY = await verificarSaltoDePagina(doc, currentY, 20);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);

@@ -9,6 +9,7 @@ import BloquePuntales from "./paso-confirmacion/BloquePuntales";
 import BloqueTransporte from "./paso-confirmacion/BloqueTransporte";
 import BloqueInstalacion from "./paso-confirmacion/BloqueInstalacion";
 import BloqueDescuento from "./paso-confirmacion/BloqueDescuento";
+import BloqueEscaleraAcceso from "./paso-confirmacion/BloqueEscaleraAcceso";
 import DespieceAdicional from "./paso-confirmacion/DespieceAdicional"
 import Loader from "../../../../shared/components/Loader";
 
@@ -51,16 +52,15 @@ export default function PasoConfirmacion() {
     <div className="paso-formulario">
       <h3>Paso 5: Confirmación Final</h3>
 
-      {formData.uso_id === 5 && formData.tipo_cotizacion === "Alquiler" && (
+      {formData.uso_id === 5 && (
         <BloquePuntales formData={formData} setFormData={setFormData} />
       )}
 
-      <ResumenDespiece
-        duracion_alquiler={formData.duracion_alquiler}
-        despiece={formData.despiece}
-        resumen={formData.resumenDespiece}
-        tipo={formData.tipo_cotizacion}
-      />
+      {formData.uso_id === 3 && (
+        <BloqueEscaleraAcceso formData={formData} setFormData={setFormData} />
+      )}
+
+      <ResumenDespiece formData={formData} />
 
       <div className="wizard-section">
         <label>¿Desea agregar más piezas al despiece?</label>
@@ -96,10 +96,6 @@ export default function PasoConfirmacion() {
         <BloqueDescuento formData={formData} setFormData={setFormData} errores={errores} />
       )}
 
-      {/* Para el caso en que sea cotización de venta de puntales si se puede aplicar descuento */}
-      {formData.uso_id === 5 && formData.tipo_cotizacion === "Venta" && (
-        <BloqueDescuento formData={formData} setFormData={setFormData} errores={errores} />
-      )}
     </div>
   );
 }

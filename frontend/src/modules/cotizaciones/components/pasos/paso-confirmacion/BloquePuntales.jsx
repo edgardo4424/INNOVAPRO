@@ -1,7 +1,9 @@
 import { useState } from "react";
 
 export default function BloquePuntales({ formData, setFormData }) {
+  const tipo = formData.tipo_cotizacion; // Alquiler o Venta
   const dias = formData.duracion_alquiler || 30;
+  const formatear = (n) => isNaN(n) ? "—" : n.toFixed(2);
   
   const puntales = formData.despiece.filter(p =>
     p.descripcion?.toUpperCase().includes("PUNTAL")
@@ -12,8 +14,13 @@ export default function BloquePuntales({ formData, setFormData }) {
   // ✅ Estado local inicializado una sola vez
   const initialPrecios = {};
   for (const p of puntales) {
-    const base = p.precio_diario_manual ?? p.precio_u_alquiler_soles / 30;
-    initialPrecios[p.pieza_id] = base.toFixed(2);
+    let base;
+    if (tipo === "Alquiler") {
+      base = p.precio_diario_manual ?? p.precio_u_alquiler_soles / 30;
+    } else {
+      base = p.precio_venta_manual ?? p.precio_u_venta_soles;
+    }
+    initialPrecios[p.pieza_id] = base.toFixed(2) ?? "0.00";
   }
   const [preciosLocales, setPreciosLocales] = useState(initialPrecios);
 
@@ -46,15 +53,24 @@ export default function BloquePuntales({ formData, setFormData }) {
     if (isNaN(valor)) return;
 
     const despieceActualizado = formData.despiece.map(p => {
-      if (p.pieza_id === pieza.pieza_id) {        
-        //const precioMensual = parseFloat((valor * 30).toFixed(2));
-        const subtotal = parseFloat((valor * dias * p.total).toFixed(2));
-        return {
-          ...p,
-          precio_diario_manual: valor,
-          precio_u_alquiler_soles: parseFloat((valor * dias).toFixed(2)),
-          precio_alquiler_soles: subtotal
-        };
+      if (p.pieza_id === pieza.pieza_id) {     
+        if (tipo === "Alquiler") {
+          const subtotal = parseFloat((valor * dias * p.total).toFixed(2));
+          return {
+            ...p,
+            precio_diario_manual: valor,
+            precio_u_alquiler_soles: parseFloat((valor * dias).toFixed(2)),
+            precio_alquiler_soles: subtotal
+          };
+        } else {
+          const subtotal = parseFloat((valor * p.total).toFixed(2))
+          return {
+            ...p,
+            precio_venta_manual: valor,
+            precio_u_venta_soles: valor,
+            precio_venta_soles: subtotal
+          }
+        }
       }
       return p;
     });
@@ -102,9 +118,15 @@ export default function BloquePuntales({ formData, setFormData }) {
                 }
                 onBlur={() => handleBlur(pieza, precioLocal)}
               />
-              <span className="text-sm text-gray-600">S/ por día</span>
+              <span className="text-sm text-gray-600">
+                {tipo === "Alquiler" ? "S/ por día" : "S/ unitario"}
+              </span>
               <span className="ml-auto text-sm text-blue-900">
-                Subtotal: <strong>S/{subtotal}</strong>
+                Subtotal: <strong>S/{formatear(
+                  tipo === "Alquiler"
+                    ? parseFloat(precioLocal) * dias * pieza.total
+                    : parseFloat(precioLocal) * pieza.total
+                )}</strong>
               </span>
             </div>
           </div>
