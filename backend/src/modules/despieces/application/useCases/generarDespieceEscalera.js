@@ -1,6 +1,6 @@
 const {
   generarDespieceEscalera,
-} = require("../../infrastructure/services/generarDespieceEscaleraService");
+} = require("../../infrastructure/services/Escalera/generarDespieceEscaleraService");
 
 module.exports = async (dataParaGenerarDespiece) => {
 

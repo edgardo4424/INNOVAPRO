@@ -1,6 +1,4 @@
-const {
-  generarDespiecePuntales,
-} = require("../../infrastructure/services/generarDespiecePuntalesService");
+const { generarDespiecePuntales } = require("../../infrastructure/services/Puntales/generarDespiecePuntalesService");
 
 module.exports = async (dataParaGenerarDespiece) => {
 

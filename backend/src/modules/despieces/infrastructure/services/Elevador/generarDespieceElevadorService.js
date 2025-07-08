@@ -5,35 +5,35 @@ const {
   combinarResultados,
   calcularTotalesGenerales,
   unificarDespiecesConTotales,
-} = require("../helpers/despieceUtils");
+} = require("../../helpers/despieceUtils");
 
-const db = require("../../../../models");
-const {
-  calcularCantidadesPorCadaPiezaDeAndamioTrabajo,
-} = require("./calcularCantidadesAndamioTrabajo");
+const db = require("../../../../../models");
+const { calcularCantidadesPorCadaPiezaDeElevador } = require("./calcularCantidadesPuntales");
 
-const CONST_ID_USO_ANDAMIO_TRABAJO = 2;
+const CONST_ID_USO_ELEVADOR = 9;
 
-async function generarDespieceAndamioTrabajo(data) {
+async function generarDespieceElevador(data) {
+
+  console.log('DATA', data);
+
   const resultadosPorZona = await Promise.all(
     data.map(async (dataPorZona) => {
-      const datosConCantidadAndamios = dataPorZona.atributos_formulario.map((d, index) => ({
-        ...d,
-        cantidadAndamios: index + 1,
-      }));
-
-      const todosDespieces = calcularCantidadesPorCadaPiezaDeAndamioTrabajo(
-        datosConCantidadAndamios
+      
+      console.log('dataPorZona', dataPorZona);
+      const todosDespieces = calcularCantidadesPorCadaPiezaDeElevador(
+        dataPorZona.atributos_formulario
       );
+
 
       if (todosDespieces[0].length === 0)
         throw new Error("No hay piezas en la modulación. Ingrese bien los atributos");
 
-      const resultadoFinal = agruparPorPieza(todosDespieces, datosConCantidadAndamios.length);
+      console.log('todosDespieces', todosDespieces);
+      const resultadoFinal = agruparPorPieza(todosDespieces,  dataPorZona.atributos_formulario.length);
       const subtotales = calcularSubtotales(resultadoFinal);
 
       const piezasBD = await db.piezas_usos.findAll({
-        where: { uso_id: CONST_ID_USO_ANDAMIO_TRABAJO },
+        where: { uso_id: CONST_ID_USO_ELEVADOR },
         include: [{ model: db.piezas, as: "pieza" }],
         raw: true,
       });
@@ -81,6 +81,8 @@ console.log(`📅 Precio subtotal alquiler S/: ${resultadoFinal.totales.precio_s
   };
 }
 
+
+
 module.exports = {
-  generarDespieceAndamioTrabajo, // Exporta la función para que pueda ser utilizada en otros módulos
+  generarDespieceElevador, // Exporta la función para que pueda ser utilizada en otros módulos
 };

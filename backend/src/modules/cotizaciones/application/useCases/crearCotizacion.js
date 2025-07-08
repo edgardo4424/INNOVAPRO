@@ -47,6 +47,8 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       zonas
     });
 
+    console.log('resultados', resultados);
+
     // 2. Insertar Despiece
 
     let dataParaDespiece = {
@@ -173,11 +175,11 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
           break;
         case "3":
           // Escaleras de acceso
-          const { numero_tramos } = cotizacion;
+          const { detalles_escaleras } = cotizacion;
 
           datosParaCalcularCostoTransporte = {
             ...datosParaCalcularCostoTransporte,
-            numero_tramos: numero_tramos
+            numero_tramos: Number(detalles_escaleras?.tramos_2m || 0) + Number(detalles_escaleras?.tramos_1m || 0)
           }
 
           break;

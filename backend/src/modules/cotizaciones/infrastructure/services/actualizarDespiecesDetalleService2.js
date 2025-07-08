@@ -1,5 +1,4 @@
 const db = require("../../../../models");
-const { mapearDetallesDespiece } = require("./mapearDetallesDespieceService");
 
 async function actualizarDespiecesDetalle({ despiece_id, despiece, transaction }) {
   if (!despiece || despiece.length === 0) {

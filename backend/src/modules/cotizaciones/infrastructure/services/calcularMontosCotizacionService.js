@@ -20,9 +20,9 @@ function calcularMontosCotizacion({
         // Solo para escalera de acceso, El subtotal no se calcular en base a las piezas, sino en base a numero de tramos
         // El precio del tramo se mandara desde el front
 
-        const { precio_tramo, numero_tramos } = cotizacion;
-       
-        subtotal = (Number(numero_tramos) * Number(precio_tramo));
+        const { detalles_escaleras } = cotizacion;
+        const numero_tramos = Number(detalles_escaleras?.tramos_2m || 0) + Number(detalles_escaleras?.tramos_1m || 0)
+        subtotal = (Number(numero_tramos) * Number(detalles_escaleras?.precio_por_tramo_alquiler));
 
       } else {
         subtotal = despiece.reduce(

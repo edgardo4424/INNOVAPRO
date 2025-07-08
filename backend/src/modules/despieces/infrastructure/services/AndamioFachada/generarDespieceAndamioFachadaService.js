@@ -1,4 +1,4 @@
-const db = require("../../../../models");
+const db = require("../../../../../models");
 const {
    agruparPorPieza,
    calcularSubtotales,
@@ -6,7 +6,7 @@ const {
    combinarResultados,
    calcularTotalesGenerales,
    unificarDespiecesConTotales,
-} = require("../helpers/despieceUtils");
+} = require("../../helpers/despieceUtils");
 const {
    calcularCantidadesPorCadaPiezaDeAndamioFachada,
 } = require("./calcularCantidadesAndamioFachada");

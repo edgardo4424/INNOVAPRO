@@ -1,6 +1,6 @@
 const {
   generarDespieceAndamioTrabajo,
-} = require("../../infrastructure/services/generarDespieceAndamioTrabajoService");
+} = require("../../infrastructure/services/AndamioTrabajo/generarDespieceAndamioTrabajoService");
 
 module.exports = async (dataParaGenerarDespiece) => {
  

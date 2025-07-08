@@ -1,6 +1,6 @@
 const {
   generarDespieceEscuadras,
-} = require("../../infrastructure/services/generarDespieceEscuadrasService");
+} = require("../../infrastructure/services/Escuadras/generarDespieceEscuadrasService");
 
 module.exports = async (dataParaGenerarDespiece) => {
   const atributos = dataParaGenerarDespiece.atributos_formulario;

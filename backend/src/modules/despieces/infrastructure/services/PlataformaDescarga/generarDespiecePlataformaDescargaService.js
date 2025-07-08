@@ -4,16 +4,16 @@ const {
   mapearPiezasConDatos,
   combinarResultados,
   calcularTotalesGenerales,
-} = require("../helpers/despieceUtils");
+} = require("../../helpers/despieceUtils");
 
-const db = require("../../../../models");
-const { calcularCantidadesPorCadaPiezaDeEscuadras } = require("./calcularCantidadesEscuadras");
+const db = require("../../../../../models");
+const { calcularCantidadesPorCadaPiezaDePlataformaDescarga } = require("./calcularCantidadesPlataformaDescarga");
 
-const CONST_ID_USO_ESCUADRAS = 4;
+const CONST_ID_USO_PLATAFORMA_DESCARGA = 7;
 
-async function generarDespieceEscuadras(atributos) {
+async function generarDespiecePlataformaDescarga(atributos) {
 
-  const todosDespieces = calcularCantidadesPorCadaPiezaDeEscuadras(atributos);
+  const todosDespieces = calcularCantidadesPorCadaPiezaDePlataformaDescarga(atributos);
 
   // Validar que por lo menos tenga piezas en el despiece
   
@@ -23,10 +23,12 @@ async function generarDespieceEscuadras(atributos) {
     todosDespieces,
     atributos.length
   );
+
+  console.log('resultadoFinal', resultadoFinal);
   const subtotales = calcularSubtotales(resultadoFinal);
 
   const piezasBD = await db.piezas_usos.findAll({
-    where: { uso_id: CONST_ID_USO_ESCUADRAS },
+    where: { uso_id: CONST_ID_USO_PLATAFORMA_DESCARGA },
     include: [{ model: db.piezas, as: "pieza" }],
     raw: true,
   });
@@ -54,6 +56,8 @@ async function generarDespieceEscuadras(atributos) {
   };
 }
 
+
+
 module.exports = {
-  generarDespieceEscuadras, // Exporta la función para que pueda ser utilizada en otros módulos
+  generarDespiecePlataformaDescarga, // Exporta la función para que pueda ser utilizada en otros módulos
 };

@@ -5,35 +5,35 @@ const {
   combinarResultados,
   calcularTotalesGenerales,
   unificarDespiecesConTotales,
-} = require("../helpers/despieceUtils");
+} = require("../../helpers/despieceUtils");
 
-const db = require("../../../../models");
-const { calcularCantidadesPorCadaPiezaDePuntales } = require("./calcularCantidadesPuntales");
+const db = require("../../../../../models");
+const {
+  calcularCantidadesPorCadaPiezaDeAndamioTrabajo,
+} = require("./calcularCantidadesAndamioTrabajo");
 
-const CONST_ID_USO_PUNTALES = 5;
+const CONST_ID_USO_ANDAMIO_TRABAJO = 2;
 
-async function generarDespiecePuntales(data) {
-
-  console.log('DATA', data);
-
+async function generarDespieceAndamioTrabajo(data) {
   const resultadosPorZona = await Promise.all(
     data.map(async (dataPorZona) => {
-      
-      console.log('dataPorZona', dataPorZona);
-      const todosDespieces = calcularCantidadesPorCadaPiezaDePuntales(
-        dataPorZona.atributos_formulario
-      );
+      const datosConCantidadAndamios = dataPorZona.atributos_formulario.map((d, index) => ({
+        ...d,
+        cantidadAndamios: index + 1,
+      }));
 
+      const todosDespieces = calcularCantidadesPorCadaPiezaDeAndamioTrabajo(
+        datosConCantidadAndamios
+      );
 
       if (todosDespieces[0].length === 0)
         throw new Error("No hay piezas en la modulación. Ingrese bien los atributos");
 
-      console.log('todosDespieces', todosDespieces);
-      const resultadoFinal = agruparPorPieza(todosDespieces,  dataPorZona.atributos_formulario.length);
+      const resultadoFinal = agruparPorPieza(todosDespieces, datosConCantidadAndamios.length);
       const subtotales = calcularSubtotales(resultadoFinal);
 
       const piezasBD = await db.piezas_usos.findAll({
-        where: { uso_id: CONST_ID_USO_PUNTALES },
+        where: { uso_id: CONST_ID_USO_ANDAMIO_TRABAJO },
         include: [{ model: db.piezas, as: "pieza" }],
         raw: true,
       });
@@ -81,8 +81,6 @@ console.log(`📅 Precio subtotal alquiler S/: ${resultadoFinal.totales.precio_s
   };
 }
 
-
-
 module.exports = {
-  generarDespiecePuntales, // Exporta la función para que pueda ser utilizada en otros módulos
+  generarDespieceAndamioTrabajo, // Exporta la función para que pueda ser utilizada en otros módulos
 };
