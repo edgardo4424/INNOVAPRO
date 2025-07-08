@@ -1,6 +1,6 @@
 const {
   generarDespiecePlataformaDescarga,
-} = require("../../infrastructure/services/calcularCantidadesPlataformaDescarga");
+} = require("../../infrastructure/services/PlataformaDescarga/calcularCantidadesPlataformaDescarga");
 
 module.exports = async (dataParaGenerarDespiece) => {
   const atributos = dataParaGenerarDespiece.atributos_formulario;

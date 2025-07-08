@@ -1,6 +1,6 @@
 
-const { calcularCON0200 } = require("../../domain/formulas-generar-despieces/funcionesEscalera");
-const { calcularAM6000, calcularAM6100, calcularAM6200, calcularAM6300, calcularAM6400, calcularAM6500, calcularAM6600, calcularAM6700, calcularAM6800, calcularAM6900, calcularAM7000, calcularAM7100, calcularAM7200, calcularAM7300, calcularAM7400, calcularAM7410, calcularAM7420, calcularAM7430, calcularAM7440, calcularEC0100, calcularEC0300, calcularEC0800, calcularCON0300, calcularEN0310, calcularEN0400 } = require("../../domain/formulas-generar-despieces/funcionesEscuadras");
+
+const { calcularCON0200, calcularAM6000, calcularAM6100, calcularAM6200, calcularAM6300, calcularAM6400, calcularAM6500, calcularAM6600, calcularAM6700, calcularAM6800, calcularAM6900, calcularAM7000, calcularAM7100, calcularAM7200, calcularAM7300, calcularAM7400, calcularAM7410, calcularAM7420, calcularAM7430, calcularAM7440, calcularEC0100, calcularEC0300, calcularEC0800, calcularCON0300, calcularEN0310, calcularEN0400 } = require("../../../domain/formulas-generar-despieces/funcionesEscuadras");
 
 function calcularCantidadesPorCadaPiezaDeEscuadras(datosCantidadPlataformasDescarga) {
     return datosCantidadPlataformasDescarga.map((dato) => {

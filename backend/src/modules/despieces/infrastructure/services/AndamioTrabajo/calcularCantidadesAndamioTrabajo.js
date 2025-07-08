@@ -81,7 +81,7 @@ const {
   calcularVertical150,
   calcularVertical200,
   calcularVertical300,
-} = require("../../domain/formulas-generar-despieces/funcionesAndamioTrabajo");
+} = require("../../../domain/formulas-generar-despieces/funcionesAndamioTrabajo");
 
 function calcularCantidadesPorCadaPiezaDeAndamioTrabajo(datosConCantidadAndamios) {
     return datosConCantidadAndamios.map((dato) => {

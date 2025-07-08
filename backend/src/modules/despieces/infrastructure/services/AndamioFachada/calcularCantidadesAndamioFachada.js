@@ -71,7 +71,7 @@ const {
    calcularPuntal3mAzul,
    calcularPinPresion11mm,
    calcularArgolla4840mm,
-} = require("../../domain/formulas-generar-despieces/funcionesAndamioFachada");
+} = require("../../../domain/formulas-generar-despieces/funcionesAndamioFachada");
 
 function calcularCantidadesPorCadaPiezaDeAndamioFachada(datosAtributos) {
    return datosAtributos.map((dato) => {

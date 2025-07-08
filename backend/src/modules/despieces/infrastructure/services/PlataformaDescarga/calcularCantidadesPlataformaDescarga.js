@@ -1,5 +1,5 @@
 
-const { calcularEC0600, calcularEC0700, calcularEC0710, calcularEC0711, calcularEC0712, calcularEC0713, calcularEC0714, calcularEC0720, calcularEC0730, calcularEC0900 } = require("../../domain/formulas-generar-despieces/funcionesPlataformaDescarga");
+const { calcularEC0600, calcularEC0700, calcularEC0710, calcularEC0711, calcularEC0712, calcularEC0713, calcularEC0714, calcularEC0720, calcularEC0730, calcularEC0900 } = require("../../../domain/formulas-generar-despieces/funcionesPlataformaDescarga");
 
 function calcularCantidadesPorCadaPiezaDePlataformaDescarga(datosCantidadPlataformasDescarga) {
     return datosCantidadPlataformasDescarga.map((dato) => {
