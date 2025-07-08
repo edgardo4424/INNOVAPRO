@@ -101,7 +101,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       filial_razon_social: filialEncontrado.razon_social,
       usuario_rol: usuarioEncontrado.rol,
       usuario_nombre: usuarioEncontrado.nombre,
-      anio_cotizacion: new Date().getFullYear(),
+      //anio_cotizacion: new Date().getFullYear(),
       estado_cotizacion: cotizacionEncontrada.estados_cotizacion_id,
 
       cotizacion: cotizacionEncontrada,

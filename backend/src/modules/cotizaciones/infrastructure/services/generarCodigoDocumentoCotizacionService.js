@@ -5,7 +5,6 @@ async function generarCodigoDocumentoCotizacion({
   uso_id_para_registrar,
   filial_razon_social,
   usuario_nombre,
-  anio_cotizacion,
   cotizacion,
   cp,
 }) {
@@ -149,7 +148,7 @@ async function generarCodigoDocumentoCotizacion({
     if (!codigo_documento) {
       correlativo = "0001";
       version = "1";
-      return `${filialAbv}-${tipoDocumento}-${codRolUsuario}-${usuarioAbv}-${correlativo}_${version}-${anio_cotizacion}`;
+      return `${filialAbv}-${tipoDocumento}-${codRolUsuario}-${usuarioAbv}-${correlativo}_${version}`;
     }
 
     // Extraer correlativo y versión actuales del código_documento
@@ -191,7 +190,7 @@ async function generarCodigoDocumentoCotizacion({
   }
 
   // 🔹 Construcción del código
-  const codigo = `${filialAbv}-${tipoDocumento}-${codRolUsuario}-${usuarioAbv}-${correlativo}_${version}-${anio_cotizacion}`;
+  const codigo = `${filialAbv}-${tipoDocumento}-${codRolUsuario}-${usuarioAbv}-${correlativo}_${version}`;
 
 
   return codigo;

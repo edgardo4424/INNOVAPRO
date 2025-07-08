@@ -121,7 +121,8 @@ async function generarPdfEscaleraAcceso({ idDespiece, tiene_pernos }) {
     ((total_tramos x 2) + 2 ) x 2 = cantidad de pernos
   */
 
-    console.log('pernoExpansionConArgollaEnElDespiece', pernoExpansionConArgollaEnElDespiece);
+  // Calcular los tramos de 2m y 1m
+    
 
   return {
     zonas: atributosDelPdf,
