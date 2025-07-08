@@ -5,6 +5,7 @@ import {renderTextoTransporte} from "../../componentes/textoTransporte";
 import { renderTextoTransporteVenta } from "../../componentes/textoTransporte_venta";
 import {renderNotas} from "./notas";
 import { renderNotasVenta } from "../../componentes/notas_venta";
+import { renderPiezasAdicionales } from "../../componentes/piezasAdicionales";
 import { generarCuerpoEscaleraAcceso } from "./cuerpo";
 import { generarCuerpoEscaleraAccesoVenta } from "./cuerpo_venta";
 import { renderFondoPDF } from "../../componentes/fondoPDF";
@@ -20,6 +21,9 @@ export default async function generarPDFEscalera(doc, data) {
   if (data.cotizacion?.tipo_servicio === "Venta") {
     // Si es una cotización de venta, usamos el cuerpo específico para venta
     currentY = await generarCuerpoEscaleraAccesoVenta(doc, data, currentY); // Genera el cuerpo del PDF para escalera de acceso en venta
+    if (data.piezasAdicionales?.length > 0) {
+      currentY = await renderPiezasAdicionales(doc, data, currentY);
+    }
     currentY = await renderTextoTransporteVenta(doc, data, currentY); // Texto transporte específico para venta
     currentY = await renderNotasVenta(doc, data, currentY); // Notas específicas para venta
     
@@ -27,6 +31,9 @@ export default async function generarPDFEscalera(doc, data) {
   else {
     // Si es una cotización normal, usamos el cuerpo estándar
     currentY = await generarCuerpoEscaleraAcceso(doc, data, currentY); // Genera el cuerpo del PDF para escalera de acceso
+    if (data.piezasAdicionales?.length > 0) {
+      currentY = await renderPiezasAdicionales(doc, data, currentY);
+    }
     currentY = await renderTextoTransporte(doc, data, currentY); // Texto transporte estándar
     currentY = await renderNotas(doc, data, currentY); // Notas estándar 
   }

@@ -11,7 +11,6 @@ export default function BloqueEscaleraAcceso({ formData, setFormData }) {
   useEffect(() => {
     const alturaEsperada = parseInt(alturaTotal);
     const alturaTramos = parseInt(totalCalculado);
-
     setErrorTramos(alturaTramos !== alturaEsperada);
   }, [tramos2m, tramos1m, alturaTotal]);
 
@@ -37,7 +36,10 @@ export default function BloqueEscaleraAcceso({ formData, setFormData }) {
             onChange={(e) =>
               setFormData((prev) => ({
                 ...prev,
-                precio_tramo: parseFloat(e.target.value) || 0,
+                detalles_escaleras: {
+                  ...prev.detalles_escaleras,
+                  precio_tramo: parseFloat(e.target.value) || 0,
+                },
               }))
             }
           />
@@ -52,7 +54,7 @@ export default function BloqueEscaleraAcceso({ formData, setFormData }) {
             style={{ backgroundColor: "#f3f6fa", fontWeight: "bold" }}
           />
         </div>
-        
+
         <div>
           <label style={{ fontWeight: "bold", color: "#ff7a00" }}>Tramos de 2 (m):</label>
           <input
@@ -60,14 +62,17 @@ export default function BloqueEscaleraAcceso({ formData, setFormData }) {
             min={0}
             value={formData.detalles_escaleras.tramos_2m ?? ""}
             onChange={(e) =>
-                setFormData((prev) => ({
+              setFormData((prev) => ({
                 ...prev,
-                tramos_2m: e.target.value === "" ? "" : parseInt(e.target.value),
-                }))
+                detalles_escaleras: {
+                  ...prev.detalles_escaleras,
+                  tramos_2m: e.target.value === "" ? "" : parseInt(e.target.value),
+                },
+              }))
             }
           />
         </div>
-        
+
         <div>
           <label style={{ fontWeight: "bold", color: "#ff7a00" }}>Tramos de 1 (m):</label>
           <input
@@ -75,24 +80,24 @@ export default function BloqueEscaleraAcceso({ formData, setFormData }) {
             min={0}
             value={formData.detalles_escaleras.tramos_1m ?? ""}
             onChange={(e) =>
-                setFormData((prev) => ({
+              setFormData((prev) => ({
                 ...prev,
-                tramos_1m: e.target.value === "" ? "" : parseInt(e.target.value),
-                }))
+                detalles_escaleras: {
+                  ...prev.detalles_escaleras,
+                  tramos_1m: e.target.value === "" ? "" : parseInt(e.target.value),
+                },
+              }))
             }
           />
         </div>
 
-
-        {errorTramos && (
+        {errorTramos ? (
           <div style={{ color: "#b10000", fontWeight: "bold", fontSize: "14px" }}>
             ⚠️ La suma de tramos ({tramos2m * 2 + tramos1m} m) no coincide con la altura total de {alturaTotal} m.
             <br />
             Por favor, ajusta los tramos para que coincidan.
           </div>
-        )}
-
-        {!errorTramos && (
+        ) : (
           <div style={{ color: "#187b00", fontWeight: "bold", fontSize: "14px" }}>
             ✅ Altura total validada: {tramos2m} tramo(s) de 2m + {tramos1m} tramo(s) de 1m = {alturaTotal} m.
           </div>

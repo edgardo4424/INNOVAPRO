@@ -5,6 +5,7 @@ import {renderTextoTransporte} from "../../componentes/textoTransporte";
 import { renderTextoTransporteVenta } from "../../componentes/textoTransporte_venta";
 import {renderNotas} from "./notas";
 import { renderNotasVenta } from "../../componentes/notas_venta";
+import { renderPiezasAdicionales } from "../../componentes/piezasAdicionales";
 import { generarCuerpoAndamioTrabajo } from "./cuerpo";
 import { generarCuerpoAndamioTrabajoVenta } from "./cuerpo_venta";
 import { renderInstalacion } from "../../componentes/instalacion";
@@ -21,6 +22,9 @@ export default async function generarPDFAndamio(doc, data) {
   if (data.cotizacion?.tipo_servicio === "Venta") {
     // Si es una cotización de venta, usamos el cuerpo específico para venta
     currentY = await generarCuerpoAndamioTrabajoVenta(doc, data, currentY); // Genera el cuerpo del PDF para andamio de trabajo en venta
+    if (data.piezasAdicionales?.length > 0) {
+      currentY = await renderPiezasAdicionales(doc, data, currentY);
+    }
     currentY = await renderInstalacion(doc, data, currentY); // Renderiza la sección de instalación si existe
     currentY = await renderTextoTransporteVenta(doc, data, currentY); // Texto transporte específico para venta
     currentY = await renderNotasVenta(doc, data, currentY); // Notas específicas para venta
@@ -28,6 +32,9 @@ export default async function generarPDFAndamio(doc, data) {
   else {
     // Si es una cotización normal, usamos el cuerpo estándar
     currentY = await generarCuerpoAndamioTrabajo(doc, data, currentY); // Genera el cuerpo del PDF para andamio de trabajo
+    if (data.piezasAdicionales?.length > 0) {
+      currentY = await renderPiezasAdicionales(doc, data, currentY);
+    }
     currentY = await renderInstalacion(doc, data, currentY); // Renderiza la sección de instalación si existe
     currentY = await renderTextoTransporte(doc, data, currentY); // Texto transporte estándar
     currentY = await renderNotas(doc, data, currentY); // Notas estándar
