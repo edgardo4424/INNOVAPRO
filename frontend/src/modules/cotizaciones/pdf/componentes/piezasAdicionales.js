@@ -85,7 +85,7 @@ export async function renderPiezasAdicionales(doc, data, currentY) {
   currentY += heightRow + 2;
 
   // Nota aclaratoria
-  const nota = `Nota: Estas piezas han sido incluidas como adicionales para complementar el equipo principal solicitado. Su presencia obedece a criterios técnicos o solicitudes específicas del cliente.`;
+  const nota = `Nota: Estas piezas han sido incluidas como adicionales para complementar el equipo principal solicitado. Su suministro obedece a solicitudes específicas del cliente.`;
 
   const palabras = nota.split(/\s+/);
   const aproxLineas = Math.ceil(palabras.length / 15);

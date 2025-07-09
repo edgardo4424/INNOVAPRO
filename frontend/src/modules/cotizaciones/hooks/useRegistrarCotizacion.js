@@ -52,7 +52,7 @@ export function useRegistrarCotizacion(pasosLength) {
         tramos_1m: Number(formData.detalles_escaleras.tramos_1m || 0)
       }
     }
-
+    console.log("Parametros extras para el payload :", extras)
     return extras;
   }
 

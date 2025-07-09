@@ -43,7 +43,19 @@ export async function generarCuerpoEscaleraAcceso(doc, data, startY = 120) {
     currentY = drawJustifiedText(doc, `**${zonaTitulo}**`, indent + 3, currentY, 170, 5.5, 10);
 
     for (const equipo of zona.atributos || []) {
-      const descripcionEquipo = `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** ${equipo.cantidad_uso || "(CANTIDAD INDEFINIDA)"} ${equipo.cantidad_uso === 1 ? "Ud." : "Uds."} de ${data.uso?.nombre || "(NOMBRE DE EQUIPO INDEFINIDO)"} de ${equipo.longitud_mm || "(LONGITUD INDEFINIDA)"} m. de longitud x ${equipo.ancho_mm || "(ANCHO INDEFINIDO)"} m. de ancho x ${equipo.altura_m || "(ALTURA INDEFINIDA)"}.00 m. de altura + 1.00 m de baranda de seguridad. (EQUIS tramos de 2.00 m y YE tramos de 1.00 m)`;
+      // Tramos Escalera
+      let descripcionTramos = "";
+      const detalles = data.detalles_escaleras || {};
+      const tieneTramos = detalles.tramos_2m > 0 || detalles.tramos_1m > 0;
+
+      if (tieneTramos) {
+        const partes = [];
+        if (detalles.tramos_2m > 0) partes.push(`${detalles.tramos_2m} tramo${detalles.tramos_2m > 1 ? "s" : ""} de 2.00 m`);
+        if (detalles.tramos_1m > 0) partes.push(`${detalles.tramos_1m} tramo${detalles.tramos_1m > 1 ? "s" : ""} de 1.00 m`);
+        descripcionTramos = ` (${partes.join(" y ")})`;
+      }
+
+      const descripcionEquipo = `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** ${equipo.cantidad_uso || "(CANTIDAD INDEFINIDA)"} ${equipo.cantidad_uso === 1 ? "Ud." : "Uds."} de ${data.uso?.nombre || "(NOMBRE DE EQUIPO INDEFINIDO)"} de ${equipo.longitud_mm || "(LONGITUD INDEFINIDA)"} m. de longitud x ${equipo.ancho_mm || "(ANCHO INDEFINIDO)"} m. de ancho x ${equipo.altura_m || "(ALTURA INDEFINIDA)"} m. de altura + 1.00 m de baranda de seguridad${descripcionTramos}.`;
 
       const palabras = descripcionEquipo.split(/\s+/);
       const aproxLineas = Math.ceil(palabras.length / 11);

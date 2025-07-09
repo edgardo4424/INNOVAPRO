@@ -9,7 +9,7 @@ import { extraerDistrito } from "../../utils/cotizacionUtils";
 // Map de funciones por uso_id extensible para cuando tengamos todos los usos
 const obtenerParametrosExtra = {
   3: (formData) => { // Escalera de acceso
-    const numero_tramos = (formData.tramos_1m || 0) + (formData.tramos_2m || 0);
+    const numero_tramos = (formData.detalles_escaleras.tramos_1m || 0) + (formData.detalles_escaleras.tramos_2m || 0);
     return { numero_tramos };
   },
   5: (formData) => { // Puntales
@@ -39,26 +39,37 @@ export function useCalculoTransporte(formData, setFormData) {
       
       if (!formData.tiene_transporte) return;
 
-      const pesoTn = formData.resumenDespiece?.peso_total_ton;
       const distrito = extraerDistrito(formData.obra_direccion || "");
 
-      if (!distrito || !pesoTn) return;
+      if (!distrito) return;
 
       try {
         const basePayload = {
           uso_id: formData.uso_id,
-          peso_total_tn: String(pesoTn),
           distrito_transporte: distrito,
           tipo_transporte: formData.tipo_transporte || "Desconocido"
         };
+
+        // Solo incluir si no es escalera de acceso 
+        if(formData.uso_id !== 3) {
+          const pesoTn = formData.resumenDespiece?.peso_total_ton;
+          if (!pesoTn) return;
+          basePayload.peso_total_tn = String(pesoTn);
+        }
         
         const extras = obtenerParametrosExtra[formData.uso_id]?.(formData);
         
         if (formData.uso_id in obtenerParametrosExtra && !extras) return;
 
         const payload = { ...basePayload, ...extras }; 
+
+        console.log("Datos para calcular transporte: ", payload)
         
         const { costosTransporte = {}, tipo_transporte = ""} = await calcularCostoTransporte(payload);
+
+        console.log("CostosTranpsortes:", costosTransporte);
+        console.log("tipo transporte:", tipo_transporte);
+
         
         setFormData((prev) => ({
           ...prev,

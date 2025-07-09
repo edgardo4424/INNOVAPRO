@@ -121,6 +121,7 @@ export default function DespieceAdicional({ formData, setFormData }) {
           <label>Cantidad:</label>
           <input
             type="number"
+            onWheel={(e) => e.target.blur()}
             min="1"
             value={cantidad}
             onChange={(e) => setCantidad(e.target.value)}

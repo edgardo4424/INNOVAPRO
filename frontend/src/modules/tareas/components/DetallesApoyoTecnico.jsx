@@ -105,6 +105,7 @@ export default function DetallesApoyoTecnico({ detalles, onChange }) {
               <label>Días de Alquiler:</label>
               <input
                 type="number"
+                onWheel={(e) => e.target.blur()}
                 min="1"
                 value={detalles.diasAlquiler || ""}
                 onChange={(e) => onChange("diasAlquiler", parseInt(e.target.value))}

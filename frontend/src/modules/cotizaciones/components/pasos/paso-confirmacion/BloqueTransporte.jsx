@@ -69,6 +69,7 @@ export default function BloqueTransporte({ formData, setFormData, errores }) {
               </label>
               <input
                 type="number"
+                onWheel={(e) => e.target.blur()}
                 min="0"
                 step="0.01"
                 value={formData[campo] || ""}

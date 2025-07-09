@@ -1,7 +1,8 @@
 const ATRIBUTOS_REQUERIDOS_POR_USO = {
   // Ejemplo: uso_id: [campos_obligatorios]
   2: ["longitud", "ancho", "altura"], // Andamio de trabajo
-  5: ["cantidad", "tipoPuntal"],
+  3: ["alturaTotal"], // Escalera de acceso
+  5: ["cantidad", "tipoPuntal"], // Puntales
   // Puedes seguir agregando más usos aquí
 };
 

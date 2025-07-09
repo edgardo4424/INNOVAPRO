@@ -69,6 +69,7 @@ export default function PasoUso() {
           <label>Duración del alquiler (días):</label>
           <input
             type="number"
+            onWheel={(e) => e.target.blur()}
             min="1"
             value={formData.duracion_alquiler || ""}
             onChange={(e) => handleChange("duracion_alquiler", parseInt(e.target.value))}

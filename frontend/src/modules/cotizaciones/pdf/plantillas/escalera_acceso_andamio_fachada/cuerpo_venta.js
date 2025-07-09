@@ -41,7 +41,19 @@ export async function generarCuerpoEscaleraAccesoVenta(doc, data, startY = 120) 
     currentY = drawJustifiedText(doc, `**${zonaTitulo}**`, indent + 3, currentY, 170, 5.5, 10);
 
     for (const equipo of zona.atributos || []) {
-      const descripcionEquipo = `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** ${equipo.cantidad_uso || "(CANTIDAD INDEFINIDA)"} ${equipo.cantidad_uso === 1 ? "Ud." : "Uds."} de ${data.uso?.nombre || "(NOMBRE DE EQUIPO INDEFINIDO)"} de ${equipo.longitud_mm || "(LONGITUD INDEFINIDA)"} m. de longitud x ${equipo.ancho_mm || "(ANCHO INDEFINIDO)"} m. de ancho x ${equipo.altura_m || "(ALTURA INDEFINIDA)"}.00 m. de altura + 1.00 m de baranda de seguridad.`;
+      // Tramos Escalera
+      let descripcionTramos = "";
+      const detalles = data.detalles_escaleras || {};
+      const tieneTramos = detalles.tramos_2m > 0 || detalles.tramos_1m > 0;
+
+      if (tieneTramos) {
+        const partes = [];
+        if (detalles.tramos_2m > 0) partes.push(`${detalles.tramos_2m} tramo${detalles.tramos_2m > 1 ? "s" : ""} de 2.00 m`);
+        if (detalles.tramos_1m > 0) partes.push(`${detalles.tramos_1m} tramo${detalles.tramos_1m > 1 ? "s" : ""} de 1.00 m`);
+        descripcionTramos = ` (${partes.join(" y ")})`;
+      }
+
+      const descripcionEquipo = `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** ${equipo.cantidad_uso || "(CANTIDAD INDEFINIDA)"} ${equipo.cantidad_uso === 1 ? "Ud." : "Uds."} de ${data.uso?.nombre || "(NOMBRE DE EQUIPO INDEFINIDO)"} de ${equipo.longitud_mm || "(LONGITUD INDEFINIDA)"} m. de longitud x ${equipo.ancho_mm || "(ANCHO INDEFINIDO)"} m. de ancho x ${equipo.altura_m || "(ALTURA INDEFINIDA)"} m. de altura + 1.00 m de baranda de seguridad${descripcionTramos}.`;
 
       const palabras = descripcionEquipo.split(/\s+/);
       const aproxLineas = Math.ceil(palabras.length / 11);
@@ -56,7 +68,7 @@ export async function generarCuerpoEscaleraAccesoVenta(doc, data, startY = 120) 
 
     currentY += 2 ; // Espacio antes del resumen de cotización
   // Resumen de cotización
-  const subtituloResumen = `** : 
+  const subtituloResumen = `Precio de venta: 
 
   **S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV.**`;
   currentY = drawJustifiedText(doc, subtituloResumen, indent + 3, currentY, 170, 5.5, 10);
@@ -64,10 +76,28 @@ export async function generarCuerpoEscaleraAccesoVenta(doc, data, startY = 120) 
 
   // Verifica si hay atributos opcionales como pernos de expansión
 
-  if (data.atributos_opcionales?.tiene_pernos === true) {
-    // ⚙️ PERNOS DE EXPANSIÓN - M16 x 145 / C/Argolla
+  if (data.perno_expansion_sin_argolla.total !== 0) {
+    // ⚙️ PERNOS DE EXPANSIÓN - M16 x 145 
     const tiene_pernos_expansion = data.tiene_pernos || [
-      `${data.atributos_opcionales?.cantidad_pernos_expansion || "(CANTIDAD INDEFINIDA DE PERNOS)"} Uds. ${data.atributos_opcionales?.nombre_perno_expansion || "(TIPO DE PERNO INDEFINIDO)"}: **S/${data.atributos_opcionales?.precio_perno_expansion || "(PRECIO PERNO INDEFINIDO)"} + IGV.**`
+      `${data.perno_expansion_sin_argolla?.total || "(CANTIDAD INDEFINIDA DE PERNOS)"} Uds. ${data.perno_expansion_sin_argolla?.nombre || "(TIPO DE PERNO INDEFINIDO)"}: **S/${data.perno_expansion_sin_argolla?.precio_venta_soles || "(PRECIO PERNO INDEFINIDO)"} + IGV.**`
+    ];
+
+    currentY += 6;
+    for (const linea of tiene_pernos_expansion) {
+      const palabras = linea.split(/\s+/);
+      const aproxLineas = Math.ceil(palabras.length / 11);
+      const alturaEstimada = aproxLineas * 5;
+
+      currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimada);
+      currentY = drawJustifiedText(doc, linea, indent + box + 3, currentY, 170, 5.5, 10);
+    }
+    
+  }
+
+  if (data.perno_expansion_con_argolla.total !== 0) {
+    // ⚙️ PERNOS DE EXPANSIÓN - C/Argolla
+    const tiene_pernos_expansion = data.tiene_pernos || [
+      `${data.perno_expansion_con_argolla?.total || "(CANTIDAD INDEFINIDA DE PERNOS)"} Uds. ${data.perno_expansion_con_argolla?.nombre || "(TIPO DE PERNO INDEFINIDO)"}: **S/${data.perno_expansion_con_argolla?.precio_venta_soles || "(PRECIO PERNO INDEFINIDO)"} + IGV.**`
     ];
 
     currentY += 6;

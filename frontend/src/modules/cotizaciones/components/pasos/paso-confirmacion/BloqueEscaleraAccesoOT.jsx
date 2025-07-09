@@ -17,14 +17,15 @@ export default function BloqueEscaleraAcceso({ formData, setFormData }) {
   return (
     <div className="wizard-section">
       <h4 style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "#004aad" }}>
-        🪜 <span>Detalles Escalera de Acceso</span>
+        🪜 <span>Detalles Escalera de Acceso Generado Desde OT</span>
       </h4>
 
       <div style={{ marginBottom: "1rem", fontSize: "14px", color: "#444" }}>
-        Este bloque te permite ajustar el <strong>precio por tramo</strong> de alquiler de la escalera.
-        La <strong>altura total general</strong> se calcula automáticamente a partir de los atributos ingresados (incluyendo todas las zonas).
+        Revisa el <strong>despiece</strong> generado por Oficina Técnica cuidadosamente e indica lo siguiente: <br />
+        <strong>Precio por tramo</strong> de alquiler de la escalera.<br />
+        <strong>Altura total general</strong> de la(s) escalera(s) de acceso.
         <br />
-        Para que el cálculo sea válido, la suma de tramos de 2m y 1m debe coincidir con la altura total.
+        Para que el cálculo sea válido, la suma de tramos de 2.00m y 1.00m debe coincidir con la altura total.
       </div>
 
       <div style={{ display: "grid", gap: "1rem" }}>
@@ -50,14 +51,22 @@ export default function BloqueEscaleraAcceso({ formData, setFormData }) {
           <label style={{ fontWeight: "bold", color: "#ff7a00" }}>Altura total general (m):</label>
           <input
             type="number"
-            value={alturaTotal}
-            disabled
-            style={{ backgroundColor: "#f3f6fa", fontWeight: "bold" }}
+            onWheel={(e) => e.target.blur()}
+            value={formData.detalles_escaleras?.altura_total_general || ""}
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                detalles_escaleras: {
+                  ...prev.detalles_escaleras,
+                  altura_total_general: e.target.value || 0,
+                },
+              }))
+            }
           />
         </div>
 
         <div>
-          <label style={{ fontWeight: "bold", color: "#ff7a00" }}>Tramos de 2 (m):</label>
+          <label style={{ fontWeight: "bold", color: "#ff7a00" }}>Tramos de 2.00 (m):</label>
           <input
             type="number"
             onWheel={(e) => e.target.blur()}
@@ -76,7 +85,7 @@ export default function BloqueEscaleraAcceso({ formData, setFormData }) {
         </div>
 
         <div>
-          <label style={{ fontWeight: "bold", color: "#ff7a00" }}>Tramos de 1 (m):</label>
+          <label style={{ fontWeight: "bold", color: "#ff7a00" }}>Tramos de 1.00 (m):</label>
           <input
             type="number"
             onWheel={(e) => e.target.blur()}

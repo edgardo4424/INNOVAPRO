@@ -43,6 +43,7 @@ export default function BloqueInstalacion({ formData, setFormData, errores }) {
           <label>💸 Precio de instalación completa (S/)</label>
           <input
             type="number"
+            onWheel={(e) => e.target.blur()}
             min="0"
             value={formData.precio_instalacion_completa || ""}
             onChange={(e) =>
@@ -61,6 +62,7 @@ export default function BloqueInstalacion({ formData, setFormData, errores }) {
             <label>💰 Precio de instalación completa (S/)</label>
             <input
               type="number"
+              onWheel={(e) => e.target.blur()}
               min="0"
               value={formData.precio_instalacion_completa || ""}
               onChange={(e) =>
@@ -76,6 +78,7 @@ export default function BloqueInstalacion({ formData, setFormData, errores }) {
             <label>💵 Precio de instalación parcial (S/)</label>
             <input
               type="number"
+              onWheel={(e) => e.target.blur()}
               min="0"
               value={formData.precio_instalacion_parcial || ""}
               onChange={(e) =>

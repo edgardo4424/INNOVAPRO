@@ -170,7 +170,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
         case "2":
           // Andamio de trabajo
           break;
-        case "3":
+        /* case "3":
           // Escaleras de acceso
           let numero_tramos = atributos_formulario[0].alturaTotal / 2;
           if (atributos_formulario[0].alturaTotal % 2 !== 0) {
@@ -178,7 +178,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
           }
 
           datosParaCalcularCostoTransporte.numero_tramos = numero_tramos;
-          break;
+          break; */
 
         case "5":
           
