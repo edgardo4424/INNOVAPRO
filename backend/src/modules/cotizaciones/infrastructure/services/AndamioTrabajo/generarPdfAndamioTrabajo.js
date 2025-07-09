@@ -8,7 +8,6 @@ async function generarPdfAndamioTrabajo({
   porcentajeDescuento,
 }) {
 
-  console.log('PORCENTAJEEEEEEEEEEEEEE DESCUENTO', porcentajeDescuento);
   let pernoExpansionConArgolla;
   let pernoEnElDespiece;
 
@@ -75,8 +74,6 @@ async function generarPdfAndamioTrabajo({
       ],
     });
 
-    console.log('piezasDetalleAdicionalesAndamioTrabajo', piezasDetalleAdicionalesAndamioTrabajo);
-
   const piezasDetalleAdicionalesAndamioTrabajoConDescuento =
   piezasDetalleAdicionalesAndamioTrabajo.map((p) => {
     const pieza = p.get({ plain: true });
@@ -94,12 +91,6 @@ async function generarPdfAndamioTrabajo({
       ),
     };
   });
-
-
-  console.log(
-    "piezasDetalleAdicionalesAndamioTrabajoConDescuento",
-    piezasDetalleAdicionalesAndamioTrabajoConDescuento
-  );
 
   return {
     zonas: atributosDelPdf,

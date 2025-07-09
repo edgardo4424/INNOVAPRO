@@ -4,7 +4,7 @@ const {
 } = require("../mapearAtributosDelPdfService");
 const { mapearAtributosValor } = require("../mapearAtributosValorService");
 
-async function generarPdfPuntales({ idDespiece, tipo_cotizacion }) {
+async function generarPdfPuntales({ idDespiece, tipo_cotizacion, porcentajeDescuento }) {
   
   // Obtener la lista de atributos
 
@@ -208,6 +208,24 @@ async function generarPdfPuntales({ idDespiece, tipo_cotizacion }) {
     ],
   });
 
+   const piezasDetalleAdicionalesPuntalesConDescuento =
+  piezasDetalleAdicionalesPuntales.map((p) => {
+    const pieza = p.get({ plain: true });
+
+    return {
+      ...pieza,
+      precio_venta_dolares: parseFloat(
+        ((100 - porcentajeDescuento) * pieza.precio_venta_dolares * 0.01).toFixed(2)
+      ),
+      precio_venta_soles: parseFloat(
+        ((100 - porcentajeDescuento) * pieza.precio_venta_soles * 0.01).toFixed(2)
+      ),
+      precio_alquiler_soles: parseFloat(
+        ((100 - porcentajeDescuento) * pieza.precio_alquiler_soles * 0.01).toFixed(2)
+      ),
+    };
+  });
+
   return {
     zonas: atributosPuntalesConPreciosDelPdf,
     tripode: {
@@ -218,7 +236,7 @@ async function generarPdfPuntales({ idDespiece, tipo_cotizacion }) {
       precio_alquiler_soles: piezaTripodeDespieceDetalle?.precio_alquiler_soles || 0,
     },
     atributos_opcionales: piezasVenta,
-    piezasAdicionales: piezasDetalleAdicionalesPuntales,
+    piezasAdicionales: piezasDetalleAdicionalesPuntalesConDescuento,
   };
 }
 

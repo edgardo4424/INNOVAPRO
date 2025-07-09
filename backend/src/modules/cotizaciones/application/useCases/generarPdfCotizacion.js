@@ -199,6 +199,8 @@ module.exports = async (idCotizacion) => {
         ...pdfAndamioFachada
       }
 
+      console.log('DATOS PDF COTIZACION', datosPdfCotizacion);
+
       break;
 
     case "2":
@@ -216,7 +218,7 @@ module.exports = async (idCotizacion) => {
     case "3":
       // ESCALERA DE ACCESO
 
-      const pdfEscaleraAcceso = await generarPdfEscaleraAcceso({dataDespiece: despieceEncontrado, tiene_pernos: tiene_pernos})
+      const pdfEscaleraAcceso = await generarPdfEscaleraAcceso({dataDespiece: despieceEncontrado, tiene_pernos: tiene_pernos, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
@@ -232,7 +234,7 @@ module.exports = async (idCotizacion) => {
     case "5":
       // PUNTALES
 
-       const pdfPuntales = await generarPdfPuntales({idDespiece: despieceEncontrado.id, tipo_cotizacion: cotizacionEncontrado.tipo_cotizacion})
+       const pdfPuntales = await generarPdfPuntales({idDespiece: despieceEncontrado.id, tipo_cotizacion: cotizacionEncontrado.tipo_cotizacion, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
