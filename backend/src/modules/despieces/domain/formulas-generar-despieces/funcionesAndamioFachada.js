@@ -2607,8 +2607,8 @@ function calcularPinGravedad8mm() {
 function calcularPernosExpansionM12x80(tubo1m, tubo05m) {
    return tubo1m + tubo05m;
 }
-// PU.0300 – Puntal 3.00m - Azul: si la altura de entrepiso está entre 1.65 m y B102, retorna F23*4; de lo contrario 0
-function calcularPuntal3mAzul({ alturaEntrepiso }, f23) {
+// PU.0300 – Puntal 3.00m: si la altura de entrepiso está entre 1.65 m y B102, retorna F23*4; de lo contrario 0
+function calcularPuntal3m({ alturaEntrepiso }, f23) {
    const b102 = 3;
    if (alturaEntrepiso >= 1.65 && alturaEntrepiso <= b102) {
       return f23 * 4;
@@ -2706,7 +2706,7 @@ module.exports = {
    calcularPinGravedad12mm,
    calcularPinGravedad8mm,
    calcularPernosExpansionM12x80,
-   calcularPuntal3mAzul,
+   calcularPuntal3m,
    calcularPinPresion11mm,
    calcularArgolla4840mm,
 };

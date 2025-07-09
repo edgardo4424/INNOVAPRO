@@ -2,7 +2,9 @@ const db = require("../../../../models");
 const {
   formatearFechaIsoADMY,
 } = require("../../infrastructure/helpers/formatearFecha");
+const { generarPdfAndamioFachada } = require("../../infrastructure/services/AndamioFachada/generarPdfAndamioFachada");
 const { generarPdfAndamioTrabajo } = require("../../infrastructure/services/AndamioTrabajo/generarPdfAndamioTrabajo");
+const { calcularSubtotalConDescuentoPiezasNoAdicionales } = require("../../infrastructure/services/calcularSubtotalConDescuentoPiezasNoAdicionalesService");
 const { generarPdfEscaleraAcceso } = require("../../infrastructure/services/EscaleraAcceso/generarPdfEscaleraAcceso");
 
 const {
@@ -98,6 +100,26 @@ module.exports = async (idCotizacion) => {
     },
   });
 
+  // Calcular el subtotal sin igv de las piezas que NO SON ADICIONALES
+   const piezasNoAdicionales = await db.despieces_detalle.findAll({
+    where: {
+      esAdicional: false,
+      despiece_id: despieceEncontrado.id
+    },
+    raw: true
+   })
+
+   console.log('piezasNoAdicionales', piezasNoAdicionales);
+
+   const { subtotal_piezas_no_adicionales_con_descuento_sin_igv } = calcularSubtotalConDescuentoPiezasNoAdicionales({
+    despiecePiezasNoAdicionales: piezasNoAdicionales,
+    tipoCotizacion: tipoServicio,
+    cotizacion: despieceEncontrado,
+    uso_id: uso_id,
+   } )
+
+  console.log('subtotal_piezas_no_adicionales_con_descuento_sin_igv', subtotal_piezas_no_adicionales_con_descuento_sin_igv);
+
   // Mapear los datos generales para todos los usos para generar el pdf
 
   let datosPdfCotizacion = {
@@ -127,7 +149,7 @@ module.exports = async (idCotizacion) => {
     cotizacion: {
       fecha: formatearFechaIsoADMY(cotizacionEncontrado.updatedAt),
       moneda: despieceEncontrado.moneda,
-      subtotal_con_descuento_sin_igv: despieceEncontrado.subtotal_con_descuento,
+      subtotal_con_descuento_sin_igv: subtotal_piezas_no_adicionales_con_descuento_sin_igv,
       tipo_servicio: tipoServicio,
       tiempo_alquiler_dias: tiempoAlquilerDias,
       codigo_documento: cotizacionEncontrado.codigo_documento,
@@ -170,12 +192,19 @@ module.exports = async (idCotizacion) => {
     case "1":
       // ANDAMIO DE FACHADA
 
+      const pdfAndamioFachada = await generarPdfAndamioFachada({dataDespiece: despieceEncontrado, tiene_pernos: tiene_pernos})
+
+      datosPdfCotizacion = {
+        ...datosPdfCotizacion,
+        ...pdfAndamioFachada
+      }
+
       break;
 
     case "2":
       // ANDAMIO DE TRABAJO
 
-      const pdfAndamioTrabajo = await generarPdfAndamioTrabajo({idDespiece: despieceEncontrado.id, tiene_pernos: tiene_pernos})
+      const pdfAndamioTrabajo = await generarPdfAndamioTrabajo({idDespiece: despieceEncontrado.id, tiene_pernos: tiene_pernos, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,

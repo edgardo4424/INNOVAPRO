@@ -68,7 +68,7 @@ const {
    calcularTuboGancho05m,
    calcularBridaGiratoria,
    calcularPernosExpansionM12x80,
-   calcularPuntal3mAzul,
+   calcularPuntal3m,
    calcularPinPresion11mm,
    calcularArgolla4840mm,
 } = require("../../../domain/formulas-generar-despieces/funcionesAndamioFachada");
@@ -95,7 +95,7 @@ function calcularCantidadesPorCadaPiezaDeAndamioFachada(datosAtributos) {
       const valorPlataformaAcceso1572 = calcularPlataformaAcceso1572(dato);
       const valorTuboGancho1m = calcularTuboGancho1m(dato);
       const valorTuboGancho05m = calcularTuboGancho05m(dato);
-      const valorPuntal3mAzul = calcularPuntal3mAzul(dato,valorPerfilMetalicoUPN);
+      const valorPuntal3mAzul = calcularPuntal3m(dato,valorPerfilMetalicoUPN);
 
       const resultados = [
          {
@@ -401,7 +401,7 @@ function calcularCantidadesPorCadaPiezaDeAndamioFachada(datosAtributos) {
             ),
          },
          {
-            pieza: "PU.0300",
+            pieza: "PU.0100",
             cantidad: valorPuntal3mAzul,
          },
          {
