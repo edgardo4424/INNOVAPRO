@@ -10,14 +10,14 @@ import { generarCuerpoEscaleraAcceso } from "./cuerpo";
 import { generarCuerpoEscaleraAccesoVenta } from "./cuerpo_venta";
 import { renderFondoPDF } from "../../componentes/fondoPDF";
 
-export default async function generarPDFEscalera(doc, data) {
+export default async function generarPDFEscaleraAndamioFachada(doc, data) {
   // Inserta fondo antes de cualquier contenido en cada pagina
   await renderFondoPDF(doc);
   
   generarHeader(doc, data); // Siempre fijo arriba en la primera página
 
   let currentY = 50;
-  console.log("generarPDFEscalera", data);
+  console.log("generarPDFEscaleraAndamioFachada", data);
   if (data.cotizacion?.tipo_servicio === "Venta") {
     // Si es una cotización de venta, usamos el cuerpo específico para venta
     currentY = await generarCuerpoEscaleraAccesoVenta(doc, data, currentY); // Genera el cuerpo del PDF para escalera de acceso en venta

@@ -1,5 +1,5 @@
 import { verificarSaltoDePagina } from "../../componentes/pagina";
-import { drawJustifiedText } from "../../../../../utils/pdf/drawJustifiedText";
+import { drawJustifiedText, renderTextoConNegrita } from "../../../../../utils/pdf/drawJustifiedText";
 
 export async function generarCuerpoEscaleraAcceso(doc, data, startY = 120) {
   let currentY = startY;
@@ -68,7 +68,6 @@ export async function generarCuerpoEscaleraAcceso(doc, data, startY = 120) {
     currentY += 4; // Espacio entre zonas
   }
 
-  currentY += 2 ; // Espacio antes del resumen de cotización
   // Resumen de cotización
   const subtituloResumen = `Precio de alquiler: 
 
@@ -78,13 +77,13 @@ export async function generarCuerpoEscaleraAcceso(doc, data, startY = 120) {
 
   // Verifica si hay atributos opcionales como pernos de expansión
 
-  if (data.perno_expansion_sin_argolla.total !== 0) {
+  if (data.perno_expansion_sin_argolla && data.perno_expansion_sin_argolla?.total !== 0) {
     // ⚙️ PERNOS DE EXPANSIÓN - M16 x 145 
     const tiene_pernos_expansion = data.tiene_pernos || [
-      `${data.perno_expansion_sin_argolla?.total || "(CANTIDAD INDEFINIDA DE PERNOS)"} Uds. ${data.perno_expansion_sin_argolla?.nombre || "(TIPO DE PERNO INDEFINIDO)"}: **S/${data.perno_expansion_sin_argolla?.precio_venta_soles || "(PRECIO PERNO INDEFINIDO)"} + IGV.**`
+      `${data.perno_expansion_sin_argolla?.total || "(CANTIDAD INDEFINIDA DE PERNOS)"} Uds. ${data.perno_expansion_sin_argolla?.nombre || "(TIPO DE PERNO INDEFINIDO)"}: **S/${data.perno_expansion_sin_argolla?.precio_venta_soles || "(PRECIO PERNO INDEFINIDO)"} + IGV.** (En venta por ser consumibles)`
     ];
 
-    currentY += 6;
+    currentY += 4;
     for (const linea of tiene_pernos_expansion) {
       const palabras = linea.split(/\s+/);
       const aproxLineas = Math.ceil(palabras.length / 11);
@@ -96,13 +95,13 @@ export async function generarCuerpoEscaleraAcceso(doc, data, startY = 120) {
     
   }
 
-  if (data.perno_expansion_con_argolla.total !== 0) {
+  if (data.perno_expansion_con_argolla?.total !== 0) {
     // ⚙️ PERNOS DE EXPANSIÓN - C/Argolla
     const tiene_pernos_expansion = data.tiene_pernos || [
-      `${data.perno_expansion_con_argolla?.total || "(CANTIDAD INDEFINIDA DE PERNOS)"} Uds. ${data.perno_expansion_con_argolla?.nombre || "(TIPO DE PERNO INDEFINIDO)"}: **S/${data.perno_expansion_con_argolla?.precio_venta_soles || "(PRECIO PERNO INDEFINIDO)"} + IGV.**`
+      `${data.perno_expansion_con_argolla?.total || "(CANTIDAD INDEFINIDA DE PERNOS)"} Uds. ${data.perno_expansion_con_argolla?.nombre || "(TIPO DE PERNO INDEFINIDO)"}: **S/${data.perno_expansion_con_argolla?.precio_venta_soles || "(PRECIO PERNO INDEFINIDO)"} + IGV.** (En venta por ser consumibles)`
     ];
 
-    currentY += 6;
+    currentY += 4;
     for (const linea of tiene_pernos_expansion) {
       const palabras = linea.split(/\s+/);
       const aproxLineas = Math.ceil(palabras.length / 11);
@@ -115,25 +114,52 @@ export async function generarCuerpoEscaleraAcceso(doc, data, startY = 120) {
   }
 
   // ⚙️ Si el andamio de fachada va en volado llevará puntales
-  if (data.atributos?.tiene_puntales === true) {
-    const puntales_detalles = data.puntales_detalles || [
-      `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** Alquiler de ${data.atributos?.cantidad || "(INDEFINIDO NÚMERO DE PUNTALES)"} ${cantidad_equipos} De ${data.uso.nombre|| "(INDEFINIDO USO DE EQUIPO)"} de ${data.atributos?.tipoPuntal || "(LONGITUD INDEFINIDA)"}: **S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.**
-      
-      *Cuando los puntales se devuelvan incompletos, se cobrará lo siguiente por el material faltante:
-          - Por cada argolla, **S/${data.atributos?.precio_argolla || "(PRECIO ARGOLLA INDEFINIDO)"} + IGV.**
-          - Por cada pasador, **S/${data.atributos?.precio_pasador || "(PRECIO PASADOR INDEFINIDO)"} + IGV.**`
+  if (data.detalles_puntales?.puntal?.cantidad > 0) {
+  const puntal = data.detalles_puntales.puntal;
+  const precioArgolla = data.detalles_puntales.piezaVentaArgolla || "(PRECIO ARGOLLA INDEFINIDO)";
+  const precioPasador = data.detalles_puntales.piezaVentaPinPresion || "(PRECIO PASADOR INDEFINIDO)";
+  const cantidad_dias = data.cotizacion?.tiempo_alquiler_dias === 1 ? "día" : "días";
+
+  currentY += 5;
+
+  // 🧱 Sección título
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  doc.text("Detalle de alquiler de puntales:", indent + 3, currentY);
+  currentY += 6;
+
+  // 🧾 Detalle tabla
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.text("Descripción", indent + 3, currentY);
+  doc.text("Cantidad", indent + 50, currentY);
+  doc.text("Subtotal (S/)", indent + 95, currentY);
+  currentY += 5;
+
+  doc.setFont("helvetica", "normal");
+  doc.text(puntal.descripcion || "(DESCRIPCIÓN NO DEFINIDA)", indent + 3, currentY);
+  doc.text(`${puntal.cantidad}`, indent + 50, currentY);
+  doc.text(`S/ ${parseFloat(puntal.subtotal_alquiler_soles).toFixed(2)} + IGV`, indent + 95, currentY);
+  currentY += 8;
+
+  // 🧾 Aclaración de condiciones
+  doc.setFontSize(8);
+  
+    const detalles = data.detalles_alquiler || [
+      `*Cuando los puntales se devuelvan incompletos, se cobrará lo siguiente por el material faltante:
+          - Por cada argolla, **S/ ${precioArgolla} + IGV.**
+          - Por cada pasador, **S/ ${precioPasador} + IGV.**`
     ];
-
-    currentY += 6;
-    for (const linea of puntales_detalles) {
-      const palabras = linea.split(/\s+/);
-      const aproxLineas = Math.ceil(palabras.length / 11);
-      const alturaEstimada = aproxLineas * 5;
-
-      currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimada);
-      currentY = drawJustifiedText(doc, linea, indent + box + 3, currentY, 170, 5.5, 10);
+  
+    for (const linea of detalles) {
+      const lineasSeparadas = linea.split("\n");
+  
+      for (const sublinea of lineasSeparadas) {
+        currentY = await verificarSaltoDePagina(doc, currentY, 6);
+        renderTextoConNegrita(doc, sublinea, indent + box + 3, currentY)
+        currentY += 5;
+      }
     }
-   
 }
 
   return currentY;
