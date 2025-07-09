@@ -10,11 +10,15 @@ import ProtectedRoute from "./ProtectedRoute";
 import RoleGuard from "./rol.guard";
 import { WizardProvider } from "@/modules/cotizaciones/context/WizardCotizacionContext";
 import LoaderInnova from "@/shared/components/LoaderInnova";
+import GestionTrabajadores from "@/modules/trabajadores/pages/GestionTrabajadores";
 
 // Lazy load components
 const Login = lazy(() => import("@/modules/auth/pages/Login"));
 const GestionUsuarios = lazy(() =>
    import("@/modules/usuarios/pages/GestionUsuarios")
+);
+const CrearTrabajador = lazy(() =>
+   import("@/modules/trabajadores/pages/CrearTrabajador")
 );
 const GestionEmpresas = lazy(() =>
    import("@/modules/filiales/pages/GestionEmpresas")
@@ -165,6 +169,20 @@ export default function AppRoutes() {
                                  <RegistrarCotizacionWizard />
                               </WizardProvider>
                            }
+                        />
+                     </Route>
+
+                     <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                        <Route
+                           path="crear-trabajador"
+                           element={<CrearTrabajador />}
+                        />
+                     </Route>
+
+                     <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                        <Route
+                           path="tabla-trabajadores"
+                           element={<GestionTrabajadores />}
                         />
                      </Route>
                   </Route>
