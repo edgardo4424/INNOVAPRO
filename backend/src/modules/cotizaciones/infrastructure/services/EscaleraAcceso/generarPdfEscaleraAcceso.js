@@ -3,7 +3,7 @@ const { agruparPorZonaYAtributos } = require("../mapearAtributosDelPdfService");
 
 const { mapearAtributosValor } = require("../mapearAtributosValorService");
 
-async function generarPdfEscaleraAcceso({ dataDespiece, tiene_pernos }) {
+async function generarPdfEscaleraAcceso({ dataDespiece, tiene_pernos, porcentajeDescuento }) {
   let pernoExpansionConArgolla;
   let pernoExpansionConArgollaEnElDespiece;
 
@@ -100,7 +100,7 @@ async function generarPdfEscaleraAcceso({ dataDespiece, tiene_pernos }) {
 
   // Obtener las piezas adicionales
 
-  const piezasDetalleAdicionalesAndamioTrabajo =
+  const piezasDetalleAdicionalesEscaleraAcceso =
     await db.despieces_detalle.findAll({
       where: {
         despiece_id: dataDespiece.id,
@@ -115,6 +115,24 @@ async function generarPdfEscaleraAcceso({ dataDespiece, tiene_pernos }) {
       ],
     });
 
+      const piezasDetalleAdicionalesEscaleraAccesoConDescuento =
+  piezasDetalleAdicionalesEscaleraAcceso.map((p) => {
+    const pieza = p.get({ plain: true });
+
+    return {
+      ...pieza,
+      precio_venta_dolares: parseFloat(
+        ((100 - porcentajeDescuento) * pieza.precio_venta_dolares * 0.01).toFixed(2)
+      ),
+      precio_venta_soles: parseFloat(
+        ((100 - porcentajeDescuento) * pieza.precio_venta_soles * 0.01).toFixed(2)
+      ),
+      precio_alquiler_soles: parseFloat(
+        ((100 - porcentajeDescuento) * pieza.precio_alquiler_soles * 0.01).toFixed(2)
+      ),
+    };
+  });
+
   // Calcular los tramos de 2m y 1m
 
   console.log('dataDespiece', dataDespiece.detalles_opcionales);
@@ -123,7 +141,7 @@ async function generarPdfEscaleraAcceso({ dataDespiece, tiene_pernos }) {
 
   return {
     zonas: atributosDelPdf,
-    piezasAdicionales: piezasDetalleAdicionalesAndamioTrabajo,
+    piezasAdicionales: piezasDetalleAdicionalesEscaleraAccesoConDescuento,
     perno_expansion_con_argolla: {
       nombre: pernoExpansionConArgolla?.descripcion || "",
       total: pernoExpansionConArgollaEnElDespiece?.cantidad || 0,
