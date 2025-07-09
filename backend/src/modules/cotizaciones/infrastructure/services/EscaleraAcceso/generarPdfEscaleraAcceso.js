@@ -115,12 +115,6 @@ async function generarPdfEscaleraAcceso({ dataDespiece, tiene_pernos }) {
       ],
     });
 
-  // Calcular la cantidad de pernos
-
-  /*
-    ((total_tramos x 2) + 2 ) x 2 = cantidad de pernos
-  */
-
   // Calcular los tramos de 2m y 1m
 
   console.log('dataDespiece', dataDespiece.detalles_opcionales);

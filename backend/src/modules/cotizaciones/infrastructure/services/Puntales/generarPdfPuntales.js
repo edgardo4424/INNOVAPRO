@@ -5,6 +5,7 @@ const {
 const { mapearAtributosValor } = require("../mapearAtributosValorService");
 
 async function generarPdfPuntales({ idDespiece, tipo_cotizacion }) {
+  
   // Obtener la lista de atributos
 
   const atributosDelUsoPuntales = await db.atributos_valor.findAll({

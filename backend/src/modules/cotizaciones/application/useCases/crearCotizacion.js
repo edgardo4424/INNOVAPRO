@@ -277,7 +277,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
           break;
       }
     }
-  
+
     await transaction.commit(); // ✔ Confirmar todo
     return {
       codigo: 201,
