@@ -8,9 +8,7 @@ const ID_ESTADO_COTIZACION_DESPIECE_GENERADO = 2;
 const ID_ESTADO_COTIZACION_POR_APROBAR = 3;
 
 const sequelizeDespieceRepository = require("../../../despieces/infrastructure/repositories/sequelizeDespieceRepository");
-const {
-  mapearDetallesDespiece,
-} = require("../../infrastructure/services/mapearDetallesDespieceService");
+
 const {
   generarCodigoDocumentoCotizacion,
 } = require("../../infrastructure/services/generarCodigoDocumentoCotizacionService");
@@ -64,12 +62,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
     );
 
       // Insertar Atributos Valor
-
-    const tareaEncontrada = await db.tareas.findOne({
-      where: {
-       cotizacionId:  cotizacionEncontrada.id
-      }
-    })
 
     const atributosValor = await mapearValoresAtributos({
       uso_id,
