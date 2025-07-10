@@ -2,6 +2,7 @@ import generarPDFAndamioTrabajo from "./plantillas/andamio_trabajo/generarPDF";
 import generarPDFPuntales from "./plantillas/puntales/generarPDF";
 import generarPDFEscaleraAndamioFachada from "./plantillas/escalera_acceso_andamio_fachada/generarPDF";
 import generarPDFEscuadras from "./plantillas/escuadras/generarPDF";
+import generarPDFPlataformaDescarga from "./plantillas/plataforma_descarga/generarPDF"
 
 
 export default function generarPDFPorUso({ uso_id, data, doc }) {
@@ -16,6 +17,8 @@ export default function generarPDFPorUso({ uso_id, data, doc }) {
       return generarPDFEscuadras(doc, data);
     case 5:
       return generarPDFPuntales(doc, data);
+    case 7:
+      return generarPDFPlataformaDescarga(doc, data);
     default:
       throw new Error("Uso no reconocido o sin plantilla definida");
   }

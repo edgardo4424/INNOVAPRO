@@ -45,6 +45,8 @@ module.exports = async (
   let unidad;
   let cantidadTotal;
 
+  console.log("grupo tarifa del backend", uso.grupo_tarifa)
+
   switch (uso.grupo_tarifa) {
     case "andamio_multidireccional":
 
@@ -154,7 +156,7 @@ module.exports = async (
 
     case "plataformas_de_descarga":
       const { cantidad } = cotizacionTransporteData;
-
+      console.log("CANTIDAD RECIBIDA", cantidad)
       tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
         where: {
           grupo_tarifa: uso.grupo_tarifa,
@@ -162,6 +164,7 @@ module.exports = async (
           rango_hasta: { [Op.gte]: cantidad },
         },
       });
+      console.log("Tarifa transporte encontrado", tarifa_transporte_encontrado)
 
       costo_tarifas_transporte = Number(
         tarifa_transporte_encontrado?.precio_soles || 0

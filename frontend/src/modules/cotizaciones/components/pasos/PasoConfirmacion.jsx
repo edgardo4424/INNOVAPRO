@@ -6,6 +6,7 @@ import { USOS_INSTALABLES, USOS_SIN_DESCUENTO} from "../../constants/usos";
 import ResumenDespiece from "./paso-confirmacion/ResumenDespiece";
 import BloquePernos from "./paso-confirmacion/BloquePernos";
 import BloquePuntales from "./paso-confirmacion/BloquePuntales";
+import BloquePlataformaDescarga from "./paso-confirmacion/BloquePlataformaDescarga";
 import BloqueTransporte from "./paso-confirmacion/BloqueTransporte";
 import BloqueInstalacion from "./paso-confirmacion/BloqueInstalacion";
 import BloqueDescuento from "./paso-confirmacion/BloqueDescuento";
@@ -53,8 +54,10 @@ export default function PasoConfirmacion() {
     <div className="paso-formulario">
       <h3>Paso 5: Confirmación Final</h3>
 
-      {formData.uso_id === 5 && ( //Si es caso puntales mostrar este bloque
         <BloquePuntales formData={formData} setFormData={setFormData} />
+
+      {formData.uso_id === 7 && ( // Si es caso plataforma de descarga mostrar este bloque
+        <BloquePlataformaDescarga formData={formData} setFormData={setFormData} />
       )}
 
       {/* 

@@ -87,51 +87,56 @@ export default function BloquePuntales({ formData, setFormData }) {
 
   return (
     <div className="wizard-section">
-      <h4 className="text-base font-semibold text-orange-700 mb-2">
-        🛠️ Ajustar precio diario de los PUNTALES
-      </h4>
-      <p className="text-sm text-gray-600 mb-4">
-        Aquí puedes editar el <strong>precio diario (S/)</strong> para cada tipo de PUNTAL. El subtotal se calcula automáticamente por 30 días.
-      </p>
+      {puntales.length > 0 && (
+        <>
+          <h4 className="text-base font-semibold text-orange-700 mb-2">
+            🛠️ Ajustar precio diario de los PUNTALES
+          </h4>
+          <p className="text-sm text-gray-600 mb-4">
+            Aquí puedes editar el <strong>precio diario (S/)</strong> para cada tipo de PUNTAL. El subtotal se calcula automáticamente por 30 días.
+          </p>
+    
+          {puntales.map((pieza) => {
+            const tipo = pieza.descripcion?.match(/PUNTAL (\d+\.\d+)/i)?.[1] || "—";
+            const precioLocal = preciosLocales[pieza.pieza_id] ?? "0.00";
+            const subtotal = (parseFloat(precioLocal) * dias * pieza.total).toFixed(2);
 
-      {puntales.map((pieza) => {
-        const tipo = pieza.descripcion?.match(/PUNTAL (\d+\.\d+)/i)?.[1] || "—";
-        const precioLocal = preciosLocales[pieza.pieza_id] ?? "0.00";
-        const subtotal = (parseFloat(precioLocal) * dias * pieza.total).toFixed(2);
-
-        return (
-          <div key={pieza.pieza_id} className="mb-3">
-            <label className="block font-medium text-sm text-gray-700 mb-1">
-              PUNTAL {tipo} m — {pieza.total} unidades
-            </label>
-            <div className="flex items-center gap-3">
-              <input
-                type="text"
-                inputMode="decimal"
-                className="border p-2 rounded w-[120px]"
-                value={precioLocal}
-                onChange={(e) =>
-                  setPreciosLocales(prev => ({
-                    ...prev,
-                    [pieza.pieza_id]: e.target.value
-                  }))
-                }
-                onBlur={() => handleBlur(pieza, precioLocal)}
-              />
-              <span className="text-sm text-gray-600">
-                {tipo === "Alquiler" ? "S/ por día" : "S/ unitario"}
-              </span>
-              <span className="ml-auto text-sm text-blue-900">
-                Subtotal: <strong>S/{formatear(
-                  tipo === "Alquiler"
-                    ? parseFloat(precioLocal) * dias * pieza.total
-                    : parseFloat(precioLocal) * pieza.total
-                )}</strong>
-              </span>
-            </div>
-          </div>
-        );
-      })}
+            return (
+              <div key={pieza.pieza_id} className="mb-3">
+                <label className="block font-medium text-sm text-gray-700 mb-1">
+                  PUNTAL {tipo} m — {pieza.total} unidades
+                </label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    className="border p-2 rounded w-[120px]"
+                    value={precioLocal}
+                    onChange={(e) =>
+                      setPreciosLocales(prev => ({
+                        ...prev,
+                        [pieza.pieza_id]: e.target.value
+                      }))
+                    }
+                    onBlur={() => handleBlur(pieza, precioLocal)}
+                  />
+                  <span className="text-sm text-gray-600">
+                    {tipo === "Alquiler" ? "S/ por día" : "S/ unitario"}
+                  </span>
+                  <span className="ml-auto text-sm text-blue-900">
+                    Subtotal: <strong>S/{formatear(
+                      tipo === "Alquiler"
+                        ? parseFloat(precioLocal) * dias * pieza.total
+                        : parseFloat(precioLocal) * pieza.total
+                    )}</strong>
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+      </>
+    )}
+      
     </div>
   );
 }

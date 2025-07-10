@@ -30,6 +30,10 @@ const obtenerParametrosExtra = {
     
     return transporte_puntales.length > 0 ? { transporte_puntales } : null;
   },
+  7: (formData) => { // Plataforma de descarga
+    const cantidad = formData.cantidad_plataformas;
+    return { cantidad };
+  }
 };
 
 
@@ -47,11 +51,11 @@ export function useCalculoTransporte(formData, setFormData) {
         const basePayload = {
           uso_id: formData.uso_id,
           distrito_transporte: distrito,
-          tipo_transporte: formData.tipo_transporte || "Desconocido"
+          //tipo_transporte: formData.tipo_transporte || "Desconocido"
         };
 
         // Solo incluir si no es escalera de acceso 
-        if(formData.uso_id !== 3) {
+        if(formData.uso_id !== 3 && formData.uso_id !== 7) {
           const pesoTn = formData.resumenDespiece?.peso_total_ton;
           if (!pesoTn) return;
           basePayload.peso_total_tn = String(pesoTn);
