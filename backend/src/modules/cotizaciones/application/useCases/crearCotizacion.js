@@ -202,8 +202,12 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
 
         case "7":
           // Plataforma de Descarga
-          datosParaCalcularCostoTransporte.cantidad = atributos_formulario.length
+          const { cantidad } = cotizacion;
           
+          datosParaCalcularCostoTransporte = {
+            ...datosParaCalcularCostoTransporte,
+            cantidad: cantidad
+          }
         break;
       
         default:

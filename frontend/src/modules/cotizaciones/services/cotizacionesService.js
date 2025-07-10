@@ -29,6 +29,9 @@ export async function generarDespiece(atributos, usoId) {
     case 1: // Andamio de fachada
       uso = "andamio-de-fachada";
       break;
+    case 7: // Plataforma de descarga
+      uso = "plataforma-de-descarga";
+      break;
   }
   const response = await api.post(`/despieces/${uso}`, 
     atributos,

@@ -14,6 +14,7 @@ const {
 const {
   mapearAtributosValor,
 } = require("../../infrastructure/services/mapearAtributosValorService");
+const { generarPdfPlataformaDescarga } = require("../../infrastructure/services/PlataformaDescarga/generarPdfPlataformaDescarga");
 const { generarPdfPuntales } = require("../../infrastructure/services/Puntales/generarPdfPuntales");
 
 module.exports = async (idCotizacion) => {
@@ -109,16 +110,12 @@ module.exports = async (idCotizacion) => {
     raw: true
    })
 
-   console.log('piezasNoAdicionales', piezasNoAdicionales);
-
    const { subtotal_piezas_no_adicionales_con_descuento_sin_igv } = calcularSubtotalConDescuentoPiezasNoAdicionales({
     despiecePiezasNoAdicionales: piezasNoAdicionales,
     tipoCotizacion: tipoServicio,
     cotizacion: despieceEncontrado,
     uso_id: uso_id,
    } )
-
-  console.log('subtotal_piezas_no_adicionales_con_descuento_sin_igv', subtotal_piezas_no_adicionales_con_descuento_sin_igv);
 
   // Mapear los datos generales para todos los usos para generar el pdf
 
@@ -248,6 +245,13 @@ module.exports = async (idCotizacion) => {
 
     case "7":
       // PLATAFORMAS DE DESCARGA
+
+      const pdfPlataformaDescarga = await generarPdfPlataformaDescarga({idDespiece: despieceEncontrado.id, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
+
+      datosPdfCotizacion = {
+        ...datosPdfCotizacion,
+        ...pdfPlataformaDescarga
+      }
       break;
 
     case "8":

@@ -1,12 +1,12 @@
 // 1. Pieza: EC.0600 - PLATAFORMA DE DESCARGA - 1.5 TON
 function calcularEC0600({ capacidad }) {
   console.log('capacidad', capacidad);
+  console.log(capacidad === 1.5 ? 1 : 0);
   return capacidad === 1.5 ? 1 : 0;
 }
 
 // 2. Pieza: EC.0700 - PLATAFORMA DE DESCARGA - 2.0 TON
 function calcularEC0700({ capacidad }) {
-  console.log('capacidad', capacidad);
   return capacidad === 2 ? 1 : 0;
 }
 
