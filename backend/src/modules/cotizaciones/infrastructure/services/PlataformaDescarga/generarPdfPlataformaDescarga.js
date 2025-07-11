@@ -56,7 +56,7 @@ async function generarPdfPlataformaDescarga({
       ],
     });
 
-  const piezasDetalleAdicionalesAndamioTrabajoConDescuento =
+  const piezasDetalleAdicionalesPlataformaDescargaConDescuento =
   piezasDetalleAdicionalesAndamioTrabajo.map((p) => {
     const pieza = p.get({ plain: true });
 
@@ -74,9 +74,107 @@ async function generarPdfPlataformaDescarga({
     };
   });
 
+  console.log('piezasDetalleAdicionalesPlataformaDescargaConDescuento',piezasDetalleAdicionalesPlataformaDescargaConDescuento);
+  
+  /* OBTENER ATRIBUTOS OPCIONALES */
+  let piezasVenta = []
+
+if(piezasDetalleAdicionalesPlataformaDescargaConDescuento.length>0){
+
+  const listaItemsPuntales = ['PU.0100', 'PU.0400', 'PU.0600']
+    const listaPuntales = piezasDetalleAdicionalesPlataformaDescargaConDescuento.filter(p => listaItemsPuntales.includes(p.pieza.item))
+      
+    const listaItemsPuntalesAdicionales = listaPuntales.map(p => p.pieza.item)
+    console.log('listaPuntales', listaPuntales);
+    console.log('listaItemsPuntalesAdicionales', listaItemsPuntalesAdicionales);
+     piezasVenta = await Promise.all(
+        listaItemsPuntalesAdicionales.map(async (item, i) => {
+    
+          let itemPiezaPinPresion;
+          let itemArgolla;
+          let tipo;
+          switch (item) {
+            case "PU.0600":  // Puntal de 5m
+              itemPiezaPinPresion = "PU.0800";
+              itemArgolla = "PU.1000";
+
+              tipo = "5.00 m"
+              break;
+    
+            case "PU.0400":  // Puntal 4m
+              itemPiezaPinPresion = "PU.0700";
+              itemArgolla = "PU.0900";
+
+              tipo = "4.00 m"
+              break;
+
+            case "PU.0100":  // Puntal 3m
+              itemPiezaPinPresion = "PU.0700";
+              itemArgolla = "PU.0900";
+
+              tipo = "3.00 m"
+              break;
+            default:
+             // console.warn("❌ Tipo de puntal no reconocido:", tipo); 
+              return null;
+          }
+    
+          const piezaPinPresion = await db.piezas.findOne({
+            where: { item: itemPiezaPinPresion },
+          });
+          const piezaArgolla = await db.piezas.findOne({
+            where: { item: itemArgolla },
+          });
+    
+          if (!piezaPinPresion || !piezaArgolla) {
+            //console.warn(`⚠️ (${i}) No se encontraron piezas con item ${itemPiezaPinPresion} o ${itemArgolla}`);
+            return {
+              tipo,
+              piezaVentaPinPresion: null,
+              piezaVentaArgolla: null,
+            };
+          }
+    
+          const pinPresion = await db.despieces_detalle.findOne({
+            where: {
+              despiece_id: Number(idDespiece),
+              pieza_id: Number(piezaPinPresion.id),
+            },
+          });
+    
+          const argolla = await db.despieces_detalle.findOne({
+            where: {
+              despiece_id: Number(idDespiece),
+              pieza_id: Number(piezaArgolla.id),
+            },
+          });
+    
+          //console.log(`✅ (${i}) IDs buscados: pin=${piezaPinPresion.id}, argolla=${piezaArgolla.id}`);
+          //console.log(`✅ (${i}) Encontrado: pin=${!!pinPresion}, argolla=${!!argolla}`);
+    
+          const ventaPin = pinPresion
+            ? (pinPresion.precio_venta_soles / pinPresion.cantidad).toFixed(2)
+            : null;
+          const ventaArg = argolla
+            ? (argolla.precio_venta_soles / argolla.cantidad).toFixed(2)
+            : null;
+    
+          return {
+            tipo,
+            piezaVentaPinPresion: ventaPin,
+            piezaVentaArgolla: ventaArg,
+          };
+        })
+      );
+  } 
+
+  /* FIN OBTENER ATRIBUTOS OPCIONALES */
+
   return {
     zonas: atributosDelPdf,
-    piezasAdicionales: piezasDetalleAdicionalesAndamioTrabajoConDescuento,
+    piezasAdicionales: piezasDetalleAdicionalesPlataformaDescargaConDescuento,
+
+   atributos_opcionales: piezasVenta,
   };
 }
 

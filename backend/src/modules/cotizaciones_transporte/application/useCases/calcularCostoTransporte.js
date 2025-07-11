@@ -183,7 +183,7 @@ module.exports = async (
         tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
           where: {
             grupo_tarifa: uso.grupo_tarifa,
-            subtipo: transporte_escuadras.tipo_escuadras,
+            subtipo: transporte_escuadras[0].tipo_escuadra,
             rango_desde: { [Op.lt]: transporte_escuadras.cantidad },
             rango_hasta: { [Op.gte]: transporte_escuadras.cantidad },
           },
