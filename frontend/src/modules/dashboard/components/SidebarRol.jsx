@@ -69,7 +69,7 @@ const iconMap = {
 const modulesByRole = {
    Gerencia: [
       {
-         group: "Areas de gestión",
+         group: "Centro de gestión ",
          items: [
             { name: "Usuarios", path: "/gestion-usuarios" },
             {
@@ -91,6 +91,21 @@ const modulesByRole = {
          items: [
             { name: "Crear Trabajador", path: "/crear-trabajador" },
             { name: "Tabla de Trabajadores", path: "/tabla-trabajadores" },
+         ],
+      },
+      {
+         group: "Asistencia",
+         items: [
+            { name: "Encofrados ", path: "/asistencia/encofrados" },
+            {
+               name: "Andamios Eléctricos",
+               path: "/asistencia/andamios-electricos",
+            },
+            { name: "Indek Andina", path: "/asistencia/indek-andina" },
+            {
+               name: "Innova Rental",
+               path: "/innova-rental",
+            },
          ],
       },
    ],

@@ -11,6 +11,10 @@ import RoleGuard from "./rol.guard";
 import { WizardProvider } from "@/modules/cotizaciones/context/WizardCotizacionContext";
 import LoaderInnova from "@/shared/components/LoaderInnova";
 import GestionTrabajadores from "@/modules/trabajadores/pages/GestionTrabajadores";
+import AsistenciaAndamiosElectricos from "@/modules/asistencia/pages/AsistenciaAndamiosElectricos";
+import AsistenciaEncofrados from "@/modules/asistencia/pages/AsistenciaEncofrados";
+import AsistenciaIndekAndina from "@/modules/asistencia/pages/AsistenciaIndekAndina";
+import AsistenciaInnovaRental from "@/modules/asistencia/pages/AsistenciaInnovaRental";
 
 // Lazy load components
 const Login = lazy(() => import("@/modules/auth/pages/Login"));
@@ -155,7 +159,7 @@ export default function AppRoutes() {
                         />
                      </Route>
                      <Route
-                        element={<RoleGuard roles={["Gerencia", "Ventas"]} />}
+                        element={<RoleGuard roles={["Gerencia", "Ventas","Oficina Técnica"]} />}
                      >
                         <Route
                            path="stock/piezas"
@@ -185,11 +189,39 @@ export default function AppRoutes() {
                            element={<GestionTrabajadores />}
                         />
                      </Route>
+
+                     <>
+                        {/* Rutas para el modulo de aistencia */}
+                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                           <Route
+                              path="asistencia/encofrados"
+                              element={<AsistenciaEncofrados />}
+                           />
+                        </Route>
+                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                           <Route
+                              path="asistencia/andamios-electricos"
+                              element={<AsistenciaAndamiosElectricos />}
+                           />
+                        </Route>
+                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                           <Route
+                              path="asistencia/indek-andina"
+                              element={<AsistenciaIndekAndina />}
+                           />
+                        </Route>
+                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                           <Route
+                              path="asistencia/innova-rental"
+                              element={<AsistenciaInnovaRental />}
+                           />
+                        </Route>
+                     </>
                   </Route>
                </Route>
 
                {/* Catch-all */}
-               <Route path="*" element={<Navigate to={LOGIN_PATH} replace />} />
+               <Route path="*" element={<Navigate to={"/"} replace />} />
             </Routes>
          </Suspense>
       </Router>

@@ -1,6 +1,5 @@
 const { DataTypes, INTEGER, STRING, BOOLEAN } = require("sequelize");
 const sequelize = require("../../../../config/db");
-const { Stock } = require("../../../stock/infrastructure/models/stockModel");
 
 const Trabajador = sequelize.define(
    "trabajadores",
@@ -70,11 +69,16 @@ const Trabajador = sequelize.define(
    }
 );
 
-Trabajador.associations = (models) => {
-   Trabajador.belongsTo(models.empresas_proveedoras),
-      {
-         foreignKey: "filial_id",
-         as: "empresa_proveedora",
-      };
+Trabajador.associate = (models) => {
+   
+   Trabajador.hasMany(models.asistencias, {
+      foreignKey: "trabajador_id",
+      as:"asistencias"
+   });
+
+   Trabajador.belongsTo(models.empresas_proveedoras, {
+      foreignKey: "filial_id",
+      as: "empresa_proveedora",
+   });
 };
 module.exports = { Trabajador };

@@ -8,6 +8,19 @@ const sequelize = require("../config/db");
 const { Cliente } = require('../modules/clientes/infrastructure/models/clienteModel');
 db.clientes = Cliente;
 
+const {Trabajador}=require('../modules/trabajadores/infraestructure/models/trabajadorModel');
+db.trabajadores=Trabajador;
+
+const {Asistencia}=require('../modules/asistencias/infraestructure/models/asistenciaModel');
+db.asistencias=Asistencia;
+
+const {Gasto}=require('../modules/asistencias/infraestructure/models/gastoModel');
+db.gastos=Gasto;
+const {Jornada}=require('../modules/asistencias/infraestructure/models/jornadaModel');
+db.jornadas=Jornada;
+const {TipoTrabajo}=require('../modules/asistencias/infraestructure/models/tipotrabajoModel');
+db.tipos_trabajo=TipoTrabajo;
+
 const { Obra } = require('../modules/obras/infrastructure/models/obraModel');
 db.obras = Obra;
 
@@ -117,6 +130,11 @@ if (db.distritos_transporte) db.distritos_transporte.associate(db)
 //if (db.costos_pernocte_transporte) db.costos_pernocte_transporte.associate(db)
 if (db.cotizaciones_transporte) db.cotizaciones_transporte.associate(db)
 if (db.cotizaciones_instalacion) db.cotizaciones_instalacion.associate(db)
+if (db.trabajadores.associate) db.trabajadores.associate(db);
+if (db.asistencias.associate) db.asistencias.associate(db);
+if (db.gastos.associate) db.gastos.associate(db);
+if (db.jornadas.associate) db.jornadas.associate(db);
+if (db.tipos_trabajo.associate) db.tipos_trabajo.associate(db);
 
 // Sequelize
 db.sequelize = sequelize;

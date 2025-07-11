@@ -46,11 +46,10 @@ export default function TrabajadorForm() {
    // Simulación de datos de filiales - en producción vendría de una API
    useEffect(() => {
       const mockFiliales = [
-         { id: 1, nombre: "Filial Lima Centro" },
-         { id: 2, nombre: "Filial Miraflores" },
-         { id: 3, nombre: "Filial San Isidro" },
-         { id: 4, nombre: "Filial Callao" },
-         { id: 5, nombre: "Filial Arequipa" },
+         { id: 1, nombre: "ENCOFRADOS INNOVA S.A.C." },
+         { id: 2, nombre: "ANDAMIOS ELECTRICOS INNOVA S.A.C." },
+         { id: 3, nombre: "INDEK ANDINA E.I.R.L" },
+         { id: 4, nombre: "INNOVA RENTAL MAQUINARIA SAC" },
       ];
       setFiliales(mockFiliales);
    }, []);
