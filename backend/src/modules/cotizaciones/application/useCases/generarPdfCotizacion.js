@@ -6,6 +6,7 @@ const { generarPdfAndamioFachada } = require("../../infrastructure/services/Anda
 const { generarPdfAndamioTrabajo } = require("../../infrastructure/services/AndamioTrabajo/generarPdfAndamioTrabajo");
 const { calcularSubtotalConDescuentoPiezasNoAdicionales } = require("../../infrastructure/services/calcularSubtotalConDescuentoPiezasNoAdicionalesService");
 const { generarPdfEscaleraAcceso } = require("../../infrastructure/services/EscaleraAcceso/generarPdfEscaleraAcceso");
+const { generarPdfEscuadras } = require("../../infrastructure/services/Escuadras/generarPdfEscuadras");
 
 const {
   agruparPorZonaYAtributos,
@@ -226,6 +227,13 @@ module.exports = async (idCotizacion) => {
 
     case "4":
       // ESCUADRAS
+
+      const pdfEscuadras = await generarPdfEscuadras({idDespiece: despieceEncontrado.id, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
+
+      datosPdfCotizacion = {
+        ...datosPdfCotizacion,
+        ...pdfEscuadras
+      }
       break;
 
     case "5":

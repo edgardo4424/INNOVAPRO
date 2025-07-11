@@ -151,7 +151,7 @@ export default function AppRoutes() {
                         />
                      </Route>
                      <Route
-                        element={<RoleGuard roles={["Gerencia", "Ventas"]} />}
+                        element={<RoleGuard roles={["Gerencia", "Ventas", "Oficina Técnica"]} />}
                      >
                         <Route
                            path="stock/piezas"

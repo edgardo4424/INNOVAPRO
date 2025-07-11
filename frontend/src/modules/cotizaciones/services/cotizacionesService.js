@@ -20,6 +20,9 @@ export async function generarDespiece(atributos, usoId) {
     case 2: // Andamio de trabajo
       uso = "andamio-de-trabajo";
       break;
+    case 4: // Escuadras
+      uso = "escuadras";
+      break;
     case 5: // Puntales
       uso = "puntales";
       break;

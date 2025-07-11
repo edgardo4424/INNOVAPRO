@@ -209,7 +209,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
             ? datosParaGuardarCotizacionesTransporte.tarifa_transporte_id
             : null,
         tipo_transporte: cotizacion.tipo_transporte,
-        unidad: datosParaGuardarCotizacionesTransporte.unidad,
+        unidad: datosParaGuardarCotizacionesTransporte.unidad || "Und",
         cantidad: datosParaGuardarCotizacionesTransporte.cantidad,
 
         costo_tarifas_transporte: cotizacion.costo_tarifas_transporte,
