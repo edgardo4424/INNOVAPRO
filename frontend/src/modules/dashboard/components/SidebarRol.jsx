@@ -13,6 +13,7 @@ import {
    LayoutDashboard,
    EllipsisVertical,
    Boxes,
+   ScrollText,
 } from "lucide-react";
 import {
    Sidebar,
@@ -39,7 +40,8 @@ const iconMap = {
    "Registrar Tarea": ClipboardPlus,
    Cotizaciones: FileText,
    "Registrar Cotización": FileEdit,   
-   "Stock de Piezas":Boxes
+   "Stock de Piezas":Boxes,
+   "Facturación":ScrollText
 };
 
 // Módulos por rol
@@ -55,6 +57,7 @@ const modulesByRole = {
       { name: "Cotizaciones", path: "/cotizaciones" },
       { name: "Registrar Cotización", path: "/cotizaciones/registrar" },
       { name: "Stock de Piezas", path: "/stock/piezas" },
+      { name: "Facturación", path: "/facturacion" },
 
    ],
    Ventas: [

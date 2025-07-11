@@ -50,6 +50,10 @@ const GestionStockPiezas = lazy(() =>
    import("../modules/stockPiezas/pages/GestionStockPiezas")
 );
 
+const Facturacion = lazy(() =>
+   import("../modules/factuacion/pages/Facturacion")
+);
+
 export default function AppRoutes() {
    const Router =
       process.env.NODE_ENV === "production" ? HashRouter : BrowserRouter;
@@ -164,6 +168,12 @@ export default function AppRoutes() {
                               <WizardProvider>
                                  <RegistrarCotizacionWizard />
                               </WizardProvider>
+                           }
+                        />
+                        <Route
+                           path="/facturacion"
+                           element={
+                              <Facturacion />
                            }
                         />
                      </Route>
