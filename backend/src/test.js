@@ -3,12 +3,12 @@ const atributos = {
 
   escuadra: Number("3"),
   tipoAnclaje: "PERNO",
-  sobrecarga: Number("250"),
+  sobrecarga: Number("200"),
   factorSeguridad: Number("1.15"),
 
   // Escuadras con plataformas
 
-  longTramo: Number("2572"),
+  longTramo: Number("3072"),
   tipoPlataforma: "ESP",
   //cantEscuadrasPorTramo: Number("6"),
 
@@ -58,7 +58,7 @@ for (let i = 1; i <= 12; i++) {
         cantEscuadrasPorTramo: i
     }
 
-    const valorEscuadras = evaluarEscuadras({...atributosParaEvaluar, valorAnteriorCantEscuadrasPorTramo: ""})
+    const valorEscuadras = evaluarEscuadras({...atributosParaEvaluar, valorAnteriorCantEscuadrasPorTramo: "7"})
 
     const cargaSolicitadaRealMedia = evaluarFormulaCargaSolicitadaRealMedia({...atributosParaEvaluar, escuadras: valorEscuadras})
     resultados.push({

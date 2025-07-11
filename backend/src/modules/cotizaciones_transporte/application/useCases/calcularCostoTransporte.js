@@ -155,6 +155,7 @@ module.exports = async (
       break;
 
     case "plataformas_de_descarga":
+      
       const { cantidad } = cotizacionTransporteData;
       console.log("CANTIDAD RECIBIDA", cantidad)
       tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
