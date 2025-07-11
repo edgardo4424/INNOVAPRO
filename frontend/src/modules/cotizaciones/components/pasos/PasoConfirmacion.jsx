@@ -7,6 +7,7 @@ import ResumenDespiece from "./paso-confirmacion/ResumenDespiece";
 import BloquePernos from "./paso-confirmacion/BloquePernos";
 import BloquePuntales from "./paso-confirmacion/BloquePuntales";
 import BloquePlataformaDescarga from "./paso-confirmacion/BloquePlataformaDescarga";
+import BloqueEscuadras from "./paso-confirmacion/BloqueEscuadras";
 import BloqueTransporte from "./paso-confirmacion/BloqueTransporte";
 import BloqueInstalacion from "./paso-confirmacion/BloqueInstalacion";
 import BloqueDescuento from "./paso-confirmacion/BloqueDescuento";
@@ -54,10 +55,15 @@ export default function PasoConfirmacion() {
     <div className="paso-formulario">
       <h3>Paso 5: Confirmación Final</h3>
 
-        <BloquePuntales formData={formData} setFormData={setFormData} />
+      {/* La lógica del renderizado de este bloque se encuentra dentro del mismo */}
+      <BloquePuntales formData={formData} setFormData={setFormData} />
 
       {formData.uso_id === 7 && ( // Si es caso plataforma de descarga mostrar este bloque
         <BloquePlataformaDescarga formData={formData} setFormData={setFormData} />
+      )}
+
+      {formData.uso_id === 4 && ( // Si es caso escuadras mostrar este bloque
+        <BloqueEscuadras formData={formData} setFormData={setFormData} />
       )}
 
       {/* 

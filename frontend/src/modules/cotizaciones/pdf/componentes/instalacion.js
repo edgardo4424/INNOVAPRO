@@ -3,7 +3,7 @@ import { drawJustifiedText } from "../../../../utils/pdf/drawJustifiedText";
 
 export async function renderInstalacion(doc, data, currentY) {
 
-  if (data.instalacion.tiene_instalacion === false) return currentY;
+  if (data.instalacion.tiene_instalacion === false || data.instalacion.tiene_instalacion === null) return currentY;
 
   const indent = 20;
   const box = 2.5;

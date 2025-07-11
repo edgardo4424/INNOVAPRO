@@ -1,5 +1,5 @@
 import { verificarSaltoDePagina } from "../../componentes/pagina";
-import { drawJustifiedText } from "../../../../../utils/pdf/drawJustifiedText";
+import { drawJustifiedText, renderTextoConNegrita } from "../../../../../utils/pdf/drawJustifiedText";
 
 export async function generarCuerpoPlataformaDescarga(doc, data, startY = 120) {
   let currentY = startY;
@@ -43,14 +43,10 @@ export async function generarCuerpoPlataformaDescarga(doc, data, startY = 120) {
     currentY = drawJustifiedText(doc, `**${zonaTitulo}**`, indent + 3, currentY, 170, 5.5, 10);
 
     for (const equipo of zona.atributos || []) {
-      const descripcionEquipo = `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** ${equipo.cantidad_uso || "(CANTIDAD INDEFINIDA)"} ${equipo.cantidad_uso === 1 ? "Ud." : "Uds."} de ${data.uso?.nombre || "(NOMBRE DE EQUIPO INDEFINIDO)"} de ${equipo.capacidad || "(CAPACIDAD INDEFINIDA)"} `;
+      const descripcionEquipo = `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** ${equipo.cantidad_uso || "(CANTIDAD INDEFINIDA)"} ${equipo.cantidad_uso === 1 ? "Ud." : "Uds."} de ${data.uso?.nombre || "(NOMBRE DE EQUIPO INDEFINIDO)"} de ${equipo.capacidad || "(CAPACIDAD INDEFINIDA)"} TN`;
 
-      const palabras = descripcionEquipo.split(/\s+/);
-      const aproxLineas = Math.ceil(palabras.length / 11);
-      const alturaEstimada = aproxLineas * 5;
-
-      currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimada);
-      currentY = drawJustifiedText(doc, descripcionEquipo, indent + box + 3, currentY, 170, 5.5, 10);
+      renderTextoConNegrita(doc, descripcionEquipo, indent + box + 3, currentY);
+      currentY +=2;
     }
 
     currentY += 4; // Espacio entre zonas
