@@ -132,7 +132,7 @@ function calcularAM7440({ escuadra, tipoPlataforma, longTramo }) {
 }
 
 // 20. EC.0100 - ESCUADRA DE 3.00 x 2.00m
-function calcularEC0100({ escuadra, escuadraReferencia, cantidadEscuadrasTramo, sobrecarga, factorSeguridad, longTotal }) {
+function calcularEC0100({ escuadra, escuadraReferencia=3, cantidadEscuadrasTramo, sobrecarga, factorSeguridad, longTotal=0 }) {
   if (escuadra === escuadraReferencia && cantidadEscuadrasTramo > 0) {
     return cantidadEscuadrasTramo;
   }
@@ -143,7 +143,7 @@ function calcularEC0100({ escuadra, escuadraReferencia, cantidadEscuadrasTramo, 
 }
 
 // 21. EC.0300 - ESCUADRA DE 1.00 x 1.00m - PERFIL DOBLE
-function calcularEC0300({ escuadra, escuadraReferencia, cantidadEscuadrasTramo, longTotal, sobrecarga }) {
+function calcularEC0300({ escuadra, escuadraReferencia=1, cantidadEscuadrasTramo, longTotal=0, sobrecarga }) {
   if (escuadra === escuadraReferencia) {
     if (cantidadEscuadrasTramo > 0) {
       return cantidadEscuadrasTramo;
@@ -160,11 +160,11 @@ function calcularEC0800(valorCalcularEC0100) {
 }
 
 // 23. CON.0200 - PERNOS DE EXPANSION - M16 x 145
-function calcularCON0200({ escuadra, tipoAnclaje, cantidadBalaustres, cantidadEscuadras }) {
+function calcularCON0200({ escuadra, tipoAnclaje, valorCalcularEC0800, valorCalcularEC0300 }) {
   if (escuadra === 3 && tipoAnclaje === "ESPARRAGO") return "ERROR";
   let total = 0;
-  if (escuadra === 3 && tipoAnclaje !== "ESPARRAGO") total += cantidadBalaustres * 6;
-  if (escuadra === 1 && tipoAnclaje === "PERNO") total += cantidadEscuadras * 2;
+  if (escuadra === 3 && tipoAnclaje !== "ESPARRAGO") total += valorCalcularEC0800 * 6;
+  if (escuadra === 1 && tipoAnclaje === "PERNO") total += valorCalcularEC0300 * 2;
   return total;
 }
 
@@ -174,9 +174,14 @@ function calcularCON0300(valorCalcularEC0800) {
 }
 
 // 25. EN.0310 - BARRA ROSCADA D=15 - 1.50m
-function calcularEN0310({ escuadra, tipoAnclaje, cantidadEscuadras }) {
+function calcularEN0310({ escuadra, tipoAnclaje, valorCalcularEC0300 }) {
+  console.log({
+    escuadra,
+    tipoAnclaje,
+    valorCalcularEC0300
+  });
   if (escuadra === 1 && tipoAnclaje === "ESPARRAGO") {
-    return cantidadEscuadras * 2;
+    return valorCalcularEC0300 * 2;
   }
   return 0;
 }
