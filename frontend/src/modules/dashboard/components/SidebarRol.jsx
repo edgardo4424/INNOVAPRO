@@ -19,6 +19,7 @@ import {
    ChevronDown,
    LogOut,
    Settings,
+   ScrollText,
 } from "lucide-react";
 import {
    Sidebar,
@@ -64,6 +65,8 @@ const iconMap = {
    "Registrar Cotización": FileEdit,
    "Stock de Piezas": Boxes,
    Trabajadores: Users,
+   "Facturación":ScrollText
+
 };
 
 const modulesByRole = {
@@ -108,6 +111,7 @@ const modulesByRole = {
             },
          ],
       },
+      { name: "Facturación", path: "/facturacion" },
    ],
    Ventas: [
       { name: "Gestión de Clientes", path: "/gestion-clientes" },

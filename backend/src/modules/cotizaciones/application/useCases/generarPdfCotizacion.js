@@ -2,18 +2,24 @@ const db = require("../../../../models");
 const {
   formatearFechaIsoADMY,
 } = require("../../infrastructure/helpers/formatearFecha");
+const { generarPdfAndamioFachada } = require("../../infrastructure/services/AndamioFachada/generarPdfAndamioFachada");
+const { generarPdfAndamioTrabajo } = require("../../infrastructure/services/AndamioTrabajo/generarPdfAndamioTrabajo");
+const { calcularSubtotalConDescuentoPiezasNoAdicionales } = require("../../infrastructure/services/calcularSubtotalConDescuentoPiezasNoAdicionalesService");
+const { generarPdfEscaleraAcceso } = require("../../infrastructure/services/EscaleraAcceso/generarPdfEscaleraAcceso");
+const { generarPdfEscuadras } = require("../../infrastructure/services/Escuadras/generarPdfEscuadras");
 
 const {
   agruparPorZonaYAtributos,
-  agruparPuntalesPorTipo,
-  agruparPuntalesPorZonaYAtributos,
 } = require("../../infrastructure/services/mapearAtributosDelPdfService");
 
 const {
   mapearAtributosValor,
 } = require("../../infrastructure/services/mapearAtributosValorService");
+const { generarPdfPlataformaDescarga } = require("../../infrastructure/services/PlataformaDescarga/generarPdfPlataformaDescarga");
+const { generarPdfPuntales } = require("../../infrastructure/services/Puntales/generarPdfPuntales");
 
 module.exports = async (idCotizacion) => {
+
   // Buscar la cotizacion incluyendo: obra, cliente, contacto, despiece, filial, usuario, costos de cotizacion de transporte
   const cotizacionEncontrado = await db.cotizaciones.findByPk(idCotizacion, {
     include: [
@@ -96,6 +102,22 @@ module.exports = async (idCotizacion) => {
     },
   });
 
+  // Calcular el subtotal sin igv de las piezas que NO SON ADICIONALES
+   const piezasNoAdicionales = await db.despieces_detalle.findAll({
+    where: {
+      esAdicional: false,
+      despiece_id: despieceEncontrado.id
+    },
+    raw: true
+   })
+
+   const { subtotal_piezas_no_adicionales_con_descuento_sin_igv } = calcularSubtotalConDescuentoPiezasNoAdicionales({
+    despiecePiezasNoAdicionales: piezasNoAdicionales,
+    tipoCotizacion: tipoServicio,
+    cotizacion: despieceEncontrado,
+    uso_id: uso_id,
+   } )
+
   // Mapear los datos generales para todos los usos para generar el pdf
 
   let datosPdfCotizacion = {
@@ -125,7 +147,7 @@ module.exports = async (idCotizacion) => {
     cotizacion: {
       fecha: formatearFechaIsoADMY(cotizacionEncontrado.updatedAt),
       moneda: despieceEncontrado.moneda,
-      subtotal_con_descuento_sin_igv: despieceEncontrado.subtotal_con_descuento,
+      subtotal_con_descuento_sin_igv: subtotal_piezas_no_adicionales_con_descuento_sin_igv,
       tipo_servicio: tipoServicio,
       tiempo_alquiler_dias: tiempoAlquilerDias,
       codigo_documento: cotizacionEncontrado.codigo_documento,
@@ -168,438 +190,61 @@ module.exports = async (idCotizacion) => {
     case "1":
       // ANDAMIO DE FACHADA
 
+      const pdfAndamioFachada = await generarPdfAndamioFachada({dataDespiece: despieceEncontrado, tiene_pernos: tiene_pernos})
+
+      datosPdfCotizacion = {
+        ...datosPdfCotizacion,
+        ...pdfAndamioFachada
+      }
+
+      console.log('DATOS PDF COTIZACION', datosPdfCotizacion);
+
       break;
 
     case "2":
       // ANDAMIO DE TRABAJO
 
-      let pernoExpansionConArgolla;
-      let pernoEnElDespiece;
-
-      if (tiene_pernos) {
-        pernoExpansionConArgolla = await db.piezas.findOne({
-          where: {
-            item: "CON.0100",
-          },
-        });
-
-        pernoEnElDespiece = await db.despieces_detalle.findOne({
-          where: {
-            despiece_id: despieceEncontrado.id,
-            pieza_id: pernoExpansionConArgolla.id,
-          },
-        });
-      }
-
-      // Obtener la lista de atributos
-
-      const atributosDelUso = await db.atributos_valor.findAll({
-        where: {
-          despiece_id: despieceEncontrado.id,
-        },
-        include: [
-          {
-            model: db.atributos,
-            as: "atributo",
-          },
-        ],
-      });
-
-      // Obtener atributos
-
-      const resultado = mapearAtributosValor(atributosDelUso);
-
-      const listaAtributos = agruparPorZonaYAtributos(resultado);
-
-      const atributosDelPdf = listaAtributos.map((atributo) => ({
-        zona: atributo.zona,
-        atributos: atributo.atributos.map((at) => ({
-          longitud_mm: at.longitud / 1000,
-          ancho_mm: at.ancho / 1000,
-          altura_m: at.altura,
-          cantidad_uso: at.cantidad_uso,
-        })),
-        nota_zona: atributo.atributos[0].nota_zona,
-      }));
-
-      // Obtener las piezas adicionales
-
-      const piezasDetalleAdicionalesAndamioTrabajo =
-        await db.despieces_detalle.findAll({
-          where: {
-            despiece_id: despieceEncontrado.id,
-            esAdicional: true,
-          },
-          include: [
-            {
-              model: db.piezas,
-              as: "pieza",
-              attributes: ["id", "item", "descripcion"],
-            },
-          ],
-        });
+      const pdfAndamioTrabajo = await generarPdfAndamioTrabajo({idDespiece: despieceEncontrado.id, tiene_pernos: tiene_pernos, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
-        zonas: atributosDelPdf,
-        atributos_opcionales: {
-          tiene_pernos: tiene_pernos,
-          nombre_perno_expansion: tiene_pernos
-            ? pernoExpansionConArgolla.descripcion
-            : null,
-          precio_perno_expansion: tiene_pernos
-            ? Number(pernoEnElDespiece?.precio_venta_soles).toFixed(2)
-            : null,
-          cantidad_pernos_expansion: tiene_pernos
-            ? pernoEnElDespiece?.cantidad
-            : null,
-        },
-        piezasAdicionales: piezasDetalleAdicionalesAndamioTrabajo,
-      };
+        ...pdfAndamioTrabajo
+      }
+     
       break;
 
     case "3":
       // ESCALERA DE ACCESO
 
-      // Obtener la lista de atributos
-
-      const atributosDelUsoEscaleraAcceso = await db.atributos_valor.findAll({
-        where: {
-          despiece_id: despieceEncontrado.id,
-        },
-        include: [
-          {
-            model: db.atributos,
-            as: "atributo",
-          },
-        ],
-      });
-
-      const resultadoEscaleraAcceso = mapearAtributosValor(
-        atributosDelUsoEscaleraAcceso
-      );
-
-      const listaAtributosEscaleraAcceso = agruparPorZonaYAtributos(
-        resultadoEscaleraAcceso
-      );
-
-      console.dir(listaAtributosPuntales, { depth: null, colors: true });
-
-      const atributosEscaleraAccesoDelPdf = listaAtributosPuntales.map(
-        (atributo) => ({
-          zona: atributo.zona,
-          atributos: atributo.atributos.map((at) => ({
-            cantidad: at.cantidad,
-            tipoPuntal: at.tipoPuntal,
-            tripode: at.tripode,
-            cantidad_uso: at.cantidad_uso,
-          })),
-          nota_zona: atributo.atributos[0].nota_zona,
-        })
-      );
-
-      console.log(
-        "atributosEscaleraAccesoDelPdf",
-        atributosEscaleraAccesoDelPdf
-      );
-
-      /* const tipoAnclaje = despieceEncontrado.atributos_valors?.[4]?.valor;
-      let itemPiezaVenta;
-
-      if (tipoAnclaje == "FERMIN") {
-        itemPiezaVenta = "CON.0200";
-      } else {
-        itemPiezaVenta = "CON.0100";
-      }
-
-      //const tiene_pernos = despieceEncontrado.tiene_pernos
-
-      let pernoExpansionArgolla;
-      let pernoDespiece;
-
-      if (tiene_pernos) {
-        pernoExpansionArgolla = await db.piezas.findOne({
-          where: {
-            item: itemPiezaVenta,
-          },
-        });
-
-        pernoDespiece = await db.despieces_detalle.findOne({
-          where: {
-            despiece_id: despieceEncontrado.id,
-            pieza_id: pernoExpansionArgolla.id,
-          },
-        });
-      }
-
-      const atributosPlanoEscaleraAcceso =
-        despieceEncontrado.atributos_valors.map((av) => av.dataValues);
-
-      const resultadoEscaleraAcceso = [];
-
-      const agrupadoEscaleraAcceso = {};
-
-      atributosPlanoEscaleraAcceso.forEach((av) => {
-        const grupo = av.numero_formulario_uso;
-        if (!agrupadoEscaleraAcceso[grupo]) agrupadoEscaleraAcceso[grupo] = {};
-        const llave_json = av.atributo.dataValues.llave_json;
-        agrupadoEscaleraAcceso[grupo][llave_json] = av.valor;
-      });
-
-      Object.keys(agrupadoEscaleraAcceso).forEach((grupo) => {
-        resultadoEscaleraAcceso.push(agrupadoEscaleraAcceso[grupo]);
-      });
-
-      const listaAtributosEscaleraAcceso = resultadoEscaleraAcceso.map(
-        (atributo) => {
-          const tipoEscalera = atributo.tipoEscalera;
-          let longitud_mm;
-
-          if (tipoEscalera == "EUROPEA") {
-            longitud_mm = 2072 / 1000;
-          } else {
-            longitud_mm = 3072 / 1000;
-          }
-
-          let ancho_mm = 1572 / 1000;
-
-          return {
-            longitud_mm: longitud_mm,
-            ancho_mm: ancho_mm,
-            altura_m: atributo.alturaTotal,
-          };
-        }
-      ); */
+      const pdfEscaleraAcceso = await generarPdfEscaleraAcceso({dataDespiece: despieceEncontrado, tiene_pernos: tiene_pernos, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
-        atributos: listaAtributosEscaleraAcceso,
-        /*  atributos_opcionales: {
-          nombre_pernos_expansion: tiene_pernos
-            ? pernoExpansionArgolla.descripcion
-            : null,
-          precio_pernos_expansion: tiene_pernos
-            ? pernoExpansionArgolla.precio_venta_soles
-            : null,
-          cantidad_pernos_expansion: tiene_pernos
-            ? pernoDespiece.cantidad
-            : null,
-        }, */
+        ...pdfEscaleraAcceso,
       };
 
       break;
 
     case "4":
       // ESCUADRAS
+
+      const pdfEscuadras = await generarPdfEscuadras({idDespiece: despieceEncontrado.id, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
+
+      datosPdfCotizacion = {
+        ...datosPdfCotizacion,
+        ...pdfEscuadras
+      }
       break;
 
     case "5":
       // PUNTALES
 
-      // Obtener la lista de atributos
-
-      const atributosDelUsoPuntales = await db.atributos_valor.findAll({
-        where: {
-          despiece_id: despieceEncontrado.id,
-        },
-        include: [
-          {
-            model: db.atributos,
-            as: "atributo",
-          },
-        ],
-      });
-
-      const resultadoPuntales = mapearAtributosValor(atributosDelUsoPuntales);
-
-      console.log("resultadoPuntales", resultadoPuntales);
-
-      const atributosPuntalesDelPdfZonas =
-        agruparPuntalesPorZonaYAtributos(resultadoPuntales);
-
-      const atributosPuntalesDelPdf =
-        agruparPuntalesPorTipo(resultadoPuntales);
-
-        console.log('atributosPuntalesDelPdfZonas', atributosPuntalesDelPdfZonas);
-
-      console.log("atributosPuntalesDelPdf", atributosPuntalesDelPdf);
-
-      const atributosPuntalesConPreciosDelPdf = await Promise.all(
-        atributosPuntalesDelPdf.map(async (zona) => {
-          const atributosConPrecios = await Promise.all(
-            zona.atributos.map(async (atributo) => {
-              const tipoPuntal = atributo.tipoPuntal;
-
-              let puntal;
-              if (tipoPuntal === "3.00 m") puntal = "PU.0100";
-              else if (tipoPuntal === "4.00 m") puntal = "PU.0400";
-              else if (tipoPuntal === "5.00 m") puntal = "PU.0600";
-
-              const piezaPuntal = await db.piezas.findOne({
-                where: { item: puntal },
-              });
-
-              if (!piezaPuntal) {
-                throw new Error(`No se encontró la pieza con item ${puntal}`);
-              }
-
-              const piezaPuntalDespiece = await db.despieces_detalle.findOne({
-                where: {
-                  despiece_id: despieceEncontrado.id,
-                  pieza_id: piezaPuntal.id,
-                },
-              });
-
-              if (!piezaPuntalDespiece) {
-                throw new Error(
-                  `No se encontró despiece para pieza_id ${piezaPuntal.id}`
-                );
-              }
-
-              let precioUnitarioPuntal;
-
-              if (cotizacionEncontrado.tipo_cotizacion === "Venta") {
-                precioUnitarioPuntal = (
-                  piezaPuntalDespiece.precio_venta_soles /
-                  piezaPuntalDespiece.cantidad
-                ).toFixed(2);
-              } else if (cotizacionEncontrado.tipo_cotizacion === "Alquiler") {
-                precioUnitarioPuntal = (
-                  piezaPuntalDespiece.precio_alquiler_soles /
-                  piezaPuntalDespiece.cantidad
-                ).toFixed(2);
-              }
-
-              const subtotal = (
-                precioUnitarioPuntal * atributo.cantidad
-              ).toFixed(2);
-
-              return {
-                ...atributo,
-                precio_unitario: precioUnitarioPuntal,
-                subtotal,
-              };
-            })
-          );
-
-          // 👇 este return es lo que FALTABA
-          return {
-            zona: zona.zona,
-            nota_zona: zona.nota_zona,
-            atributos: atributosConPrecios,
-          };
-        })
-      );
-
-      // Averiguar que tipos de puntales se registraron en la cotizacion
-
-      const tiposPuntalUnicos = [
-        // Convertimos a un array los valores únicos usando Set
-        ...new Set(
-          // Recorremos cada zona con flatMap para aplanar los resultados
-          atributosPuntalesDelPdf.flatMap((item) =>
-            // De cada zona, accedemos al array "atributos" y sacamos el campo tipoPuntal
-            item.atributos.map((attr) => attr.tipoPuntal)
-          )
-        ),
-      ];
-
-      const piezasVenta = await Promise.all(
-        tiposPuntalUnicos.map(async (tipo, i) => {
-          console.log(`👉 (${i}) tipo: ${tipo}`);
-
-          let itemPiezaPinPresion;
-          let itemArgolla;
-          switch (tipo) {
-            case "5.00 m":
-              itemPiezaPinPresion = "PU.0800";
-              itemArgolla = "PU.1000";
-              break;
-
-            case "4.00 m":
-              itemPiezaPinPresion = "PU.0700";
-              itemArgolla = "PU.0900";
-              break;
-            case "3.00 m":
-              itemPiezaPinPresion = "PU.0700";
-              itemArgolla = "PU.0900";
-              break;
-            default:
-              console.warn("❌ Tipo de puntal no reconocido:", tipo);
-              return null;
-          }
-
-          const piezaPinPresion = await db.piezas.findOne({
-            where: { item: itemPiezaPinPresion },
-          });
-          const piezaArgolla = await db.piezas.findOne({
-            where: { item: itemArgolla },
-          });
-
-          if (!piezaPinPresion || !piezaArgolla) {
-            //console.warn(`⚠️ (${i}) No se encontraron piezas con item ${itemPiezaPinPresion} o ${itemArgolla}`);
-            return {
-              tipo,
-              piezaVentaPinPresion: null,
-              piezaVentaArgolla: null,
-            };
-          }
-
-          const pinPresion = await db.despieces_detalle.findOne({
-            where: {
-              despiece_id: Number(despieceEncontrado.id),
-              pieza_id: Number(piezaPinPresion.id),
-            },
-          });
-
-          const argolla = await db.despieces_detalle.findOne({
-            where: {
-              despiece_id: Number(despieceEncontrado.id),
-              pieza_id: Number(piezaArgolla.id),
-            },
-          });
-
-          //console.log(`✅ (${i}) IDs buscados: pin=${piezaPinPresion.id}, argolla=${piezaArgolla.id}`);
-          //console.log(`✅ (${i}) Encontrado: pin=${!!pinPresion}, argolla=${!!argolla}`);
-
-          const ventaPin = pinPresion
-            ? (pinPresion.precio_venta_soles / pinPresion.cantidad).toFixed(2)
-            : null;
-          const ventaArg = argolla
-            ? (argolla.precio_venta_soles / argolla.cantidad).toFixed(2)
-            : null;
-
-          return {
-            tipo,
-            piezaVentaPinPresion: ventaPin,
-            piezaVentaArgolla: ventaArg,
-          };
-        })
-      );
-
-      // Obtener las piezas adicionales
-
-      const piezasDetalleAdicionalesPuntales =
-        await db.despieces_detalle.findAll({
-          where: {
-            despiece_id: despieceEncontrado.id,
-            esAdicional: true,
-          },
-          include: [
-            {
-              model: db.piezas,
-              as: "pieza",
-              attributes: ["id", "item", "descripcion"],
-            },
-          ],
-        });
+       const pdfPuntales = await generarPdfPuntales({idDespiece: despieceEncontrado.id, tipo_cotizacion: cotizacionEncontrado.tipo_cotizacion, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
-        zonas: atributosPuntalesConPreciosDelPdf,
-        atributos_opcionales: piezasVenta,
-        piezasAdicionales: piezasDetalleAdicionalesPuntales,
-      };
+        ...pdfPuntales
+      }
       break;
 
     case "6":
@@ -608,6 +253,13 @@ module.exports = async (idCotizacion) => {
 
     case "7":
       // PLATAFORMAS DE DESCARGA
+
+      const pdfPlataformaDescarga = await generarPdfPlataformaDescarga({idDespiece: despieceEncontrado.id, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
+
+      datosPdfCotizacion = {
+        ...datosPdfCotizacion,
+        ...pdfPlataformaDescarga
+      }
       break;
 
     case "8":

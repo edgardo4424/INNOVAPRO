@@ -24,6 +24,7 @@ export default function BloqueDescuento({ formData, setFormData, errores }) {
       <label>🎯 ¿Desea aplicar un descuento?</label>
       <input
         type="number"
+        onWheel={(e) => e.target.blur()}
         min="0"
         max="100"
         value={formData.descuento || ""}

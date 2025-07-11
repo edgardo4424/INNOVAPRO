@@ -6,10 +6,11 @@ import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import { NotificacionesProvider } from "./context/NotificacionesContext";
 import { AuthProvider } from "./context/AuthContext";
+import { FacturacionProver } from "./context/FacturacionContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 // Importaciones temporales hasta que todos los módulos migren sus estilos
-import "./styles/global.css"; 
+import "./styles/global.css";
 import "./styles/dashboard.css";
 import "./styles/centroAtencion.css";
 import "./styles/cotizacionForm.css";
@@ -20,7 +21,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
       <NotificacionesProvider>
-        <App />
+        <FacturacionProver>
+          <App />
           <ToastContainer
             position="top-right"
             autoClose={5000}
@@ -32,6 +34,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             draggable
             pauseOnHover
           />
+        </FacturacionProver>
       </NotificacionesProvider>
     </AuthProvider>
   </React.StrictMode>

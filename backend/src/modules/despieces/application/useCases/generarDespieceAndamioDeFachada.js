@@ -1,6 +1,6 @@
 const {
    generarDespieceAndamioDeFachada,
-} = require("../../infrastructure/services/generarDespieceAndamioFachadaService");
+} = require("../../infrastructure/services/AndamioFachada/generarDespieceAndamioFachadaService");
 
 module.exports = async (dataParaGenerarDespice) => {
    const dataGenerarDespiceAndamioFachada = dataParaGenerarDespice.map(

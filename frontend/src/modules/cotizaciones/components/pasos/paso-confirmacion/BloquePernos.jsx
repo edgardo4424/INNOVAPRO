@@ -43,6 +43,7 @@ export default function BloquePernos({ formData, setFormData, errores }) {
           <label>💸 Precio de venta de los PERNOS DE EXPANSIÓN (S/)</label>
           <input
             type="number"
+            onWheel={(e) => e.target.blur()}
             min="0"
             value={perno.precio_u_venta_soles || 0}
             onChange={(e) => {

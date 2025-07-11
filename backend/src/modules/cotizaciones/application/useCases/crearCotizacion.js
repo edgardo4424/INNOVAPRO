@@ -15,13 +15,16 @@ const {
 } = require("../../infrastructure/services/mapearValoresAtributosService");
 
 const calcularCostoTransporte = require("../../../cotizaciones_transporte/application/useCases/calcularCostoTransporte");
-const { generarCodigoDocumentoCotizacion } = require("../../infrastructure/services/generarCodigoDocumentoCotizacionService");
-const { enviarNotificacionTelegram } = require("../../../notificaciones/infrastructure/services/enviarNotificacionTelegram");
+const {
+  generarCodigoDocumentoCotizacion,
+} = require("../../infrastructure/services/generarCodigoDocumentoCotizacionService");
+const {
+  enviarNotificacionTelegram,
+} = require("../../../notificaciones/infrastructure/services/enviarNotificacionTelegram");
 
 const ID_ESTADO_COTIZACION_POR_APROBAR = 3;
 
 module.exports = async (cotizacionData, cotizacionRepository) => {
-
   const transaction = await db.sequelize.transaction(); // Iniciar transacción
 
   try {
@@ -44,26 +47,38 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       tipoCotizacion: cotizacion.tipo_cotizacion,
       cotizacion,
       uso_id,
-      zonas
+      zonas,
     });
+
+    console.log("resultados", resultados);
 
     // 2. Insertar Despiece
 
     let dataParaDespiece = {
       ...resultados.dataParaGuardarDespiece,
       cp: "0",
-      tiene_pernos: cotizacion.tiene_pernos
+      tiene_pernos: cotizacion.tiene_pernos,
+    };
+
+    if (uso_id == "3") {
+      // Si es escalera de acceso, se añade detalles_opcionales
+      dataParaDespiece.detalles_opcionales = cotizacion.detalles_escaleras;
     }
 
-    console.log('dataParaDespiece', dataParaDespiece);
+    console.log("dataParaDespiece", dataParaDespiece);
 
     // Valida los campos del despiece
-    const errorCampos = Despiece.validarCamposObligatorios( dataParaDespiece,"crear");
+    const errorCampos = Despiece.validarCamposObligatorios(
+      dataParaDespiece,
+      "crear"
+    );
 
     if (errorCampos)
       return { codigo: 400, respuesta: { mensaje: errorCampos } };
 
-    const nuevoDespiece = await db.despieces.create(dataParaDespiece,{ transaction });
+    const nuevoDespiece = await db.despieces.create(dataParaDespiece, {
+      transaction,
+    });
 
     const despiece_id = nuevoDespiece.id;
 
@@ -73,9 +88,12 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
 
     // Validación de todos los registros de despiece
     for (const data of detalles) {
-      const errorCampos = DespieceDetalle.validarCamposObligatorios(data, "crear");
+      const errorCampos = DespieceDetalle.validarCamposObligatorios(
+        data,
+        "crear"
+      );
       if (errorCampos) {
-         /* console.log("Registro inválido", data, "->", errorCampos); */
+        /* console.log("Registro inválido", data, "->", errorCampos); */
         return {
           codigo: 400,
           respuesta: { mensaje: `Error en un registro: ${errorCampos}` },
@@ -83,7 +101,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       }
     }
 
-    await db.despieces_detalle.bulkCreate(detalles, { transaction});
+    await db.despieces_detalle.bulkCreate(detalles, { transaction });
 
     // 4. Insertar Atributos Valor
     const atributosValor = await mapearValoresAtributos({
@@ -115,36 +133,41 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       estados_cotizacion_id: ID_ESTADO_COTIZACION_POR_APROBAR, // Estado de "Por aprobar"
     };
 
-    const filialEncontrado = await db.empresas_proveedoras.findByPk(cotizacionFinal.filial_id)
-    const usuarioEncontrado = await db.usuarios.findByPk(cotizacionFinal.usuario_id)
+    const filialEncontrado = await db.empresas_proveedoras.findByPk(
+      cotizacionFinal.filial_id
+    );
+    const usuarioEncontrado = await db.usuarios.findByPk(
+      cotizacionFinal.usuario_id
+    );
 
     const datosParaGenerarCodigoDocumento = {
-
       uso_id_para_registrar: uso_id,
       filial_razon_social: filialEncontrado.razon_social,
       usuario_rol: usuarioEncontrado.rol,
       usuario_nombre: usuarioEncontrado.nombre,
-      anio_cotizacion: new Date().getFullYear(),
+      //anio_cotizacion: new Date().getFullYear(),
       estado_cotizacion: cotizacionFinal.estados_cotizacion_id,
-      
+
       cotizacion: cotizacionFinal,
       cp: nuevoDespiece.cp,
-    }
+    };
 
-    const codigoDocumento = await generarCodigoDocumentoCotizacion(datosParaGenerarCodigoDocumento)
-   
+    const codigoDocumento = await generarCodigoDocumentoCotizacion(
+      datosParaGenerarCodigoDocumento
+    );
+
     cotizacionFinal = {
       ...cotizacionFinal,
       codigo_documento: codigoDocumento,
-      uso_id: uso_id
-    }
-    
+      uso_id: uso_id,
+    };
+
     // Valida los campos de la Cotizacion
     const errorCamposCotizacion = Cotizacion.validarCamposObligatorios(
       cotizacionFinal,
       "crear"
     );
-    
+
     if (errorCampos)
       return { codigo: 400, respuesta: { mensaje: errorCamposCotizacion } };
 
@@ -156,128 +179,149 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
     // 6. Insertar precios de transporte
 
     if (cotizacion?.tiene_transporte) {
-      
       const totalKg = despiece.reduce((acumulador, item) => {
         return acumulador + (item.peso_kg || 0); // suma solo si existe el campo cantidad
       }, 0);
 
       let datosParaCalcularCostoTransporte = {
         uso_id: uso_id,
-        peso_total_tn: (totalKg/1000).toFixed(2),
+        peso_total_tn: (totalKg / 1000).toFixed(2),
         distrito_transporte: cotizacion?.distrito_transporte,
       };
 
-      switch (uso_id+"") {
+      switch (uso_id + "") {
         case "2":
           // Andamio de trabajo
           break;
         case "3":
           // Escaleras de acceso
-          const { numero_tramos } = cotizacion;
+          const { detalles_escaleras } = cotizacion;
 
           datosParaCalcularCostoTransporte = {
             ...datosParaCalcularCostoTransporte,
-            numero_tramos: numero_tramos
-          }
+            numero_tramos:
+              Number(detalles_escaleras?.tramos_2m || 0) +
+              Number(detalles_escaleras?.tramos_1m || 0),
+          };
 
           break;
-        
+        case "4":
+          // Escuadras con plataforma
+          break;
         case "5":
           // Puntales
           const { transporte_puntales } = cotizacion;
 
           datosParaCalcularCostoTransporte = {
             ...datosParaCalcularCostoTransporte,
-            transporte_puntales: transporte_puntales
-          }
-          
-        break;
+            transporte_puntales: transporte_puntales,
+          };
+
+          break;
 
         case "7":
           // Plataforma de Descarga
-          datosParaCalcularCostoTransporte.cantidad = atributos_formulario.length
-          
-        break;
-      
+          const { cantidad } = cotizacion;
+
+          datosParaCalcularCostoTransporte = {
+            ...datosParaCalcularCostoTransporte,
+            cantidad: cantidad,
+          };
+          break;
+
         default:
           break;
       }
 
-      const datosParaGuardarCotizacionesTransporte =  (await calcularCostoTransporte(datosParaCalcularCostoTransporte)).respuesta;
+      const datosParaGuardarCotizacionesTransporte = (
+        await calcularCostoTransporte(datosParaCalcularCostoTransporte)
+      ).respuesta;
 
       const mapeoDataGuardar = {
         cotizacion_id: cotizacionCreada.id,
-        uso_id: uso_id, 
-        
-        distrito_transporte:datosParaGuardarCotizacionesTransporte.distrito_transporte,
-        tarifa_transporte_id: datosParaGuardarCotizacionesTransporte.tarifa_transporte_id ? datosParaGuardarCotizacionesTransporte.tarifa_transporte_id:null,
+        uso_id: uso_id,
+
+        distrito_transporte:
+          datosParaGuardarCotizacionesTransporte.distrito_transporte,
+        tarifa_transporte_id:
+          datosParaGuardarCotizacionesTransporte.tarifa_transporte_id
+            ? datosParaGuardarCotizacionesTransporte.tarifa_transporte_id
+            : null,
         tipo_transporte: cotizacion.tipo_transporte,
-        unidad: datosParaGuardarCotizacionesTransporte.unidad,
+        unidad: datosParaGuardarCotizacionesTransporte.unidad || "Und",
         cantidad: datosParaGuardarCotizacionesTransporte.cantidad,
 
         costo_tarifas_transporte: cotizacion.costo_tarifas_transporte,
         costo_distrito_transporte: cotizacion.costo_distrito_transporte,
         costo_pernocte_transporte: cotizacion.costo_pernocte_transporte,
 
-        costo_total: (Number(cotizacion.costo_tarifas_transporte)+Number(cotizacion.costo_distrito_transporte)+Number(cotizacion.costo_pernocte_transporte)).toFixed(2),
+        costo_total: (
+          Number(cotizacion.costo_tarifas_transporte) +
+          Number(cotizacion.costo_distrito_transporte) +
+          Number(cotizacion.costo_pernocte_transporte)
+        ).toFixed(2),
+      };
 
-      }
-      
-      console.log('mapeoDataGuardar', mapeoDataGuardar);
+      console.log("mapeoDataGuardar", mapeoDataGuardar);
 
-
-      await db.cotizaciones_transporte.create(mapeoDataGuardar, { transaction })
+      await db.cotizaciones_transporte.create(mapeoDataGuardar, {
+        transaction,
+      });
     }
 
     // 7. Insertar precios de instalacion
 
     let tipo_instalacion;
 
-    if(cotizacion.tiene_instalacion){
-
+    if (cotizacion.tiene_instalacion) {
       switch (cotizacion.tipo_instalacion) {
-
         case "COMPLETA":
-          tipo_instalacion = "Completa"
+          tipo_instalacion = "Completa";
 
           const dataInstalacionCompleta = {
             cotizacion_id: cotizacionCreada.id,
             tipo_instalacion: tipo_instalacion,
-            precio_instalacion_completa_soles: cotizacion.precio_instalacion_completa,
+            precio_instalacion_completa_soles:
+              cotizacion.precio_instalacion_completa,
             precio_instalacion_parcial_soles: 0,
             /* nota: cotizacion.nota_instalacion */
-          }
+          };
 
-          await db.cotizaciones_instalacion.create(dataInstalacionCompleta, { transaction });
-          
+          await db.cotizaciones_instalacion.create(dataInstalacionCompleta, {
+            transaction,
+          });
+
           break;
-        
-        case "PARCIAL":
-        tipo_instalacion = "Parcial"
 
-        const dataInstalacionParcial = {
+        case "PARCIAL":
+          tipo_instalacion = "Parcial";
+
+          const dataInstalacionParcial = {
             cotizacion_id: cotizacionCreada.id,
             tipo_instalacion: tipo_instalacion,
-            precio_instalacion_completa_soles: cotizacion.precio_instalacion_completa,
-            precio_instalacion_parcial_soles: cotizacion.precio_instalacion_parcial,
-            nota: cotizacion.nota_instalacion
-          }
+            precio_instalacion_completa_soles:
+              cotizacion.precio_instalacion_completa,
+            precio_instalacion_parcial_soles:
+              cotizacion.precio_instalacion_parcial,
+            nota: cotizacion.nota_instalacion,
+          };
 
-          await db.cotizaciones_instalacion.create(dataInstalacionParcial, { transaction });
+          await db.cotizaciones_instalacion.create(dataInstalacionParcial, {
+            transaction,
+          });
           break;
-      
+
         default:
           break;
       }
     }
-  
+
     await transaction.commit(); // ✔ Confirmar todo
     return {
       codigo: 201,
       respuesta: { mensaje: "Cotización creada exitosamente" },
     };
   } catch (error) {
-  
     await transaction.rollback(); // ❌ Deshacer todo si algo falla
     console.error("Error en creación de cotización:", error);
     return {

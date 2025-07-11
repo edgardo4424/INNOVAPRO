@@ -31,7 +31,7 @@ const formDataInicial = {
   nota_instalacion: "",
   tiene_pernos_disponibles: false,
   tiene_pernos: undefined,
-  duracion_alquiler: 0,
+  duracion_alquiler: 0
 };
 
 export default formDataInicial;

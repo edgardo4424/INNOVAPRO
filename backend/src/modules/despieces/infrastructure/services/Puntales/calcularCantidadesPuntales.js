@@ -1,4 +1,4 @@
-const { calcularPU0100, calcularPU0400, calcularPU0600, calcularPU0700, calcularPU0800, calcularPU0900, calcularPU1000, calcularPU1100 } = require("../../domain/formulas-generar-despieces/funcionesPuntales");
+const { calcularPU0100, calcularPU0400, calcularPU0600, calcularPU0700, calcularPU0800, calcularPU0900, calcularPU1000, calcularPU1100 } = require("../../../domain/formulas-generar-despieces/funcionesPuntales");
 
 function calcularCantidadesPorCadaPiezaDePuntales(datosAtributos) {
   console.log('datosAtributos', datosAtributos);

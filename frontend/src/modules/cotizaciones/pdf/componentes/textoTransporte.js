@@ -21,8 +21,8 @@ export async function renderTextoTransporte(doc, data, currentY) {
   doc.line(indent + box + 3, currentY + 1.5, indent + box + 3 + w, currentY + 1.5);
 
   const transporte = [
-    `Transporte de ENTREGA: **S/${data.tarifa_transporte?.costo_total_transporte || "(INDEFINIDO COSTO DE TRANSPORTE)"} + IGV.**`,
-    `Transporte de DEVOLUCIÓN: **S/${data.tarifa_transporte?.costo_total_transporte || "(INDEFINIDO COSTO DE TRANSPORTE)"} + IGV. (Siempre y cuando el servicio se realice en un solo flete)**`
+    `Transporte de ENTREGA: **S/ ${data.tarifa_transporte?.costo_total_transporte || "(INDEFINIDO COSTO DE TRANSPORTE)"} + IGV.**`,
+    `Transporte de DEVOLUCIÓN: **S/ ${data.tarifa_transporte?.costo_total_transporte || "(INDEFINIDO COSTO DE TRANSPORTE)"} + IGV. (Siempre y cuando el servicio se realice en un solo flete)**`
   ];
 
   currentY += 6;

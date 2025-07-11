@@ -58,9 +58,9 @@ export async function generarCuerpoAndamioTrabajo(doc, data, startY = 120) {
   
   currentY += 2 ; // Espacio antes del resumen de cotización
   // Resumen de cotización
-  const subtituloResumen = `** : 
+  const subtituloResumen = `Precio total de alquiler: 
 
-  **S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.**`;
+  **S/ ${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.**`;
   currentY = drawJustifiedText(doc, subtituloResumen, indent + 3, currentY, 170, 5.5, 10);
 
   // Verifica si hay atributos opcionales como pernos de expansión
@@ -68,7 +68,7 @@ export async function generarCuerpoAndamioTrabajo(doc, data, startY = 120) {
   if (data.atributos_opcionales?.tiene_pernos === true) {
     // ⚙️ PERNOS DE EXPANSIÓN - M16 x 145 / C/Argolla
     const tiene_pernos_expansion = data.tiene_pernos || [
-      `${data.atributos_opcionales?.cantidad_pernos_expansion || "(CANTIDAD INDEFINIDA DE PERNOS)"} Uds. ${data.atributos_opcionales?.nombre_perno_expansion || "(TIPO DE PERNO INDEFINIDO)"}: **S/${data.atributos_opcionales?.precio_perno_expansion || "(PRECIO PERNO INDEFINIDO)"} + IGV.**`
+      `${data.atributos_opcionales?.cantidad_pernos_expansion || "(CANTIDAD INDEFINIDA DE PERNOS)"} Uds. ${data.atributos_opcionales?.nombre_perno_expansion || "(TIPO DE PERNO INDEFINIDO)"}: **S/ ${data.atributos_opcionales?.precio_perno_expansion || "(PRECIO PERNO INDEFINIDO)"} + IGV.** (En venta por ser consumibles)`
     ];
 
     currentY += 6;

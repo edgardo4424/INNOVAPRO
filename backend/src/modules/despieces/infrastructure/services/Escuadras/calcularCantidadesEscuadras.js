@@ -1,9 +1,9 @@
 
-const { calcularCON0200 } = require("../../domain/formulas-generar-despieces/funcionesEscalera");
-const { calcularAM6000, calcularAM6100, calcularAM6200, calcularAM6300, calcularAM6400, calcularAM6500, calcularAM6600, calcularAM6700, calcularAM6800, calcularAM6900, calcularAM7000, calcularAM7100, calcularAM7200, calcularAM7300, calcularAM7400, calcularAM7410, calcularAM7420, calcularAM7430, calcularAM7440, calcularEC0100, calcularEC0300, calcularEC0800, calcularCON0300, calcularEN0310, calcularEN0400 } = require("../../domain/formulas-generar-despieces/funcionesEscuadras");
 
-function calcularCantidadesPorCadaPiezaDeEscuadras(datosCantidadPlataformasDescarga) {
-    return datosCantidadPlataformasDescarga.map((dato) => {
+const { calcularCON0200, calcularAM6000, calcularAM6100, calcularAM6200, calcularAM6300, calcularAM6400, calcularAM6500, calcularAM6600, calcularAM6700, calcularAM6800, calcularAM6900, calcularAM7000, calcularAM7100, calcularAM7200, calcularAM7300, calcularAM7400, calcularAM7410, calcularAM7420, calcularAM7430, calcularAM7440, calcularEC0100, calcularEC0300, calcularEC0800, calcularCON0300, calcularEN0310, calcularEN0400 } = require("../../../domain/formulas-generar-despieces/funcionesEscuadras");
+
+function calcularCantidadesPorCadaPiezaDeEscuadras(datosCantidadEscuadras) {
+    return datosCantidadEscuadras.map((dato) => {
       const resultados = [
         { pieza: "AM.6000", cantidad: calcularAM6000(dato) },
         { pieza: "AM.6100", cantidad: calcularAM6100(dato) },
@@ -26,11 +26,11 @@ function calcularCantidadesPorCadaPiezaDeEscuadras(datosCantidadPlataformasDesca
         { pieza: "AM.7440", cantidad: calcularAM7440(dato) },
         { pieza: "EC.0100", cantidad: calcularEC0100(dato) },
         { pieza: "EC.0300", cantidad: calcularEC0300(dato) },
-        { pieza: "EC.0800", cantidad: calcularEC0800(dato) },
-        { pieza: "CON.0200", cantidad: calcularCON0200(dato) },
-        { pieza: "CON.0300", cantidad: calcularCON0300(calcularEC0800(dato)) },
-        { pieza: "EN.0310", cantidad: calcularEN0310(dato) },
-        { pieza: "EN.0400", cantidad: calcularEN0400(calcularEN0310(dato)) },
+        { pieza: "EC.0800", cantidad: calcularEC0800(calcularEC0100(dato)) },
+        { pieza: "CON.0200", cantidad: calcularCON0200({...dato, valorCalcularEC0800: calcularEC0800(calcularEC0100(dato)), valorCalcularEC0300: calcularEC0300(dato)}) },
+        { pieza: "CON.0300", cantidad: calcularCON0300(calcularEC0800(calcularEC0100(dato))) },
+        { pieza: "EN.0310", cantidad: calcularEN0310({...dato,valorCalcularEC0300: calcularEC0300(dato)}) },
+        { pieza: "EN.0400", cantidad: calcularEN0400(calcularEN0310({...dato,valorCalcularEC0300: calcularEC0300(dato)}) ) },
       ];
 
       return resultados.filter((item) => item.cantidad > 0);

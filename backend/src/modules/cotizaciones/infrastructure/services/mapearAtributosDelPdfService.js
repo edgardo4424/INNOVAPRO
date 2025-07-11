@@ -131,24 +131,45 @@ function agruparPuntalesPorZonaYAtributos(data) {
   return resultado;
 }
 
-function agruparPuntalesPorTipo(data) {
-  const tipoMap = new Map();
+function agruparPuntalesPorZonaYTipo(data) {
+  const resultado = [];
+
+  const zonasMap = new Map();
 
   for (const item of data) {
-    const { tipoPuntal, cantidad } = item;
+    const { zona, tipoPuntal, cantidad, nota_zona } = item;
 
-    if (tipoMap.has(tipoPuntal)) {
-      tipoMap.get(tipoPuntal).cantidad += cantidad;
+    if (!zonasMap.has(zona)) {
+      zonasMap.set(zona, {
+        nota_zona,
+        tipoMap: new Map(),
+      });
+    }
+
+    const zonaObj = zonasMap.get(zona);
+    const clave = tipoPuntal;
+
+    if (zonaObj.tipoMap.has(clave)) {
+      zonaObj.tipoMap.get(clave).cantidad += cantidad;
     } else {
-      tipoMap.set(tipoPuntal, {
+      zonaObj.tipoMap.set(clave, {
         tipoPuntal,
         cantidad,
       });
     }
   }
 
-  return Array.from(tipoMap.values());
+  for (const [zona, { nota_zona, tipoMap }] of zonasMap.entries()) {
+    resultado.push({
+      zona,
+      nota_zona,
+      atributos: Array.from(tipoMap.values()),
+    });
+  }
+
+  return resultado;
 }
 
 
-module.exports = { mapearPorAtributos, agruparPorZonaYAtributos, agruparPorZona, agruparPuntalesPorZonaYAtributos, agruparPuntalesPorTipo };
+
+module.exports = { mapearPorAtributos, agruparPorZonaYAtributos, agruparPorZona, agruparPuntalesPorZonaYAtributos, agruparPuntalesPorZonaYTipo };

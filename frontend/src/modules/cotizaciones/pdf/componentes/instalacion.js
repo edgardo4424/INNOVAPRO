@@ -22,8 +22,8 @@ export async function renderInstalacion(doc, data, currentY) {
 
   if (data.instalacion.tipo_instalacion === "Parcial") {
     const instalacion = [
-      `Instalación completa: **S/${data.instalacion?.precio_instalacion_completa_soles || "(INDEFINIDO COSTO DE INSTALACION COMPLETA)"} + IGV.**`,
-      `Instalación parcial: **S/${data.instalacion?.precio_instalacion_parcial_soles || "(INDEFINIDO COSTO DE INSTALACION PARCIAL)"} + IGV.**`,
+      `Instalación completa: **S/ ${data.instalacion?.precio_instalacion_completa_soles || "(INDEFINIDO COSTO DE INSTALACION COMPLETA)"} + IGV.**`,
+      `Instalación parcial: **S/ ${data.instalacion?.precio_instalacion_parcial_soles || "(INDEFINIDO COSTO DE INSTALACION PARCIAL)"} + IGV.**`,
 
       `__${data.instalacion?.nota}__`,
     ];

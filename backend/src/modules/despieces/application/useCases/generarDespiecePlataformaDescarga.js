@@ -1,17 +1,17 @@
-const {
-  generarDespiecePlataformaDescarga,
-} = require("../../infrastructure/services/calcularCantidadesPlataformaDescarga");
+const { generarDespiecePlataformaDescarga } = require("../../infrastructure/services/PlataformaDescarga/generarDespiecePlataformaDescargaService");
 
 module.exports = async (dataParaGenerarDespiece) => {
-  const atributos = dataParaGenerarDespiece.atributos_formulario;
-
-  const atributosFormularioFormateado = atributos.map((atributo) => ({
+  
+   const dataGenerarDespiecePlataformaDescarga = dataParaGenerarDespiece.map((data) => (({
+    ...data,
+    atributos_formulario: data.atributos_formulario.map((atributo) => ({
     ...atributo,
     capacidad: Number(atributo.capacidad),
-  }));
+  }))
+  })))
 
   const despieceGenerado = await generarDespiecePlataformaDescarga(
-    atributosFormularioFormateado
+    dataGenerarDespiecePlataformaDescarga
   );
 
   return {

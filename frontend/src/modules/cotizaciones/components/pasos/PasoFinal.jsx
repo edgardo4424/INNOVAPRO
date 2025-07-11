@@ -36,11 +36,21 @@ export default function PasoFinal() {
   } = formData;
 
   // Cálculo del total base
-  const total = parseFloat(
-    tipo_cotizacion === "Alquiler"
-      ? resumenDespiece?.precio_subtotal_alquiler_soles
-      : resumenDespiece?.precio_subtotal_venta_soles
-  ) || 0;
+  const calcularTotalBase = () => {
+    if (tipo_cotizacion === "Alquiler") {
+      if (uso_id === 3 && formData.detalles_escaleras) {
+        const { precio_tramo, tramos_2m, tramos_1m } = formData.detalles_escaleras;
+        const tramos = (tramos_2m || 0) + (tramos_1m || 0);
+        return parseFloat((precio_tramo * tramos).toFixed(2));
+      }
+      return parseFloat(resumenDespiece?.precio_subtotal_alquiler_soles || 0);
+    } else {
+      return parseFloat(resumenDespiece?.precio_subtotal_venta_soles || 0);
+    }
+  };
+
+  const total = calcularTotalBase();
+
 
   // Aplicación de descuento en caso tenga
   const totalConDescuento = (total * (1 - (descuento || 0) / 100)).toFixed(2);
@@ -77,7 +87,7 @@ export default function PasoFinal() {
         <h4>⚙️ Cotización</h4>
         <div className="wizard-key-value"><strong>⚙️ Uso:</strong> {uso_nombre || `ID #${uso_id}`}</div>
         <div className="wizard-key-value"><strong>📦 Tipo de cotización:</strong> {tipo_cotizacion}</div>
-        {descuento !== 0 && (
+        {!descuento || descuento !== 0 && (
           <div className="wizard-key-value"><strong>Descuento:</strong> {descuento}%</div>
         )}
         {requiereAprobacion && (
@@ -136,7 +146,7 @@ export default function PasoFinal() {
 
       {/* Total referencial incluyendo servicios */}
       {console.log("Form Data:", formData)}
-      {(tiene_instalacion !== false && tiene_transporte != false) && (
+      {(tiene_instalacion !== false || tiene_transporte != false) && (
         <div className="wizard-total" style={{ marginTop: "1rem", color: "#666", fontSize: "15px" }}>
           <strong>🧾 Total referencial con servicios:</strong>{" "}
           <span style={{ color: "#009688" }}>

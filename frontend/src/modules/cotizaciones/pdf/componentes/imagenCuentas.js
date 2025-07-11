@@ -32,7 +32,7 @@ export async function renderImagenCuentas(doc, data, currentY) {
    });
 
    // 🔁 Validar salto de página antes de insertar la imagen
-   currentY = await verificarSaltoDePagina(doc, currentY, data, 110); // 50 = altura de la imagen
-   doc.addImage(cuentaImg, "PNG", 25, currentY + 2, 145, 110);
+   currentY = await verificarSaltoDePagina(doc, currentY, data, 35); // 50 = altura de la imagen
+   doc.addImage(cuentaImg, "PNG", 10, currentY + 2, 190, 35);
    return currentY + 50; // Ajusta si la imagen es más grande
 };

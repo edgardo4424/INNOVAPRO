@@ -25,7 +25,7 @@ async function verificarToken(req, res, next) {
     next();
   } catch (error) {
     console.log("🔴 Token inválido:", error);
-    res.status(400).json({ mensaje: "Token no válido" });
+    res.status(417).json({ mensaje: "Token no válido" });
   }
 }
 

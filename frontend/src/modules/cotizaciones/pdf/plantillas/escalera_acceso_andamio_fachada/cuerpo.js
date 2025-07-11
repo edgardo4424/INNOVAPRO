@@ -1,5 +1,5 @@
 import { verificarSaltoDePagina } from "../../componentes/pagina";
-import { drawJustifiedText } from "../../../../../utils/pdf/drawJustifiedText";
+import { drawJustifiedText, renderTextoConNegrita } from "../../../../../utils/pdf/drawJustifiedText";
 
 export async function generarCuerpoEscaleraAcceso(doc, data, startY = 120) {
   let currentY = startY;
@@ -33,34 +33,57 @@ export async function generarCuerpoEscaleraAcceso(doc, data, startY = 120) {
   doc.setLineWidth(0.3);
   doc.line(indent + box + 3, currentY + 1.5, indent + box + 3 + subtituloWidth, currentY + 1.5);
 
-  // 🧮 Cantidad de equipos
-  const cantidad_equipos = data.uso.cantidad_uso === 1 ? "Ud." : "Uds.";
-
   // 🧮 Días de alquiler
   const cantidad_dias = data.cotizacion?.tiempo_alquiler_dias === 1 ? "día" : "días";
 
-  // ⚙️ Detalles cotización
-  const detalles = data.detalles_alquiler || [
-    `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** ${data.uso.cantidad_uso || "(INDEFINIDO NÚMERO DE EQUIPOS)"} ${cantidad_equipos} De ${data.uso.nombre|| "(INDEFINIDO USO DE EQUIPO)"} de ${data.atributos?.longitud_mm || "(LONGITUD INDEFINIDA)"} m. de longitud x ${data.atributos?.ancho_mm || "(ANCHO INDEFINIDO)"} m. de ancho x ${data.atributos?.altura_m || "(ALTURA INDEFINIDA)"}.00 m. de altura + 1.00 m de baranda de seguridad: **S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.**`
-  ];
-
   currentY += 6;
-  for (const linea of detalles) {
-    const palabras = linea.split(/\s+/);
-    const aproxLineas = Math.ceil(palabras.length / 11);
-    const alturaEstimada = aproxLineas * 5;
 
-    currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimada);
-    currentY = drawJustifiedText(doc, linea, indent + box + 3, currentY, 170, 5.5, 10);
+  for (const zona of data.zonas || []) {
+    const zonaTitulo = `Zona ${zona.zona || "1"} - ${zona.nota_zona || "(DESCRIPCIÓN DE ZONA INDEFINIDA)"}`;
+    currentY = drawJustifiedText(doc, `**${zonaTitulo}**`, indent + 3, currentY, 170, 5.5, 10);
+
+    for (const equipo of zona.atributos || []) {
+      // Tramos Escalera
+      let descripcionTramos = "";
+      const detalles = data.detalles_escaleras || {};
+      const tieneTramos = detalles.tramos_2m > 0 || detalles.tramos_1m > 0;
+
+      if (tieneTramos) {
+        const partes = [];
+        if (detalles.tramos_2m > 0) partes.push(`${detalles.tramos_2m} tramo${detalles.tramos_2m > 1 ? "s" : ""} de 2.00 m`);
+        if (detalles.tramos_1m > 0) partes.push(`${detalles.tramos_1m} tramo${detalles.tramos_1m > 1 ? "s" : ""} de 1.00 m`);
+        descripcionTramos = ` (${partes.join(" y ")})`;
+      }
+
+      const descripcionEquipo = `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** ${equipo.cantidad_uso || "(CANTIDAD INDEFINIDA)"} ${equipo.cantidad_uso === 1 ? "Ud." : "Uds."} de ${data.uso?.nombre || "(NOMBRE DE EQUIPO INDEFINIDO)"} de ${equipo.longitud_mm || "(LONGITUD INDEFINIDA)"} m. de longitud x ${equipo.ancho_mm || "(ANCHO INDEFINIDO)"} m. de ancho x ${equipo.altura_m || "(ALTURA INDEFINIDA)"} m. de altura + 1.00 m de baranda de seguridad${descripcionTramos}.`;
+
+      const palabras = descripcionEquipo.split(/\s+/);
+      const aproxLineas = Math.ceil(palabras.length / 11);
+      const alturaEstimada = aproxLineas * 5;
+
+      currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimada);
+      currentY = drawJustifiedText(doc, descripcionEquipo, indent + box + 3, currentY, 170, 5.5, 10);
+    }
+
+    currentY += 4; // Espacio entre zonas
   }
 
-  if (data.atributos?.tiene_pernos === true) {
-    // ⚙️ PERNOS DE EXPANSIÓN - M16 x 145 / C/Argolla
+  // Resumen de cotización
+  const subtituloResumen = `Precio de alquiler: 
+
+  **S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.**`;
+  currentY = drawJustifiedText(doc, subtituloResumen, indent + 3, currentY, 170, 5.5, 10);
+
+
+  // Verifica si hay atributos opcionales como pernos de expansión
+
+  if (data.perno_expansion_sin_argolla && data.perno_expansion_sin_argolla?.total !== 0) {
+    // ⚙️ PERNOS DE EXPANSIÓN - M16 x 145 
     const tiene_pernos_expansion = data.tiene_pernos || [
-      `${data.atributos?.cantidad_pernos_expansion || "(CANTIDAD INDEFINIDA DE PERNOS)"} Uds. ${data.atributos?.nombre_perno_expansion || "(TIPO DE PERNO INDEFINIDO)"}: **S/${data.atributos?.precio_perno_expansion || "(PRECIO PERNO INDEFINIDO)"} + IGV.**`
+      `${data.perno_expansion_sin_argolla?.total || "(CANTIDAD INDEFINIDA DE PERNOS)"} Uds. ${data.perno_expansion_sin_argolla?.nombre || "(TIPO DE PERNO INDEFINIDO)"}: **S/${data.perno_expansion_sin_argolla?.precio_venta_soles || "(PRECIO PERNO INDEFINIDO)"} + IGV.** (En venta por ser consumibles)`
     ];
 
-    currentY += 6;
+    currentY += 4;
     for (const linea of tiene_pernos_expansion) {
       const palabras = linea.split(/\s+/);
       const aproxLineas = Math.ceil(palabras.length / 11);
@@ -68,21 +91,18 @@ export async function generarCuerpoEscaleraAcceso(doc, data, startY = 120) {
 
       currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimada);
       currentY = drawJustifiedText(doc, linea, indent + box + 3, currentY, 170, 5.5, 10);
-    } 
+    }
+    
   }
 
-  // ⚙️ Si el andamio de fachada va en volado llevará puntales
-  if (data.atributos?.tiene_puntales === true) {
-    const puntales_detalles = data.puntales_detalles || [
-      `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** Alquiler de ${data.atributos?.cantidad || "(INDEFINIDO NÚMERO DE PUNTALES)"} ${cantidad_equipos} De ${data.uso.nombre|| "(INDEFINIDO USO DE EQUIPO)"} de ${data.atributos?.tipoPuntal || "(LONGITUD INDEFINIDA)"}: **S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "(PRECIO SIN IGV INDEFINIDO)"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "(INDEFINIDOS DÍAS)"} ${cantidad_dias} calendario.**
-      
-      *Cuando los puntales se devuelvan incompletos, se cobrará lo siguiente por el material faltante:
-          - Por cada argolla, **S/${data.atributos?.precio_argolla || "(PRECIO ARGOLLA INDEFINIDO)"} + IGV.**
-          - Por cada pasador, **S/${data.atributos?.precio_pasador || "(PRECIO PASADOR INDEFINIDO)"} + IGV.**`
+  if (data.perno_expansion_con_argolla?.total !== 0) {
+    // ⚙️ PERNOS DE EXPANSIÓN - C/Argolla
+    const tiene_pernos_expansion = data.tiene_pernos || [
+      `${data.perno_expansion_con_argolla?.total || "(CANTIDAD INDEFINIDA DE PERNOS)"} Uds. ${data.perno_expansion_con_argolla?.nombre || "(TIPO DE PERNO INDEFINIDO)"}: **S/${data.perno_expansion_con_argolla?.precio_venta_soles || "(PRECIO PERNO INDEFINIDO)"} + IGV.** (En venta por ser consumibles)`
     ];
 
-    currentY += 6;
-    for (const linea of puntales_detalles) {
+    currentY += 4;
+    for (const linea of tiene_pernos_expansion) {
       const palabras = linea.split(/\s+/);
       const aproxLineas = Math.ceil(palabras.length / 11);
       const alturaEstimada = aproxLineas * 5;
@@ -90,7 +110,56 @@ export async function generarCuerpoEscaleraAcceso(doc, data, startY = 120) {
       currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimada);
       currentY = drawJustifiedText(doc, linea, indent + box + 3, currentY, 170, 5.5, 10);
     }
-   
+    
+  }
+
+  // ⚙️ Si el andamio de fachada va en volado llevará puntales
+  if (data.detalles_puntales?.puntal?.cantidad > 0) {
+  const puntal = data.detalles_puntales.puntal;
+  const precioArgolla = data.detalles_puntales.piezaVentaArgolla || "(PRECIO ARGOLLA INDEFINIDO)";
+  const precioPasador = data.detalles_puntales.piezaVentaPinPresion || "(PRECIO PASADOR INDEFINIDO)";
+  const cantidad_dias = data.cotizacion?.tiempo_alquiler_dias === 1 ? "día" : "días";
+
+  currentY += 5;
+
+  // 🧱 Sección título
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  doc.text("Detalle de alquiler de puntales:", indent + 3, currentY);
+  currentY += 6;
+
+  // 🧾 Detalle tabla
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.text("Descripción", indent + 3, currentY);
+  doc.text("Cantidad", indent + 50, currentY);
+  doc.text("Subtotal (S/)", indent + 95, currentY);
+  currentY += 5;
+
+  doc.setFont("helvetica", "normal");
+  doc.text(puntal.descripcion || "(DESCRIPCIÓN NO DEFINIDA)", indent + 3, currentY);
+  doc.text(`${puntal.cantidad}`, indent + 50, currentY);
+  doc.text(`S/ ${parseFloat(puntal.subtotal_alquiler_soles).toFixed(2)} + IGV`, indent + 95, currentY);
+  currentY += 8;
+
+  // 🧾 Aclaración de condiciones
+  doc.setFontSize(8);
+  
+    const detalles = data.detalles_alquiler || [
+      `*Cuando los puntales se devuelvan incompletos, se cobrará lo siguiente por el material faltante:
+          - Por cada argolla, **S/ ${precioArgolla} + IGV.**
+          - Por cada pasador, **S/ ${precioPasador} + IGV.**`
+    ];
+  
+    for (const linea of detalles) {
+      const lineasSeparadas = linea.split("\n");
+  
+      for (const sublinea of lineasSeparadas) {
+        currentY = await verificarSaltoDePagina(doc, currentY, 6);
+        renderTextoConNegrita(doc, sublinea, indent + box + 3, currentY)
+        currentY += 5;
+      }
+    }
 }
 
   return currentY;

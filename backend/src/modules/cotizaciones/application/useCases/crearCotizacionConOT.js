@@ -8,9 +8,7 @@ const ID_ESTADO_COTIZACION_DESPIECE_GENERADO = 2;
 const ID_ESTADO_COTIZACION_POR_APROBAR = 3;
 
 const sequelizeDespieceRepository = require("../../../despieces/infrastructure/repositories/sequelizeDespieceRepository");
-const {
-  mapearDetallesDespiece,
-} = require("../../infrastructure/services/mapearDetallesDespieceService");
+
 const {
   generarCodigoDocumentoCotizacion,
 } = require("../../infrastructure/services/generarCodigoDocumentoCotizacionService");
@@ -65,12 +63,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
 
       // Insertar Atributos Valor
 
-    const tareaEncontrada = await db.tareas.findOne({
-      where: {
-       cotizacionId:  cotizacionEncontrada.id
-      }
-    })
-
     const atributosValor = await mapearValoresAtributos({
       uso_id,
       despiece_id: cotizacionEncontrada.despiece_id,
@@ -101,7 +93,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       filial_razon_social: filialEncontrado.razon_social,
       usuario_rol: usuarioEncontrado.rol,
       usuario_nombre: usuarioEncontrado.nombre,
-      anio_cotizacion: new Date().getFullYear(),
+      //anio_cotizacion: new Date().getFullYear(),
       estado_cotizacion: cotizacionEncontrada.estados_cotizacion_id,
 
       cotizacion: cotizacionEncontrada,
@@ -170,7 +162,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
         case "2":
           // Andamio de trabajo
           break;
-        case "3":
+        /* case "3":
           // Escaleras de acceso
           let numero_tramos = atributos_formulario[0].alturaTotal / 2;
           if (atributos_formulario[0].alturaTotal % 2 !== 0) {
@@ -178,7 +170,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
           }
 
           datosParaCalcularCostoTransporte.numero_tramos = numero_tramos;
-          break;
+          break; */
 
         case "5":
           
@@ -217,7 +209,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
             ? datosParaGuardarCotizacionesTransporte.tarifa_transporte_id
             : null,
         tipo_transporte: cotizacion.tipo_transporte,
-        unidad: datosParaGuardarCotizacionesTransporte.unidad,
+        unidad: datosParaGuardarCotizacionesTransporte.unidad || "Und",
         cantidad: datosParaGuardarCotizacionesTransporte.cantidad,
 
         costo_tarifas_transporte: cotizacion.costo_tarifas_transporte,

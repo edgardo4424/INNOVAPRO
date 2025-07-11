@@ -69,6 +69,7 @@ const PasoAtributos = () => {
     return ( 
       <input
         type="number"
+        onWheel={(e) => e.target.blur()}
         value={valorActual}
         onChange={(e) => 
           handleChange(zonaIndex, equipoIndex, atributo.llave_json, e.target.value) // Actualiza el valor del atributo

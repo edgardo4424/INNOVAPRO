@@ -6,9 +6,12 @@ import { USOS_INSTALABLES, USOS_SIN_DESCUENTO} from "../../constants/usos";
 import ResumenDespiece from "./paso-confirmacion/ResumenDespiece";
 import BloquePernos from "./paso-confirmacion/BloquePernos";
 import BloquePuntales from "./paso-confirmacion/BloquePuntales";
+import BloquePlataformaDescarga from "./paso-confirmacion/BloquePlataformaDescarga";
 import BloqueTransporte from "./paso-confirmacion/BloqueTransporte";
 import BloqueInstalacion from "./paso-confirmacion/BloqueInstalacion";
 import BloqueDescuento from "./paso-confirmacion/BloqueDescuento";
+import BloqueEscaleraAcceso from "./paso-confirmacion/BloqueEscaleraAcceso";
+import BloqueEscaleraAccesoOT from "./paso-confirmacion/BloqueEscaleraAccesoOT";
 import DespieceAdicional from "./paso-confirmacion/DespieceAdicional"
 import Loader from "../../../../shared/components/Loader";
 
@@ -51,17 +54,29 @@ export default function PasoConfirmacion() {
     <div className="paso-formulario">
       <h3>Paso 5: Confirmación Final</h3>
 
-      {formData.uso_id === 5 && (
         <BloquePuntales formData={formData} setFormData={setFormData} />
+
+      {formData.uso_id === 7 && ( // Si es caso plataforma de descarga mostrar este bloque
+        <BloquePlataformaDescarga formData={formData} setFormData={setFormData} />
       )}
 
-      <ResumenDespiece
-        duracion_alquiler={formData.duracion_alquiler}
-        despiece={formData.despiece}
-        resumen={formData.resumenDespiece}
-        tipo={formData.tipo_cotizacion}
-      />
+      {/* 
+        Si es escalera de acceso en alquiler generado por el comercial con CP0,
+        renderizamos este bloque
+      */}
+      {formData.uso_id === 3 && formData.tipo_cotizacion === "Alquiler" && !formData.id && (
+        <BloqueEscaleraAcceso formData={formData} setFormData={setFormData} />
+      )}
 
+      {/* Siempre mostraremos el resumen del despiece con sus condiciones dentro del mismo bloque */}
+      <ResumenDespiece formData={formData} />
+      
+      {/* Si es escalera de acceso generado por Despiece de Oficina Técnica */}
+      {formData.uso_id === 3 && formData.id && (
+        <BloqueEscaleraAccesoOT formData={formData} setFormData={setFormData} />
+      )}
+
+      {/* Sección para determinar si se añadirán piezas adicionales al despiece */}
       <div className="wizard-section">
         <label>¿Desea agregar más piezas al despiece?</label>
         <select
@@ -82,19 +97,34 @@ export default function PasoConfirmacion() {
         )}
       </div>
 
-
+      {/* En caso la sección previa sea afirmativa, mostramos este bloque */}
       {formData.agregar_mas_piezas && (
         <DespieceAdicional formData={formData} setFormData={setFormData} />
       )}
 
+      {/*
+        Siempre que exista pernos en el despiece renderiza el BloquePernos.
+        Además siempre consultaremos mediante el BloqueTransporte si se desea incluir o no.
+      */}
       <BloquePernos formData={formData} setFormData={setFormData} errores={errores} />
       <BloqueTransporte formData={formData} setFormData={setFormData} errores={errores} />
+      
+      {/* Solo para los usos que sean instalables renderizamos el BloqueInstalacion */}
       {USOS_INSTALABLES.includes(formData.uso_id) && (
         <BloqueInstalacion formData={formData} setFormData={setFormData} errores={errores} />
       )}
+
+      {/* Solo para los usos que dependan exclusivamente del despiece se permitirá hacer descuento en % */}
       {!USOS_SIN_DESCUENTO.includes(formData.uso_id) && (
         <BloqueDescuento formData={formData} setFormData={setFormData} errores={errores} />
       )}
+
+      {/*En caso de que la cotización sea Escalera de Acceso en Venta para que apliquen descuento*/}
+      {formData.uso_id === 3 && formData.tipo_cotizacion === "Venta" && (
+        <BloqueDescuento formData={formData} setFormData={setFormData} errores={errores} />
+      )}
+      {console.log("FormData en Paso Confirmación viniendo de OT: ", formData)}
+
     </div>
   );
 }

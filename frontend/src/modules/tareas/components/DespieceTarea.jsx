@@ -71,6 +71,7 @@ export default function DespieceTarea({ formData, setFormData }) {
                       ) : (
                         <input
                           type="number"
+                          onWheel={(e) => e.target.blur()}
                           value={equipo[atrib.llave_json] || ""}
                           onChange={(e) =>
                             handleChange(zonaIndex, equipoIndex, atrib.llave_json, e.target.value)
