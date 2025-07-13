@@ -135,6 +135,8 @@ module.exports = async (dataParaGenerarDespiece) => {
 
   console.dir(dataGenerarDespieceEscuadras, { depth: null, colors: true });
 
+  console.log('dataGenerarDespieceEscuadras',dataGenerarDespieceEscuadras)
+
   const despieceGenerado = await generarDespieceEscuadras(
     dataGenerarDespieceEscuadras
   );
@@ -143,7 +145,10 @@ module.exports = async (dataParaGenerarDespiece) => {
     codigo: 200,
     respuesta: {
       mensaje: "Despiece del Uso ESCUADRAS generado exitosamente",
-      despieceGenerado: despieceGenerado,
+      despieceGenerado: {
+        ...despieceGenerado,
+        detalles_escuadras: dataGenerarDespieceEscuadras
+      },
     },
   };
 };

@@ -1,5 +1,5 @@
-import { verificarSaltoDePagina } from "../../componentes/pagina";
-import { renderTextoConNegrita } from "../../../../../utils/pdf/drawJustifiedText";
+import { verificarSaltoDePagina } from "../../../componentes/pagina";
+import { renderTextoConNegrita } from "../../../../../../utils/pdf/drawJustifiedText";
 
 export async function renderNotasColganteBasico(doc, data, currentY) {
   const indent = 20;

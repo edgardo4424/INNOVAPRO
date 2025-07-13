@@ -56,6 +56,12 @@ export function useRegistrarCotizacion(pasosLength) {
     if (formData.uso_id === 7 && formData.cantidad_plataformas) {
       extras.cantidad_plataformas = formData.cantidad_plataformas;
     }
+
+    if (formData.uso_id === 4 && formData.detalles_escuadras) {
+      // Escuadras con plataforma
+      extras.detalles_escuadras = formData.detalles_escuadras;
+    }
+    
     console.log("Parametros extras para el payload :", extras)
     return extras;
   }

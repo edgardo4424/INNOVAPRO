@@ -1,5 +1,5 @@
-import { verificarSaltoDePagina } from "../../componentes/pagina";
-import { drawJustifiedText } from "../../../../../utils/pdf/drawJustifiedText";
+import { verificarSaltoDePagina } from "../../../componentes/pagina";
+import { drawJustifiedText } from "../../../../../../utils/pdf/drawJustifiedText";
 
 export async function generarCuerpoPlanBasico(doc, data, startY = 120) {
   let currentY = startY;
