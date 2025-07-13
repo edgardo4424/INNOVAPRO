@@ -13,13 +13,16 @@ export default function DespieceAdicional({ formData, setFormData }) {
   const [piezasDisponibles, setPiezasDisponibles] = useState([]);
   const [piezaSeleccionada, setPiezaSeleccionada] = useState(null);
   const [cantidad, setCantidad] = useState("");
+  const [precioManual, setPrecioManual ] = useState("");
+
+  const tipoCotizacion = formData.tipo_cotizacion;
 
   const {
     despieceManual,
     agregarPieza,
     eliminarPieza
   } = useDespieceManual({
-    tipoCotizacion: formData.tipo_cotizacion,
+    tipoCotizacion,
     formData,
     onResumenChange: ({ nuevoDespiece, resumen }) => {
       const despieceOriginal = formData.despiece || [];
@@ -73,10 +76,11 @@ export default function DespieceAdicional({ formData, setFormData }) {
         piezaSeleccionada?.busqueda?.toLowerCase()
     );
     if (piezaEncontrada && cantidad > 0) {
-      const éxito = agregarPieza(piezaEncontrada, parseInt(cantidad));
+      const éxito = agregarPieza(piezaEncontrada, parseInt(cantidad), parseFloat(precioManual || 0));
       if (éxito) {
         setCantidad("");
         setPiezaSeleccionada(null);
+        setPrecioManual("");
       }
     }
   };
@@ -85,30 +89,40 @@ export default function DespieceAdicional({ formData, setFormData }) {
 
   return (
     <div className="wizard-section">
-      <h4 style={{ marginBottom: "0.5rem" }}>➕ Agregar piezas adicionales al despiece</h4>
+      <h4 className="mb-2">➕ Agregar piezas adicionales al despiece</h4>
 
-      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "flex-end" }}>
-        <div style={{ flex: "2 1 300px" }}>
+      <div className="flex flex-wrap gap-4 items-end">
+        <div className="flex-1 min-w-[220px]">
           <label>Buscar pieza:</label>
           <input
             type="text"
             placeholder="Ej: AM.0100 o Husillo"
             value={piezaSeleccionada?.busqueda || ""}
             onChange={(e) => {
-              const texto = e.target.value.toLowerCase();
-              const pieza = piezasDisponibles.find(
-                (p) =>
-                  p.item.toLowerCase().includes(texto) ||
-                  p.descripcion.toLowerCase().includes(texto)
-              );
-              if (pieza) {
-                setPiezaSeleccionada({ ...pieza, busqueda: e.target.value });
-              } else {
-                setPiezaSeleccionada({ busqueda: e.target.value });
+              const texto = e.target.value;
+              setPiezaSeleccionada({ busqueda: texto }); // solo texto por ahora
+
+              if (texto.trim() === "") {
+                setPrecioManual(""); // limpiamos el precio si se borra la busqueda
               }
             }}
+            onBlur={(e) => {
+              const texto = e.target.value.toUpperCase().trim();
+              const pieza = piezasDisponibles.find(
+                (p) =>
+                  `${p.item} - ${p.descripcion}`.toUpperCase() === texto
+              );
+              if (pieza) {
+                const precioBase = tipoCotizacion === "Alquiler"
+                  ? pieza.precio_alquiler_soles
+                  : pieza.precio_venta_soles;
+
+                setPiezaSeleccionada({ ...pieza, busqueda: texto });
+                setPrecioManual(parseFloat(precioBase || 0).toFixed(2));
+              } 
+            }}
             list="piezas-lista"
-            style={{ width: "100%" }}
+            className="input w-full"
           />
           <datalist id="piezas-lista">
             {piezasDisponibles.map((pieza) => (
@@ -117,61 +131,81 @@ export default function DespieceAdicional({ formData, setFormData }) {
           </datalist>
         </div>
 
-        <div style={{ flex: "1 1 150px" }}>
+        <div className="w-32">
           <label>Cantidad:</label>
           <input
             type="number"
-            onWheel={(e) => e.target.blur()}
             min="1"
+            onWheel={(e) => e.target.blur()}
             value={cantidad}
             onChange={(e) => setCantidad(e.target.value)}
-            style={{ width: "100%" }}
+            className="input w-full"
           />
         </div>
 
-        <div style={{ flex: "0 0 auto" }}>
-          <button type="button" onClick={handleAgregar}>
+        <div className="w-44">
+          <label>Precio unitario (S/):</label>
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            value={precioManual}
+            onChange={(e) => setPrecioManual(e.target.value)}
+            onWheel={(e) => e.target.blur()}
+            className="input w-full"
+          />
+        </div>
+
+        <div>
+          <button
+            type="button"
+            onClick={handleAgregar}
+            className="bg-blue-800 hover:bg-blue-700 text-white py-2 px-4 rounded transition"
+          >
             Agregar
           </button>
         </div>
       </div>
 
       {piezasVisuales.length > 0 && (
-        <div style={{ marginTop: "1rem" }}>
-          <h5>Piezas adicionales:</h5>
-          <ul style={{ paddingLeft: 0 }}>
-            {despieceManual.map((pieza, idx) => (
-                <li
-                key={`${pieza.id}-${idx}`}
-                style={{
-                    marginBottom: "0.5rem",
-                    borderBottom: "1px solid #ddd",
-                    paddingBottom: "0.3rem",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center"
-                }}
-                >
-                <span>
-                    <strong>{idx + 1}.</strong> {pieza.descripcion} — <strong>{pieza.cantidad}</strong> unidades
-                </span>
-                <button
-                    onClick={() => eliminarPieza(pieza.id)}
-                    style={{
-                    backgroundColor: "#ff4d4f",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "4px",
-                    padding: "0.2rem 0.5rem",
-                    cursor: "pointer"
-                    }}
-                >
-                    Eliminar
-                </button>
-                </li>
-            ))}
-            </ul>
+        <div className="mt-6">
+          <h5 className="mb-2">Piezas adicionales:</h5>
+          <table className="w-full text-sm border">
+            <thead>
+              <tr className="bg-gray-100 text-left">
+                <th className="py-1 px-2">#</th>
+                <th className="py-1 px-2">Descripción</th>
+                <th className="py-1 px-2">Cantidad</th>
+                <th className="py-1 px-2">Precio unitario</th>
+                <th className="py-1 px-2">Subtotal</th>
+                <th className="py-1 px-2 text-center">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              {despieceManual.map((pieza, idx) => {
+                const unitario = parseFloat(pieza.precio_unitario_alquiler || pieza.precio_unitario_venta || 0);
+                const subtotal = (unitario * parseFloat(pieza.cantidad || 0)).toFixed(2);
 
+                return (
+                  <tr key={idx} className="border-t">
+                    <td className="py-1 px-2">{idx + 1}</td>
+                    <td className="py-1 px-2">{pieza.descripcion}</td>
+                    <td className="py-1 px-2">{pieza.cantidad}</td>
+                    <td className="py-1 px-2">S/ {unitario.toFixed(2)}</td>
+                    <td className="py-1 px-2">S/ {subtotal}</td>
+                    <td className="py-1 px-2 text-center">
+                      <button
+                        onClick={() => eliminarPieza(pieza.id)}
+                        className="text-red-600 hover:underline text-xs"
+                      >
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

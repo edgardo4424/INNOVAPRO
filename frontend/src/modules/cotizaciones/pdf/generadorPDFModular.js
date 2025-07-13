@@ -3,6 +3,7 @@ import generarPDFPuntales from "./plantillas/puntales/generarPDF";
 import generarPDFEscaleraAndamioFachada from "./plantillas/escalera_acceso_andamio_fachada/generarPDF";
 import generarPDFEscuadras from "./plantillas/escuadras/generarPDF";
 import generarPDFPlataformaDescarga from "./plantillas/plataforma_descarga/generarPDF"
+import generarPDFColgante from "./plantillas/andamio_colgante/generarPDF";
 
 
 export default function generarPDFPorUso({ uso_id, data, doc }) {
@@ -17,6 +18,8 @@ export default function generarPDFPorUso({ uso_id, data, doc }) {
       return generarPDFEscuadras(doc, data);
     case 5:
       return generarPDFPuntales(doc, data);
+    case 6:
+      return generarPDFColgante(doc, data);
     case 7:
       return generarPDFPlataformaDescarga(doc, data);
     default:

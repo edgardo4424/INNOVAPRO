@@ -4,6 +4,7 @@ import { drawJustifiedText } from "./drawJustifiedText";
 
 /**
  * Renderiza una lista con numeración a la izquierda y texto justificado al lado.
+ * Si el contenido contiene saltos de línea, renderiza subitems con viñetas.
  * 
  * @param {jsPDF} doc - Instancia de jsPDF.
  * @param {Array<string>} lista - Arreglo de strings numerados (ej. "1° Texto...", "2° Texto...")
@@ -28,16 +29,29 @@ export async function renderListaJustificada({
   for (const linea of lista) {
     const [numero, ...resto] = linea.trim().split(" ");
     const contenido = resto.join(" ");
+    const subBloques = contenido.split("\n");
+    /* 
     const palabras = contenido.split(/\s+/);
     const aproxLineas = Math.ceil(palabras.length / 11);
     const alturaEstimado = aproxLineas * lineHeight + 1.5;
+ */
 
-    y = await verificarSaltoDePagina(doc, y, alturaEstimado);
-
+    // Render del número
+    y = await verificarSaltoDePagina(doc, y, lineHeight);
     doc.setFontSize(fontSize);
     doc.text(numero, x + 3, y); // Número
 
-    y = drawJustifiedText(doc, contenido, x + 13, y, maxWidth - 10, lineHeight, fontSize); // Contenido
+    // Si hay subbloques (párrafos o viñetas)
+    for (let i=0; i < subBloques.length; i++) {
+      const texto = subBloques[i].trim();
+      const esViñeta = texto.startsWith("-");
+
+      const contenidoFinal = esViñeta ? texto : texto;
+      const offsetX = i === 0 ? x + 13 : x + 17;
+      const widthFinal = i === 0 ? maxWidth - 10 : maxWidth - 14;
+
+      y = drawJustifiedText(doc, contenidoFinal, offsetX, y, widthFinal, lineHeight, fontSize); // Contenido
+    }
   }
 
   return y;

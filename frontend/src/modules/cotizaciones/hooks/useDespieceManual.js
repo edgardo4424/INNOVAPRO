@@ -12,19 +12,29 @@ export default function useDespieceManual({ tipoCotizacion, formData, onResumenC
     }
   }, [despieceManual]);
 
-  const agregarPieza = (pieza, cantidad) => {
+  const agregarPieza = (pieza, cantidad, precioManual) => {
     const yaExiste = despieceManual.find(p => p.id === pieza.id);
     if (yaExiste) return false;
 
     const pesoTotal = parseFloat(pieza.peso_kg) * cantidad;
 
+    // Detectamos si es cotización de Aqluiler o Venta
+    const esAlquiler = tipoCotizacion === "Alquiler";
+
+    const precioUnitario = parseFloat(precioManual || (esAlquiler ? pieza.precio_alquiler_soles : pieza.precio_venta_soles));
+    const subtotal = precioUnitario * cantidad;
+
     const nueva = {
       ...pieza,
       cantidad,
       descripcion: `${pieza.descripcion}`,
-      subtotal_alquiler: (parseFloat(pieza.precio_alquiler_soles) * cantidad).toFixed(2),
-      subtotal_venta: (parseFloat(pieza.precio_venta_soles) * cantidad).toFixed(2),
-      peso_kg_total: pesoTotal
+      peso_kg_total: pesoTotal,
+      precio_unitario_alquiler: esAlquiler ? precioUnitario : 0,
+      precio_unitario_venta: !esAlquiler ? precioUnitario : 0,
+      subtotal_alquiler: esAlquiler ? subtotal.toFixed(2) : 0,
+      subtotal_venta: !esAlquiler ? subtotal.toFixed(2) : 0,
+      precio_venta_soles: !esAlquiler ? subtotal.toFixed(2) : 0,
+      precio_alquiler_soles: esAlquiler ? subtotal.toFixed(2) : 0,
     };
 
     setDespieceManual(prev => [...prev, nueva]);
