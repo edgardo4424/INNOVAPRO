@@ -101,7 +101,7 @@ async function generarPdfEscuadras({ idDespiece, porcentajeDescuento }) {
   });
 
   console.log('piezasDetalleEscuadrasEncontrado', piezasDetalleEscuadrasEncontrado);
-  const piezasDetalleEscuadras = piezasDetalleEscuadrasEncontrado.map((p) => {
+  const piezasDetallePlataformas = piezasDetalleEscuadrasEncontrado.map((p) => {
     const pieza = p.get({ plain: true });
 
     console.log({
@@ -205,7 +205,7 @@ async function generarPdfEscuadras({ idDespiece, porcentajeDescuento }) {
   return {
     zonas: listaAtributosConCantidadPlataformas,
     piezasAdicionales: piezasDetalleAdicionalesEscuadrasConDescuento,
-    piezasDetalleEscuadras: piezasDetalleEscuadras
+    piezasDetallePlataformas: piezasDetallePlataformas
   };
 }
 
