@@ -150,6 +150,7 @@ function agruparEscuadrasPorZonaYAtributos(data) {
 
     if (zonaObj.atributosMap.has(clave)) {
       zonaObj.atributosMap.get(clave).cantidadEscuadrasTramo += cantidadEscuadrasTramo;
+      zonaObj.atributosMap.get(clave).cantidad_uso += 1;
     } else {
       zonaObj.atributosMap.set(clave, {
   escuadra,
@@ -159,6 +160,7 @@ function agruparEscuadrasPorZonaYAtributos(data) {
   longTramo,
   tipoPlataforma,
   cantidadEscuadrasTramo: Number(cantidadEscuadrasTramo),
+  cantidad_uso: 1,
 });
     }
   }

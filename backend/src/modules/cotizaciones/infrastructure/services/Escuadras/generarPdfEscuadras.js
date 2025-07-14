@@ -82,8 +82,80 @@ async function generarPdfEscuadras({ idDespiece, porcentajeDescuento }) {
 });
 
 
+  // Obtener las piezas que empiecen con el item AM. en despieces_detalle
+  const piezasDetalleEscuadrasEncontrado = await db.despieces_detalle.findAll({
+    where: {
+      despiece_id: idDespiece,
+    },
+    include: [
+      {
+        model: db.piezas,
+        as: "pieza",
+        where: {
+          item: {
+            [db.Sequelize.Op.like]: "AM.%",
+          },
+        },
+      },
+    ]
+  });
+
+  console.log('piezasDetalleEscuadrasEncontrado', piezasDetalleEscuadrasEncontrado);
+  const piezasDetalleEscuadras = piezasDetalleEscuadrasEncontrado.map((p) => {
+    const pieza = p.get({ plain: true });
+
+    console.log({
+
+      precio_alquiler_soles: pieza.precio_alquiler_soles,
+      precio_venta_soles: pieza.precio_venta_soles,
+      cantidad: pieza.cantidad,
+    })
+
+    return {
+      item: pieza.pieza.item,
+      descripcion: pieza.pieza.descripcion,
+      cantidad: pieza.cantidad,
+      precio_alquiler_soles: pieza.precio_alquiler_soles,
+      precio_venta_soles: pieza.precio_venta_soles,
+      precio_venta_dolares: pieza.precio_venta_dolares,
+     /*  precio_u_alquiler_soles: (Number(pieza.precio_alquiler_soles)/Number(pieza.cantidad)).toFixed(2),
+      precio_u_venta_soles:(Number(pieza.precio_venta_soles)/Number(pieza.cantidad)).toFixed(2), */
+    };
+  });
+
   const listaAtributos = agruparEscuadrasPorZonaYAtributos(resultadoConCantidad);
 
+  const listaAtributosConCantidadPlataformas = listaAtributos.map((zona) => {
+
+    const atributos = zona.atributos.map((at) => {
+      let cantidadPlataformas = 0;
+      console.log('at.escuadra', at.escuadra);
+      switch (at.escuadra+"") {
+        case "3":
+          cantidadPlataformas = 10*at.cantidad_uso;
+          break;
+        case "1":
+        cantidadPlataformas = 3*at.cantidad_uso;
+          break;
+        default:
+          break;
+      }
+      return {
+        ...at,
+        cantidadPlataformas: cantidadPlataformas
+      }
+    }
+    );
+    return {
+      ...zona,
+      atributos: atributos,
+    }
+  })
+
+  console.log('listaAtributosConCantidadPlataformas', listaAtributosConCantidadPlataformas);
+
+
+  
   // Obtener las piezas adicionales
 
   const piezasDetalleAdicionalesEscuadras = await db.despieces_detalle.findAll({
@@ -131,8 +203,9 @@ async function generarPdfEscuadras({ idDespiece, porcentajeDescuento }) {
     });
 
   return {
-    zonas: listaAtributos,
+    zonas: listaAtributosConCantidadPlataformas,
     piezasAdicionales: piezasDetalleAdicionalesEscuadrasConDescuento,
+    piezasDetalleEscuadras: piezasDetalleEscuadras
   };
 }
 
