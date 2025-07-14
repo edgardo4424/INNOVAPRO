@@ -18,27 +18,43 @@ export default function useDespieceManual({ tipoCotizacion, formData, onResumenC
 
     const pesoTotal = parseFloat(pieza.peso_kg) * cantidad;
 
-    // Detectamos si es cotización de Aqluiler o Venta
     const esAlquiler = tipoCotizacion === "Alquiler";
 
-    const precioUnitario = parseFloat(precioManual || (esAlquiler ? pieza.precio_alquiler_soles : pieza.precio_venta_soles));
-    const subtotal = precioUnitario * cantidad;
-
-    const nueva = {
+    let precioUnitario;
+    let subtotal;
+    let nueva = {
       ...pieza,
       cantidad,
       descripcion: `${pieza.descripcion}`,
       peso_kg_total: pesoTotal,
-      precio_unitario_alquiler: esAlquiler ? precioUnitario : 0,
-      precio_unitario_venta: !esAlquiler ? precioUnitario : 0,
-      subtotal_alquiler: esAlquiler ? subtotal.toFixed(2) : 0,
-      subtotal_venta: !esAlquiler ? subtotal.toFixed(2) : 0,
-      precio_venta_soles: !esAlquiler ? subtotal.toFixed(2) : 0,
-      precio_alquiler_soles: esAlquiler ? subtotal.toFixed(2) : 0,
+      esAdicional: true,
     };
+
+    // Usamos manual si se proporcionó, sino el de base
+    if (esAlquiler) {
+      const precioManualAlquiler = parseFloat(precioManual || pieza.precio_alquiler_soles);
+      precioUnitario = precioManualAlquiler;
+      subtotal = precioUnitario * cantidad;
+
+      nueva.precio_unitario_alquiler = precioUnitario;
+      nueva.subtotal_alquiler = subtotal.toFixed(2);
+      nueva.precio_alquiler_soles = precioUnitario;
+      nueva.precio_manual_alquiler = precioManual ? parseFloat(precioManual) : null;
+
+    } else {
+      const precioManualVenta = parseFloat(precioManual || pieza.precio_venta_soles);
+      precioUnitario = precioManualVenta;
+      subtotal = precioUnitario * cantidad;
+
+      nueva.precio_unitario_venta = precioUnitario;
+      nueva.subtotal_venta = subtotal.toFixed(2);
+      nueva.precio_venta_soles = precioUnitario;
+      nueva.precio_manual_venta = precioManual ? parseFloat(precioManual) : null;
+    }
 
     setDespieceManual(prev => [...prev, nueva]);
     return true;
+
   };
 
   const eliminarPieza = (piezaId) => {

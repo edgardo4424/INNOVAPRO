@@ -183,6 +183,7 @@ export default function DespieceAdicional({ formData, setFormData }) {
             </thead>
             <tbody>
               {despieceManual.map((pieza, idx) => {
+                console.log("Piezas", pieza, idx)
                 const unitario = parseFloat(pieza.precio_unitario_alquiler || pieza.precio_unitario_venta || 0);
                 const subtotal = (unitario * parseFloat(pieza.cantidad || 0)).toFixed(2);
 
