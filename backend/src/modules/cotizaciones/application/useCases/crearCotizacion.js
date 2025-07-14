@@ -25,6 +25,8 @@ const {
 const ID_ESTADO_COTIZACION_POR_APROBAR = 3;
 
 module.exports = async (cotizacionData, cotizacionRepository) => {
+
+  console.log('cotizacionData', cotizacionData);
   const transaction = await db.sequelize.transaction(); // Iniciar transacción
 
   try {
@@ -65,6 +67,12 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       dataParaDespiece.detalles_opcionales = cotizacion.detalles_escaleras;
     }
 
+    if(uso_id == "4"){
+      // Si es escuadras con plataforma, se añade detalles_opcionales
+      dataParaDespiece.detalles_opcionales = cotizacion.detalles_escuadras;
+
+    }
+
     console.log("dataParaDespiece", dataParaDespiece);
 
     // Valida los campos del despiece
@@ -72,6 +80,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       dataParaDespiece,
       "crear"
     );
+    console.log('pase insertar despiece')
 
     if (errorCampos)
       return { codigo: 400, respuesta: { mensaje: errorCampos } };
@@ -101,7 +110,11 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       }
     }
 
+    console.log('pase validacion detalles despiece')
+
     await db.despieces_detalle.bulkCreate(detalles, { transaction });
+
+    console.log('inserto despiece detalle')
 
     // 4. Insertar Atributos Valor
     const atributosValor = await mapearValoresAtributos({

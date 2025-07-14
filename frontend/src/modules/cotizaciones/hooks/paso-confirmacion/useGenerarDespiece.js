@@ -108,6 +108,10 @@ export function useGenerarDespiece(formData, setFormData) {
           }
         }
 
+        if(uso_id === 4 && data.detalles_escuadras) { // Si es escuadras con plataforma
+          nuevoEstado.detalles_escuadras = data.detalles_escuadras
+        }
+
         setFormData(nuevoEstado);
       } catch (error) {
         console.error("❌ Error generando despiece:", error.message);

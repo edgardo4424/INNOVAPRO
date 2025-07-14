@@ -47,7 +47,7 @@ export async function generarCuerpoEscuadras(doc, data, startY = 120) {
       const tramo = equipo.longTramo ? `${equipo.longTramo} mm` : "—";
       const plataforma = equipo.tipoPlataforma || "—";
       const anclaje = equipo.tipoAnclaje || "—";
-      const cantidad = equipo.cantidad_uso || "—";
+      const cantidad = equipo.cantidadEscuadrasTramo || "—";
 
       const descripcion = `${cantidad} Uds. Escuadras de ${tipo}.00 x 2.00 para una carga de ${sobrecarga} kg/m2.`;
 
