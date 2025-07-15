@@ -17,6 +17,14 @@ const Trabajador = sequelize.define(
             key: "id",
          },
       },
+      cargo_id: {
+         type: DataTypes.INTEGER,
+         allowNull: false,
+         references: {
+            model: "cargos",
+            key: "id",
+         },
+      },
       nombres: {
          type: DataTypes.STRING,
          allowNull: false,
@@ -70,15 +78,18 @@ const Trabajador = sequelize.define(
 );
 
 Trabajador.associate = (models) => {
-   
    Trabajador.hasMany(models.asistencias, {
       foreignKey: "trabajador_id",
-      as:"asistencias"
+      as: "asistencias",
    });
 
    Trabajador.belongsTo(models.empresas_proveedoras, {
       foreignKey: "filial_id",
       as: "empresa_proveedora",
+   });
+   Trabajador.belongsTo(models.cargos, {
+      foreignKey: "cargo_id",
+      as: "cargo",
    });
 };
 module.exports = { Trabajador };

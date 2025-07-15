@@ -7,7 +7,7 @@ const TrabajadorController = require("../controllers/trabajadorController");
 
 router.use(verificarToken); // Verificamos el token para todas las rutas
 
-router.post("/crear",TrabajadorController.crearTrabajador);
-router.get("/filial/:id",TrabajadorController.obtenerTrabajadoresPorFilial)
-
+router.post("/crear", TrabajadorController.crearTrabajador);
+router.get("/filial/:id/:fecha", TrabajadorController.obtenerTrabajadoresPorArea);
+router.get("/", TrabajadorController.obtenerTrabajadores);
 module.exports = router;

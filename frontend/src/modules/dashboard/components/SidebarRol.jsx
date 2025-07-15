@@ -65,8 +65,7 @@ const iconMap = {
    "Registrar Cotización": FileEdit,
    "Stock de Piezas": Boxes,
    Trabajadores: Users,
-   "Facturación":ScrollText
-
+   Facturación: ScrollText,
 };
 
 const modulesByRole = {
@@ -99,19 +98,16 @@ const modulesByRole = {
       {
          group: "Asistencia",
          items: [
-            { name: "Encofrados ", path: "/asistencia/encofrados" },
+            { name: "Almacen ", path: "/asistencia/almacen?area_id=2" },
             {
-               name: "Andamios Eléctricos",
-               path: "/asistencia/andamios-electricos",
+               name: "Montadores",
+               path: "/asistencia/montadores?area_id=6",
             },
-            { name: "Indek Andina", path: "/asistencia/indek-andina" },
-            {
-               name: "Innova Rental",
-               path: "/innova-rental",
-            },
+            { name: "Ventas ", path: "/asistencia/ventas?area_id=9" },
          ],
       },
       { name: "Facturación", path: "/facturacion" },
+      { name: "Planilla", path: "/planilla" },
    ],
    Ventas: [
       { name: "Gestión de Clientes", path: "/gestion-clientes" },
@@ -133,9 +129,8 @@ const modulesByRole = {
 };
 
 const isPathActive = (currentPath, itemPath) => {
-   if (itemPath === "/" && currentPath === "/") return true;
-   if (itemPath !== "/" && currentPath.startsWith(itemPath)) return true;
-   return false;
+   const itemUrl = new URL(itemPath, window.location.origin); // para extraer pathname de itemPath
+   return currentPath.startsWith(itemUrl.pathname);
 };
 
 const getUserInitials = (name) => {

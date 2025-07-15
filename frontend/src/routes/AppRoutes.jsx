@@ -11,10 +11,8 @@ import RoleGuard from "./rol.guard";
 import { WizardProvider } from "@/modules/cotizaciones/context/WizardCotizacionContext";
 import LoaderInnova from "@/shared/components/LoaderInnova";
 import GestionTrabajadores from "@/modules/trabajadores/pages/GestionTrabajadores";
-import AsistenciaAndamiosElectricos from "@/modules/asistencia/pages/AsistenciaAndamiosElectricos";
-import AsistenciaEncofrados from "@/modules/asistencia/pages/AsistenciaEncofrados";
-import AsistenciaIndekAndina from "@/modules/asistencia/pages/AsistenciaIndekAndina";
-import AsistenciaInnovaRental from "@/modules/asistencia/pages/AsistenciaInnovaRental";
+import Montadores from "@/modules/asistencia/pages/montadores";
+import PlanillaEnConstruccion from "@/modules/planilla/pages/planilla";
 
 // Lazy load components
 const Login = lazy(() => import("@/modules/auth/pages/Login"));
@@ -163,7 +161,11 @@ export default function AppRoutes() {
                         />
                      </Route>
                      <Route
-                        element={<RoleGuard roles={["Gerencia", "Ventas","Oficina Técnica"]} />}
+                        element={
+                           <RoleGuard
+                              roles={["Gerencia", "Ventas", "Oficina Técnica"]}
+                           />
+                        }
                      >
                         <Route
                            path="stock/piezas"
@@ -178,12 +180,7 @@ export default function AppRoutes() {
                               </WizardProvider>
                            }
                         />
-                        <Route
-                           path="/facturacion"
-                           element={
-                              <Facturacion />
-                           }
-                        />
+                        <Route path="/facturacion" element={<Facturacion />} />
                      </Route>
 
                      <Route element={<RoleGuard roles={["Gerencia"]} />}>
@@ -202,28 +199,28 @@ export default function AppRoutes() {
 
                      <>
                         {/* Rutas para el modulo de aistencia */}
-                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                        {/* <Route element={<RoleGuard roles={["Gerencia"]} />}>
                            <Route
                               path="asistencia/encofrados"
                               element={<AsistenciaEncofrados />}
                            />
-                        </Route>
+                        </Route> */}
                         <Route element={<RoleGuard roles={["Gerencia"]} />}>
                            <Route
-                              path="asistencia/andamios-electricos"
-                              element={<AsistenciaAndamiosElectricos />}
+                              path="asistencia/:tipo"
+                              element={<Montadores />}
                            />
                         </Route>
-                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                        {/* <Route element={<RoleGuard roles={["Gerencia"]} />}>
                            <Route
                               path="asistencia/indek-andina"
                               element={<AsistenciaIndekAndina />}
                            />
-                        </Route>
+                        </Route> */}
                         <Route element={<RoleGuard roles={["Gerencia"]} />}>
                            <Route
-                              path="asistencia/innova-rental"
-                              element={<AsistenciaInnovaRental />}
+                              path="planilla"
+                              element={<PlanillaEnConstruccion />}
                            />
                         </Route>
                      </>

@@ -1,25 +1,21 @@
 const { Trabajador } = require("../models/trabajadorModel");
 const db = require("../../../../models");
 const EmpresaProveedora = db.empresas_proveedoras;
-const hoy = new Date();
-const fechaHoy = hoy.toISOString().slice(0, 10);
 const { Op, fn, col, where } = require("sequelize");
 class SequelizeTrabajadorRepository {
    async crear(trabajadorData) {
-      console.log("sequalize", trabajadorData);
-
+      console.log(trabajadorData);
       const trabajador = await Trabajador.create(trabajadorData);
       return trabajador;
    }
-   async obtenerTrabajadoresPorFilial(filialId) {
+   async obtenerTrabajadoresPorArea(areaId, fecha) {
       const trabajadores = await Trabajador.findAll({
-         where: { filial_id: filialId },
          include: [
             {
                model: db.asistencias,
                as: "asistencias",
                required: false,
-               where: where(fn("DATE", col("asistencias.fecha")), fechaHoy),
+               where: where(fn("DATE", col("asistencias.fecha")), fecha),
                include: [
                   { model: db.gastos, as: "gastos" },
                   {
@@ -35,6 +31,14 @@ class SequelizeTrabajadorRepository {
                   },
                ],
             },
+            {
+               model: db.cargos,
+               as: "cargo",
+               required: true,
+               where: {
+                  area_id: areaId, // <--- filtro aquí por area_id
+               },
+            },
          ],
       });
 
@@ -45,37 +49,26 @@ class SequelizeTrabajadorRepository {
          delete data.asistencias;
          return data;
       });
-
-      console.log(resultado);
-
       return resultado;
+   }
+
+   async obtenerTrabajadores() {
+      const trabajadores = await Trabajador.findAll({
+         include: [
+            {
+               model: db.cargos,
+               as: "cargo",
+               include: [
+                  {
+                     model: db.areas,
+                     as: "area",
+                  },
+               ],
+            },
+         ],
+      });
+      return trabajadores;
    }
 }
 
 module.exports = SequelizeTrabajadorRepository;
-
-
-// {
-//   "id": 4,
-//   "filial_id": 2,
-//   "nombres": "Carlos",
-//   "apellidos": "Ramírez",
-//   "tipo_documento": "DNI",
-//   "numero_documento": "12345678",
-//   "fecha_ingreso": "2024-06-15",
-//   "fecha_salida": null,
-//   "sueldo_base": 2800,
-//   "asignacion_familiar": true,
-//   "sistema_pension": "AFP",
-//   "quinta_categoria": false,
-//   "estado": "activo",
-//   "asistencia": {
-//     "id": 1,
-//     "trabajador_id": 4,
-//     "fecha": "2025-07-11T15:00:00.000Z",
-//     "horas_trabajadas": 5.5,
-//     "estado_asistencia": "falto",
-//     "gastos": [],
-//     "jornadas": []
-//   }
-// }

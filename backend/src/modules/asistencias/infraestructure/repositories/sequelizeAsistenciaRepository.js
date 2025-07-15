@@ -1,0 +1,124 @@
+const { where } = require("sequelize");
+const sequelize = require("../../../../config/db");
+const { Asistencia } = require("../models/asistenciaModel");
+const { Gasto } = require("../models/gastoModel");
+const { Jornada } = require("../models/jornadaModel");
+
+class SequelizeAsistenciaRepository {
+   async crearAsistencia(asistenciaData) {
+      const t = await sequelize.transaction();
+      try {
+         const asistencia = await Asistencia.create(
+            {
+               trabajador_id: asistenciaData.trabajador_id,
+               horas_trabajadas: asistenciaData.horas_trabajadas || null,
+               horas_extras: asistenciaData.horas_extras || null,
+               estado_asistencia: asistenciaData.estado_asistencia,
+               fecha: asistenciaData.fecha,
+            },
+            {
+               transaction: t,
+            }
+         );
+         if (asistenciaData.gastos && asistenciaData.gastos.length > 0) {
+            for (const gasto of asistenciaData.gastos) {
+               await Gasto.create(
+                  {
+                     asistencia_id: asistencia.id,
+                     descripcion: gasto.descripcion,
+                     monto: gasto.monto,
+                  },
+                  {
+                     transaction: t,
+                  }
+               );
+            }
+         }
+         if (asistenciaData.jornadas && asistenciaData.jornadas.length > 0) {
+            for (const jornada of [...asistenciaData.jornadas].reverse()) {
+               await Jornada.create(
+                  {
+                     asistencia_id: asistencia.id,
+                     tipo_trabajo_id: jornada.tipo_trabajo_id,
+                     turno: jornada.turno,
+                     lugar: jornada.lugar,
+                  },
+                  {
+                     transaction: t,
+                  }
+               );
+            }
+         }
+         await t.commit();
+      } catch (error) {
+         await t.rollback();
+         throw new Error(error.message);
+      }
+   }
+   async actualizarAsistencia(asistenciaData) {
+      const t = await sequelize.transaction();
+      try {
+          await Asistencia.update(
+            {
+               horas_trabajadas: asistenciaData.horas_trabajadas || null,
+               horas_extras: asistenciaData.horas_extras || null,
+               estado_asistencia: asistenciaData.estado_asistencia,
+            },
+            {
+               where: {
+                  id: asistenciaData.id,
+               },
+               transaction: t,
+            }
+         );
+         await Gasto.destroy({
+            where: {
+               asistencia_id: asistenciaData.id,
+            },
+            transaction: t,
+         });
+         await Jornada.destroy({
+            where: {
+               asistencia_id: asistenciaData.id,
+            },
+            transaction: t,
+         });
+         if (asistenciaData.gastos && asistenciaData.gastos.length > 0) {
+            for (const gasto of asistenciaData.gastos) {
+               await Gasto.create(
+                  {
+                     asistencia_id: asistenciaData.id,
+                     descripcion: gasto.descripcion,
+                     monto: gasto.monto,
+                  },
+                  {
+                     transaction: t,
+                  }
+               );
+            }
+         }
+         if (asistenciaData.jornadas && asistenciaData.jornadas.length > 0) {
+            for (const jornada of [...asistenciaData.jornadas].reverse()) {
+               await Jornada.create(
+                  {
+                     asistencia_id: asistenciaData.id,
+                     tipo_trabajo_id: jornada.tipo_trabajo_id,
+                     turno: jornada.turno,
+                     lugar: jornada.lugar,
+                  },
+                  {
+                     transaction: t,
+                  }
+               );
+            }
+         }
+
+         await t.commit();
+      } catch (error) {
+         await t.rollback();
+         throw new Error(error.message);
+      }
+   }
+}
+
+module.exports = SequelizeAsistenciaRepository;

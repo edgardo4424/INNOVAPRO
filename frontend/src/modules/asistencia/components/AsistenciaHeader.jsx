@@ -11,6 +11,7 @@ import {
    Sun,
    Users,
 } from "lucide-react";
+import { formatearFecha } from "../libs/formatearFecha";
 
 const AsistenciaHeader = ({
    trabajadores,
@@ -25,6 +26,7 @@ const AsistenciaHeader = ({
             <CardTitle className="flex items-center gap-2 text-2xl">
                <Users className="h-6 w-6" />
                Control de Asistencia "{title}"
+               <p>{formatearFecha(fechaSeleccionada)}</p>
             </CardTitle>
          </CardHeader>
          <CardContent>
@@ -39,6 +41,7 @@ const AsistenciaHeader = ({
                         value={fechaSeleccionada}
                         onChange={(e) => setFechaSeleccionada(e.target.value)}
                         className="w-auto"
+                        
                      />
                   </div>
                </div>

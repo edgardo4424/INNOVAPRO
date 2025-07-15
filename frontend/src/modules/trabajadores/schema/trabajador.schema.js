@@ -46,5 +46,13 @@ export const trabajadorSchema = (isEdit = false) =>
       quinta_categoria: yup
          .boolean()
          .required("La quinta categoría es requerida"),
+      cargo_id: yup
+         .number()
+         .transform((value, originalValue) =>
+            originalValue === "" ? null : value
+         )
+         .nullable()
+         .required("El cargo es obligatorio"),
+
       // estado y fecha_salida no se validan según tu requerimiento
    });
