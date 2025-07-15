@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import asistenciaService from "../services/asistenciaService";
 import AsistenciaHeader from "../components/AsistenciaHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import JornadaCard from "../components/JornadaCard";
 import BadgeEstadoAsistencia from "../components/BadgeEstadoAsistencia";
 import { useParams, useSearchParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import AsistenciaSimple from "../components/AsistenciaSimple";
 
-const Montadores = () => {
+const GestionAsistencia = () => {
    const { tipo } = useParams();
    const [searchParams] = useSearchParams();
    const area_id = searchParams.get("area_id");
@@ -37,26 +37,50 @@ const Montadores = () => {
          setLoading(false);
       }
    };
-
-   const estadisticas = {
-      presentes: 8,
-      ausentes: 9,
-      tardanzas: 7,
-      doble_turno: 4,
-   };
-
    useEffect(() => {
-      // Cuando el área cambia, reseteamos la fecha al día actual
       const hoy = new Date().toISOString().split("T")[0];
       setFechaSeleccionada(hoy);
    }, [area_id]);
 
-   useEffect(() => {      
+   useEffect(() => {
       if (fechaSeleccionada) {
-         console.log("La fecha seleccionada es: ", fechaSeleccionada);
          obtenerTrabajadores();
       }
    }, [fechaSeleccionada, area_id]);
+
+   const estadisticas = useMemo(() => {
+      const stats = {
+         presentes: 0,
+         ausentes: 0,
+         tardanzas: 0,
+         no_registrado: 0,
+         total: trabajadores.length,
+      };
+
+      trabajadores.forEach((trabajador) => {
+         if (trabajador.asistencia) {
+            switch (trabajador.asistencia.estado_asistencia) {
+               case "presente":
+                  stats.presentes++;
+                  break;
+               case "falto":
+               case "permiso":
+               case "falta-justificada":
+               case "vacaciones":
+               case "licencia":
+                  stats.ausentes++;
+                  break;
+               case "tardanza":
+                  stats.tardanzas++;
+                  break;
+            }
+         } else {
+            stats.no_registrado++; // Si no tiene asistencia
+         }
+      });
+
+      return stats;
+   }, [trabajadores]);
 
    return (
       <div className="min-h-full flex-1 flex flex-col items-center p-8">
@@ -79,12 +103,12 @@ const Montadores = () => {
                   Cargando trabajadores...
                </div>
             ) : (
-               <div className="space-y-6">
+               <div className="space-y-4">
                   {trabajadores.length === 0 ? (
                      <div className="text-center text-gray-400">
                         No hay trabajadores disponibles para esta área.
                      </div>
-                  ) : (
+                  ) : area_id == 6 || area_id == 2 ? (
                      trabajadores.map((trabajador) => (
                         <Card key={trabajador.id} className={"py-3 gap-2"}>
                            <CardHeader className={""}>
@@ -117,6 +141,15 @@ const Montadores = () => {
                            </CardContent>
                         </Card>
                      ))
+                  ) : (
+                     trabajadores.map((trabajador) => (
+                        <AsistenciaSimple
+                           key={trabajador.id}
+                           trabajador={trabajador}
+                           fecha={fechaSeleccionada}
+                           obtenerTrabajadores={obtenerTrabajadores}
+                        />
+                     ))
                   )}
                </div>
             )}
@@ -125,4 +158,4 @@ const Montadores = () => {
    );
 };
 
-export default Montadores;
+export default GestionAsistencia;

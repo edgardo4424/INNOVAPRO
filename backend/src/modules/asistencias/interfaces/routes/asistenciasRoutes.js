@@ -9,5 +9,6 @@ router.use(verificarToken); // Verificamos el token para todas las rutas
 
 router.post("/", AsistenciaController.crearAsistencia);
 router.put("/", AsistenciaController.actualizarAsistencia);
-
+router.post("/simple", AsistenciaController.crearAsistenciaSimple);
+router.put("/simple", AsistenciaController.actualizarAsistenciaSimple);
 module.exports = router;

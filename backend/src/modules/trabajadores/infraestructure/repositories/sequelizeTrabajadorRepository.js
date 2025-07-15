@@ -4,7 +4,6 @@ const EmpresaProveedora = db.empresas_proveedoras;
 const { Op, fn, col, where } = require("sequelize");
 class SequelizeTrabajadorRepository {
    async crear(trabajadorData) {
-      console.log(trabajadorData);
       const trabajador = await Trabajador.create(trabajadorData);
       return trabajador;
    }

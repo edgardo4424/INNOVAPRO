@@ -30,18 +30,12 @@ const TrabajadorController = {
       }
    },
    async obtenerTrabajadores(req, res) {
-      console.log("se entro");
-
       try {
          const trabajadores = await obtenerTrabajadores(trabajadorRepository);
-         console.log(trabajadores);
-
          res.status(trabajadores.codigo).json(
             trabajadores.respuesta.trabajadores
          );
       } catch (error) {
-         console.log(error);
-
          res.status(500).json({ error: error.message });
       }
    },

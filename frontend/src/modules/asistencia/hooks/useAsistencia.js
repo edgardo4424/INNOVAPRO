@@ -23,8 +23,6 @@ export const useAsistencia = (trabajador, obtenerTrabajadores, date) => {
 
    const [inputsDeshabilitados, setInputsDeshabilitados] = useState(false);
    useEffect(() => {
-      console.log(trabajador.asistencia);
-
       if (trabajador.asistencia) {
          setAsistencia(trabajador.asistencia);
       }
@@ -86,9 +84,8 @@ export const useAsistencia = (trabajador, obtenerTrabajadores, date) => {
 
    const guardarAsistencia = async () => {
       try {
-         console.log(asistencia);
 
-         const response = await asistenciaService.crearAsistenia(asistencia);
+        await asistenciaService.crearAsistenia(asistencia);
          obtenerTrabajadores();
          toast.success("Asistencia guardada corrrectamente");
       } catch (error) {
@@ -101,11 +98,7 @@ export const useAsistencia = (trabajador, obtenerTrabajadores, date) => {
    // };
    const actualizarEstadoAsistencia = async () => {
       try {
-         console.log(asistencia);
-
-         const response = await asistenciaService.actualizarAsistencia(asistencia);
-         console.log(response);
-         
+         await asistenciaService.actualizarAsistencia(asistencia);
          obtenerTrabajadores();
          toast.success("Asistencia Actualizada corrrectamente");
       } catch (error) {

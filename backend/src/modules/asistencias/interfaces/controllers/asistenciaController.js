@@ -1,5 +1,8 @@
 const actualizarAsistencia = require("../../application/useCases/actualizarAsistencia");
 const crearAsistencia = require("../../application/useCases/crearAsistencia");
+const crearAsistenciaSimple = require("../../application/useCases/crearAsistenciaSimple");
+const actualizarAsistenciaSimple = require("../../application/useCases/actualizarAsistenciaSimple");
+
 const SequelizeAsistenciaRepository = require("../../infraestructure/repositories/sequelizeAsistenciaRepository");
 
 const asistenciaRepository = new SequelizeAsistenciaRepository();
@@ -23,6 +26,36 @@ const AsistenciaController = {
    async actualizarAsistencia(req, res) {
       try {
          const asistencia = await actualizarAsistencia(
+            req.body,
+            asistenciaRepository
+         );
+         res.status(asistencia.codigo).json({
+            mensaje: asistencia.respuesta.mensaje,
+         });
+      } catch (error) {
+         console.log(error);
+
+         res.status(500).json({ error: error.message });
+      }
+   },
+   async actualizarAsistenciaSimple(req, res) {
+      try {
+         const asistencia = await actualizarAsistenciaSimple(
+            req.body,
+            asistenciaRepository
+         );
+         res.status(asistencia.codigo).json({
+            mensaje: asistencia.respuesta.mensaje,
+         });
+      } catch (error) {
+         console.log(error);
+
+         res.status(500).json({ error: error.message });
+      }
+   },
+   async crearAsistenciaSimple(req, res) {
+      try {
+         const asistencia = await crearAsistenciaSimple(
             req.body,
             asistenciaRepository
          );

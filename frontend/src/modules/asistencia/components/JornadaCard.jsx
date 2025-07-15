@@ -19,6 +19,7 @@ import {
    TooltipContent,
    TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { estadosAsistencia } from "./AsistenciaSimple";
 
 const JornadaCard = ({ trabajador, obtenerTrabajadores, fecha }) => {
    const {
@@ -57,16 +58,16 @@ const JornadaCard = ({ trabajador, obtenerTrabajadores, fecha }) => {
                         <SelectValue placeholder="Selecciona" />
                      </SelectTrigger>
                      <SelectContent>
-                        <SelectItem value="presente">Presente</SelectItem>
-                        <SelectItem value="falto">Falto</SelectItem>
-                        <SelectItem value="tardanza">Tardanza</SelectItem>
-
-                        <SelectItem value="permiso">Permiso</SelectItem>
-                        <SelectItem value="licencia">Licencia</SelectItem>
-                        <SelectItem value="vacaciones">Vacaciones</SelectItem>
-                        <SelectItem value="falta-justificada">
-                           Falta Justificada
-                        </SelectItem>
+                        {estadosAsistencia.map((estado) => (
+                           <SelectItem key={estado.value} value={estado.value}>
+                              <div className="flex items-center gap-2">
+                                 <div
+                                    className={`w-3 h-3 rounded-full ${estado.color}`}
+                                 />
+                                 {estado.label}
+                              </div>
+                           </SelectItem>
+                        ))}
                      </SelectContent>
                   </Select>
                </div>

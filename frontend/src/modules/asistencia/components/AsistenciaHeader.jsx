@@ -46,7 +46,7 @@ const AsistenciaHeader = ({
                   </div>
                </div>
 
-               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+               <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
                   <Badge variant="outline" className="flex items-center gap-1">
                      <Sun className="h-3 w-3 text-yellow-600" />
                      Presentes: {estadisticas.presentes || 0}
@@ -59,6 +59,11 @@ const AsistenciaHeader = ({
                      <AlertCircle className="h-3 w-3 text-yellow-600" />
                      Tardanzas: {estadisticas.tardanzas || 0}
                   </Badge>
+                  <Badge variant="outline" className="flex items-center gap-1">
+                     <AlertCircle className="h-3 w-3 text-yellow-600" />
+                     Sin registrar: {estadisticas.no_registrado || 0}
+                  </Badge>
+                  
 
                   <Badge variant="outline" className="flex items-center gap-1">
                      <Briefcase className="h-3 w-3 text-green-600" />

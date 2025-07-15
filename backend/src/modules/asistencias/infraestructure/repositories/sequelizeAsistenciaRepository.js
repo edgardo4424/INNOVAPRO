@@ -58,7 +58,7 @@ class SequelizeAsistenciaRepository {
    async actualizarAsistencia(asistenciaData) {
       const t = await sequelize.transaction();
       try {
-          await Asistencia.update(
+         await Asistencia.update(
             {
                horas_trabajadas: asistenciaData.horas_trabajadas || null,
                horas_extras: asistenciaData.horas_extras || null,
@@ -116,6 +116,37 @@ class SequelizeAsistenciaRepository {
          await t.commit();
       } catch (error) {
          await t.rollback();
+         throw new Error(error.message);
+      }
+   }
+   async crearAsistenciaSimple(asistenciaData) {
+      try {
+         const asistencia = await Asistencia.create({
+            trabajador_id: asistenciaData.trabajador_id,
+            horas_trabajadas: 9,
+            estado_asistencia: asistenciaData.estado_asistencia,
+            fecha: asistenciaData.fecha,
+         });
+         console.log(asistencia);
+      } catch (error) {
+         console.error(error);
+         throw new Error(error.message);
+      }
+   }
+
+   async actualizarAsistenciaSimple(asistenciaData) {
+      try {
+         await Asistencia.update(
+            {
+               estado_asistencia: asistenciaData.estado_asistencia,
+            },
+            {
+               where: {
+                  id: asistenciaData.id,
+               },
+            }
+         );
+      } catch (error) {
          throw new Error(error.message);
       }
    }

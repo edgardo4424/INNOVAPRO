@@ -11,7 +11,7 @@ import RoleGuard from "./rol.guard";
 import { WizardProvider } from "@/modules/cotizaciones/context/WizardCotizacionContext";
 import LoaderInnova from "@/shared/components/LoaderInnova";
 import GestionTrabajadores from "@/modules/trabajadores/pages/GestionTrabajadores";
-import Montadores from "@/modules/asistencia/pages/montadores";
+import GestionAsistencia from "@/modules/asistencia/pages/GestionAsistencia";
 import PlanillaEnConstruccion from "@/modules/planilla/pages/planilla";
 
 // Lazy load components
@@ -208,15 +208,9 @@ export default function AppRoutes() {
                         <Route element={<RoleGuard roles={["Gerencia"]} />}>
                            <Route
                               path="asistencia/:tipo"
-                              element={<Montadores />}
+                              element={<GestionAsistencia />}
                            />
                         </Route>
-                        {/* <Route element={<RoleGuard roles={["Gerencia"]} />}>
-                           <Route
-                              path="asistencia/indek-andina"
-                              element={<AsistenciaIndekAndina />}
-                           />
-                        </Route> */}
                         <Route element={<RoleGuard roles={["Gerencia"]} />}>
                            <Route
                               path="planilla"
