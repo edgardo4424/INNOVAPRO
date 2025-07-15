@@ -6,6 +6,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import initialCorrelativosData from "./../modules/factuacion/utils/correlativoLocal.json";
 import facturasEmitidasLocal from "./../modules/factuacion/utils/facturasEmitidasLocal.json";
+import numeroALeyenda from "@/modules/factuacion/utils/numeroALeyenda";
 
 const FacturacionContext = createContext();
 
@@ -37,7 +38,7 @@ export function FacturacionProver({ children }) {
         legend: [
             {
                 legend_Code: "1000",
-                legend_Value: "SON CIENTO DIECIOCHO CON 00/100 SOLES",
+                legend_Value: "",
             },
         ],
     };
@@ -257,13 +258,13 @@ export function FacturacionProver({ children }) {
                 // valor_Venta: parseFloat(redondearPersonalizado(gravadas + exoneradas)),
                 // sub_Total: parseFloat(redondearPersonalizado(subTotal)),
                 // monto_Imp_Venta: parseFloat(redondearPersonalizado(totalVenta)),
-                monto_Oper_Gravadas: parseFloat(gravadas).toFixed(2),
-                monto_Oper_Exoneradas: parseFloat(exoneradas).toFixed(2),
-                monto_Igv: parseFloat(igvTotal).toFixed(2),
-                total_Impuestos: parseFloat(igvTotal).toFixed(2),
-                valor_Venta: parseFloat(gravadas + exoneradas).toFixed(2),
-                sub_Total: parseFloat(subTotal).toFixed(2),
-                monto_Imp_Venta: parseFloat(totalVenta).toFixed(2),
+                monto_Oper_Gravadas: parseFloat(gravadas.toFixed(2)),
+                monto_Oper_Exoneradas: parseFloat(exoneradas.toFixed(2)),
+                monto_Igv: parseFloat(igvTotal.toFixed(2)),
+                total_Impuestos: parseFloat(igvTotal.toFixed(2)),
+                valor_Venta: parseFloat((gravadas + exoneradas).toFixed(2)),
+                sub_Total: parseFloat(subTotal.toFixed(2)),
+                monto_Imp_Venta: parseFloat(totalVenta.toFixed(2)),
             }));
         };
 
@@ -273,10 +274,27 @@ export function FacturacionProver({ children }) {
     }, [factura.detalle]);
 
     useEffect(() => {
+        if (!factura.monto_Imp_Venta || factura.monto_Imp_Venta <= 0) return;
+    
+        const nuevaLegenda = numeroALeyenda(factura.monto_Imp_Venta);
+        console.log("nueva legenda")
+        console.log(nuevaLegenda)
+    
+        setFactura((prev) => ({
+            ...prev,
+            legend: [{
+                legend_Code: "1000",
+                legend_Value: nuevaLegenda,
+            }]
+        }));
+    }, [factura.monto_Imp_Venta]);
+    
+
+    useEffect(() => {
         let montoPendiente = factura.monto_Imp_Venta;
         if (factura.forma_pago.length > 0) {
             const pagosRealizados = factura.forma_pago.reduce((total, item) => {
-                const monto = parseFloat(item.monto);
+                const monto = parseFloat(item.monto.toFixed(2));
                 return total + (isNaN(monto) ? 0 : monto);
             }, 0);
             montoPendiente = factura.monto_Imp_Venta - pagosRealizados;
@@ -286,7 +304,7 @@ export function FacturacionProver({ children }) {
             ...prev,
             cuota: factura.forma_pago.length,
             // monto: parseFloat(redondearPersonalizado(montoPendiente)),
-            monto: parseFloat(montoPendiente).toFixed(2),
+            monto: parseFloat(montoPendiente.toFixed(2)),
         }));
     }, [factura.monto_Imp_Venta, factura.forma_pago]);
 
@@ -350,7 +368,7 @@ export function FacturacionProver({ children }) {
             ...prevFactura,
             forma_pago: [...prevFactura.forma_pago, {
                 ...pagoActual,
-                monto: Number(pagoActual.monto),
+                monto: parseFloat(pagoActual.monto),
             }],
         }));
         setPagoActual(initialPagoActualState);
