@@ -8,16 +8,19 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { ClipboardPlus, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProductoForm from "../../forms/ProductoForm";
 import { useFacturacion } from "@/context/FacturacionContext";
 
-export default function ModalProducto() {
+export default function ModalProducto({open, setOpen}) {
 
+    const { setProductoActual, setEdicionProducto } = useFacturacion();
 
-    const [open, setOpen] = useState(false);
-    const { setProductoActual } = useFacturacion();
     const closeModal = () => {
+        setEdicionProducto({
+            edicion: false,
+            index: null
+        })
         setOpen(false);
         setProductoActual(
             {
@@ -34,9 +37,21 @@ export default function ModalProducto() {
                 monto_Precio_Unitario: 0,
                 monto_Valor_Venta: 0,
                 factor_Icbper: 0,
+                edicion: false
             }
         )
     };
+
+    useEffect(() => {
+        const handleKeydown = (event) => {
+            if (event.key === "Escape") {
+                closeModal();
+            }
+        };
+        window.addEventListener("keydown", handleKeydown);
+        return () => window.removeEventListener("keydown", handleKeydown);
+    }, []);
+
 
     return (
         <AlertDialog open={open} onOpenChange={setOpen} >
@@ -50,7 +65,7 @@ export default function ModalProducto() {
             <AlertDialogContent className="min-w-3xl flex flex-col gap-4 ">
                 {/* ❌ Botón cerrar arriba */}
                 <button
-                    className="absolute top-4 right-4 text-gray-500 hover:text-red-600"
+                    className="absolute top-4 right-4 text-gray-500 hover:text-red-600 cursor-pointer"
                     onClick={closeModal}
                 >
                     <X />
@@ -64,8 +79,10 @@ export default function ModalProducto() {
                     </AlertDialogDescription>
                 </AlertDialogHeader>
 
+                
+
                 {/* 📦 Formulario */}
-                <ProductoForm closeModal={closeModal} />
+                <ProductoForm closeModal={closeModal}  />
 
 
             </AlertDialogContent>

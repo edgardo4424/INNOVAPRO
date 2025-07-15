@@ -9,44 +9,69 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { useFacturacion } from '@/context/FacturacionContext';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ModalListaDeProductos from '../components/modal/ModalListaDeProductos';
 
 const ProductoForm = ({ closeModal }) => {
-    const { agregarProducto, productoActual, setProductoActual, validarCampos, productoValida } = useFacturacion();
+    const { agregarProducto, productoActual, setProductoActual, edicionProducto, validarCampos, productoValida, eliminarProducto } = useFacturacion();
 
 
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
 
-        const cantidad = name === "cantidad" ? parseFloat(value) : parseFloat(productoActual.cantidad || 0);
-        const valorUnitario = name === "monto_Valor_Unitario" ? parseFloat(value) : parseFloat(productoActual.monto_Valor_Unitario || 0);
+        let validatedValue = value;
+
+        if (name === "cantidad" || name === "monto_Valor_Unitario") {
+            let numericValue = parseFloat(value);
+
+            if (isNaN(numericValue) || numericValue < 0) {
+                validatedValue = 0;
+            } else {
+                validatedValue = numericValue;
+            }
+        }
+
+        const cantidad = name === "cantidad" ? validatedValue : parseFloat(productoActual.cantidad || 0);
+        const valorUnitario = name === "monto_Valor_Unitario" ? validatedValue : parseFloat(productoActual.monto_Valor_Unitario || 0);
         const tipAfeIgv = productoActual.tip_Afe_Igv || "10";
 
         let monto_Base_Igv = cantidad * valorUnitario;
         let igv = 0;
         let total_Impuestos = 0;
         let monto_Precio_Unitario = valorUnitario;
-        let monto_Valor_Venta = valorUnitario * cantidad;
+        let monto_Valor_Venta = cantidad * valorUnitario;
 
-        if (tipAfeIgv === "10") {
+        if (["10", "11", "12", "13", "14", "15", "16", "17"].includes(tipAfeIgv)) {
             igv = +(monto_Base_Igv * 0.18).toFixed(2);
             total_Impuestos = igv;
             monto_Precio_Unitario = +(valorUnitario * 1.18).toFixed(2);
+        } else if (["20", "21", "30", "31", "32", "33", "34", "35", "36", "40"].includes(tipAfeIgv)) {
+            igv = 0;
+            total_Impuestos = 0;
+            monto_Precio_Unitario = valorUnitario;
+        } else {
+            // En caso de un tipAfeIgv no reconocido, por defecto a 0 IGV
+            igv = 0;
+            total_Impuestos = 0;
+            monto_Precio_Unitario = valorUnitario;
         }
 
         setProductoActual((prevValores) => ({
             ...prevValores,
-            [name]: value,
-            monto_Base_Igv,
+            [name]: validatedValue,
+            monto_Base_Igv: +monto_Base_Igv.toFixed(2),
             igv,
             total_Impuestos,
             monto_Precio_Unitario,
-            monto_Valor_Venta,
-            porcentaje_Igv: tipAfeIgv === "10" ? 18 : 0,
+            monto_Valor_Venta: +monto_Valor_Venta.toFixed(2),
+            porcentaje_Igv: (["10", "11", "12", "13", "14", "15", "16", "17"].includes(tipAfeIgv)) ? 18 : 0,
         }));
     };
+
+    useEffect(() => {
+        handleInputChange({ target: { name: "monto_Valor_Unitario", value: productoActual.monto_Valor_Unitario } });
+    }, [productoActual.tip_Afe_Igv])
 
 
     const handleSelectChange = (value, name) => {
@@ -63,10 +88,14 @@ const ProductoForm = ({ closeModal }) => {
             return;
         }
         agregarProducto();
-
-        setProductoActual({});
         closeModal();
     };
+
+    const handleEliminar = () => {
+        eliminarProducto();
+        closeModal();
+    }
+
 
 
     return (
@@ -339,18 +368,24 @@ const ProductoForm = ({ closeModal }) => {
                         step="0.01"
                         onChange={handleInputChange}
                         className="border-1 border-gray-400"
-                        disabled
+                    // disabled
                     />
                 </div>
             </form>
             {/* 🔘 Botones de acción */}
             <div className="flex justify-end gap-3 border-t pt-4">
-                <Button variant="outline" onClick={closeModal} className={"hover:bg-red-50 hover:text-red-600 border-2 border-gray-400"}>
+                {
+                    edicionProducto?.edicion == true &&
+                    <Button variant="outline" onClick={handleEliminar} className={"cursor-pointer hover:bg-red-600 bg-red-400 hover:text-white text-white border-2 "}>
+                        Eliminar
+                    </Button>
+                }
+                <Button variant="outline" onClick={closeModal} className={"cursor-pointer hover:bg-red-50 hover:text-red-600 border-2 "}>
                     Cancelar
                 </Button>
                 <Button
                     onClick={handleAgregar}
-                    form="form-producto" className={"bg-blue-600 hover:bg-blue-800"}>
+                    form="form-producto" className={"cursor-pointer bg-blue-600 hover:bg-blue-800"}>
                     Guardar
                 </Button>
             </div>

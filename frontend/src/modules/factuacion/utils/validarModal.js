@@ -3,7 +3,7 @@ export function validarModal(tipo, item) {
         const camposRequeridos = [
             { key: "unidad" },
             { key: "cantidad" },
-            { key: "cod_Producto" },
+            // { key: "cod_Producto" },
             { key: "descripcion" },
             // { key: "monto_valor_Unitario" },
             { key: "monto_Base_Igv" },
@@ -33,6 +33,45 @@ export function validarModal(tipo, item) {
                 errores,
                 validos: false,
                 message: "⚠️ Verifica los datos del Producto"
+            };
+        }
+
+
+        return {
+            errores: camposRequeridos.reduce((acc, curr) => {
+                acc[curr.key] = false;
+                return acc;
+            }, {}),
+            validos: true,
+            message: ""
+        };
+    }
+
+    if (tipo == "pago") {
+        const camposRequeridos = [
+            { key: "tipo" },
+            { key: "monto" },
+            // { key: "cuota" },
+            { key: "fecha_Pago" },
+        ];
+
+        const errores = {};
+
+        for (const campo of camposRequeridos) {
+            const valor = item[campo.key];
+            if (!valor || valor.toString().trim() === "" || valor === 0) {
+                errores[campo.key] = true;
+            } else {
+                errores[campo.key] = false
+            }
+        }
+        const hayErrores = Object.values(errores).some((val) => val === true);
+
+        if (hayErrores) {
+            return {
+                errores,
+                validos: false,
+                message: "⚠️ Verifica los datos del Pago"
             };
         }
 

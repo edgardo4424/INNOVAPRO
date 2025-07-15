@@ -111,7 +111,16 @@ const modulesByRole = {
             },
          ],
       },
-      { name: "Facturación", path: "/facturacion" },
+      // { name: "Facturación", path: "/facturacion" },
+      {
+         group: "Facturación",
+         items: [
+            { name: "Generar Factura", path: "/facturacion/generar-factura" },
+            { name: "Listar Facturas", path: "/facturacion/listar" },
+            // { name: "Facturas Pendientes", path: "/facturacion/pendientes" },
+            { name: "Facturas Anuladas", path: "/facturacion/anuladas" },
+         ],
+      },
    ],
    Ventas: [
       { name: "Gestión de Clientes", path: "/gestion-clientes" },

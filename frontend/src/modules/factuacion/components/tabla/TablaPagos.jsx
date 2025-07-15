@@ -24,9 +24,9 @@ const TablaPagos = () => {
 
                 <TableHeader className="bg-gray-100 border-b-2 border-gray-400">
                     <TableRow>
-                        <TableHead>Monto</TableHead>
                         <TableHead>Cuota</TableHead>
                         <TableHead>Metodo</TableHead>
+                        <TableHead>Monto a Pagar + IGV</TableHead>
                         <TableHead>Fecha de Pago</TableHead>
 
                     </TableRow>
@@ -44,28 +44,14 @@ const TablaPagos = () => {
                     <TableBody className={"bg-gray-200"}>
                         {ListaDePago.map((item, index) => (
                             <TableRow key={index}>
-                                <TableCell>{item.monto || ""}</TableCell>
-                                <TableCell>{item.cuota || ""}</TableCell>
-                                <TableCell>{item.tipo || ""}</TableCell>
-                                <TableCell>{item.fecha_Pago || ""}</TableCell>
+                                <TableCell>{item.cuota}</TableCell>
+                                <TableCell>{item.tipo}</TableCell>
+                                <TableCell>{item.monto}</TableCell>
+                                <TableCell>{item.fecha_Pago}</TableCell>
 
                             </TableRow>
                         ))}
-                        <TableRow >
-                            <TableCell colSpan={2} className="text-right font-bold">
-                                TOTAL
-                            </TableCell>
-                            <TableCell>
-                                S/.{" "}
-                                {/* {ListaDePago.reduce(
-                                    (total, item) => total + item.monto_Valor_Venta,
-                                    0
-                                )} */}
-                            </TableCell>
-                            <TableCell colSpan={7} className="text-right font-bold">
 
-                            </TableCell>
-                        </TableRow>
                     </TableBody>
                 )}
             </Table>

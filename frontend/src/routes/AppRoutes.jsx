@@ -16,6 +16,7 @@ import AsistenciaEncofrados from "@/modules/asistencia/pages/AsistenciaEncofrado
 import AsistenciaIndekAndina from "@/modules/asistencia/pages/AsistenciaIndekAndina";
 import AsistenciaInnovaRental from "@/modules/asistencia/pages/AsistenciaInnovaRental";
 
+
 // Lazy load components
 const Login = lazy(() => import("@/modules/auth/pages/Login"));
 const GestionUsuarios = lazy(() =>
@@ -58,8 +59,17 @@ const GestionStockPiezas = lazy(() =>
    import("../modules/stockPiezas/pages/GestionStockPiezas")
 );
 
+// Facturacion
 const Facturacion = lazy(() =>
    import("../modules/factuacion/pages/Facturacion")
+);
+
+const FacturasAnuladas = lazy(() =>
+   import("../modules/factuacion/pages/FacturasAnuladas")
+);
+
+const FacturasEmitidas = lazy(() =>
+   import("../modules/factuacion/pages/FacturasEmitidas")
 );
 
 export default function AppRoutes() {
@@ -178,13 +188,33 @@ export default function AppRoutes() {
                               </WizardProvider>
                            }
                         />
-                        <Route
-                           path="/facturacion"
+
+                     </Route>
+
+                     <Route  element={<RoleGuard roles={["Gerencia"]} />}>
+                     <Route
+                           path="facturacion/generar-factura"
                            element={
                               <Facturacion />
                            }
                         />
                      </Route>
+
+                     <Route  element={<RoleGuard roles={["Gerencia"]} />}>
+                        <Route
+                           path="facturacion/listar"
+                           element={<FacturasEmitidas />}
+                        />
+                     </Route>
+
+                     <Route  element={<RoleGuard roles={["Gerencia"]} />}>
+                        <Route
+                           path="facturacion/anuladas"
+                           element={<FacturasAnuladas />}
+                        />
+                     </Route>
+
+                     
 
                      <Route element={<RoleGuard roles={["Gerencia"]} />}>
                         <Route

@@ -8,8 +8,8 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { useFacturacion } from "@/context/FacturacionContext";
-import { Calendar22 } from "../Calendar22";
 import { motion } from "framer-motion"; // ✅ Importar motion
+import { Calendar22 } from "../Calendar22";
 
 const DatosDelComprobante = () => {
     const { factura, setFactura, facturaValida } = useFacturacion();
@@ -40,7 +40,7 @@ const DatosDelComprobante = () => {
             <form action="" className="w-full  grid grid-cols-2 gap-x-2 gap-y-3">
                 {/* Tipo de Operacion */}
                 <div className="flex flex-col gap-1 col-span-2 md:col-span-1 ">
-                    <Label>Tipo de Operación</Label>
+                    <Label>Tipo de Venta</Label>
                     <Select
                         name="tipo_operacion"
                         value={factura.tipo_Operacion}
@@ -111,6 +111,7 @@ const DatosDelComprobante = () => {
                         className={"border-1 border-gray-400"}
                         value={factura.serie || ""}
                         onChange={handleInputChange}
+                        disabled
                     />
                     <span
                         className={`text-red-500  text-sm ${facturaValida.serie ? "block" : "hidden"
@@ -130,6 +131,7 @@ const DatosDelComprobante = () => {
                         className={"border-1 border-gray-400"}
                         value={factura.correlativo || ""}
                         onChange={handleInputChange}
+                        disabled
                     />
                     <span
                         className={`text-red-500  text-sm ${facturaValida.correlativo ? "block" : "hidden"

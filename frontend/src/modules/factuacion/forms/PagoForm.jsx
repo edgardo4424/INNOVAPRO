@@ -10,18 +10,58 @@ import {
 } from "@/components/ui/select";
 import { useFacturacion } from "@/context/FacturacionContext";
 import { Calendar22 } from "../components/Calendar22";
+import { toast } from "react-toastify";
 const PagoForm = ({ closeModal }) => {
-    const { factura, setFactura, pagoActual, setPagoActual } = useFacturacion();
+    const { factura, agregarPago, pagoActual, pagoValida, setPagoActual, validarCampos } = useFacturacion();
 
-    const { forma_pago: ListaDePago } = factura
+    const { forma_pago: ListaDePago } = factura;
+
+    const montoTotalPagos = ListaDePago.reduce(
+        (total, pago) => total + (parseFloat(pago.monto) || 0),
+        0
+    );
+
+    const montoTotalFactura = parseFloat(factura.monto_Imp_Venta || 0);
+    const pagosCompletos = montoTotalPagos >= montoTotalFactura;
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        console.log(name, value)
+    
+        // Permitir que el campo quede vacío sin bloquearlo
+        if (value === "") {
+            setPagoActual({
+                ...pagoActual,
+                [name]: value,
+            });
+            return;
+        }
+    
+        const valorNumerico = parseFloat(value);
+    
+        // Validación: No permitir negativos ni NaN
+        if (isNaN(valorNumerico) || valorNumerico < 0) {
+            return;
+        }
+    
+        // Validar solo si es el campo 'monto'
+        if (name === "monto") {
+            const previo = parseFloat(pagoActual.monto) || 0;
+            const sumaReal = montoTotalPagos - previo + valorNumerico;
+    
+            if (sumaReal > montoTotalFactura) {
+                return;
+            }
+        }
+    
         setPagoActual({
             ...pagoActual,
-            [name]: value
+            [name]: valorNumerico,
         });
     };
+    
+    
+
+
+
 
     const handleSelectChange = (value, name) => {
         setPagoActual((prevValores) => ({
@@ -32,19 +72,28 @@ const PagoForm = ({ closeModal }) => {
 
 
 
-    const handleAgregar = () => {
-        console.log(pagoActual)
-        setFactura({
-            ...factura,
-            forma_pago: [...factura.forma_pago, {
-                ...pagoActual,
-                cuota: ListaDePago.length ,
-            }]
-        })
-
-        setPagoActual({});
+    const handleAgregar = async () => {
+        const validar = await validarCampos("pago");
+        if (validar === false) {
+            return;
+        }
+        const nuevoTotal = montoTotalPagos + (parseFloat(pagoActual.monto) || 0);
+        if (nuevoTotal > montoTotalFactura) {
+            toast.error("El total de cuotas no puede exceder el monto de la factura.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
+            return;
+        }
+        agregarPago();
         closeModal();
     };
+    
 
 
     return (
@@ -63,26 +112,41 @@ const PagoForm = ({ closeModal }) => {
                         }}
                     >
                         <SelectTrigger className="w-full border-1 border-gray-400">
-                            <SelectValue placeholder="-Seleccione-" />
+                            <SelectValue placeholder="Selecciona un tipo" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="CONTADO">CONTADO </SelectItem>
                             <SelectItem value="CREDITO">CREDITO</SelectItem>
                         </SelectContent>
                     </Select>
+                    {
+                        pagoValida.tipo && (
+                            <span className="text-red-500 text-sm">
+                                Debes seleccionar un metodo de pago
+                            </span>
+                        )
+                    }
                 </div>
 
                 {/* Monto */}
                 <div className="flex flex-col gap-1 col-span-2">
-                    <Label>Monto</Label>
+                    <Label>Monto de Pago con IGV</Label>
                     <Input
                         type="number"
                         name="monto"
-                        placeholder="monto"
+                        placeholder="Monto"
                         className={"border-1 border-gray-400"}
-                        value={pagoActual.monto || 0}
+                        onwheel={(e) => e.target.blur()}
+                        value={pagoActual.monto}
                         onChange={handleInputChange}
                     />
+                    {
+                        pagoValida.monto && (
+                            <span className="text-red-500 text-sm">
+                                Debes ingresar un monto
+                            </span>
+                        )
+                    }
                 </div>
 
                 {/* Cuota */}
@@ -93,17 +157,24 @@ const PagoForm = ({ closeModal }) => {
                         name="cuota"
                         placeholder="cuota"
                         className={"border-1 border-gray-400"}
-                        value={ListaDePago.length + 1}
-                        // onChange={handleInputChange}
+                        value={ListaDePago.length}
                         disabled
                     />
                 </div>
 
                 {/* Fecha Emision */}
                 <div className="flex flex-col gap-1 col-span-2">
-                    <Label>Fecha Emision</Label>
+                    <Label>Fecha Vencimineto</Label>
                     <Calendar22 Dato={pagoActual} setDato={setPagoActual} tipo={"fecha_Pago"} />
+                    {
+                        pagoValida.fecha_Pago && (
+                            <span className="text-red-500 text-sm">
+                                Debes ingresar una fecha
+                            </span>
+                        )
+                    }
                 </div>
+
             </form>
             {/* 🔘 Botones de acción */}
             <div className="flex justify-end gap-3 border-t pt-4">

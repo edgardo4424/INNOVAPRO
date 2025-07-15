@@ -10,6 +10,7 @@ import {
 import { useFacturacion } from "@/context/FacturacionContext";
 import { Search } from "lucide-react";
 import { toast } from "react-toastify";
+import { motion } from "framer-motion"; // ✅ Importar motion
 
 const DatosDelCliente = () => {
     const { factura, setFactura, facturaValida, metodo } = useFacturacion();
@@ -49,11 +50,47 @@ const DatosDelCliente = () => {
     };
 
     return (
-        <div className="max-h-[80dvh] min-h-[40dvh] overflow-y-auto p-2">
+        <motion.div className="max-h-[80dvh] min-h-[40dvh] overflow-y-auto p-2"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+        >
             <form
                 className="w-full grid grid-cols-2 gap-x-2 gap-y-3"
                 onSubmit={handleBuscar}
             >
+                {/* Tipo de Documento */}
+                <div className="flex flex-col gap-1 col-span-2 md:col-span-1">
+                    <Label>Tipo de Documento</Label>
+                    <Select value={cliente_Tipo_Doc} onValueChange={handleSelectChange}>
+                        <SelectTrigger className="w-full border-1 border-gray-400">
+                            <SelectValue placeholder="Selecciona tipo de documento" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {factura.tipo_Doc === "01" && (
+                                <SelectItem value="6">RUC</SelectItem>
+                            )}
+                            {factura.tipo_Doc === "03" && (
+                                <>
+                                    <SelectItem value="6">RUC</SelectItem>
+                                    <SelectItem value="1">
+                                        DNI - Documento Nacional de Identidad
+                                    </SelectItem>
+                                    <SelectItem value="4">CARNET DE EXTRANJERIA</SelectItem>
+                                </>
+                            )}
+                            {/* Agrega más tipos si los vas a usar */}
+                        </SelectContent>
+                    </Select>
+                    <span
+                        className={`text-red-500  text-sm ${facturaValida.cliente_Tipo_Doc ? "block" : "hidden"
+                            }`}
+                    >
+                        Debes seleccionar el tipo de documento del cliente.
+                    </span>
+                </div>
+
                 {/* Número de Documento */}
                 <div className="flex flex-col gap-1 col-span-2 md:col-span-1">
                     <Label>Número de Documento</Label>
@@ -78,31 +115,6 @@ const DatosDelCliente = () => {
                             }`}
                     >
                         Debes ingresar el número de documento del cliente.
-                    </span>
-                </div>
-
-                {/* Tipo de Documento */}
-                <div className="flex flex-col gap-1 col-span-2 md:col-span-1">
-                    <Label>Tipo de Documento</Label>
-                    <Select value={cliente_Tipo_Doc} onValueChange={handleSelectChange}>
-                        <SelectTrigger className="w-full border-1 border-gray-400">
-                            <SelectValue placeholder="Selecciona tipo de documento" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="6">RUC</SelectItem>
-                            <SelectItem value="1">
-                                DNI - Documento Nacional de Identidad
-                            </SelectItem>
-                            <SelectItem value="4">CARNET DE EXTRANJERIA</SelectItem>
-
-                            {/* Agrega más tipos si los vas a usar */}
-                        </SelectContent>
-                    </Select>
-                    <span
-                        className={`text-red-500  text-sm ${facturaValida.cliente_Tipo_Doc ? "block" : "hidden"
-                            }`}
-                    >
-                        Debes seleccionar el tipo de documento del cliente.
                     </span>
                 </div>
 
@@ -138,7 +150,7 @@ const DatosDelCliente = () => {
                     />
                 </div>
             </form>
-        </div>
+        </motion.div>
     );
 };
 

@@ -62,7 +62,7 @@ const ListaDeProductos = ({ closeModal }) => {
             ...productoActual,
             cod_Producto: pieza.item,
             descripcion: pieza.descripcion,
-            unidad: pieza.unidad,
+            // unidad: pieza.unidad,
             cantidad: 1,
             monto_Valor_Unitario: valorUnitario,
             monto_Base_Igv,
