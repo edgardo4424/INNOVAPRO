@@ -10,7 +10,7 @@ const {
 const db = require("../../../../../models");
 const { calcularCantidadesPorCadaPiezaDeEscuadras } = require("./calcularCantidadesEscuadras");
 
-const CONST_ID_USO_ESCUADRAS = 4;
+const CONST_ID_USO_ESCUADRAS_CON_PLATAFORMAS = 4;
 
 async function generarDespieceEscuadras(data) {
 
@@ -28,7 +28,7 @@ async function generarDespieceEscuadras(data) {
       const subtotales = calcularSubtotales(resultadoFinal);
 
       const piezasBD = await db.piezas_usos.findAll({
-        where: { uso_id: CONST_ID_USO_ESCUADRAS },
+        where: { uso_id: CONST_ID_USO_ESCUADRAS_CON_PLATAFORMAS },
         include: [{ model: db.piezas, as: "pieza" }],
         raw: true,
       });

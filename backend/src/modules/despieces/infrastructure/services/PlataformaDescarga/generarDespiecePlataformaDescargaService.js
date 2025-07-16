@@ -14,13 +14,9 @@ const CONST_ID_USO_PLATAFORMA_DESCARGA = 7;
 
 async function generarDespiecePlataformaDescarga(data) {
 
-  
-  console.log('DATA', data);
-
   const resultadosPorZona = await Promise.all(
     data.map(async (dataPorZona) => {
       
-      console.log('dataPorZona', dataPorZona);
       const todosDespieces = calcularCantidadesPorCadaPiezaDePlataformaDescarga(
         dataPorZona.atributos_formulario
       );
@@ -29,7 +25,6 @@ async function generarDespiecePlataformaDescarga(data) {
       if (todosDespieces[0].length === 0)
         throw new Error("No hay piezas en la modulación. Ingrese bien los atributos");
 
-      console.log('todosDespieces', todosDespieces);
       const resultadoFinal = agruparPorPieza(todosDespieces,  dataPorZona.atributos_formulario.length);
       const subtotales = calcularSubtotales(resultadoFinal);
 

@@ -2,7 +2,7 @@ const db = require("../../../../../models");
 const { agruparPorZonaYAtributos } = require("../mapearAtributosDelPdfService");
 const { mapearAtributosValor } = require("../mapearAtributosValorService");
 
-async function generarPdfAndamioFachada({ dataDespiece, tiene_pernos }) {
+async function generarPdfAndamioFachada({ dataDespiece, tiene_pernos, porcentajeDescuento }) {
   let pernoExpansionConArgolla;
   let pernoExpansionConArgollaEnElDespiece;
 
@@ -14,7 +14,7 @@ async function generarPdfAndamioFachada({ dataDespiece, tiene_pernos }) {
     });
 
     if (pernoExpansionConArgolla) {
-      console.log("entre 1er if");
+     
       pernoExpansionConArgollaEnElDespiece = await db.despieces_detalle.findOne(
         {
           where: {
@@ -25,10 +25,6 @@ async function generarPdfAndamioFachada({ dataDespiece, tiene_pernos }) {
       );
     }
 
-    console.log(
-      "pernoExpansionConArgollaEnElDespiece",
-      pernoExpansionConArgollaEnElDespiece
-    );
   }
 
   // Obtener la lista de atributos
@@ -81,6 +77,24 @@ async function generarPdfAndamioFachada({ dataDespiece, tiene_pernos }) {
         },
       ],
     });
+
+     const piezasDetalleAdicionalesAndamioFachadaConDescuento =
+  piezasDetalleAdicionalesAndamioFachada.map((p) => {
+    const pieza = p.get({ plain: true });
+
+    return {
+      ...pieza,
+      precio_venta_dolares: parseFloat(
+        ((100 - porcentajeDescuento) * pieza.precio_venta_dolares * 0.01).toFixed(2)
+      ),
+      precio_venta_soles: parseFloat(
+        ((100 - porcentajeDescuento) * pieza.precio_venta_soles * 0.01).toFixed(2)
+      ),
+      precio_alquiler_soles: parseFloat(
+        ((100 - porcentajeDescuento) * pieza.precio_alquiler_soles * 0.01).toFixed(2)
+      ),
+    };
+  });
 
   // Obtener los detalles puntales
 
@@ -139,7 +153,7 @@ async function generarPdfAndamioFachada({ dataDespiece, tiene_pernos }) {
         ? pernoEnElDespiece?.cantidad
         : null,
     }, */
-    piezasAdicionales: piezasDetalleAdicionalesAndamioFachada,
+    piezasAdicionales: piezasDetalleAdicionalesAndamioFachadaConDescuento,
     perno_expansion_con_argolla: {
       nombre: pernoExpansionConArgolla?.descripcion || "",
       total: pernoExpansionConArgollaEnElDespiece?.cantidad || 0,

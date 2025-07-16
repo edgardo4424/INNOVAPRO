@@ -41,7 +41,7 @@ async function generarPdfPlataformaDescarga({
 
   // Obtener las piezas adicionales
 
-  const piezasDetalleAdicionalesAndamioTrabajo =
+  const piezasDetalleAdicionalesPlataformaDescarga =
     await db.despieces_detalle.findAll({
       where: {
         despiece_id: idDespiece,
@@ -57,7 +57,7 @@ async function generarPdfPlataformaDescarga({
     });
 
   const piezasDetalleAdicionalesPlataformaDescargaConDescuento =
-  piezasDetalleAdicionalesAndamioTrabajo.map((p) => {
+  piezasDetalleAdicionalesPlataformaDescarga.map((p) => {
     const pieza = p.get({ plain: true });
 
     return {
@@ -74,8 +74,6 @@ async function generarPdfPlataformaDescarga({
     };
   });
 
-  console.log('piezasDetalleAdicionalesPlataformaDescargaConDescuento',piezasDetalleAdicionalesPlataformaDescargaConDescuento);
-  
   /* OBTENER ATRIBUTOS OPCIONALES */
   let piezasVenta = []
 
@@ -85,8 +83,7 @@ if(piezasDetalleAdicionalesPlataformaDescargaConDescuento.length>0){
     const listaPuntales = piezasDetalleAdicionalesPlataformaDescargaConDescuento.filter(p => listaItemsPuntales.includes(p.pieza.item))
       
     const listaItemsPuntalesAdicionales = listaPuntales.map(p => p.pieza.item)
-    console.log('listaPuntales', listaPuntales);
-    console.log('listaItemsPuntalesAdicionales', listaItemsPuntalesAdicionales);
+   
      piezasVenta = await Promise.all(
         listaItemsPuntalesAdicionales.map(async (item, i) => {
     

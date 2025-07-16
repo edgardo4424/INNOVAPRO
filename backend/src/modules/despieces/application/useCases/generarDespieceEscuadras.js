@@ -1,6 +1,6 @@
 const {
   generarDespieceEscuadras,
-} = require("../../infrastructure/services/Escuadras/generarDespieceEscuadrasService");
+} = require("../../infrastructure/services/Escuadras/generarDespieceEscuadras");
 
 function evaluarEscuadras({
   longTramo,
@@ -47,8 +47,6 @@ function evaluarFormulaCargaSolicitadaRealMedia({
 
   const valorReferencia = escuadra == 1 ? 400 : 182.5;
   const resultado = (sobrecarga * factorSeguridad * escuadras) / 1000;
-
-  console.log({ valorReferencia, resultado });
 
   return resultado <= valorReferencia ? resultado : "MAL";
 }
@@ -114,8 +112,6 @@ module.exports = async (dataParaGenerarDespiece) => {
           cantidadEscuadrasTramo: cantidad,
         });
 
-        console.log("listaCantidadEscuadras", listadoCantidadEscuadras);
-
         return {
           ...atributo,
           escuadra: Number(atributo.escuadra),
@@ -134,8 +130,6 @@ module.exports = async (dataParaGenerarDespiece) => {
   });
 
   console.dir(dataGenerarDespieceEscuadras, { depth: null, colors: true });
-
-  console.log('dataGenerarDespieceEscuadras',dataGenerarDespieceEscuadras)
 
   const despieceGenerado = await generarDespieceEscuadras(
     dataGenerarDespieceEscuadras

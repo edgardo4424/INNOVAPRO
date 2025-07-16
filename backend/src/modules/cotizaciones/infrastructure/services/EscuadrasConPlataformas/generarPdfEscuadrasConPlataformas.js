@@ -2,7 +2,7 @@ const db = require("../../../../../models");
 const { agruparPorZonaYAtributos, agruparEscuadrasPorZonaYAtributos } = require("../mapearAtributosDelPdfService");
 const { mapearAtributosValor } = require("../mapearAtributosValorService");
 
-async function generarPdfEscuadras({ idDespiece, porcentajeDescuento }) {
+async function generarPdfEscuadrasConPlataformas({ idDespiece, porcentajeDescuento }) {
   const despieceEncontrado = await db.despieces.findByPk(idDespiece);
 
   let atributosDelPdf = [];
@@ -44,8 +44,6 @@ async function generarPdfEscuadras({ idDespiece, porcentajeDescuento }) {
   // Obtener atributos
 
   const resultado = mapearAtributosValor(atributosDelUso);
-
-  console.log('RESULTADO', resultado);
 
   console.dir(atributosDelPdf, { depth: null, colors: true });
 
@@ -100,16 +98,10 @@ async function generarPdfEscuadras({ idDespiece, porcentajeDescuento }) {
     ]
   });
 
-  console.log('piezasDetalleEscuadrasEncontrado', piezasDetalleEscuadrasEncontrado);
   const piezasDetallePlataformas = piezasDetalleEscuadrasEncontrado.map((p) => {
     const pieza = p.get({ plain: true });
 
-    console.log({
-
-      precio_alquiler_soles: pieza.precio_alquiler_soles,
-      precio_venta_soles: pieza.precio_venta_soles,
-      cantidad: pieza.cantidad,
-    })
+    
 
     return {
       item: pieza.pieza.item,
@@ -129,7 +121,7 @@ async function generarPdfEscuadras({ idDespiece, porcentajeDescuento }) {
 
     const atributos = zona.atributos.map((at) => {
       let cantidadPlataformas = 0;
-      console.log('at.escuadra', at.escuadra);
+   
       switch (at.escuadra+"") {
         case "3":
           cantidadPlataformas = 10*at.cantidad_uso;
@@ -151,9 +143,6 @@ async function generarPdfEscuadras({ idDespiece, porcentajeDescuento }) {
       atributos: atributos,
     }
   })
-
-  console.log('listaAtributosConCantidadPlataformas', listaAtributosConCantidadPlataformas);
-
 
   
   // Obtener las piezas adicionales
@@ -210,5 +199,5 @@ async function generarPdfEscuadras({ idDespiece, porcentajeDescuento }) {
 }
 
 module.exports = {
-  generarPdfEscuadras,
+  generarPdfEscuadrasConPlataformas,
 };

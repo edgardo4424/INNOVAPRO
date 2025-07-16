@@ -10,33 +10,38 @@ const cotizacionRepository = new sequelizeCotizacionRepository(); // Instancia d
 const SequelizeNotificacionesRepository = require("../../../notificaciones/infrastructure/repositories/SequelizeNotificacionesRepository"); // Importamos el repositorio de notificaciones
 const notificacionRepository = new SequelizeNotificacionesRepository(); // Instancia del repositorio de notificaciones
 
-const { emitirNotificacionPrivada } = require("../../../notificaciones/infrastructure/services/emisorNotificaciones");
-const { enviarNotificacionTelegram } = require("../../../notificaciones/infrastructure/services/enviarNotificacionTelegram");
+const {
+  emitirNotificacionPrivada,
+} = require("../../../notificaciones/infrastructure/services/emisorNotificaciones");
+const {
+  enviarNotificacionTelegram,
+} = require("../../../notificaciones/infrastructure/services/enviarNotificacionTelegram");
 
 const ESTADO_TAREA_EN_PROCESO = "En proceso";
 
 // Crear la cotizacion pero en estado
-const ID_ESTADO_COTIZACION_DESPIECE_GENERADO= 2; // Estado por aprobar por el comercial
+const ID_ESTADO_COTIZACION_DESPIECE_GENERADO = 2; // Estado por aprobar por el comercial
 
 module.exports = async (dataDespiece, tareaRepository) => {
-
-  console.log('dataDespiece', dataDespiece);
-
   const transaction = await db.sequelize.transaction(); // Iniciar transacción
 
   try {
-
     const tarea = await tareaRepository.obtenerPorId(dataDespiece.idTarea);
     if (!tarea)
       return { codigo: 404, respuesta: { mensaje: "Tarea no encontrado" } };
 
-    if(tarea.estado != ESTADO_TAREA_EN_PROCESO){
+    if (tarea.estado != ESTADO_TAREA_EN_PROCESO) {
       return {
         codigo: 400,
-        respuesta: { mensaje: "La tarea debe estar 'En proceso' y debe ser tomada por OT" },
+        respuesta: {
+          mensaje: "La tarea debe estar 'En proceso' y debe ser tomada por OT",
+        },
       };
     }
-    if (tarea.detalles?.apoyoTecnico && tarea.detalles?.apoyoTecnico.includes("Despiece")) {
+    if (
+      tarea.detalles?.apoyoTecnico &&
+      tarea.detalles?.apoyoTecnico.includes("Despiece")
+    ) {
       if (dataDespiece.despiece.length == 0) {
         return {
           codigo: 400,
@@ -70,12 +75,16 @@ module.exports = async (dataDespiece, tareaRepository) => {
         estados_cotizacion_id: ID_ESTADO_COTIZACION_DESPIECE_GENERADO,
       };
 
-      await cotizacionRepository.actualizarCotizacion(tarea.cotizacionId, dataCotizacionActualizar, transaction);
+      await cotizacionRepository.actualizarCotizacion(
+        tarea.cotizacionId,
+        dataCotizacionActualizar,
+        transaction
+      );
 
       tarea.estado = "Finalizada";
 
       await tarea.save({ transaction });
-    
+
       // Notificar al comercial que solicitó la tarea (ERP)
 
       const notificacionParaElCreador = {
@@ -86,21 +95,28 @@ module.exports = async (dataDespiece, tareaRepository) => {
       const notiCreador = await notificacionRepository.crear(
         notificacionParaElCreador
       );
-      emitirNotificacionPrivada(notificacionParaElCreador.usuarioId, notiCreador);
+      emitirNotificacionPrivada(
+        notificacionParaElCreador.usuarioId,
+        notiCreador
+      );
 
       // Notificar al comercial que solicitó la tarea (TELEGRAM)
       const usuario = await db.usuarios.findByPk(tarea.usuarioId);
 
-     if (usuario.id_chat) {
-  try {
-    await enviarNotificacionTelegram(usuario.id_chat, notificacionParaElCreador.mensaje);
-  } catch (error) {
-    console.error("❌ Error al intentar enviar notificación por Telegram:", error.message);
-    // Continúa normalmente
-  }
-}
-      
-    
+      if (usuario.id_chat) {
+        try {
+          await enviarNotificacionTelegram(
+            usuario.id_chat,
+            notificacionParaElCreador.mensaje
+          );
+        } catch (error) {
+          console.error(
+            "❌ Error al intentar enviar notificación por Telegram:",
+            error.message
+          );
+          // Continúa normalmente
+        }
+      }
     } else {
       return {
         codigo: 400,
@@ -108,9 +124,11 @@ module.exports = async (dataDespiece, tareaRepository) => {
       };
     }
 
-
     await transaction.commit(); // ✔ Confirmar todo
-    return { codigo: 201, respuesta: { mensaje: "Despiece creado por OT correctamente."} };
+    return {
+      codigo: 201,
+      respuesta: { mensaje: "Despiece creado por OT correctamente." },
+    };
   } catch (error) {
     await transaction.rollback(); // ❌ Deshacer todo si algo falla
     console.error("Error en registrar despiece manual:", error);

@@ -49,8 +49,6 @@ module.exports = async (idTarea, idUsuario, tareaRepository) => {
       notificacionParaElCreador
     );
 
-
-    console.log("notiCreador mira esto en finalizar tarea", notiCreador.usuario);
     await enviarMensajeWhatsAppFinalizaTarea(
      // `51${notiCreador.usuario.telefono}`, // formato internacional, ejemplo: "51987654321"
      '51912617842',
