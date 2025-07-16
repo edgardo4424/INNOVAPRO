@@ -20,8 +20,8 @@ export async function generarDespiece(atributos, usoId) {
     case 2: // Andamio de trabajo
       uso = "andamio-de-trabajo";
       break;
-    case 4: // Escuadras
-      uso = "escuadras";
+    case 4: // Escuadras con plataformas
+      uso = "escuadras-con-plataformas";
       break;
     case 5: // Puntales
       uso = "puntales";
@@ -34,6 +34,9 @@ export async function generarDespiece(atributos, usoId) {
       break;
     case 7: // Plataforma de descarga
       uso = "plataforma-de-descarga";
+      break;
+    case 11: // Escuadras sin plataformas
+      uso = "escuadras-sin-plataformas";
       break;
   }
   const response = await api.post(`/despieces/${uso}`, 

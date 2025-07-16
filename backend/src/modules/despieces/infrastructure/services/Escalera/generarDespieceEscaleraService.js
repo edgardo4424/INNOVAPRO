@@ -18,8 +18,7 @@ async function generarDespieceEscalera(zonas) {
 
   const resultadosPorZona = await Promise.all(
     zonas.map(async (dataPorZona) => {
-      
-      console.log('dataPorZona', dataPorZona);
+  
       const todosDespieces = calcularCantidadesPorCadaPiezaDeEscalera(
         dataPorZona.atributos_formulario
       );
@@ -28,7 +27,6 @@ async function generarDespieceEscalera(zonas) {
       if (todosDespieces[0].length === 0)
         throw new Error("No hay piezas en la modulación. Ingrese bien los atributos");
 
-      console.log('todosDespieces', todosDespieces);
       const resultadoFinal = agruparPorPieza(todosDespieces,  dataPorZona.atributos_formulario.length);
       const subtotales = calcularSubtotales(resultadoFinal);
 
@@ -89,10 +87,6 @@ async function generarDespieceEscalera(zonas) {
   const totalTramos2mPorZona = resultadosPorZona.map(zona => zona.tramos_2m)
   const totalTramos1mPorZona = resultadosPorZona.map(zona => zona.tramos_1m)
 
-  console.log({
-    totalTramos2mPorZona,
-    totalTramos1mPorZona
-  });
 
    const totalTramos2m = totalTramos2mPorZona.reduce((total, tramos_2m) => total + tramos_2m, 0);
  const totalTramos1m = totalTramos1mPorZona.reduce((total, tramos_1m) => total + tramos_1m, 0);

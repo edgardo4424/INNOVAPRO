@@ -15,7 +15,8 @@ router.post("/andamio-de-trabajo", despieceController.generarDespieceAndamioDeTr
 router.post("/puntales", despieceController.generarDespiecePuntales)
 router.post("/escalera-de-acceso", despieceController.generarDespieceEscalera)
 router.post("/plataforma-de-descarga", despieceController.generarDespiecePlataformaDescarga)
-router.post("/escuadras", despieceController.generarDespieceEscuadras)
-router.post("/andamio-fachada", despieceController.generarDespiecePuntales)
+router.post("/escuadras-con-plataformas", despieceController.generarDespieceEscuadras)
+router.post("/colgantes", despieceController.generarDespieceColgante)
+router.post("/escuadras-sin-plataformas", despieceController.generarDespieceEscuadras)
 
 module.exports = router;

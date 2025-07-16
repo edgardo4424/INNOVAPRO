@@ -16,8 +16,6 @@ module.exports = async (dataParaGenerarDespiece) => {
   }))
   })))
 
-  console.log('dataGenerarDespieceAndamioTrabajo', dataGenerarDespieceAndamioTrabajo);
-
   const despieceGenerado = await generarDespieceAndamioTrabajo(
     dataGenerarDespieceAndamioTrabajo
   );
