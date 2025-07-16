@@ -10,11 +10,11 @@ import { Button } from "@/components/ui/button";
 import { ClipboardPlus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import ProductoForm from "../../forms/ProductoForm";
-import { useFacturacion } from "@/context/FacturacionContext";
+import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
 
 export default function ModalProducto({open, setOpen}) {
 
-    const { setProductoActual, setEdicionProducto } = useFacturacion();
+    const { setProductoActual, setEdicionProducto } = useFacturaBoleta();
 
     const closeModal = () => {
         setEdicionProducto({
@@ -62,7 +62,7 @@ export default function ModalProducto({open, setOpen}) {
                 </Button>
             </AlertDialogTrigger>
 
-            <AlertDialogContent className="min-w-3xl flex flex-col gap-4 ">
+            <AlertDialogContent className="md:min-w-3xl flex flex-col gap-4 ">
                 {/* ❌ Botón cerrar arriba */}
                 <button
                     className="absolute top-4 right-4 text-gray-500 hover:text-red-600 cursor-pointer"

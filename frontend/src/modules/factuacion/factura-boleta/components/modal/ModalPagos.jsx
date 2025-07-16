@@ -7,14 +7,14 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { useFacturacion } from "@/context/FacturacionContext";
+import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
 import { ClipboardPlus, X } from "lucide-react";
 import { useState } from "react";
 import PagoForm from "../../forms/PagoForm";
 
 export default function ModalPagos() {
 
-    const { factura } = useFacturacion();
+    const { factura } = useFacturaBoleta();
 
     const montoTotalPagos = factura.forma_pago.reduce(
         (total, pago) => total + (parseFloat(pago.monto) || 0),
@@ -32,7 +32,7 @@ export default function ModalPagos() {
 
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
-            <div className="flex items-end justify-start">
+            <div className="flex md:items-end justify-start items-start">
 
                 <AlertDialogTrigger asChild>
                     <Button className="btn-agregar" disabled={pagosCompletos}>
@@ -41,7 +41,7 @@ export default function ModalPagos() {
                     </Button>
                 </AlertDialogTrigger>
 
-                <div className="w-full  flex py-2 justify-start gap-x-3 px-3 font-semibold ">
+                <div className="w-full  flex py-2 justify-start gap-x-3 text-xs flex-col md:flex-row px-3 font-semibold ">
                     {
                         pagosCompletos ? (
                             <h2 className="text-green-400">✅ LLegaste a el Monto Total de la Factura</h2>
@@ -52,7 +52,7 @@ export default function ModalPagos() {
                     <h2>{montoTotalFactura.toFixed(2)} / {montoTotalPagos.toFixed(2)}</h2>
                 </div>
             </div>
-            <AlertDialogContent className="min-w-3xl flex flex-col gap-4 ">
+            <AlertDialogContent className="md:min-w-3xl flex flex-col gap-4 ">
                 {/* ❌ Botón cerrar arriba */}
                 <button
                     className="absolute top-4 right-4 text-gray-500 hover:text-red-600"

@@ -8,11 +8,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { useFacturacion } from "@/context/FacturacionContext";
+import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
 import { Calendar22 } from "../components/Calendar22";
 import { toast } from "react-toastify";
 const PagoForm = ({ closeModal }) => {
-    const { factura, agregarPago, pagoActual, pagoValida, setPagoActual, validarCampos } = useFacturacion();
+    const { factura, agregarPago, pagoActual, pagoValida, setPagoActual, validarCampos } = useFacturaBoleta();
 
     const { forma_pago: ListaDePago } = factura;
 
@@ -103,7 +103,7 @@ const PagoForm = ({ closeModal }) => {
                 className="w-full  grid grid-cols-4 gap-x-2 gap-y-3  py-8 "
             >
                 {/* Unidad */}
-                <div className="flex flex-col gap-1 col-span-2">
+                <div className="flex flex-col gap-1 col-span-4 md:col-span-2">
                     <Label>Metodo de pago</Label>
                     <Select
                         name="tipo"
@@ -129,7 +129,7 @@ const PagoForm = ({ closeModal }) => {
                 </div>
 
                 {/* Monto */}
-                <div className="flex flex-col gap-1 col-span-2">
+                <div className="flex flex-col gap-1 col-span-4 md:col-span-2">
                     <Label>Monto de Pago con IGV</Label>
                     <Input
                         type="number"
@@ -150,7 +150,7 @@ const PagoForm = ({ closeModal }) => {
                 </div>
 
                 {/* Cuota */}
-                <div className="flex flex-col gap-1 col-span-2">
+                <div className="flex flex-col gap-1 col-span-4 md:col-span-2">
                     <Label>Cuotas</Label>
                     <Input
                         type="number"
@@ -163,7 +163,7 @@ const PagoForm = ({ closeModal }) => {
                 </div>
 
                 {/* Fecha Emision */}
-                <div className="flex flex-col gap-1 col-span-2">
+                <div className="flex flex-col gap-1 col-span-4 md:col-span-2">
                     <Label>Fecha Vencimineto</Label>
                     <Calendar22 Dato={pagoActual} setDato={setPagoActual} tipo={"fecha_Pago"} />
                     {

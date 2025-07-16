@@ -7,10 +7,10 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { useFacturacion } from "@/context/FacturacionContext";
+import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
 
 const TablaPagos = () => {
-    const { factura } = useFacturacion();
+    const { factura } = useFacturaBoleta();
     const { forma_pago: ListaDePago } = factura;
 
 

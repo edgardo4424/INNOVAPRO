@@ -1,16 +1,15 @@
 import facturacionService from "@/modules/factuacion/service/FacturacionService";
-import redondearPersonalizado from "@/modules/factuacion/utils/redondearPersonalizado ";
+import numeroALeyenda from "@/modules/factuacion/utils/numeroALeyenda";
 import { validarModal } from "@/modules/factuacion/utils/validarModal";
 import { validarPasos } from "@/modules/factuacion/utils/validarPasos";
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import initialCorrelativosData from "./../modules/factuacion/utils/correlativoLocal.json";
-import facturasEmitidasLocal from "./../modules/factuacion/utils/facturasEmitidasLocal.json";
-import numeroALeyenda from "@/modules/factuacion/utils/numeroALeyenda";
+import initialCorrelativosData from "./../../modules/factuacion/utils/correlativoLocal.json";
+import facturasEmitidasLocal from "./../../modules/factuacion/utils/facturasEmitidasLocal.json";
 
-const FacturacionContext = createContext();
+const FacturaBoletaContext = createContext();
 
-export function FacturacionProver({ children }) {
+export function FacturaBoletaProvider({ children }) {
     const initialFacturaState = {
         tipo_Operacion: "",
         tipo_Doc: "01",
@@ -251,13 +250,6 @@ export function FacturacionProver({ children }) {
 
             setFactura((prev) => ({
                 ...prev,
-                // monto_Oper_Gravadas: parseFloat(redondearPersonalizado(gravadas)),
-                // monto_Oper_Exoneradas: parseFloat(redondearPersonalizado(exoneradas)),
-                // monto_Igv: parseFloat(redondearPersonalizado(igvTotal)),
-                // total_Impuestos: parseFloat(redondearPersonalizado(igvTotal)),
-                // valor_Venta: parseFloat(redondearPersonalizado(gravadas + exoneradas)),
-                // sub_Total: parseFloat(redondearPersonalizado(subTotal)),
-                // monto_Imp_Venta: parseFloat(redondearPersonalizado(totalVenta)),
                 monto_Oper_Gravadas: parseFloat(gravadas.toFixed(2)),
                 monto_Oper_Exoneradas: parseFloat(exoneradas.toFixed(2)),
                 monto_Igv: parseFloat(igvTotal.toFixed(2)),
@@ -303,7 +295,6 @@ export function FacturacionProver({ children }) {
         setPagoActual((prev) => ({
             ...prev,
             cuota: factura.forma_pago.length,
-            // monto: parseFloat(redondearPersonalizado(montoPendiente)),
             monto: parseFloat(montoPendiente.toFixed(2)),
         }));
     }, [factura.monto_Imp_Venta, factura.forma_pago]);
@@ -631,7 +622,6 @@ export function FacturacionProver({ children }) {
             case "fecha":
                 return buscarTipoCambioPorFecha(factura.cliente_Num_Doc);
             case "mes":
-                // Assuming factura.cliente_Num_Doc contains "mes,anio" or similar for this case
                 const [mes, anio] = factura.cliente_Num_Doc.split(",");
                 return buscarTipoCambioPorMes(mes, anio);
             default:
@@ -652,7 +642,7 @@ export function FacturacionProver({ children }) {
     };
 
     return (
-        <FacturacionContext.Provider
+        <FacturaBoletaContext.Provider
             value={{
                 factura,
                 setFactura,
@@ -679,10 +669,10 @@ export function FacturacionProver({ children }) {
             }}
         >
             {children}
-        </FacturacionContext.Provider>
+        </FacturaBoletaContext.Provider>
     );
 }
 
-export function useFacturacion() {
-    return useContext(FacturacionContext);
+export function useFacturaBoleta() {
+    return useContext(FacturaBoletaContext);
 }

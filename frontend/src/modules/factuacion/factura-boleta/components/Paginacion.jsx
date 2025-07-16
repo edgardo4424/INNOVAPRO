@@ -1,8 +1,8 @@
-import { useFacturacion } from "@/context/FacturacionContext"; // Asegúrate de que esta ruta sea correcta
+import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext"; // Asegúrate de que esta ruta sea correcta
 
 const Paginacion = ({ FormSelect, setFormSelect }) => {
     // Obtenemos la función validarPaso del contexto
-    const { validarPaso } = useFacturacion();
+    const { validarPaso } = useFacturaBoleta();
 
     const handlePagination = async (opcion) => {
         // ¡Hacemos la función async!

@@ -10,13 +10,13 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { useEffect, useState } from "react";
-import useProducto from "../hooks/useProducto";
-import { useFacturacion } from "@/context/FacturacionContext";
+import useProducto from "../../factura-boleta/hooks/useProducto";
+import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
 
 const ListaDeProductos = ({ closeModal }) => {
 
     const { ObtenerProductos } = useProducto();
-    const { productoActual, setProductoActual } = useFacturacion();
+    const { productoActual, setProductoActual } = useFacturaBoleta();
 
     const [piezasDisponibles, setPiezasDisponibles] = useState([]);
     const [filtro, setFiltro] = useState("");

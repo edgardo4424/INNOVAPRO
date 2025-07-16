@@ -1,99 +1,228 @@
-import { useFacturacion } from "@/context/FacturacionContext";
+import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
 import { useState } from "react";
-import ModalVisualizarFactura from "../components/modal/ModalVisualizarFactura";
-import Paginacion from "../components/Paginacion";
-import DatosDelCliente from "../components/paso/DatosDelCliente";
-import DatosDelComprobante from "../components/paso/DatosDelComprobante";
-import FormaDePago from "../components/paso/FormaDePago";
-import MontoyProductos from "../components/paso/MontoyProductos";
+import { useNavigate } from "react-router-dom";
 
 const Facturacion = () => {
     const [FormSelect, setFormSelect] = useState(1);
-    const { facturarNuevoDocumento, validarPaso } = useFacturacion();
+    const [activeTab, setActiveTab] = useState("facturaBoleta"); // New state for active tab
+    const { validarPaso } = useFacturaBoleta();
 
-    const renderForm = () => {
-        switch (FormSelect) {
-            case 1:
-                return <DatosDelComprobante />;
-            case 2:
-                return <DatosDelCliente />;
-            case 3:
-                return <MontoyProductos />;
-            case 4:
-                return <FormaDePago />;
+    const navigate = useNavigate();
+
+    const navegarAOtrasRutas = (ruta) => {
+        navigate(ruta);
+    };
+
+    const renderContent = () => {
+        switch (activeTab) {
+            case "facturaBoleta":
+                return (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {/* Generar Factura / Boleta de venta */}
+                        <div
+                            className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
+                            onClick={() => navegarAOtrasRutas("/facturacion/generar/factura-boleta")}
+                        >
+                            <h3 className="text-xl font-semibold text-blue-700 mb-2">
+                                Generar Factura / Boleta
+                            </h3>
+                            <p className="text-gray-600 text-sm">
+                                Crea y emite nuevas facturas o boletas de venta de forma rápida y sencilla.
+                            </p>
+                        </div>
+
+                        {/* PDF documento */}
+                        <div
+                            className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
+                            onClick={() => console.log("Ver PDF Factura/Boleta")}
+                        >
+                            <h3 className="text-xl font-semibold text-blue-700 mb-2">
+                                Ver PDF Documento
+                            </h3>
+                            <p className="text-gray-600 text-sm">
+                                Visualiza y descarga tus facturas o boletas en formato PDF.
+                            </p>
+                        </div>
+
+                        {/* XML documento */}
+                        <div
+                            className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
+                            onClick={() => console.log("Descargar XML Factura/Boleta")}
+                        >
+                            <h3 className="text-xl font-semibold text-blue-700 mb-2">
+                                Descargar XML Documento
+                            </h3>
+                            <p className="text-gray-600 text-sm">
+                                Obtén el archivo XML de tus comprobantes electrónicos.
+                            </p>
+                        </div>
+                    </div>
+                );
+            case "notaCreditoDebito":
+                return (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {/* Enviar Nota */}
+                        <div
+                            className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
+                            onClick={() => console.log("Enviar Nota de Crédito/Débito")}
+                        >
+                            <h3 className="text-xl font-semibold text-blue-700 mb-2">
+                                Generar Nota
+                            </h3>
+                            <p className="text-gray-600 text-sm">
+                                Crea y envía notas de crédito o débito para ajustar tus comprobantes.
+                            </p>
+                        </div>
+
+                        {/* PDF Nota */}
+                        <div
+                            className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
+                            onClick={() => console.log("Ver PDF Nota")}
+                        >
+                            <h3 className="text-xl font-semibold text-blue-700 mb-2">
+                                Ver PDF Nota
+                            </h3>
+                            <p className="text-gray-600 text-sm">
+                                Visualiza y descarga tus notas en formato PDF.
+                            </p>
+                        </div>
+
+                        {/* XML Nota */}
+                        <div
+                            className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
+                            onClick={() => console.log("Descargar XML Nota")}
+                        >
+                            <h3 className="text-xl font-semibold text-blue-700 mb-2">
+                                Descargar XML Nota
+                            </h3>
+                            <p className="text-gray-600 text-sm">
+                                Obtén el archivo XML de tus notas de crédito/débito.
+                            </p>
+                        </div>
+                    </div>
+                );
+            case "guiaRemision":
+                return (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {/* Transporte privado */}
+                        <div
+                            className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
+                            onClick={() => navegarAOtrasRutas("/facturacion/generar/guia-de-remision/transporte-privado")}
+                        >
+                            <h3 className="text-xl font-semibold text-blue-700 mb-2">
+                                Transporte Privado
+                            </h3>
+                            <p className="text-gray-600 text-sm">
+                                Emite guías de remisión para traslados con tu propio transporte.
+                            </p>
+                        </div>
+
+                        {/* Transporte público */}
+                        <div
+                            className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
+                            onClick={() => navegarAOtrasRutas("/facturacion/generar/guia-de-remision/transporte-publico")}
+                        >
+                            <h3 className="text-xl font-semibold text-blue-700 mb-2">
+                                Transporte Público
+                            </h3>
+                            <p className="text-gray-600 text-sm">
+                                Genera guías de remisión para envíos a través de transportistas públicos.
+                            </p>
+                        </div>
+
+                        {/* Traslado misma empresa */}
+                        <div
+                            className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
+                            onClick={() => navegarAOtrasRutas("/facturacion/generar/guia-de-remision/traslado-misma-empresa")}
+                        >
+                            <h3 className="text-xl font-semibold text-blue-700 mb-2">
+                                Traslado Misma Empresa
+                            </h3>
+                            <p className="text-gray-600 text-sm">
+                                Utiliza esta opción para movimientos de bienes entre tus propias sucursales.
+                            </p>
+                        </div>
+
+                        {/* PDF Guia */}
+                        <div
+                            className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
+                            onClick={() => console.log("Ver PDF Guía")}
+                        >
+                            <h3 className="text-xl font-semibold text-blue-700 mb-2">
+                                Ver PDF Guía
+                            </h3>
+                            <p className="text-gray-600 text-sm">
+                                Visualiza y descarga tus guías de remisión en formato PDF.
+                            </p>
+                        </div>
+
+                        {/* XML Guia */}
+                        <div
+                            className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
+                            onClick={() => console.log("Descargar XML Guía")}
+                        >
+                            <h3 className="text-xl font-semibold text-blue-700 mb-2">
+                                Descargar XML Guía
+                            </h3>
+                            <p className="text-gray-600 text-sm">
+                                Obtén el archivo XML de tus guías de remisión electrónicas.
+                            </p>
+                        </div>
+                    </div>
+                );
             default:
-                return <DatosDelComprobante />;
+                return null;
         }
     };
-
-    const tabs = [
-        { id: 1, label: "Datos del Comprobante" },
-        { id: 2, label: "Datos del Cliente" },
-        { id: 3, label: "Monto y Productos" },
-        { id: 4, label: "Forma de Pago" },
-    ];
-
-
-    const handleTabClick = async (tabId) => {
-        if (tabId === 2) {
-            const esValido = await validarPaso("DatosDelComprobante");
-            if (!esValido) return;
-        }
-
-        if (tabId === 3) {
-            const esValido = await validarPaso("DatosDelCliente");
-            if (!esValido) return;
-        }
-
-        if (tabId === 4) {
-            const esValido = await validarPaso("DatosDelProducto");
-            if (!esValido) return;
-        }
-
-        setFormSelect(tabId);
-    };
-
 
     return (
-        <div className="min-h-screen w-full flex flex-col items-center px-4 md:px-8 py-6">
+        <div className="min-h-screen w-full flex flex-col items-center px-4 md:px-8 py-6 ">
             <div className="w-full max-w-7xl">
-                <div className="flex items-center justify-between mb-6 ">
-                    <h2 className="text-2xl md:text-3xl font-bold text-blue-600">
-                        Emicion de Factura
+                {/* Header */}
+                <div className="flex items-center justify-between mb-8">
+                    <h2 className="text-3xl md:text-4xl font-extrabold text-blue-700">
+                        Módulo de Facturación Electrónica
                     </h2>
                 </div>
 
-                {/* Tabs */}
-                <div className="grid grid-cols-2 sm:grid-cols-4  mb-6">
-                    {tabs.map((tab) => (
+                {/* Tab Navigation */}
+                <div className="border-b border-gray-300 mb-8">
+                    <nav className="-mb-px flex space-x-8" aria-label="Tabs">
                         <button
-                            key={tab.id}
-                            onClick={() => handleTabClick(tab.id)}
-                            className={`py-3 px-2 text-sm sm:text-base font-semibold text-center  transition-all  ease-in-out border-b-4 cursor-pointer
-                            ${FormSelect === tab.id
-                                    ? "border-blue-600 text-blue-600 "
-                                    : " text-gray-500"
-                                }`}
+                            onClick={() => setActiveTab("facturaBoleta")}
+                            className={`${activeTab === "facturaBoleta"
+                                ? "border-blue-600 text-blue-600"
+                                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg focus:outline-none`}
                         >
-                            {tab.label}
+                            Factura y Boleta
                         </button>
-                    ))}
+                        <button
+                            onClick={() => setActiveTab("notaCreditoDebito")}
+                            className={`${activeTab === "notaCreditoDebito"
+                                ? "border-blue-600 text-blue-600"
+                                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg focus:outline-none`}
+                        >
+                            Notas de Crédito/Débito
+                        </button>
+                        <button
+                            onClick={() => setActiveTab("guiaRemision")}
+                            className={`${activeTab === "guiaRemision"
+                                ? "border-blue-600 text-blue-600"
+                                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg focus:outline-none`}
+                        >
+                            Guías de Remisión
+                        </button>
+                    </nav>
                 </div>
 
-                {/* Form content */}
-                <div className="bg-white   p-4  transition-all duration-300 mb-6">
-                    {renderForm()}
-                </div>
+                {/* Content based on active tab */}
+                {renderContent()}
 
-                {/* Pagination */}
-                <div className="mb-6">
-                    <Paginacion FormSelect={FormSelect} setFormSelect={setFormSelect} />
-                </div>
 
-                {/* Facturar  */}
-                <div className="flex justify-end">
-                    <ModalVisualizarFactura />
-                </div>
+
             </div>
         </div>
     );

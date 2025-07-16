@@ -7,10 +7,10 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { useFacturacion } from "@/context/FacturacionContext";
+import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
 
 const TablaProductos = ({ setOpen }) => {
-    const { factura, TotalProducto, editarProducto } = useFacturacion();
+    const { factura, TotalProducto, editarProducto } = useFacturaBoleta();
     const { detalle: listaProductos } = factura;
 
     const seleccionarProducto = async (producto, index) => {

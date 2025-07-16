@@ -7,13 +7,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { useFacturacion } from "@/context/FacturacionContext";
+import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
 import { Search } from "lucide-react";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion"; // ✅ Importar motion
 
 const DatosDelCliente = () => {
-    const { factura, setFactura, facturaValida, metodo } = useFacturacion();
+    const { factura, setFactura, facturaValida, metodo } = useFacturaBoleta();
     const { cliente_Tipo_Doc, cliente_Num_Doc, cliente_Razon_Social, cliente_Direccion } = factura;
 
     const handleBuscar = async (e) => {

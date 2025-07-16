@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useFacturacion } from "@/context/FacturacionContext"; // Import your context
+import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext"; // Import your context
 import { ClipboardPlus, Eye, X } from "lucide-react"; // Still using Lucide icons
 
 export default function ModalVisualizarFactura() {
 
-    const {facturaValidaParaGuardar, facturarNuevoDocumento} = useFacturacion();
+    const {facturaValidaParaGuardar, facturarNuevoDocumento} = useFacturaBoleta();
 
     const [isOpen, setIsOpen] = useState(false); // Changed state name for clarity
 
@@ -17,7 +17,7 @@ export default function ModalVisualizarFactura() {
     };
 
     // Get the factura object from your context
-    const { factura } = useFacturacion();
+    const { factura } = useFacturaBoleta();
 
     // Helper to get document type description
     const getTipoDocDescription = (typeCode) => {

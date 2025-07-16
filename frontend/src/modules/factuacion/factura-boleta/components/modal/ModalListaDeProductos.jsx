@@ -28,7 +28,7 @@ export default function ModalListaDeProductos() {
                 </Button>
             </AlertDialogTrigger>
 
-            <AlertDialogContent className="min-w-2xl flex flex-col gap-4 ">
+            <AlertDialogContent className="md:min-w-2xl flex flex-col gap-4 ">
                 {/* ❌ Botón cerrar arriba */}
                 <button
                     className="absolute top-4 right-4 text-gray-500 hover:text-red-600"

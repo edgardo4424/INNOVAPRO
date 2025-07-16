@@ -115,8 +115,8 @@ const modulesByRole = {
       {
          group: "Facturación",
          items: [
-            { name: "Generar Factura", path: "/facturacion/generar-factura" },
-            { name: "Listar Facturas", path: "/facturacion/listar" },
+            { name: "Generar Documentos", path: "/facturacion/generar" },
+            { name: "Listar Documentos", path: "/facturacion/listar" },
             // { name: "Facturas Pendientes", path: "/facturacion/pendientes" },
             { name: "Facturas Anuladas", path: "/facturacion/anuladas" },
          ],

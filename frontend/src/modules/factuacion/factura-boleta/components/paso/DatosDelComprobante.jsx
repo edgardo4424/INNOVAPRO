@@ -7,12 +7,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { useFacturacion } from "@/context/FacturacionContext";
+import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
 import { motion } from "framer-motion"; // ✅ Importar motion
 import { Calendar22 } from "../Calendar22";
 
 const DatosDelComprobante = () => {
-    const { factura, setFactura, facturaValida } = useFacturacion();
+    const { factura, setFactura, facturaValida } = useFacturaBoleta();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;

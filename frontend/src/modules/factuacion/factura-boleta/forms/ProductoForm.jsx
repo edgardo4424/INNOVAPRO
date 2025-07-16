@@ -8,14 +8,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { useFacturacion } from '@/context/FacturacionContext';
+import { useFacturaBoleta } from '@/context/Factura/FacturaBoletaContext';
 import { useEffect, useState } from 'react';
 import ModalListaDeProductos from '../components/modal/ModalListaDeProductos';
 
 const ProductoForm = ({ closeModal }) => {
-    const { agregarProducto, productoActual, setProductoActual, edicionProducto, validarCampos, productoValida, eliminarProducto } = useFacturacion();
-
-
+    const { agregarProducto, productoActual, setProductoActual, edicionProducto, validarCampos, productoValida, eliminarProducto } = useFacturaBoleta();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -96,10 +94,8 @@ const ProductoForm = ({ closeModal }) => {
         closeModal();
     }
 
-
-
     return (
-        <div className='max-h-[50dvh] min-h-[40dvh] overflow-y-auto  col-span-4 w-full'>
+        <div className='max-h-[50dvh] min-h-[40dvh] overflow-y-auto col-span-4 w-full'>
             <div className='w-full flex justify-end'>
                 <ModalListaDeProductos />
             </div>
@@ -108,11 +104,11 @@ const ProductoForm = ({ closeModal }) => {
                 onSubmit={(e) => {
                     e.preventDefault();
                 }}
-
-                className="w-full grid grid-cols-4 gap-x-2 gap-y-3 "
+                // Default to 1 column on small screens, 2 on medium, 4 on large
+                className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-2 gap-y-3"
             >
                 {/* Código de Producto */}
-                <div className="flex flex-col gap-1 col-span-2 relative">
+                <div className="flex flex-col gap-1 col-span-full md:col-span-2 relative">
                     <Label>Código de Producto</Label>
                     <input
                         type="text"
@@ -124,7 +120,7 @@ const ProductoForm = ({ closeModal }) => {
                         className="border-1 border-gray-400 p-2 rounded"
                     />
                     <span
-                        className={`text-red-500  text-sm ${productoValida.cod_Producto ? "block" : "hidden"
+                        className={`text-red-500 text-sm ${productoValida.cod_Producto ? "block" : "hidden"
                             }`}
                     >
                         Debes ingresar el codigo del producto
@@ -132,7 +128,7 @@ const ProductoForm = ({ closeModal }) => {
                 </div>
 
                 {/* Unidad */}
-                <div className='flex flex-col gap-1 col-span-2'>
+                <div className='flex flex-col gap-1 col-span-full md:col-span-2'>
                     <Label>Unidad</Label>
                     <Select
                         name="unidad"
@@ -164,7 +160,7 @@ const ProductoForm = ({ closeModal }) => {
                         </SelectContent>
                     </Select>
                     <span
-                        className={`text-red-500  text-sm ${productoValida.unidad ? "block" : "hidden"
+                        className={`text-red-500 text-sm ${productoValida.unidad ? "block" : "hidden"
                             }`}
                     >
                         Debes ingresar la unidad del producto.
@@ -172,7 +168,7 @@ const ProductoForm = ({ closeModal }) => {
                 </div>
 
                 {/* Cantidad */}
-                <div className='flex flex-col gap-1 col-span-1'>
+                <div className='flex flex-col gap-1 col-span-full md:col-span-2 lg:col-span-1'>
                     <Label>Cantidad</Label>
                     <Input
                         type="number"
@@ -182,7 +178,7 @@ const ProductoForm = ({ closeModal }) => {
                         className="border-1 border-gray-400"
                     />
                     <span
-                        className={`text-red-500  text-sm ${productoValida.cantidad ? "block" : "hidden"
+                        className={`text-red-500 text-sm ${productoValida.cantidad ? "block" : "hidden"
                             }`}
                     >
                         Debes ingresar la cantidad del producto
@@ -190,7 +186,7 @@ const ProductoForm = ({ closeModal }) => {
                 </div>
 
                 {/* Descripción */}
-                <div className='flex flex-col gap-1 col-span-2'>
+                <div className='flex flex-col gap-1 col-span-full md:col-span-2'>
                     <Label>Descripción</Label>
                     <Input
                         type="text"
@@ -200,7 +196,7 @@ const ProductoForm = ({ closeModal }) => {
                         className="border-1 border-gray-400"
                     />
                     <span
-                        className={`text-red-500  text-sm ${productoValida.descripcion ? "block" : "hidden"
+                        className={`text-red-500 text-sm ${productoValida.descripcion ? "block" : "hidden"
                             }`}
                     >
                         Debes ingresar la descripción del producto
@@ -208,7 +204,7 @@ const ProductoForm = ({ closeModal }) => {
                 </div>
 
                 {/* Valor Unitario */}
-                <div className='flex flex-col gap-1 col-span-1'>
+                <div className='flex flex-col gap-1 col-span-full md:col-span-2 lg:col-span-1'>
                     <Label>Valor Unitario</Label>
                     <Input
                         type="number"
@@ -218,10 +214,9 @@ const ProductoForm = ({ closeModal }) => {
                         onChange={handleInputChange}
                         className="border-1 border-gray-400"
                         list="piezas-lista"
-
                     />
                     <span
-                        className={`text-red-500  text-sm ${productoValida.descripcion ? "block" : "hidden"
+                        className={`text-red-500 text-sm ${productoValida.monto_Valor_Unitario ? "block" : "hidden"
                             }`}
                     >
                         Debes ingresar el valor unitario
@@ -229,7 +224,7 @@ const ProductoForm = ({ closeModal }) => {
                 </div>
 
                 {/* Porcentaje IGV */}
-                <div className='flex flex-col gap-1 col-span-1'>
+                <div className='flex flex-col gap-1 col-span-full md:col-span-1 lg:col-span-1'>
                     <Label>% IGV</Label>
                     <Input
                         type="number"
@@ -243,7 +238,7 @@ const ProductoForm = ({ closeModal }) => {
                 </div>
 
                 {/* IGV */}
-                <div className='flex flex-col gap-1 col-span-1'>
+                <div className='flex flex-col gap-1 col-span-full md:col-span-1 lg:col-span-1'>
                     <Label>IGV</Label>
                     <Input
                         type="number"
@@ -257,7 +252,7 @@ const ProductoForm = ({ closeModal }) => {
                 </div>
 
                 {/* Base IGV */}
-                <div className='flex flex-col gap-1 col-span-1'>
+                <div className='flex flex-col gap-1 col-span-full md:col-span-1 lg:col-span-1'>
                     <Label>Base IGV</Label>
                     <Input
                         type="number"
@@ -271,7 +266,7 @@ const ProductoForm = ({ closeModal }) => {
                 </div>
 
                 {/* Tipo Afectación IGV */}
-                <div className='flex flex-col gap-1 col-span-1'>
+                <div className='flex flex-col gap-1 col-span-full md:col-span-2 lg:col-span-1'>
                     <Label>Tipo Afe. IGV</Label>
                     <Select
                         value={productoActual.tip_Afe_Igv}
@@ -309,7 +304,7 @@ const ProductoForm = ({ closeModal }) => {
                         </SelectContent>
                     </Select>
                     <span
-                        className={`text-red-500  text-sm ${productoValida.tip_Afe_Igv ? "block" : "hidden"
+                        className={`text-red-500 text-sm ${productoValida.tip_Afe_Igv ? "block" : "hidden"
                             }`}
                     >
                         Selecciona un Tipo Afe. IGV
@@ -317,7 +312,7 @@ const ProductoForm = ({ closeModal }) => {
                 </div>
 
                 {/* Total Impuestos */}
-                <div className='flex flex-col gap-1 col-span-1'>
+                <div className='flex flex-col gap-1 col-span-full md:col-span-2 lg:col-span-1'>
                     <Label>Total Impuestos</Label>
                     <Input
                         type="number"
@@ -331,7 +326,7 @@ const ProductoForm = ({ closeModal }) => {
                 </div>
 
                 {/* Precio Unitario */}
-                <div className='flex flex-col gap-1 col-span-1'>
+                <div className='flex flex-col gap-1 col-span-full md:col-span-2 lg:col-span-1'>
                     <Label>Precio Unitario</Label>
                     <Input
                         type="number"
@@ -345,7 +340,7 @@ const ProductoForm = ({ closeModal }) => {
                 </div>
 
                 {/* Valor de Venta */}
-                <div className='flex flex-col gap-1 col-span-1'>
+                <div className='flex flex-col gap-1 col-span-full md:col-span-2 lg:col-span-1'>
                     <Label>Valor de Venta</Label>
                     <Input
                         type="number"
@@ -359,7 +354,7 @@ const ProductoForm = ({ closeModal }) => {
                 </div>
 
                 {/* Factor ICBPER */}
-                <div className='flex flex-col gap-1 col-span-1'>
+                <div className='flex flex-col gap-1 col-span-full md:col-span-2 lg:col-span-1'>
                     <Label>Factor ICBPER</Label>
                     <Input
                         type="number"
@@ -368,24 +363,23 @@ const ProductoForm = ({ closeModal }) => {
                         step="0.01"
                         onChange={handleInputChange}
                         className="border-1 border-gray-400"
-                    // disabled
                     />
                 </div>
             </form>
             {/* 🔘 Botones de acción */}
-            <div className="flex justify-end gap-3 border-t pt-4">
+            <div className="flex justify-end gap-3 border-t pt-4 mt-4 flex-wrap"> {/* Added flex-wrap for smaller screens */}
                 {
                     edicionProducto?.edicion == true &&
-                    <Button variant="outline" onClick={handleEliminar} className={"cursor-pointer hover:bg-red-600 bg-red-400 hover:text-white text-white border-2 "}>
+                    <Button variant="outline" onClick={handleEliminar} className={"cursor-pointer hover:bg-red-600 bg-red-400 hover:text-white text-white border-2 w-full md:w-auto"}> {/* Full width on small, auto on medium+ */}
                         Eliminar
                     </Button>
                 }
-                <Button variant="outline" onClick={closeModal} className={"cursor-pointer hover:bg-red-50 hover:text-red-600 border-2 "}>
+                <Button variant="outline" onClick={closeModal} className={"cursor-pointer hover:bg-red-50 hover:text-red-600 border-2 w-full md:w-auto"}> {/* Full width on small, auto on medium+ */}
                     Cancelar
                 </Button>
                 <Button
                     onClick={handleAgregar}
-                    form="form-producto" className={"cursor-pointer bg-blue-600 hover:bg-blue-800"}>
+                    form="form-producto" className={"cursor-pointer bg-blue-600 hover:bg-blue-800 w-full md:w-auto"}> {/* Full width on small, auto on medium+ */}
                     Guardar
                 </Button>
             </div>
