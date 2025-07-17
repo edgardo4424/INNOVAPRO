@@ -32,7 +32,7 @@ const Facturacion = () => {
                         </div>
 
                         {/* PDF documento */}
-                        <div
+                        {/* <div
                             className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
                             onClick={() => console.log("Ver PDF Factura/Boleta")}
                         >
@@ -42,10 +42,10 @@ const Facturacion = () => {
                             <p className="text-gray-600 text-sm">
                                 Visualiza y descarga tus facturas o boletas en formato PDF.
                             </p>
-                        </div>
+                        </div> */}
 
                         {/* XML documento */}
-                        <div
+                        {/* <div
                             className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
                             onClick={() => console.log("Descargar XML Factura/Boleta")}
                         >
@@ -55,7 +55,7 @@ const Facturacion = () => {
                             <p className="text-gray-600 text-sm">
                                 Obtén el archivo XML de tus comprobantes electrónicos.
                             </p>
-                        </div>
+                        </div> */}
                     </div>
                 );
             case "notaCreditoDebito":
@@ -75,7 +75,7 @@ const Facturacion = () => {
                         </div>
 
                         {/* PDF Nota */}
-                        <div
+                        {/* <div
                             className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
                             onClick={() => console.log("Ver PDF Nota")}
                         >
@@ -85,10 +85,10 @@ const Facturacion = () => {
                             <p className="text-gray-600 text-sm">
                                 Visualiza y descarga tus notas en formato PDF.
                             </p>
-                        </div>
+                        </div> */}
 
                         {/* XML Nota */}
-                        <div
+                        {/* <div
                             className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
                             onClick={() => console.log("Descargar XML Nota")}
                         >
@@ -98,7 +98,7 @@ const Facturacion = () => {
                             <p className="text-gray-600 text-sm">
                                 Obtén el archivo XML de tus notas de crédito/débito.
                             </p>
-                        </div>
+                        </div> */}
                     </div>
                 );
             case "guiaRemision":
@@ -144,7 +144,7 @@ const Facturacion = () => {
                         </div>
 
                         {/* PDF Guia */}
-                        <div
+                        {/* <div
                             className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
                             onClick={() => console.log("Ver PDF Guía")}
                         >
@@ -154,10 +154,10 @@ const Facturacion = () => {
                             <p className="text-gray-600 text-sm">
                                 Visualiza y descarga tus guías de remisión en formato PDF.
                             </p>
-                        </div>
+                        </div> */}
 
                         {/* XML Guia */}
-                        <div
+                        {/* <div
                             className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
                             onClick={() => console.log("Descargar XML Guía")}
                         >
@@ -167,7 +167,7 @@ const Facturacion = () => {
                             <p className="text-gray-600 text-sm">
                                 Obtén el archivo XML de tus guías de remisión electrónicas.
                             </p>
-                        </div>
+                        </div> */}
                     </div>
                 );
             default:

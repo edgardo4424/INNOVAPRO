@@ -65,10 +65,10 @@ const Facturacion = lazy(() =>
 );
 
 const FacturaBoleta = lazy(() =>
-   import("../modules/factuacion/pages/FacturaBoleta")
+   import("../modules/factuacion/factura-boleta/FacturaBoleta")
 );
 const GuiaRemision = lazy(() =>
-   import("../modules/factuacion/pages/GuiaRemision")
+   import("../modules/factuacion/guia-de-remision/GuiaRemision")
 );
 
 const FacturasAnuladas = lazy(() =>

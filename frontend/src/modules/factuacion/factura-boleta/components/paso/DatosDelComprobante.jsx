@@ -8,7 +8,6 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
-import { motion } from "framer-motion"; // ✅ Importar motion
 import { Calendar22 } from "../Calendar22";
 
 const DatosDelComprobante = () => {
@@ -30,17 +29,12 @@ const DatosDelComprobante = () => {
     };
 
     return (
-        <motion.div
-            className="max-h-[80dvh] min-h-[55dvh] md:min-h-[40dvh] overflow-y-auto p-2"
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-        >
-            <form action="" className="w-full  grid grid-cols-2 gap-x-2 gap-y-3">
+        <div className="md:min-h-[40dvh] overflow-y-auto p-4 sm:p-6 lg:p-8"> {/* Ajuste de padding */}
+            <h1 className="text-2xl font-bold py-3 text-gray-800">Datos del Comprobante</h1>
+            <form action="" className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-5 md:gap-x-6 md:gap-y-8"> {/* Grid más flexible */}
                 {/* Tipo de Operacion */}
-                <div className="flex flex-col gap-1 col-span-2 md:col-span-1 ">
-                    <Label>Tipo de Venta</Label>
+                <div className="flex flex-col gap-1 col-span-full sm:col-span-1"> {/* Col-span-full para que ocupe todo el ancho en móviles */}
+                    <Label htmlFor="tipo_operacion">Tipo de Venta</Label>
                     <Select
                         name="tipo_operacion"
                         value={factura.tipo_Operacion}
@@ -48,15 +42,15 @@ const DatosDelComprobante = () => {
                             handleSelectChange(e, "tipo_Operacion");
                         }}
                     >
-                        <SelectTrigger className="w-full border-1 border-gray-400">
+                        <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> {/* Estilo de borde mejorado */}
                             <SelectValue placeholder="Selecciona un tipo de operación" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="0101">Venta lnterna</SelectItem>
+                            <SelectItem value="0101">Venta Interna</SelectItem>
                             <SelectItem value="0102">Exportación</SelectItem>
                             <SelectItem value="0103">No Domiciliados</SelectItem>
                             <SelectItem value="0104">Venta Interna – Anticipos</SelectItem>
-                            <SelectItem value="0105">Venta Itinerante </SelectItem>
+                            <SelectItem value="0105">Venta Itinerante</SelectItem>
                             <SelectItem value="0106">Factura Guía</SelectItem>
                             <SelectItem value="0107">Venta Arroz Pilado</SelectItem>
                             <SelectItem value="0108">
@@ -67,16 +61,16 @@ const DatosDelComprobante = () => {
                         </SelectContent>
                     </Select>
                     <span
-                        className={`text-red-500  text-sm ${facturaValida.tipo_Operacion ? "block" : "hidden"
+                        className={`text-red-500 text-sm mt-1 ${facturaValida.tipo_Operacion ? "block" : "hidden"
                             }`}
                     >
-                        Debes seleccionar el tipo de operación.
+                        Debes seleccionar el tipo de operación.
                     </span>
                 </div>
 
                 {/* Tipo de Documento */}
-                <div className="flex flex-col gap-1 col-span-1 ">
-                    <Label>Tipo de Documento</Label>
+                <div className="flex flex-col gap-1 col-span-full sm:col-span-1">
+                    <Label htmlFor="tipo_doc">Tipo de Documento</Label>
                     <Select
                         value={factura.tipo_Doc}
                         name="tipo_Doc"
@@ -84,7 +78,7 @@ const DatosDelComprobante = () => {
                             handleSelectChange(e, "tipo_Doc");
                         }}
                     >
-                        <SelectTrigger className="w-full border-1 border-gray-400">
+                        <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm">
                             <SelectValue placeholder="Selecciona un tipo de documento" />
                         </SelectTrigger>
                         <SelectContent>
@@ -93,7 +87,7 @@ const DatosDelComprobante = () => {
                         </SelectContent>
                     </Select>
                     <span
-                        className={`text-red-500  text-sm ${facturaValida.tipo_Doc ? "block" : "hidden"
+                        className={`text-red-500 text-sm mt-1 ${facturaValida.tipo_Doc ? "block" : "hidden"
                             }`}
                     >
                         Debes seleccionar el tipo de documento.
@@ -101,20 +95,20 @@ const DatosDelComprobante = () => {
                 </div>
 
                 {/* Serie */}
-                <div className="flex flex-col gap-1 col-span-1 ">
-                    <Label>Serie</Label>
+                <div className="flex flex-col gap-1 col-span-full sm:col-span-1">
+                    <Label htmlFor="serie">Serie</Label>
                     <Input
-                        handleInputChange
                         type="text"
                         name="serie"
-                        placeholder="serie"
-                        className={"border-1 border-gray-400"}
+                        id="serie"
+                        placeholder="Serie"
+                        className="border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
                         value={factura.serie || ""}
                         onChange={handleInputChange}
                         disabled
                     />
                     <span
-                        className={`text-red-500  text-sm ${facturaValida.serie ? "block" : "hidden"
+                        className={`text-red-500 text-sm mt-1 ${facturaValida.serie ? "block" : "hidden"
                             }`}
                     >
                         Debes ingresar la serie del comprobante.
@@ -122,19 +116,20 @@ const DatosDelComprobante = () => {
                 </div>
 
                 {/* Correlativo */}
-                <div className="flex flex-col gap-1 col-span-1 ">
-                    <Label>Correlativo</Label>
+                <div className="flex flex-col gap-1 col-span-full sm:col-span-1">
+                    <Label htmlFor="correlativo">Correlativo</Label>
                     <Input
                         type="text"
                         name="correlativo"
-                        placeholder="correlativo"
-                        className={"border-1 border-gray-400"}
+                        id="correlativo"
+                        placeholder="Correlativo"
+                        className="border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
                         value={factura.correlativo || ""}
                         onChange={handleInputChange}
                         disabled
                     />
                     <span
-                        className={`text-red-500  text-sm ${facturaValida.correlativo ? "block" : "hidden"
+                        className={`text-red-500 text-sm mt-1 ${facturaValida.correlativo ? "block" : "hidden"
                             }`}
                     >
                         Debes ingresar el correlativo del comprobante.
@@ -142,8 +137,8 @@ const DatosDelComprobante = () => {
                 </div>
 
                 {/* Tipo de Moneda */}
-                <div className="flex flex-col gap-1 col-span-1 ">
-                    <Label>Tipo de Moneda</Label>
+                <div className="flex flex-col gap-1 col-span-full sm:col-span-1">
+                    <Label htmlFor="tipo_moneda">Tipo de Moneda</Label>
                     <Select
                         value={factura.tipo_Moneda}
                         name="tipo_Moneda"
@@ -151,16 +146,16 @@ const DatosDelComprobante = () => {
                             handleSelectChange(e, "tipo_Moneda");
                         }}
                     >
-                        <SelectTrigger className="w-full border-1 border-gray-400">
-                            <SelectValue placeholder="Que moneda usass" />
+                        <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm">
+                            <SelectValue placeholder="Qué moneda usas" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="PEN">SOLES</SelectItem>
-                            <SelectItem value="USD">DOLAR</SelectItem>
+                            <SelectItem value="USD">DÓLAR</SelectItem>
                         </SelectContent>
                     </Select>
                     <span
-                        className={`text-red-500  text-sm ${facturaValida.tipo_Moneda ? "block" : "hidden"
+                        className={`text-red-500 text-sm mt-1 ${facturaValida.tipo_Moneda ? "block" : "hidden"
                             }`}
                     >
                         Debes ingresar el tipo de moneda.
@@ -168,23 +163,23 @@ const DatosDelComprobante = () => {
                 </div>
 
                 {/* Fecha Emision */}
-                <div className="flex flex-col gap-1 col-span-1 ">
-                    <Label>Fecha Emision</Label>
+                <div className="flex flex-col gap-1 col-span-full sm:col-span-1">
+                    <Label htmlFor="fecha_emision">Fecha Emisión</Label>
                     <Calendar22
                         Dato={factura}
                         setDato={setFactura}
                         tipo="fecha_Emision"
                     />
                     <span
-                        className={`text-red-500  text-sm ${facturaValida.fecha_Emision ? "block" : "hidden"
+                        className={`text-red-500 text-sm mt-1 ${facturaValida.fecha_Emision ? "block" : "hidden"
                             }`}
                     >
-                        Debes ingresar la fecha de emision.
+                        Debes ingresar la fecha de emisión.
                     </span>
                 </div>
 
                 {/* Ruc de la empresa */}
-                <div className="flex flex-col gap-1 col-span-1 ">
+                <div className="flex flex-col gap-1 col-span-full sm:col-span-1">
                     <Label htmlFor="empresa_Ruc">Ruc de la empresa</Label>
                     <input
                         list="ruc-options"
@@ -192,7 +187,7 @@ const DatosDelComprobante = () => {
                         name="empresa_Ruc"
                         id="empresa_Ruc"
                         placeholder="Ruc de la empresa"
-                        className="border border-gray-400 rounded-md px-2 py-1 "
+                        className="border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
                         value={factura.empresa_Ruc || ""}
                         onChange={handleInputChange}
                     />
@@ -214,17 +209,16 @@ const DatosDelComprobante = () => {
                             value="20555389052"
                             label="Indek Andina e.I.R.L | Grupo Innova"
                         />
-                        {/* Puedes cargar esto dinámicamente también */}
                     </datalist>
                     <span
-                        className={`text-red-500  text-sm ${facturaValida.empresa_Ruc ? "block" : "hidden"
+                        className={`text-red-500 text-sm mt-1 ${facturaValida.empresa_Ruc ? "block" : "hidden"
                             }`}
                     >
                         Debes ingresar el ruc de la empresa.
                     </span>
                 </div>
             </form>
-        </motion.div>
+        </div>
     );
 };
 

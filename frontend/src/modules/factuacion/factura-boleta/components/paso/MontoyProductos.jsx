@@ -1,4 +1,3 @@
-import { motion } from "framer-motion"; // ✅ Importar motion
 import { useState } from "react";
 import ModalProducto from '../modal/ModalProducto';
 import TablaProductos from '../tabla/TablaProductos';
@@ -8,19 +7,15 @@ const MontoyProductos = () => {
 
 
     return (
-        <motion.div className='min-h-[40dvh] '
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-        >
+        <div className='overflow-y-auto p-4 sm:p-6 lg:p-8'>
+            <h1 className="text-2xl font-bold py-4">Productos</h1>
 
             <ModalProducto open={open} setOpen={setOpen} />
 
             <TablaProductos setOpen={setOpen} />
 
 
-        </motion.div>)
+        </div>)
 }
 
 export default MontoyProductos

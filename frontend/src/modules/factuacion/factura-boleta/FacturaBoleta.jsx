@@ -1,11 +1,10 @@
 import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
 import { useState } from "react";
-import ModalVisualizarFactura from "../factura-boleta/components/modal/ModalVisualizarFactura";
-import Paginacion from "../factura-boleta/components/Paginacion";
-import DatosDelCliente from "../factura-boleta/components/paso/DatosDelCliente";
-import DatosDelComprobante from "../factura-boleta/components/paso/DatosDelComprobante";
-import FormaDePago from "../factura-boleta/components/paso/FormaDePago";
-import MontoyProductos from "../factura-boleta/components/paso/MontoyProductos";
+import ModalVisualizarFactura from "./components/modal/ModalVisualizarFactura";
+import DatosDelCliente from "./components/paso/DatosDelCliente";
+import DatosDelComprobante from "./components/paso/DatosDelComprobante";
+import FormaDePago from "./components/paso/FormaDePago";
+import MontoyProductos from "./components/paso/MontoyProductos";
 
 const FacturaBoleta = () => {
     const [FormSelect, setFormSelect] = useState(1);
@@ -63,36 +62,30 @@ const FacturaBoleta = () => {
                     </h2>
                 </div>
 
-                {/* Tabs */}
-                <div className="grid grid-cols-2 sm:grid-cols-4  mb-6">
-                    {tabs.map((tab) => (
-                        <button
-                            key={tab.id}
-                            onClick={() => handleTabClick(tab.id)}
-                            className={`py-3 px-2 text-sm sm:text-base font-semibold text-center  transition-all  ease-in-out border-b-4 cursor-pointer
-                            ${FormSelect === tab.id
-                                    ? "border-blue-600 text-blue-600 "
-                                    : " text-gray-500"
-                                }`}
-                        >
-                            {tab.label}
-                        </button>
-                    ))}
-                </div>
 
                 {/* Form content */}
-                <div className="bg-white   p-4  transition-all duration-300 mb-6">
-                    {renderForm()}
-                </div>
+                <div className=" shadow-xl border border-gray-200 rounded-3xl  p-4  transition-all duration-300 mb-6">
+                    {/* {renderForm()} */}
+                    <DatosDelComprobante />
+                    <DatosDelCliente />
+                    <MontoyProductos />
+                    <FormaDePago />
 
-                {/* Pagination */}
-                <div className="mb-6">
-                    <Paginacion FormSelect={FormSelect} setFormSelect={setFormSelect} />
-                </div>
 
-                {/* Facturar  */}
-                <div className="flex justify-end">
-                    <ModalVisualizarFactura />
+
+
+                    {/* Facturar  */}
+                    <div className="flex justify-between">
+                        <div className="flex gap-x-8">
+                            <button className="py-3 px-4 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-600 cursor-pointer ">
+                                Guardar
+                            </button>
+                            <button className="py-3 px-4 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 cursor-pointer ">
+                                Cancelar
+                            </button>
+                        </div>
+                        <ModalVisualizarFactura />
+                    </div>
                 </div>
             </div>
         </div>
