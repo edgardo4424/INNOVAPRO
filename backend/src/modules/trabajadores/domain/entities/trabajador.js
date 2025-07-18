@@ -10,6 +10,7 @@ class Trabajador {
       sistema_pension,
       quinta_categoria,
       tipo_documento,
+      cargo_id,
    }) {
       (this.filial_id = filial_id),
          (this.nombres = nombres),
@@ -21,12 +22,11 @@ class Trabajador {
          (this.asignacion_familiar = asignacion_familiar),
          (this.sistema_pension = sistema_pension),
          (this.quinta_categoria = quinta_categoria);
+      this.cargo_id = cargo_id;
    }
 
    validarCamposObligatorios(modo = "crear") {
       const errores = [];
-      console.log('sisye',this.sistema_pension);
-      
       if (modo === "crear") {
          if (this.filial_id <= 0) {
             errores.push("filial_id inválido");
@@ -53,12 +53,12 @@ class Trabajador {
          if (
             this.asignacion_familiar === null ||
             this.asignacion_familiar === undefined
-         ) {            
+         ) {
             errores.push("Asignacion familiar inválida");
          }
-         if (this.sistema_pension !== "AFP" && this.sistema_pension !== "ONP") {          
+         if (this.sistema_pension !== "AFP" && this.sistema_pension !== "ONP") {
             console.log(this.sistema_pension);
-              
+
             errores.push("El sistema de pension es inválido.");
          }
          if (
@@ -66,6 +66,9 @@ class Trabajador {
             this.quinta_categoria === undefined
          ) {
             errores.push("Quinta categoría es inválida.");
+         }
+         if (this.cargo_id === null) {
+            errores.push("El cargo no se a enviado");
          }
          return errores;
       }
@@ -85,6 +88,7 @@ class Trabajador {
          asignacion_familiar: this.asignacion_familiar,
          sistema_pension: this.sistema_pension,
          quinta_categoria: this.quinta_categoria,
+         cargo_id: this.cargo_id,
       };
    }
 }

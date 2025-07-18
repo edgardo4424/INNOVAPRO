@@ -1,4 +1,4 @@
-const { DataTypes, INTEGER, STRING, BOOLEAN } = require("sequelize");
+const { DataTypes } = require("sequelize");
 const sequelize = require("../../../../config/db");
 
 const Trabajador = sequelize.define(
@@ -14,6 +14,14 @@ const Trabajador = sequelize.define(
          allowNull: false,
          references: {
             model: "empresas_proveedoras",
+            key: "id",
+         },
+      },
+      cargo_id: {
+         type: DataTypes.INTEGER,
+         allowNull: false,
+         references: {
+            model: "cargos",
             key: "id",
          },
       },
@@ -62,6 +70,10 @@ const Trabajador = sequelize.define(
          allowNull: false,
          defaultValue: "activo",
       },
+      regimen: {
+         type: DataTypes.ENUM("GENERAL", "MYPE"),
+         allowNull: true,
+      },
    },
    {
       tableName: "trabajadores",
@@ -70,15 +82,23 @@ const Trabajador = sequelize.define(
 );
 
 Trabajador.associate = (models) => {
-   
    Trabajador.hasMany(models.asistencias, {
       foreignKey: "trabajador_id",
-      as:"asistencias"
+      as: "asistencias",
+   });
+
+   Trabajador.hasMany(models.vacaciones, {
+      foreignKey: "trabajador_id",
+      as: "vacaciones",
    });
 
    Trabajador.belongsTo(models.empresas_proveedoras, {
       foreignKey: "filial_id",
       as: "empresa_proveedora",
+   });
+   Trabajador.belongsTo(models.cargos, {
+      foreignKey: "cargo_id",
+      as: "cargo",
    });
 };
 module.exports = { Trabajador };

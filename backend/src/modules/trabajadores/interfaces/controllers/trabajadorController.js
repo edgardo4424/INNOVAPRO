@@ -1,5 +1,6 @@
+const obtenerTrabajadores = require("../../application/useCases/obtenerTrabajadores");
 const crearTrabajador = require("../../application/useCases/crearTrabajador");
-const obtenerTrabajadoresPorFilial = require("../../application/useCases/obtenerTrabajadoresPorFilial");
+const obtenerTrabajadoresPorArea = require("../../application/useCases/obtenerTrabajadoresPorArea");
 const SequelizeTrabajadorRepository = require("../../infraestructure/repositories/sequelizeTrabajadorRepository");
 
 const trabajadorRepository = new SequelizeTrabajadorRepository();
@@ -16,11 +17,27 @@ const TrabajadorController = {
          res.status(500).json({ error: error.message });
       }
    },
-   async obtenerTrabajadoresPorFilial(req, res) {
+   async obtenerTrabajadoresPorArea(req, res) {
       try {
-         const trabajadores = await obtenerTrabajadoresPorFilial(req.params.id,trabajadorRepository);
-         res.status(trabajadores.codigo).json(trabajadores.respuesta)
-      } catch (error) {}
+         const trabajadores = await obtenerTrabajadoresPorArea(
+            req.params.id,
+            req.params.fecha,
+            trabajadorRepository
+         );
+         res.status(trabajadores.codigo).json(trabajadores.respuesta);
+      } catch (error) {
+         res.status(500).json({ error: error.message });
+      }
+   },
+   async obtenerTrabajadores(req, res) {
+      try {
+         const trabajadores = await obtenerTrabajadores(trabajadorRepository);
+         res.status(trabajadores.codigo).json(
+            trabajadores.respuesta.trabajadores
+         );
+      } catch (error) {
+         res.status(500).json({ error: error.message });
+      }
    },
 };
 

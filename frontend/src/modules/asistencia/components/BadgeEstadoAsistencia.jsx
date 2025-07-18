@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Check, X } from "lucide-react";
+import { Check, Clock, X } from "lucide-react";
 
 const BadgeEstadoAsistencia = ({ trabajador }) => {
    return (
@@ -14,11 +14,11 @@ const BadgeEstadoAsistencia = ({ trabajador }) => {
             </Badge>
          ) : (
             <Badge
-               variant="destructive"
-               className="bg-red-500 hover:bg-red-600"
+               variant="outline"
+               className="flex items-center gap-2 px-3 py-1 border-gray-500 text-gray-600"
             >
-               <X className="w-3 h-3 mr-1" />
-               Sin Registrar
+               <Clock className="w-3 h-3" />
+               Sin Marcar
             </Badge>
          )}
       </>
