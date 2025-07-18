@@ -134,9 +134,11 @@ function calcularAM7440({ escuadra, tipoPlataforma, longTramo }) {
 // 20. EC.0100 - ESCUADRA DE 3.00 x 2.00m
 function calcularEC0100({ escuadra, escuadraReferencia=3, cantidadEscuadrasTramo, sobrecarga, factorSeguridad, longTotal=0 }) {
   if (escuadra === escuadraReferencia && cantidadEscuadrasTramo > 0) {
+    console.log('cantidadEscuadrasTramo', cantidadEscuadrasTramo);
     return cantidadEscuadrasTramo;
   }
   if (escuadra === escuadraReferencia && longTotal > 0) {
+      console.log('cantidadEscuadrasTramo', cantidadEscuadrasTramo);
     return 1 + Math.ceil(longTotal / (180 / (sobrecarga * factorSeguridad)));
   }
   return 0;
@@ -175,11 +177,7 @@ function calcularCON0300(valorCalcularEC0800) {
 
 // 25. EN.0310 - BARRA ROSCADA D=15 - 1.50m
 function calcularEN0310({ escuadra, tipoAnclaje, valorCalcularEC0300 }) {
-  console.log({
-    escuadra,
-    tipoAnclaje,
-    valorCalcularEC0300
-  });
+  
   if (escuadra === 1 && tipoAnclaje === "ESPARRAGO") {
     return valorCalcularEC0300 * 2;
   }

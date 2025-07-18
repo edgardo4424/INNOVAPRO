@@ -5,8 +5,10 @@ const {
 const { generarPdfAndamioFachada } = require("../../infrastructure/services/AndamioFachada/generarPdfAndamioFachada");
 const { generarPdfAndamioTrabajo } = require("../../infrastructure/services/AndamioTrabajo/generarPdfAndamioTrabajo");
 const { calcularSubtotalConDescuentoPiezasNoAdicionales } = require("../../infrastructure/services/calcularSubtotalConDescuentoPiezasNoAdicionalesService");
+const { generarPdfColgante } = require("../../infrastructure/services/Colgante/generarPdfColgante");
 const { generarPdfEscaleraAcceso } = require("../../infrastructure/services/EscaleraAcceso/generarPdfEscaleraAcceso");
-const { generarPdfEscuadras } = require("../../infrastructure/services/Escuadras/generarPdfEscuadras");
+const { generarPdfEscuadrasConPlataformas } = require("../../infrastructure/services/EscuadrasConPlataformas/generarPdfEscuadrasConPlataformas");
+const { generarPdfEscuadrasSinPlataformas } = require("../../infrastructure/services/EscuadrasSinPlataformas/generarPdfEscuadrasSinPlataformas");
 
 const {
   agruparPorZonaYAtributos,
@@ -109,7 +111,7 @@ module.exports = async (idCotizacion) => {
       despiece_id: despieceEncontrado.id
     },
     raw: true
-   })
+   }) || []
 
    const { subtotal_piezas_no_adicionales_con_descuento_sin_igv } = calcularSubtotalConDescuentoPiezasNoAdicionales({
     despiecePiezasNoAdicionales: piezasNoAdicionales,
@@ -190,14 +192,12 @@ module.exports = async (idCotizacion) => {
     case "1":
       // ANDAMIO DE FACHADA
 
-      const pdfAndamioFachada = await generarPdfAndamioFachada({dataDespiece: despieceEncontrado, tiene_pernos: tiene_pernos})
+      const pdfAndamioFachada = await generarPdfAndamioFachada({dataDespiece: despieceEncontrado, tiene_pernos: tiene_pernos, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
         ...pdfAndamioFachada
       }
-
-      console.log('DATOS PDF COTIZACION', datosPdfCotizacion);
 
       break;
 
@@ -226,13 +226,13 @@ module.exports = async (idCotizacion) => {
       break;
 
     case "4":
-      // ESCUADRAS
+      // ESCUADRAS CON PLATAFORMAS
 
-      const pdfEscuadras = await generarPdfEscuadras({idDespiece: despieceEncontrado.id, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
+      const pdfEscuadrasConPlataformas = await generarPdfEscuadrasConPlataformas({idDespiece: despieceEncontrado.id, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
-        ...pdfEscuadras
+        ...pdfEscuadrasConPlataformas
       }
       break;
 
@@ -264,10 +264,30 @@ module.exports = async (idCotizacion) => {
 
     case "8":
       // COLGANTE
+
+       const pdfColgante = await generarPdfColgante({idDespiece: despieceEncontrado.id, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
+
+      datosPdfCotizacion = {
+        ...datosPdfCotizacion,
+        ...pdfColgante
+      }
+
       break;
 
     case "9":
       // ELEVADOR
+      break;
+
+    case "11":
+       // ESCUADRAS SIN PLATAFORMAS
+
+      const pdfEscuadrasSinPlataformas = await generarPdfEscuadrasSinPlataformas({idDespiece: despieceEncontrado.id, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
+
+      datosPdfCotizacion = {
+        ...datosPdfCotizacion,
+        ...pdfEscuadrasSinPlataformas
+      }
+      break;
       break;
 
     default:

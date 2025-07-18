@@ -40,8 +40,6 @@ function evaluarFormulaCargaSolicitadaRealMedia({escuadra, sobrecarga, factorSeg
   const valorReferencia = escuadra === 1 ? 400 : 182.5;
   const resultado = (sobrecarga * factorSeguridad * escuadras) / 1000;
 
-  console.log({valorReferencia, resultado});
-
   return resultado <= valorReferencia ? resultado : "MAL";
 }
 

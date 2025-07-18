@@ -6,12 +6,13 @@ const generarDespiecePuntales = require('../../application/useCases/generarDespi
 const generarDespieceEscalera = require('../../application/useCases/generarDespieceEscalera')
 const generarDespiecePlataformaDescarga = require('../../application/useCases/generarDespiecePlataformaDescarga');
 const generarDespieceEscuadras = require('../../application/useCases/generarDespieceEscuadras');
+const generarDespieceColgante = require('../../application/useCases/generarDespieceColgante');
+const generarDespieceAndamioDeFachada = require('../../application/useCases/generarDespieceAndamioDeFachada');
 
 const obtenerDespieces = require('../../application/useCases/obtenerDespieces'); // Importamos el caso de uso para obtener todos los despieces
 const obtenerDespiecePorId = require('../../application/useCases/obtenerDespiecePorId'); // Importamos el caso de uso para obtener un despiece por ID
 const actualizarDespiece = require('../../application/useCases/actualizarDespiece'); // Importamos el caso de uso para actualizar un despiece
 const eliminarDespiece = require('../../application/useCases/eliminarDespiece'); // Importamos el caso de uso para eliminar un despiece
-const generarDespieceAndamioDeFachada = require('../../application/useCases/generarDespieceAndamioDeFachada');
 
 
 const despieceRepository = new sequelizeDespieceRepository(); // Instancia del repositorio de despieces
@@ -100,6 +101,19 @@ const DespieceController = {
             res.status(500).json({ error: error.message }); 
         }
     },
+
+     async generarDespieceColgante(req, res) {
+        try {
+
+            const despieceGenerado = await generarDespieceColgante(req.body); 
+           
+            res.status(despieceGenerado.codigo).json(despieceGenerado.respuesta);
+        } catch (error) {
+            console.log('error', error);
+            res.status(500).json({ error: error.message }); 
+        }
+    },
+
 
     async obtenerDespieces(req, res) {
         try {

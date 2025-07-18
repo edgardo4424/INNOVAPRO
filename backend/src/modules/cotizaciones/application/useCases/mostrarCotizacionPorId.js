@@ -48,8 +48,7 @@ module.exports = async (id, cotizacionRepository) => {
           cotizacionId: cotizacion.id
         }
       });
-      console.log('tareaEncontrada', tareaEncontrada);
-  
+
       atributosDelUso = tareaEncontrada?.atributos_valor_zonas || []
   
     }else{
@@ -81,8 +80,6 @@ module.exports = async (id, cotizacionRepository) => {
        
       })))
     }
-
-  console.log('atributosDelUso', atributosDelUso);
 
   // Obtener despiece
   const despieceDetalle = await db.despieces_detalle.findAll({
@@ -139,7 +136,5 @@ module.exports = async (id, cotizacionRepository) => {
     cotizacion: dataCotizacion,
   };
 
-  console.log('respuesta', respuesta);
-  
   return { codigo: 200, respuesta: respuesta }; // Retorna el cotizacion encontrado
 }; // Exporta la función para que pueda ser utilizada en otros módulos

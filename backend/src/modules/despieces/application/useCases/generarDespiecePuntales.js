@@ -2,7 +2,6 @@ const { generarDespiecePuntales } = require("../../infrastructure/services/Punta
 
 module.exports = async (dataParaGenerarDespiece) => {
 
-  console.log('dataParaGenerarDespiece', dataParaGenerarDespiece);
 
   const dataGenerarDespiecePuntales = dataParaGenerarDespiece.map((data) => (({
     ...data,

@@ -18,6 +18,7 @@ function calcularMontosCotizacion({
 
   switch (tipoCotizacion) {
     case "Alquiler":
+      // ESCALERA DE ACCESO
       if (uso_id == "3") {
         // ESCALERA DE ACCESO
 
@@ -36,31 +37,65 @@ function calcularMontosCotizacion({
         const piezas_adicionales = despiece.filter((p) => p?.esAdicional);
         let subtotal_2 = 0;
 
-        console.log('piezas_adicionales', piezas_adicionales);
+        console.log("piezas_adicionales", piezas_adicionales);
 
         subtotal_2 = piezas_adicionales.reduce(
-          (acc, p) => acc + p.total * parseFloat(p.precio_u_alquiler_soles || 0),
+          (acc, p) =>
+            acc + p.total * parseFloat(p.precio_u_alquiler_soles || 0),
           0
         );
 
-        subtotal = subtotal_1 + subtotal_2
-        console.log('SUBTOTALLLLLL', subtotal);
+        subtotal = subtotal_1 + subtotal_2;
+        
+      } else if (uso_id == "8") {
+        // COLGANTE
+
+        // Solo para escalera de acceso, El subtotal no se calcular en base a las piezas, sino en base a numero de tramos
+        // El precio del tramo se mandara desde el front
+
+        const { detalles_colgantes } = cotizacion;
+
+        let subtotal_1 =
+          Number(detalles_colgantes?.cantidad_colgantes) *
+          Number(detalles_colgantes?.precio_u_alquiler_soles);
+
+        // Añadir los precios de las piezas adicionales
+        const piezas_adicionales = despiece.filter((p) => p?.esAdicional);
+        let subtotal_2 = 0;
+
+        subtotal_2 = piezas_adicionales.reduce(
+          (acc, p) =>
+            acc + p.total * parseFloat(p.precio_u_alquiler_soles || 0),
+          0
+        );
+
+        subtotal = subtotal_1 + subtotal_2;
+       
       } else {
         subtotal = despiece.reduce(
           (acc, p) =>
             acc + p.total * parseFloat(p.precio_u_alquiler_soles || 0),
           0
         );
-
-        console.log("subtotal", subtotal);
       }
       moneda = "PEN";
       break;
     case "Venta":
-      subtotal = despiece.reduce(
-        (acc, p) => acc + p.total * parseFloat(p.precio_u_venta_soles || 0),
-        0
-      );
+      // Colgante
+      if (uso_id == "8") {
+        const { detalles_colgantes } = cotizacion;
+
+        subtotal = Number(detalles_colgantes?.cantidad_colgantes) *
+          Number(detalles_colgantes?.precio_u_venta_soles);
+
+
+      } else {
+        subtotal = despiece.reduce(
+          (acc, p) => acc + p.total * parseFloat(p.precio_u_venta_soles || 0),
+          0
+        );
+      }
+
       moneda = "PEN";
       break;
   }

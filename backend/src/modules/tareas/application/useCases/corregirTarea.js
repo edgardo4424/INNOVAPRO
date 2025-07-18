@@ -52,7 +52,6 @@ module.exports = async (idTarea, correcion, tareaRepository) => {
       notificacionAlCreador
     );
 
-    console.log("notiRegistradoCreador", notiRegistradoCreador);
     await enviarMensajeWhatsApp(
       `51${notiRegistradoCreador.telefono}`, // formato internacional, ejemplo: "51987654321"
       notiRegistradoCreador.usuario.nombre,

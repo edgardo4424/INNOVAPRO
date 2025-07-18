@@ -23,7 +23,6 @@ module.exports = async (tareaData, tareaRepository) => {
 
   const nuevaTareaData = new Tarea(tarea); // Creamos una nueva instancia de la clase Tarea con los datos proporcionados
 
-  console.log('nuevaTareaDAta', nuevaTareaData);
   if (nuevaTareaData?.detalles?.apoyoTecnico && nuevaTareaData?.detalles?.apoyoTecnico.includes("Despiece")) {
     
     // Si la tarea viene incluido un despiece, se crea la cotizacion con estado "En proceso"

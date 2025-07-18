@@ -22,6 +22,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { trabajadorSchema } from "../schema/trabajador.schema";
 import trabajadoresService from "../services/trabajadoresService";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function TrabajadorForm() {
    const navigate = useNavigate();
@@ -37,11 +38,13 @@ export default function TrabajadorForm() {
       asignacion_familiar: false,
       sistema_pension: "",
       quinta_categoria: false,
+      cargo_id: "",
    });
 
    const [filiales, setFiliales] = useState([]);
    const [errors, setErrors] = useState({});
    const [isSubmitting, setIsSubmitting] = useState(false);
+   const [cargos, setCargos] = useState([]);
 
    // Simulación de datos de filiales - en producción vendría de una API
    useEffect(() => {
@@ -52,6 +55,37 @@ export default function TrabajadorForm() {
          { id: 4, nombre: "INNOVA RENTAL MAQUINARIA SAC" },
       ];
       setFiliales(mockFiliales);
+      const mockCargos = [
+         { id: 1, nombre: "Gerente general" },
+         { id: 2, nombre: "Gerente de administración" },
+         { id: 3, nombre: "Gerente de comercialización" },
+         { id: 4, nombre: "Jefe de Almacén" },
+         { id: 5, nombre: "Facturación" },
+         { id: 6, nombre: "Técnico Comercial" },
+         { id: 7, nombre: "Técnico Elevadores" },
+         { id: 8, nombre: "Montador de andamios" },
+         { id: 9, nombre: "Almacenero" },
+         { id: 10, nombre: "Soldador" },
+         { id: 11, nombre: "Auxiliar de oficina" },
+         { id: 12, nombre: "Jefe de OT" },
+         { id: 13, nombre: "Abogada" },
+         { id: 14, nombre: "CEO" },
+         { id: 15, nombre: "Técnico electricista" },
+         { id: 16, nombre: "Operador de elevador" },
+         { id: 17, nombre: "Jefe montadores y operadores" },
+         { id: 18, nombre: "Jefe TI" },
+         { id: 19, nombre: "Contadora / RRHH" },
+         { id: 20, nombre: "Estibador" },
+         { id: 21, nombre: "OT" },
+         { id: 22, nombre: "Contadora" },
+         { id: 23, nombre: "Marketing" },
+         { id: 24, nombre: "Programador" },
+         { id: 25, nombre: "Asistente Facturación" },
+         { id: 26, nombre: "Seguridad" },
+         { id: 27, nombre: "Motorizado" },
+         { id: 28, nombre: "Limpieza de oficina" },
+      ];
+      setCargos(mockCargos);
    }, []);
 
    const handleInputChange = (field, value) => {
@@ -89,9 +123,11 @@ export default function TrabajadorForm() {
             asignacion_familiar: formData.asignacion_familiar,
             sistema_pension: formData.sistema_pension,
             quinta_categoria: formData.quinta_categoria,
+            cargo_id: Number.parseInt(formData.cargo_id), 
          };
 
          await trabajadoresService.crear(dataToSubmit);
+         toast.success("Trabajador creado con exito!")
          navigate("/tabla-trabajadores");
          setIsSubmitting(false);
       } catch (error) {
@@ -111,8 +147,8 @@ export default function TrabajadorForm() {
    };
 
    return (
-      <div className="w-full mx-auto p-6">
-         <Card className="shadow-none outline-none border-0">
+      <div className=" mx-auto p-6">
+         <Card className="shadow-none ">
             <CardHeader>
                <CardTitle className="flex items-center gap-2 text-[#1b274a]">
                   <User className="h-7 w-7 ]" />
@@ -131,34 +167,63 @@ export default function TrabajadorForm() {
                         <Building2 className="h-5 w-5 text-[#1b274a]" />
                         Información de la Empresa
                      </div>
-
-                     <div className="space-y-2">
-                        <Label htmlFor="filial_id">Filial *</Label>
-                        <Select
-                           value={formData.filial_id}
-                           onValueChange={(value) =>
-                              handleInputChange("filial_id", value)
-                           }
-                        >
-                           <SelectTrigger>
-                              <SelectValue placeholder="Seleccione una filial" />
-                           </SelectTrigger>
-                           <SelectContent>
-                              {filiales.map((filial) => (
-                                 <SelectItem
-                                    key={filial.id}
-                                    value={filial.id.toString()}
-                                 >
-                                    {filial.nombre}
-                                 </SelectItem>
-                              ))}
-                           </SelectContent>
-                        </Select>
-                        {errors.filial_id && (
-                           <p className="text-sm text-red-500">
-                              {errors.filial_id}
-                           </p>
-                        )}
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                           <Label htmlFor="filial_id">Filial *</Label>
+                           <Select
+                              value={formData.filial_id}
+                              onValueChange={(value) =>
+                                 handleInputChange("filial_id", value)
+                              }
+                           >
+                              <SelectTrigger>
+                                 <SelectValue placeholder="Seleccione una filial" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                 {filiales.map((filial) => (
+                                    <SelectItem
+                                       key={filial.id}
+                                       value={filial.id.toString()}
+                                    >
+                                       {filial.nombre}
+                                    </SelectItem>
+                                 ))}
+                              </SelectContent>
+                           </Select>
+                           {errors.filial_id && (
+                              <p className="text-sm text-red-500">
+                                 {errors.filial_id}
+                              </p>
+                           )}
+                        </div>
+                        <div className="space-y-2">
+                           <Label htmlFor="cargo_id">Cargo *</Label>
+                           <Select
+                              value={formData.cargo_id}
+                              onValueChange={(value) =>
+                                 handleInputChange("cargo_id", value)
+                              }
+                           >
+                              <SelectTrigger>
+                                 <SelectValue placeholder="Seleccione un cargo" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                 {cargos.map((cargo) => (
+                                    <SelectItem
+                                       key={cargo.id}
+                                       value={cargo.id.toString()}
+                                    >
+                                       {cargo.nombre}
+                                    </SelectItem>
+                                 ))}
+                              </SelectContent>
+                           </Select>
+                           {errors.cargo_id && (
+                              <p className="text-sm text-red-500">
+                                 {errors.cargo_id}
+                              </p>
+                           )}
+                        </div>
                      </div>
                   </div>
 
