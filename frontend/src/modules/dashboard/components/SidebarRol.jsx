@@ -96,6 +96,15 @@ const modulesByRole = {
          ],
       },
       {
+         group: "Beneficios",
+         items: [
+            { name: "Vacaciones", path: "/vacaciones" },
+            { name: "Cts", path: "/cts" },
+            { name: "Gratificacion", path: "/gratificacion" },
+
+         ],
+      },
+      {
          group: "Asistencia",
          items: [
             { name: "Almacen ", path: "/asistencia/almacen?area_id=2" },

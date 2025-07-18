@@ -13,6 +13,7 @@ import LoaderInnova from "@/shared/components/LoaderInnova";
 import GestionTrabajadores from "@/modules/trabajadores/pages/GestionTrabajadores";
 import GestionAsistencia from "@/modules/asistencia/pages/GestionAsistencia";
 import PlanillaEnConstruccion from "@/modules/planilla/pages/planilla";
+import GestionVacaciones from "@/modules/Beneficios/Pages/GestionVacaciones";
 
 // Lazy load components
 const Login = lazy(() => import("@/modules/auth/pages/Login"));
@@ -215,6 +216,12 @@ export default function AppRoutes() {
                            <Route
                               path="planilla"
                               element={<PlanillaEnConstruccion />}
+                           />
+                        </Route>
+                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                           <Route
+                              path="vacaciones"
+                              element={<GestionVacaciones />}
                            />
                         </Route>
                      </>

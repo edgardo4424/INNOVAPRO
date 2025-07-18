@@ -1,0 +1,246 @@
+
+
+import { useEffect, useMemo, useState } from "react";
+import {
+   Dialog,
+   DialogContent,
+   DialogHeader,
+   DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+   Select,
+   SelectContent,
+   SelectItem,
+   SelectTrigger,
+   SelectValue,
+} from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import {
+   Popover,
+   PopoverContent,
+   PopoverTrigger,
+} from "@/components/ui/popover";
+import { CalendarIcon, Plus } from "lucide-react";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import beneficiosService from "../services/beneficiosService";
+import { toast } from "react-toastify";
+
+export function VacationModal({ empleados, fetchEmployees }) {
+   const [modalAbierto, setModalAbierto] = useState(false);
+   const [formulario, setFormulario] = useState({
+      empleadoSeleccionado: "",
+      fechaInicio: null,
+      fechaFin: null,
+      diasTomados: "0",
+      diasVendidos: "0",
+      observaciones: "",
+   });
+
+   const empleado = useMemo(
+      () => empleados.find((e) => e.id == formulario.empleadoSeleccionado),
+      [formulario.empleadoSeleccionado, empleados]
+   );
+
+   const fechaIngreso = useMemo(() => empleado ? new Date(empleado.fecha_ingreso) : null, [empleado]);
+   const regimen = empleado?.regimen || null;
+   const vacacionesPrevias = empleado?.vacaciones || [];
+
+   const calcularDiasTrabajados = (fechaIngreso) => {
+      const hoy = new Date();
+      return Math.floor((hoy - fechaIngreso) / (1000 * 60 * 60 * 24));
+   };
+
+   const obtenerDiasPorRegimen = (regimen) => {
+      return regimen?.toLowerCase() === "mype" ? 15 : 30;
+   };
+
+   const diasHistoricosUsados = useMemo(() => {
+      return vacacionesPrevias.reduce(
+         (total, v) => total + v.dias_tomados + v.dias_vendidos,
+         0
+      );
+   }, [vacacionesPrevias]);
+
+   const manejarCambio = (campo) => (e) => {
+      const valor = e?.target?.value ?? e;
+      setFormulario((prev) => ({ ...prev, [campo]: valor }));
+   };
+
+   const reiniciarFormulario = () => {
+      setFormulario({
+         empleadoSeleccionado: "",
+         fechaInicio: null,
+         fechaFin: null,
+         diasTomados: "0",
+         diasVendidos: "0",
+         observaciones: "",
+      });
+   };
+
+   const cerrarModal = () => {
+      setModalAbierto(false);
+      reiniciarFormulario();
+   };
+
+   const manejarEnvio = async (e) => {
+      e.preventDefault();
+
+      if (!empleado || !formulario.fechaInicio || !formulario.fechaFin) {
+         toast.error("Por favor completa todos los campos requeridos");
+         return;
+      }
+
+      const tomados = parseInt(formulario.diasTomados) || 0;
+      const vendidos = parseInt(formulario.diasVendidos) || 0;
+      const solicitados = tomados + vendidos;
+      const trabajados = calcularDiasTrabajados(fechaIngreso);
+      const maximo = obtenerDiasPorRegimen(regimen);
+
+      if (trabajados < 183) {
+         toast.error("El trabajador aún no cumple medio año. No puede solicitar vacaciones.");
+         return;
+      }
+
+      if (trabajados >= 183 && trabajados < 365 && solicitados > 7) {
+         toast.error("El trabajador aún no cumple 1 año. Solo puede adelantar hasta 7 días.");
+         return;
+      }
+
+      if (diasHistoricosUsados + solicitados > maximo) {
+         toast.error(
+            `Este trabajador ya ha utilizado ${diasHistoricosUsados} días. Solo puede usar hasta ${maximo} días por año.`
+         );
+         return;
+      }
+
+      const datosVacaciones = {
+         trabajador_id: Number(formulario.empleadoSeleccionado),
+         fecha_inicio: format(formulario.fechaInicio, "yyyy-MM-dd"),
+         fecha_termino: format(formulario.fechaFin, "yyyy-MM-dd"),
+         dias_tomados: tomados,
+         dias_vendidos: vendidos,
+         observaciones: formulario.observaciones,
+         regimen,
+      };
+
+      try {
+         await beneficiosService.crear(datosVacaciones);
+         await fetchEmployees();
+         toast.success("Las vacaciones fueron registradas con éxito.");
+         cerrarModal();
+      } catch (error) {
+         const errores = error.response?.data?.mensaje || ["Error al registrar vacaciones"];
+         errores.forEach((e) => toast.error(e));
+      }
+   };
+
+   return (
+      <>
+         <Button onClick={() => setModalAbierto(true)} className="bg-blue-600 hover:bg-blue-700">
+            <Plus className="w-4 h-4 mr-2" /> Nueva Solicitud
+         </Button>
+
+         <Dialog open={modalAbierto} onOpenChange={setModalAbierto}>
+            <DialogContent className="sm:max-w-[500px]">
+               <DialogHeader>
+                  <DialogTitle>Nueva Solicitud de Vacaciones</DialogTitle>
+                  <p className="text-sm text-muted-foreground">
+                     Completa los datos para crear una nueva solicitud.
+                  </p>
+               </DialogHeader>
+
+               <form onSubmit={manejarEnvio} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                     <div>
+                        <Label>Trabajador</Label>
+                        <Select value={formulario.empleadoSeleccionado} onValueChange={manejarCambio("empleadoSeleccionado")}> 
+                           <SelectTrigger>
+                              <SelectValue placeholder="Selecciona un trabajador" />
+                           </SelectTrigger>
+                           <SelectContent>
+                              {empleados.map((emp) => (
+                                 <SelectItem key={emp.id} value={emp.id.toString()}>
+                                    {`${emp.nombres} ${emp.apellidos}`}
+                                 </SelectItem>
+                              ))}
+                           </SelectContent>
+                        </Select>
+                     </div>
+                     <div>
+                        <Label>Régimen</Label>
+                        <Input value={`${regimen  || " "} ${empleado?.fecha_ingreso||" "} `} disabled />
+                     </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                     {["fechaInicio", "fechaFin"].map((campo) => (
+                        <div key={campo} className="space-y-2">
+                           <Label>{campo === "fechaInicio" ? "Fecha de Inicio" : "Fecha de Término"}</Label>
+                           <Popover>
+                              <PopoverTrigger asChild>
+                                 <Button variant="outline" className="w-full justify-start text-left font-normal">
+                                    <CalendarIcon className="mr-2 h-4 w-4" />
+                                    {formulario[campo]
+                                       ? format(formulario[campo], "dd/MM/yyyy", { locale: es })
+                                       : "Seleccionar fecha"}
+                                 </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-auto p-0">
+                                 <Calendar
+                                    mode="single"
+                                    selected={formulario[campo]}
+                                    onSelect={(date) => manejarCambio(campo)({ target: { value: date } })}
+                                    initialFocus
+                                 />
+                              </PopoverContent>
+                           </Popover>
+                        </div>
+                     ))}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                     <div>
+                        <Label>Días Tomados</Label>
+                        <Input
+                           type="number"
+                           min="0"
+                           value={formulario.diasTomados}
+                           onChange={manejarCambio("diasTomados")}
+                        />
+                     </div>
+                     <div>
+                        <Label>Días Vendidos</Label>
+                        <Input
+                           type="number"
+                           min="0"
+                           value={formulario.diasVendidos}
+                           onChange={manejarCambio("diasVendidos")}
+                        />
+                     </div>
+                  </div>
+
+                  <div>
+                     <Label>Observaciones</Label>
+                     <Textarea
+                        value={formulario.observaciones}
+                        onChange={manejarCambio("observaciones")}
+                        placeholder="Comentarios adicionales..."
+                        rows={3}
+                     />
+                  </div>
+
+                  <div className="flex justify-end space-x-2 pt-4">
+                     <Button type="button" variant="outline" onClick={cerrarModal}>Cancelar</Button>
+                     <Button type="submit" className="bg-gray-900 hover:bg-gray-800">Crear Solicitud</Button>
+                  </div>
+               </form>
+            </DialogContent>
+         </Dialog>
+      </>
+   );
+}

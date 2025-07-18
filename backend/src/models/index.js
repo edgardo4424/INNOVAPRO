@@ -30,6 +30,11 @@ const {
 db.asistencias = Asistencia;
 
 const {
+   Vacaciones,
+} = require("../modules/vacaciones/infraestructure/models/vacacionesModel");
+db.vacaciones = Vacaciones;
+
+const {
    Gasto,
 } = require("../modules/asistencias/infraestructure/models/gastoModel");
 db.gastos = Gasto;
@@ -188,6 +193,7 @@ if (db.distritos_transporte) db.distritos_transporte.associate(db);
 if (db.cotizaciones_transporte) db.cotizaciones_transporte.associate(db);
 if (db.cotizaciones_instalacion) db.cotizaciones_instalacion.associate(db);
 if (db.trabajadores.associate) db.trabajadores.associate(db);
+if (db.vacaciones.associate) db.vacaciones.associate(db);
 if (db.asistencias.associate) db.asistencias.associate(db);
 if (db.gastos.associate) db.gastos.associate(db);
 if (db.jornadas.associate) db.jornadas.associate(db);
