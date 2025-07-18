@@ -49,6 +49,10 @@ db.ubigeos = Ubigeo;
 db.cotizaciones = require("./cotizaciones")(sequelize, DataTypes);
 db.cotizacion_detalles = require("./cotizacion_detalles")(sequelize, DataTypes);
 
+// Condiciones de alquiler
+const  CondicionAlquiler  = require("../modules/cotizaciones/infrastructure/models/condicionAlquilerModel");
+db.condiciones_alquiler = CondicionAlquiler;
+
 // Productos
 db.ProductoServicio = require("./productos_servicios")(sequelize, DataTypes);
 db.EmpresaProducto = require("./empresa_producto")(sequelize, DataTypes);
@@ -112,6 +116,7 @@ if (db.EmpresaProducto.associate) db.EmpresaProducto.associate(db);
 if (db.empresas_proveedoras.associate) db.empresas_proveedoras.associate(db);
 if (db.cotizaciones.associate) db.cotizaciones.associate(db);
 if (db.cotizacion_detalles.associate) db.cotizacion_detalles.associate(db);
+if (db.condiciones_alquiler.associate) db.condiciones_alquiler.associate(db);
 if (db.tareas.associate) db.tareas.associate(db);
 if (db.notificaciones.associate) db.notificaciones.associate(db);
 if (db.contrisunat.associate) db.contrisunat.associate(db);

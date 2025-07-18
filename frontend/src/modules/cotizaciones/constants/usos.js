@@ -7,3 +7,5 @@
 export const USOS_INSTALABLES = [1, 2, 3, 4]; 
 
 export const USOS_SIN_DESCUENTO = [3, 4, 5];
+
+export const USOS_SIN_DESPIECE = [6, 9];

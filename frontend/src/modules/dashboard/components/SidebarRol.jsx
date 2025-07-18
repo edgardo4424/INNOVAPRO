@@ -18,7 +18,7 @@ import {
    Boxes,
    ChevronDown,
    LogOut,
-   Settings,
+   ShieldCheck,
    ScrollText,
 } from "lucide-react";
 import {
@@ -65,7 +65,8 @@ const iconMap = {
    "Registrar Cotización": FileEdit,
    "Stock de Piezas": Boxes,
    Trabajadores: Users,
-   "Facturación":ScrollText
+   "Facturación":ScrollText,
+   "Gestión de Condiciones": ShieldCheck,
 
 };
 
@@ -87,6 +88,7 @@ const modulesByRole = {
       { name: "Centro de Atención", path: "/centro-atencion" },
       { name: "Registrar Tarea", path: "/registrar-tarea" },
       { name: "Cotizaciones", path: "/cotizaciones" },
+      { name: "Gestión de condiciones", path: "/condiciones" },
       { name: "Registrar Cotización", path: "/cotizaciones/registrar" },
       { name: "Stock de Piezas", path: "/stock/piezas" },
       {
@@ -128,7 +130,9 @@ const modulesByRole = {
       { name: "Stock de Piezas", path: "/stock/piezas" },
    ],
    Almacén: [],
-   Administración: [],
+   Administración: [
+      { name: "Gestión de condiciones", path: "/condiciones"},
+   ],
    Clientes: [],
 };
 
