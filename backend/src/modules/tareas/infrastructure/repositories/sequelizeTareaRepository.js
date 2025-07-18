@@ -7,6 +7,7 @@ class SequelizeTareaRepository {
   }
 
   async crear(tareaData) {
+    
     return await db.tareas.create({
       usuarioId: tareaData.usuarioId,
       empresaProveedoraId: tareaData.empresaProveedoraId,
@@ -14,9 +15,12 @@ class SequelizeTareaRepository {
       obraId: tareaData.obraId,
       ubicacion: tareaData.ubicacion,
       tipoTarea: tareaData.tipoTarea,
-      urgencia: tareaData.urgencia,
       estado: "Pendiente",
       detalles: tareaData.detalles ? tareaData.detalles : {}, // ✅ Aseguramos que `detalles` no sea undefined
+      contactoId: tareaData.contactoId,
+      usoId: tareaData.usoId,
+      atributos_valor_zonas: tareaData.atributos_valor_zonas,
+      cotizacionId: tareaData.cotizacionId
     });
   }
 
@@ -49,6 +53,7 @@ class SequelizeTareaRepository {
   }
 
   async obtenerPorId(id) {
+    
     return await db.tareas.findByPk(id, {
       include: [
         {
@@ -182,15 +187,12 @@ class SequelizeTareaRepository {
         return null;
     }
 
-    console.log("ESTADO", tarea.estado);
-
     if(tarea.estado != "Devuelta") return null;
 
     tarea.estado = "Pendiente";
     tarea.correccionComercial = correcion;
     tarea.asignadoA = null;
 
-    console.log('pasara a pendiente');
     return await tarea.save();
   }
   

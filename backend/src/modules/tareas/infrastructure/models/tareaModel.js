@@ -16,22 +16,22 @@ const Tarea = sequelize.define(
     },
     empresaProveedoraId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       references: { model: "empresas_proveedoras", key: "id" },
     },
     clienteId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       references: { model: "clientes", key: "id" },
     },
     obraId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       references: { model: "obras", key: "id" },
     },
     ubicacion: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     tipoTarea: {
       type: DataTypes.ENUM(
@@ -43,10 +43,10 @@ const Tarea = sequelize.define(
       ),
       allowNull: false,
     },
-    urgencia: {
+  /*   urgencia: {
       type: DataTypes.ENUM("Prioridad", "Normal", "Baja prioridad"),
       allowNull: false,
-    },
+    }, */
     estado: {
       type: DataTypes.ENUM(
         "Pendiente",
@@ -78,6 +78,24 @@ const Tarea = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    contactoId: {
+      type: DataTypes.INTEGER,
+       allowNull: true,
+      references: { model: "contactos", key: "id" },
+    },
+     usoId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: { model: "usos", key: "id" },
+    },
+    atributos_valor_zonas: {
+       type: DataTypes.JSON,
+      defaultValue: [],
+    },
+    cotizacionId:{
+    type: DataTypes.INTEGER,
+    allowNull: true
+    }
   },
   {
     timestamps: false,
@@ -105,6 +123,14 @@ Tarea.associate = (models) => {
   Tarea.belongsTo(models.obras, {
     foreignKey: "obraId",
     as: "obra",
+  });
+    Tarea.belongsTo(models.usos, {
+    foreignKey: "usoId",
+    as: "uso",
+  });
+   Tarea.belongsTo(models.contactos, {
+    foreignKey: "contactoId",
+    as: "contacto",
   });
 };
 

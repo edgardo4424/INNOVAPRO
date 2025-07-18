@@ -1,0 +1,39 @@
+
+Obra:  👍
+    Direccion
+    nombre
+
+Cliente: 👍
+    Razon social
+    RUC
+    Domicio fiscal
+
+Contacto: 👍
+    nombre
+    email
+
+
+Atributos:
+    longitud
+    altura
+    ancho
+    
+(Obtener la cantidad de usos)
+
+Despiece
+    Subtotal sin igv
+
+Transporte
+    subtotal sin igv id y vuelta
+
+Filial  👍
+    Nombre 
+    ruc 
+    direccion almacen (Ojo falta)
+    direccion
+
+Usuario (Comercial) 👍
+    nombre 
+    telefono  (ojo falta)
+    email
+

@@ -19,6 +19,14 @@ const Ubigeo = sequelize.define("ubigeos", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  extra_camioneta_soles: {
+      type: DataTypes.DECIMAL(10, 2),
+      defaultValue: 0,
+  },
+  extra_camion_soles: {
+      type: DataTypes.DECIMAL(10, 2),
+      defaultValue: 0,
+  },
 }, {
   tableName: "ubigeos",
   timestamps: false,

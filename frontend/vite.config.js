@@ -1,13 +1,14 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig(({ mode }) => {
   // 🔥 Cargar las variables del entorno correspondiente
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
-    plugins: [react()],
+    plugins: [react(),tailwindcss()],
     base: '/', // ⚠️ Cambia si usas subcarpeta (ej: /erp/)
     server: {
       port: 3000,

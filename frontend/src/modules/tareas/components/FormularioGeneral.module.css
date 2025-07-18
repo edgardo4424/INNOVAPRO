@@ -1,0 +1,85 @@
+/* .formSectionTitle {
+  font-size: 1.3rem;
+  margin: 30px 0 15px;
+  border-left: 5px solid #007BFF;
+  padding-left: 12px;
+  color: #2c3e50;
+} */
+
+.formStepContainer {
+  grid-column: span 2;
+  background: #fefefe;
+  padding: 20px;
+  margin-bottom: 25px;
+  border-radius: 12px;
+  box-shadow: 0px 3px 8px rgba(0,0,0,0.05);
+  border: 1px solid #eaeaea;
+}
+
+.wizardNav {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.wizardNav button {
+  padding: 10px 30px;
+  font-size: 16px;
+  background-color: #007BFF;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+.wizardNav button:hover {
+  transform: scale(1.03);
+  background-color: #0056b3;
+}
+
+
+.wizardNav button:hover {
+  background-color: #0056b3;
+}
+
+.contenedorFinal {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 2rem;
+}
+
+.btnSubmit {
+  background-color: #f97316;
+  padding: 1rem 2.5rem;
+  font-weight: bold;
+  color: white;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 1rem;
+  box-shadow: 0 4px 8px rgba(249, 115, 22, 0.4);
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.btnSubmit:hover {
+  transform: scale(1.02);
+}
+
+.btnRegistrar {
+  width: 100%;
+  max-width: 400px;
+  margin: 2rem auto 0;
+  padding: 1rem;
+  background-color: #f47c20;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.btnRegistrar:hover {
+  background-color: #da6819;
+  transform: scale(1.02);
+}

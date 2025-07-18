@@ -6,6 +6,7 @@ const { verificarToken } = require("../../../../shared/middlewares/authMiddlewar
 router.use(verificarToken); // Middleware para verificar el token JWT
 
 router.get("/", NotificacionController.listar); // Obtener todas las notificaciones
+router.get("/telegram/:id_chat", NotificacionController.enviarNotificacionTelegram); 
 router.put("/:id/leida", NotificacionController.marcarComoLeida); // Marcar una notificación como leída
 
 module.exports = router;

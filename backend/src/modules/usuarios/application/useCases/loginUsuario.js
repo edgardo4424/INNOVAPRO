@@ -31,6 +31,6 @@ module.exports = async (datoslogin, usuarioRepository ) => {
         { expiresIn: '8h' } // El token expirará en 8 horas
     )
 
-    return { codigo: 200, respuesta: { token, usuario: { id: usuario.id, nombre: usuario.nombre, email: usuario.email, rol: usuario.rol } } }; // Retornamos el token y los datos del usuario
+    return { codigo: 200, respuesta: { token, usuario: { id: usuario.id, nombre: usuario.nombre, email: usuario.email,id_chat:usuario.id_chat, rol: usuario.rol } } }; // Retornamos el token y los datos del usuario
 
 }

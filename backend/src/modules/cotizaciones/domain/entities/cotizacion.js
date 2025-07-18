@@ -10,7 +10,10 @@ class Cotizacion {
         tiene_instalacion,
         transporte_id,
         instalacion_id,
-        estado_cotizacion
+        estado_cotizacion,
+        tiempo_alquiler_dias,
+        codigo_documento,
+        uso_id
     }) {
         this.despiece_id = despiece_id;
         this.contacto_id = contacto_id;
@@ -23,6 +26,9 @@ class Cotizacion {
         this.transporte_id = transporte_id;
         this.instalacion_id = instalacion_id;
         this.estado_cotizacion = estado_cotizacion;
+        this.tiempo_alquiler_dias = tiempo_alquiler_dias;
+        this.codigo_documento = codigo_documento;
+        this.uso_id = uso_id;
     }
 
     static validarCamposObligatorios(datos, modo = "crear") {
@@ -31,13 +37,13 @@ class Cotizacion {
         if (!["Venta", "Alquiler"].includes(datos.tipo_cotizacion)) return 'Tipo de cotización inválido';
 
         if (modo === "crear") {
-            if (!datos.despiece_id || !datos.contacto_id || !datos.cliente_id || !datos.obra_id || !datos.filial_id || !datos.usuario_id || !datos.tiene_transporte || !datos.tiene_instalacion || !datos.transporte_id || !datos.instalacion_id || !datos.estado_cotizacion) {
-                return "Faltan campos obligatorios: despiece_id, contacto_id, cliente_id, obra_id, filial_id, usuario_id, tiene_transporte, tiene_instalacion, instalacion_id, estado_cotizacion";
+            if (!datos.contacto_id || !datos.cliente_id || !datos.obra_id || !datos.filial_id || !datos.usuario_id || !datos.tiene_transporte || !datos.tiene_instalacion || !datos.transporte_id || !datos.instalacion_id || !datos.estado_cotizacion || !datos.codigo_documento || !datos.uso_id) {
+                return "Faltan campos obligatorios: contacto_id, cliente_id, obra_id, filial_id, usuario_id, uso_id, tiene_transporte, tiene_instalacion, instalacion_id, estado_cotizacion, codigo_documento";
             }
         }
 
         if (modo === "editar") {
-            const tieneAlMenosUnCampoValido = ["despiece_id", "contacto_id", "cliente_id", "obra_id","filial_id", "usuario_id","tiene_transporte", "tiene_instalacion", "instalacion_id", "estado_cotizacion"].some(
+            const tieneAlMenosUnCampoValido = ["despiece_id", "contacto_id", "cliente_id", "obra_id","filial_id", "usuario_id","uso_id", "tiene_transporte", "tiene_instalacion", "instalacion_id", "estado_cotizacion", "tiempo_alquiler_dias", "codigo_documento"].some(
                 (campo) => 
                     datos[campo] !== undefined && 
                     datos[campo] !== null && 

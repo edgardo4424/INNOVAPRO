@@ -11,7 +11,7 @@ const Cotizacion = sequelize.define(
     },
     despiece_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       references: {
         model: "despieces",
         key: "id",
@@ -72,23 +72,32 @@ const Cotizacion = sequelize.define(
         "Alquiler", 
         "Venta",
       ),
-      allowNull: false,
+      /* allowNull: false, */
     },
     tiene_transporte: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
+      /* allowNull: false, */
     },
     tiene_instalacion: {
       type: DataTypes.BOOLEAN,
+      /* allowNull: false, */
+    },
+    tiempo_alquiler_dias: {
+      type: DataTypes.INTEGER,
+    },
+    codigo_documento: {
+       type: DataTypes.STRING,
+       /* allowNull: false, */
+    },
+    uso_id: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-    },
-    transporte_id: {
-      type: DataTypes.INTEGER,
-    },
-    instalacion_id: {
-      type: DataTypes.INTEGER,
-    },
-    
+      references: {
+        model: "usos",
+        key: "id",
+      },
+    }
+
   }, {
     timestamps: true,
     tableName: "cotizaciones",
@@ -117,7 +126,7 @@ const Cotizacion = sequelize.define(
 
   Cotizacion.belongsTo(models.empresas_proveedoras, {
     foreignKey: "filial_id",
-    /* as: "filial_cotizacion", */
+    /* as: "empresa_proveedora", */
   });
 
   Cotizacion.belongsTo(models.usuarios, {
@@ -128,6 +137,16 @@ const Cotizacion = sequelize.define(
     foreignKey: "estados_cotizacion_id",
     /* as: "estado_cotizacion", */
   });
+   Cotizacion.belongsTo(models.usos, {
+    foreignKey: "uso_id",
+  });
+  Cotizacion.hasMany(models.cotizaciones_transporte, {
+  foreignKey: "cotizacion_id",
+});
+
+Cotizacion.hasOne(models.cotizaciones_instalacion, {
+  foreignKey: 'cotizacion_id'
+})
 }
 
 module.exports = { Cotizacion }; // Exporta el modelo para que pueda ser utilizado en otros módulos

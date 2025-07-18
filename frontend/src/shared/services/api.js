@@ -1,16 +1,21 @@
 import axios from "axios";
 
-// 🔥 Detectamos si estamos en desarrollo o producción
+// Esta configuración de Axios permite realizar solicitudes HTTP a la API de tu backend.
+// Utiliza variables de entorno para definir la URL base y manejar el token de autenticación.
+
+// Detectamos si estamos en desarrollo o producción
 const API_URL =
   import.meta.env.MODE === "production"
     ? import.meta.env.VITE_API_URL_PROD
     : import.meta.env.VITE_API_URL;
 
-    // 🔥 Verificar si la variable está bien cargada
+    // Verificar si la variable está bien cargada
 if (!API_URL) {
   console.error("⚠️ ERROR: No se encontró REACT_APP_API_URL_PROD o REACT_APP_API_URL en el entorno.");
 }
 
+// Crear una instancia de Axios con la configuración base
+// Establecemos un timeout largo para evitar problemas de conexión en operaciones pesadas
 const api = axios.create({
   baseURL: API_URL,
   timeout: 2400000,
@@ -32,7 +37,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 417) {
       console.warn("⚠️ Sesión expirada. Redirigiendo al login...");
       localStorage.removeItem("token");
       localStorage.removeItem("user");
@@ -41,15 +46,5 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-export const buscarDatosPorRUC = async (ruc) => {
-  try {
-    const res = await api.get(`/sunat/buscar-ruc/${ruc}`);
-    return res.data;
-  } catch (error) {
-    console.error("❌ Error buscando RUC en SUNAT:", error);
-    return null;
-  }
-};
 
 export default api;

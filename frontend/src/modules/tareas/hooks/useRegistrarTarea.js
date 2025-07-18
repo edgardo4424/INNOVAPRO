@@ -1,39 +1,46 @@
-
 import { useEffect, useState } from "react";
-import tareasService from "../services/tareasService";
-import { useAuth } from "../../../context/AuthContext";
 import { toast } from "react-toastify";
-import { validarTarea } from "../validaciones/validarTarea";
+import tareasService from "../services/tareasService";
+import {validarTarea} from "../validaciones/validarTarea";
+import { useAuth } from "../../../context/AuthContext";
 
 export default function useRegistrarTarea() {
   const { user } = useAuth();
 
-  const [empresas, setEmpresas] = useState([]);
-  const [clientes, setClientes] = useState([]);
-  const [obras, setObras] = useState([]);
-  const [obraSeleccionada, setObraSeleccionada] = useState(null);
-
-  const [tipoTarea, setTipoTarea] = useState("");
-
   const [formData, setFormData] = useState({
-    empresaProveedoraId: "",
-    clienteId: "",
-    obraId: "",
-    urgencia: "",
+    empresaProveedoraId: null,
+    clienteId: null,
+    obraId: null,
+    contactoId: null,
+    tipoTarea: "",
+    usoId: null,
     detalles: {},
+    zonas: [],
   });
 
+  const [paso, setPaso] = useState(1);
   const [errores, setErrores] = useState({});
+  const [contactos, setContactos] = useState([]);
+  const [clientes, setClientes] = useState([]);
+  const [obras, setObras] = useState([]);
+  const [empresas, setEmpresas] = useState([]);
+  const [clientesFiltrados, setClientesFiltrados] = useState([]);
+  const [obrasFiltradas, setObrasFiltradas] = useState([]);
+  const [obraSeleccionada, setObraSeleccionada] = useState(null);
 
   useEffect(() => {
-    async function fetchData() {
+  async function fetchData() {
       try {
-        const resEmpresas = await tareasService.obtenerFiliales();
-        const resClientes = await tareasService.obtenerClientes();
-        const resObras = await tareasService.obtenerObras();
+        const [resEmpresas, resClientes, resObras, resContactos] = await Promise.all([
+          tareasService.obtenerFiliales(),
+          tareasService.obtenerClientes(),
+          tareasService.obtenerObras(),
+          tareasService.obtenerContactos(),
+        ]);
         setEmpresas(resEmpresas);
         setClientes(resClientes);
         setObras(resObras);
+        setContactos(resContactos);
       } catch (error) {
         console.error("❌ Error al cargar datos iniciales:", error);
         toast.error("Error al cargar datos");
@@ -42,129 +49,115 @@ export default function useRegistrarTarea() {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    if (formData.obraId) {
-      const obra = obras.find((o) => o.id === Number(formData.obraId));
-      if (obra) setObraSeleccionada(obra);
+  // Cambio de campos generales
+  const onChangeCampo = (campo, valor) => {
+
+    setFormData((prev) => ({
+      ...prev,
+      [campo]: valor,
+    }));
+
+    if (campo === "obraId") {
+      const obra = obras.find((o) => o.id === valor);
+      setObraSeleccionada(obra || null);
     }
-  }, [formData.obraId, obras]);
 
-  const camposPorTipoTarea = {
-    "Apoyo Técnico": [
-      "apoyoTecnico", "tipoModulacion", "tipoEquipo", "nota",
-      "plataformado", "anclajes", "uso",
-      "apoyadoA", "rotaciones", "mensulas",
-      "ingreso", "pasadizo",
-      "escuadras", "sobrecarga", "plataformas",
-      "encofrados", "elevador"
-    ],
-    "Apoyo Administrativo": [
-      "apoyoAdministrativo", "nota",
-      "valorizacion", "liquidacion", "acuerdoComercial", "envioCliente"
-    ],
-    "Pase de Pedido": [
-      "estadoPasePedido", "numeroVersionContrato", "tipoOperacion",
-      "estadoHabilitacion", "obraNueva", "valorizacionAdelantada",
-      "transporte", "fechaEntrega", "horaEntrega", "nota",
-      "despacho", "plataformado", "ingreso", "pasadizo", "tipoEscalera",
-      "tipoServicioColgante", "venta", "puntales", "adaptarMotor"
-    ],
-    "Servicios Adicionales": [
-      "tipoServicio", "fechaEntrega", "horaEntrega", "numeroVersionContrato", "nota"
-    ],
-    "Tarea Interna": ["nota"]
-  };
-
-  const limpiarCamposPorTipoTarea = (tipo) => {
-    const camposPermitidos = new Set([...(camposPorTipoTarea[tipo] || [])]);
-    const detallesFiltrados = Object.fromEntries(
-      Object.entries(formData.detalles).filter(([key]) =>
-        camposPermitidos.has(key)
-      )
-    );
-    setFormData((prev) => ({
-      ...prev,
-      detalles: detallesFiltrados,
-    }));
-  };
-
-  const limpiarSoloCamposDeEquipo = (nuevoTipoEquipo) => {
-    const camposEquipo = {
-      "AT - And. TRABAJO": ["plataformado", "anclajes", "uso"],
-      "AF - And. FACHADA": ["apoyadoA", "rotaciones", "mensulas"],
-      "EA - Escalera Acceso": ["apoyadoA", "ingreso", "pasadizo"],
-      "EC - Escuadras": ["escuadras", "sobrecarga", "plataformas"],
-      "EN - Encofrado": ["encofrados"],
-      "EV - Elevador": ["elevador"],
-    };
-
-    const camposPermitidos = new Set([
-      "apoyoTecnico", "tipoModulacion", "tipoEquipo", "nota",
-      ...(camposEquipo[nuevoTipoEquipo] || []),
-    ]);
-
-    const detallesFiltrados = Object.fromEntries(
-      Object.entries(formData.detalles).filter(([key]) =>
-        camposPermitidos.has(key)
-      )
-    );
-
-    setFormData((prev) => ({
-      ...prev,
-      detalles: {
-        ...detallesFiltrados,
-        tipoEquipo: nuevoTipoEquipo,
-      },
-    }));
-  };
-
-  const handleTipoTareaChange = (tipo) => {
-    setTipoTarea(tipo);
-    limpiarCamposPorTipoTarea(tipo);
-  };
-
-  const handleInputChange = (campo, valor) => {
-    setFormData((prev) => ({ ...prev, [campo]: valor }));
-  };
-
-  const handleDetallesChange = (campo, valor) => {
-    if (campo === "tipoEquipo" && tipoTarea === "Apoyo Técnico") {
-      limpiarSoloCamposDeEquipo(valor);
-    } else {
+    if (campo === "tipoTarea") {
       setFormData((prev) => ({
         ...prev,
-        detalles: { ...prev.detalles, [campo]: valor },
+        tipoTarea: valor,
+        detalles: {},
+        usoId: null,
+        zonas: [],
       }));
     }
   };
 
+  // Cambio de campos internos del objeto detalles
+  const onChangeDetalles = (campo, valor) => {
+
+    if (campo === "usoId") {
+      setFormData((prev) => ({
+        ...prev,
+        usoId: valor,
+        detalles: {
+          ...prev.detalles,
+          usoId: valor,
+        }
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        detalles: { 
+          ...prev.detalles, 
+          [campo]: valor 
+        },
+      }));
+    }
+  }
+  
+  // Cambio del uso (tipo de equipo)
+  const handleUsoChange = (usoId) => {
+    setFormData((prev) => ({ 
+      ...prev, 
+      usoId
+    }));
+  };
+
+  // Cambio de zonas para despiece
+  const handleZonasChange = (zonas) => {
+    setFormData((prev) => ({ ...prev, zonas }));
+  };
+
+  // Envío al backend
   const registrarTarea = async (e) => {
     e.preventDefault();
-    const validacion = validarTarea(formData, tipoTarea);
+    const validacion = validarTarea(formData);
     setErrores(validacion);
 
-    if (Object.keys(validacion).length > 0) {
+    // Verifica errores correctamente
+    const hayErrores = Object.values(validacion).some(grupo => Object.keys(grupo).length > 0);
+
+    if (hayErrores) {
       toast.error("Faltan campos obligatorios");
       return;
     }
 
     try {
-      await tareasService.crearTarea({
-        ...formData,
-        tipoTarea,
-        ubicacion: obraSeleccionada?.ubicacion || "",
-      }, user.token);
+      const { tipoCotizacion, diasAlquiler, ...restoDetalles } = formData.detalles;
 
+      const payload = {
+        ...formData,
+        estado: "Pendiente",
+        usuarioId: user.id,
+        detalles: {
+          ...restoDetalles,
+          tipo_cotizacion: tipoCotizacion,
+          dias_alquiler: diasAlquiler,
+        },
+        zonas: (formData.zonas || []).map((zona, index) => ({
+          ...zona,
+          zona: index + 1,
+        })),
+        
+      };
+
+      await tareasService.crearTarea(payload, user.token);
       toast.success("✅ Tarea registrada con éxito");
+
+      // Limpiar todo
       setFormData({
-        empresaProveedoraId: "",
+        contactoId: "",
         clienteId: "",
         obraId: "",
-        urgencia: "",
+        empresaProveedoraId: "",
+        tipoTarea: "",
+        usoId: null,
         detalles: {},
+        zonas: [],
       });
-      setTipoTarea("");
       setErrores({});
+      setPaso(1);
     } catch (error) {
       console.error("❌ Error al registrar tarea:", error);
       toast.error("No se pudo registrar la tarea");
@@ -172,17 +165,26 @@ export default function useRegistrarTarea() {
   };
 
   return {
-    empresas,
+    paso,
+    setPaso,
+    contactos,
     clientes,
     obras,
+    empresas,
+    clientesFiltrados,
+    setClientesFiltrados,
+    obrasFiltradas,
+    setObrasFiltradas,
     obraSeleccionada,
-    tipoTarea,
-    setTipoTarea: handleTipoTareaChange,
     formData,
     setFormData,
-    handleInputChange,
-    handleDetallesChange,
-    registrarTarea,
     errores,
+    setErrores,
+    onChangeCampo,
+    onChangeDetalles,
+    handleUsoChange,
+    handleZonasChange,
+    registrarTarea,
   };
+
 }

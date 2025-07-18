@@ -41,6 +41,16 @@ const Despiece = sequelize.define(
     total_final: {
       type: DataTypes.DECIMAL(10, 2),
       defaultValue: 0,
+    },
+    cp: {
+      type: DataTypes.STRING(10)
+    },
+    tiene_pernos: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    detalles_opcionales: {
+      type: DataTypes.JSON,
     }
   }, {
     timestamps: false,

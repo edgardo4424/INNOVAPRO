@@ -19,8 +19,10 @@
     font-weight: bold;
     color: #004085;
     text-align: center;
-    margin-bottom: 10px;
+    margin-top: 20px;
+    margin-bottom: 15px;
   }
+
   
   .registro-tarea-mensaje {
     background: #e7f3ff;
@@ -37,26 +39,26 @@
   }
   
   .registro-tarea-form {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    margin-bottom: 15px;
-    background: rgba(255, 255, 255, 0.2);
-    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+    background-color: rgba(255, 255, 255, 0.2);
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-light);
     transition: all var(--transition-speed);
   }
 
+
   .registro-tarea-form input,
   .registro-tarea-form select {
     flex: 1;
-    padding: 5px;
-    width: 99%;
-    border: 2px solid rgba(0, 0, 0, 0.2);
-    border-radius: var(--border-radius);
-    font-size: 14px;
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    padding: 10px;
+    width: 100%;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
 
   .registro-tarea-form input:focus,
@@ -81,12 +83,6 @@
     background: var(--hover-color);
     transform: scale(1.01);
     box-shadow: var(--shadow-medium);
-  }
-  
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 0px;
   }
   
   .tarea-detalles {
@@ -294,7 +290,7 @@
     
     .registro-tarea-form {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr;
       gap: 10px;
       margin-bottom: 15px;
       padding: 10px;
@@ -386,6 +382,14 @@
       padding: 10px;
       font-size: 15px;
     }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 18px;
+    }
+
   
   }
   

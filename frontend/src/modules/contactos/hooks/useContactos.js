@@ -9,19 +9,10 @@ export default function useContactos() {
   const [clientes, setClientes] = useState([]);
   const [obras, setObras] = useState([]);
   const [busqueda, setBusqueda] = useState("");
-  const [modalAgregar, setModalAgregar] = useState(false);
-  const [contactoEditando, setContactoEditando] = useState(null);
   const [paginaActual, setPaginaActual] = useState(1);
-  const contactosPorPagina = 5;
+  const [contactosPorPagina,setContactosPorPagina] = useState( 5);
 
-  const [nuevoContacto, setNuevoContacto] = useState({
-    nombre: "",
-    email: "",
-    telefono: "",
-    cargo: "",
-    clientes_asociados: [],
-    obras_asociadas: [],
-  });
+
 
   // 🔄 Cargar datos iniciales
   useEffect(() => {
@@ -44,38 +35,12 @@ export default function useContactos() {
     cargarDatos();
   }, []);
 
-  // ➕ Abrir / cerrar modal agregar
-  const abrirModalAgregar = () => setModalAgregar(true);
-  const cerrarModalAgregar = () => {
-    setModalAgregar(false);
-    resetNuevoContacto();
-  };
-
-  // ✏️ Abrir / cerrar modal editar
-  const abrirModalEditar = (contacto) => {
-    setContactoEditando({
-      ...contacto,
-      clientes_asociados: contacto.clientes_asociados?.map((c) => c.id) || [],
-      obras_asociadas: contacto.obras_asociadas?.map((o) => o.id) || [],
-    });
-  };
-
-  const cerrarModalEditar = () => setContactoEditando(null);
 
   // ✅ Crear nuevo contacto
-  const agregarContacto = async (e) => {
-    e.preventDefault();
-
-    const errores = validarContacto(nuevoContacto);
-    if (Object.keys(errores).length > 0) {
-      toast.error("Faltan campos obligatorios");
-      return;
-    }
-
+  const agregarContacto = async (contacto) => {
     try {
-      const creado = await contactosService.crearContacto(nuevoContacto);
+      const creado = await contactosService.crearContacto(contacto);
       setContactos((prev) => [...prev, creado]);
-      cerrarModalAgregar();
       toast.success("Contacto creado con éxito");
     } catch (error) {
       console.error("❌ Error al crear contacto:", error);
@@ -84,22 +49,14 @@ export default function useContactos() {
   };
 
   // 💾 Guardar edición
-  const guardarEdicion = async (e) => {
-    e.preventDefault();
-
-    const errores = validarContacto(contactoEditando);
-    if (Object.keys(errores).length > 0) {
-      toast.error("Faltan campos obligatorios");
-      return;
-    }
+  const guardarEdicion = async (contacto) => {
 
     try {
-      await contactosService.actualizarContacto(contactoEditando.id, contactoEditando);
-      const actualizado = await contactosService.obtenerContactoPorId(contactoEditando.id);
+      await contactosService.actualizarContacto(contacto.id, contacto);
+      const actualizado = await contactosService.obtenerContactoPorId(contacto.id);
       setContactos((prev) =>
         prev.map((c) => (c.id === actualizado.id ? actualizado : c))
       );
-      cerrarModalEditar();
       toast.success("Contacto actualizado");
     } catch (error) {
       console.error("❌ Error al actualizar contacto:", error);
@@ -121,15 +78,7 @@ export default function useContactos() {
     });
   };
 
-  const resetNuevoContacto = () =>
-    setNuevoContacto({
-      nombre: "",
-      email: "",
-      telefono: "",
-      cargo: "",
-      clientes_asociados: [],
-      obras_asociadas: [],
-    });
+
 
   // 🔎 Búsqueda inteligente
   const contactosFiltrados = contactos.filter((c) => {
@@ -154,26 +103,18 @@ export default function useContactos() {
   );
 
   return {
-    contactosFiltrados,
-    contactosPaginados,
-    totalPaginas,
-    paginaActual,
-    setPaginaActual,
-    clientes,
-    obras,
-    busqueda,
-    setBusqueda,
-    modalAgregar,
-    abrirModalAgregar,
-    cerrarModalAgregar,
-    contactoEditando,
-    abrirModalEditar,
-    cerrarModalEditar,
-    nuevoContacto,
-    setNuevoContacto,
-    agregarContacto,
-    guardarEdicion,
-    eliminarContacto,
-    setContactoEditando,
+      contactosPaginados,
+      totalPaginas,
+      paginaActual,
+      setPaginaActual,
+      clientes,
+      obras,
+      busqueda,
+      setBusqueda,
+      agregarContacto,
+      guardarEdicion,
+      eliminarContacto,
+      contactosPorPagina,
+      setContactosPorPagina,
   };
 }

@@ -1,0 +1,48 @@
+Holaaaa. Necesito que me ayudes a obtener las formulas. Quiero que interpretes cada Formula de excel y lo transformes a formulas en js. 
+
+Datos de Entrada:
+D4 - CANTIDAD
+D5 - TIPO PUNTAL
+D6 - TRIPODE
+
+1. Pieza: PU.0100 - PUNTAL 3.00m - VERDE CLARO
+Excel: =SI($B10=F$5;F$4;0)
+
+2. Pieza: PU.0200 - PUNTAL 3.00m - VERDE OSCURO
+Excel: =SI($B11=F$5;F$4;0)
+
+3. Pieza: PU.0300 - PUNTAL 3.00m - AZUL
+Excel: =SI($B12=F$5;F$4;0)
+
+4. Pieza: PU.0350 - PUNTAL 3.00m - AZUL TIPO N
+Excel: =SI($B13=F$5;F$4;0)
+
+5. Pieza: PU.0400 - PUNTAL 4.00m - VERDE
+Excel: =SI($B14=F$5;F$4;0)
+
+6. Pieza: PU.0500 - PUNTAL 4.00m - AZUL
+Excel: =SI($B15=F$5;F$4;0)
+
+7. Pieza: PU.0600 - PUNTAL 5.00m
+Excel: =SI($B16=F$5;F$4;0)
+
+8. Pieza: PU.0700 - PIN PRESION - 11mm
+Excel: =+F10+F11+F12+F13+F14+F15
+
+9. Pieza: PU.0800 - PIN PRESION - 12mm
+Excel: =+F16
+
+10. Pieza: PU.0900 - ARGOLLA - 48/40mm
+Excel: =+F10+F11+F12+F13+F14+F15
+
+11. Pieza: PU.1000 - ARGOLLA - 60/52mm
+Excel: =+F16
+
+12. Pieza: PU.1100 - TRIPODE
+Excel: =+SI(F6="SI";F4;)
+
+
+
+
+
+

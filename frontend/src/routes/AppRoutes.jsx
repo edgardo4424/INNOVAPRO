@@ -1,66 +1,239 @@
-import { BrowserRouter, HashRouter, Routes, Route, Navigate } from "react-router-dom";
-import App from "../App";
-import Login from "@/modules/auth/pages/Login";
+import React, { Suspense, lazy } from "react";
+import {
+   BrowserRouter,
+   HashRouter,
+   Routes,
+   Route,
+   Navigate,
+} from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
-import GestionUsuarios from "@/modules/usuarios/pages/GestionUsuarios";
-import GestionEmpresas from "@/modules/filiales/pages/GestionEmpresas";
-import GestionClientes from "@/modules/clientes/pages/GestionClientes";
-import GestionContactos from "@/modules/contactos/pages/GestionContactos";
-import GestionObras from "@/modules/obras/pages/GestionObras";
-import CentroAtencion from "@/modules/centroAtencion/pages/CentroAtencion";
-import RegistrarTarea from "@/modules/tareas/pages/RegistrarTarea";
+import RoleGuard from "./rol.guard";
+import { WizardProvider } from "@/modules/cotizaciones/context/WizardCotizacionContext";
+import LoaderInnova from "@/shared/components/LoaderInnova";
+import GestionTrabajadores from "@/modules/trabajadores/pages/GestionTrabajadores";
+import AsistenciaAndamiosElectricos from "@/modules/asistencia/pages/AsistenciaAndamiosElectricos";
+import AsistenciaEncofrados from "@/modules/asistencia/pages/AsistenciaEncofrados";
+import AsistenciaIndekAndina from "@/modules/asistencia/pages/AsistenciaIndekAndina";
+import AsistenciaInnovaRental from "@/modules/asistencia/pages/AsistenciaInnovaRental";
 
-import DashboardHome from "@/modules/dashboard/pages/DashboardHome";
-import DashboardLayout from "@/modules/dashboard/pages/DashboardLayout";
+// Lazy load components
+const Login = lazy(() => import("@/modules/auth/pages/Login"));
+const GestionUsuarios = lazy(() =>
+   import("@/modules/usuarios/pages/GestionUsuarios")
+);
+const CrearTrabajador = lazy(() =>
+   import("@/modules/trabajadores/pages/CrearTrabajador")
+);
+const GestionEmpresas = lazy(() =>
+   import("@/modules/filiales/pages/GestionEmpresas")
+);
+const GestionClientes = lazy(() =>
+   import("@/modules/clientes/pages/GestionClientes")
+);
+const GestionContactos = lazy(() =>
+   import("@/modules/contactos/pages/GestionContactos")
+);
+const GestionObras = lazy(() => import("@/modules/obras/pages/GestionObras"));
+const CentroAtencion = lazy(() =>
+   import("@/modules/centroAtencion/pages/CentroAtencion")
+);
+const RegistrarTarea = lazy(() =>
+   import("@/modules/tareas/pages/RegistrarTarea")
+);
 
-import { WizardProvider } from "@/modules/cotizaciones/hooks/useWizardCotizacion";
-import RegistrarCotizacionWizard from "@/modules/cotizaciones/pages/RegistrarCotizacionWizard";
-import GestionCotizaciones from "../modules/cotizaciones/pages/GestionCotizaciones";
+const DashboardHome = lazy(() =>
+   import("@/modules/dashboard/pages/DashboardHome")
+);
+const DashboardLayout = lazy(() =>
+   import("@/modules/dashboard/pages/DashboardLayout")
+);
 
+const RegistrarCotizacionWizard = lazy(() =>
+   import("@/modules/cotizaciones/pages/RegistrarCotizacionWizard")
+);
+const GestionCotizaciones = lazy(() =>
+   import("../modules/cotizaciones/pages/GestionCotizaciones")
+);
+const GestionStockPiezas = lazy(() =>
+   import("../modules/stockPiezas/pages/GestionStockPiezas")
+);
 
+const Facturacion = lazy(() =>
+   import("../modules/factuacion/pages/Facturacion")
+);
 
 export default function AppRoutes() {
-  const Router = process.env.NODE_ENV === "production" ? HashRouter : BrowserRouter;
-  const LOGIN_PATH = process.env.NODE_ENV === "production" ? "/#/login" : "/login";
-  const DASHBOARD_PATH = process.env.NODE_ENV === "production" ? "/#/dashboard" : "/dashboard";
+   const Router =
+      process.env.NODE_ENV === "production" ? HashRouter : BrowserRouter;
+   const LOGIN_PATH =
+      process.env.NODE_ENV === "production" ? "/#/login" : "/login";
 
-  return (
-    <Router>
-      <Routes>
+   return (
+      <Router>
+         {/* Suspense para mostrar fallback mientras carga */}
+         <Suspense fallback={<LoaderInnova />}>
+            <Routes>
+               {/* Ruta pública */}
+               <Route path="/login" element={<Login />} />
+               {/* Rutas protegidas */}
+               <Route path="/" element={<ProtectedRoute />}>
+                  <Route element={<DashboardLayout />}>
+                     <Route index element={<DashboardHome />} />
+                     <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                        <Route
+                           path="gestion-usuarios"
+                           element={<GestionUsuarios />}
+                        />
+                     </Route>
+                     <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                        <Route
+                           path="gestion-empresas"
+                           element={<GestionEmpresas />}
+                        />
+                     </Route>
 
-        {/* Ruta pública */}
-        <Route path="/login" element={<Login />} />
+                     <Route
+                        element={<RoleGuard roles={["Gerencia", "Ventas"]} />}
+                     >
+                        <Route
+                           path="gestion-clientes"
+                           element={<GestionClientes />}
+                        />
+                     </Route>
 
-        {/* Rutas protegidas */}
-        <Route path="/" element={<ProtectedRoute />}>
-          <Route element={<DashboardLayout />}>
-            <Route index element={<DashboardHome />} />
-            <Route path="gestion-usuarios" element={<GestionUsuarios />} />
-            <Route path="gestion-empresas" element={<GestionEmpresas />} />
-            <Route path="gestion-clientes" element={<GestionClientes />} />
-            <Route path="gestion-contactos" element={<GestionContactos />} />
-            <Route path="gestion-obras" element={<GestionObras />} />
-            <Route path="centro-atencion" element={<CentroAtencion />} />
-            <Route path="registrar-tarea" element={<RegistrarTarea />} />
-            <Route
-              path="cotizaciones"
-              element={<GestionCotizaciones/>}
-            />
-            <Route
-              path="cotizaciones/registrar"
-              element={
-                <WizardProvider>
-                  <RegistrarCotizacionWizard />
-                </WizardProvider>
-              }
-            />
-          </Route>
-        </Route>
+                     <Route
+                        element={<RoleGuard roles={["Gerencia", "Ventas"]} />}
+                     >
+                        <Route
+                           path="gestion-contactos"
+                           element={<GestionContactos />}
+                        />
+                     </Route>
 
-        {/* Catch-all */}
-        <Route path="*" element={<Navigate to={LOGIN_PATH} replace />} />
+                     <Route
+                        element={<RoleGuard roles={["Gerencia", "Ventas"]} />}
+                     >
+                        <Route
+                           path="gestion-obras"
+                           element={<GestionObras />}
+                        />
+                     </Route>
 
-      </Routes>
-    </Router>
-  );
-  }
+                     <Route
+                        element={
+                           <RoleGuard
+                              roles={["Gerencia", "Oficina Técnica", "Ventas"]}
+                           />
+                        }
+                     >
+                        <Route
+                           path="centro-atencion"
+                           element={<CentroAtencion />}
+                        />
+                     </Route>
+
+                     <Route
+                        element={<RoleGuard roles={["Gerencia", "Ventas"]} />}
+                     >
+                        <Route
+                           path="registrar-tarea"
+                           element={<RegistrarTarea />}
+                        />
+                     </Route>
+
+                     <Route
+                        element={<RoleGuard roles={["Gerencia", "Ventas"]} />}
+                     >
+                        <Route
+                           path="cotizaciones"
+                           element={<GestionCotizaciones />}
+                        />
+                     </Route>
+
+                     <Route
+                        element={<RoleGuard roles={["Gerencia", "Ventas"]} />}
+                     >
+                        <Route
+                           path="cotizaciones/registrar"
+                           element={
+                              <WizardProvider>
+                                 <RegistrarCotizacionWizard />
+                              </WizardProvider>
+                           }
+                        />
+                     </Route>
+                     <Route
+                        element={<RoleGuard roles={["Gerencia", "Ventas","Oficina Técnica"]} />}
+                     >
+                        <Route
+                           path="stock/piezas"
+                           element={<GestionStockPiezas />}
+                        />
+
+                        <Route
+                           path="/cotizaciones/wizard/:id"
+                           element={
+                              <WizardProvider>
+                                 <RegistrarCotizacionWizard />
+                              </WizardProvider>
+                           }
+                        />
+                        <Route
+                           path="/facturacion"
+                           element={
+                              <Facturacion />
+                           }
+                        />
+                     </Route>
+
+                     <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                        <Route
+                           path="crear-trabajador"
+                           element={<CrearTrabajador />}
+                        />
+                     </Route>
+
+                     <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                        <Route
+                           path="tabla-trabajadores"
+                           element={<GestionTrabajadores />}
+                        />
+                     </Route>
+
+                     <>
+                        {/* Rutas para el modulo de aistencia */}
+                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                           <Route
+                              path="asistencia/encofrados"
+                              element={<AsistenciaEncofrados />}
+                           />
+                        </Route>
+                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                           <Route
+                              path="asistencia/andamios-electricos"
+                              element={<AsistenciaAndamiosElectricos />}
+                           />
+                        </Route>
+                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                           <Route
+                              path="asistencia/indek-andina"
+                              element={<AsistenciaIndekAndina />}
+                           />
+                        </Route>
+                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                           <Route
+                              path="asistencia/innova-rental"
+                              element={<AsistenciaInnovaRental />}
+                           />
+                        </Route>
+                     </>
+                  </Route>
+               </Route>
+
+               {/* Catch-all */}
+               <Route path="*" element={<Navigate to={"/"} replace />} />
+            </Routes>
+         </Suspense>
+      </Router>
+   );
+}

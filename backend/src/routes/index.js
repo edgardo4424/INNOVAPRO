@@ -15,9 +15,4 @@ if (process.env.NODE_ENV !== "development") {
 // Cargar dinámicamente rutas de módulos con Clean Architecture
 registerModuleRoutes(router, null); // Ya protegemos globamente con el middleware verificarToken
 
-// Rutas aun no refactorizadas a Clean Architecture
-router.use("/cotizaciones", require("./cotizaciones"));
-router.use("/productos-servicios", require("./productosServiciosRoutes"));
-router.use("/tareas", require("./tareasRoutes"));
-
 module.exports = router;

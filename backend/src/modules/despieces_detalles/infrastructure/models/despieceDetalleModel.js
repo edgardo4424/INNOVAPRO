@@ -45,10 +45,20 @@ const DespieceDetalle = sequelize.define(
       type: DataTypes.DECIMAL(10, 2),
       defaultValue: 0,
     },
+    esAdicional: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    }
   },
   {
     timestamps: false,
     tableName: "despieces_detalle",
+     indexes: [
+      {
+        unique: true,
+        fields: ["despiece_id", "pieza_id", "esAdicional"],
+      },
+    ],
   }
 );
 

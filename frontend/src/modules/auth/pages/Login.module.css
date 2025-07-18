@@ -30,7 +30,7 @@
   align-items: center;
   height: 100vh;
   width: 100vw;
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("/public/images/wallpaper1.jpeg");
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("/public/images/wallpaper1.webp");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -137,6 +137,7 @@
   height: auto; /* Mantiene la proporción */
   display: block; /* Evita espacios adicionales */
   margin-bottom: 1rem; /* Centrado y separación */
+  aspect-ratio: 3334 / 2501;
 }
 
 .recaptcha-container {

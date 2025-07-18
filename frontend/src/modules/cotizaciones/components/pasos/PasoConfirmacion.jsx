@@ -1,113 +1,136 @@
-// INNOVA PRO+ v1.3.1
 import { useEffect } from "react";
-import { useWizardContext } from "../../hooks/useWizardCotizacion";
-import { generarDespiece } from "../../services/cotizacionesService";
+import { useWizardContext } from "../../context/WizardCotizacionContext";
+import { useGenerarDespiece } from "../../hooks/paso-confirmacion/useGenerarDespiece";
+import { useCalculoTransporte } from "../../hooks/paso-confirmacion/useCalculoTransporte";
+import { USOS_INSTALABLES, USOS_SIN_DESCUENTO} from "../../constants/usos";
+import ResumenDespiece from "./paso-confirmacion/ResumenDespiece";
+import BloquePernos from "./paso-confirmacion/BloquePernos";
+import BloquePuntales from "./paso-confirmacion/BloquePuntales";
+import BloquePlataformaDescarga from "./paso-confirmacion/BloquePlataformaDescarga";
+import BloqueEscuadras from "./paso-confirmacion/BloqueEscuadras";
+import BloqueTransporte from "./paso-confirmacion/BloqueTransporte";
+import BloqueInstalacion from "./paso-confirmacion/BloqueInstalacion";
+import BloqueDescuento from "./paso-confirmacion/BloqueDescuento";
+import BloqueEscaleraAcceso from "./paso-confirmacion/BloqueEscaleraAcceso";
+import BloqueEscaleraAccesoOT from "./paso-confirmacion/BloqueEscaleraAccesoOT";
+import DespieceAdicional from "./paso-confirmacion/DespieceAdicional"
 import Loader from "../../../../shared/components/Loader";
 
+// Este componente representa el quinto paso del Wizard. Muestra el resumen del despiece generado automáticamente.
+// Le permite al comercial confirmar las piezas calculadas, agregar piezas adicionales, incluir o excluir pernos,
+// configurar transporte, instalación y descuentos.
+// Utiliza la lógica separada en hooks para generar el despiece y realizar el cálculo del transporte automático.
+// Desacoplado los componentes que se van a renderizar de manera condicional con sus lógicas separadas.
+
 export default function PasoConfirmacion() {
-  const { formData, setFormData } = useWizardContext();
+  const { formData, setFormData, errores } = useWizardContext();
+
+  useGenerarDespiece(formData, setFormData); // Hook personalizado para generar el despiece
+  useCalculoTransporte(formData, setFormData); // Hook personalizado para calcular el transporte
+
+  // Validación básica para determinar si todos los datos mínimos están listos 
+  
+  const datosListos =
+    formData.uso_id &&
+    formData.zonas?.length &&
+    Array.isArray(formData.despiece) &&
+    formData.resumenDespiece !== undefined;
+
+
+  // Si el comercial desactiva los pernos, se eliminan del despiece
 
   useEffect(() => {
-    const cargarDespiece = async () => {
-      try {
-        const data = await generarDespiece(formData.atributos);
-        console.log("📦 Respuesta despiece:", data);
+    if (!formData.despiece?.length) return;
+    const despieceActualizado = formData.despiece.map(pieza => 
+      pieza.esPerno 
+      ? { ...pieza, incluido: formData.tiene_pernos } 
+      : pieza
+    );
+    setFormData(prev => ({ ...prev, despiece: despieceActualizado }));
+  }, [formData.tiene_pernos]);
 
-        if (!data?.despiece || !Array.isArray(data.despiece)) {
-          throw new Error("La respuesta del backend no contiene un despiece válido");
-        }
-
-        setFormData((prev) => ({
-          ...prev,
-          despiece: data.despiece,
-          resumenDespiece: {
-            total_piezas: data.total_piezas,
-            peso_total_kg: data.peso_total_kg,
-            peso_total_ton: data.peso_total_ton,
-            precio_subtotal_venta_dolares: data.precio_subtotal_venta_dolares,
-            precio_subtotal_venta_soles: data.precio_subtotal_venta_soles,
-            precio_subtotal_alquiler_soles: data.precio_subtotal_alquiler_soles
-          },
-          requiereAprobacion: false,
-        }));
-      } catch (error) {
-        console.error("Error generando despiece:", error.message);
-      }
-    };
-
-    cargarDespiece();
-  }, []);
-
-  const resumen = formData.resumenDespiece;
-  const tipo = formData.tipo_cotizacion;
-
-  if (!formData.despiece.length || !resumen) return <Loader texto="Generando despiece..." />;
-
-  const subtotal = parseFloat(
-    tipo === "Alquiler"
-      ? resumen.precio_subtotal_alquiler_soles
-      : resumen.precio_subtotal_venta_soles
-  );
-
-  const descuento = formData.descuento || 0;
-  const totalConDescuento = (subtotal * (1 - descuento / 100)).toFixed(2);
-
-  const handleDescuento = (valor) => {
-    const num = parseFloat(valor) || 0;
-    const requiereAprobacion = num > 10;
-    setFormData((prev) => ({
-      ...prev,
-      descuento: num,
-      requiereAprobacion,
-    }));
-  };
+  if (!datosListos) return <Loader texto="Generando despiece..." />
 
   return (
     <div className="paso-formulario">
       <h3>Paso 5: Confirmación Final</h3>
 
-      <h4 style={{ color: "#e67e22", marginBottom: "1rem" }}>Resumen del Despiece:</h4>
-      <ul style={{ color: "#e67e22", fontSize: "0.95rem", lineHeight: "1.4" }}>
-        {formData.despiece.map((pieza) => (
-          <li key={pieza.pieza_id}>
-            <strong>{pieza.descripcion}</strong> - {pieza.total} unidades - S/{" "}
-            {tipo === "Alquiler" ? pieza.precio_alquiler_soles : pieza.precio_venta_soles}
-          </li>
-        ))}
-      </ul>
+      {/* La lógica del renderizado de este bloque se encuentra dentro del mismo */}
+      <BloquePuntales formData={formData} setFormData={setFormData} />
 
-      <hr />
+      {formData.uso_id === 7 && ( // Si es caso plataforma de descarga mostrar este bloque
+        <BloquePlataformaDescarga formData={formData} setFormData={setFormData} />
+      )}
 
-      <div style={{ marginTop: "1rem" }}>
-        <p><strong>🧱 Total de piezas:</strong> {resumen.total_piezas}</p>
-        <p><strong>⚖️ Peso total (kg):</strong> {resumen.peso_total_kg}</p>
-        <p><strong>🚚 Peso total (ton):</strong> {resumen.peso_total_ton}</p>
-        <p><strong>💵 Subtotal venta (USD):</strong> ${resumen.precio_subtotal_venta_dolares}</p>
-        <p><strong>💰 Subtotal venta (S/):</strong> S/ {resumen.precio_subtotal_venta_soles}</p>
-        <p><strong>🛠️ Subtotal alquiler (S/):</strong> S/ {resumen.precio_subtotal_alquiler_soles}</p>
-      </div>
+      {formData.uso_id === 4 && ( // Si es caso escuadras mostrar este bloque
+        <BloqueEscuadras formData={formData} setFormData={setFormData} />
+      )}
 
-      <div style={{ marginTop: "1.5rem" }}>
-        <label><strong>🎯 Descuento (%):</strong></label>
-        <input
-          type="number"
-          value={formData.descuento || ""}
-          onChange={(e) => handleDescuento(e.target.value)}
-          placeholder="Ej: 5"
-          min="0"
-          max="100"
-        />
-        {formData.requiereAprobacion && (
-          <p className="warning-text" style={{ color: "#e74c3c", marginTop: "0.5rem" }}>
-            ⚠️ Este descuento requiere aprobación de Gerencia.
-          </p>
+      {/* 
+        Si es escalera de acceso en alquiler generado por el comercial con CP0,
+        renderizamos este bloque
+      */}
+      {formData.uso_id === 3 && formData.tipo_cotizacion === "Alquiler" && !formData.id && (
+        <BloqueEscaleraAcceso formData={formData} setFormData={setFormData} />
+      )}
+
+      {/* Siempre mostraremos el resumen del despiece con sus condiciones dentro del mismo bloque */}
+      <ResumenDespiece formData={formData} />
+      
+      {/* Si es escalera de acceso generado por Despiece de Oficina Técnica */}
+      {formData.uso_id === 3 && formData.id && (
+        <BloqueEscaleraAccesoOT formData={formData} setFormData={setFormData} />
+      )}
+
+      {/* Sección para determinar si se añadirán piezas adicionales al despiece */}
+      <div className="wizard-section">
+        <label>¿Desea agregar más piezas al despiece?</label>
+        <select
+          value={formData.agregar_mas_piezas ?? ""}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              agregar_mas_piezas: e.target.value === "true",
+            }))
+          }
+        >
+          <option value="">Seleccione una opción</option>
+          <option value="true">Sí</option>
+          <option value="false">No</option>
+        </select>
+        {errores.agregar_mas_piezas && (
+          <p className="error-text">{errores.agregar_mas_piezas}</p>
         )}
-
-        <p style={{ marginTop: "1rem" }}>
-          <strong>Total final:</strong> S/{" "}
-          <span style={{ fontSize: "1.2rem" }}>{totalConDescuento}</span>
-        </p>
       </div>
+
+      {/* En caso la sección previa sea afirmativa, mostramos este bloque */}
+      {formData.agregar_mas_piezas && (
+        <DespieceAdicional formData={formData} setFormData={setFormData} />
+      )}
+
+      {/*
+        Siempre que exista pernos en el despiece renderiza el BloquePernos.
+        Además siempre consultaremos mediante el BloqueTransporte si se desea incluir o no.
+      */}
+      <BloquePernos formData={formData} setFormData={setFormData} errores={errores} />
+      <BloqueTransporte formData={formData} setFormData={setFormData} errores={errores} />
+      
+      {/* Solo para los usos que sean instalables renderizamos el BloqueInstalacion */}
+      {USOS_INSTALABLES.includes(formData.uso_id) && (
+        <BloqueInstalacion formData={formData} setFormData={setFormData} errores={errores} />
+      )}
+
+      {/* Solo para los usos que dependan exclusivamente del despiece se permitirá hacer descuento en % */}
+      {!USOS_SIN_DESCUENTO.includes(formData.uso_id) && (
+        <BloqueDescuento formData={formData} setFormData={setFormData} errores={errores} />
+      )}
+
+      {/*En caso de que la cotización sea Escalera de Acceso en Venta para que apliquen descuento*/}
+      {formData.uso_id === 3 && formData.tipo_cotizacion === "Venta" && (
+        <BloqueDescuento formData={formData} setFormData={setFormData} errores={errores} />
+      )}
+      {console.log("FormData en Paso Confirmación viniendo de OT: ", formData)}
+
     </div>
   );
 }

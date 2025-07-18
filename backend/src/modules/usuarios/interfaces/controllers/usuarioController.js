@@ -5,12 +5,14 @@ const obtenerUsuarios = require('../../application/useCases/obtenerUsuarios'); /
 const obtenerUsuarioPorId = require('../../application/useCases/obtenerUsuarioPorId'); // Importamos el caso de uso para obtener un Usuario por ID
 const actualizarUsuario = require('../../application/useCases/actualizarUsuario'); // Importamos el caso de uso para actualizar un Usuario
 const eliminarUsuario = require('../../application/useCases/eliminarUsuario'); // Importamos el caso de uso para eliminar un Usuario
+const actualizarIdChatTelegramUsuario = require('../../application/useCases/actualizarIdChatTelegramUsuario')
 
 const usuarioRepository = new sequelizeUsuarioRepository(); // Instancia del repositorio de usuarios
 
 const UsuarioController = {
     async crearUsuario(req, res) {
         try {
+          
             const nuevoUsuario = await crearUsuario(req.body, usuarioRepository ); // Llamamos al caso de uso para crear un usuario
             res.status(nuevoUsuario.codigo).json(nuevoUsuario.respuesta); // Respondemos con el usuario creado
         } catch (error) {
@@ -50,6 +52,15 @@ const UsuarioController = {
         try {
             const usuarioEliminado = await eliminarUsuario(req.params.id, usuarioRepository); // Llamamos al caso de uso para eliminar un usuario
             res.status(usuarioEliminado.codigo).json(usuarioEliminado.respuesta); // Respondemos con el usuario eliminado
+        } catch (error) {
+            res.status(500).json({ error: error.message }); // Respondemos con un error
+        }
+    },
+
+      async actualizarIdChatTelegramUsuario(req, res) {
+        try {
+            const usuarioActualizado = await actualizarIdChatTelegramUsuario(req.params.id, req.body, usuarioRepository); // Llamamos al caso de uso para eliminar un usuario
+            res.status(usuarioActualizado.codigo).json(usuarioActualizado.respuesta); // Respondemos con el usuario eliminado
         } catch (error) {
             res.status(500).json({ error: error.message }); // Respondemos con un error
         }

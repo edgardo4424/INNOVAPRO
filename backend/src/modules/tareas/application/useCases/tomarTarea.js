@@ -4,11 +4,16 @@ const notificacionRepository = new SequelizeNotificacionesRepository(); // Insta
 const {
   emitirNotificacionPrivada,
 } = require("../../../notificaciones/infrastructure/services/emisorNotificaciones");
+const {
+  enviarNotificacionTelegram,
+} = require("../../../notificaciones/infrastructure/services/enviarNotificacionTelegram");
+
+// ✅ Importamos el servicio de envío por WhatsApp
+const enviarMensajeWhatsAppTomaTarea = require("../../infrastructure/services/enviarMensajeServiceTomaTarea");
 
 module.exports = async (idTarea, idUsuario, tareaRepository) => {
-
   // id de la tarea e id del usuario del middleware (idUsuario)
-  
+
   const tarea = await tareaRepository.obtenerPorId(idTarea);
 
   if (!tarea) {
@@ -45,18 +50,54 @@ module.exports = async (idTarea, idUsuario, tareaRepository) => {
 
   /*  console.log(`El técnico ${notiTecnico.usuario.nombre} ha tomado tu tarea #${tarea.id}.`); */
 
-  // ✅ Notificar al creador
-  if (tarea.usuario_solicitante) {
-    const notificacionParaElCreador = {
-      usuarioId: tarea.usuario_solicitante.id,
-      mensaje: `El técnico ${notiTecnico.usuario.nombre} ha tomado tu tarea #${tarea.id}.`,
-      tipo: "tarea",
-    };
-    const notiCreador = await notificacionRepository.crear(
-      notificacionParaElCreador
-    );
+  // ✅ Enviar mensaje por WhatsApp al creador ANTES de notificarlo
 
-    emitirNotificacionPrivada(notificacionParaElCreador.usuarioId, notiCreador); // 🔥 ENVÍA OBJETO COMPLETO
+  /* await enviarMensajeWhatsApp(
+    tarea.usuario_solicitante.telefono, // formato internacional, ejemplo: "51987654321"
+    notiTecnico.usuario.nombre,
+    tarea.id.toString()
+  ); */
+  //console.log("noti tecnico: ", notiTecnico.usuario);
+
+  try {
+    // ✅ Notificar al creador
+    if (tarea.usuario_solicitante) {
+      const notificacionParaElCreador = {
+        usuarioId: tarea.usuario_solicitante.id,
+        mensaje: `El técnico ${notiTecnico.usuario.nombre} ha tomado tu tarea #${tarea.id}.`,
+        tipo: "tarea",
+      };
+      const notiCreador = await notificacionRepository.crear(
+        notificacionParaElCreador
+      );
+      emitirNotificacionPrivada(
+        notificacionParaElCreador.usuarioId,
+        notiCreador
+      );
+
+      // Notificar al comercial que solicitó la tarea (TELEGRAM)
+      const usuario = await db.usuarios.findByPk(tarea.usuarioId);
+
+      if (usuario.id_chat) {
+        try {
+          await enviarNotificacionTelegram(
+            usuario.id_chat,
+            notificacionParaElCreador.mensaje
+          );
+        } catch (error) {
+          console.error(
+            "❌ Error al intentar enviar notificación por Telegram:",
+            error.message
+          );
+          // Continúa normalmente
+        }
+      }
+    }
+  } catch (error) {
+    console.error(
+      "❌ Error al enviar notificacion al creador:",
+      error.response?.data || error.message
+    );
   }
 
   return {

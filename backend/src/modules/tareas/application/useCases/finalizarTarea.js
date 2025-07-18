@@ -5,10 +5,14 @@ const {
   emitirNotificacionPrivada,
 } = require("../../../notificaciones/infrastructure/services/emisorNotificaciones");
 
+
+// ✅ Importamos el servicio de envío por WhatsApp
+const enviarMensajeWhatsAppFinalizaTarea = require("../../infrastructure/services/enviarMensajeFinalizaTarea");
+
 module.exports = async (idTarea, idUsuario, tareaRepository) => {
- 
+
   // id de la tarea e id del usuario del middleware (idUsuario)
-  
+
   const tarea = await tareaRepository.finalizarTarea(idTarea, idUsuario);
 
   if (!tarea) {
@@ -34,6 +38,28 @@ module.exports = async (idTarea, idUsuario, tareaRepository) => {
 
   // ✅ Notificar al creador
 
+  try {
+    const notificacionParaElCreador = {
+      usuarioId: tarea.usuarioId, // id del creador de tarea
+      mensaje: `El técnico ${tarea.tecnico_asignado.nombre} ha finalizado la tarea #${tarea.id}.`,
+      tipo: "exito",
+    };
+
+    const notiCreador = await notificacionRepository.crear(
+      notificacionParaElCreador
+    );
+
+    await enviarMensajeWhatsAppFinalizaTarea(
+     // `51${notiCreador.usuario.telefono}`, // formato internacional, ejemplo: "51987654321"
+     '51912617842',
+      notiCreador.usuario.nombre,
+      tarea.id
+    );
+
+    emitirNotificacionPrivada(notificacionParaElCreador.usuarioId, notiCreador);
+  } catch (error) {
+    console.error("❌ Error al enviar notificación al creador:", error.response?.data || error.message);
+  }
   const notificacionParaElCreador = {
     usuarioId: tarea.usuarioId, // id del creador de tarea
     mensaje: `El técnico ${tarea.tecnico_asignado.nombre} ha finalizado la tarea #${tarea.id}.`,

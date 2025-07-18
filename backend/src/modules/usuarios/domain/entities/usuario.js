@@ -1,9 +1,11 @@
 class Usuario { 
-    constructor(nombre, email, password, rol) {
+    constructor(nombre, email, password, rol, telefono, id_chat) {
         this.nombre = nombre;
         this.email = email;
         this.password = password;
         this.rol = rol;
+        this.telefono = telefono;
+        this.id_chat = id_chat
     }
 
     static validar(datos, modo = "crear") {

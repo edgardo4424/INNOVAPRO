@@ -26,7 +26,7 @@ class SequelizeNotificacionesRepository {
   // Crear una notificacion
 
   async crear(notificacionData) {
-    console.log({ notificacionData });
+   
     const notificacion = await Notificaciones.create(notificacionData);
     // Volver a buscarla con el usuario asociado (opcionalmente en un solo paso si necesitas evitar dos queries)
     const notificacionConUsuario = await Notificaciones.findByPk(
@@ -35,7 +35,7 @@ class SequelizeNotificacionesRepository {
         include: {
           model: db.usuarios, // o models.Usuario
           as: "usuario",
-          attributes: ["id", "nombre"], // 👈 solo lo necesario
+          attributes: ["id", "nombre", "telefono"], // 👈 solo lo necesario
         },
       }
     );

@@ -22,6 +22,25 @@
     justify-content: space-between;
     margin-bottom: 2rem;
   }
+
+  .wizard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  }
+
+  .wizard-table th,
+  .wizard-table td {
+    padding: 0.5rem;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+  }
+
+  .wizard-table th {
+    background-color: #f5f8fa;
+    color: #004aad;
+  }
+
   
   .step {
     flex: 1;
@@ -48,26 +67,57 @@
     font-weight: 600;
   }
   
-  .paso-formulario input,
-  .paso-formulario select {
-    width: 100%;
-    padding: 0.6rem;
-    margin-bottom: 1rem;
-    border-radius: 8px;
-    border: 1px solid #ccc;
+  .paso-formulario select,
+  .paso-formulario input {
     font-size: 14px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
   }
+
   
   .paso-formulario input:focus,
   .paso-formulario select:focus {
     border-color: #004aad;
     outline: none;
   }
+
+  .paso-formulario table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  }
+
+  .paso-formulario th,
+  .paso-formulario td {
+    border: 1px solid #ddd;
+    padding: 0.6rem;
+    text-align: left;
+    font-size: 14px;
+  }
+
+  .paso-formulario th {
+    background-color: #f1f4f9;
+    color: #004aad;
+  }
   
   .wizard-footer {
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
+  }
+
+  .tag {
+  background-color: #e0f7fa;
+  color: #006064;
+  font-weight: bold;
+  font-size: 12px;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  display: inline-block;
+  margin-top: 0.3rem;
   }
   
   .btn-primary,
@@ -121,3 +171,148 @@
     font-weight: 500;
     margin-top: 0.5rem;
   }  
+
+  .wizard-section {
+  margin-bottom: 2rem;
+  }
+
+  .wizard-section h4 {
+    font-size: 16px;
+    color: #004aad;
+    border-left: 4px solid #004aad;
+    padding-left: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .wizard-section label {
+  display: block;
+  background-color: #f3f6fb;
+  color: #ff7b00;
+  padding: 0.3rem 0.6rem;
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 6px;
+  margin-bottom: 0.4rem;
+  }
+
+
+  .wizard-key-value {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.3rem 0;
+  font-size: 14px;
+  border-bottom: 1px dashed #eee;
+  }
+
+  .wizard-key-value strong {
+    font-weight: 600;
+    color: #333;
+  }
+
+  .wizard-total {
+  font-size: 18px;
+  font-weight: bold;
+  color: #004aad;
+  text-align: right;
+  margin-top: 1rem;
+}
+
+.wizard-total span {
+  font-size: 22px;
+  color: #009688;
+}
+
+.atributos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.mensaje-revision-final {
+  background-color: #fef5e7;
+  color: #b25c00;
+  padding: 1rem;
+  margin-top: 2rem;
+  border-left: 5px solid #f39c12;
+  font-style: italic;
+  border-radius: 6px;
+}
+
+.bloque-descuento {
+  margin-top: 2rem;
+}
+
+.bloque-descuento label {
+  font-weight: bold;
+  color: #e67e22;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.bloque-descuento input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.warning-text {
+  color: #e74c3c;
+  margin-top: 0.5rem;
+}
+
+.total-final {
+  margin-top: 1rem;
+  font-weight: bold;
+  font-size: 16px;
+  color: #e67e22;
+}
+
+.total-final span {
+  font-size: 20px;
+  color: #009688;
+  margin-left: 4px;
+}
+
+/* INNOVA PRO+ v1.2.4 - Botones cantidad de equipos */
+
+.botones-cantidad {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
+
+.btn-cantidad {
+  background-color: #004aad;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s;
+}
+
+.btn-cantidad:hover {
+  background-color: #003b8a;
+  transform: scale(1.1);
+}
+
+.cantidad-label {
+  font-size: 1.2rem;
+  font-weight: bold;
+  min-width: 32px;
+  text-align: center;
+}
+
+.paso-info {
+  font-size: 13px;
+  margin-top: 0.4rem;
+  color: #666;
+}

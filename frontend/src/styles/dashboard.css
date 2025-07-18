@@ -174,73 +174,13 @@
 }
 
 /* === FORMULARIO DE GESTIÓN DE USUARIOS MEJORADO === */
-.gestion-form-global {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 15px;
-  background: rgba(255, 255, 255, 0.2);
-  padding: 15px;
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-light);
-  transition: all var(--transition-speed);
-}
-
-.gestion-form-global:hover {
-  box-shadow: var(--shadow-medium);
-  transform: scale(1.02);
-}
-
-.gestion-form-global input,
-.gestion-form-global select {
-  flex: 1;
-  padding: 5px;
-  width: 96%;
-  border: 2px solid rgba(0, 0, 0, 0.2);
-  border-radius: var(--border-radius);
-  font-size: 14px;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.gestion-form-global input:focus,
-.gestion-form-global select:focus {
-  border-color: var(--accent-color);
-  box-shadow: 0px 0px 10px rgba(240, 138, 36, 0.5);
-  outline: none;
-}
-
-.gestion-form-global button {
-  padding: 5px 5px;
-  background: var(--accent-color);
-  color: var(--text-color);
-  border: none;
-  border-radius: var(--border-radius);
-  font-size: 14px;
-  cursor: pointer;
-  transition: background var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
-}
-
-.gestion-form-global button:hover {
-  background: var(--hover-color);
-  transform: scale(1.01);
-  box-shadow: var(--shadow-medium);
-}
 
 .table-responsive {
   width: 100%;
   overflow-x: auto;
 }
 
-.top-actions {
-  display: flex;
-  justify-content: space-between; /* Alinea el botón y la búsqueda en los extremos */
-  align-items: center; /* Asegura que ambos estén alineados verticalmente */
-  margin-bottom: 15px; /* Espacio debajo */
-  padding: 10px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-}
+
 
 .error-message {
   color: #e74c3c;
@@ -441,28 +381,7 @@
     position: fixed;
   }
 
-.gestion-form-global {
-  gap: 5px;
-  margin-bottom: 0px;
-  padding: 15px;
-}
 
-.gestion-form-global input,
-.gestion-form-global select {
-  padding: 5px;
-  width: 95%;
-  font-size: 14px;
-}
-
-.gestion-form-global button {
-  padding: 5px 5px;
-  font-size: 14px;
-}
-
-.top-actions {
-  margin-bottom: 10px;
-  padding: 5px;
-}
 
 /* 🔹 Overlay con mensaje sin desenfoque */
 .overlay-mantenimiento {

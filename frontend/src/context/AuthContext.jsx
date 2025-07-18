@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import api from "../shared/services/api";
 import { loginService } from "@/modules/auth/services/authService";
+import LoaderInnova from "@/shared/components/LoaderInnova";
 
 const AuthContext = createContext();
 
@@ -26,7 +27,6 @@ export function AuthProvider({ children }) {
         if (res.data.valid) {
           const storedUser = JSON.parse(localStorage.getItem("user"));
           setUser(storedUser);
-          console.log("✅ Sesión válida, usuario:", storedUser);
         } else {
           console.warn("⚠️ Sesión inválida. Cerrando sesión...");
           logout(); 
@@ -74,12 +74,11 @@ export function AuthProvider({ children }) {
     setLoading(false);
   
     const LOGIN_URL = process.env.NODE_ENV === "production" ? "/#/login" : "/login";
-    window.location.replace(LOGIN_URL); // siempre redirige por seguridad
   };  
 
   return (
     <AuthContext.Provider value={{ user, loading, login, logout }}>
-      {loading ? <h2 style={{ textAlign: "center" }}>Cargando...</h2> : children}
+      {loading ? <LoaderInnova/> : children}
     </AuthContext.Provider>
   );
 }

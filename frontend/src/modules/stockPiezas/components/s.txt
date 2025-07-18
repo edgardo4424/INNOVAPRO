@@ -1,0 +1,1177 @@
+AreaColumnCombo: "Área y columna"
+​
+addCurrentSelectionToFilter: "Agregar selección actual al filtro"
+​
+addFilterCard: "Agregar Filtro"
+​
+addFilterPlaceholder: "Buscar columnas..."
+​
+addToLabels: "Añadir ${variable} a etiquetas"
+​
+addToValues: "Añadir ${variable} a valores"
+​
+advancedFilterAnd: "Y"
+​
+advancedFilterApply: "Aplicar"
+​
+advancedFilterBlank: "está en blanco"
+​
+advancedFilterBuilder: "Constructor"
+​
+advancedFilterBuilderAddButtonTooltip: "Añadir filtro o grupo"
+​
+advancedFilterBuilderAddCondition: "Añadir Filtro"
+​
+advancedFilterBuilderAddJoin: "Añadir Grupo"
+​
+advancedFilterBuilderApply: "Aplicar"
+​
+advancedFilterBuilderCancel: "Cancelar"
+​
+advancedFilterBuilderEnterValue: "Introduce un valor..."
+​
+advancedFilterBuilderMoveDownButtonTooltip: "Mover abajo"
+​
+advancedFilterBuilderMoveUpButtonTooltip: "Mover arriba"
+​
+advancedFilterBuilderRemoveButtonTooltip: "Eliminar"
+​
+advancedFilterBuilderSelectColumn: "Selecciona una columna"
+​
+advancedFilterBuilderSelectOption: "Selecciona una opción"
+​
+advancedFilterBuilderTitle: "Filtro Avanzado"
+​
+advancedFilterBuilderValidationAlreadyApplied: "Filtro actual ya aplicado."
+​
+advancedFilterBuilderValidationEnterValue: "Debe introducir un valor."
+​
+advancedFilterBuilderValidationIncomplete: "No todas las condiciones están completas."
+​
+advancedFilterBuilderValidationSelectColumn: "Debe seleccionar una columna."
+​
+advancedFilterBuilderValidationSelectOption: "Debe seleccionar una opción."
+​
+advancedFilterContains: "contiene"
+​
+advancedFilterEndsWith: "termina con"
+​
+advancedFilterEquals: "="
+​
+advancedFilterFalse: "es falso"
+​
+advancedFilterGreaterThan: ">"
+​
+advancedFilterGreaterThanOrEqual: ">="
+​
+advancedFilterLessThan: "<"
+​
+advancedFilterLessThanOrEqual: "<="
+​
+advancedFilterNotBlank: "no está en blanco"
+​
+advancedFilterNotContains: "no contiene"
+​
+advancedFilterNotEqual: "!="
+​
+advancedFilterOr: "O"
+​
+advancedFilterStartsWith: "comienza con"
+​
+advancedFilterTextEquals: "es igual a"
+​
+advancedFilterTextNotEqual: "no es igual a"
+​
+advancedFilterTrue: "es verdadero"
+​
+advancedFilterValidationExtraEndBracket: "Demasiados paréntesis de cierre"
+​
+advancedFilterValidationInvalidColumn: "Columna no encontrada"
+​
+advancedFilterValidationInvalidDate: "El valor no es una fecha válida"
+​
+advancedFilterValidationInvalidJoinOperator: "Operador de unión no encontrado"
+​
+advancedFilterValidationInvalidOption: "Opción no encontrada"
+​
+advancedFilterValidationJoinOperatorMismatch: "Los operadores de unión dentro de una condición deben ser los mismos"
+​
+advancedFilterValidationMessage: "La expresión contiene un error. ${variable} - ${variable}."
+​
+advancedFilterValidationMessageAtEnd: "La expresión contiene un error. ${variable} al final de la expresión."
+​
+advancedFilterValidationMissingColumn: "Falta la columna"
+​
+advancedFilterValidationMissingCondition: "Falta la condición"
+​
+advancedFilterValidationMissingEndBracket: "Falta paréntesis de cierre"
+​
+advancedFilterValidationMissingOption: "Falta la opción"
+​
+advancedFilterValidationMissingQuote: "Falta una comilla de cierre"
+​
+advancedFilterValidationMissingValue: "Falta el valor"
+​
+advancedFilterValidationNotANumber: "El valor no es un número"
+​
+advancedSettings: "Configuración Avanzada"
+​
+after: "Después"
+​
+agDateColumnFilterDisplayName: "Filtro Simple"
+​
+agMultiColumnFilterDisplayName: "Filtro Combinado"
+​
+agNumberColumnFilterDisplayName: "Filtro Simple"
+​
+agSetColumnFilterDisplayName: "Filtro de Selección"
+​
+agTextColumnFilterDisplayName: "Filtro Simple"
+​
+aggregate: "Agregado"
+​
+andCondition: "Y"
+​
+animation: "Animación"
+​
+applyFilter: "Aplicar"
+​
+april: "Abril"
+​
+area: "Área"
+​
+areaChart: "Área"
+​
+areaColumnComboTooltip: "Área y Columna"
+​
+areaGroup: "Área"
+​
+ariaAdvancedFilterBuilderColumn: "Columna"
+​
+ariaAdvancedFilterBuilderFilterItem: "Condición del Filtro"
+​
+ariaAdvancedFilterBuilderGroupItem: "Grupo de Filtros"
+​
+ariaAdvancedFilterBuilderItem: "${variable}. Nivel ${variable}. Presiona ENTER para editar."
+​
+ariaAdvancedFilterBuilderItemValidation: "${variable}. Nivel ${variable}. ${variable} Presiona ENTER para editar."
+​
+ariaAdvancedFilterBuilderJoinOperator: "Operador de Unión"
+​
+ariaAdvancedFilterBuilderList: "Lista de Constructor de Filtros Avanzados"
+​
+ariaAdvancedFilterBuilderOption: "Opción"
+​
+ariaAdvancedFilterBuilderValueP: "Valor"
+​
+ariaAdvancedFilterInput: "Entrada de Filtro Avanzado"
+​
+ariaChartMenuClose: "Cerrar Menú de Edición de Gráfica"
+​
+ariaChartSelected: "Seleccionado"
+​
+ariaChecked: "seleccionado"
+​
+ariaColumn: "Columna"
+​
+ariaColumnFiltered: "Columna Filtrada"
+​
+ariaColumnGroup: "Grupo de Columnas"
+​
+ariaColumnPanelList: "Lista de columnas"
+​
+ariaColumnSelectAll: "Alternar visibilidad de todas las columnas"
+​
+ariaDateFilterInput: "Entrada de Filtro de Fecha"
+​
+ariaDefaultListName: "Lista"
+​
+ariaDeferSkeletonCellLoading: "Cargando celda"
+​
+ariaDropZoneColumnComponentAggFuncSeparator: " de "
+​
+ariaDropZoneColumnComponentDescription: "Presione DELETE para eliminar"
+​
+ariaDropZoneColumnComponentSortAscending: "ascendente"
+​
+ariaDropZoneColumnComponentSortDescending: "descendente"
+​
+ariaDropZoneColumnGroupItemDescription: "Presione ENTER para ordenar"
+​
+ariaDropZoneColumnValueItemDescription: "Presione ENTER para cambiar el tipo de agregación"
+​
+ariaFilterColumn: "Presiona CTRL ENTER para abrir el filtro"
+​
+ariaFilterColumnsInput: "Entrada de Filtrado de Columnas"
+​
+ariaFilterFromValue: "Filtrar desde valor"
+​
+ariaFilterInput: "Entrada de Filtro"
+​
+ariaFilterList: "Lista de Filtros"
+​
+ariaFilterMenuOpen: "Abrir Menú de Filtros"
+​
+ariaFilterPanelList: "Lista de filtros"
+​
+ariaFilterToValue: "Filtrar hasta valor"
+​
+ariaFilterValue: "Valor del Filtro"
+​
+ariaFilteringOperator: "Operador de Filtrado"
+​
+ariaHeaderSelection: "Columna con selección de encabezado"
+​
+ariaHidden: "oculto"
+​
+ariaIndeterminate: "indeterminado"
+​
+ariaInputEditor: "Editor de Entrada"
+​
+ariaLabelAddFilterField: "Agregar campo de filtro"
+​
+ariaLabelAdvancedFilterAutocomplete: "Autocompletar filtro avanzado"
+​
+ariaLabelAdvancedFilterBuilderAddField: "Agregar campo al generador de filtro avanzado"
+​
+ariaLabelAdvancedFilterBuilderColumnSelectField: "Campo de selección de columna del generador de filtro avanzado"
+​
+ariaLabelAdvancedFilterBuilderJoinSelectField: "Campo de selección de operador de unión del generador de filtro avanzado"
+​
+ariaLabelAdvancedFilterBuilderOptionSelectField: "Campo de selección de opción del generador de filtro avanzado"
+​
+ariaLabelAggregationFunction: "Función de agregación"
+​
+ariaLabelCellEditor: "Editor de Celda"
+​
+ariaLabelColumnFilter: "Filtro de Columna"
+​
+ariaLabelColumnMenu: "Menú de Columna"
+​
+ariaLabelContextMenu: "Menú contextual"
+​
+ariaLabelDialog: "Diálogo"
+​
+ariaLabelFilterCardDelete: "Eliminar filtro"
+​
+ariaLabelFilterCardHasEdits: "Tiene ediciones"
+​
+ariaLabelLoadingContextMenu: "Cargando menú contextual"
+​
+ariaLabelRichSelectDeleteSelection: "Presiona SUPRIMIR para deseleccionar el elemento"
+​
+ariaLabelRichSelectDeselectAllItems: "Presiona SUPRIMIR para deseleccionar todos los elementos"
+​
+ariaLabelRichSelectField: "Campo de selección enriquecido"
+​
+ariaLabelRichSelectToggleSelection: "Presiona ESPACIO para alternar la selección"
+​
+ariaLabelSelectField: "Seleccionar Campo"
+​
+ariaLabelSubMenu: "Submenú"
+​
+ariaLabelTooltip: "Información sobre herramientas"
+​
+ariaMenuColumn: "Presiona ALT ABAJO para abrir el menú de la columna"
+​
+ariaPageSizeSelectorLabel: "Tamaño de Página"
+​
+ariaPendingChange: "Cambio pendiente"
+​
+ariaPivotDropZonePanelLabel: "Etiquetas de columna"
+​
+ariaRowDeselect: "Presiona SPACE para anular la selección de esta fila"
+​
+ariaRowGroupDropZonePanelLabel: "Grupos de filas"
+​
+ariaRowSelect: "Presiona SPACE para seleccionar esta fila"
+​
+ariaRowSelectAll: "Presiona SPACE para alternar la selección de todas las filas"
+​
+ariaRowSelectionDisabled: "La selección de filas está deshabilitada para esta fila"
+​
+ariaRowToggleSelection: "Presiona SPACE para alternar la selección de la fila"
+​
+ariaSearch: "Buscar"
+​
+ariaSearchFilterValues: "Buscar valores de filtro"
+​
+ariaSelectAllCells: "Presione espacio para seleccionar todas las celdas"
+​
+ariaSkeletonCellLoading: "Cargando datos de la fila"
+​
+ariaSkeletonCellLoadingFailed: "Carga de fila fallida"
+​
+ariaSortableColumn: "Presiona ENTER para ordenar"
+​
+ariaToggleCellValue: "Presiona SPACE para alternar el valor de la celda"
+​
+ariaToggleVisibility: "Presiona SPACE para alternar la visibilidad"
+​
+ariaUnchecked: "no seleccionado"
+​
+ariaValidationErrorPrefix: "Validación del Editor de Celda"
+​
+ariaValuesDropZonePanelLabel: "Valores"
+​
+ariaVisible: "visible"
+​
+august: "Agosto"
+​
+autoRotate: "Rotación Automática"
+​
+automatic: "Automático"
+​
+autosizeAllColumns: "Autoajustar Todas las Columnas"
+​
+autosizeThisColumn: "Autoajustar Esta Columna"
+​
+avg: "Promedio"
+​
+axis: "Eje"
+​
+axisType: "Tipo de Eje"
+​
+background: "Fondo"
+​
+bar: "Barra"
+​
+barChart: "Barra"
+​
+barGroup: "Barra"
+​
+before: "Antes"
+​
+blank: "En blanco"
+​
+blanks: "(Vacíos)"
+​
+blur: "Desenfoque"
+​
+bold: "Negrita"
+​
+boldItalic: "Negrita Itálica"
+​
+bottom: "Inferior"
+​
+boxPlot: "Gráfico de caja"
+​
+boxPlotTooltip: "Diagrama de Cajas"
+​
+bubble: "Burbuja"
+​
+bubbleTooltip: "Burbuja"
+​
+callout: "Llamada"
+​
+calloutLabels: "Etiquetas de Llamada"
+​
+cancelFilter: "Cancelar"
+​
+cap: "Tapón"
+​
+capLengthRatio: "Relación de Longitud"
+​
+categories: "Categorías"
+​
+category: "Categoría"
+​
+categoryAdd: "Agregar una categoría"
+​
+categoryValues: "Valores de Categoría"
+​
+chartAdvancedSettings: "Configuración Avanzada"
+​
+chartDownload: "Descargar Gráfico"
+​
+chartDownloadToolbarTooltip: "Descargar Gráfico"
+​
+chartEdit: "Editar Gráfico"
+​
+chartLink: "Vincular a la Cuadrícula"
+​
+chartLinkToolbarTooltip: "Vinculado a la Cuadrícula"
+​
+chartMenuToolbarTooltip: "Menú"
+​
+chartRange: "Rango de gráfico"
+​
+chartSettingsToolbarTooltip: "Menú"
+​
+chartStyle: "Estilo de Gráfico"
+​
+chartSubtitle: "Subtítulo"
+​
+chartTitle: "Título del Gráfico"
+​
+chartTitles: "Títulos"
+​
+chartUnlink: "Desvincular de la Cuadrícula"
+​
+chartUnlinkToolbarTooltip: "Desvinculado de la Cuadrícula"
+​
+chooseColumns: "Elegir columnas"
+​
+circle: "Círculo"
+​
+clearFilter: "Borrar"
+​
+collapseAll: "Cerrar Todos los Grupos de Filas"
+​
+color: "Color"
+​
+column: "Columna"
+​
+columnChart: "Columna"
+​
+columnChooser: "Elegir Columnas"
+​
+columnFilter: "Filtrar Columna"
+​
+columnGroup: "Columna"
+​
+columnLineCombo: "Columna y línea"
+​
+columnLineComboTooltip: "Columna y Línea"
+​
+columns: "Columnas"
+​
+combinationChart: "Combinación"
+​
+combinationGroup: "Combinación"
+​
+coneFunnel: "Embudo Cono"
+​
+coneFunnelTooltip: "Embudo Cono"
+​
+connectorLine: "Línea Conectora"
+​
+contains: "Contiene"
+​
+copy: "Copiar"
+​
+copyWithGroupHeaders: "Copiar Con Encabezados de Grupo"
+​
+copyWithHeaders: "Copiar Con Encabezados"
+​
+count: "Cuenta"
+​
+cross: "Cruz"
+​
+crosshair: "Retícula"
+​
+crosshairLabel: "Etiqueta"
+​
+crosshairSnap: "Ajustar al Nodo"
+​
+csvExport: "Exportar CSV"
+​
+ctrlC: "Ctrl+C"
+​
+ctrlV: "Ctrl+V"
+​
+ctrlX: "Ctrl+X"
+​
+customCombo: "Combinación Personalizada"
+​
+customComboTooltip: "Combinación Personalizada"
+​
+cut: "Cortar"
+​
+data: "Configuración"
+​
+dateFilter: "Filtro de Fecha"
+​
+dateFormatOoo: "yyyy-mm-dd"
+​
+december: "Diciembre"
+​
+decimalSeparator: "."
+​
+defaultCategory: "(Ninguna)"
+​
+diamond: "Diamante"
+​
+direction: "Dirección"
+​
+donut: "Rosquilla"
+​
+donutTooltip: "Donut"
+​
+dropOff: "Caída"
+​
+durationMillis: "Duración (ms)"
+​
+empty: "Elige uno"
+​
+enabled: "Habilitado"
+​
+endAngle: "Ángulo Final"
+​
+endsWith: "Termina con"
+​
+equals: "Igual a"
+​
+excelExport: "Exportar Excel"
+​
+expandAll: "Expandir Todos los Grupos de Filas"
+​
+export: "Exportar"
+​
+false: "Falso"
+​
+february: "Febrero"
+​
+fillOpacity: "Opacidad de Relleno"
+​
+filterOoo: "Filtro..."
+​
+filterSummaryBlank: "está en blanco"
+​
+filterSummaryContains: "contiene"
+​
+filterSummaryEndsWith: "termina con"
+​
+filterSummaryEquals: "="
+​
+filterSummaryGreaterThan: ">"
+​
+filterSummaryGreaterThanOrEqual: ">="
+​
+filterSummaryInRange: "entre"
+​
+filterSummaryInRangeValues: "(${variable}, ${variable})"
+​
+filterSummaryInactive: "es (Todo)"
+​
+filterSummaryLessThan: "<"
+​
+filterSummaryLessThanOrEqual: "<="
+​
+filterSummaryListInactive: "es (Todo)"
+​
+filterSummaryListLong: "es (${variable}) y ${variable} más"
+​
+filterSummaryListSeparator: ", "
+​
+filterSummaryListShort: "es (${variable})"
+​
+filterSummaryNotBlank: "no está en blanco"
+​
+filterSummaryNotContains: "no contiene"
+​
+filterSummaryNotEqual: "!="
+​
+filterSummaryStartsWith: "comienza con"
+​
+filterSummaryTextEquals: "es igual a"
+​
+filterSummaryTextNotEqual: "no es igual a"
+​
+filterSummaryTextQuote: '"${variable}"'
+​
+filteredRows: "Filtrados"
+​
+filters: "Filtros"
+​
+first: "Primero"
+​
+firstPage: "Primera Página"
+​
+fixed: "Fijo"
+​
+font: "Fuente"
+​
+footerTotal: "Total"
+​
+format: "Personalizar"
+​
+funnel: "Embudo"
+​
+funnelGroup: "Embudo"
+​
+funnelTooltip: "Embudo"
+​
+greaterThan: "Más que"
+​
+greaterThanOrEqual: "Más o igual que"
+​
+gridLines: "Líneas de Cuadrícula"
+​
+group: "Grupo"
+​
+groupBy: "Agrupar por"
+​
+groupFilterSelect: "Seleccionar campo:"
+​
+groupPadding: "Relleno de Grupo"
+​
+groupedAreaTooltip: "Área"
+​
+groupedBar: "Agrupada"
+​
+groupedBarFull: "Barra Agrupada"
+​
+groupedBarTooltip: "Agrupada"
+​
+groupedColumn: "Agrupada"
+​
+groupedColumnFull: "Columna Agrupada"
+​
+groupedColumnTooltip: "Agrupada"
+​
+groupedSeriesGroupType: "Agrupadas"
+​
+groups: "Grupos de Filas"
+​
+heart: "Corazón"
+​
+heatmap: "Mapa de calor"
+​
+heatmapTooltip: "Mapa de Calor"
+​
+height: "Altura"
+​
+hierarchicalChart: "Jerárquico"
+​
+hierarchicalGroup: "Jerárquico"
+​
+histogram: "Histograma"
+​
+histogramBinCount: "Conteo de Intervalos"
+​
+histogramChart: "Histograma"
+​
+histogramFrequency: "Frecuencia"
+​
+histogramTooltip: "Histograma"
+​
+horizontal: "Horizontal"
+​
+horizontalAxisTitle: "Título del Eje Horizontal"
+​
+inRange: "Entre"
+​
+inRangeEnd: "Hasta"
+​
+inRangeStart: "Desde"
+​
+innerRadius: "Radio Interno"
+​
+inside: "Dentro"
+​
+invalidColor: "El valor del color es inválido"
+​
+invalidDate: "Fecha inválida"
+​
+invalidNumber: "Número inválido"
+​
+invalidSelectionValidation: "Selección no válida."
+​
+italic: "Itálica"
+​
+itemPaddingX: "Relleno X de Ítems"
+​
+itemPaddingY: "Relleno Y de Ítems"
+​
+itemSpacing: "Espaciado de Ítems"
+​
+january: "Enero"
+​
+july: "Julio"
+​
+june: "Junio"
+​
+labelPlacement: "Ubicación de Etiqueta"
+​
+labelRotation: "Rotación"
+​
+labels: "Etiquetas"
+​
+last: "Último"
+​
+lastPage: "Última Página"
+​
+layoutHorizontalSpacing: "Espaciado Horizontal"
+​
+layoutVerticalSpacing: "Espaciado Vertical"
+​
+left: "Izquierda"
+​
+legend: "Leyenda"
+​
+legendEnabled: "Habilitado"
+​
+length: "Longitud"
+​
+lessThan: "Menos que"
+​
+lessThanOrEqual: "Menos o igual que"
+​
+lineChart: "Línea"
+​
+lineDash: "Línea Discontinua"
+​
+lineDashOffset: "Desplazamiento de Discontinuidad"
+​
+lineGroup: "Línea"
+​
+lineTooltip: "Línea"
+​
+lineWidth: "Ancho de Línea"
+​
+loadingError: "ERR"
+​
+loadingOoo: "Cargando..."
+​
+march: "Marzo"
+​
+markerPadding: "Relleno del Marcador"
+​
+markerSize: "Tamaño del Marcador"
+​
+markerStroke: "Trazo del Marcador"
+​
+markers: "Marcadores"
+​
+max: "Máximo"
+​
+maxDateValidation: "La fecha debe ser anterior a ${variable}"
+​
+maxLengthValidation: "Debe tener ${variable} caracteres o menos."
+​
+maxSize: "Tamaño Máximo"
+​
+maxValueValidation: "Debe ser menor o igual a ${variable}"
+​
+may: "Mayo"
+​
+min: "Mínimo"
+​
+minDateValidation: "La fecha debe ser posterior a ${variable}"
+​
+minSize: "Tamaño Mínimo"
+​
+minValueValidation: "Debe ser mayor o igual a ${variable}"
+​
+miniChart: "Mini-Gráfico"
+​
+more: "Más"
+​
+navigator: "Navegador"
+​
+nextPage: "Siguiente Página"
+​
+nightingale: "Nightingale"
+​
+nightingaleTooltip: "Nightingale"
+​
+noAggregation: "Ninguna"
+​
+noDataToChart: "No hay datos disponibles para graficar."
+​
+noMatches: "Sin coincidencias"
+​
+noPin: "No Fijar"
+​
+noRowsToShow: "No hay filas para mostrar"
+​
+none: "Ninguno"
+​
+normal: "Normal"
+​
+normalizedArea: "100% Apilada"
+​
+normalizedAreaFull: "Área 100% Apilada"
+​
+normalizedAreaTooltip: "100% Apilada"
+​
+normalizedBar: "100% Apilada"
+​
+normalizedBarFull: "Barra 100% Apilada"
+​
+normalizedBarTooltip: "100% Apilada"
+​
+normalizedColumn: "100% Apilada"
+​
+normalizedColumnFull: "Columna 100% Apilada"
+​
+normalizedColumnTooltip: "100% Apilada"
+​
+normalizedLine: "100% Apilado"
+​
+normalizedLineTooltip: "Apilado 100%"
+​
+normalizedSeriesGroupType: "100% Apiladas"
+​
+notBlank: "No en blanco"
+​
+notContains: "No contiene"
+​
+notEqual: "No igual a"
+​
+november: "Noviembre"
+​
+number: "Número"
+​
+numberFilter: "Filtro de Números"
+​
+october: "Octubre"
+​
+of: "de"
+​
+offset: "Desplazamiento"
+​
+offsets: "Desplazamientos"
+​
+orCondition: "O"
+​
+orientation: "Orientación"
+​
+outside: "Fuera"
+​
+padding: "Relleno"
+​
+page: "Página"
+​
+pageLastRowUnknown: "?"
+​
+pageSizeSelectorLabel: "Tamaño de Página:"
+​
+paired: "Modo Pareado"
+​
+parallel: "Paralelo"
+​
+paste: "Pegar"
+​
+perpendicular: "Perpendicular"
+​
+pie: "Circular"
+​
+pieChart: "Circular"
+​
+pieGroup: "Torta"
+​
+pieTooltip: "Torta"
+​
+pinColumn: "Fijar Columna"
+​
+pinLeft: "Fijar a la Izquierda"
+​
+pinRight: "Fijar a la Derecha"
+​
+pivotChart: "Gráfico dinámico"
+​
+pivotChartAndPivotMode: "Gráfico dinámico y modo dinámico"
+​
+pivotChartRequiresPivotMode: "El Gráfico de Pivote requiere el Modo de Pivote habilitado."
+​
+pivotChartTitle: "Gráfico de Pivote"
+​
+pivotColumnGroupTotals: "Total"
+​
+pivotColumnsEmptyMessage: "Arrastre aquí para establecer las etiquetas de columna"
+​
+pivotMode: "Modo Pivot"
+​
+pivots: "Etiquetas de Columna"
+​
+plus: "Más"
+​
+polarAxis: "Eje Polar"
+​
+polarAxisTitle: "Título del Eje Polar"
+​
+polarChart: "Polar"
+​
+polarGroup: "Polar"
+​
+polygon: "Polígono"
+​
+position: "Posición"
+​
+positionRatio: "Relación de Posición"
+​
+predefined: "Predefinido"
+​
+preferredLength: "Longitud Preferida"
+​
+previousPage: "Página Anterior"
+​
+pyramid: "Pirámide"
+​
+pyramidTooltip: "Pirámide"
+​
+radarArea: "Área de radar"
+​
+radarAreaTooltip: "Área de Radar"
+​
+radarLine: "Línea de radar"
+​
+radarLineTooltip: "Línea de Radar"
+​
+radialBar: "Barra radial"
+​
+radialBarTooltip: "Barra Radial"
+​
+radialColumn: "Columna radial"
+​
+radialColumnTooltip: "Columna Radial"
+​
+radiusAxis: "Eje de Radio"
+​
+radiusAxisPosition: "Posición"
+​
+rangeArea: "Área de rango"
+​
+rangeAreaTooltip: "Área de Intervalo"
+​
+rangeBar: "Barra de rango"
+​
+rangeBarTooltip: "Barra de Intervalo"
+​
+rangeChartTitle: "Gráfico de Intervalo"
+​
+removeFromLabels: "Quitar ${variable} de etiquetas"
+​
+removeFromValues: "Quitar ${variable} de valores"
+​
+resetColumns: "Restablecer Columnas"
+​
+resetFilter: "Reiniciar"
+​
+reverse: "Invertir"
+​
+reverseDirection: "Dirección Inversa"
+​
+right: "Derecha"
+​
+rowDragRow: "fila"
+​
+rowDragRows: "filas"
+​
+rowGroupColumnsEmptyMessage: "Arrastre aquí para establecer los grupos de filas"
+​
+scatter: "Dispersión"
+​
+scatterGroup: "XY (Dispersión)"
+​
+scatterTooltip: "Dispersión"
+​
+scrollColumnIntoView: "Desplazar ${variable} a la vista"
+​
+scrollingStep: "Paso de Desplazamiento"
+​
+scrollingZoom: "Desplazamiento"
+​
+searchOoo: "Buscar..."
+​
+secondaryAxis: "Eje Secundario"
+​
+sectorLabels: "Etiquetas de Sector"
+​
+selectAll: "(Seleccionar todo)"
+​
+selectAllSearchResults: "(Seleccionar todos los resultados de la búsqueda)"
+​
+selectedRows: "Seleccionados"
+​
+selectingZoom: "Seleccionando"
+​
+september: "Septiembre"
+​
+series: "Series"
+​
+seriesAdd: "Agregar una serie"
+​
+seriesChartType: "Tipo de Gráfico de Series"
+​
+seriesGroupType: "Tipo de Grupo"
+​
+seriesItemLabels: "Etiquetas de Ítems"
+​
+seriesItemNegative: "Negativo"
+​
+seriesItemPositive: "Positivo"
+​
+seriesItemType: "Tipo de Ítem"
+​
+seriesItems: "Ítems de Series"
+​
+seriesLabels: "Etiquetas de Series"
+​
+seriesPadding: "Relleno de Series"
+​
+seriesType: "Tipo de Series"
+​
+setFilter: "Filtro de Conjunto"
+​
+settings: "Gráfico"
+​
+shadow: "Sombra"
+​
+shape: "Forma"
+​
+size: "Tamaño"
+​
+sortAscending: "Ordenar Ascendente"
+​
+sortDescending: "Ordenar Descendente"
+​
+sortUnSort: "Limpiar Orden"
+​
+spacing: "Espaciado"
+​
+specializedChart: "Especializado"
+​
+specializedGroup: "Especializado"
+​
+square: "Cuadrado"
+​
+stackedArea: "Apilada"
+​
+stackedAreaFull: "Área Apilada"
+​
+stackedAreaTooltip: "Apilada"
+​
+stackedBar: "Apilada"
+​
+stackedBarFull: "Barra Apilada"
+​
+stackedBarTooltip: "Apilada"
+​
+stackedColumn: "Apilada"
+​
+stackedColumnFull: "Columna Apilada"
+​
+stackedColumnTooltip: "Apilada"
+​
+stackedLine: "Apilado"
+​
+stackedLineTooltip: "Apilado"
+​
+stackedSeriesGroupType: "Apiladas"
+​
+stageLabels: "Etiquetas de Etapa"
+​
+startAngle: "Ángulo de Inicio"
+​
+startsWith: "Empieza con"
+​
+statisticalChart: "Estadístico"
+​
+statisticalGroup: "Estadístico"
+​
+statusBarLastRowUnknown: "?"
+​
+strokeColor: "Color de Línea"
+​
+strokeOpacity: "Opacidad de Línea"
+​
+strokeWidth: "Grosor del Trazo"
+​
+sum: "Suma"
+​
+sunburst: "Explosión solar"
+​
+sunburstTooltip: "Estallido Solar"
+​
+switchCategorySeries: "Cambiar Categoría / Series"
+​
+textFilter: "Filtro de Texto"
+​
+thickness: "Espesor"
+​
+thousandSeparator: ","
+​
+ticks: "Marcas"
+​
+tile: "Mosaico"
+​
+time: "Tiempo"
+​
+timeFormat: "Formato de Tiempo"
+​
+timeFormatDashesYYYYMMDD: "AAAA-MM-DD"
+​
+timeFormatDotsDDMYY: "DD.M.AA"
+​
+timeFormatDotsMDDYY: "M.DD.AA"
+​
+timeFormatHHMMSS: "HH:MM:SS"
+​
+timeFormatHHMMSSAmPm: "HH:MM:SS AM/PM"
+​
+timeFormatSlashesDDMMYY: "DD/MM/AA"
+​
+timeFormatSlashesDDMMYYYY: "DD/MM/AAAA"
+​
+timeFormatSlashesMMDDYY: "MM/DD/AA"
+​
+timeFormatSlashesMMDDYYYY: "MM/DD/AAAA"
+​
+timeFormatSpacesDDMMMMYYYY: "DD MMMM AAAA"
+​
+title: "Título"
+​
+titlePlaceholder: "Título del Gráfico"
+​
+to: "a"
+​
+tooltipValidationErrorSeparator: ". "
+​
+tooltips: "Información sobre herramientas"
+​
+top: "Superior"
+​
+totalAndFilteredRows: "Filas"
+​
+totalRows: "Filas Totales"
+​
+treemap: "Mapa de árbol"
+​
+treemapTooltip: "Mapa de Áreas"
+​
+triangle: "Triángulo"
+​
+true: "Verdadero"
+​
+ungroupAll: "Desagrupar Todo"
+​
+ungroupBy: "Desagrupar por"
+​
+valueAggregation: "Agregación de Valores"
+​
+valueColumnsEmptyMessage: "Arrastre aquí para agregar"
+​
+values: "Valores"
+​
+vertical: "Vertical"
+​
+verticalAxisTitle: "Título del Eje Vertical"
+​
+waterfall: "Cascada"
+​
+waterfallTooltip: "Cascada"
+​
+weight: "Peso"
+​
+whisker: "Bigote"
+​
+width: "Ancho"
+​
+xAxis: "Eje Horizontal"
+​
+xOffset: "Desplazamiento X"
+​
+xType: "Tipo X"
+​
+xyChart: "X Y (Dispersión)"
+​
+xyValues: "Valores XY"
+​
+yAxis: "Eje Vertical"
+​
+yOffset: "Desplazamiento Y"
+​
+zoom: "Zoom"

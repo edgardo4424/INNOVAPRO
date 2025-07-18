@@ -1,27 +1,33 @@
 class Tarea {
-  constructor({usuarioId, empresaProveedoraId, clienteId, obraId, ubicacion, tipoTarea, urgencia, estado, detalles, fecha_creacion, asignadoA, motivoDevolucion, correccionComercial}) {
+
+  constructor({usuarioId, empresaProveedoraId, clienteId, obraId, ubicacion, tipoTarea, estado, detalles, fecha_creacion, asignadoA, motivoDevolucion, correccionComercial, contactoId, usoId, atributos_valor_zonas, cotizacionId}) {
+
     this.usuarioId = usuarioId;
     this.empresaProveedoraId = empresaProveedoraId;
     this.clienteId = clienteId;
     this.obraId = obraId;
     this.ubicacion = ubicacion;
     this.tipoTarea = tipoTarea;
-    this.urgencia = urgencia;
     this.estado = estado;
     this.detalles = detalles;
     this.fecha_creacion = fecha_creacion;
     this.asignadoA = asignadoA;
     this.motivoDevolucion = motivoDevolucion;
     this.correccionComercial = correccionComercial;
+    this.contactoId = contactoId;
+    this.usoId = usoId;
+    this.atributos_valor_zonas = atributos_valor_zonas;
+    this.cotizacionId = cotizacionId;
   }
 
   static validarCamposObligatorios(datos, modo = "crear") {
-    const camposValidos = ["usuarioId", "empresaProveedoraId", "clienteId", "obraId", "tipoTarea", "urgencia", "estado", "detalles","fecha_creacion", "asignadoA", "motivoDevolucion", "correccionComercial"];
+
+    const camposValidos = ["usuarioId", "empresaProveedoraId", "clienteId", "obraId", "ubicacion", "tipoTarea", "estado", "detalles","fecha_creacion", "asignadoA", "motivoDevolucion", "correccionComercial", "contactoId", "usoId", "atributos_valor_zonas", "cotizacionId"];
     
     if (modo === "crear") {
 
-      if (!datos.usuarioId || !datos.empresaProveedoraId || !datos.clienteId || !datos.obraId || !datos.tipoTarea || !datos.urgencia) {
-        return "Todos los campos son obligatorios.";
+      if (!datos.usuarioId || !datos.tipoTarea) {
+        return "Los campos usuarioId, tipoTarea son obligatorios";
     }
     }
     if (modo === "editar") {

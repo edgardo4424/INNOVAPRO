@@ -27,6 +27,15 @@ const AtributosValor = sequelize.define(
     },
     valor: {
       type: DataTypes.STRING,
+    },
+    numero_formulario_uso: {
+      type: DataTypes.INTEGER,
+    },
+    zona: {
+      type: DataTypes.INTEGER
+    },
+    nota_zona: {
+      type: DataTypes.STRING
     }
   }, {
     timestamps: false,

@@ -20,8 +20,7 @@ export const NotificacionesProvider = ({ children }) => {
         async function fetchNotificaciones() {
             try {
                 const res = await api.get("/notificaciones");
-                console.log("📩 Notificaciones cargadas:", res.data.notificaciones);
-                setNotificaciones(res.data.notificaciones.filter(noti => !noti.leida));
+                setNotificaciones(res.data.notificaciones);
             } catch (error) {
                 console.error("❌ Error al obtener notificaciones:", error);
             }
@@ -31,6 +30,7 @@ export const NotificacionesProvider = ({ children }) => {
 
         const canal = `notificacion_usuario_${user.id}`;
         const canalLeida = `notificacion_leida_usuario_${user.id}`;
+        const canalTelegram = `notificacion_telegram_usuario_${user.id}`
 
         // 🔥 Evento cuando llega una nueva notificación
         socket.on(canal, (data) => {
@@ -52,9 +52,15 @@ export const NotificacionesProvider = ({ children }) => {
             setNotificaciones((prev) => prev.filter((noti) => noti.id !== id));
         });
   
+         // 🔥 Evento cuando una notificación es marcada como leída
+        socket.on(canalTelegram, (data) => {
+           console.log('data', data);
+        });
+
         return () => {
             socket.off(canal);
             socket.off(canalLeida);
+            socket.off(canalTelegram)
         };
     }, [user]);
 

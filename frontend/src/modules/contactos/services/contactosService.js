@@ -17,13 +17,13 @@ const contactosService = {
   },
 
   crearContacto: async (data) => {
-    console.log("📤 Enviando nuevo contacto al backend:", data);
+
     const res = await api.post("/contactos", data);
     return res.data.contacto;
   },
 
   actualizarContacto: async (id, data) => {
-    console.log("✏️ Enviando contacto actualizado:", data);
+
     const res = await api.put(`/contactos/${id}`, data);
     return res.data;
   },

@@ -13,16 +13,28 @@ const Uso = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-   
+   grupo_tarifa: {
+      type: DataTypes.STRING,
+    },
   }, {
     timestamps: false,
     tableName: "usos",
   });
 
-  Uso.associate = (models) => {
-    /* Uso.hasMany(models.piezas_usos, {
-      foreignKey: "uso_id",
-  }); */
+Uso.associate = (models) => {
+
+  Uso.hasMany(models.cotizaciones_transporte,{
+     foreignKey: "uso_id",
+  })
+
+  Uso.hasMany(models.cotizaciones,{
+     foreignKey: "uso_id",
+  })
+
+ Uso.hasMany(models.tareas,{
+     foreignKey: "usoId",
+  })
+
 }
 
 module.exports = { Uso }; // Exporta el modelo para que pueda ser utilizado en otros módulos
