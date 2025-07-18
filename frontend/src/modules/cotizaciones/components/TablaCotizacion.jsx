@@ -7,7 +7,7 @@ import {
    TooltipProvider,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { Edit, Eye, FileDown, Settings } from "lucide-react";
+import { Edit, Eye, FileDown, SquareCheckBig  } from "lucide-react";
 import { ColumnSelector } from "@/shared/components/ColumnSelector";
 import { Input } from "@/components/ui/input";
 
@@ -15,6 +15,9 @@ import { AgGridReact } from "ag-grid-react";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 ModuleRegistry.registerModules([AllCommunityModule]);
 import "ag-grid-community/styles/ag-theme-quartz.css";
+import SolicitarCondicionesModal from "./SolicitarCondicionesModal";
+import CondicionesModal from "./CondicionesModal";
+import { obtenerTodos } from "../services/cotizacionesService"
 
 // Componente para texto truncado con tooltip
 const TruncatedText = ({ text }) => {
@@ -36,7 +39,10 @@ export default function TablaCotizacion({
    onDownloadPDF,
    setCotizacionPrevisualizada,
    onContinuarWizard,
+   onSolicitarCondicionesAlquiler,
+   user,
 }) {
+   console.log("Usuario en auth context:", user);
    const [text, setText] = useState("");
    const [cotizaciones, setCotizaciones] = useState([]);
    useEffect(() => {
@@ -129,24 +135,71 @@ export default function TablaCotizacion({
                      <div className="flex gap-1 justify-start">
                         {row.estados_cotizacion.nombre === "Por Aprobar" && (
                            <>
-                              <Button
-                                 variant="outline"
-                                 size="icon"
-                                 onClick={() => onDownloadPDF(row.id)}
-                              >
-                                 <FileDown />
-                              </Button>
-                              <Button
-                                 variant="outline"
-                                 size="icon"
-                                 onClick={() =>
-                                    setCotizacionPrevisualizada(row.id)
-                                 }
-                              >
-                                 <Eye />
-                              </Button>
+                              <Tooltip>
+                                 <TooltipTrigger asChild>
+                                    <Button
+                                       variant="outline"
+                                       size="icon"
+                                       onClick={() => onDownloadPDF(row.id)}
+                                    >
+                                       <FileDown />
+                                    </Button>
+                                 </TooltipTrigger>
+                                 <TooltipContent>
+                                    <p>Descargar PDF</p>
+                                 </TooltipContent>
+                              </Tooltip>
+                              <Tooltip>
+                                 <TooltipTrigger asChild>
+                                    <Button
+                                       variant="outline"
+                                       size="icon"
+                                       onClick={() =>
+                                          setCotizacionPrevisualizada(row.id)
+                                       }
+                                    >
+                                       <Eye />
+                                    </Button>
+                                    </TooltipTrigger>
+                                 <TooltipContent>
+                                    <p>Previsualizar PDF</p>
+                                 </TooltipContent>
+                              </Tooltip>
                            </>
                         )}
+                        {row.tipo_cotizacion === "Alquiler" && 
+                        row.estados_cotizacion.nombre === "Por Aprobar" && 
+                        row.usuario.id === user.id &&
+                        (
+                           <SolicitarCondicionesModal
+                              cotizacion={row}
+                              onConfirmar={onSolicitarCondicionesAlquiler}
+                           >
+                              <Tooltip>
+                                 <TooltipTrigger asChild>
+                                 <Button variant="outline" size="icon">
+                                    <SquareCheckBig />
+                                 </Button>
+                                 </TooltipTrigger>
+                                 <TooltipContent>
+                                 <p>Solicitar Condiciones de Alquiler</p>
+                                 </TooltipContent>
+                              </Tooltip>
+                           </SolicitarCondicionesModal>
+                        )}
+
+                        {row.estados_cotizacion.nombre === "Validar Condiciones" &&
+                         row.usuario.id === user.id && (
+                           <CondicionesModal 
+                              cotizacionId={row.id} 
+                              onActualizarCotizaciones={async () => {
+                                 const res = await obtenerTodos();
+                                 setCotizaciones(res || []);
+                              }}
+                           />
+                        )}
+
+                        {console.log(row)}
                         {row.estados_cotizacion.nombre ===
                            "Despiece generado" && (
                            <Button

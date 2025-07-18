@@ -53,6 +53,9 @@ const RegistrarCotizacionWizard = lazy(() =>
 const GestionCotizaciones = lazy(() =>
    import("../modules/cotizaciones/pages/GestionCotizaciones")
 );
+const GestionCondiciones = lazy(() =>
+   import("../modules/condiciones/pages/GestionCondiciones")
+);
 const GestionStockPiezas = lazy(() =>
    import("../modules/stockPiezas/pages/GestionStockPiezas")
 );
@@ -161,6 +164,20 @@ export default function AppRoutes() {
                            }
                         />
                      </Route>
+
+                     <Route
+                        element={<RoleGuard roles={["Gerencia", "Administracion"]} />}
+                     >
+                        <Route
+                           path="condiciones"
+                           element={
+                              <WizardProvider>
+                                 <GestionCondiciones />
+                              </WizardProvider>
+                           }
+                        />
+                     </Route>
+
                      <Route
                         element={
                            <RoleGuard

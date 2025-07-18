@@ -178,6 +178,7 @@ export function useRegistrarCotizacion(pasosLength) {
       setPasoActual(pasosLength);
     } catch (error) {
       console.error("Error al guardar cotización", error.response?.data?.message || error.message);
+      toast.error("Error al guardar cotización ", error.respones?.data?.message || error.message);
     } finally {
       setGuardando(false);
     }

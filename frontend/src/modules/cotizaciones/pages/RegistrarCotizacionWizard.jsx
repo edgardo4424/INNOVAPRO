@@ -10,6 +10,7 @@ import { useWizardContext } from "../context/WizardCotizacionContext";
 import "../styles/wizard.css";
 import "../styles/exito.css";
 import { toast } from "react-toastify";
+import { USOS_SIN_DESPIECE } from "../constants/usos";
 
 // Este componente es un wizard para registrar una cotización, dividido en varios pasos.
 // Cada paso es un componente separado que se renderiza según el estado actual del wizard.
@@ -63,7 +64,15 @@ export default function RegistrarCotizacionWizard() {
           toast.error("Completa los campos obligatorios antes de continuar.");
           return;
         }
-
+        
+        // Bloqueamos avance si es un uso sin despiece
+        if (
+          pasoActual === 2 && // Está en PasoAtributos y quiere pasar a PasoConfirmación
+          USOS_SIN_DESPIECE.includes(formData.uso_id)
+        ) {
+          toast.warning("Este uso no permite generar despiece. Registra una tarea de apoyo técnico.");
+          return;
+        }
         avanzarPaso();
       }}
       onGuardar={cotizacionConDespieceOT ? guardarCotizacionDesdeOT : guardarCotizacion}
