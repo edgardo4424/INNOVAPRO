@@ -174,51 +174,56 @@ const PasoAtributos = () => {
           ))}
 
           {/* Botones para modificar cantidad de equipos por zona */}
-          <div className="botones-cantidad">
-            <button
-              type="button"
-              className="btn-cantidad"
-              onClick={() => eliminarEquipo(zonaIndex)}
-              disabled={zona.atributos_formulario.length <= 1}
-            >
-              −
-            </button>
-            <span className="cantidad-label">
-              {zona.atributos_formulario.length} equipo(s)
-            </span>
-            <button
-              type="button"
-              className="btn-cantidad"
-              onClick={() => agregarEquipo(zonaIndex)}
-            >
-              +
-            </button>
-          </div>
+          {formData.uso_id !== 8 && (
+            <div className="botones-cantidad">
+              <button
+                type="button"
+                className="btn-cantidad"
+                onClick={() => eliminarEquipo(zonaIndex)}
+                disabled={zona.atributos_formulario.length <= 1}
+              >
+                −
+              </button>
+              <span className="cantidad-label">
+                {zona.atributos_formulario.length} equipo(s)
+              </span>
+              <button
+                type="button"
+                className="btn-cantidad"
+                onClick={() => agregarEquipo(zonaIndex)}
+              >
+                +
+              </button>
+            </div>
+           )}
 
           <hr style={{ margin: "2rem 0" }} />
         </div>
       ))}
 
       {/* Botones para agregar/eliminar zonas */}
-      <div className="wizard-section" style={{ textAlign: "center", marginTop: "2rem" }}>
-        <p style={{ color: "#ff7b00", fontWeight: "bold", marginBottom: "0.6rem" }}>
-          Puedes agregar más zonas si el proyecto lo requiere.
-        </p>
-        <div className="botones-cantidad">
-          <button
-            type="button"
-            className="btn-cantidad"
-            onClick={eliminarZona}
-            disabled={zonas.length <= 1}
-          >
-            − Zona
-          </button>
-          <span className="cantidad-label">{zonas.length} zona(s)</span>
-          <button type="button" className="btn-cantidad" onClick={agregarZona}>
-            + Zona
-          </button>
+      {formData.uso_id !== 8 && (
+        <div className="wizard-section" style={{ textAlign: "center", marginTop: "2rem" }}>
+          <p style={{ color: "#ff7b00", fontWeight: "bold", marginBottom: "0.6rem" }}>
+            Puedes agregar más zonas si el proyecto lo requiere.
+          </p>
+          <div className="botones-cantidad">
+            <button
+              type="button"
+              className="btn-cantidad"
+              onClick={eliminarZona}
+              disabled={zonas.length <= 1}
+            >
+              − Zona
+            </button>
+            <span className="cantidad-label">{zonas.length} zona(s)</span>
+            <button type="button" className="btn-cantidad" onClick={agregarZona}>
+              + Zona
+            </button>
+          </div>
         </div>
-      </div>
+      )}
+      
 
       {errores?.atributos_formulario && (
         <p className="error-text" style={{ textAlign: "center" }}>

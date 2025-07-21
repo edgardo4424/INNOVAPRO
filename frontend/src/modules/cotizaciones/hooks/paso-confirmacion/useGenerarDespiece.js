@@ -68,6 +68,30 @@ export function useGenerarDespiece(formData, setFormData) {
         const despieceAnterior = formData.despiece;
 
         const data = await generarDespiece(zonas, uso_id);
+
+        // Si el uso es colgante, no generar despiece
+        if (data.tarifario_colgante_soles) {
+          setFormData(prev => ({
+            ...prev,
+            despiece: [],
+            resumenDespiece: {
+              total_piezas: 0,
+              peso_total_kg: 0,
+              peso_total_ton: "0.00",
+              precio_subtotal_venta_soles: "0.00",
+              precio_subtotal_venta_dolares: "0.00",
+              precio_subtotal_alquiler_soles: "0.00",
+            },
+            requiereAprobacion: false,
+            tiene_pernos_disponibles: false,
+            detalles_colgantes: {
+              tarifa_soles: data.tarifario_colgante_soles,
+              tarifa_dolares: data.tarifario_colgante_dolares
+            }
+          }));
+          return;
+        }
+
         if (!Array.isArray(data?.despiece)) throw new Error ("Respuesta sin despiece válido");
 
         const despieceOriginal = data.despiece.map(mapearPieza);

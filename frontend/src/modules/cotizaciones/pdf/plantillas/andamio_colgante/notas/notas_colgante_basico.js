@@ -1,5 +1,5 @@
 import { verificarSaltoDePagina } from "../../../componentes/pagina";
-import { renderTextoConNegrita } from "../../../../../../utils/pdf/drawJustifiedText";
+import { renderListaJustificada } from "../../../../../../utils/pdf/renderListaJustificada";
 
 export async function renderNotasColganteBasico(doc, data, currentY) {
   const indent = 20;
@@ -30,15 +30,21 @@ export async function renderNotasColganteBasico(doc, data, currentY) {
     "14° Relación de cuentas para depósito o transferencia:"
   ];
 
-  for (const texto of condiciones) {
-    const bloques = doc.splitTextToSize(texto, maxWidth);
-    for (const linea of bloques) {
-      await verificarSaltoDePagina(doc, currentY, data, lineHeight);
-      renderTextoConNegrita(doc, linea, indent, currentY);
-      currentY += lineHeight;
-    }
-    currentY += 1;
-  }
+  // Esta función es anónima y permite que se puedan pasar los datos a la función del salto de página.
+  // Sin ésta función se tienen problemas de renderizado de encabezado en documentos con más de una página.
+  const saltoConData = async (doc, currentY, alturaBloque, margenInferior) =>
+  await verificarSaltoDePagina(doc, currentY, data, alturaBloque, margenInferior);
+  
+  currentY = await renderListaJustificada({
+    doc,
+    lista: condiciones,
+    x: indent,
+    y: currentY,
+    maxWidth,
+    verificarSaltoDePagina: saltoConData,
+    lineHeight: lineHeight + 0.5, 
+    fontSize: 8,
+  })
 
   return currentY;
 }

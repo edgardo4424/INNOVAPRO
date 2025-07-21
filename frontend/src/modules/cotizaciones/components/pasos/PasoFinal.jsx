@@ -32,7 +32,8 @@ export default function PasoFinal() {
     costo_tarifas_transporte,
     costo_distrito_transporte,
     costo_pernocte_transporte,
-    tiene_instalacion
+    tiene_instalacion,
+    tarifa_colgante,
   } = formData;
 
   // Cálculo del total base
@@ -98,7 +99,7 @@ export default function PasoFinal() {
       </div>
 
       {/* SERVICIOS ADICIONALES */}
-      {(tiene_pernos_disponibles || tiene_transporte || tipo_instalacion !== "NINGUNA") && (
+      {(tiene_pernos_disponibles || tiene_transporte || tipo_instalacion !== "NINGUNA") && formData.uso_id !== 8 && (
         <div className="wizard-section">
           <h4>➕ Servicios adicionales</h4>
 
@@ -141,12 +142,20 @@ export default function PasoFinal() {
 
       {/* Total principal */}
       <div className="wizard-total">
-        <strong>💰 Total final:</strong> <span> S/ {totalConDescuento}</span>
+        {formData.uso_id === 8 ? (
+          <>
+            <strong>💰 Total por colgante:</strong> <span> S/ {tarifa_colgante}</span>
+          </>
+        ) : (
+          <>
+            <strong>💰 Total final:</strong> <span> S/ {totalConDescuento}</span>
+          </>
+        )}
       </div>
 
       {/* Total referencial incluyendo servicios */}
       {console.log("Form Data:", formData)}
-      {(tiene_instalacion !== false || tiene_transporte != false) && (
+      {(tiene_instalacion !== false || tiene_transporte != false) && formData.uso_id !== 8 && (
         <div className="wizard-total" style={{ marginTop: "1rem", color: "#666", fontSize: "15px" }}>
           <strong>🧾 Total referencial con servicios:</strong>{" "}
           <span style={{ color: "#009688" }}>
