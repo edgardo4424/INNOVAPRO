@@ -115,7 +115,7 @@ async function generarPdfEscuadrasConPlataformas({ idDespiece, porcentajeDescuen
 
 
   // Obtener las piezas que empiecen con el item AM. en despieces_detalle
-  const piezasDetalleEscuadrasEncontrado = await db.despieces_detalle.findAll({
+  const piezasPlataformasEncontrado = await db.despieces_detalle.findAll({
     where: {
       despiece_id: idDespiece,
       esAdicional: false,
@@ -134,7 +134,7 @@ async function generarPdfEscuadrasConPlataformas({ idDespiece, porcentajeDescuen
   });
 
 
-  const totalesDetallePlataformas = piezasDetalleEscuadrasEncontrado.reduce(
+  const totalesDetallePlataformas = piezasPlataformasEncontrado.reduce(
   (acc, item) => {
     acc.cantidad += item.cantidad;
     acc.precio_alquiler_soles += parseFloat(item.precio_alquiler_soles);
