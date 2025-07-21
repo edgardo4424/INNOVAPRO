@@ -35,6 +35,9 @@ export async function generarDespiece(atributos, usoId) {
     case 7: // Plataforma de descarga
       uso = "plataforma-de-descarga";
       break;
+    case 8: // Colgantes
+      uso = "colgantes";
+      break;
     case 11: // Escuadras sin plataformas
       uso = "escuadras-sin-plataformas";
       break;

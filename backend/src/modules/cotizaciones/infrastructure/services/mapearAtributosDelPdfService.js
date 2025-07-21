@@ -137,7 +137,7 @@ function agruparEscuadrasPorZonaYAtributos(data) {
   const zonasMap = new Map();
 
   for (const item of data) {
-    const { zona, escuadra, tipoAnclaje,sobrecarga, factorSeguridad, cantidadEscuadrasTramo, longTramo,tipoPlataforma, nota_zona } = item;
+    const { zona, escuadra, tipoAnclaje,sobrecarga, factorSeguridad, cantidadEscuadrasTramo,tipoPlataforma, nota_zona } = item;
     if (!zonasMap.has(zona)) {
       zonasMap.set(zona, {
         nota_zona,
@@ -146,7 +146,7 @@ function agruparEscuadrasPorZonaYAtributos(data) {
     }
 
     const zonaObj = zonasMap.get(zona);
-    const clave = `${escuadra}|${tipoAnclaje}|${sobrecarga}|${factorSeguridad}|${longTramo}|${tipoPlataforma}`;
+    const clave = `${escuadra}|${tipoAnclaje}|${sobrecarga}|${factorSeguridad}|${tipoPlataforma}`;
 
     if (zonaObj.atributosMap.has(clave)) {
       zonaObj.atributosMap.get(clave).cantidadEscuadrasTramo += cantidadEscuadrasTramo;
@@ -157,7 +157,6 @@ function agruparEscuadrasPorZonaYAtributos(data) {
   tipoAnclaje,
   sobrecarga,
   factorSeguridad,
-  longTramo,
   tipoPlataforma,
   cantidadEscuadrasTramo: Number(cantidadEscuadrasTramo),
   cantidad_uso: 1,

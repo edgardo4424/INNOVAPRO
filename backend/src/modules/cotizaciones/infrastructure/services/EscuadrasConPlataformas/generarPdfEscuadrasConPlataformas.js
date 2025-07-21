@@ -79,11 +79,46 @@ async function generarPdfEscuadrasConPlataformas({ idDespiece, porcentajeDescuen
   };
 });
 
+// Obtener las piezas escuadras
+  const piezasEscuadrasEncontradas = await db.despieces_detalle.findAll({
+    where: {
+      despiece_id: idDespiece,
+      esAdicional: false,
+    },
+    include: [
+      {
+        model: db.piezas,
+        as: "pieza",
+        where: {
+          item: ["EC.0100", "EC.0300"],
+        },
+      },
+    ],
+  });
+
+  // calcular totales detalles escuadras
+  const totalesDetallesEscuadras = piezasEscuadrasEncontradas.reduce(
+    (acc, item) => {
+      acc.cantidad += item.cantidad;
+      acc.precio_alquiler_soles += parseFloat(item.precio_alquiler_soles);
+      acc.precio_venta_soles += parseFloat(item.precio_venta_soles);
+      acc.precio_venta_dolares += parseFloat(item.precio_venta_dolares);
+      return acc;
+    },
+    {
+      cantidad: 0,
+      precio_alquiler_soles: 0,
+      precio_venta_soles: 0,
+      precio_venta_dolares: 0
+    }
+  );
+
 
   // Obtener las piezas que empiecen con el item AM. en despieces_detalle
   const piezasDetalleEscuadrasEncontrado = await db.despieces_detalle.findAll({
     where: {
       despiece_id: idDespiece,
+      esAdicional: false,
     },
     include: [
       {
@@ -98,22 +133,30 @@ async function generarPdfEscuadrasConPlataformas({ idDespiece, porcentajeDescuen
     ]
   });
 
-  const piezasDetallePlataformas = piezasDetalleEscuadrasEncontrado.map((p) => {
-    const pieza = p.get({ plain: true });
 
-    
+  const totalesDetallePlataformas = piezasDetalleEscuadrasEncontrado.reduce(
+  (acc, item) => {
+    acc.cantidad += item.cantidad;
+    acc.precio_alquiler_soles += parseFloat(item.precio_alquiler_soles);
+    acc.precio_venta_soles += parseFloat(item.precio_venta_soles);
+    acc.precio_venta_dolares += parseFloat(item.precio_venta_dolares);
+    return acc;
+  },
+  {
+    cantidad: 0,
+    precio_alquiler_soles: 0,
+    precio_venta_soles: 0,
+    precio_venta_dolares: 0
+  }
+);
 
-    return {
-      item: pieza.pieza.item,
-      descripcion: pieza.pieza.descripcion,
-      cantidad: pieza.cantidad,
-      precio_alquiler_soles: pieza.precio_alquiler_soles,
-      precio_venta_soles: pieza.precio_venta_soles,
-      precio_venta_dolares: pieza.precio_venta_dolares,
-     /*  precio_u_alquiler_soles: (Number(pieza.precio_alquiler_soles)/Number(pieza.cantidad)).toFixed(2),
-      precio_u_venta_soles:(Number(pieza.precio_venta_soles)/Number(pieza.cantidad)).toFixed(2), */
-    };
-  });
+// Aplicar .toFixed(2) al final (opcional: parseFloat si quieres número en vez de string)
+const totalesFormateadosDetallePlataformas = {
+  cantidad: totalesDetallePlataformas.cantidad,
+  precio_alquiler_soles: parseFloat(totalesDetallePlataformas.precio_alquiler_soles.toFixed(2)),
+  precio_venta_soles: parseFloat(totalesDetallePlataformas.precio_venta_soles.toFixed(2)),
+  precio_venta_dolares: parseFloat(totalesDetallePlataformas.precio_venta_dolares.toFixed(2)),
+};
 
   const listaAtributos = agruparEscuadrasPorZonaYAtributos(resultadoConCantidad);
 
@@ -191,10 +234,18 @@ async function generarPdfEscuadrasConPlataformas({ idDespiece, porcentajeDescuen
       };
     });
 
+  console.dir(listaAtributosConCantidadPlataformas, { depth: null, colors: true });
+
+  console.log({
+    totalesDetallesEscuadras,
+    totalesFormateadosDetallePlataformas,
+  });
   return {
     zonas: listaAtributosConCantidadPlataformas,
     piezasAdicionales: piezasDetalleAdicionalesEscuadrasConDescuento,
-    piezasDetallePlataformas: piezasDetallePlataformas
+    //piezasDetallePlataformas: piezasDetallePlataformas,
+    detalles_escuadras: totalesDetallesEscuadras,
+    detalle_plataformas: totalesFormateadosDetallePlataformas,
   };
 }
 
