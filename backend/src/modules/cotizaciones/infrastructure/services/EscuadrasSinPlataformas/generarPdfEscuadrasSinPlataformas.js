@@ -4,6 +4,7 @@ const { mapearAtributosValor } = require("../mapearAtributosValorService");
 
 async function generarPdfEscuadrasSinPlataformas({ idDespiece, porcentajeDescuento }) {
   
+  console.log({idDespiece, porcentajeDescuento});
     // Obtener la lista de atributos
   
     const atributosDelUso = await db.atributos_valor.findAll({
@@ -23,6 +24,8 @@ async function generarPdfEscuadrasSinPlataformas({ idDespiece, porcentajeDescuen
     const resultado = mapearAtributosValor(atributosDelUso);
   
     const listaAtributos = agruparPorZonaYAtributos(resultado);
+
+    console.log('listaAtributos', listaAtributos);
   
     const atributosDelPdf = listaAtributos.map((atributo) => ({
       zona: atributo.zona,
@@ -70,6 +73,8 @@ async function generarPdfEscuadrasSinPlataformas({ idDespiece, porcentajeDescuen
         ),
       };
     });
+
+    console.log('piezasDetalleAdicionalesEscuadrasSinPlataformaConDescuento', piezasDetalleAdicionalesEscuadrasSinPlataformaConDescuento);
   
 
   return {
