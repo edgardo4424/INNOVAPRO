@@ -103,6 +103,19 @@ db.cotizaciones_transporte = CotizacionesTransporte;
 const { CotizacionesInstalacion } = require('../modules/cotizaciones/infrastructure/models/cotizacionesInstalacionesModel')
 db.cotizaciones_instalacion = CotizacionesInstalacion;
 
+// ? Facturacion
+const { Factura } = require('../modules/facturacion/infrastructure/models/facturaModel')
+db.facturas = Factura;
+
+const {FacturaDetalle} = require('../modules/facturacion/infrastructure/models/facturaDetalleModel')
+db.factura_detalles = FacturaDetalle;
+
+const {FormaPago} = require('../modules/facturacion/infrastructure/models/formaPagoModel')
+db.formas_pago = FormaPago;
+
+const {Leyenda} = require('../modules/facturacion/infrastructure/models/leyendaModel')
+db.leyendas = Leyenda;
+
 // ✅ Solo se asocian los que tienen .associate()
 if (db.contactos.associate) db.contactos.associate(db);
 if (db.clientes.associate) db.clientes.associate(db);
@@ -135,6 +148,11 @@ if (db.asistencias.associate) db.asistencias.associate(db);
 if (db.gastos.associate) db.gastos.associate(db);
 if (db.jornadas.associate) db.jornadas.associate(db);
 if (db.tipos_trabajo.associate) db.tipos_trabajo.associate(db);
+// ? Conexion Facturacion
+if(db.facturas.associate) db.facturas.associate(db);
+if(db.factura_detalles.associate) db.factura_detalles.associate(db);
+if(db.formas_pago.associate) db.formas_pago.associate(db);
+if(db.leyendas.associate) db.leyendas.associate(db)
 
 // Sequelize
 db.sequelize = sequelize;
