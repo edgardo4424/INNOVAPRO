@@ -3,6 +3,22 @@ import { USOS_INSTALABLES } from "../constants/usos";
 export default function validarPasoConfirmacion(formData) {
   const errores = {};
 
+  const esColgante = formData.uso_id === 8;
+
+  // 🔹 Validación especial para Colgantes
+  if (esColgante) {
+    if (!formData.tarifa_colgante || isNaN(formData.tarifa_colgante)) {
+      errores.tarifa_colgante = "Debes ingresar una tarifa válida para colgantes.";
+    }
+
+    const cantidad = parseInt(formData.zonas?.[0]?.atributos_formulario?.[0]?.cantidad || "0");
+    if (!cantidad || isNaN(cantidad) || cantidad <= 0) {
+      errores.cantidad_colgante = "La cantidad de colgantes debe ser mayor a 0.";
+    }
+
+    return errores; // ✅ Nos saltamos el resto de validaciones para colgantes
+  }
+
   // 🔹 Validación PERNOS
   if (formData.tiene_pernos_disponibles && typeof formData.tiene_pernos !== "boolean") {
     errores.tiene_pernos = "Debes indicar si deseas incluir los pernos de expansión.";
