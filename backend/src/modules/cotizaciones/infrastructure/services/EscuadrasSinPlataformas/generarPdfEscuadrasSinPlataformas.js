@@ -25,7 +25,7 @@ async function generarPdfEscuadrasSinPlataformas({ idDespiece, porcentajeDescuen
   
     const listaAtributos = agruparPorZonaYAtributos(resultado);
 
-    console.log('listaAtributos', listaAtributos);
+    console.dir(listaAtributos, { depth: null });
   
     const atributosDelPdf = listaAtributos.map((atributo) => ({
       zona: atributo.zona,
@@ -38,6 +38,41 @@ async function generarPdfEscuadrasSinPlataformas({ idDespiece, porcentajeDescuen
       })),
       nota_zona: atributo.atributos[0].nota_zona,
     }));
+
+    // Obtener las piezas escuadras
+      const piezasEscuadrasEncontradas = await db.despieces_detalle.findAll({
+        where: {
+          despiece_id: idDespiece,
+          esAdicional: false,
+        },
+        include: [
+          {
+            model: db.piezas,
+            as: "pieza",
+            where: {
+              item: ["EC.0100", "EC.0300"],
+            },
+          },
+        ],
+      });
+    
+      // calcular totales detalles escuadras
+      const totalesDetallesEscuadras = piezasEscuadrasEncontradas.reduce(
+        (acc, item) => {
+          acc.cantidad += item.cantidad;
+          acc.precio_alquiler_soles += parseFloat(item.precio_alquiler_soles);
+          acc.precio_venta_soles += parseFloat(item.precio_venta_soles);
+          acc.precio_venta_dolares += parseFloat(item.precio_venta_dolares);
+          return acc;
+        },
+        {
+          cantidad: 0,
+          precio_alquiler_soles: 0,
+          precio_venta_soles: 0,
+          precio_venta_dolares: 0
+        }
+      );
+    
   
     // Obtener las piezas adicionales
   
@@ -80,6 +115,7 @@ async function generarPdfEscuadrasSinPlataformas({ idDespiece, porcentajeDescuen
   return {
      zonas: atributosDelPdf,
       piezasAdicionales: piezasDetalleAdicionalesEscuadrasSinPlataformaConDescuento,
+      detalles_escuadras: totalesDetallesEscuadras,
   };
 }
 
