@@ -117,7 +117,7 @@ const modulesByRole = {
          items: [
             { name: "Generar Documentos", path: "/facturacion/generar" },
             { name: "Listar Documentos", path: "/facturacion/listar" },
-            // { name: "Facturas Pendientes", path: "/facturacion/pendientes" },
+            { name: "Lista Borradores", path: "/facturacion/borradores" },
             { name: "Facturas Anuladas", path: "/facturacion/anuladas" },
          ],
       },

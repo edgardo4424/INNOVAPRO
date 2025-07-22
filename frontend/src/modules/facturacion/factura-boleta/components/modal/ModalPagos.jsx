@@ -41,7 +41,7 @@ export default function ModalPagos() {
                     </Button>
                 </AlertDialogTrigger>
 
-                <div className="w-full  flex py-2 justify-start gap-x-3 text-xs flex-col md:flex-row px-3 font-semibold ">
+                <div className="w-full  flex py-2 justify-start gap-x-3 text-md flex-col md:flex-row px-3 font-semibold ">
                     {
                         pagosCompletos ? (
                             <h2 className="text-green-400">✅ LLegaste a el Monto Total de la Factura</h2>

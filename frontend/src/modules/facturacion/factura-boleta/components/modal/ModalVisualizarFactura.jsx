@@ -4,7 +4,7 @@ import { ClipboardPlus, Eye, X } from "lucide-react"; // Still using Lucide icon
 
 export default function ModalVisualizarFactura() {
 
-    const {facturaValidaParaGuardar, facturarNuevoDocumento} = useFacturaBoleta();
+    const { facturaValidaParaGuardar, emitirSunat } = useFacturaBoleta();
 
     const [isOpen, setIsOpen] = useState(false); // Changed state name for clarity
 
@@ -155,6 +155,15 @@ export default function ModalVisualizarFactura() {
                                 </div>
                             </div>
 
+                            {/* // Observations Section */}
+                            <div className="mb-6">
+                                <h3 className="font-bold text-md mb-2 text-gray-600 border-b pb-1">OBSERVACIONES:</h3>
+                                <div className="p-4 border border-gray-200 rounded-md bg-white text-sm text-gray-800">
+                                    {factura.observaciones || 'No hay observaciones registradas.'}
+                                </div>
+                            </div>
+
+
                             {/* Totals & Payment */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 <div>
@@ -209,9 +218,9 @@ export default function ModalVisualizarFactura() {
                         </div>
                         {/* --- End Invoice Detail --- */}
                         <div className="w-full flex justify-end pt-5">
-                            <button className={` ${facturaValidaParaGuardar ? 'cursor-pointer bg-green-600' : 'cursor-not-allowed bg-red-600/20'}  text-white py-2 px-4 rounded-md flex gap-x-2`} 
-                            disabled={!facturaValidaParaGuardar}
-                            onClick={facturarNuevoDocumento}
+                            <button className={` ${facturaValidaParaGuardar ? 'cursor-pointer bg-green-600' : 'cursor-not-allowed bg-red-600/20'}  text-white py-2 px-4 rounded-md flex gap-x-2`}
+                                disabled={!facturaValidaParaGuardar}
+                                onClick={emitirSunat}
                             >
                                 <ClipboardPlus size={20} />
                                 <span>

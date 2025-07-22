@@ -1,20 +1,22 @@
-import facturacionService from "@/modules/factuacion/service/FacturacionService";
-import numeroALeyenda from "@/modules/factuacion/utils/numeroALeyenda";
-import { validarModal } from "@/modules/factuacion/utils/validarModal";
-import { validarPasos } from "@/modules/factuacion/utils/validarPasos";
+import facturacionService from "@/modules/facturacion/service/FacturacionService";
+import facturaService from "@/modules/facturacion/service/FacturaService";
+import numeroALeyenda from "@/modules/facturacion/utils/numeroALeyenda";
+import { validarModal } from "@/modules/facturacion/utils/validarModal";
+import { validarPasos } from "@/modules/facturacion/utils/validarPasos";
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import initialCorrelativosData from "./../../modules/factuacion/utils/correlativoLocal.json";
-import facturasEmitidasLocal from "./../../modules/factuacion/utils/facturasEmitidasLocal.json";
 
 const FacturaBoletaContext = createContext();
 
 export function FacturaBoletaProvider({ children }) {
+
+    const [correlativos, setCorrelativos] = useState("000001");
+
     const initialFacturaState = {
         tipo_Operacion: "",
         tipo_Doc: "01",
-        serie: "",
-        correlativo: "",
+        serie: "F001",
+        correlativo: correlativos,
         tipo_Moneda: "PEN",
         fecha_Emision: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
         empresa_Ruc: "20607086215",
@@ -23,7 +25,7 @@ export function FacturaBoletaProvider({ children }) {
         cliente_Razon_Social: "",
         cliente_Direccion: "",
         monto_Oper_Gravadas: 0,
-        monto_Igv: 18,
+        monto_Igv: 0,
         total_Impuestos: 0,
         valor_Venta: 0,
         sub_Total: 0,
@@ -32,6 +34,8 @@ export function FacturaBoletaProvider({ children }) {
         estado_Documento: "0",
         manual: false,
         id_Base_Dato: "15265",
+        observaciones: "", //? nuevo campo solo para bd
+        usuario_id: 1, //* cambiar a el usuario logeado
         detalle: [],
         forma_pago: [],
         legend: [
@@ -113,8 +117,6 @@ export function FacturaBoletaProvider({ children }) {
         fecha_Pago: false,
     });
 
-    const [correlativos, setCorrelativos] = useState(initialCorrelativosData.correlativo);
-    const [facturasEmitidas, setFacturasEmitidas] = useState(facturasEmitidasLocal); // Estado para facturas emitidas localmente
 
     const [facturaValidaParaGuardar, setFacturaValidaParaGuardar] = useState(false);
 
@@ -198,17 +200,12 @@ export function FacturaBoletaProvider({ children }) {
                 break;
         }
 
-        setFactura((prev) => {
-            if (prev.serie !== newSerie || prev.correlativo !== newCorrelativo) {
-                return {
-                    ...prev,
-                    serie: newSerie,
-                    correlativo: newCorrelativo,
-                };
-            }
-            return prev;
-        });
-    }, [factura.tipo_Doc, correlativos]);
+        setFactura((prev) => ({
+            ...prev,
+            serie: newSerie,
+        }));
+
+    }, [factura.tipo_Doc]);
 
     useEffect(() => {
         if (!productoActual.cod_Producto) return;
@@ -267,11 +264,11 @@ export function FacturaBoletaProvider({ children }) {
 
     useEffect(() => {
         if (!factura.monto_Imp_Venta || factura.monto_Imp_Venta <= 0) return;
-    
+
         const nuevaLegenda = numeroALeyenda(factura.monto_Imp_Venta);
         console.log("nueva legenda")
         console.log(nuevaLegenda)
-    
+
         setFactura((prev) => ({
             ...prev,
             legend: [{
@@ -280,7 +277,7 @@ export function FacturaBoletaProvider({ children }) {
             }]
         }));
     }, [factura.monto_Imp_Venta]);
-    
+
 
     useEffect(() => {
         let montoPendiente = factura.monto_Imp_Venta;
@@ -411,7 +408,13 @@ export function FacturaBoletaProvider({ children }) {
         }));
     };
 
-    const facturarNuevoDocumento = async () => {
+    const emitirFactura = async () => {
+        const { status, success, message, data } = await emitirFactura()
+
+
+    };
+
+    const emitirSunat = async () => {
         const { validos, message } = validarPasos("ValidaCionTotal", factura);
         if (!validos) {
             toast.error(message || "Por favor, completa todos los datos requeridos antes de emitir.");
@@ -426,42 +429,8 @@ export function FacturaBoletaProvider({ children }) {
                     success: {
                         render({ data }) {
                             const { status, success, message, data: responseData } = data;
-
                             if (status === 200 && success) {
-                                if (responseData?.cdrResponse?.code === "0") {
-                                    setCorrelativos((prevCorrelativos) => {
-                                        const newCorrelativos = { ...prevCorrelativos };
-                                        if (factura.tipo_Doc === "01") {
-                                            newCorrelativos.facturas += 1;
-                                        } else if (factura.tipo_Doc === "03") {
-                                            newCorrelativos.boletas += 1;
-                                        }
-                                        return newCorrelativos;
-                                    });
-
-                                    setFacturasEmitidas((prevList) => [
-                                        ...prevList,
-                                        {
-                                            id: responseData.cdrResponse?.id || `${factura.serie}-${factura.correlativo}`,
-                                            tipoDoc: factura.tipo_Doc,
-                                            serie: factura.serie,
-                                            correlativo: factura.correlativo,
-                                            montoTotal: factura.monto_Imp_Venta,
-                                            fechaEmision: factura.fecha_Emision,
-                                            clienteRazonSocial: factura.cliente_Razon_Social,
-                                            estadoSunat: responseData.cdrResponse?.description || "Aceptada",
-                                        },
-                                    ]);
-
-                                    setFactura(initialFacturaState);
-                                    setProductoActual(initialProductoActualState); // Reset product form as well
-                                    setEdicionProducto({ edicion: false, index: null }); // Reset editing state
-                                    setPagoActual(initialPagoActualState); // Reset payment form
-
-                                    return `✅ ${responseData.cdrResponse.description || "Documento aceptado y registrado con éxito."}`;
-                                } else {
-                                    return `🎉 ¡Documento generado! ${message || ""}`;
-                                }
+                                return `🎉 ¡Documento generado! ${message || ""}`;
                             } else if (status === 200 && !success) {
                                 if (responseData?.error?.message) {
                                     return `⚠️ ${responseData.error.message} (Código: ${responseData.error.code})`;
@@ -483,11 +452,44 @@ export function FacturaBoletaProvider({ children }) {
             );
             console.log("Respuesta completa de facturación:", res);
             return res;
+
         } catch (error) {
             console.error("Error inesperado durante la facturación:", error);
             return null;
         }
     };
+
+    const registrarBaseDatos = async (tipo) => {
+        try {
+            const { status, data } = await toast.promise(
+                facturaService.registrarFactura(factura),
+                {
+                    pending: "Registrando factura en la base de datos...",
+                    success: tipo ? `Factura registrada con éxito como ${tipo.toUpperCase()}` : "Factura registrada con éxito",
+                    error: `No se pudo registrar la factura`,
+                }
+            )
+            if (status === 200) {
+                Limpiar();
+            }
+            return { facturaCreada, estado, mensaje };
+        } catch (error) {
+            if (error.response) {
+                const { status, data } = error.response;
+                if (status === 409) {
+                    toast.error(data?.mensaje);
+                }
+            }
+        }
+    };
+
+    const Limpiar = () => {
+        setFactura(initialFacturaState);
+        setProductoActual(initialProductoActualState);
+        setEdicionProducto({ edicion: false, index: null });
+        setPagoActual(initialPagoActualState);
+    };
+
 
     const buscarPersonaPorDni = async (dni) => {
         try {
@@ -664,8 +666,9 @@ export function FacturaBoletaProvider({ children }) {
                 setPagoActual,
                 agregarPago,
                 metodo,
-                facturarNuevoDocumento,
+                emitirSunat,
                 facturaValidaParaGuardar,
+                registrarBaseDatos
             }}
         >
             {children}

@@ -1,17 +1,20 @@
+const Factura = require("../../domain/entities/facura");
 module.exports = async (facturaRepository) => {
     // * Llamamos al repositorio para obtener todas las facturas
-    const facturas = await facturaRepository.obtenerTodasLasFacturas();
+    const facturas = await facturaRepository.obtenerFacturas();
 
-    // ? si no se encuentra el usuario,
+    // ? si no se encuentra las facturas,
     if (facturas.length == 0)
         return {
-            codigo: 204,
+            codigo: 200,
             respuesta: {
                 mensaje: "Facturas no encontrados",
                 estado: true,
+                total: 0,
                 datos: [],
             },
         };
+    // const datosFormateados = Factura.formatearListado(facturas);
 
     return {
         codigo: 200,
@@ -19,7 +22,8 @@ module.exports = async (facturaRepository) => {
             mensaje: "Facturas encontrados",
             estado: true,
             total: facturas.length,
-            datos: facturas,
+            facturas: facturas,
+            // facturas: datosFormateados,
         },
     };
 };

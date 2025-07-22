@@ -17,11 +17,11 @@ const Leyenda = sequelize.define(
                 key: "id",
             },
         },
-        legend_code: {
+        legend_Code: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        legend_code: {
+        legend_Value: {
             type: DataTypes.TEXT,
             allowNull: false,
         },

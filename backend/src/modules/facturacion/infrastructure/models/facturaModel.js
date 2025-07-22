@@ -9,11 +9,11 @@ const Factura = sequelize.define(
             autoIncrement: true,
             primaryKey: true,
         },
-        tipo_operacion: {
+        tipo_Operacion: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        tipo_doc: {
+        tipo_Doc: {
             type: DataTypes.STRING,
             allowNull: true,
         },
@@ -25,63 +25,63 @@ const Factura = sequelize.define(
             type: DataTypes.STRING,
             allowNull: true,
         },
-        tipo_moneda: {
+        tipo_Moneda: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        fecha_emision: {
+        fecha_Emision: {
             type: DataTypes.DATE,
             allowNull: true,
         },
-        empresa_ruc: {
+        empresa_Ruc: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        cliente_tipo_doc: {
+        cliente_Tipo_Doc: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        cliente_num_doc: {
+        cliente_Num_Doc: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        cliente_razon_social: {
+        cliente_Razon_Social: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        cliente_direccion: {
+        cliente_Direccion: {
             type: DataTypes.TEXT,
             allowNull: true,
         },
-        monto_oper_gravadas: {
+        monto_Oper_Gravadas: {
             type: DataTypes.DECIMAL(12, 2),
             allowNull: true,
         },
-        monto_oper_exoneradas: {
+        monto_Oper_Exoneradas: {
             type: DataTypes.DECIMAL(12, 2),
             allowNull: true,
         },
-        monto_igv: {
+        monto_Igv: {
             type: DataTypes.DECIMAL(12, 2),
             allowNull: true,
         },
-        total_impuestos: {
+        total_Impuestos: {
             type: DataTypes.DECIMAL(12, 2),
             allowNull: true,
         },
-        valor_venta: {
+        valor_Venta: {
             type: DataTypes.DECIMAL(12, 2),
             allowNull: true,
         },
-        sub_total: {
+        sub_Total: {
             type: DataTypes.DECIMAL(12, 2),
             allowNull: true,
         },
-        monto_imp_venta: {
+        monto_Imp_Venta: {
             type: DataTypes.DECIMAL(12, 2),
             allowNull: true,
         },
-        estado_documento: {
+        estado_Documento: {
             type: DataTypes.ENUM(
                 "BORRADOR",
                 "EMITIDA",
@@ -95,11 +95,15 @@ const Factura = sequelize.define(
             type: DataTypes.STRING,
             allowNull: true,
         },
+        observaciones: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        },
         manual: {
             type: DataTypes.BOOLEAN,
             allowNull: true,
         },
-        id_base_dato: {
+        id_Base_Dato: {
             type: DataTypes.INTEGER,
             allowNull: true,
         },

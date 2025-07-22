@@ -21,7 +21,7 @@ const FormaPago = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
-        monot: {
+        monto: {
             type: DataTypes.DECIMAL(12, 2),
             allowNull: false,
         },
@@ -29,7 +29,7 @@ const FormaPago = sequelize.define(
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        fecha_pago: {
+        fecha_Pago: {
             type: DataTypes.DATE,
             allowNull: false,
         },

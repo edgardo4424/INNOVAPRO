@@ -10,7 +10,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { useEffect, useState } from "react";
-import useProducto from "../../factura-boleta/hooks/useProducto";
+import useProducto from "../hooks/useProducto";
 import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
 
 const ListaDeProductos = ({ closeModal }) => {

@@ -25,7 +25,7 @@ const FacturaDetalle = sequelize.define(
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        cod_producto: {
+        cod_Producto: {
             type: DataTypes.STRING,
             allowNull: false,
         },
@@ -33,15 +33,15 @@ const FacturaDetalle = sequelize.define(
             type: DataTypes.TEXT,
             allowNull: false,
         },
-        monto_valor_unitario: {
+        monto_Valor_Unitario: {
             type: DataTypes.DECIMAL(12, 2),
             allowNull: false,
         },
-        monto_base_igv: {
+        monto_Base_Igv: {
             type: DataTypes.DECIMAL(12, 2),
             allowNull: false,
         },
-        porcentaje_igv: {
+        porcentaje_Igv: {
             type: DataTypes.DECIMAL(5, 2),
             allowNull: false,
         },
@@ -49,23 +49,23 @@ const FacturaDetalle = sequelize.define(
             type: DataTypes.DECIMAL(12, 2),
             allowNull: false,
         },
-        tip_afe_igv: {
+        tip_Afe_Igv: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        total_impuestos: {
+        total_Impuestos: {
             type: DataTypes.DECIMAL(12, 2),
             allowNull: false,
         },
-        monto_precio_unitario: {
+        monto_Precio_Unitario: {
             type: DataTypes.DECIMAL(12, 2),
             allowNull: false,
         },
-        monto_valor_venta: {
+        monto_Valor_Venta: {
             type: DataTypes.DECIMAL(12, 2),
             allowNull: false,
         },
-        factor_icbper: {
+        factor_Icbper: {
             type: DataTypes.DECIMAL(5, 2),
             allowNull: false,
         },

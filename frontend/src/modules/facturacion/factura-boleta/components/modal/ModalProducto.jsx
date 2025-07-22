@@ -62,7 +62,7 @@ export default function ModalProducto({open, setOpen}) {
                 </Button>
             </AlertDialogTrigger>
 
-            <AlertDialogContent className="md:min-w-3xl flex flex-col gap-4 ">
+            <AlertDialogContent className="md:min-w-3xl  flex flex-col gap-4 ">
                 {/* ❌ Botón cerrar arriba */}
                 <button
                     className="absolute top-4 right-4 text-gray-500 hover:text-red-600 cursor-pointer"
@@ -72,7 +72,7 @@ export default function ModalProducto({open, setOpen}) {
                 </button>
 
                 {/* 🧾 Encabezado */}
-                <AlertDialogHeader>
+                <AlertDialogHeader >
                     <AlertDialogTitle>Datos del Producto</AlertDialogTitle>
                     <AlertDialogDescription className="text-center">
                         Ingresa los datos correctamente para crear un producto.

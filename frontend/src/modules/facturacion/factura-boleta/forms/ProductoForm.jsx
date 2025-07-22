@@ -57,7 +57,7 @@ const ProductoForm = ({ closeModal }) => {
 
         setProductoActual((prevValores) => ({
             ...prevValores,
-            [name]: validatedValue,
+            [name]: typeof validatedValue === 'string' ? validatedValue.toUpperCase() : validatedValue,
             monto_Base_Igv: +monto_Base_Igv.toFixed(2),
             igv,
             total_Impuestos,
@@ -108,13 +108,13 @@ const ProductoForm = ({ closeModal }) => {
                 className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-2 gap-y-3"
             >
                 {/* Código de Producto */}
-                <div className="flex flex-col gap-1 col-span-full md:col-span-2 relative">
+                <div className="flex flex-col gap-1 col-span-full md:col-span-1 relative">
                     <Label>Código de Producto</Label>
                     <input
                         type="text"
                         placeholder="Ej: AM.0100 o Husillo"
                         name="cod_Producto"
-                        value={productoActual.cod_Producto || ''}
+                        value={productoActual.cod_Producto}
                         onChange={handleInputChange}
                         list="piezas-lista"
                         className="border-1 border-gray-400 p-2 rounded"
@@ -173,7 +173,7 @@ const ProductoForm = ({ closeModal }) => {
                     <Input
                         type="number"
                         name="cantidad"
-                        value={productoActual.cantidad}
+                        value={productoActual.cantidad || ""}
                         onChange={handleInputChange}
                         className="border-1 border-gray-400"
                     />
@@ -185,31 +185,13 @@ const ProductoForm = ({ closeModal }) => {
                     </span>
                 </div>
 
-                {/* Descripción */}
-                <div className='flex flex-col gap-1 col-span-full md:col-span-2'>
-                    <Label>Descripción</Label>
-                    <Input
-                        type="text"
-                        name="descripcion"
-                        value={productoActual.descripcion}
-                        onChange={handleInputChange}
-                        className="border-1 border-gray-400"
-                    />
-                    <span
-                        className={`text-red-500 text-sm ${productoValida.descripcion ? "block" : "hidden"
-                            }`}
-                    >
-                        Debes ingresar la descripción del producto
-                    </span>
-                </div>
-
                 {/* Valor Unitario */}
                 <div className='flex flex-col gap-1 col-span-full md:col-span-2 lg:col-span-1'>
                     <Label>Valor Unitario</Label>
                     <Input
                         type="number"
                         name="monto_Valor_Unitario"
-                        value={productoActual.monto_Valor_Unitario}
+                        value={productoActual.monto_Valor_Unitario || ""}
                         step="0.01"
                         onChange={handleInputChange}
                         className="border-1 border-gray-400"
@@ -364,6 +346,24 @@ const ProductoForm = ({ closeModal }) => {
                         onChange={handleInputChange}
                         className="border-1 border-gray-400"
                     />
+                </div>
+
+                {/* Descripción */}
+                <div className='flex flex-col gap-1 col-span-full md:col-span-3'>
+                    <Label>Descripción</Label>
+                    <textarea
+                        type="text"
+                        name="descripcion"
+                        value={productoActual.descripcion}
+                        onChange={handleInputChange}
+                        className="border-1 border-gray-400 h-15 p-2 resize-none rounded-xl "
+                    />
+                    <span
+                        className={`text-red-500 text-sm ${productoValida.descripcion ? "block" : "hidden"
+                            }`}
+                    >
+                        Debes ingresar la descripción del producto
+                    </span>
                 </div>
             </form>
             {/* 🔘 Botones de acción */}
