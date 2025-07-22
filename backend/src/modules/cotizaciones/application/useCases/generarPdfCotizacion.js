@@ -265,7 +265,7 @@ module.exports = async (idCotizacion) => {
     case "8":
       // COLGANTE
 
-       const pdfColgante = await generarPdfColgante({idDespiece: despieceEncontrado.id, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
+       const pdfColgante = await generarPdfColgante({dataDespiece: despieceEncontrado, idDespiece: despieceEncontrado.id, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,

@@ -3,6 +3,7 @@ const { agruparPorZonaYAtributos } = require("../mapearAtributosDelPdfService");
 const { mapearAtributosValor } = require("../mapearAtributosValorService");
 
 async function generarPdfColgante({
+  dataDespiece,
   idDespiece,
   porcentajeDescuento,
 }) {
@@ -74,9 +75,12 @@ async function generarPdfColgante({
     };
   });
 
+  const { detalles_opcionales } = dataDespiece
+
   return {
     zonas: atributosDelPdf,
     piezasAdicionales: piezasDetalleAdicionalesColganteConDescuento,
+    detalles_colgantes: detalles_opcionales,
   };
 }
 
