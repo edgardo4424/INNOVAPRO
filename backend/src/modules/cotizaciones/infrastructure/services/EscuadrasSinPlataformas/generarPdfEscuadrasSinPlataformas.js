@@ -25,8 +25,6 @@ async function generarPdfEscuadrasSinPlataformas({ idDespiece, porcentajeDescuen
   
     const listaAtributos = agruparPorZonaYAtributos(resultado);
 
-    console.dir(listaAtributos, { depth: null });
-  
     const atributosDelPdf = listaAtributos.map((atributo) => ({
       zona: atributo.zona,
       atributos: atributo.atributos.map((at) => ({
