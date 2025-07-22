@@ -23,6 +23,8 @@ import { trabajadorSchema } from "../schema/trabajador.schema";
 import trabajadoresService from "../services/trabajadoresService";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { mockCargos, mockFiliales } from "../mocks/mockFiliales_Cargos";
+import ContratosLaborales from "../components/ContratosLaborales";
 
 export default function TrabajadorForm() {
    const navigate = useNavigate();
@@ -33,12 +35,19 @@ export default function TrabajadorForm() {
       apellidos: "",
       tipo_documento: "",
       numero_documento: "",
-      fecha_ingreso: "",
-      sueldo_base: "",
       asignacion_familiar: false,
       sistema_pension: "",
       quinta_categoria: false,
       cargo_id: "",
+      contratos_laborales: [
+         {
+            id: Math.floor(Date.now() / 1000),
+            fecha_inicio: "",
+            fecha_fin: "",
+            sueldo: "",
+            regimen: "",
+         },
+      ],
    });
 
    const [filiales, setFiliales] = useState([]);
@@ -48,43 +57,8 @@ export default function TrabajadorForm() {
 
    // Simulación de datos de filiales - en producción vendría de una API
    useEffect(() => {
-      const mockFiliales = [
-         { id: 1, nombre: "ENCOFRADOS INNOVA S.A.C." },
-         { id: 2, nombre: "ANDAMIOS ELECTRICOS INNOVA S.A.C." },
-         { id: 3, nombre: "INDEK ANDINA E.I.R.L" },
-         { id: 4, nombre: "INNOVA RENTAL MAQUINARIA SAC" },
-      ];
       setFiliales(mockFiliales);
-      const mockCargos = [
-         { id: 1, nombre: "Gerente general" },
-         { id: 2, nombre: "Gerente de administración" },
-         { id: 3, nombre: "Gerente de comercialización" },
-         { id: 4, nombre: "Jefe de Almacén" },
-         { id: 5, nombre: "Facturación" },
-         { id: 6, nombre: "Técnico Comercial" },
-         { id: 7, nombre: "Técnico Elevadores" },
-         { id: 8, nombre: "Montador de andamios" },
-         { id: 9, nombre: "Almacenero" },
-         { id: 10, nombre: "Soldador" },
-         { id: 11, nombre: "Auxiliar de oficina" },
-         { id: 12, nombre: "Jefe de OT" },
-         { id: 13, nombre: "Abogada" },
-         { id: 14, nombre: "CEO" },
-         { id: 15, nombre: "Técnico electricista" },
-         { id: 16, nombre: "Operador de elevador" },
-         { id: 17, nombre: "Jefe montadores y operadores" },
-         { id: 18, nombre: "Jefe TI" },
-         { id: 19, nombre: "Contadora / RRHH" },
-         { id: 20, nombre: "Estibador" },
-         { id: 21, nombre: "OT" },
-         { id: 22, nombre: "Contadora" },
-         { id: 23, nombre: "Marketing" },
-         { id: 24, nombre: "Programador" },
-         { id: 25, nombre: "Asistente Facturación" },
-         { id: 26, nombre: "Seguridad" },
-         { id: 27, nombre: "Motorizado" },
-         { id: 28, nombre: "Limpieza de oficina" },
-      ];
+
       setCargos(mockCargos);
    }, []);
 
@@ -118,16 +92,14 @@ export default function TrabajadorForm() {
             apellidos: formData.apellidos.trim(),
             tipo_documento: formData.tipo_documento,
             numero_documento: formData.numero_documento.trim(),
-            fecha_ingreso: formData.fecha_ingreso,
-            sueldo_base: Number.parseInt(formData.sueldo_base),
             asignacion_familiar: formData.asignacion_familiar,
             sistema_pension: formData.sistema_pension,
             quinta_categoria: formData.quinta_categoria,
-            cargo_id: Number.parseInt(formData.cargo_id), 
+            cargo_id: Number.parseInt(formData.cargo_id),
          };
 
          await trabajadoresService.crear(dataToSubmit);
-         toast.success("Trabajador creado con exito!")
+         toast.success("Trabajador creado con exito!");
          navigate("/tabla-trabajadores");
          setIsSubmitting(false);
       } catch (error) {
@@ -289,9 +261,6 @@ export default function TrabajadorForm() {
                                  <SelectItem value="CE">
                                     Carné de Extranjería
                                  </SelectItem>
-                                 <SelectItem value="PTP">
-                                    Permiso Temporal de Permanencia
-                                 </SelectItem>
                               </SelectContent>
                            </Select>
                            {errors.tipo_documento && (
@@ -326,7 +295,7 @@ export default function TrabajadorForm() {
                   </div>
 
                   {/* Información Laboral */}
-                  <div className="space-y-4">
+                  {/* <div className="space-y-4">
                      <div className="flex items-center gap-2 text-lg font-semibold">
                         <CalendarIcon className="h-5 w-5  text-[#1b274a]" />
                         Información Laboral
@@ -378,7 +347,11 @@ export default function TrabajadorForm() {
                            )}
                         </div>
                      </div>
-                  </div>
+                  </div> */}
+                  <ContratosLaborales
+                     formData={formData}
+                     setFormData={setFormData}
+                  />
 
                   {/* Beneficios y Sistema de Pensión */}
                   <div className="space-y-4">
