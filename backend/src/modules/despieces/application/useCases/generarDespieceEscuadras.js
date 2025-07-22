@@ -129,8 +129,6 @@ module.exports = async (dataParaGenerarDespiece) => {
     };
   });
 
-  console.dir(dataGenerarDespieceEscuadras, { depth: null, colors: true });
-
   const despieceGenerado = await generarDespieceEscuadras(
     dataGenerarDespieceEscuadras
   );

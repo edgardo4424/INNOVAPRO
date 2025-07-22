@@ -109,9 +109,7 @@ async function generarPdfEscuadrasSinPlataformas({ idDespiece, porcentajeDescuen
       };
     });
 
-    console.log('piezasDetalleAdicionalesEscuadrasSinPlataformaConDescuento', piezasDetalleAdicionalesEscuadrasSinPlataformaConDescuento);
   
-
   return {
      zonas: atributosDelPdf,
       piezasAdicionales: piezasDetalleAdicionalesEscuadrasSinPlataformaConDescuento,
