@@ -8,11 +8,13 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
+import facturacionService from "@/modules/facturacion/service/FacturacionService";
 import { Search } from "lucide-react";
 import { toast } from "react-toastify";
 
 const DatosDelCliente = () => {
-    const { factura, setFactura, facturaValida, metodo } = useFacturaBoleta();
+    const { factura, setFactura, facturaValida, } = useFacturaBoleta();
+
     const {
         cliente_Tipo_Doc,
         cliente_Num_Doc,
@@ -36,7 +38,18 @@ const DatosDelCliente = () => {
         try {
             // Asumo que 'obtenerMiInformacion' es una función que busca datos del cliente.
             // Es importante que esta función actualice el estado 'factura' con la información obtenida.
-            const response = await metodo.obtenerMiInformacion();
+            const {data, status, succes} = await facturacionService.metodoOpcional(
+                cliente_Tipo_Doc,
+                cliente_Num_Doc)
+                console.log("response", response);
+
+        if(status === 200 && success && cliente_Tipo_Doc == "1"){}
+
+                setFactura((prev) => ({
+                    ...prev,
+                    cliente_Razon_Social: response.nombre_completo,
+                    cliente_Direccion: response.direccion,
+                }))
             // Ejemplo de cómo podrías actualizar el estado con los datos obtenidos:
             // setFactura(prev => ({
             //     ...prev,

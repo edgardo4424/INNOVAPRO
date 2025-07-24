@@ -116,6 +116,9 @@ db.formas_pago = FormaPago;
 const {Leyenda} = require('../modules/facturacion/infrastructure/models/leyendaModel')
 db.leyendas = Leyenda;
 
+const {SunatRespuesta} = require('../modules/facturacion/infrastructure/models/sunatRespuestaModel')
+db.sunat_respuesta = SunatRespuesta
+
 // ✅ Solo se asocian los que tienen .associate()
 if (db.contactos.associate) db.contactos.associate(db);
 if (db.clientes.associate) db.clientes.associate(db);
@@ -153,6 +156,7 @@ if(db.facturas.associate) db.facturas.associate(db);
 if(db.factura_detalles.associate) db.factura_detalles.associate(db);
 if(db.formas_pago.associate) db.formas_pago.associate(db);
 if(db.leyendas.associate) db.leyendas.associate(db)
+if(db.sunat_respuesta.associate) db.leyendas.associate(db)
 
 // Sequelize
 db.sequelize = sequelize;

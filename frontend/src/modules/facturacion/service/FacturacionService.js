@@ -1,57 +1,53 @@
 import apiFactilizaConsultas from "@/shared/services/factilizaConsultas";
 import apiFactilizaFacturacion from "@/shared/services/factilizaFacturacion";
 
-
+const getRequest = async (api, endpoint) => {
+    const res = await api.get(endpoint);
+    return res.data;
+};
 
 const facturacionService = {
 
 
     // !!! FACTURACION
 
-    facturacion: async (factura) => {
+    enviarFactura: async (factura) => {
         const res = await apiFactilizaFacturacion.post("/invoice/send", factura);
         return res.data;
     },
 
     // !!! CONSULTAS
-    obtenerPersonaPorDni: async (dni) => {
-        const res = await apiFactilizaConsultas.get(`/dni/info/${dni}`);
-        return res.data;
-    },
+    obtenerPersonaPorDni: (dni) => getRequest(apiFactilizaConsultas, `/dni/info/${dni}`),
+    obtenerEmpresaPorRuc: (ruc) => getRequest(apiFactilizaConsultas, `/ruc/info/${ruc}`),
+    obtenerEstablecimientosPorRuc: (ruc) => getRequest(apiFactilizaConsultas, `/ruc/anexo/${ruc}`),
+    obtenerVehiculoPorPlaca: (placa) => getRequest(apiFactilizaConsultas, `/placa/info/${placa}`),
+    obtenerLicenciaPorDni: (dni) => getRequest(apiFactilizaConsultas, `/licencia/info/${dni}`),
+    obtenerExtranjeroPorCee: (cee) => getRequest(apiFactilizaConsultas, `/cee/info/${cee}`),
+    obtenerTipoCambioDia: (fecha) => getRequest(apiFactilizaConsultas, `/tipocambio/info/dia?fecha=${fecha}`),
+    obtenerTipoCambioMes: (mes, anio) =>
+        getRequest(apiFactilizaConsultas, `/tipocambio/info/mes?anio=${anio}&mes=${mes}`),
 
-    obtenerEmpresaPorRuc: async (ruc) => {
-        const res = await apiFactilizaConsultas.get(`/ruc/info/${ruc}`);
-        return res.data;
-    },
-
-    obtenerEstablecimientosPorRuc: async (ruc) => {
-        const res = await apiFactilizaConsultas.get(`/ruc/anexo/${ruc}`);
-        return res.data;
-    },
-
-    obtenerVehiculoPorPlaca: async (placa) => {
-        const res = await apiFactilizaConsultas.get(`/placa/info/${placa}`);
-        return res.data;
-    },
-
-    obtenerLicenciaPorDni: async (dni) => {
-        const res = await apiFactilizaConsultas.get(`/licencia/info/${dni}`);
-        return res.data;
-    },
-
-    obtenerExtranjeroPorCee: async (cee) => {
-        const res = await apiFactilizaConsultas.get(`/cee/info/${cee}`);
-        return res.data;
-    },
-
-    obtenerTipoCambioDia: async (fecha) => {
-        const res = await apiFactilizaConsultas.get(`/tipocambio/info/dia?fecha=${fecha}`);
-        return res.data;
-    },
-
-    obtenerTipoCambioMes: async (mes, anio) => {
-        const res = await apiFactilizaConsultas.get(`/tipocambio/info/mes?anio=${anio}&mes=${mes}`);
-        return res.data;
+    // ? METODO OPCIONAL
+    metodoOpcional: async function (tipoDoc, documento) {
+        switch (tipoDoc) {
+            case "6":
+                return this.obtenerEmpresaPorRuc(documento);
+            case "1":
+                return this.obtenerPersonaPorDni(documento);
+            case "placa":
+                return this.obtenerVehiculoPorPlaca(documento);
+            case "4":
+                return this.obtenerExtranjeroPorCee(documento);
+            case "licencia":
+                return this.obtenerLicenciaPorDni(documento);
+            case "fecha":
+                return this.obtenerTipoCambioDia(documento);
+            case "mes":
+                const [mes, anio] = documento.split(",");
+                return this.obtenerTipoCambioMes(mes.trim(), anio.trim());
+            default:
+                return null;
+        }
     },
 };
 

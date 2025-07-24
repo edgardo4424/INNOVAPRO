@@ -1,8 +1,11 @@
 import { useState } from "react";
 import ModalProducto from '../modal/ModalProducto';
 import TablaProductos from '../tabla/TablaProductos';
+import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
 
 const MontoyProductos = () => {
+    const { facturaValidaParaGuardar, emitirFactura } = useFacturaBoleta();
+
     const [open, setOpen] = useState(false);
 
 

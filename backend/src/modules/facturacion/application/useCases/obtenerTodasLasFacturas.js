@@ -1,7 +1,8 @@
 const Factura = require("../../domain/entities/facura");
-module.exports = async (facturaRepository) => {
+module.exports = async (facturaRepository, tipo, page, limit) => {
     // * Llamamos al repositorio para obtener todas las facturas
-    const facturas = await facturaRepository.obtenerFacturas();
+    const facturas = await facturaRepository.obtenerFacturas(tipo, page, limit);
+    // console.log("Facturas Obtendidas:", facturas);
 
     // ? si no se encuentra las facturas,
     if (facturas.length == 0)

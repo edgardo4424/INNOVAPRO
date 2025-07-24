@@ -82,6 +82,10 @@ const Factura = sequelize.define(
             allowNull: true,
         },
         estado_Documento: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        estado: {
             type: DataTypes.ENUM(
                 "BORRADOR",
                 "EMITIDA",
@@ -89,10 +93,6 @@ const Factura = sequelize.define(
                 "ANULADA",
                 "OBSERVADA"
             ),
-            allowNull: true,
-        },
-        estado: {
-            type: DataTypes.STRING,
             allowNull: true,
         },
         observaciones: {
@@ -171,6 +171,9 @@ Factura.associate = (models) => {
         foreignKey: "factura_id",
     })
     Factura.hasMany(models.leyendas, {
+        foreignKey: "factura_id",
+    })
+    Factura.hasMany(models.sunat_respuesta, {
         foreignKey: "factura_id",
     })
 }

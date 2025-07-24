@@ -395,6 +395,10 @@ export function FacturaBoletaProvider({ children }) {
             edicion: true,
             index,
         });
+        setFactura((prevFactura) => ({
+            ...prevFactura,
+            forma_pago: [],
+        }));
     };
 
     const eliminarProducto = () => {
@@ -409,70 +413,65 @@ export function FacturaBoletaProvider({ children }) {
     };
 
     const emitirFactura = async () => {
-        const { status, success, message, data } = await emitirFactura()
-
-
-    };
-
-    const emitirSunat = async () => {
-        const { validos, message } = validarPasos("ValidaCionTotal", factura);
-        if (!validos) {
-            toast.error(message || "Por favor, completa todos los datos requeridos antes de emitir.");
-            return null;
-        }
-
+        let result = { success: false, message: "Error desconocido al emitir la factura", data: null };
         try {
-            const res = await toast.promise(
-                facturacionService.facturacion(factura),
-                {
-                    pending: "🧾 Generando y enviando tu documento...",
-                    success: {
-                        render({ data }) {
-                            const { status, success, message, data: responseData } = data;
-                            if (status === 200 && success) {
-                                return `🎉 ¡Documento generado! ${message || ""}`;
-                            } else if (status === 200 && !success) {
-                                if (responseData?.error?.message) {
-                                    return `⚠️ ${responseData.error.message} (Código: ${responseData.error.code})`;
-                                }
-                                return `⚠️ ${message || "Documento generado, pero con advertencias."}`;
-                            }
-                            return `👍 Operación completada: ${message || "Verifica los detalles."}`;
-                        },
-                    },
-                    error: {
-                        render({ data }) {
-                            if (data.response?.data?.message) {
-                                return `❌ Error: ${data.response.data.message}`;
-                            }
-                            return `🚨 Fallo al facturar: ${data.message || "Error de conexión o servidor."}`;
-                        },
-                    },
+            const { status, success, message, data } = await facturacionService.enviarFactura(factura)
+        
+         
+            if (status === 200 && success) {
+                const sunat_respuest = {
+                    hash: data.hash,
+                    // cdr_zip: data.sunatResponse.cdrZip, // Descomentar si es necesario
+                    sunat_success: data.sunatResponse.success,
+                    cdr_response_id: data.sunatResponse.cdrResponse.id,
+                    cdr_response_code: data.sunatResponse.cdrResponse.code,
+                    cdr_response_description: data.sunatResponse.cdrResponse.description
+                };
+
+                const facturaCopia = { ...factura, estado: "EMITIDA", sunat_respuesta: sunat_respuest };
+                // ?Intentar registrar en base de datos
+                const dbResult = await registrarBaseDatos("EMITIDA", facturaCopia);
+
+                if (dbResult.success) {
+                    result = { success: true, message: message || "Factura emitida y registrada con éxito.", data: facturaCopia };
+                } else {
+                    result = { success: false, message: dbResult.mensaje || "Factura emitida a SUNAT, pero no se pudo registrar en la base de datos.", data: facturaCopia };
                 }
-            );
-            console.log("Respuesta completa de facturación:", res);
-            return res;
-
+            } else {
+                result = { success: false, message: message || "Error desconocido al enviar la factura.", data: null };
+            }
         } catch (error) {
-            console.error("Error inesperado durante la facturación:", error);
-            return null;
+            console.error("Error al enviar factura:", error);
+            if (error.response) {
+                result = {
+                    success: false,
+                    message: error.response.data?.message || error.response.data?.error || "Error al comunicarse con la API.",
+                    data: error.response.data
+                };
+            } else {
+                result = { success: false, message: error.message || "Ocurrió un error inesperado.", data: null };
+            }
+        } finally {
+            return result;
         }
+
     };
 
-    const registrarBaseDatos = async (tipo) => {
+    const registrarBaseDatos = async (tipo, documento = factura) => {
         try {
-            const { status, data } = await toast.promise(
-                facturaService.registrarFactura(factura),
+
+            const { status, success } = await toast.promise(
+                facturaService.registrarFactura(documento),
                 {
                     pending: "Registrando factura en la base de datos...",
-                    success: tipo ? `Factura registrada con éxito como ${tipo.toUpperCase()}` : "Factura registrada con éxito",
+                    success: "Factura registrada con éxito en la base de datos de INNOVA.",
                     error: `No se pudo registrar la factura`,
                 }
             )
-            if (status === 200) {
+            if (status === 201) {
                 Limpiar();
             }
-            return { facturaCreada, estado, mensaje };
+            return { status, success };
         } catch (error) {
             if (error.response) {
                 const { status, data } = error.response;
@@ -488,160 +487,10 @@ export function FacturaBoletaProvider({ children }) {
         setProductoActual(initialProductoActualState);
         setEdicionProducto({ edicion: false, index: null });
         setPagoActual(initialPagoActualState);
+        setTotalProducto(0);
     };
 
 
-    const buscarPersonaPorDni = async (dni) => {
-        try {
-            const { data, status, message } = await toast.promise(
-                facturacionService.obtenerPersonaPorDni(dni),
-                {
-                    pending: "Buscando Persona...",
-                    success: "Persona encontrada con éxito",
-                    error: "No se pudo encontrar la persona",
-                }
-            );
-            if (status === 200 && message === "Exito") {
-                setFactura((prev) => ({
-                    ...prev,
-                    cliente_Razon_Social: data.nombre_completo,
-                    cliente_Direccion: data.direccion_completa,
-                }));
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const buscarEmpresaPorRuc = async (ruc) => {
-        try {
-            const { data, status, message } = await toast.promise(
-                facturacionService.obtenerEmpresaPorRuc(ruc),
-                {
-                    pending: "Buscando empresa...",
-                    success: "Empresa encontrada con éxito",
-                    error: "No se pudo encontrar la empresa",
-                }
-            );
-            if (status === 200 && message === "Exito") {
-                setFactura((prev) => ({
-                    ...prev,
-                    cliente_Razon_Social: data.nombre_o_razon_social,
-                    cliente_Direccion: data.direccion_completa,
-                }));
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const buscarEstablecimientosPorRuc = async (ruc) => {
-        try {
-            const data = await facturacionService.obtenerEstablecimientosPorRuc(ruc);
-            return data;
-        } catch (error) {
-            toast.error("Error al buscar establecimientos");
-            console.error(error);
-        }
-    };
-
-    const buscarVehiculoPorPlaca = async (placa) => {
-        try {
-            const data = await facturacionService.obtenerVehiculoPorPlaca(placa);
-            return data;
-        } catch (error) {
-            toast.error("Error al buscar vehículo");
-            console.error(error);
-        }
-    };
-
-    const buscarLicenciaPorDni = async (dni) => {
-        try {
-            const data = await facturacionService.obtenerLicenciaPorDni(dni);
-            return data;
-        } catch (error) {
-            toast.error("Error al buscar licencia");
-            console.error(error);
-        }
-    };
-
-    const buscarExtranjeroPorCee = async (cee) => {
-        try {
-            const { data, status, message } = await toast.promise(
-                facturacionService.obtenerPersonaPorDni(cee), // Asumo que el servicio es el mismo que para DNI
-                {
-                    pending: "Buscando Persona Extranjera...",
-                    success: "Persona Extranjera encontrada con éxito",
-                    error: "No se pudo encontrar la persona extranjera",
-                }
-            );
-            if (status === 200 && message === "Exito") {
-                setFactura((prev) => ({
-                    ...prev,
-                    cliente_Razon_Social: `${data.nombres} ${data.apellido_paterno} ${data.apellido_materno}`,
-                    cliente_Direccion: "",
-                }));
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const buscarTipoCambioPorFecha = async (fecha) => {
-        try {
-            const data = await facturacionService.obtenerTipoCambioDia(fecha);
-            return data;
-        } catch (error) {
-            toast.error("Error al obtener tipo de cambio del día");
-            console.error(error);
-        }
-    };
-
-    const buscarTipoCambioPorMes = async (mes, anio) => {
-        try {
-            const data = await facturacionService.obtenerTipoCambioMes(mes, anio);
-            return data;
-        } catch (error) {
-            toast.error("Error al obtener tipo de cambio mensual");
-            console.error(error);
-        }
-    };
-
-    const obtenerMiInformacion = () => {
-        if (!factura.cliente_Num_Doc) return;
-
-        switch (factura.cliente_Tipo_Doc) {
-            case "6":
-                return buscarEmpresaPorRuc(factura.cliente_Num_Doc);
-            case "1":
-                return buscarPersonaPorDni(factura.cliente_Num_Doc);
-            case "placa":
-                return buscarVehiculoPorPlaca(factura.cliente_Num_Doc);
-            case "4":
-                return buscarExtranjeroPorCee(factura.cliente_Num_Doc);
-            case "licencia":
-                return buscarLicenciaPorDni(factura.cliente_Num_Doc);
-            case "fecha":
-                return buscarTipoCambioPorFecha(factura.cliente_Num_Doc);
-            case "mes":
-                const [mes, anio] = factura.cliente_Num_Doc.split(",");
-                return buscarTipoCambioPorMes(mes, anio);
-            default:
-                return null;
-        }
-    };
-
-    const metodo = {
-        buscarPersonaPorDni,
-        buscarEmpresaPorRuc,
-        buscarEstablecimientosPorRuc,
-        buscarVehiculoPorPlaca,
-        buscarLicenciaPorDni,
-        buscarExtranjeroPorCee,
-        buscarTipoCambioPorFecha,
-        buscarTipoCambioPorMes,
-        obtenerMiInformacion,
-    };
 
     return (
         <FacturaBoletaContext.Provider
@@ -665,8 +514,7 @@ export function FacturaBoletaProvider({ children }) {
                 pagoValida,
                 setPagoActual,
                 agregarPago,
-                metodo,
-                emitirSunat,
+                emitirFactura,
                 facturaValidaParaGuardar,
                 registrarBaseDatos
             }}

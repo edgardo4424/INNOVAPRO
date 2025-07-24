@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext"; // Import your context
 import { ClipboardPlus, Eye, X } from "lucide-react"; // Still using Lucide icons
+import EnviarFactura from "./EnviarFactura";
 
 export default function ModalVisualizarFactura() {
 
-    const { facturaValidaParaGuardar, emitirSunat } = useFacturaBoleta();
+    const { facturaValidaParaGuardar, emitirFactura } = useFacturaBoleta();
+    //? Modal Emmitir
+    const [open, setOpen] = useState(false);
 
     const [isOpen, setIsOpen] = useState(false); // Changed state name for clarity
 
@@ -218,15 +221,17 @@ export default function ModalVisualizarFactura() {
                         </div>
                         {/* --- End Invoice Detail --- */}
                         <div className="w-full flex justify-end pt-5">
-                            <button className={` ${facturaValidaParaGuardar ? 'cursor-pointer bg-green-600' : 'cursor-not-allowed bg-red-600/20'}  text-white py-2 px-4 rounded-md flex gap-x-2`}
+                            {/* <button className={` ${facturaValidaParaGuardar ? 'cursor-pointer bg-green-600' : 'cursor-not-allowed bg-red-600/20'}  text-white py-2 px-4 rounded-md flex gap-x-2`}
                                 disabled={!facturaValidaParaGuardar}
-                                onClick={emitirSunat}
+                                onClick={emitirFactura}
                             >
                                 <ClipboardPlus size={20} />
                                 <span>
                                     Emitir Factura
                                 </span>
-                            </button>
+                            </button> */}
+                            <EnviarFactura open={open} setOpen={setOpen} ClosePreviu={closeModal}/>
+
                         </div>
                     </div>
                 </div>

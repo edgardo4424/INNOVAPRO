@@ -21,8 +21,10 @@ module.exports = async (body, facturaRepository) => {
         sub_Total,
         monto_Imp_Venta,
         estado_Documento,
+        estado,
         manual,
         id_Base_Dato,
+        observaciones,
         usuario_id,
         detraccion_cod_bien_detraccion,
         detraccion_cod_medio_pago,
@@ -35,7 +37,8 @@ module.exports = async (body, facturaRepository) => {
         descuento_monto,
         detalle = [],
         forma_pago = [],
-        legend = []
+        legend = [],
+        sunat_respuesta = {}
     } = body;
 
     //* 2. Construir el objeto 'factura' con los datos principales
@@ -59,8 +62,10 @@ module.exports = async (body, facturaRepository) => {
         sub_Total,
         monto_Imp_Venta,
         estado_Documento,
+        estado,
         manual,
         id_Base_Dato,
+        observaciones,
         usuario_id,
         detraccion_cod_bien_detraccion,
         detraccion_cod_medio_pago,
@@ -86,14 +91,16 @@ module.exports = async (body, facturaRepository) => {
     }
 
     // todo: Validacion si ya se registro una factura con ese correlativo o serie
-    const facturaExistente = await facturaRepository.buscarExistencia(serie, correlativo);
+    const facturaExistente = await facturaRepository.buscarExistencia(serie, correlativo, estado);
     if (facturaExistente) {
         return {
             codigo: 409,
             respuesta: {
-                mensaje: "La factura ya existe en la base de datos. Correlativo: " + correlativo + " Serie: " + serie,
+                mensaje: "La factura ya existe en la base de datos. Correlativo: " + correlativo + " Serie: " + serie + " Estado: " + estado,
                 estado: false,
                 datos: null,
+                success: false,
+                status: 409
             },
         };
     }
@@ -105,6 +112,7 @@ module.exports = async (body, facturaRepository) => {
             detalle: detalle,
             formas_pagos: forma_pago,
             leyendas: legend,
+            sunat_respuesta
         });
 
         //* 5. Evaluar el resultado de la operación del repositorio
@@ -115,6 +123,8 @@ module.exports = async (body, facturaRepository) => {
                     mensaje: resultadoCreacion.message || "No se pudo crear la factura y sus componentes.",
                     estado: false,
                     datos: resultadoCreacion.data,
+                    success: false,
+                    status: 400
                 },
             };
         }
@@ -126,6 +136,8 @@ module.exports = async (body, facturaRepository) => {
                 mensaje: "Factura y sus componentes creados correctamente.",
                 estado: true,
                 facturaCreada: true,
+                success: true,
+                status: 201
             },
         };
 
@@ -138,6 +150,8 @@ module.exports = async (body, facturaRepository) => {
                 mensaje: "Ocurrió un error interno al crear la factura.",
                 estado: false,
                 datos: null,
+                success: false,
+                status: 400
             },
         };
     }

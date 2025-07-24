@@ -22,7 +22,7 @@ const FacturaBoleta = () => {
 
 
                 {/* Form content */}
-                <div className=" shadow-xl border border-gray-200 rounded-3xl  p-4  transition-all duration-300 mb-6">
+                <div className=" shadow-xl border border-gray-400  rounded-3xl  p-4  transition-all duration-300 mb-6">
                     {/* Form */}
                     {/* Datos del comprobante */}
                     <DatosDelComprobante />

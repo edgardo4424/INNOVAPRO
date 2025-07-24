@@ -1,8 +1,8 @@
 import api from "@/shared/services/api";
 
 const facturaService = {
-    obtenerTodasLasFacturas: async () => {
-        const res = await api.get(`/facturacion`);
+    obtenerTodasLasFacturas: async (query) => {
+        const res = await api.get(`/facturacion/facturas${query}`);
         return res.data;
     },
     registrarFactura: async (factura) => {

@@ -78,6 +78,8 @@ const PagoForm = ({ closeModal }) => {
             return;
         }
         const nuevoTotal = montoTotalPagos + (parseFloat(pagoActual.monto) || 0);
+        console.log("nuevoTotal", nuevoTotal);
+        console.log("montoTotalFactura", montoTotalFactura);
         if (nuevoTotal > montoTotalFactura) {
             toast.error("El total de cuotas no puede exceder el monto de la factura.", {
                 position: "top-right",

@@ -9,12 +9,14 @@ const crearFactura = require('../../application/useCases/crearFactura')
 const facturaRepository = new SequelizeFacturaRepository()
 
 const facturaController = {
-    async obtenerFacturas(_, res) {
+    async obtenerFacturas(req, res) {
         try {
-            const { codigo, respuesta } = await obtenerTodasLasFacturas(facturaRepository)
-            res.status(codigo).json(respuesta)
+            console.log("🚚 Atributos para obtener facturas:", req.query);
+            const { tipo , page = 1, limit = 10 } = req.query;
+            const { codigo, respuesta } = await obtenerTodasLasFacturas(facturaRepository, tipo, page, limit);
+            res.status(codigo).json(respuesta);
         } catch (error) {
-            res.status(500).json({ error: error.message })
+            res.status(500).json({ error: error.message });
         }
     },
     async obtenerFacturaPorId(req, res) {
