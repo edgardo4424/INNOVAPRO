@@ -1,5 +1,5 @@
 import { verificarSaltoDePagina } from "../../componentes/pagina";
-import { drawJustifiedText } from "../../../../../utils/pdf/drawJustifiedText";
+import { drawJustifiedText, renderTextoConNegrita} from "../../../../../utils/pdf/drawJustifiedText";
 
 export async function generarCuerpoEscuadras(doc, data, startY = 120) {
   let currentY = startY;
@@ -36,6 +36,8 @@ export async function generarCuerpoEscuadras(doc, data, startY = 120) {
   currentY = drawJustifiedText(doc, usoTitulo, indent + 3, currentY, 170, 5.5, 10);
   currentY += 2;
 
+  let cantidad_escuadras = data.detalles_escuadras?.cantidad;
+
   // 🧩 Zonas y escuadras
   for (const zona of data.zonas || []) {
     const tituloZona = `Zona ${zona.zona} - ${zona.nota_zona || "Sin descripción"}`;
@@ -47,7 +49,11 @@ export async function generarCuerpoEscuadras(doc, data, startY = 120) {
       const tramo = equipo.longTramo ? `${equipo.longTramo} mm` : "—";
       const plataforma = equipo.tipoPlataforma || "—";
       const anclaje = equipo.tipoAnclaje || "—";
-      const cantidad = equipo.cantidadEscuadrasTramo || "—";
+      let cantidad = equipo.cantidadEscuadrasTramo || "—";
+
+      if (cantidad = "—") {
+        cantidad = cantidad_escuadras || "—";
+      }
 
       const descripcion = `${cantidad} Uds. Escuadras de ${tipo}.00 x 2.00 para una carga de ${sobrecarga} kg/m2.`;
 
@@ -63,8 +69,27 @@ export async function generarCuerpoEscuadras(doc, data, startY = 120) {
 
   // 💰 Precio resumen final
   const dias = data.cotizacion?.tiempo_alquiler_dias === 1 ? "día" : "días";
-  const textoResumen = `Precio de alquiler total: **S/${data.cotizacion?.subtotal_con_descuento_sin_igv || "—"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "—"} ${dias} calendario.**`;
-  currentY = drawJustifiedText(doc, textoResumen, indent + 3, currentY, 170, 5.5, 10);
+  const textoResumen = `Precio total de alquiler de escuadras: **S/${data.detalles_escuadras?.precio_alquiler_soles || "—"} + IGV. por ${data.cotizacion?.tiempo_alquiler_dias || "—"} ${dias} calendario.**`;
+  currentY = drawJustifiedText(doc, textoResumen, indent + 6, currentY, 170, 5.5, 10);
+
+
+  // Si tenemos plataformas
+  if (data.detalle_plataformas?.cantidad > 0) {
+    const tiene_plataformas = [
+      `${data.detalle_plataformas?.cantidad || "(CANTIDAD INDEFINIDA DE PLATAFORMAS)"} Uds. PLATAFORMAS según modulación:  **S/ ${data.detalle_plataformas?.precio_alquiler_soles || "(PRECIO PLATAFORMAS INDEFINIDO)"} + IGV.**`
+    ];
+
+    currentY += 3;
+    for (const linea of tiene_plataformas) {
+      const palabras = linea.split(/\s+/);
+      const aproxLineas = Math.ceil(palabras.length / 11);
+      const alturaEstimada = aproxLineas * 5;
+
+      currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimada);
+      renderTextoConNegrita(doc, linea, indent + box, currentY);
+    }
+    
+  }
 
   return currentY;
 }

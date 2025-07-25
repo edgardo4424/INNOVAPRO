@@ -1,13 +1,20 @@
 import { USOS_INSTALABLES } from "../constants/usos";
 
+// Este archivo contiene la validación avanzada y condicional de campos relacionados con:
+// Colgantes
+// Pernos
+// Transporte
+// Instalación
+// Descuento máximo
+
 export default function validarPasoConfirmacion(formData) {
   const errores = {};
 
   const esColgante = formData.uso_id === 8;
 
-  // 🔹 Validación especial para Colgantes
+  // Validación especial para Colgantes
   if (esColgante) {
-    if (!formData.tarifa_colgante || isNaN(formData.tarifa_colgante)) {
+    if (!formData.detalles_colgantes.cantidad_colgantes || isNaN(formData.detalles_colgantes.cantidad_colgantes )) {
       errores.tarifa_colgante = "Debes ingresar una tarifa válida para colgantes.";
     }
 
@@ -16,10 +23,10 @@ export default function validarPasoConfirmacion(formData) {
       errores.cantidad_colgante = "La cantidad de colgantes debe ser mayor a 0.";
     }
 
-    return errores; // ✅ Nos saltamos el resto de validaciones para colgantes
+    return errores; // Nos saltamos el resto de validaciones para colgantes
   }
 
-  // 🔹 Validación PERNOS
+  // Validación PERNOS
   if (formData.tiene_pernos_disponibles && typeof formData.tiene_pernos !== "boolean") {
     errores.tiene_pernos = "Debes indicar si deseas incluir los pernos de expansión.";
   }
@@ -31,7 +38,7 @@ export default function validarPasoConfirmacion(formData) {
     }
   }
 
-  // 🔹 Validación TRANSPORTE
+  // Validación TRANSPORTE
   if (formData.tiene_transporte === undefined || formData.tiene_transporte === "") {
     errores.tiene_transporte = "Debes indicar si deseas incluir transporte.";
   }
@@ -52,7 +59,7 @@ export default function validarPasoConfirmacion(formData) {
     }
   }
 
-  // 🔹 Validación INSTALACIÓN (solo si el uso lo permite)
+  // Validación INSTALACIÓN (solo si el uso lo permite)
   if (USOS_INSTALABLES.includes(formData.uso_id)){
     if (!formData.tipo_instalacion || formData.tipo_instalacion === "") {
       errores.instalacion = "Debes indicar si deseas incluir instalación.";
@@ -70,7 +77,7 @@ export default function validarPasoConfirmacion(formData) {
     }
   }
 
-  // 🔹 Validación DESCUENTO
+  // Validación DESCUENTO
   if (formData.descuento > 50) {
     errores.descuento = "El descuento no puede superar el 50%.";
   }

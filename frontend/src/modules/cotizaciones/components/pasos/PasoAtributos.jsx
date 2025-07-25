@@ -12,7 +12,9 @@ import { useNavigate } from "react-router-dom";
 // actualiza el estado del formulario según la selección del usuario.
 
 const PasoAtributos = () => {
+  // En caso de que sea ELEVADOR o ENCOFRADOS redireccionamos a tareas con este navigate
   const navigate = useNavigate();
+
   const { formData, setFormData, errores } = useWizardContext(); // Traemos el contexto del wizard donde se maneja el estado del formulario y los errores
   const {
     zonas,
@@ -24,22 +26,29 @@ const PasoAtributos = () => {
     agregarEquipo,
     eliminarEquipo,
     setZonas
-  } = useZonasCotizacion(formData.uso_id); // Hook personalizado para manejar zonas y atributos
+  } = useZonasCotizacion(formData.uso.id); // Hook personalizado para manejar zonas y atributos
 
+  // Al cargar el componente seteamos la primera zona
   useEffect(() => {
-  if (formData.zonas?.length > 0) {
-      setZonas(formData.zonas);
+  if (formData.uso.zonas?.length > 0) {
+      setZonas(formData.uso.zonas);
     }
   }, []);
 
 
   // Actualizar zonas en el formData global cada vez que cambian
   useEffect(() => {
-    setFormData((prev) => ({ ...prev, zonas }));
+    setFormData((prev) => ({ 
+      ...prev, 
+      uso: {
+        ...prev.uso,
+        zonas
+      }
+    }));
   }, [zonas]);
 
   // Mostrar advertencia si el uso no tiene despiece automático
-  if (USOS_SIN_DESPIECE.includes(formData.uso_id)) {
+  if (USOS_SIN_DESPIECE.includes(formData.uso.id)) {
     return (
       <div className="paso-formulario">
         <h3>Paso 4: Atributos por Zona</h3>
@@ -93,7 +102,7 @@ const PasoAtributos = () => {
 
   if (loading || atributos.length === 0) return <Loader texto="Cargando atributos por zona..." />;
 
-
+  // Método para actualizar la nota en la zona
   const actualizarNotaZona = (zonaIndex, nuevaNota) => {
     setZonas((prev) => 
       prev.map((zona, index) =>
@@ -102,34 +111,37 @@ const PasoAtributos = () => {
     )
   }
 
+  // Renderizar los campos de los atributos por defecto y vacíos
   const renderCampoAtributo = (atributo, zonaIndex, equipoIndex) => {
-    const valorActual = zonas[zonaIndex].atributos_formulario[equipoIndex]?.[atributo.llave_json] || "";
+    const llaveActualAtributo = atributo.llave_json
+    const equipo = zonas[zonaIndex].atributos_formulario[equipoIndex];
+    const valorActualAtributo = equipo?.[atributo.llave_json] || "";
 
     if (atributo.tipo_dato === "select") {
       return (
         <select 
-          value={valorActual}
+          value={valorActualAtributo}
           onChange={(e) =>
-            handleChange(zonaIndex, equipoIndex, atributo.llave_json, e.target.value) // Actualiza el valor del atributo 
+            handleChange(zonaIndex, equipoIndex, llaveActualAtributo, e.target.value) // Actualiza el valor del atributo 
           }
         >
           <option value="">Seleccione...</option>
-          {atributo.valores_por_defecto.map((opt, i) => ( // Mapeamos las opciones del select
-            <option key ={i} value={opt}> 
-              {opt}
+          {atributo.valores_por_defecto.map((opcion, index) => ( // Mapeamos las opciones del select
+            <option key ={index} value={opcion}> 
+              {opcion}
             </option>
           ))}
           </select>
       )
     }
-
+    
     return ( 
       <input
         type="number"
         onWheel={(e) => e.target.blur()}
-        value={valorActual}
+        value={valorActualAtributo}
         onChange={(e) => 
-          handleChange(zonaIndex, equipoIndex, atributo.llave_json, e.target.value) // Actualiza el valor del atributo
+          handleChange(zonaIndex, equipoIndex, llaveActualAtributo, e.target.value) // Actualiza el valor del atributo
         }
         placeholder={`Ingrese ${atributo.nombre.toLowerCase()}`}
       />

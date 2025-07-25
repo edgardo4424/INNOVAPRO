@@ -33,7 +33,7 @@ export default function PasoFinal() {
     costo_distrito_transporte,
     costo_pernocte_transporte,
     tiene_instalacion,
-    tarifa_colgante,
+    detalles_colgantes,
   } = formData;
 
   // Cálculo del total base
@@ -144,7 +144,7 @@ export default function PasoFinal() {
       <div className="wizard-total">
         {formData.uso_id === 8 ? (
           <>
-            <strong>💰 Total por colgante:</strong> <span> S/ {tarifa_colgante}</span>
+            <strong>💰 Total por colgante:</strong> <span> S/ {detalles_colgantes.tarifa_colgante}</span>
           </>
         ) : (
           <>

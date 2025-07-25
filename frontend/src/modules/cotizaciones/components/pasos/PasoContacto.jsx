@@ -20,19 +20,29 @@ export default function PasoContacto() {
   const [obrasFiltradas, setObrasFiltradas] = useState([]); // Guarda las obras filtradas por el contacto seleccionado
 
   const handleSeleccionContacto = (contactoId) => { 
-    const contacto = contactos.find(c => c.id === contactoId);  // Buscamos el contacto seleccionado por su ID
+    const contacto = contactos.find(contacto => contacto.id === contactoId);  // Buscamos el contacto seleccionado por su ID
     setFormData((prev) => ({ // Actualizamos el estado del formulario con los datos del contacto seleccionado
       ...prev,
-      contacto_id: contactoId,
-      contacto_nombre: contacto?.nombre || "",
-      cliente_id: null,
-      cliente_nombre: "",
-      obra_id: null,
-      obra_nombre: "",
-      obra_direccion: "",
-      obra_ubicacion: "",
-      filial_id: null,
-      filial_nombre: ""
+      entidad: {
+        contacto: {
+          id: contactoId,
+          nombre: contacto?.nombre || "",
+        },
+        cliente: {
+          id: null,
+          razon_social: "",
+        },
+        obra: {
+          id: null,
+          nombre: "",
+          direccion: "",
+          ubicacion: "",
+        },
+        filial: {
+          id: null,
+          nombre: "",
+        }
+      },
     }));
     setClientesFiltrados(Array.isArray(contacto?.clientes_asociados) ? contacto.clientes_asociados : []); // Filtramos los clientes asociados al contacto seleccionado
     setObrasFiltradas(Array.isArray(contacto?.obras_asociadas) ? contacto.obras_asociadas : []); // Filtramos las obras asociadas al contacto seleccionado
@@ -41,17 +51,24 @@ export default function PasoContacto() {
   // En caso de que vengan datos pre cargados de la cotización: Por tarea de Oficina Técnica
   // Se cargarán los datos automáticamente gracias a el siguiente useEffect:
   useEffect(() => {
-    if (formData.contacto_id) {
-      const contacto = contactos.find(c => c.id === formData.contacto_id);
+    const contacto_cargado = formData.entidad.contacto;
+    if (contacto_cargado.id) {
+      const contacto = contactos.find(contacto => contacto.id === contacto_cargado.id);
       if (contacto) {
         setClientesFiltrados(Array.isArray(contacto.clientes_asociados) ? contacto.clientes_asociados : []);
         setObrasFiltradas(Array.isArray(contacto.obras_asociadas) ? contacto.obras_asociadas : []); 
       }
     }
-  }, [contactos, formData.contacto_id]);
+  }, [contactos, formData.entidad.contacto.id]);
 
   const handleChange = (campo, valor) => { // Función para manejar los cambios en los campos del formulario
-    setFormData((prev) => ({ ...prev, [campo]: valor })); // Actualizamos el estado del formulario con el nuevo valor del campo
+    setFormData((prev) => ({ 
+      ...prev, 
+      entidad: {
+        ...prev.entidad,
+        [campo]: valor,
+      }
+    })); // Actualizamos el estado del formulario con el nuevo valor del campo
   };
 
   if (loading) return <Loader texto="Cargando datos del paso 1..." />;
@@ -76,9 +93,9 @@ export default function PasoContacto() {
       <div className="wizard-section">
         <label>Contacto:</label>
         <Select
-          options={contactos.map(c => ({ label: `${c.nombre} — ${c.email}`, value: c.id }))} 
-          value={contactos.find(c => c.id === formData.contacto_id)
-            ? { label: `${contactos.find(c => c.id === formData.contacto_id).nombre}`, value: formData.contacto_id }
+          options={contactos.map(contacto => ({ label: `${contacto.nombre} — ${contacto.email}`, value: contacto.id }))} 
+          value={contactos.find(contacto => contacto.id === formData.entidad.contacto.id)
+            ? { label: `${contactos.find(contacto => contacto.id === formData.entidad.contacto.id).nombre}`, value: formData.entidad.contacto.id }
             : null} 
           onChange={(option) => handleSeleccionContacto(option.value)}
           placeholder="— Seleccione un contacto —"
@@ -95,14 +112,16 @@ export default function PasoContacto() {
       <div className="wizard-section">
         <label>Cliente:</label>
         <Select
-          isDisabled={!formData.contacto_id}
-          options={clientesFiltrados.map(c => ({ label: c.razon_social, value: c.id }))}
-          value={clientesFiltrados.find(c => c.id === formData.cliente_id)
-            ? { label: clientesFiltrados.find(c => c.id === formData.cliente_id).razon_social, value: formData.cliente_id }
+          isDisabled={!formData.entidad.contacto.id}
+          options={clientesFiltrados.map(cliente => ({ label: cliente.razon_social, value: cliente.id }))}
+          value={clientesFiltrados.find(cliente => cliente.id === formData.entidad.cliente.id)
+            ? { label: clientesFiltrados.find(cliente => cliente.id === formData.entidad.cliente.id).razon_social, value: formData.entidad.cliente.id }
             : null}
           onChange={(option) => {
-            handleChange("cliente_id", option.value)
-            handleChange("cliente_nombre", option.label)
+            handleChange("cliente", {
+              id: option.value,
+              razon_social: option.label,
+            })
           }}
           placeholder="— Seleccione un cliente relacionado —"
         />
@@ -112,16 +131,18 @@ export default function PasoContacto() {
       <div className="wizard-section">
         <label>Obra:</label>
         <Select
-          isDisabled={!formData.contacto_id}
+          isDisabled={!formData.entidad.contacto.id}
           options={obrasFiltradas}
           getOptionLabel={(obra) => obra.nombre}
           getOptionValue={(obra) => obra.id}
-          value={obrasFiltradas.find((o) => o.id === formData.obra_id) || null}
+          value={obrasFiltradas.find((obra) => obra.id === formData.entidad.obra.id) || null}
           onChange={(obra) => {
-            handleChange("obra_id", obra.id)
-            handleChange("obra_nombre", obra.nombre)
-            handleChange("obra_direccion", obra.direccion || "")
-            handleChange("obra_ubicacion", obra.ubicacion || "")
+            handleChange("obra", {
+              id: obra.id,
+              nombre: obra.nombre,
+              direccion: obra.direccion || "",
+              ubicacion: obra.ubicacion || "",
+            })
           }}
           placeholder="— Seleccione una obra relacionada —"
         />
@@ -131,13 +152,15 @@ export default function PasoContacto() {
       <div className="wizard-section">
         <label>Filial (Empresa Proveedora):</label>
         <Select
-          options={filiales.map(f => ({ label: f.razon_social, value: f.id }))}
-          value={filiales.find(f => f.id === formData.filial_id)
-            ? { label: filiales.find(f => f.id === formData.filial_id).razon_social, value: formData.filial_id }
+          options={filiales.map(filial => ({ label: filial.razon_social, value: filial.id }))}
+          value={filiales.find(filial => filial.id === formData.entidad.filial.id)
+            ? { label: filiales.find(filial => filial.id === formData.entidad.filial.id).razon_social, value: formData.entidad.filial.id }
             : null}
           onChange={(option) => {
-            handleChange("filial_id", option.value)
-            handleChange("filial_nombre", option.label)
+            handleChange("filial", {
+              id: option.value,
+              razon_social: option.label,
+            })
           }}
           placeholder="— Seleccione una filial —"
         />

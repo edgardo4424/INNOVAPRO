@@ -1,7 +1,8 @@
 import axios from "axios";
 
-// Esta configuración de Axios permite realizar solicitudes HTTP a la API de tu backend.
+// Esta configuración de Axios es la base de todas las llamadas HTTP a la API del backend.
 // Utiliza variables de entorno para definir la URL base y manejar el token de autenticación.
+// Es una instancia centralizada de axios que todos los servicios de la app la pueden utilizar
 
 // Detectamos si estamos en desarrollo o producción
 const API_URL =
@@ -9,41 +10,45 @@ const API_URL =
     ? import.meta.env.VITE_API_URL_PROD
     : import.meta.env.VITE_API_URL;
 
-    // Verificar si la variable está bien cargada
+// Verificamos si las variables de entorno están bien cargada
 if (!API_URL) {
-  console.error("⚠️ ERROR: No se encontró REACT_APP_API_URL_PROD o REACT_APP_API_URL en el entorno.");
+  console.error("⚠️ ERROR: No se encontró VITE_API_URL_PROD o VITE_API_URL en el entorno.");
 }
 
-// Crear una instancia de Axios con la configuración base
-// Establecemos un timeout largo para evitar problemas de conexión en operaciones pesadas
+// Creamos una instancia de Axios con la configuración base
+// Establecemos un timeout largo para evitar problemas de conexión en operaciones pesadas como la generación de PDF
 const api = axios.create({
   baseURL: API_URL,
   timeout: 2400000,
   headers: { "Content-Type": "application/json" },
 });
 
-// Agregar token automáticamente a cada solicitud
+// Ejecutamos un interceptor antes de cada solicitud HTTP [api.get(...), api.post(...), etc.]
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-},
-(error) => Promise.reject(error)
+    // La idea es pasar el token guardado del usuario en el header para todas las solicitudes
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
 );
 
-// Manejo de errores 401 (sesión expirada)
+// Ejecutamos un interceptor de todas las respuestas del backend para verificar si no a vencido la sesión
 api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 417) {
+  (response) => response, // Si existe una respuesta es que no hay problema y la devolvemos tal como llega
+  (error) => { // Pero si hay un error, verificamos si es un 417
+    if (error.response?.status === 417) { // Si efectivamente es, significa que se venció la sesión
       console.warn("⚠️ Sesión expirada. Redirigiendo al login...");
+      // Limipamos y redirigimos
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      window.location.href = "/";
+      const LOGIN_URL = process.env.NODE_ENV === "production" ? "/#/login" : "/login";
+      window.location.href = LOGIN_URL; // Redirigir al login
     }
-    return Promise.reject(error);
+    return Promise.reject(error); // Si no, simplemente devolvemos el error para que lo maneje el que hizo la llamada
   }
 );
 

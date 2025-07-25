@@ -147,15 +147,13 @@ export function useRegistrarCotizacion(pasosLength) {
       }
 
       if (formDataAjustado.uso_id === 8 && formDataAjustado.detalles_colgantes) {
-        const zonas = formDataAjustado.zonas || [];
         cotizacionExtras.detalles_colgantes = {
-          cantidad_colgantes: parseInt(zonas?.[0]?.atributos_formulario?.[0]?.cantidad || "1"),
-          precio_u_alquiler_soles: formDataAjustado.tipo_cotizacion === "Alquiler"
-            ? formDataAjustado.tarifa_colgantes || 0
-            : undefined,
-          precio_u_venta_soles: formDataAjustado.tipo_cotizacion === "Venta"
-            ? formDataAjustado.tarifa_colgantes || 0
-            : undefined,
+          cantidad_colgantes: formDataAjustado.detalles_colgantes.cantidad_colgantes,
+          precio_u_alquiler_soles: formDataAjustado.detalles_colgantes.precio_u_alquiler_soles || 0, 
+          precio_u_venta_nuevo: formDataAjustado.detalles_colgantes.precio_u_venta_nuevo || 0,
+          precui_u_venta_usado: formDataAjustado.detalles_colgantes.precio_u_venta_usado || 0,
+          longitud_plataformas: formDataAjustado.detalles_colgantes.longitud_plataformas,
+          tipo_soporte: formDataAjustado.detalles_colgantes.tipo_soporte,
         };
       }
 

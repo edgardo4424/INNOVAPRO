@@ -16,13 +16,26 @@ export default function PasoUso() {
     setFormData
   })
 
+  // Manejamos los cambios respectivos a los datos de la cotización en este paso
+  const handleChangeCotizacion = (campo, valor) => { // Función para manejar los cambios en los campos del formulario
+    setFormData((prev) => ({ 
+      ...prev, 
+      cotizacion: {
+        ...prev.cotizacion,
+        [campo]: valor,
+      }
+    })); // Actualizamos el estado del formulario con el nuevo valor del campo
+  };
+
   useDespieceManual({
-    tipo_cotizacion: formData.tipo_cotizacion,
+    tipo_cotizacion: formData.cotizacion.tipo,
     onResumeChange: ({ despiece, resumen }) => {
       setFormData(prev => ({
         ...prev,
-        despiece,
-        resumenDespiece: resumen,
+        uso: {
+          despiece,
+          resumenDespiece: resumen,
+        },
       }))
     }
   })
@@ -36,13 +49,13 @@ export default function PasoUso() {
       <div className="wizard-section">
         <label>Uso / Tipo de equipo:</label>
         <select
-          value={formData.uso_id || ""} 
+          value={formData.uso.id || ""} 
           onChange={handleSeleccionUso}
         >
           <option value="">Seleccione un uso...</option>
-          {usos.map((u) => (
-            <option key={u.id} value={u.id}>
-              {u.descripcion}
+          {usos.map((uso) => (
+            <option key={uso.id} value={uso.id}>
+              {uso.descripcion}
             </option>
           ))}
         </select>
@@ -54,25 +67,27 @@ export default function PasoUso() {
       <div className="wizard-section">
         <label>Tipo de cotización:</label>
         <select
-          value={formData.tipo_cotizacion || ""}
-          onChange={(e) => handleChange("tipo_cotizacion", e.target.value)}
+          value={formData.cotizacion.tipo || ""}
+          onChange={(e) => handleChangeCotizacion("tipo", e.target.value)}
         >
           <option value="">Seleccione...</option>
           <option value="Alquiler">Alquiler</option>
           <option value="Venta">Venta</option>
         </select>
-        {errores?.tipo_cotizacion && <p className="error-text">⚠ {errores.tipo_cotizacion}</p>}
+        <div style={{ marginTop: "1rem" }}>
+          {errores?.tipo_cotizacion && <p className="error-text">⚠ {errores.tipo_cotizacion}</p>}
+        </div>
       </div>
         
-      {formData.tipo_cotizacion === "Alquiler" && (
+      {formData.cotizacion.tipo === "Alquiler" && (
         <div className="wizard-section">
           <label>Duración del alquiler (días):</label>
           <input
             type="number"
             onWheel={(e) => e.target.blur()}
             min="1"
-            value={formData.duracion_alquiler || ""}
-            onChange={(e) => handleChange("duracion_alquiler", parseInt(e.target.value))}
+            value={formData.cotizacion.duracion_alquiler || ""}
+            onChange={(e) => handleChangeCotizacion("duracion_alquiler", parseInt(e.target.value))}
           />
           <div style={{ marginTop: "1rem" }}>
             {errores?.duracion_alquiler && <p className="error-text">⚠ {errores.duracion_alquiler}</p>}
