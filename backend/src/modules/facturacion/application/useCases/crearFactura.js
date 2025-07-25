@@ -78,6 +78,8 @@ module.exports = async (body, facturaRepository) => {
         descuento_monto,
     };
 
+
+    console.log("************************CUERPO DE LA FACTURA", facturaData);
     //* 3. Validación de entrada: Ahora verificamos un campo clave de la factura principal
     if (!tipo_Doc || !serie || !correlativo) {
         return {
@@ -91,18 +93,21 @@ module.exports = async (body, facturaRepository) => {
     }
 
     // todo: Validacion si ya se registro una factura con ese correlativo o serie
-    const facturaExistente = await facturaRepository.buscarExistencia(serie, correlativo, estado);
-    if (facturaExistente) {
-        return {
-            codigo: 409,
-            respuesta: {
-                mensaje: "La factura ya existe en la base de datos. Correlativo: " + correlativo + " Serie: " + serie + " Estado: " + estado,
-                estado: false,
-                datos: null,
-                success: false,
-                status: 409
-            },
-        };
+    if(estado){
+        const facturaExistente = await facturaRepository.buscarExistencia(serie, correlativo, estado);
+        console.log("🚚 facturaExistente:", facturaExistente);
+        if (facturaExistente) {
+            return {
+                codigo: 409,
+                respuesta: {
+                    mensaje: "La factura ya existe en la base de datos. Correlativo: " + correlativo + " Serie: " + serie + " Estado: " + estado,
+                    estado: false,
+                    datos: null,
+                    success: false,
+                    status: 409
+                },
+            };
+        }
     }
 
     try {

@@ -75,8 +75,8 @@ const FacturasAnuladas = lazy(() =>
    import("../modules/facturacion/pages/FacturasAnuladas")
 );
 
-const FacturasEmitidas = lazy(() =>
-   import("../modules/facturacion/pages/FacturasEmitidas")
+const ListaDocumentos = lazy(() =>
+   import("../modules/facturacion/list-documentos/ListaDocumentos")
 );
 
 const FacturaBorradores = lazy(() =>
@@ -231,8 +231,8 @@ export default function AppRoutes() {
 
                      <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
                         <Route
-                           path="facturacion/listar"
-                           element={<FacturasEmitidas />}
+                           path="facturacion/facturas"
+                           element={<ListaDocumentos />}
                         />
                      </Route>
 

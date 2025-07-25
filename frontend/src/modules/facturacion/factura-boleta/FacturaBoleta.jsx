@@ -9,7 +9,7 @@ const FacturaBoleta = () => {
     const { registrarBaseDatos } = useFacturaBoleta();
 
     const handleRegister = () => {
-        registrarBaseDatos("Borrador");
+        registrarBaseDatos();
     };
     return (
         <div className="min-h-screen w-full flex flex-col items-center px-4 md:px-8 py-6">

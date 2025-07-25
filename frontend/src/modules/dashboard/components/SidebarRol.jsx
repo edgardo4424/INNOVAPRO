@@ -116,8 +116,8 @@ const modulesByRole = {
          group: "Facturación",
          items: [
             { name: "Generar Documentos", path: "/facturacion/generar" },
-            { name: "Listar Documentos", path: "/facturacion/listar" },
-            { name: "Lista Borradores", path: "/facturacion/borradores" },
+            { name: "Listar Documentos", path: "/facturacion/facturas?page=1&limit=40" },
+            { name: "Lista Borradores", path: "/facturacion/borradores?page=1&limit=40" },
             { name: "Facturas Anuladas", path: "/facturacion/anuladas" },
          ],
       },

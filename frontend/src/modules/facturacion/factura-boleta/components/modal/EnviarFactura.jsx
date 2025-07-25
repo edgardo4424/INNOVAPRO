@@ -44,6 +44,7 @@ const EnviarFactura = ({ open, setOpen, ClosePreviu }) => {
     const [isSuccess, setIsSuccess] = useState(false);
     const [isError, setIsError] = useState(false);
     const [displayMessage, setDisplayMessage] = useState("");
+    const [detailedMessage, setDetailedMessage] = useState("");
 
     //* Resetear estados cuando el modal se abre/cierra
     useEffect(() => {
@@ -71,6 +72,7 @@ const EnviarFactura = ({ open, setOpen, ClosePreviu }) => {
             } else {
                 setIsError(true);
                 setDisplayMessage(result.message || "Error al emitir la factura.");
+                setDetailedMessage(result.detailed_message || "");
             }
         } catch (err) {
             console.error("Error inesperado en handleEmitirFacturaClick del componente:", err);
@@ -151,6 +153,9 @@ const EnviarFactura = ({ open, setOpen, ClosePreviu }) => {
                         <>
                             <AlertCircle className="text-red-500 mb-4" size={120} />
                             <h2 className="text-lg font-semibold text-red-700 text-center">{displayMessage}</h2>
+                            {displayMessage !== "" && (
+                                <p className="text-sm text-red-600">{displayMessage}</p>
+                            )}
                             <Button onClick={closeModal} className="mt-4 bg-red-500 hover:bg-red-600">Cerrar</Button>
                         </>
                     )}

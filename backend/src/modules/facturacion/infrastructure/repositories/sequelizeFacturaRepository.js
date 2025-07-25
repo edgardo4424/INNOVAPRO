@@ -11,11 +11,15 @@ class SequelizeFacturaRepository {
         return value != null ? parseFloat(value) : 0;
     }
 
-    async obtenerFacturas(tipo = "TODAS", page = 1, limit = 10) {
+    async obtenerFacturas(tipo = "TODAS", page = 1, limit = 10, num_doc, tip_doc, fec_des, fec_ast) {
         console.log("🚚 Atributos para obtener facturas desde el repository:", {
             tipo,
             page,
             limit,
+            num_doc,
+            tip_doc,
+            fec_des,
+            fec_ast,
         });
 
         // ? CONVERTIMOS A NÚMEROS los parámetros de paginación
@@ -30,42 +34,49 @@ class SequelizeFacturaRepository {
         let include = [];
 
         if (tipo.toUpperCase() === "BORRADOR") {
-            where = { estado: "BORRADOR" };
+            where.estado = "BORRADOR";
         } else if (tipo.toUpperCase() === "TODAS") {
-            where = { estado: { [Op.not]: "BORRADOR" } };
+            where.estado = { [Op.not]: "BORRADOR" };
             include.push({
                 model: SunatRespuesta,
-                attributes: [
-                    "hash",
-                    // "cdr_zip",
-                    // "cdr_response_description",
-                    "cdr_response_id",
-                ],
+                attributes: ["hash", "cdr_response_id"],
             });
         } else {
-            // ? APLICA FILTRO POR TIPO
-            where = { estado: tipo, estado: { [Op.not]: "BORRADOR" } };
-
-            // Forma correcta:
             where = {
-                estado: tipo,
+                [Op.and]: [
+                    { estado: tipo },
+                    { estado: { [Op.not]: "BORRADOR" } },
+                ],
             };
-
-            where = {
-                [Op.and]: [{ estado: tipo }, { estado: { [Op.not]: "BORRADOR" } }],
-            };
-
             include.push({
                 model: SunatRespuesta,
-                attributes: [
-                    "hash",
-                    // "cdr_zip",
-                    // "cdr_response_description",
-                    "cdr_response_id",
-                ],
+                attributes: ["hash", "cdr_response_id"],
             });
         }
 
+        // ? Aplica filtros
+        // 🔍 Filtros adicionales opcionales
+        if (num_doc) {
+            where.cliente_num_doc = { [Op.like]: `%${num_doc}%` };
+        }
+
+        if (tip_doc) {
+            where.tipo_doc = tip_doc;
+        }
+
+        if (fec_des && fec_ast) {
+            where.fecha_emision = {
+                [Op.between]: [fec_des, fec_ast],
+            };
+        } else if (fec_des) {
+            where.fecha_emision = {
+                [Op.gte]: fec_des,
+            };
+        } else if (fec_ast) {
+            where.fecha_emision = {
+                [Op.lte]: fec_ast,
+            };
+        }
         const facturas = await Factura.findAll({
             attributes: [
                 "id",
@@ -170,13 +181,17 @@ class SequelizeFacturaRepository {
         return facturaTransformada;
     }
 
-    async buscarExistencia(serie, correlativo, estado = "BORRADOR") {
+    async buscarExistencia(serie, correlativo, estado) {
+        console.log("🚚 Atributos para buscar existencia:", serie, correlativo, estado);
+        const where = {
+            serie: serie,
+            correlativo: correlativo,
+        };
+        if (estado) {
+            where.estado = estado;
+        }
         const factura = await Factura.findOne({
-            where: {
-                serie: serie,
-                correlativo: correlativo,
-                estado: estado,
-            },
+            where
         });
         return factura;
     }
@@ -253,19 +268,21 @@ class SequelizeFacturaRepository {
             createdInvoice.legendas = createdLeyendas;
 
             // *5. Crear Respuesta Sunat
-            const sunat = await SunatRespuesta.create(
-                {
-                    factura_id: factura.id,
-                    ...data.sunat_respuesta,
-                },
-                { transaction }
-            );
-            if (!sunat) {
-                throw new Error("No se pudo crear la respuesta sunat.");
-            }
-            createdInvoice.sunat_respuesta = sunat;
-            // console.log("FACTURA RESPUESTA SUNAT DESDE SEQUELIZE", sunat);
+            if (factura.estado === 'EMITIDA') {
 
+                const sunat = await SunatRespuesta.create(
+                    {
+                        factura_id: factura.id,
+                        ...data.sunat_respuesta,
+                    },
+                    { transaction }
+                );
+                if (!sunat) {
+                    throw new Error("No se pudo crear la respuesta sunat.");
+                }
+                createdInvoice.sunat_respuesta = sunat;
+                // console.log("FACTURA RESPUESTA SUNAT DESDE SEQUELIZE", sunat);
+            }
             //* Si todas las operaciones fueron exitosas, confirma la transacción.
             await transaction.commit();
 

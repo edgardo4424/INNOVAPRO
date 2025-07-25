@@ -38,7 +38,7 @@ const DatosDelCliente = () => {
         try {
             // Asumo que 'obtenerMiInformacion' es una función que busca datos del cliente.
             // Es importante que esta función actualice el estado 'factura' con la información obtenida.
-            const {data, status, succes} = await facturacionService.metodoOpcional(
+            const {data, status, success} = await facturacionService.metodoOpcional(
                 cliente_Tipo_Doc,
                 cliente_Num_Doc)
                 console.log("response", response);
@@ -50,7 +50,6 @@ const DatosDelCliente = () => {
                     cliente_Razon_Social: response.nombre_completo,
                     cliente_Direccion: response.direccion,
                 }))
-            // Ejemplo de cómo podrías actualizar el estado con los datos obtenidos:
             // setFactura(prev => ({
             //     ...prev,
             //     cliente_Razon_Social: response.razonSocial,

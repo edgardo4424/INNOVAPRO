@@ -416,8 +416,8 @@ export function FacturaBoletaProvider({ children }) {
         let result = { success: false, message: "Error desconocido al emitir la factura", data: null };
         try {
             const { status, success, message, data } = await facturacionService.enviarFactura(factura)
-        
-         
+
+
             if (status === 200 && success) {
                 const sunat_respuest = {
                     hash: data.hash,
@@ -430,7 +430,9 @@ export function FacturaBoletaProvider({ children }) {
 
                 const facturaCopia = { ...factura, estado: "EMITIDA", sunat_respuesta: sunat_respuest };
                 // ?Intentar registrar en base de datos
-                const dbResult = await registrarBaseDatos("EMITIDA", facturaCopia);
+                console.log("*************************FACTURA EMITIDA*************************");
+                console.log(facturaCopia);
+                const dbResult = await registrarBaseDatos(facturaCopia);
 
                 if (dbResult.success) {
                     result = { success: true, message: message || "Factura emitida y registrada con éxito.", data: facturaCopia };
@@ -438,7 +440,8 @@ export function FacturaBoletaProvider({ children }) {
                     result = { success: false, message: dbResult.mensaje || "Factura emitida a SUNAT, pero no se pudo registrar en la base de datos.", data: facturaCopia };
                 }
             } else {
-                result = { success: false, message: message || "Error desconocido al enviar la factura.", data: null };
+                console.error("*****MEGA ERROR ALV: ", status, success, message, data, "*****",  );
+                result = { success: false, message: message, detailed_message : data.error.message || "Error desconocido al enviar la factura.", data: null };
             }
         } catch (error) {
             console.error("Error al enviar factura:", error);
@@ -457,9 +460,19 @@ export function FacturaBoletaProvider({ children }) {
 
     };
 
-    const registrarBaseDatos = async (tipo, documento = factura) => {
+    const registrarBaseDatos = async (documento = factura) => {
         try {
-
+            if (!documento) {
+                return { success: false, mensaje: "No se pudo registrar la factura" }
+            }
+            if (documento.estado !== "EMITIDA") {
+                const esValido = await validarPaso("validarBorrador")
+                if (!esValido) {
+                    return toast.error("Para crear un borrador, por favor complete los datos del comprobante y del cliente.")
+                }
+            }
+            console.log("*************************REGISTRANDO EN BASE DE DATOS*************************");
+            console.log(documento);
             const { status, success } = await toast.promise(
                 facturaService.registrarFactura(documento),
                 {

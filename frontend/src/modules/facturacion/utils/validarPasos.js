@@ -191,4 +191,26 @@ export function validarPasos(pasoActual, Factura) {
         };
     }
 
+    if (pasoActual === "validarBorrador") {
+        // Pass Factura to sub-validations
+        const { validos: validosComprobante, message: msgComprobante } = validarPasos("DatosDelComprobante", Factura);
+        if (!validosComprobante) return { errores: null, validos: false, message: msgComprobante };
+
+        const { validos: validosCliente, message: msgCliente } = validarPasos("DatosDelCliente", Factura);
+        if (!validosCliente) return { errores: null, validos: false, message: msgCliente };
+
+        // const { validos: validosProductos, message: msgProductos } = validarPasos("DatosDelProducto", Factura);
+        // if (!validosProductos) return { errores: null, validos: false, message: msgProductos };
+
+        // const { validos: validosFormaDePago, message: msgFormaDePago } = validarPasos("FormaDePago", Factura);
+        // if (!validosFormaDePago) return { errores: null, validos: false, message: msgFormaDePago };
+
+        // If all sub-validations pass
+        return {
+            errores: null,
+            validos: true,
+            message: "🎉 ¡Factura lista para emitir!"
+        };
+    }
+
 }

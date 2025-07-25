@@ -12,8 +12,8 @@ const facturaController = {
     async obtenerFacturas(req, res) {
         try {
             console.log("🚚 Atributos para obtener facturas:", req.query);
-            const { tipo , page = 1, limit = 10 } = req.query;
-            const { codigo, respuesta } = await obtenerTodasLasFacturas(facturaRepository, tipo, page, limit);
+            // const { tipo, page = 1, limit = 10, num_doc, tip_doc, fec_des, fec_ast } = req.query;
+            const { codigo, respuesta } = await obtenerTodasLasFacturas(facturaRepository, req.query);
             res.status(codigo).json(respuesta);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -23,7 +23,7 @@ const facturaController = {
         try {
             const id = req.params.id
             console.log(id);
-            const { codigo, respuesta } = await obtenerFacturaPorId(id,facturaRepository)
+            const { codigo, respuesta } = await obtenerFacturaPorId(id, facturaRepository)
             res.status(codigo).json(respuesta)
         } catch (error) {
             res.status(500).json({ error: error.message })
