@@ -1,10 +1,17 @@
 import { useState, useEffect } from "react";
 
-export default function useDespieceManual({ tipoCotizacion, formData, onResumenChange }) {
-  const [despieceManual, setDespieceManual] = useState([]);
+// Hook personalizado que maneja la lógica para agregar/eliminar piezas a un despiece.
 
-  useEffect(() => {
+export default function useDespieceManual({ tipoCotizacion, formData, onResumenChange }) {
+
+  // Almacenamos las piezas seleccionadas por el usuario
+  const [despieceManual, setDespieceManual] = useState([]); 
+
+  // Actualizamos automáticamente cada vez que cambia el despieceManual
+  // Calculamos el resumen y formateamos el despiece
+  useEffect(() => { 
     if (typeof onResumenChange === "function") {
+
       const resumen = calcularResumen(despieceManual);
       const nuevoDespiece = formatearDespiece(despieceManual);
 
@@ -12,11 +19,20 @@ export default function useDespieceManual({ tipoCotizacion, formData, onResumenC
     }
   }, [despieceManual]);
 
-  const agregarPieza = (pieza, cantidad, precioManual) => {
-    const yaExiste = despieceManual.find(p => p.id === pieza.id);
-    if (yaExiste) return false;
+  // Método para agregar una pieza nueva al despiece
+  // Recibe tres parámetros: la pieza, la cantidad de piezas y el precio unitario de cada pieza
 
+  const agregarPieza = (pieza, cantidad, precioManual) => {
+
+    // Verificamos si la pieza ya existe en el despiece manual
+    const yaExiste = despieceManual.find(p => p.id === pieza.id); 
+
+    // Si ya existe, no la agregamos de nuevo
+    if (yaExiste) return false; 
+
+    // Calculamos el peso total de la pieza en base a la cantidad
     const pesoTotal = parseFloat(pieza.peso_kg) * cantidad;
+
 
     const esAlquiler = tipoCotizacion === "Alquiler";
 
@@ -30,7 +46,9 @@ export default function useDespieceManual({ tipoCotizacion, formData, onResumenC
       esAdicional: true,
     };
 
-    // Usamos manual si se proporcionó, sino el de base
+
+    // Dependiendo del tipo de cotización elegimos como calcular el precio
+    // Usamos el precio manual si se proporcionó, sino el de base
     if (esAlquiler) {
       const precioManualAlquiler = parseFloat(precioManual || pieza.precio_alquiler_soles);
       precioUnitario = precioManualAlquiler;
@@ -41,7 +59,8 @@ export default function useDespieceManual({ tipoCotizacion, formData, onResumenC
       nueva.precio_alquiler_soles = precioUnitario;
       nueva.precio_manual_alquiler = precioManual ? parseFloat(precioManual) : null;
 
-    } else {
+    } else { // En caso sea Venta
+      // Si es venta, usamos el precio de venta manual o el de base
       const precioManualVenta = parseFloat(precioManual || pieza.precio_venta_soles);
       precioUnitario = precioManualVenta;
       subtotal = precioUnitario * cantidad;
@@ -51,26 +70,37 @@ export default function useDespieceManual({ tipoCotizacion, formData, onResumenC
       nueva.precio_venta_soles = precioUnitario;
       nueva.precio_manual_venta = precioManual ? parseFloat(precioManual) : null;
     }
-
+    
+    // Guardamos la pieza en el despiece manual
     setDespieceManual(prev => [...prev, nueva]);
-    return true;
+
+    return true; // Retornamos true para indicar que se agregó correctamente
 
   };
 
+  // Método para eliminar una pieza del despiece manual
+  // Recibe el ID de la pieza a eliminar
   const eliminarPieza = (piezaId) => {
-    const nuevaLista = despieceManual.filter(p => p.id !== piezaId); 
-    setDespieceManual(nuevaLista); // Acá vamos a ir guardando las piezas adicionales que nosotros ingresamos
 
-    const despieceFiltrado = formData.despiece?.filter(p => p.id !== piezaId);
-    const resumen = calcularResumen(despieceFiltrado); //Acá filtramos el despiece para eliminar cualquier pieza con ese id
+    // Filtramos el despiece manual para sacar la pieza con el ID proporcionado
+    const nuevaLista = despieceManual.filter(p => p.id !== piezaId); 
+
+    // Actualizamos el estado de piezas manuales con la nueva lista sin la pieza eliminada
+    setDespieceManual(nuevaLista);
+
+    const despieceFiltrado = formData.uso.despiece?.filter(p => p.id !== piezaId);
+
+    //Acá filtramos el despiece para eliminar cualquier pieza con ese id
+    // Calculamos el resumen con el despiece filtrado
+    const resumen = calcularResumen(despieceFiltrado); 
 
     onResumenChange({
         nuevoDespiece: nuevaLista,
         resumen,
     });
-    };
+  };
 
-
+  // Método para calcular el resumen del despiece manual
   const calcularResumen = (piezas) => {
     const total_piezas = piezas.reduce((acc, p) => acc + p.cantidad, 0);
     const peso_total_kg = piezas.reduce((acc, p) => acc + p.peso_kg_total, 0);
@@ -88,27 +118,30 @@ export default function useDespieceManual({ tipoCotizacion, formData, onResumenC
     };
   };
 
+  // Formateamos las piezas con la estructura exacta 
+  // que el backend necesita para la tabla despieces_detalle
   const formatearDespiece = (piezas) => {
-  return piezas.map(p => {
+    return piezas.map(p => {
         return {
-        pieza_id: p.id,
-        item: p.item,
-        descripcion: p.descripcion,
-        total: p.cantidad,
-        peso_u_kg: parseFloat(p.peso_kg).toFixed(2),
-        peso_kg: p.peso_kg_total,
-        precio_u_venta_dolares: parseFloat(p.precio_venta_dolares).toFixed(2),
-        precio_venta_dolares: (parseFloat(p.precio_venta_dolares) * p.cantidad).toFixed(2),
-        precio_u_venta_soles: parseFloat(p.precio_venta_soles).toFixed(2),
-        precio_venta_soles: (parseFloat(p.precio_venta_soles) * p.cantidad).toFixed(2),
-        precio_u_alquiler_soles: parseFloat(p.precio_alquiler_soles).toFixed(2),
-        precio_alquiler_soles: (parseFloat(p.precio_alquiler_soles) * p.cantidad).toFixed(2),
-        stock_actual: p.stock_actual || 0,
+          pieza_id: p.id,
+          item: p.item,
+          descripcion: p.descripcion,
+          total: p.cantidad,
+          peso_u_kg: parseFloat(p.peso_kg).toFixed(2),
+          peso_kg: p.peso_kg_total,
+          precio_u_venta_dolares: parseFloat(p.precio_venta_dolares).toFixed(2),
+          precio_venta_dolares: (parseFloat(p.precio_venta_dolares) * p.cantidad).toFixed(2),
+          precio_u_venta_soles: parseFloat(p.precio_venta_soles).toFixed(2),
+          precio_venta_soles: (parseFloat(p.precio_venta_soles) * p.cantidad).toFixed(2),
+          precio_u_alquiler_soles: parseFloat(p.precio_alquiler_soles).toFixed(2),
+          precio_alquiler_soles: (parseFloat(p.precio_alquiler_soles) * p.cantidad).toFixed(2),
+          stock_actual: p.stock_actual || 0,
         };
     });
-    };
+  };
 
-
+  // Retornamos los métodos y el estado necesario para el despiece manual
+  // para que puedan ser usados en los componentes que lo necesiten
   return {
     despieceManual,
     agregarPieza,

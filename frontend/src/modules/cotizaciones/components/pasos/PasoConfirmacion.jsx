@@ -14,7 +14,7 @@ import BloqueDescuento from "./paso-confirmacion/BloqueDescuento";
 import BloqueEscaleraAcceso from "./paso-confirmacion/BloqueEscaleraAcceso";
 import BloqueEscaleraAccesoOT from "./paso-confirmacion/BloqueEscaleraAccesoOT";
 import BloqueColgantes from "./paso-confirmacion/BloqueColgantes";
-import DespieceAdicional from "./paso-confirmacion/DespieceAdicional"
+import DespieceAdicional from "./paso-confirmacion/DespieceAdicional";
 import Loader from "../../../../shared/components/Loader";
 
 // Este componente representa el quinto paso del Wizard. Muestra el resumen del despiece generado automáticamente.
@@ -34,7 +34,7 @@ export default function PasoConfirmacion() {
     formData.uso.id &&
     formData.uso.zonas?.length &&
     (
-      (Array.isArray(formData.uso.despiece) && formData.uso.despiece.length > 0) ||
+      (Array.isArray(formData.uso?.despiece) && formData.uso?.despiece.length > 0) ||
       formData.uso.id === 8 // Si es caso andamios colgantes, no requiere despiece
     ) &&
     (
@@ -70,8 +70,11 @@ export default function PasoConfirmacion() {
         <BloqueColgantes formData={formData} setFormData={setFormData} />
       )}
 
-      {/* La lógica del renderizado de este bloque se encuentra dentro del mismo */}
-      <BloquePuntales formData={formData} setFormData={setFormData} />
+      {/* La lógica del renderizado de este bloque se encuentra dentro del mismo 
+        Menos cuando el uso sea colgantes. En este caso lo evitamos directamente*/}
+      {formData.uso.id !== 8 && (
+        <BloquePuntales formData={formData} setFormData={setFormData} />   
+      )}
 
       {formData.uso.id === 7 && ( // Si es caso plataforma de descarga mostrar este bloque
         <BloquePlataformaDescarga formData={formData} setFormData={setFormData} />
@@ -85,7 +88,7 @@ export default function PasoConfirmacion() {
         Si es escalera de acceso en alquiler generado por el comercial con CP0,
         renderizamos este bloque
       */}
-      {formData.uso.id === 3 && formData.cotizacion.tipo_cotizacion === "Alquiler" && !formData.cotizacion.id && (
+      {formData.uso.id === 3 && formData.cotizacion.tipo === "Alquiler" && !formData.cotizacion.id && (
         <BloqueEscaleraAcceso formData={formData} setFormData={setFormData} />
       )}
 
@@ -147,10 +150,9 @@ export default function PasoConfirmacion() {
       )}
 
       {/*En caso de que la cotización sea Escalera de Acceso en Venta para que apliquen descuento*/}
-      {formData.uso.id === 3 && formData.cotizacion.tipo_cotizacion === "Venta" && (
+      {formData.uso.id === 3 && formData.cotizacion.tipo === "Venta" && (
         <BloqueDescuento formData={formData} setFormData={setFormData} errores={errores} />
       )}
-      {console.log("FormData en Paso Confirmación viniendo de OT: ", formData)}
 
     </div>
   );

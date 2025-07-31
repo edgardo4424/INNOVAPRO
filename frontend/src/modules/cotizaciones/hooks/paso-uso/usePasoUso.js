@@ -34,7 +34,7 @@ export function usePasoUso({ formData, setFormData }) {
   const handleSeleccionUso = (equipo) => {
     const id = parseInt(equipo.target.value);
     const uso = usos.find(uso => uso.id === id);
-    console.log("ID:", id, "Del uso:", uso);
+    
     handleChange("uso", {
       id: uso?.id || null,
       nombre: uso?.descripcion || "",

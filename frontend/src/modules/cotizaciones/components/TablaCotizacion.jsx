@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-
 import {
    Tooltip,
    TooltipTrigger,
@@ -14,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { AgGridReact } from "ag-grid-react";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 ModuleRegistry.registerModules([AllCommunityModule]);
+
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import SolicitarCondicionesModal from "./SolicitarCondicionesModal";
 import CondicionesModal from "./CondicionesModal";
@@ -42,11 +42,20 @@ export default function TablaCotizacion({
    onSolicitarCondicionesAlquiler,
    user,
 }) {
-   console.log("Usuario en auth context:", user);
    const [text, setText] = useState("");
    const [cotizaciones, setCotizaciones] = useState([]);
+
+   // Cuando cambia la data, aplanamos la estructura para AG grid
    useEffect(() => {
-      setCotizaciones(data);
+      const flattened = data.map((item) => ({
+         ...item,
+         despiece_cp: item.despiece?.cp ?? "-",
+         cliente_razon_social: item.cliente?.razon_social ?? "-",
+         obra_nombre: item.obra?.nombre ?? "-",
+         uso_descripcion: item.uso?.descripcion ?? "-",
+         estado_nombre: item.estados_cotizacion?.nombre ?? "-",
+      }))
+      setCotizaciones(flattened);
    }, [data]);
 
    // Estado para las columnas visibles
@@ -60,6 +69,8 @@ export default function TablaCotizacion({
       estado: true,
       acciones: true,
    });
+
+   // Opciones para el selector de columnas 
    const columnOptions = [
       { id: "codigo_documento", label: "Cod. Doc" },
       { id: "cp", label: "CP" },
@@ -71,69 +82,77 @@ export default function TablaCotizacion({
       { id: "acciones", label: "Acciones" },
    ];
 
-   // Definición de columnas
-
+   // Definición de columnas de AG grid
    const columns = useMemo(
       () =>
          [
             visibleColumns.codigo_documento && {
                field: "codigo_documento",
                headerName: "Cod. Doc",
-               cellRendererFramework: (params) => (
-                  <TruncatedText text={params.codigo_documento} />
+               width: 195,
+               cellRenderer: (params) => (
+                  <TruncatedText text={params.value} />
                ),
             },
             visibleColumns.cp && {
-               field: "despiece.cp",
+               field: "despiece_cp",
                headerName: "CP",
-               cellRendererFramework: (params) => (
-                  <TruncatedText text={params.despiece?.cp} />
+               width: 50,
+               cellRenderer: (params) => (
+                  <TruncatedText text={params.value} />
                ),
                sortable: true,
             },
             visibleColumns.cliente && {
-               field: "cliente.razon_social",
+               field: "cliente_razon_social",
                headerName: "Cliente",
-               cellRendererFramework: (params) => (
-                  <TruncatedText text={params.cliente?.razon_social} />
+               width: 250,
+               cellRenderer: (params) => (
+                  <TruncatedText text={params.value} />
                ),
             },
 
             visibleColumns.obra && {
-               field: "obra.nombre",
+               field: "obra_nombre",
                headerName: "Obra",
-               cellRendererFramework: (params) => (
-                  <TruncatedText text={params.obra?.nombre} />
+               width: 190,
+               cellRenderer: (params) => (
+                  <TruncatedText text={params.value} />
                ),
                sortable: true,
             },
             visibleColumns.uso && {
-               field: "uso.descripcion",
+               field: "uso_descripcion",
                headerName: "Uso",
-               cellRendererFramework: (params) => (
-                  <TruncatedText text={params.uso?.descripcion} />
+               width: 250,
+               cellRenderer: (params) => (
+                  <TruncatedText text={params.value} />
                ),
                sortable: true,
             },
             visibleColumns.tipo_cotizacion && {
                field: "tipo_cotizacion",
                headerName: "Tipo",
+               width: 85,
                sortable: true,
             },
             visibleColumns.estado && {
-               field: "estados_cotizacion.nombre",
+               field: "estado_nombre",
                headerName: "Estado",
+               width: 190,
                sortable: true,
             },
             {
-               headerName: "Accioness",
+               headerName: "Acciones",
                sortable: false,
+               width: 150,
                cellRenderer: (params) => {
                   const row = params.data;
 
                   return (
                      <div className="flex gap-1 justify-start">
-                        {row.estados_cotizacion.nombre === "Por Aprobar" && (
+                        {/* Descarga y previsualización de PDF */}
+                        {row.estado_nombre === "Por Aprobar" && (
                            <>
                               <Tooltip>
                                  <TooltipTrigger asChild>
@@ -167,8 +186,10 @@ export default function TablaCotizacion({
                               </Tooltip>
                            </>
                         )}
+
+                        {/* Solicitar condiciones de alquiler para el mismo usuario */}
                         {row.tipo_cotizacion === "Alquiler" && 
-                        row.estados_cotizacion.nombre === "Por Aprobar" && 
+                        row.estado_nombre === "Por Aprobar" && 
                         row.usuario.id === user.id &&
                         (
                            <SolicitarCondicionesModal
@@ -188,19 +209,29 @@ export default function TablaCotizacion({
                            </SolicitarCondicionesModal>
                         )}
 
-                        {row.estados_cotizacion.nombre === "Validar Condiciones" &&
+                        {/* Validar condiciones, si corresponde */}
+                        {row.estado_nombre === "Validar Condiciones" &&
                          row.usuario.id === user.id && (
                            <CondicionesModal 
                               cotizacionId={row.id} 
                               onActualizarCotizaciones={async () => {
                                  const res = await obtenerTodos();
-                                 setCotizaciones(res || []);
+                                 setCotizaciones(
+                                    res.map((item) => ({
+                                       ...item,
+                                       despiece_cp: item.despiece?.cp ?? "—",
+                                       cliente_razon_social: item.cliente?.razon_social ?? "—",
+                                       obra_nombre: item.obra?.nombre ?? "—",
+                                       uso_descripcion: item.uso?.descripcion ?? "—",
+                                       estado_nombre: item.estados_cotizacion?.nombre ?? "—",
+                                    }))
+                                 )
                               }}
                            />
                         )}
 
-                        {console.log(row)}
-                        {row.estados_cotizacion.nombre ===
+                        {/* Continuar el Wizard si ya hay despiece generado por OT */}
+                        {row.estado_nombre ===
                            "Despiece generado" && (
                            <Button
                               variant="outline"
@@ -215,44 +246,61 @@ export default function TablaCotizacion({
                },
             },
          ].filter(Boolean),
-      [visibleColumns]
+      [visibleColumns, user.id]
    );
 
+   // filtro de búsqueda por texto (codigo, cliente, obra)
    useEffect(() => {
       if (!text) {
-         setCotizaciones(data);
+         setCotizaciones(
+            data.map((item) => ({
+               ...item,
+               despiece_cp: item.despiece?.cp ?? "—",
+               cliente_razon_social: item.cliente?.razon_social ?? "—",
+               obra_nombre: item.obra?.nombre ?? "—",
+               uso_descripcion: item.uso?.descripcion ?? "—",
+               estado_nombre: item.estados_cotizacion?.nombre ?? "—",
+            }))
+         );
       } else {
          const lowerText = text.toLowerCase();
-
          const filtro = data.filter((item) => {
-            const codigo = (item.codigo_documento ?? "")
-               .toString()
-               .toLowerCase();
-            const cliente = (item.cliente.razon_social ?? "")
-               .toString()
-               .toLowerCase();
-            const obra = (item.obra.nombre ?? "").toString().toLowerCase();
+            const codigo = (item.codigo_documento ?? "").toLowerCase();
+            const cliente = (item.cliente.razon_social ?? "").toLowerCase();
+            const obra = (item.obra.nombre ?? "").toLowerCase();
+            const uso = (item.uso?.descripcion ?? "").toLowerCase();
+            const estado = (item.estados_cotizacion?.nombre ?? "").toLowerCase();
 
             // Devuelve true si coincide en alguno de los campos
             return (
                codigo.includes(lowerText) ||
                cliente.includes(lowerText) ||
-               obra.includes(lowerText)
+               obra.includes(lowerText) ||
+               uso.includes(lowerText) ||
+               estado.includes(lowerText)
             );
-         });
+         }).map((item) => ({
+            ...item,
+            despiece_cp: item.despiece?.cp ?? "—",
+            cliente_razon_social: item.cliente?.razon_social ?? "—",
+            obra_nombre: item.obra?.nombre ?? "—",
+            uso_descripcion: item.uso?.descripcion ?? "—",
+            estado_nombre: item.estados_cotizacion?.nombre ?? "—",
+         }))
 
          setCotizaciones(filtro);
       }
-   }, [text]);
+   }, [text, data]);
 
    return (
       <div className="w-full px-4 max-w-7xl">
+         {/* Filtro y selector de columnas */}
          <article className="flex flex-col md:flex-row justify-between mt-6">
             <section className="relative flex-1 w-full md:max-w-80 ">
                <Input
                   value={text}
                   onChange={(e) => setText(e.target.value)}
-                  placeholder="Filtra por código, cliente o obra"
+                  placeholder="Filtra por código, cliente, obra, uso, o estado"
                   className="w-full"
                />
             </section>
@@ -272,7 +320,6 @@ export default function TablaCotizacion({
             overlayNoRowsTemplate="<span>No hay registros para mostrar</span>"
             pagination={true}
             paginationPageSize={20}
-            loadingOverlayComponentParams={{ loadingMessage: "Cargando..." }}
             domLayout="autoHeight"
             rowHeight={50}
             headerHeight={50}

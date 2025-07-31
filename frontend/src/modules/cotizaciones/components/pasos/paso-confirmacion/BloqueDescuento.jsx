@@ -1,42 +1,49 @@
 // Este componente le permite al comercial aplicar un descuento sobre todo el despiece.
 
 export default function BloqueDescuento({ formData, setFormData, errores }) {
+  // Calculamos el subtotal dependiendo el tipo de cotización para mostrarle al usuario
   const subtotal = parseFloat(
-    formData.tipo_cotizacion === "Alquiler"
-      ? formData.resumenDespiece?.precio_subtotal_alquiler_soles
-      : formData.resumenDespiece?.precio_subtotal_venta_soles
+    formData.cotizacion.tipo === "Alquiler"
+      ? formData.uso.resumenDespiece?.precio_subtotal_alquiler_soles
+      : formData.uso.resumenDespiece?.precio_subtotal_venta_soles
   ) || 0;
 
-  const totalConDescuento = (subtotal * (1 - (formData.descuento || 0) / 100)).toFixed(2);
+  // Guardamos el total con descuento
+  const totalConDescuento = (subtotal * (1 - (formData.cotizacion.descuento || 0) / 100)).toFixed(2);
 
+  // Manejamos el descuento cada vez que cambia el valor
   const handleDescuento = (valor) => {
-    const num = parseFloat(valor) || 0;
-    const requiereAprobacion = num > 10;
+    let num = parseFloat(valor) || 0;
+    if (num < 0 ) num = 0;
+    const requiereAprobacion = num > 50;
     setFormData((prev) => ({
       ...prev,
-      descuento: num,
-      requiereAprobacion,
+      cotizacion: {
+        ...prev.cotizacion,
+        descuento: num,
+        requiereAprobacion,
+      }
     }));
   };
 
   return (
     <div className="bloque-descuento">
-      <label>🎯 ¿Desea aplicar un descuento?</label>
+      <label>🎯 Si desea aplicar un descuento, aplique su porcentaje</label>
       <input
         type="number"
         onWheel={(e) => e.target.blur()}
         min="0"
         max="100"
-        value={formData.descuento || ""}
+        value={formData.cotizacion.descuento || ""}
         onChange={(e) => handleDescuento(e.target.value)}
-        placeholder="Ej: 5"
+        placeholder="Ej: 5%"
       />
     
       <div style={{ fontSize: "13px", marginTop: "1rem", color: "#666" }}>
           {errores?.descuento && <p className="error-text">{errores.descuento}</p>}    
       </div>
 
-      {formData.requiereAprobacion && (
+      {formData.cotizacion.requiereAprobacion && (
         <p className="warning-text">
           ⚠️ Recuerde informar a Gerencia sobre este descuento.
         </p>

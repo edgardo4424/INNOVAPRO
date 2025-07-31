@@ -33,6 +33,7 @@ export default function PasoUso() {
       setFormData(prev => ({
         ...prev,
         uso: {
+          ...prev.uso,
           despiece,
           resumenDespiece: resumen,
         },

@@ -2,20 +2,29 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+// Este es el componente dedicado a los andamios colgantes.
+// Primero, presenta una ficha informativa con los datos técnicos: tipo de servicio, altura del edificio, sistema de soporte y cantidad.
+// Luego, guía al usuario para que defina: Cuánto cuesta cada colgante. Cuántos metros de plataformas se instalarán. Y qué tipo de soporte se empleará en obra.
+// A medida que se escriben estos valores, el sistema calcula el subtotal parcial (precio × cantidad) y lo actualiza en pantalla, para dar feedback en tiempo real.
+
 export default function BloqueColgantes({ formData, setFormData }) {
-  const zonas = formData.zonas || [];
+  
+  // Como solo vamos a definir una zona con unos solos atributos, los almacenamos:
+  const zonas = formData.uso.zonas || [];
   const atributos = zonas?.[0]?.atributos_formulario?.[0] || {};
-  const detalles = formData.detalles_colgantes || {};
+  
+  // Almacenamos los detalles que defina el comercial
+  const detalles = formData.uso.detalles_colgantes || {};
+
+  // Guardamos la cantidad de colgantes
   const cantidad = parseInt(atributos.cantidad || detalles.cantidad_colgantes || 1);
   
   const [precioUnitario, setPrecioUnitario] = useState("");
   const [longitud, setLongitud] = useState("");
-  const [sistemaSoporte, setSistemaSoporte] = useState(
-    detalles.tipo_soporte || atributos.sistemaSoporte || ""
-  );
+  const sistemaSoporte = atributos.sistemaSoporte || ""
 
 
-  // Cargar valores iniciales cuando estén disponibles (y solo una vez)
+  // Cargamos valores iniciales que vienen del backend, cuando estén disponibles (y solo una vez)
   useEffect(() => {
     if (detalles && detalles.precio_u_alquiler_soles && precioUnitario === "") {
       setPrecioUnitario(detalles.precio_u_alquiler_soles);
@@ -23,28 +32,28 @@ export default function BloqueColgantes({ formData, setFormData }) {
     if (detalles && detalles.longitud_plataformas && longitud === "") {
       setLongitud(detalles.longitud_plataformas);
     }
-    if (detalles && detalles.tipo_soporte && sistemaSoporte === "") {
-      setSistemaSoporte(atributos.sistemaSoporte);
-    }
   }, [detalles]);
 
-  // Calcular total parcial
+  // Calcular cuanto costarían los colgantes con el precio ingresado
   const totalParcial = (parseFloat(precioUnitario || 0) * cantidad).toFixed(2);
 
-  // Actualizar formData en el padre
+  // Cada vez que el comercial cambia algo, actualizamos el formData
   useEffect(() => {
     setFormData((prev) => ({
       ...prev,
-      detalles_colgantes: {
-        ...prev.detalles_colgantes,
+      uso: {
+        ...prev.uso,
+        detalles_colgantes: {
+        ...prev.uso.detalles_colgantes,
         cantidad_colgantes: cantidad,
         precio_u_alquiler_soles: parseFloat(precioUnitario || 0),
         longitud_plataformas: parseFloat(longitud || 0),
         tipo_soporte: sistemaSoporte,
         tarifa_colgante: parseFloat(precioUnitario || 0),
+      },
       }
     }));
-  }, [precioUnitario, longitud, sistemaSoporte, cantidad]);
+  }, [precioUnitario, longitud, cantidad]);
 
   return (
     <div className="wizard-section">
@@ -93,17 +102,6 @@ export default function BloqueColgantes({ formData, setFormData }) {
           <p className="text-sm text-muted-foreground mt-1">
             Este valor será considerado para el cálculo técnico.
           </p>
-        </div>
-
-        <div className="md:col-span-2">
-          <Label htmlFor="tipo_soporte">🧱 Tipo de Soporte</Label>
-          <Input
-            id="tipo_soporte"
-            type="text"
-            value={sistemaSoporte}
-            onChange={(e) => setSistemaSoporte(e.target.value)}
-            placeholder="Ej: Convencional, Especial"
-          />
         </div>
       </div>
     </div>

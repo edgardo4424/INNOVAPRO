@@ -14,8 +14,6 @@ import { useAuth } from "@/context/AuthContext";
 export function useGestionCotizaciones() {
   const { user } = useAuth();
   const [cotizaciones, setCotizaciones] = useState([]);
-  console.log('cotizaciones en el hook',cotizaciones);
-  
 
   // Este estado controla si el modal de confirmación está abierto y qué cotización se va a descargar.
   // `abierto` indica si el modal está visible, y `cotizacionId` es el ID de la cotización seleccionada para descargar el PDF.

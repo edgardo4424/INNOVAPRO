@@ -1,11 +1,11 @@
 import { useState } from "react";
 
 export default function BloquePuntales({ formData, setFormData }) {
-  const tipo = formData.tipo_cotizacion; // Alquiler o Venta
-  const dias = formData.duracion_alquiler || 30;
+  const tipo = formData.cotizacion.tipo; // Alquiler o Venta
+  const dias = formData.cotizacion.duracion_alquiler || 30;
   const formatear = (n) => isNaN(n) ? "—" : n.toFixed(2);
   
-  const puntales = formData.despiece.filter(p =>
+  const puntales = formData.uso.despiece.filter(p =>
     p.descripcion?.toUpperCase().includes("PUNTAL")
   );
 
@@ -15,6 +15,7 @@ export default function BloquePuntales({ formData, setFormData }) {
   const initialPrecios = {};
   for (const p of puntales) {
     let base;
+    console.log("Tipo de cotizacion en bloque puntales:", tipo)
     if (tipo === "Alquiler") {
       base = p.precio_diario_manual ?? p.precio_u_alquiler_soles / 30;
     } else {
@@ -52,8 +53,9 @@ export default function BloquePuntales({ formData, setFormData }) {
     const valor = parseFloat(precioStr);
     if (isNaN(valor)) return;
 
-    const despieceActualizado = formData.despiece.map(p => {
+    const despieceActualizado = formData.uso.despiece.map(p => {
       if (p.pieza_id === pieza.pieza_id) {     
+        console.log("Tipo dentro del handleBlur:", tipo)
         if (tipo === "Alquiler") {
           const subtotal = parseFloat((valor * dias * p.total).toFixed(2));
           return {
@@ -75,13 +77,17 @@ export default function BloquePuntales({ formData, setFormData }) {
       return p;
     });
 
+    console.log("Despiece actualizado: ", despieceActualizado)
     const nuevoResumen = calcularResumen(despieceActualizado);
 
     setFormData(prev => ({
       ...prev,
-      despiece: despieceActualizado,
-      resumenDespiece: nuevoResumen,
-      despiece_editado_manualmente: true // Para evitar que el useEffect del useGenerarDespiece nos borre la actualización
+      uso: {
+        ...prev.uso,
+        despiece: despieceActualizado,
+        resumenDespiece: nuevoResumen,
+        despiece_editado_manualmente: true // Para evitar que el useEffect del useGenerarDespiece nos borre la actualización
+      },
     }));
   };
 

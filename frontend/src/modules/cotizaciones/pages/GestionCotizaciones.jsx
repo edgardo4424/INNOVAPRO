@@ -29,8 +29,6 @@ export default function GestionCotizaciones() {
    const continuarCotizacion = (idCotizacion) => {
       navigate(`/cotizaciones/wizard/${idCotizacion}`);
    }
-
-   console.log('cotizaciones en gstion',cotizaciones);
    
    return (
       <div className="min-h-full flex-1  flex flex-col items-center">
