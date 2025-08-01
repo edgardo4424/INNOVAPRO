@@ -4,40 +4,13 @@ import {
     AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
+import { useGuiaTransporte } from "@/context/Factura/GuiaTransporteContext";
 import { AlertCircle, CheckCircle, ClipboardPlus, LoaderCircle, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
-/*
- * Componente EnviarFactura
- * 
- * Este componente representa un modal para gestionar el proceso de envío de una factura.
- * 
- * Props:
- * - open: Un booleano que indica si el modal está abierto o cerrado.
- * - setOpen: Una función para actualizar el estado de apertura del modal.
- * - ClosePreviu: Una función para cerrar la previsualización de la factura.
- * 
- * Contexto:
- * Utiliza useFacturaBoleta del contexto FacturaBoletaContext para acceder a las funciones y estados relacionados con la factura.
- * - facturaValidaParaGuardar: Verifica si la factura cumple con los requisitos necesarios para ser guardada.
- * - emitirFactura: Función que maneja la lógica para emitir la factura.
- * - factura: Datos de la factura que se está procesando.
- * 
- * Estados:
- * - isLoading: Indica si el proceso de emisión de la factura está en curso.
- * - isSuccess: Indica si la factura fue emitida exitosamente.
- * - isError: Indica si hubo un error durante la emisión de la factura.
- * - displayMessage: Mensaje que se muestra al usuario, dependiendo del resultado de la emisión.
- * 
- * Funcionalidades:
- * Este componente maneja la interacción del usuario al intentar emitir una factura. Muestra mensajes de éxito o error según sea el caso,
- * y utiliza iconos visuales para mejorar la experiencia del usuario.
- */
+const ModalEnviarGuia = ({ open, setOpen, ClosePreviu }) => {
+    const { EmitirGuia } = useGuiaTransporte();
 
-
-const EnviarFactura = ({ open, setOpen, ClosePreviu }) => {
-    const { facturaValidaParaGuardar, emitirFactura, factura } = useFacturaBoleta();
 
     //* Estados para controlar el modal de emisión
     const [isLoading, setIsLoading] = useState(false);
@@ -56,32 +29,33 @@ const EnviarFactura = ({ open, setOpen, ClosePreviu }) => {
         }
     }, [open]);
 
-    // ?Esta función se llama al hacer clic en el botón "Emitir Factura"
-    const handleEmitirFacturaClick = async () => {
+    // ?Esta función se llama al hacer clic en el botón "Emitir Guia"
+    const handleEmitirGuiaClick = async () => {
         setIsLoading(true); //* Inicia el loading en el modal
         setIsError(false);
         setIsSuccess(false);
         setDisplayMessage("Emitiendo documento...");
 
         try {
-            const result = await emitirFactura();
+            const result = await EmitirGuia();
 
             if (result.success) {
                 setIsSuccess(true);
-                setDisplayMessage(result.message || "Factura emitida con éxito.");
+                setDisplayMessage(result.message || "Guia emitida con éxito.");
             } else {
                 setIsError(true);
-                setDisplayMessage(result.message || "Error al emitir la factura.");
+                setDisplayMessage(result.response.data.message || "Error al emitir la guia.");
                 setDetailedMessage(result.detailed_message || "");
             }
         } catch (err) {
-            console.error("Error inesperado en handleEmitirFacturaClick del componente:", err);
+            console.error("Error inesperado en handleEmitirGuiaClick del componente:", err);
             setIsError(true);
             setDisplayMessage("Ocurrió un error inesperado.");
         } finally {
             setIsLoading(false); // ? Detener el loading 
         }
     };
+
 
     const closeModal = () => {
         setOpen(false);
@@ -97,8 +71,8 @@ const EnviarFactura = ({ open, setOpen, ClosePreviu }) => {
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
                 <Button
-                    className={` ${facturaValidaParaGuardar ? 'cursor-pointer bg-green-600' : 'cursor-not-allowed bg-red-600/80'} text-white py-2 px-4 rounded-md flex gap-x-2`}
-                    disabled={!facturaValidaParaGuardar}
+                // className={` ${facturaValidaParaGuardar ? 'cursor-pointer bg-green-600' : 'cursor-not-allowed bg-red-600/80'} text-white py-2 px-4 rounded-md flex gap-x-2`}
+                // disabled={!facturaValidaParaGuardar}
                 >
                     <ClipboardPlus />
                     <span className="hidden md:block">
@@ -120,10 +94,10 @@ const EnviarFactura = ({ open, setOpen, ClosePreviu }) => {
                     {!isLoading && !isSuccess && !isError && (
                         <>
                             <h2 className="text-lg font-semibold text-gray-700 mb-4">
-                                ¿Estás seguro de emitir esta factura?
+                                ¿Estás seguro de emitir esta Guia?
                             </h2>
                             <Button
-                                onClick={handleEmitirFacturaClick}
+                                onClick={handleEmitirGuiaClick}
                                 className="bg-blue-500 hover:bg-blue-600 text-white cursor-pointer"
                             >
                                 Sí, emitir
@@ -160,9 +134,11 @@ const EnviarFactura = ({ open, setOpen, ClosePreviu }) => {
                         </>
                     )}
                 </div>
+
+
             </AlertDialogContent>
         </AlertDialog>
     );
 };
 
-export default EnviarFactura;
+export default ModalEnviarGuia;

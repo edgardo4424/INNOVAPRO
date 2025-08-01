@@ -36,26 +36,41 @@ const DatosDelCliente = () => {
         }
 
         try {
-            // Asumo que 'obtenerMiInformacion' es una función que busca datos del cliente.
-            // Es importante que esta función actualice el estado 'factura' con la información obtenida.
-            const {data, status, success} = await facturacionService.metodoOpcional(
+            const promise = facturacionService.metodoOpcional(
                 cliente_Tipo_Doc,
-                cliente_Num_Doc)
-                console.log("response", response);
+                cliente_Num_Doc
+            );
+            toast.promise(
+                promise,
+                {
+                    pending: "Buscando información del cliente",
+                    success: "Información encontrada",
+                    error: "Ocurrió un error al buscar la información del cliente",
+                }
+            );
+            const { data, status, success } = await promise;
+            console.log("data", data);
 
-        if(status === 200 && success && cliente_Tipo_Doc == "1"){}
+            if (status === 200 && success) {
+                let razonSocial = "";
+                let direccion = "";
+
+                if (cliente_Tipo_Doc === "1") {
+                    razonSocial = data.nombre_completo;
+                    direccion = data.direccion_completa;
+                } else if (cliente_Tipo_Doc === "6") {
+                    razonSocial = data.nombre_o_razon_social;
+                    direccion = data.direccion;
+                } else if (cliente_Tipo_Doc === "4") {
+                    razonSocial = `${data.nombres} ${data.apellido_paterno} ${data.apellido_materno}`;
+                }
 
                 setFactura((prev) => ({
                     ...prev,
-                    cliente_Razon_Social: response.nombre_completo,
-                    cliente_Direccion: response.direccion,
-                }))
-            // setFactura(prev => ({
-            //     ...prev,
-            //     cliente_Razon_Social: response.razonSocial,
-            //     cliente_Direccion: response.direccion,
-            // }));
-            // toast.success("Información del cliente encontrada.");
+                    cliente_Razon_Social: razonSocial,
+                    cliente_Direccion: direccion,
+                }));
+            }
         } catch (error) {
             console.error("Error al buscar:", error);
             toast.error("Ocurrió un error al buscar la información del cliente.");

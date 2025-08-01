@@ -1,3 +1,4 @@
+import { FacturaValidarEstados, PagoValidarEstados, ProductoValidarEstados, valorIncialPago, ValorInicialFactura, valorInicialProducto } from "@/modules/facturacion/factura-boleta/utils/valoresInicial";
 import facturacionService from "@/modules/facturacion/service/FacturacionService";
 import facturaService from "@/modules/facturacion/service/FacturaService";
 import numeroALeyenda from "@/modules/facturacion/utils/numeroALeyenda";
@@ -12,110 +13,25 @@ export function FacturaBoletaProvider({ children }) {
 
     const [correlativos, setCorrelativos] = useState("000001");
 
-    const initialFacturaState = {
-        tipo_Operacion: "",
-        tipo_Doc: "01",
-        serie: "F001",
-        correlativo: correlativos,
-        tipo_Moneda: "PEN",
-        fecha_Emision: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
-        empresa_Ruc: "20607086215",
-        cliente_Tipo_Doc: "",
-        cliente_Num_Doc: "",
-        cliente_Razon_Social: "",
-        cliente_Direccion: "",
-        monto_Oper_Gravadas: 0,
-        monto_Igv: 0,
-        total_Impuestos: 0,
-        valor_Venta: 0,
-        sub_Total: 0,
-        monto_Imp_Venta: 0,
-        monto_Oper_Exoneradas: 0,
-        estado_Documento: "0",
-        manual: false,
-        id_Base_Dato: "15265",
-        observaciones: "", //? nuevo campo solo para bd
-        usuario_id: 1, //* cambiar a el usuario logeado
-        detalle: [],
-        forma_pago: [],
-        legend: [
-            {
-                legend_Code: "1000",
-                legend_Value: "",
-            },
-        ],
-    };
+    const [factura, setFactura] = useState(ValorInicialFactura);
 
-    const [factura, setFactura] = useState(initialFacturaState);
+    const [facturaValida, setFacturaValida] = useState(FacturaValidarEstados);
 
-    const [facturaValida, setFacturaValida] = useState({
-        tipo_Operacion: false,
-        tipo_Doc: false,
-        serie: false,
-        correlativo: false,
-        tipo_Moneda: false,
-        fecha_Emision: false,
-        empresa_Ruc: false,
-        cliente_Tipo_Doc: false,
-        cliente_Num_Doc: false,
-        cliente_Razon_Social: false,
-        cliente_Direccion: false,
-    });
+    const [productoActual, setProductoActual] = useState(valorInicialProducto);
 
-    const initialProductoActualState = {
-        unidad: "",
-        cantidad: null,
-        cod_Producto: "",
-        descripcion: "",
-        monto_Valor_Unitario: null,
-        monto_Base_Igv: 0,
-        porcentaje_Igv: 18.0,
-        igv: 0,
-        tip_Afe_Igv: "",
-        total_Impuestos: 0,
-        monto_Precio_Unitario: 0,
-        monto_Valor_Venta: 0,
-        factor_Icbper: 0,
-    };
-
-    const [productoActual, setProductoActual] = useState(initialProductoActualState);
     const [edicionProducto, setEdicionProducto] = useState({
         edicion: false,
         index: null,
     });
 
-    const [productoValida, setProductoValida] = useState({
-        unidad: false,
-        cantidad: false,
-        cod_Producto: false,
-        descripcion: false,
-        monto_Valor_Unitario: false,
-        monto_Base_Igv: false,
-        porcentaje_Igv: false,
-        igv: false,
-        tip_Afe_Igv: false,
-        total_Impuestos: false,
-        monto_Precio_Unitario: false,
-        monto_Valor_Venta: false,
-        factor_Icbper: false,
-    });
+    const [productoValida, setProductoValida] = useState(ProductoValidarEstados);
 
     const [TotalProducto, setTotalProducto] = useState(0);
 
-    const initialPagoActualState = {
-        tipo: "",
-        monto: 0,
-        cuota: 0,
-        fecha_Pago: "",
-    };
-    const [pagoActual, setPagoActual] = useState(initialPagoActualState);
 
-    const [pagoValida, setPagoValida] = useState({
-        tipo: false,
-        monto: false,
-        cuota: false,
-        fecha_Pago: false,
-    });
+    const [pagoActual, setPagoActual] = useState(valorIncialPago);
+
+    const [pagoValida, setPagoValida] = useState(PagoValidarEstados);
 
 
     const [facturaValidaParaGuardar, setFacturaValidaParaGuardar] = useState(false);
@@ -172,6 +88,7 @@ export function FacturaBoletaProvider({ children }) {
         }
     };
 
+    // TODO LOS USEEFFECT DE LOS FORMULARIOS DE LOS MODALES ------- INICIO
     useEffect(() => {
         let newSerie = "";
         let newCorrelativo = "";
@@ -302,6 +219,8 @@ export function FacturaBoletaProvider({ children }) {
         setFacturaValidaParaGuardar(validos);
     }, [factura]);
 
+    // TODO LOS USEEFFECT DE LOS FORMULARIOS DE LOS MODALES ------- FINAL
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         let validatedValue = value;
@@ -359,7 +278,7 @@ export function FacturaBoletaProvider({ children }) {
                 monto: parseFloat(pagoActual.monto),
             }],
         }));
-        setPagoActual(initialPagoActualState);
+        setPagoActual(valorIncialPago);
     };
 
     const agregarProducto = () => {
@@ -383,7 +302,7 @@ export function FacturaBoletaProvider({ children }) {
             };
         });
 
-        setProductoActual(initialProductoActualState);
+        setProductoActual(valorInicialProducto);
         setEdicionProducto({ edicion: false, index: null });
     };
 
@@ -440,8 +359,8 @@ export function FacturaBoletaProvider({ children }) {
                     result = { success: false, message: dbResult.mensaje || "Factura emitida a SUNAT, pero no se pudo registrar en la base de datos.", data: facturaCopia };
                 }
             } else {
-                console.error("*****MEGA ERROR ALV: ", status, success, message, data, "*****",  );
-                result = { success: false, message: message, detailed_message : data.error.message || "Error desconocido al enviar la factura.", data: null };
+                console.error("*****MEGA ERROR ALV: ", status, success, message, data, "*****",);
+                result = { success: false, message: message, detailed_message: data.error.message || "Error desconocido al enviar la factura.", data: null };
             }
         } catch (error) {
             console.error("Error al enviar factura:", error);
@@ -496,10 +415,10 @@ export function FacturaBoletaProvider({ children }) {
     };
 
     const Limpiar = () => {
-        setFactura(initialFacturaState);
-        setProductoActual(initialProductoActualState);
+        setFactura(ValorInicialFactura);
+        setProductoActual(valorInicialProducto);
         setEdicionProducto({ edicion: false, index: null });
-        setPagoActual(initialPagoActualState);
+        setPagoActual(valorIncialPago);
         setTotalProducto(0);
     };
 

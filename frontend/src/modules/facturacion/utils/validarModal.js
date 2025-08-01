@@ -1,4 +1,4 @@
-export function validarModal(tipo, item) {
+export async function  validarModal (tipo, item) {
     if (tipo == "producto") {
         const camposRequeridos = [
             { key: "unidad" },

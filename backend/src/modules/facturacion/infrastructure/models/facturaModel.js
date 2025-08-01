@@ -153,6 +153,12 @@ const Factura = sequelize.define(
             type: DataTypes.DECIMAL(12, 2),
             allowNull: true,
         },
+        // ! -- Campo Eliminar
+        eliminado: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+            allowNull: true,
+        },
     },
     {
         timestamps: false,

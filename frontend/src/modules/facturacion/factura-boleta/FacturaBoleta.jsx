@@ -1,12 +1,18 @@
 import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
 import ModalVisualizarFactura from "./components/modal/ModalVisualizarFactura";
-import DatosDelCliente from "./components/paso/DatosDelCliente";
-import DatosDelComprobante from "./components/paso/DatosDelComprobante";
-import FormaDePago from "./components/paso/FormaDePago";
-import MontoyProductos from "./components/paso/MontoyProductos";
+import DatosDelCliente from "./components/campos/DatosDelCliente";
+import DatosDelComprobante from "./components/campos/DatosDelComprobante";
+import FormaDePago from "./components/campos/FormaDePago";
+import MontoyProductos from "./components/campos/MontoyProductos";
+import DatosDeDetraccion from "./components/campos/DatosDeDetraccion";
+import { useSearchParams } from "react-router-dom";
 
 const FacturaBoleta = () => {
     const { registrarBaseDatos } = useFacturaBoleta();
+
+    const [searchParams] = useSearchParams();
+    const tipo = searchParams.get("tipo");
+    const id = searchParams.get("id");
 
     const handleRegister = () => {
         registrarBaseDatos();
@@ -22,7 +28,9 @@ const FacturaBoleta = () => {
 
 
                 {/* Form content */}
-                <div className=" shadow-xl border border-gray-400  rounded-3xl  p-4  transition-all duration-300 mb-6">
+                <div
+                    className=" shadow-xl border border-gray-400  rounded-3xl  p-4  transition-all duration-300 mb-6"
+                >
                     {/* Form */}
                     {/* Datos del comprobante */}
                     <DatosDelComprobante />
@@ -32,6 +40,8 @@ const FacturaBoleta = () => {
                     <MontoyProductos />
                     {/* Forma de pago */}
                     <FormaDePago />
+                    {/* Datos de detraccion */}
+                    <DatosDeDetraccion />
 
                     {/* Facturar  */}
                     <div className="flex justify-between">

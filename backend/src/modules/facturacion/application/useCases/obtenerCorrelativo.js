@@ -1,28 +1,30 @@
-module.exports = async (id, facturaRepository) => {
+module.exports = async (facturaRepository) => {
     // * Llamamos al repositorio para obtener todas las facturas
-    const facturaObtenida = await facturaRepository.obtenerFactura(id);
+    const ultimosCorrelativos = await facturaRepository.correlativo();
 
-    // ? si no se encuentra la factura
-    if (!facturaObtenida)
+
+    console.log("PRIMER CLG", ultimosCorrelativos)
+    // ? si no encuenta  ningun correlativo
+    if (!ultimosCorrelativos)
         return {
             codigo: 200,
             respuesta: {
-                mensaje: "Factura no encontrada",
+                mensaje: "Ocurrio un error al buscar el correlativo",
                 estado: false,
-                factura: null
+                correlativos: null
             },
         };
 
         // const  facturaDataValues = {...facturaObtenida.dataValues, factura_detalles: facturaObtenida.factura_detalles.dataValues, formas_pago: facturaObtenida.formas_pago.dataValues, leyendas: facturaObtenida.leyendas.dataValues};
-        console.log("UNA FACTURA**********************",facturaObtenida);
+        console.log("SEGUNDO CLG",ultimosCorrelativos);
     // const datosFormateados = Factura.formatearFactura([facturaObtenida]);
 
     return {
         codigo: 200,
         respuesta: {
-            mensaje: "Se encontro la factura correctamente",
+            mensaje: "Se encontro correctamente los correlativo",
             estado: true,
-            factura: facturaObtenida,
+            correlativos: ultimosCorrelativos,
         },
     };
 };

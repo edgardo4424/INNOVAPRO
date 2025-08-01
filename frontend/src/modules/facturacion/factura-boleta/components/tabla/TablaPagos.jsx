@@ -13,8 +13,6 @@ const TablaPagos = () => {
     const { factura } = useFacturaBoleta();
     const { forma_pago: ListaDePago } = factura;
 
-
-    console.log("ListaDePago", ListaDePago)
     return (
         <div className="w-full overflow-x-auto mt-6">
             <Table className={"border-2 border-gray-200"}>

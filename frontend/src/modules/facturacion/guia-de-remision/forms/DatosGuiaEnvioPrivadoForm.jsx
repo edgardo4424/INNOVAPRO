@@ -12,7 +12,7 @@ import { useGuiaTransporte } from "@/context/Factura/GuiaTransporteContext";
 import { Ubigeos } from "../utils/ubigeo";
 import { useEffect, useMemo, useState } from "react";
 
-const DatosGuiaEnvioPublicoForm = () => {
+const DatosGuiaEnvioPrivadoForm = () => {
     const { guiaTransporte, setGuiaTransporte } = useGuiaTransporte();
 
     // Estados locales para los inputs de ubigeo y su visibilidad de sugerencias
@@ -24,7 +24,6 @@ const DatosGuiaEnvioPublicoForm = () => {
 
     const {
         guia_Envio_Cod_Traslado,
-        guia_Envio_Des_Traslado,
         guia_Envio_Mod_Traslado,
         guia_Envio_Peso_Total,
         guia_Envio_Und_Peso_Total,
@@ -35,6 +34,7 @@ const DatosGuiaEnvioPublicoForm = () => {
         guia_Envio_Llegada_Ubigeo,
         guia_Envio_Llegada_Direccion,
 
+        guia_Envio_Vehiculo_Placa
     } = guiaTransporte;
 
     useEffect(() => {
@@ -165,7 +165,7 @@ const DatosGuiaEnvioPublicoForm = () => {
         } else {
             setGuiaTransporte((prevGuiaTransporte) => ({
                 ...prevGuiaTransporte,
-                [name]: value,
+                [name]: value.toUpperCase(),
             }));
         }
     };
@@ -196,23 +196,6 @@ const DatosGuiaEnvioPublicoForm = () => {
                         name="guia_Envio_Cod_Traslado"
                         value={guia_Envio_Cod_Traslado}
                         onChange={handleChange}
-                        className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
-                    />
-                </div>
-                <div>
-                    <Label
-                        htmlFor="guia_Envio_Cod_Traslado"
-                        className="block text-sm font-semibold text-gray-700 text-left mb-1"
-                    >
-                        Código de Traslado
-                    </Label>
-                    <Input
-                        type="text"
-                        id="guia_Envio_Des_Traslado"
-                        name="guia_Envio_Des_Traslado"
-                        value={guia_Envio_Des_Traslado}
-                        // onChange={handleChange}
-
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                     />
                 </div>
@@ -396,9 +379,27 @@ const DatosGuiaEnvioPublicoForm = () => {
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                     />
                 </div>
+                <div className="col-span-1 md:col-span-2 lg:col-span-1">
+                    {" "}
+                    {/* Made address span full width on small screens too */}
+                    <Label
+                        htmlFor="guia_Envio_Llegada_Direccion"
+                        className="block text-sm font-semibold text-gray-700 text-left mb-1"
+                    >
+                        Placa del Vehiculo
+                    </Label>
+                    <Input
+                        type="text"
+                        id="guia_Envio_Vehiculo_Placa"
+                        name="guia_Envio_Vehiculo_Placa"
+                        value={guia_Envio_Vehiculo_Placa}
+                        onChange={handleChange}
+                        className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    />
+                </div>
             </div>
         </div>
     );
 };
 
-export default DatosGuiaEnvioPublicoForm;
+export default DatosGuiaEnvioPrivadoForm;

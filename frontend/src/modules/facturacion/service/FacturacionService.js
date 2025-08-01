@@ -16,6 +16,13 @@ const facturacionService = {
         return res.data;
     },
 
+    // !!! Guia de Remision
+
+    enviarGuia: async (guia) => {
+        const res = await apiFactilizaFacturacion.post("/despatch/send", guia);
+        return res.data;
+    },
+
     // !!! CONSULTAS
     obtenerPersonaPorDni: (dni) => getRequest(apiFactilizaConsultas, `/dni/info/${dni}`),
     obtenerEmpresaPorRuc: (ruc) => getRequest(apiFactilizaConsultas, `/ruc/info/${ruc}`),

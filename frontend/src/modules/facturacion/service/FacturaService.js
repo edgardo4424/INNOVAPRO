@@ -12,6 +12,14 @@ const facturaService = {
     obtenerDocumentoConId: async(documento_id) =>{
         const res = await api.get(`/facturacion/factura/${documento_id}`);
         return res.data;
+    },
+    obtenerCorrelativo: async () => {
+        const res = await api.get(`/facturacion/correlativo`);
+        return res.data;
+    },
+    eliminarBorrador: async (id) => {
+        const res = await api.patch(`/facturacion//eliminar-borrador/${id}`);
+        return res.data;
     }
 }
 

@@ -9,12 +9,15 @@ import {
 } from "@/components/ui/select";
 import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
 import { Calendar22 } from "../Calendar22";
-import { useState } from "react";
-import { SquarePen } from "lucide-react";
+import { useEffect, useState } from "react";
+import { LoaderCircle, Search, SquarePen } from "lucide-react";
+import facturaService from "@/modules/facturacion/service/FacturaService";
+import { toast } from "react-toastify";
 
 const DatosDelComprobante = () => {
     const { factura, setFactura, facturaValida } = useFacturaBoleta();
     const [correlativoEstado, setCorrelativoEstado] = useState(false);
+    const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
 
 
     const activarCorrelativo = (e) => {
@@ -35,6 +38,40 @@ const DatosDelComprobante = () => {
             [name]: value,
         }));
     };
+
+    const buscarCorrelativo = async (e) => {
+        e.preventDefault();
+        try {
+            setLoadingCorrelativo(true);
+            // Lógica para buscar el correlativo
+            const { mensaje, estado, correlativos } = await facturaService.obtenerCorrelativo();
+
+            console.log(mensaje, estado, correlativos);
+
+            let tipoDoc = factura.tipo_Doc === "01" ? "Factura" : "Boleta";
+            if (estado) {
+                setFactura((prevValores) => ({
+                    ...prevValores,
+                    correlativo: tipoDoc === "Factura" ? correlativos.factura : correlativos.boleta,
+                }))
+                setCorrelativoEstado(false);
+                setLoadingCorrelativo(false);
+
+            }
+        } catch (error) {
+            toast.error('Error al obtener el correlativo: ' + error.message);
+            setLoadingCorrelativo(false);
+        } finally {
+            setLoadingCorrelativo(false);
+        }
+    };
+
+    useEffect(() => {
+        setFactura((prevValores) => ({
+            ...prevValores,
+            correlativo: "",
+        }))
+    }, [factura.tipo_Doc])
 
     return (
         <div className="overflow-y-auto p-4 sm:p-6 lg:px-8 lg:py-4">
@@ -57,7 +94,7 @@ const DatosDelComprobante = () => {
                             <SelectItem value="0101">Venta Interna</SelectItem>
                             <SelectItem value="0102">Exportación</SelectItem>
                             <SelectItem value="0103">No Domiciliados</SelectItem>
-                            <SelectItem value="0104">Venta Interna – Anticipos</SelectItem>
+                            {/* <SelectItem value="0104">Venta Interna – Anticipos</SelectItem>
                             <SelectItem value="0105">Venta Itinerante</SelectItem>
                             <SelectItem value="0106">Factura Guía</SelectItem>
                             <SelectItem value="0107">Venta Arroz Pilado</SelectItem>
@@ -65,7 +102,8 @@ const DatosDelComprobante = () => {
                                 Factura - Comprobante de Percepción
                             </SelectItem>
                             <SelectItem value="0110">Factura - Guía remitente</SelectItem>
-                            <SelectItem value="0111">Factura - Guía transportista</SelectItem>
+                            <SelectItem value="0111">Factura - Guía transportista</SelectItem> */}
+                            <SelectItem value="1001">Operaciones Gravadas</SelectItem>
                         </SelectContent>
                     </Select>
                     <span
@@ -126,18 +164,25 @@ const DatosDelComprobante = () => {
                 {/* Correlativo */}
                 <div className="flex flex-col gap-1 col-span-full sm:col-span-1">
                     <Label htmlFor="correlativo">Correlativo</Label>
-                    <div className="relative">
-                        <Input
-                            type="text"
-                            name="correlativo"
-                            id="correlativo"
-                            placeholder="Correlativo"
-                            className="border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-                            value={factura.correlativo}
-                            onChange={handleInputChange}
-                            disabled={!correlativoEstado}
-                        />
-                        <button onClick={activarCorrelativo} className={`absolute right-2 top-1/2 transform -translate-y-1/2 ${correlativoEstado ? "text-blue-500" : "text-gray-400"} `}><SquarePen /></button>
+                    <div className="flex justify-between gap-x-2">
+                        <div className="relative w-full">
+                            <Input
+                                type="text"
+                                name="correlativo"
+                                id="correlativo"
+                                placeholder="Correlativo"
+                                className="border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                                value={factura.correlativo}
+                                onChange={handleInputChange}
+                                disabled={!correlativoEstado}
+                            />
+                            <button onClick={activarCorrelativo} className={`absolute right-2 top-1/2 transform -translate-y-1/2 ${correlativoEstado ? "text-blue-500" : "text-gray-400"} `}><SquarePen /></button>
+                        </div>
+                        <button className={`bg-blue-500 hover:bg-blue-600  cursor-pointer  text-white rounded-md px-2 `}
+                            disabled={correlativoEstado}
+                            onClick={(e) => buscarCorrelativo(e)}>
+                            {loadingCorrelativo ? <LoaderCircle className="w-4 h-4 animate-spin" /> : <Search />}
+                        </button>
                     </div>
                     <span
                         className={`text-red-500 text-sm mt-1 ${facturaValida.correlativo ? "block" : "hidden"

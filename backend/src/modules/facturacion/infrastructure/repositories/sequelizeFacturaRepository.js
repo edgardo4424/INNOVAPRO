@@ -30,7 +30,9 @@ class SequelizeFacturaRepository {
         const offset = (pageNumber - 1) * limitNumber;
 
         // ? Aplica condicional
-        let where = {};
+        let where = {
+            eliminado: false,
+        };
         let include = [];
 
         if (tipo.toUpperCase() === "BORRADOR") {
@@ -305,6 +307,45 @@ class SequelizeFacturaRepository {
                     error.message || "Ocurrió un error inesperado al crear la factura.",
                 data: null,
             };
+        }
+    }
+
+    async eliminar(id) {
+        const factura = await Factura.findOne({
+            where: {
+                id,
+                estado: 'BORRADOR'
+            }
+        });
+        if (!factura) {
+            throw new Error("El documento a borrar no es un BORRADOR o no existe.");
+        }
+        factura.eliminado = true;
+        await factura.save();
+        return {
+            success: true,
+            message: "La factura ha sido marcada como eliminada con éxito.",
+            data: null,
+        };
+    }
+
+    async correlativo(){
+        const correlativoFactura = await Factura.max('correlativo', {
+            where: {
+                tipo_Doc: '01',
+                estado: 'EMITIDA'
+            }
+        });
+        const correlativoBoleta = await Factura.max('correlativo', {
+            where: {
+                tipo_Doc: '03',
+                estado: 'EMITIDA'
+            }
+        });
+        
+        return {
+            factura: correlativoFactura + 1,
+            boleta: correlativoBoleta + 1
         }
     }
 }

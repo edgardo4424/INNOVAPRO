@@ -221,15 +221,6 @@ export default function ModalVisualizarFactura() {
                         </div>
                         {/* --- End Invoice Detail --- */}
                         <div className="w-full flex justify-end pt-5">
-                            {/* <button className={` ${facturaValidaParaGuardar ? 'cursor-pointer bg-green-600' : 'cursor-not-allowed bg-red-600/20'}  text-white py-2 px-4 rounded-md flex gap-x-2`}
-                                disabled={!facturaValidaParaGuardar}
-                                onClick={emitirFactura}
-                            >
-                                <ClipboardPlus size={20} />
-                                <span>
-                                    Emitir Factura
-                                </span>
-                            </button> */}
                             <EnviarFactura open={open} setOpen={setOpen} ClosePreviu={closeModal}/>
 
                         </div>

@@ -1,4 +1,3 @@
-const Factura = require("../../domain/entities/facura");
 module.exports = async (facturaRepository, query) => {
     const { tipo, page, limit, num_doc, tip_doc, fec_des, fec_ast } = query;
     // * Llamamos al repositorio para obtener todas las facturas

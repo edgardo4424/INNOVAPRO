@@ -1,18 +1,17 @@
-import { Eye } from "lucide-react";
-import ChoferPrivadoForm from "../../forms/ChoferPrivadoForm";
 import DatosDeClienteForm from "../../forms/DatosDeClienteForm";
 import DatosDeEmpresaForm from "../../forms/DatosDeEmpresaForm";
 import DatosGuiaEnvioPrivadoForm from "../../forms/DatosGuiaEnvioPrivadoForm";
 import DetalleProductoForm from "../../forms/DetalleProductoForm";
 import InfDocumentoForm from "../../forms/InfDocumentoForm";
-import ModalVisualizarGuiaPrivada from "../modal/ModalVisualizarGuiaPrivada";
+import ModalVisualizarGuiaMismaEmpresa from "../modal/ModalVisualizarGuiaMismaEmpresa";
 
-const GuiaPrivado = () => {
+const GuiaMismaEmpresa = () => {
+
 
     return (
         <div className="container max-w-6xl mx-auto ">
             <form
-                onSubmit={(e) => {e.preventDefault();}}
+                // onSubmit={handleSubmit}
                 className=" shadow-xl border border-gray-400 bg-white  rounded-3xl  p-10  transition-all duration-300 mb-6"
             >
                 {/* Sección de Documento Principal */}
@@ -27,11 +26,6 @@ const GuiaPrivado = () => {
                 {/* Sección de Guía de Envío */}
                 <DatosGuiaEnvioPrivadoForm />
 
-                {/* Sección de Estado y Otros */}
-                {/* <EstadoYOtrosDatosForm /> */}
-
-                {/* Sección de Transportista */}
-                <ChoferPrivadoForm />
 
                 {/* Sección de Detalle de Productos */}
                 <DetalleProductoForm />
@@ -52,11 +46,11 @@ const GuiaPrivado = () => {
                             Cancelar
                         </button>
                     </div>
-                    <ModalVisualizarGuiaPrivada />
+                    <ModalVisualizarGuiaMismaEmpresa />
                 </div>
             </form>
         </div>
     );
 };
 
-export default GuiaPrivado;
+export default GuiaMismaEmpresa;
