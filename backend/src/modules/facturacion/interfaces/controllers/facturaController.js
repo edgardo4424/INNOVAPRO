@@ -10,6 +10,8 @@ const eliminarBorrador = require('../../application/useCases/eliminarBorrador')
 
 const obtenerCorrelativo = require('../../application/useCases/obtenerCorrelativo')
 
+const obtenerMTC = require('../../application/useCases/obtenerMTC')
+
 const facturaRepository = new SequelizeFacturaRepository()
 
 const facturaController = {
@@ -61,12 +63,15 @@ const facturaController = {
         }
     },
     // !!! PLAYWRIGHT
-    async obtenerMTC(req, res) {
+    async obtenerMTCconRuc(req, res) {
         try {
-            const { codigo, respuesta } = await obtenerCorrelativo(facturaRepository)
-            res.status(codigo).json(respuesta)
+            const { ruc } = req.query;
+            console.log("🚚 Atributos para obtener MTC:desde el controller", ruc);
+
+            const { codigo, respuesta } = await obtenerMTC(ruc);
+            res.status(codigo).json(respuesta);
         } catch (error) {
-            res.status(500).json({ error: error.message, estado: false })
+            res.status(500).json({ error: error.message, estado: false });
         }
     }
 }

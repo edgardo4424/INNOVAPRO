@@ -7,4 +7,5 @@ router.get("/factura/:id", facturaController.obtenerFacturaPorId);
 router.post("/registrar", facturaController.crearFactura);
 router.get("/correlativo", facturaController.obtenerCorrelativo);
 router.patch("/eliminar-borrador/:id", facturaController.eliminarBorrador);
+router.get("/mtc", facturaController.obtenerMTCconRuc);
 module.exports = router;
