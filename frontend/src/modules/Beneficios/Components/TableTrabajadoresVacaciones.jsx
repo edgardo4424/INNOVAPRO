@@ -10,6 +10,14 @@ import { Eye } from "lucide-react";
 import DetalleVacacionesModal from "./DetalleVacacionesModal";
 
 const TableTrabajadoresVacaciones = ({ filteredEmployees }) => {
+   const fechaIngreso = (contratos) => {
+      if (contratos.length === 0) return null;
+      const ordenados = [...contratos].sort(
+         (a, b) => new Date(a.fecha_inicio) - new Date(b.fecha_inicio)
+      );
+      return ordenados[0].fecha_inicio;
+   };
+
    return (
       <div className="overflow-x-auto">
          <table className="w-full">
@@ -26,7 +34,9 @@ const TableTrabajadoresVacaciones = ({ filteredEmployees }) => {
                   <th className="text-left py-3 px-4 font-medium">
                      Días Vendidos
                   </th>
-                  <th className="py-3 px-4 font-medium text-center">Acciones</th>
+                  <th className="py-3 px-4 font-medium text-center">
+                     Acciones
+                  </th>
                </tr>
             </thead>
             <tbody>
@@ -50,9 +60,7 @@ const TableTrabajadoresVacaciones = ({ filteredEmployees }) => {
                               <div className="font-medium">{`${employee.nombres} ${employee.apellidos}`}</div>
                               <div className="text-sm text-gray-500">
                                  Ingreso:{" "}
-                                 {new Date(
-                                    employee.fecha_ingreso
-                                 ).toLocaleDateString()}
+                                 {fechaIngreso(employee.contratos_laborales) ? fechaIngreso(employee.contratos_laborales) : "No disponible"}
                               </div>
                            </div>
                         </td>
@@ -86,7 +94,7 @@ const TableTrabajadoresVacaciones = ({ filteredEmployees }) => {
                            </Badge>
                         </td>
                         <td className="py-3 px-4  text-center">
-                           <DetalleVacacionesModal datosEmpleado={employee}/>
+                           <DetalleVacacionesModal datosEmpleado={employee} />
                         </td>
                      </tr>
                   );

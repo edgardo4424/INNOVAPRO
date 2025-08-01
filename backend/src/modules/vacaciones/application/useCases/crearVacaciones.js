@@ -2,11 +2,14 @@ const Vacaciones = require("../../domain/entities/vacaciones");
 
 module.exports = async (vacacionesData, vacacionesRepository) => {
    const vacaciones = new Vacaciones(vacacionesData);
-   const errores = vacaciones.validarCampos();   
+
+   const errores = vacaciones.validarCampos();
+   console.log("errores recibidos", errores);
+
    if (errores.length > 0) {
       return { codigo: 400, respuesta: { mensaje: errores } };
    }
-   const nuevasVacaciones=await vacacionesRepository.crear(vacaciones.get());
+   const nuevasVacaciones = await vacacionesRepository.crear(vacaciones.get());
 
    return {
       codigo: 201,

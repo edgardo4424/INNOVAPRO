@@ -23,7 +23,7 @@ export default function GestionVacaciones() {
          const res = await beneficiosService.getTrabajadoresVacaciones();
          console.log(res.data.trabajadoresXvacaciones);
 
-         setEmployees(res.data.trabajadoresXvacaciones); // mockData.json debe exportar el array
+         setEmployees(res.data.trabajadoresXvacaciones.reverse()); // mockData.json debe exportar el array
          setLoading(false);
       } catch (error) {
          console.log(error);

@@ -96,12 +96,17 @@ export default function TrabajadorForm() {
             sistema_pension: formData.sistema_pension,
             quinta_categoria: formData.quinta_categoria,
             cargo_id: Number.parseInt(formData.cargo_id),
+            contratos_laborales: formData.contratos_laborales,
+            sueldo_base: formData.contratos_laborales.at(-1).sueldo,
          };
+         console.log(dataToSubmit);
 
-         await trabajadoresService.crear(dataToSubmit);
-         toast.success("Trabajador creado con exito!");
-         navigate("/tabla-trabajadores");
-         setIsSubmitting(false);
+         const res = await trabajadoresService.crearTrabajador(dataToSubmit);
+         console.log(res);
+
+         // toast.success("Trabajador creado con exito!");
+         // navigate("/tabla-trabajadores");
+         // setIsSubmitting(false);
       } catch (error) {
          if (error.name === "ValidationError") {
             // Formatea los errores como un objeto plano: { campo: "mensaje de error" }

@@ -4,7 +4,6 @@ class Trabajador {
       nombres,
       apellidos,
       numero_documento,
-      fecha_ingreso,
       sueldo_base,
       asignacion_familiar,
       sistema_pension,
@@ -17,7 +16,6 @@ class Trabajador {
          (this.apellidos = apellidos),
          (this.tipo_documento = tipo_documento),
          (this.numero_documento = numero_documento),
-         (this.fecha_ingreso = fecha_ingreso),
          (this.sueldo_base = sueldo_base),
          (this.asignacion_familiar = asignacion_familiar),
          (this.sistema_pension = sistema_pension),
@@ -43,9 +41,6 @@ class Trabajador {
          }
          if (!this.numero_documento || !this.numero_documento.trim()) {
             errores.push("Número de documento inválido");
-         }
-         if (!this.fecha_ingreso || !this.fecha_ingreso.trim()) {
-            errores.push("fecha_ingreso inválida");
          }
          if (this.sueldo_base < 1130) {
             errores.push("El sueldo base es invalido");
@@ -83,7 +78,6 @@ class Trabajador {
          apellidos: this.apellidos,
          tipo_documento: this.tipo_documento,
          numero_documento: this.numero_documento,
-         fecha_ingreso: this.fecha_ingreso,
          sueldo_base: this.sueldo_base,
          asignacion_familiar: this.asignacion_familiar,
          sistema_pension: this.sistema_pension,

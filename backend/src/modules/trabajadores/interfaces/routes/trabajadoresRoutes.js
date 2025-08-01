@@ -10,4 +10,6 @@ router.use(verificarToken); // Verificamos el token para todas las rutas
 router.post("/crear", TrabajadorController.crearTrabajador);
 router.get("/filial/:id/:fecha", TrabajadorController.obtenerTrabajadoresPorArea);
 router.get("/", TrabajadorController.obtenerTrabajadores);
+router.post("/", TrabajadorController.crearTrabajadorConContrato);
+
 module.exports = router;
