@@ -1,6 +1,7 @@
 // ? VALORES INICIALES ---- INICIO
 
 const ValorInicialFactura = {
+    // ?Datos del comprobante
     tipo_Operacion: "",
     tipo_Doc: "01",
     serie: "F001",
@@ -8,10 +9,14 @@ const ValorInicialFactura = {
     tipo_Moneda: "PEN",
     fecha_Emision: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
     empresa_Ruc: "20607086215",
+
+    // ?Datos del cliente
     cliente_Tipo_Doc: "",
     cliente_Num_Doc: "",
     cliente_Razon_Social: "",
     cliente_Direccion: "",
+
+    // ?Montos
     monto_Oper_Gravadas: 0,
     monto_Igv: 0,
     total_Impuestos: 0,
@@ -19,24 +24,36 @@ const ValorInicialFactura = {
     sub_Total: 0,
     monto_Imp_Venta: 0,
     monto_Oper_Exoneradas: 0,
+
+    // ?Base de datos
     estado_Documento: "0",
     manual: false,
     id_Base_Dato: "15265",
+
+    // ?Parametros para innova Pro
     observaciones: "", //? nuevo campo solo para bd
     usuario_id: 1, //* cambiar a el usuario logeado
+
     // ?campos para detraccion
     detraccion_cod_bien_detraccion: "",
     detraccion_cod_medio_pago: "",
     detraccion_cta_banco: "",
     detraccion_percent: 0,
     detraccion_mount: 0,
+
     // ?campos descuento
     descuento_cod_tipo: "",
     descuento_monto_base: 0,
     descuento_factor: 0,
     descuento_monto: 0,
+
+    // ?Lista de Productos
     detalle: [],
+
+    // ?Lista Forma de Pagos
     forma_pago: [],
+
+    // ?lista de leyendas
     legend: [
         {
             legend_Code: "1000",

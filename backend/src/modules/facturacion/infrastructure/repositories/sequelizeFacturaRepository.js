@@ -30,15 +30,10 @@ class SequelizeFacturaRepository {
         const offset = (pageNumber - 1) * limitNumber;
 
         // ? Aplica condicional
-        let where = {
-            eliminado: false,
-        };
+        let where = {};
         let include = [];
 
-        if (tipo.toUpperCase() === "BORRADOR") {
-            where.estado = "BORRADOR";
-        } else if (tipo.toUpperCase() === "TODAS") {
-            where.estado = { [Op.not]: "BORRADOR" };
+        if (tipo.toUpperCase() === "TODAS") {
             include.push({
                 model: SunatRespuesta,
                 attributes: ["hash", "cdr_response_id"],
@@ -47,7 +42,6 @@ class SequelizeFacturaRepository {
             where = {
                 [Op.and]: [
                     { estado: tipo },
-                    { estado: { [Op.not]: "BORRADOR" } },
                 ],
             };
             include.push({
@@ -310,26 +304,7 @@ class SequelizeFacturaRepository {
         }
     }
 
-    async eliminar(id) {
-        const factura = await Factura.findOne({
-            where: {
-                id,
-                estado: 'BORRADOR'
-            }
-        });
-        if (!factura) {
-            throw new Error("El documento a borrar no es un BORRADOR o no existe.");
-        }
-        factura.eliminado = true;
-        await factura.save();
-        return {
-            success: true,
-            message: "La factura ha sido marcada como eliminada con éxito.",
-            data: null,
-        };
-    }
-
-    async correlativo(){
+    async correlativo() {
         const correlativoFactura = await Factura.max('correlativo', {
             where: {
                 tipo_Doc: '01',
@@ -342,12 +317,13 @@ class SequelizeFacturaRepository {
                 estado: 'EMITIDA'
             }
         });
-        
+
         return {
             factura: correlativoFactura + 1,
             boleta: correlativoBoleta + 1
         }
     }
+
 }
 
 module.exports = SequelizeFacturaRepository;

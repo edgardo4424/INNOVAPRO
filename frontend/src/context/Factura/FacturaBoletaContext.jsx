@@ -157,7 +157,7 @@ export function FacturaBoletaProvider({ children }) {
                 }
             });
 
-            const subTotal = gravadas + igvTotal;
+            const subTotal = gravadas + igvTotal + exoneradas;
             const totalVenta = subTotal;
 
             setTotalProducto(gravadas);

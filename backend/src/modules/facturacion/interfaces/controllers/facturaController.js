@@ -1,16 +1,14 @@
 const SequelizeFacturaRepository = require('../../infrastructure/repositories/sequelizeFacturaRepository')
 
-const obtenerTodasLasFacturas = require('../../application/useCases/obtenerTodasLasFacturas')
+const obtenerTodasLasFacturas = require('../../application/useCases/factura-boleta/obtenerTodasLasFacturas')
 
-const obtenerFacturaPorId = require('../../application/useCases/obtenerFacturoPorId')
+const obtenerFacturaPorId = require('../../application/useCases/factura-boleta/obtenerFacturaPorId')
 
-const crearFactura = require('../../application/useCases/crearFactura')
+const crearFactura = require('../../application/useCases/factura-boleta/crearFactura')
 
-const eliminarBorrador = require('../../application/useCases/eliminarBorrador')
+const obtenerCorrelativo = require('../../application/useCases/factura-boleta/obtenerCorrelativo')
 
-const obtenerCorrelativo = require('../../application/useCases/obtenerCorrelativo')
-
-const obtenerMTC = require('../../application/useCases/obtenerMTC')
+const obtenerMTC = require('../../application/useCases/factura-boleta/obtenerMTC')
 
 const facturaRepository = new SequelizeFacturaRepository()
 
@@ -44,16 +42,7 @@ const facturaController = {
             res.status(500).json({ error: error.message })
         }
     },
-    async eliminarBorrador(req, res) {
-        try {
-            const { id } = req.params
-            const { codigo, respuesta } = await eliminarBorrador(id, facturaRepository)
-            res.status(codigo).json(respuesta)
-        } catch (error) {
-            res.status(500).json({ error: error.message, estado: false })
 
-        }
-    },
     async obtenerCorrelativo(_, res) {
         try {
             const { codigo, respuesta } = await obtenerCorrelativo(facturaRepository)

@@ -6,16 +6,62 @@ import FormaDePago from "./components/campos/FormaDePago";
 import MontoyProductos from "./components/campos/MontoyProductos";
 import DatosDeDetraccion from "./components/campos/DatosDeDetraccion";
 import { useSearchParams } from "react-router-dom";
+import { formatearBorrador } from "../utils/formatearBorrador";
+import facturaService from "../service/FacturaService";
+import { toast } from "react-toastify";
+import { ValorInicialFactura } from "./utils/valoresInicial";
 
 const FacturaBoleta = () => {
-    const { registrarBaseDatos } = useFacturaBoleta();
+    const { factura, setFactura } = useFacturaBoleta();
 
     const [searchParams] = useSearchParams();
     const tipo = searchParams.get("tipo");
     const id = searchParams.get("id");
 
-    const handleRegister = () => {
-        registrarBaseDatos();
+    const handleRegister = async () => {
+        // *conseguir id usuario
+        const user = localStorage.getItem("user");
+        const userData = JSON.parse(user);
+
+        console.log("formatear documento")
+        let tipo_borrador = ""
+        if (factura.tipo_Doc == "01") {
+            tipo_borrador = "factura"
+        }
+        if (factura.tipo_Doc == "03") {
+            tipo_borrador = "boleta"
+        }
+        const formateado = await formatearBorrador(tipo_borrador, factura, userData.id);
+
+        try {
+            const { message, status, success } = await facturaService.registrarBorrador(formateado);
+            if (status == 201 && success) {
+                toast.success(message, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+                setFactura(ValorInicialFactura);
+            }
+            if (status == 400 && !success) {
+                toast.error(message, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
     };
     return (
         <div className="min-h-screen w-full flex flex-col items-center px-4 md:px-8 py-6">

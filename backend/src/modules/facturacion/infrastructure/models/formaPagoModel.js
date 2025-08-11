@@ -1,8 +1,8 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../../../config/db");
 
-const FormaPago = sequelize.define(
-    "formas_pago",
+const FormaPagoFactura = sequelize.define(
+    "forma_pago_factura",
     {
         id: {
             type: DataTypes.INTEGER,
@@ -13,7 +13,7 @@ const FormaPago = sequelize.define(
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: "facturas",
+                model: "factura",
                 key: "id",
             },
         },
@@ -36,14 +36,14 @@ const FormaPago = sequelize.define(
     },
     {
         timestamps: false,
-        tableName: "formas_pago",
+        tableName: "forma_pago_factura",
     }
 );
 
-FormaPago.associate = (models) => {
-    FormaPago.belongsTo(models.facturas, {
+FormaPagoFactura.associate = (models) => {
+    FormaPagoFactura.belongsTo(models.factura, {
         foreignKey: "factura_id",
     });
 };
 
-module.exports = { FormaPago };
+module.exports = { FormaPagoFactura };

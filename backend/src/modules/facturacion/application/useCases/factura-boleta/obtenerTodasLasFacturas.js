@@ -12,7 +12,7 @@ module.exports = async (facturaRepository, query) => {
                 mensaje: "Facturas no encontrados",
                 estado: true,
                 total: 0,
-                datos: [],
+                facturas: [],
             },
         };
     // const datosFormateados = Factura.formatearListado(facturas);

@@ -1,6 +1,7 @@
 import api from "@/shared/services/api";
 
 const facturaService = {
+    // * ENDPOINTS FACTURAS
     obtenerTodasLasFacturas: async (query) => {
         const res = await api.get(`/facturacion/facturas${query}`);
         return res.data;
@@ -15,6 +16,16 @@ const facturaService = {
     },
     obtenerCorrelativo: async () => {
         const res = await api.get(`/facturacion/correlativo`);
+        return res.data;
+    },
+
+    // * ENDPOINTS BORRADORES
+    registrarBorrador: async (borrador) => {
+        const res = await api.post(`/facturacion/borrador/crear`, borrador);
+        return res.data;
+    },
+    obtenerTodosLosBorradores: async (query) => {
+        const res = await api.get(`/facturacion/borradores${query}`);
         return res.data;
     },
     eliminarBorrador: async (id) => {

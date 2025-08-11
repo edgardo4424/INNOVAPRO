@@ -51,7 +51,7 @@ const SunatRespuesta = sequelize.define(
 });
 
 SunatRespuesta.associate = (models) => {
-    SunatRespuesta.belongsTo(models.facturas, {
+    SunatRespuesta.belongsTo(models.factura, {
         foreignKey: "factura_id",
     });
 

@@ -1,7 +1,7 @@
-module.exports = async (id, facturaRepository) => {
-    const facturasEliminada = await facturaRepository.eliminar(id);
+module.exports = async (id, borradorRepository) => {
+    const result = await borradorRepository.eliminar(id);
 
-    if (!facturasEliminada) {
+    if (!result.success) {
         return {
             codigo: 500,
             respuesta: {
@@ -16,7 +16,7 @@ module.exports = async (id, facturaRepository) => {
         respuesta: {
             success: true,
             message: "El borrador se elimino correctamente.",
-            data: facturasEliminada,
+            data: null,
         }
     };
 }

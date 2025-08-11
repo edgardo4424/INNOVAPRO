@@ -105,19 +105,24 @@ db.cotizaciones_instalacion = CotizacionesInstalacion;
 
 // ? Facturacion
 const { Factura } = require('../modules/facturacion/infrastructure/models/facturaModel')
-db.facturas = Factura;
+db.factura = Factura;
 
-const {FacturaDetalle} = require('../modules/facturacion/infrastructure/models/facturaDetalleModel')
-db.factura_detalles = FacturaDetalle;
+const {DetalleFactura} = require('../modules/facturacion/infrastructure/models/facturaDetalleModel')
+db.detalle_factura = DetalleFactura;
 
-const {FormaPago} = require('../modules/facturacion/infrastructure/models/formaPagoModel')
-db.formas_pago = FormaPago;
+const {FormaPagoFactura} = require('../modules/facturacion/infrastructure/models/formaPagoModel')
+db.forma_pago_factura = FormaPagoFactura;
 
 const {Leyenda} = require('../modules/facturacion/infrastructure/models/leyendaModel')
-db.leyendas = Leyenda;
+db.legend_factura = Leyenda;
 
 const {SunatRespuesta} = require('../modules/facturacion/infrastructure/models/sunatRespuestaModel')
 db.sunat_respuesta = SunatRespuesta
+
+
+const {Borrador} = require('../modules/facturacion/infrastructure/models/borradorModel')
+db.borradores = Borrador;
+
 
 // ✅ Solo se asocian los que tienen .associate()
 if (db.contactos.associate) db.contactos.associate(db);
@@ -152,11 +157,12 @@ if (db.gastos.associate) db.gastos.associate(db);
 if (db.jornadas.associate) db.jornadas.associate(db);
 if (db.tipos_trabajo.associate) db.tipos_trabajo.associate(db);
 // ? Conexion Facturacion
-if(db.facturas.associate) db.facturas.associate(db);
-if(db.factura_detalles.associate) db.factura_detalles.associate(db);
-if(db.formas_pago.associate) db.formas_pago.associate(db);
-if(db.leyendas.associate) db.leyendas.associate(db)
-if(db.sunat_respuesta.associate) db.leyendas.associate(db)
+if(db.factura.associate) db.factura.associate(db);
+if(db.detalle_factura.associate) db.detalle_factura.associate(db);
+if(db.forma_pago_factura.associate) db.forma_pago_factura.associate(db);
+if(db.legend_factura.associate) db.legend_factura.associate(db)
+if(db.sunat_respuesta.associate) db.sunat_respuesta.associate(db)
+if(db.borradores.associate) db.borradores.associate(db)
 
 // Sequelize
 db.sequelize = sequelize;

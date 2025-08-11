@@ -5,7 +5,7 @@ const guiaPrivada = {
     serie: "T001",
     correlativo: "1",
     observacion: "",
-    fecha_Emision: "",
+    fecha_Emision: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
 
     empresa_Ruc: "20607086215",
 
@@ -110,7 +110,7 @@ const guiaPublica = {
     serie: "T001",
     correlativo: "1",
     observacion: "PRUEBA DE GUIA",
-    fecha_Emision: "",
+    fecha_Emision: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
 
     empresa_Ruc: "20607086215",
 
@@ -208,7 +208,7 @@ const guiaMismaEmpresa = {
     serie: "T001",
     correlativo: "1",
     observacion: "PRUEBA DE GUIA",
-    fecha_Emision: "2024-02-06T12:34:00-05:00",
+    fecha_Emision: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
 
     empresa_Ruc: "20607086215",
 

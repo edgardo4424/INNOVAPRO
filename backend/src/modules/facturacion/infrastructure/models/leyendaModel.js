@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../../../../config/db");
 
 const Leyenda = sequelize.define(
-    "leyendas",
+    "legend_factura",
     {
         id: {
             type: DataTypes.INTEGER,
@@ -13,7 +13,7 @@ const Leyenda = sequelize.define(
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: "facturas",
+                model: "factura",
                 key: "id",
             },
         },
@@ -27,11 +27,11 @@ const Leyenda = sequelize.define(
         },
     }, {
     timestamps: false,
-    tableName: "leyendas",
+    tableName: "legend_factura",
 });
 
 Leyenda.associate = (models) => {
-    Leyenda.belongsTo(models.facturas, {
+    Leyenda.belongsTo(models.factura, {
         foreignKey: "factura_id",
     });
 }

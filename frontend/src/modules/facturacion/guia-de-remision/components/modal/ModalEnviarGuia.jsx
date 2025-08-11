@@ -38,6 +38,7 @@ const ModalEnviarGuia = ({ open, setOpen, ClosePreviu }) => {
 
         try {
             const result = await EmitirGuia();
+            console.log(result);
 
             if (result.success) {
                 setIsSuccess(true);

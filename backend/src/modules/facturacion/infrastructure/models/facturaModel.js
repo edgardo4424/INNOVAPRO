@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../../../../config/db");
 
 const Factura = sequelize.define(
-    "facturas",
+    "factura",
     {
         id: {
             type: DataTypes.INTEGER,
@@ -87,7 +87,6 @@ const Factura = sequelize.define(
         },
         estado: {
             type: DataTypes.ENUM(
-                "BORRADOR",
                 "EMITIDA",
                 "RECHAZADA",
                 "ANULADA",
@@ -153,16 +152,10 @@ const Factura = sequelize.define(
             type: DataTypes.DECIMAL(12, 2),
             allowNull: true,
         },
-        // ! -- Campo Eliminar
-        eliminado: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
-            allowNull: true,
-        },
     },
     {
         timestamps: false,
-        tableName: "facturas",
+        tableName: "factura",
     }
 );
 
@@ -170,13 +163,13 @@ Factura.associate = (models) => {
     Factura.belongsTo(models.usuarios, {
         foreignKey: "usuario_id",
     })
-    Factura.hasMany(models.factura_detalles, {
+    Factura.hasMany(models.detalle_factura, {
         foreignKey: "factura_id",
     });
-    Factura.hasMany(models.formas_pago, {
+    Factura.hasMany(models.forma_pago_factura, {
         foreignKey: "factura_id",
     })
-    Factura.hasMany(models.leyendas, {
+    Factura.hasMany(models.legend_factura, {
         foreignKey: "factura_id",
     })
     Factura.hasMany(models.sunat_respuesta, {

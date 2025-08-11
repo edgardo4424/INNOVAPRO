@@ -7,7 +7,7 @@ import facturaService from "../service/FacturaService";
 import ModalEliminarBorrador from "./modal/ModalEliminarBorrador";
 
 const ListaBorradores = () => {
-  const [facturas, setFacturas] = useState([]);
+  const [documentos, setDocumentos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState({
     page: 1,
@@ -41,23 +41,24 @@ const ListaBorradores = () => {
   const obtenerBorradores = async () => {
     setLoading(true);
     try {
-      let query = "?tipo=borrador";
+      let query = "?tipo_borrador=boleta";
       if (page) query += `&page=${page}`;
       if (limit) query += `&limit=${limit}`;
       if (num_doc) query += `&num_doc=${num_doc}`;
       if (tip_doc) query += `&tip_doc=${tip_doc}`;
       if (fec_des) query += `&fec_des=${fec_des}`;
       if (fec_ast) query += `&fec_ast=${fec_ast}`;
-      const { estado, total, facturas } =
-        await facturaService.obtenerTodasLasFacturas(query);
+      const { estado, total, borradores } =
+        await facturaService.obtenerTodosLosBorradores(query);
       if (estado && total > 0) {
+        console.log("documentos Obtendidas:", borradores);
         {
-          setFacturas(facturas);
+          setDocumentos(borradores);
         }
       }
       setLoading(false);
     } catch (error) {
-      toast.error(error.message || "Error al obtener facturas");
+      toast.error(error.message || "Error al obtener documentos");
       setLoading(false);
     } finally {
       setLoading(false);
@@ -197,7 +198,7 @@ const ListaBorradores = () => {
             Cargando...
           </h2>
         </div>
-      ) : facturas.length == 0 ? (
+      ) : documentos.length == 0 ? (
         <div className="w-full max-w-6xl">
           <div className="flex items-center justify-between mb-6"></div>
           <h2 className="text-2xl md:text-3xl font-bold text-blue-600">
@@ -211,6 +212,9 @@ const ListaBorradores = () => {
             <thead className="bg-blue-600 text-white">
               <tr>
                 <th className="py-3 px-3 text-left text-sm font-semibold uppercase tracking-wider">
+                  Tipo Borrador
+                </th>
+                <th className="py-3 px-3 text-left text-sm font-semibold uppercase tracking-wider">
                   Serie-Correlativo
                 </th>
                 <th className="py-3 px-3 text-left text-sm font-semibold uppercase tracking-wider">
@@ -222,15 +226,6 @@ const ListaBorradores = () => {
                 <th className="py-3 px-3 text-left text-sm font-semibold uppercase tracking-wider">
                   Cliente
                 </th>
-                <th className="py-3 px-3 text-left text-sm font-semibold uppercase tracking-wider">
-                  Valor Venta
-                </th>
-                <th className="py-3 px-3 text-left text-sm font-semibold uppercase tracking-wider">
-                  Sub Total
-                </th>
-                <th className="py-3 px-3 text-left text-sm font-semibold uppercase tracking-wider">
-                  Monto Imp. Venta
-                </th>
                 {/* <th className="py-3 px-3 text-left text-sm font-semibold uppercase tracking-wider">Estado</th> */}
                 <th className="py-3 px-3 text-left text-sm font-semibold uppercase tracking-wider">
                   Acciones
@@ -238,42 +233,36 @@ const ListaBorradores = () => {
               </tr>
             </thead>
             <tbody>
-              {facturas.length > 0 ? (
-                facturas.map((factura, index) => (
+              {documentos.length > 0 ? (
+                documentos.map((doc, index) => (
                   <tr
-                    key={factura.id}
+                    key={doc.id}
                     className={`${index % 2 === 0 ? "bg-white" : "bg-gray-50"
                       } border-b border-gray-200`}
                   >
-                    <td className="py-3 px-6 text-sm text-gray-700">{`${factura.serie}-${factura.correlativo}`}</td>
                     <td className="py-3 px-6 text-sm text-gray-700">
-                      {new Date(factura.fecha_emision).toLocaleDateString(
+                      {doc.tipo_borrador}
+                    </td>
+                    <td className="py-3 px-6 text-sm text-gray-700">{`${doc.serie}-${doc.correlativo}`}</td>
+                    <td className="py-3 px-6 text-sm text-gray-700">
+                      {new Date(doc.fecha_Emision).toLocaleDateString(
                         "es-PE",
                         { year: "numeric", month: "2-digit", day: "2-digit" }
                       )}
                     </td>
                     <td className="py-3 px-6 text-sm text-gray-700">
-                      {factura.empresa_ruc}
+                      {doc.empresa_ruc}
                     </td>
                     <td className="py-3 px-6 text-sm text-gray-700">
-                      {factura.cliente_num_doc === ""
-                        ? factura.cliente_razon_social
-                        : `${factura.cliente_num_doc} - ${factura.cliente_razon_social}`}
+                      {doc.cliente_num_doc === ""
+                        ? doc.cliente_razon_social
+                        : `${doc.cliente_num_doc} - ${doc.cliente_razon_social}`}
                     </td>
-                    <td className="py-3 px-6 text-sm text-gray-700 font-medium">{`${factura.tipo_moneda
-                      } ${factura.valor_venta.toFixed(2)}`}</td>
-                    <td className="py-3 px-6 text-sm text-gray-700 font-medium">{`${factura.tipo_moneda
-                      } ${factura.sub_total.toFixed(2)}`}</td>
-                    <td className="py-3 px-6 text-sm text-gray-700 font-medium">{`${factura.tipo_moneda
-                      } ${factura.monto_imp_venta.toFixed(2)}`}</td>
-                    {/* <td className="py-3 px-6 text-sm font-semibold text-gray-500">
-                            {factura.estado}
-                          </td> */}
                     <td className="py-3 ">
                       <div className="flex justify-start pl-2  gap-x-2">
                         <button
                           onClick={() => {
-                            setIdDocumento(factura.id);
+                            setIdDocumento(doc.id);
                             setModalOpen(true);
                           }}
                         >
@@ -283,8 +272,8 @@ const ListaBorradores = () => {
                         <button
                           onClick={() => {
                             setDocumentoEliminar({
-                              id: factura.id,
-                              correlativo: `${factura.serie}-${factura.correlativo}`,
+                              id: doc.id,
+                              correlativo: `${doc.serie}-${doc.correlativo}`,
                             });
                             setModalEliminar(true);
                           }}
