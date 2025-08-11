@@ -30,6 +30,10 @@ const {
 db.asistencias = Asistencia;
 
 const {
+   ContratoLaboral,
+} = require("../modules/contratos_laborales/infraestructure/models/contratoLaboralModel");
+db.contratos_laborales = ContratoLaboral;
+const {
    Vacaciones,
 } = require("../modules/vacaciones/infraestructure/models/vacacionesModel");
 db.vacaciones = Vacaciones;
@@ -86,7 +90,7 @@ db.cotizaciones = require("./cotizaciones")(sequelize, DataTypes);
 db.cotizacion_detalles = require("./cotizacion_detalles")(sequelize, DataTypes);
 
 // Condiciones de alquiler
-const  CondicionAlquiler  = require("../modules/cotizaciones/infrastructure/models/condicionAlquilerModel");
+const CondicionAlquiler = require("../modules/cotizaciones/infrastructure/models/condicionAlquilerModel");
 db.condiciones_alquiler = CondicionAlquiler;
 
 // Productos
@@ -199,6 +203,7 @@ if (db.cotizaciones_transporte) db.cotizaciones_transporte.associate(db);
 if (db.cotizaciones_instalacion) db.cotizaciones_instalacion.associate(db);
 if (db.trabajadores.associate) db.trabajadores.associate(db);
 if (db.vacaciones.associate) db.vacaciones.associate(db);
+if (db.contratos_laborales.associate) db.contratos_laborales.associate(db);
 if (db.asistencias.associate) db.asistencias.associate(db);
 if (db.gastos.associate) db.gastos.associate(db);
 if (db.jornadas.associate) db.jornadas.associate(db);

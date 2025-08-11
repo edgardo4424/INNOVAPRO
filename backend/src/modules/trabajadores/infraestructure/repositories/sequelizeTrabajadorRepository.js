@@ -3,8 +3,12 @@ const db = require("../../../../models");
 const EmpresaProveedora = db.empresas_proveedoras;
 const { Op, fn, col, where } = require("sequelize");
 class SequelizeTrabajadorRepository {
-   async crear(trabajadorData) {
-      const trabajador = await Trabajador.create(trabajadorData);
+   async crear(trabajadorData, transaction = null) {
+      const options = {};
+      if (transaction) {
+         options.transaction = transaction;
+      }
+      const trabajador = await Trabajador.create(trabajadorData, options);
       return trabajador;
    }
    async obtenerTrabajadoresPorArea(areaId, fecha) {

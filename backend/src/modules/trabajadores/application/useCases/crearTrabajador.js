@@ -1,6 +1,6 @@
 const Trabajador = require("../../domain/entities/trabajador");
 
-module.exports = async (empleadoData, trabajadorRepository) => {
+module.exports = async (empleadoData, trabajadorRepository,transaction = null) => {
    
     const trabajador = new Trabajador(empleadoData);
     
@@ -11,7 +11,8 @@ module.exports = async (empleadoData, trabajadorRepository) => {
 
    const nuevoTrabajadorData = trabajador.get(); // Almacenamos los datos del contacto a crear
    const nuevoTrabajador = await trabajadorRepository.crear(
-      nuevoTrabajadorData
+      nuevoTrabajadorData,
+      transaction
    ); // Creamos el nuevo trabajador con todos sus datos en la base de datos
 
    return {

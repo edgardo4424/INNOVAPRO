@@ -2,6 +2,7 @@ const obtenerTrabajadores = require("../../application/useCases/obtenerTrabajado
 const crearTrabajador = require("../../application/useCases/crearTrabajador");
 const obtenerTrabajadoresPorArea = require("../../application/useCases/obtenerTrabajadoresPorArea");
 const SequelizeTrabajadorRepository = require("../../infraestructure/repositories/sequelizeTrabajadorRepository");
+const crearTrabajadorConContrato = require("../../../../application/services/crearTrabajadorConContrato");
 
 const trabajadorRepository = new SequelizeTrabajadorRepository();
 
@@ -13,6 +14,14 @@ const TrabajadorController = {
             trabajadorRepository
          );
          res.status(nuevoTrabajador.codigo).json(nuevoTrabajador.respuesta);
+      } catch (error) {
+         res.status(500).json({ error: error.message });
+      }
+   },
+   async crearTrabajadorConContrato(req, res) {
+      try {
+         const nuevaContratacion = await crearTrabajadorConContrato(req.body);
+         res.status(nuevaContratacion.codigo).json(nuevaContratacion.respuesta);
       } catch (error) {
          res.status(500).json({ error: error.message });
       }

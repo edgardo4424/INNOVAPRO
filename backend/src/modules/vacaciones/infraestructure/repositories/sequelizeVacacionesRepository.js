@@ -32,6 +32,11 @@ class SequelizeVacacionesRepository {
                      as:"area"
                   }
                ]
+            },
+            {
+               model:db.contratos_laborales,
+               as:"contratos_laborales"
+
             }
          ],
       });
