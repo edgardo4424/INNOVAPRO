@@ -63,6 +63,7 @@ function mergeRangosConRegimen(contratos = []) {
  * }}
  */
 function calcularMesesComputablesSemestre(contratos, periodo, anio) {
+  
   const year = Number(anio);
   if (!year || !['JULIO','DICIEMBRE'].includes(periodo)) {
     throw new Error('Parámetros inválidos.');

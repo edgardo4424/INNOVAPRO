@@ -13,7 +13,7 @@ const GestionGratificacion = () => {
             try {
                 setLoading(true);
                 const res = await gratificacionService.obtenerGratificaciones({
-                    periodo: "DICIEMBRE",
+                    periodo: "JULIO",
                     anio: "2025"
                 })
                 setGratificacion(res)

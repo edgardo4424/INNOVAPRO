@@ -23,9 +23,9 @@ const GratificacionController = {
     
     async calcularGratificaciones(req, res) {
         try {
-            const { periodo, anio } = req.body;
+            const { periodo, anio, filial_id } = req.body;
 
-            const gratifiaciones = await calcularGratificaciones(periodo, anio, gratificacionRepository); // Llamamos al caso de uso para obtener todos los gratifiaciones
+            const gratifiaciones = await calcularGratificaciones(periodo, anio, filial_id, gratificacionRepository); // Llamamos al caso de uso para obtener todos los gratifiaciones
            
             res.status(200).json(gratifiaciones.respuesta); // 🔥 Siempre devuelve un array, aunque esté vacío
         } catch (error) {
