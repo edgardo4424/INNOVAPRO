@@ -14,6 +14,7 @@ import GestionTrabajadores from "@/modules/trabajadores/pages/GestionTrabajadore
 import GestionAsistencia from "@/modules/asistencia/pages/GestionAsistencia";
 import PlanillaEnConstruccion from "@/modules/planilla/pages/planilla";
 import GestionVacaciones from "@/modules/Beneficios/Pages/GestionVacaciones";
+import GestionBonos from "@/modules/Beneficios/Pages/GestionBonos";
 
 // Lazy load components
 const Login = lazy(() => import("@/modules/auth/pages/Login"));
@@ -166,7 +167,9 @@ export default function AppRoutes() {
                      </Route>
 
                      <Route
-                        element={<RoleGuard roles={["Gerencia", "Administracion"]} />}
+                        element={
+                           <RoleGuard roles={["Gerencia", "Administracion"]} />
+                        }
                      >
                         <Route
                            path="condiciones"
@@ -240,6 +243,9 @@ export default function AppRoutes() {
                               path="vacaciones"
                               element={<GestionVacaciones />}
                            />
+                        </Route>
+                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                           <Route path="bonos" element={<GestionBonos />} />
                         </Route>
                      </>
                   </Route>

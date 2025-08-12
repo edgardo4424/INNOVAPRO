@@ -82,7 +82,10 @@ Trabajador.associate = (models) => {
       foreignKey: "trabajador_id",
       as: "vacaciones",
    });
-
+   Trabajador.hasMany(models.bonos, {
+      foreignKey: "trabajador_id",
+      as: "bonos",
+   });
    Trabajador.belongsTo(models.empresas_proveedoras, {
       foreignKey: "filial_id",
       as: "empresa_proveedora",
