@@ -151,15 +151,21 @@ class SequelizeAsistenciaRepository {
       }
    }
 
-   async calcularNumeroDeFaltasEnUnPeriodo(trabajador_id, periodo){
-       try {
-         const asistencia = await Asistencia.findAll({
-            trabajador_id: trabajador_id,
+   async ObtenerHorasExtras(trabajador_id, periodo, anio) {
+      try {
+         const inicio = periodo === 1 ? `${anio}-01-01` : `${anio}-07-01`;
+         const fin = periodo === 1 ? `${anio}-06-30` : `${anio}-12-31`;
+         const asistencias = await Asistencia.findAll({
+            where: {
+               trabajador_id,
+               fecha: {
+                  [Op.gte]: inicio,
+                  [Op.lte]: fin,
+               },
+            },
          });
-         console.log('asistencia',asistencia);
-
+         return asistencias.reduce((total, asistencia) => total + asistencia.horas_extras, 0);
       } catch (error) {
-         console.error(error);
          throw new Error(error.message);
       }
    }
