@@ -7,15 +7,16 @@ import gratificacionService from "../services/gratificacionService";
 const GestionGratificacion = () => {
     const [loading, setLoading] = useState(false);
     const [gratificacion, setGratificacion] = useState(null);
+    const [filtro, setFiltro] = useState({
+        anio: "",
+        periodo: "",
+        filial_id: "",
+    });
 
-    useEffect(() => {
         const fetchGratificacion = async () => {
             try {
                 setLoading(true);
-                const res = await gratificacionService.obtenerGratificaciones({
-                    periodo: "DICIEMBRE",
-                    anio: "2025"
-                })
+                const res = await gratificacionService.obtenerGratificaciones(filtro);
                 setGratificacion(res)
             } catch (error) {
             }
@@ -24,10 +25,11 @@ const GestionGratificacion = () => {
             }
         };
 
-        fetchGratificacion();
-    }, []);
+        const Buscar = () => {
+            fetchGratificacion();
+        };
 
-    const [renderType, setRenderType] = useState(true);
+
     return (
         <div className="min-h-full flex-1  flex flex-col items-center">
             <div className="w-full px-4 max-w-7xl py-6 flex justify-between">
@@ -35,7 +37,7 @@ const GestionGratificacion = () => {
                     <h2 className=" text-2xl md:text-3xl font-bold text-gray-800 !text-start">
                         Gestión de Gratificaciones
                     </h2>
-                    <Filtro />
+                    <Filtro filtro={filtro} setFiltro={setFiltro} Buscar={Buscar} />
                 </div>
             </div>
             {loading ? (
@@ -47,7 +49,7 @@ const GestionGratificacion = () => {
                 </div>
             ) : (
                 gratificacion ? (
-                    <div className="w-full px-20  max-w-8xl ">
+                    <div className="w-full px-7 ">
                         <ListaGratificacion TipoGratificacion="Planilla" gratificacion={gratificacion} />
                         {/* <ListaGratificacion TipoGratificacion="Honorarios" gratificacion={Gratificacion.honorarios} /> */}
                     </div>
