@@ -150,6 +150,19 @@ class SequelizeAsistenciaRepository {
          throw new Error(error.message);
       }
    }
+
+   async calcularNumeroDeFaltasEnUnPeriodo(trabajador_id, periodo){
+       try {
+         const asistencia = await Asistencia.findAll({
+            trabajador_id: trabajador_id,
+         });
+         console.log('asistencia',asistencia);
+
+      } catch (error) {
+         console.error(error);
+         throw new Error(error.message);
+      }
+   }
 }
 
 module.exports = SequelizeAsistenciaRepository;
