@@ -1,6 +1,7 @@
 const { Op } = require("sequelize");
 const { options } = require("../../interfaces/routes/bonosRoutes");
 const { Bonos } = require("../models/bonoModel");
+const db = require("../../../../models");
 
 class SequelizeBonoRepository {
    async crearBono(bonoData) {
@@ -13,8 +14,7 @@ class SequelizeBonoRepository {
       };
       if (transaction) options.transaction = transaction;
 
-       await Bonos.update(bonoData, options);
-      
+      await Bonos.update(bonoData, options);
    }
    async obtenerBonosPorTrabajadorId(id, transaction = null) {
       const options = { where: { trabajador_id: id, estado: 1 } };
@@ -23,7 +23,10 @@ class SequelizeBonoRepository {
       return bonos;
    }
    async obtenerBonos(transaction = null) {
-      const options = { where: { estado: 1 } };
+      const options = {
+         where: { estado: 1 },
+         include: [{ model: db.trabajadores, as: "trabajadores" }],
+      };
       if (transaction) options.transaction = transaction;
       const bonos = await Bonos.findAll(options);
       return bonos;
