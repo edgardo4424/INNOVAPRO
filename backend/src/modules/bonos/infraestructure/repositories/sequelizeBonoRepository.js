@@ -59,6 +59,21 @@ class SequelizeBonoRepository {
       const bonos = await Bonos.findAll(options);
       return bonos;
    }
+
+   async obtenerBonoTotalDelTrabajadorPorRangoFecha(trabajador_id, fechaInicio, fechaFin){
+
+    const total = await Bonos.sum('monto', {
+    where: {
+      trabajador_id,
+      estado: true, // ajusta si tu campo es 1/0 o 'ACTIVO'
+      fecha: { [Op.between]: [fechaInicio, fechaFin] }, // inclusivo
+      // deleted_at: null, // si usas soft delete y paranoid:false
+    },
+    // logging: console.log, // útil para depurar el SQL
+  });
+
+  return Number(total || 0);
+   }
 }
 
 module.exports = SequelizeBonoRepository;

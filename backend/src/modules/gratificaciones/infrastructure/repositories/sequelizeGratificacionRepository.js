@@ -10,8 +10,11 @@ const {
 } = require("../services/mapearParaReporteGratificaciones");
 
 const SequelizeAsistenciaRepository = require("../../../asistencias/infraestructure/repositories/sequelizeAsistenciaRepository");
+const SequelizeBonoRepository = require("../../../bonos/infraestructure/repositories/sequelizeBonoRepository");
+
 
 const asistenciaRepository = new SequelizeAsistenciaRepository();
+const bonoRepository = new SequelizeBonoRepository()
 
 const MONTO_POR_HORA_EXTRA = 10;
 const MONTO_ASIGNACION_FAMILIAR = 102.5;
@@ -52,6 +55,19 @@ class SequelizeFilialRepository {
       porTrabajador.get(tid).contratos.push(c.get({ plain: true }));
     }
 
+     let fechaInicio, fechaFin;
+
+    switch (periodo) {
+      case 'JULIO':      // semestre ene-jun
+        fechaInicio = `${anio}-01-01`;
+        fechaFin    = `${anio}-06-30`;  // <-- junio tiene 30
+        break;
+      case 'DICIEMBRE':  // semestre jul-dic
+        fechaInicio = `${anio}-07-01`;
+        fechaFin    = `${anio}-12-31`;
+        break;           // <-- faltaba
+    }
+
     const filas = await Promise.all(
       Array.from(porTrabajador.values()).map(
         async ({ trabajador, contratos }) => {
@@ -63,16 +79,19 @@ class SequelizeFilialRepository {
           // 2) Componentes comunes de RC (si RC se calcula igual para todo el semestre)
           const asignacionFamiliar = trabajador.asignacion_familiar ? MONTO_ASIGNACION_FAMILIAR : 0;
 
-         const totalHorasExtras = await asistenciaRepository.obtenerHorasExtras(trabajador.id, periodo, anio)
+         const totalHorasExtras = await asistenciaRepository.obtenerHorasExtrasPorRangoFecha(trabajador.id, fechaInicio, fechaFin)
 
          console.log('totalHorasExtras', totalHorasExtras);
         
          //console.log('totalHorasExtras', totalHorasExtras);
           const promedioHorasExtras = totalHorasExtras * MONTO_POR_HORA_EXTRA;
-          const promedioBonoObra = 0; // TODO
+          const promedioBonoObra = await bonoRepository.obtenerBonoTotalDelTrabajadorPorRangoFecha(trabajador.id, fechaInicio, fechaFin); // TODO
 
+          console.log('PROMEDIOOOOOOOOOO BONO OBRA', promedioBonoObra);
           const noComputableDias = 0; // TODO: Falta calcular los dias no computables
           const noComputable = noComputableDias * MONTO_NO_COMPUTABLE;
+
+           const faltasDias = await asistenciaRepository.obtenerCantidadFaltasPorRangoFecha(trabajador.id, fechaInicio, fechaFin); // Falta calcular la cantidad de faltas
 
           // Nota: si el sueldo_base cambia por contrato, ya viene por cada parte (porRegimen.sueldo_base).
           // Aquí RC se arma por parte con su sueldo_base específico:
@@ -87,7 +106,6 @@ class SequelizeFilialRepository {
             const gratiBruta = +(RC * p.factor * (p.meses / 6)).toFixed(2);
 
             // Faltas: si llevaras por mes, podrías repartir por proporción de meses
-            const faltasDias = 1; // Falta calcular la cantidad de faltas
             const faltasMonto = faltasDias * MONTO_FALTA_POR_DIA;
             //const gratiNeta = +Math.max(0, gratiBruta - faltasMonto).toFixed(2);
             const gratiNeta = gratiBruta - faltasMonto - noComputable;

@@ -151,24 +151,9 @@ class SequelizeAsistenciaRepository {
       }
    }
 
-   async obtenerHorasExtras(trabajador_id, periodo, anio) {
+   async obtenerHorasExtrasPorRangoFecha(trabajador_id, fechaInicio, fechaFin) {
   try {
-    if (!['JULIO','DICIEMBRE'].includes(periodo)) {
-      throw new Error('Periodo inválido. Use "JULIO" o "DICIEMBRE".');
-    }
 
-    let fechaInicio, fechaFin;
-
-    switch (periodo) {
-      case 'JULIO':      // semestre ene-jun
-        fechaInicio = `${anio}-01-01`;
-        fechaFin    = `${anio}-06-30`;  // <-- junio tiene 30
-        break;
-      case 'DICIEMBRE':  // semestre jul-dic
-        fechaInicio = `${anio}-07-01`;
-        fechaFin    = `${anio}-12-31`;
-        break;           // <-- faltaba
-    }
 
     const asistencias = await Asistencia.findAll({
       where: {
@@ -188,6 +173,26 @@ class SequelizeAsistenciaRepository {
   }
 }
 
+ async obtenerCantidadFaltasPorRangoFecha(trabajador_id, fechaInicio, fechaFin) {
+  try {
+
+    const cantidadFaltas = await Asistencia.count({
+      where: {
+        trabajador_id,
+        estado_asistencia: "falto",
+        fecha: {
+          [Op.between]: [fechaInicio, fechaFin], // <-- inclusivo en ambos extremos
+        },
+      },
+    });
+
+    console.log('cantidadFaltas', cantidadFaltas);
+
+    return cantidadFaltas
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
 }
 
 module.exports = SequelizeAsistenciaRepository;
