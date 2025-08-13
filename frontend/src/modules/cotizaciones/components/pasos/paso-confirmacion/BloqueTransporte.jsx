@@ -1,10 +1,25 @@
+import { useEffect } from "react";
 import { extraerDistrito } from "../../../utils/cotizacionUtils";
 
-// Este componente permite al comercial si requiere transporte o no, seleccionar el tipo de transporte y personalizar los costos
+// Este componente permite al comercial decidir si requiere transporte o no, seleccionar el tipo de transporte y personalizar los costos
 // recibidos automáticamente.
 
 export default function BloqueTransporte({ formData, setFormData, errores }) {
-  const distrito = extraerDistrito(formData.obra_direccion);
+  const distrito = extraerDistrito(formData.entidad.obra.direccion);
+  const transporte = formData.atributos_opcionales.transporte;
+  
+  useEffect(() => {
+  setFormData((prev) => ({
+      ...prev,
+      atributos_opcionales: {
+        ...prev.atributos_opcionales,
+        transporte: {
+          ...prev.atributos_opcionales.transporte,
+          tiene_transporte: false
+        }
+      }
+    }));
+  }, [formData.uso.despiece]);
 
   return (
     <div className="wizard-section">
@@ -13,17 +28,22 @@ export default function BloqueTransporte({ formData, setFormData, errores }) {
 
       <select
         value={
-            formData.tiene_transporte === true
+            transporte.tiene_transporte === true
             ? "TRUE"
-            : formData.tiene_transporte === false
+            : transporte.tiene_transporte === false
             ? "FALSE"
             : ""
         }
         onChange={(e) =>
             setFormData((prev) => ({
             ...prev,
-            tiene_transporte: e.target.value === "TRUE",
-            costo_transporte: 0,
+            atributos_opcionales: {
+              ...prev.atributos_opcionales,
+              transporte: {
+                ...prev.atributos_opcionales.transporte,
+                tiene_transporte: e.target.value === "TRUE",
+              }
+            }
             }))
         }
         >
@@ -31,20 +51,25 @@ export default function BloqueTransporte({ formData, setFormData, errores }) {
         <option value="TRUE">Sí</option>
         <option value="FALSE">No</option>
     </select>
-      
       <div style={{ fontSize: "13px", marginTop: "1rem", color: "#666" }}>
         {errores?.tiene_transporte && <p className="error-text">{errores.tiene_transporte}</p>}
       </div>
 
-      {formData.tiene_transporte && (
+      {transporte.tiene_transporte && (
         <div style={{ marginTop: "1rem" }}>
           <label>🛻 Tipo de transporte</label>
           <select
-            value={formData.tipo_transporte || ""}
+            value={transporte.tipo_transporte || ""}
             onChange={(e) =>
               setFormData((prev) => ({
                 ...prev,
-                tipo_transporte: e.target.value,
+                atributos_opcionales: {
+                  ...prev.atributos_opcionales,
+                  transporte: {
+                    ...prev.atributos_opcionales.transporte,
+                    tipo_transporte: e.target.value,
+                  }
+                }
               }))
             }
           >
@@ -69,16 +94,41 @@ export default function BloqueTransporte({ formData, setFormData, errores }) {
               </label>
               <input
                 type="number"
-                onWheel={(e) => e.target.blur()}
-                min="0"
-                step="0.01"
-                value={formData[campo] || ""}
-                onChange={(e) =>
+                onWheel={(e) => e.target.blur()} 
+                min="0" 
+                step="0.01" 
+                placeholder="0.00" 
+                value={transporte[campo] ?? ""} // Muestra el valor actual del campo, si es null o undefined, se muestra el placeholder
+                onChange={(e) => {
+                  const valor = e.target.value;
+                  // Al escribir, se guarda el valor como string temporal para permitir escritura libre (incluso vacío)
                   setFormData((prev) => ({
                     ...prev,
-                    [campo]: parseFloat(e.target.value),
-                  }))
-                }
+                    atributos_opcionales: {
+                      ...prev.atributos_opcionales,
+                      transporte: {
+                        ...prev.atributos_opcionales.transporte,
+                        [campo]: valor // No lo convertimos aún para no interferir con la experiencia de escritura
+                      }
+                    }
+                  }));
+                }}
+                onBlur={(e) => {
+                  const valor = e.target.value;
+                  // Cuando el usuario sale del campo (blur), validamos:
+                  // Si el campo quedó vacío, guardamos 0.00
+                  // Si tiene valor, lo convertimos (parseFloat)
+                  setFormData((prev) => ({
+                    ...prev,
+                    atributos_opcionales: {
+                      ...prev.atributos_opcionales,
+                      transporte: {
+                        ...prev.atributos_opcionales.transporte,
+                        [campo]: valor === "" ? 0.00 : parseFloat(valor)
+                      }
+                    }
+                  }));
+                }}
               />
             </div>
           ))}
@@ -86,9 +136,9 @@ export default function BloqueTransporte({ formData, setFormData, errores }) {
           <div style={{ marginTop: "1rem" }}>
             <strong>🚛 Costo Transporte Total:</strong> S/{" "}
             {(
-              Number(formData.costo_tarifas_transporte || 0) +
-              Number(formData.costo_distrito_transporte || 0) +
-              Number(formData.costo_pernocte_transporte || 0)
+              Number(transporte.costo_tarifas_transporte || 0) +
+              Number(transporte.costo_distrito_transporte || 0) +
+              Number(transporte.costo_pernocte_transporte || 0)
             ).toFixed(2)}
           </div>
           

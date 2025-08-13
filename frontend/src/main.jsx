@@ -1,5 +1,7 @@
 // Este archivo es el punto de entrada en REACT: ReactDOM.createRoot()
-// Aquí se envuelven los providers globales (AuthProvider, NotificacionesProvider, App, ToastContainer)
+// Se envuelve la app con los contextos globales y renderiza el componente principal <App/>
+// Aquí se conectan los cables principales de la aplicación: autenticación, notificaciones, facturación y estilos globales
+
 
 import React from "react";
 import ReactDOM from "react-dom/client";
@@ -19,10 +21,11 @@ import "./styles/registroTarea.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <AuthProvider>
-      <NotificacionesProvider>
-        <AppProviderFacturacion>
-          <App />
+  //<React.StrictMode> {/* Modo Stric que nos ayuda en desarrollo a encontrar bugs */}
+    <AuthProvider> {/* Se encarga de la sesión del usuario. */}
+      <NotificacionesProvider> {/* Gestiona el sistema de notificaciones. */}
+        <AppProviderFacturacion>{/* Provee datos específicos del módulo de facturación. */}
+          <App /> {/* Invocamos la APP principal que a su vez lanzará las rutas del sistema */}
           <ToastContainer
             position="top-right"
             autoClose={5000}
@@ -37,5 +40,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         </AppProviderFacturacion>
       </NotificacionesProvider>
     </AuthProvider>
-  </React.StrictMode>
+  //</React.StrictMode>
 )

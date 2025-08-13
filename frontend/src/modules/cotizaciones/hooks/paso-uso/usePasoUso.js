@@ -25,14 +25,20 @@ export function usePasoUso({ formData, setFormData }) {
   }, []);
 
   const handleChange = (campo, valor) => {
-    setFormData(prev => ({ ...prev, [campo]: valor }));
+    setFormData((prev) => ({ 
+      ...prev, 
+      [campo]: valor,
+    }));
   };
 
-  const handleSeleccionUso = (e) => {
-    const id = parseInt(e.target.value);
-    const uso = usos.find(u => u.id === id);
-    handleChange("uso_id", uso?.id || null);
-    handleChange("uso_nombre", uso?.descripcion || "");
+  const handleSeleccionUso = (equipo) => {
+    const id = parseInt(equipo.target.value);
+    const uso = usos.find(uso => uso.id === id);
+    
+    handleChange("uso", {
+      id: uso?.id || null,
+      nombre: uso?.descripcion || "",
+    })
   };
 
   return {

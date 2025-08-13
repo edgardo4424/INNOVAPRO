@@ -29,15 +29,16 @@ export async function generarCuerpoPlanIntegral(doc, data, startY = 120) {
   currentY += 6;
 
   // ⚙️ Datos técnicos
-  const equipo = data.zonas?.[0]?.atributos?.[0] || {};
-  const altura = equipo.altura_m || "—";
-  const plataforma = equipo.longitud_plataforma_m || "—";
+  const equipo = data.detalles_colgantes || {};
+  const altura = data.zonas[0].atributos[0].alturaEdificio || "—";
+  const plataforma = equipo.longitud_plataformas || "—";
   const cable = equipo.longitud_cable || "—";
   const soporte = equipo.tipo_soporte || "—";
-  const cantidad = equipo.cantidad_uso || 2;
+  const cantidad = equipo.cantidad_colgantes || 1;
   const modelo = equipo.modelo || "ZPL630 O ZPL800";
+  let unidades = cantidad > 1 ? "Uds." : "Ud.";
 
-  const detalle = `Alquiler de ${cantidad} Uds. andamio colgante eléctrico.\nModelo: ${modelo}\nTipo de Servicio: INTEGRAL\nAltura del edificio: ${altura} m\nLongitud cable de acero: ${cable || "(definir según obra)"}\nLongitud de línea de vida: Altura + 15 m\nLongitud de plataforma: ${plataforma} m (definir modulación, ej. 3+3+1.5)\nSistema de soporte: ${soporte}\nPeriodo de alquiler: ${data.cotizacion?.tiempo_alquiler_dias || "(por definir)"} días calendario`;
+  const detalle = `Alquiler de ${cantidad} ${unidades} de andamios colgantes eléctricos.\nModelo: ${modelo}\nTipo de Servicio: INTEGRAL\nAltura del edificio: ${altura} m\nLongitud cable de acero: ${cable || "(definir según obra)"}\nLongitud de línea de vida: Altura + 15 m\nLongitud de plataforma: ${plataforma} m (definir modulación, ej. 3+3+1.5)\nSistema de soporte: ${soporte}\nPeriodo de alquiler: ${data.cotizacion?.tiempo_alquiler_dias || "(por definir)"} días calendario`;
 
   const detalleFinal = detalle.split("\n");
 

@@ -4,15 +4,22 @@
 // a qué se está refiriendo con "parcial"
 
 export default function BloqueInstalacion({ formData, setFormData, errores }) {
-  const tipo = formData.tipo_instalacion || "";
+  // Almacenamos el tipo de cotización que puede ser Completa o Parcial
+  const tipo = formData.atributos_opcionales.instalacion.tipo_instalacion || "";
 
   const limpiarInstalacion = () => {
     setFormData((prev) => ({
       ...prev,
-      tiene_instalacion: false,
-      precio_instalacion_completa: 0,
-      precio_instalacion_parcial: 0,
-      nota_instalacion: ""
+      atributos_opcionales:{
+        ...prev.atributos_opcionales,
+        instalacion: {
+          ...prev.atributos_opcionales.instalacion,
+          tiene_instalacion: false,
+          precio_instalacion_completa: 0,
+          precio_instalacion_parcial: 0,
+          nota_instalacion: ""
+        }
+      }
     }));
   };
 
@@ -25,8 +32,14 @@ export default function BloqueInstalacion({ formData, setFormData, errores }) {
           const seleccion = e.target.value;
           setFormData((prev) => ({
             ...prev,
-            tipo_instalacion: seleccion,
-            tiene_instalacion: seleccion !== "NINGUNA"
+            atributos_opcionales:{
+              ...prev.atributos_opcionales,
+              instalacion: {
+                ...prev.atributos_opcionales.instalacion,
+                tipo_instalacion: seleccion,
+                tiene_instalacion: seleccion !== "NINGUNA"
+              }
+            }
           }));
 
           if (seleccion === "NINGUNA" || seleccion === "") limpiarInstalacion();
@@ -43,16 +56,42 @@ export default function BloqueInstalacion({ formData, setFormData, errores }) {
           <label>💸 Precio de instalación completa (S/)</label>
           <input
             type="number"
-            onWheel={(e) => e.target.blur()}
-            min="0"
-            value={formData.precio_instalacion_completa || ""}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                precio_instalacion_completa: parseFloat(e.target.value),
-              }))
-            }
-          />
+            onWheel={(e) => e.target.blur()} 
+            min="0" 
+            step="0.01" 
+            placeholder="0.00" 
+            value={formData.atributos_opcionales.instalacion.precio_instalacion_completa ?? ""} // Muestra el valor actual del campo, si es null o undefined, se muestra el placeholder
+              onChange={(e) => {
+                const valor = e.target.value;
+                // Al escribir, se guarda el valor como string temporal para permitir escritura libre (incluso vacío)
+                setFormData((prev) => ({
+                  ...prev,
+                  atributos_opcionales:{
+                    ...prev.atributos_opcionales,
+                    instalacion: {
+                      ...prev.atributos_opcionales.instalacion,
+                      precio_instalacion_completa: valor,
+                    }
+                  }
+                }))
+              }}
+              onBlur={(e) => {
+                const valor = e.target.value;
+                // Cuando el usuario sale del campo (blur), validamos:
+                // Si el campo quedó vacío, guardamos 0.00
+                // Si tiene valor, lo convertimos (parseFloat)
+                setFormData((prev) => ({
+                  ...prev,
+                  atributos_opcionales: {
+                    ...prev.atributos_opcionales,
+                    instalacion: {
+                      ...prev.atributos_opcionales.instalacion,
+                      precio_instalacion_completa: valor === "" ? 0.00 : parseFloat(valor)
+                    }
+                  }
+                }));
+              }}
+            />
         </div>
       )}
 
@@ -61,32 +100,84 @@ export default function BloqueInstalacion({ formData, setFormData, errores }) {
           <div style={{ marginTop: "1rem" }}>
             <label>💰 Precio de instalación completa (S/)</label>
             <input
-              type="number"
-              onWheel={(e) => e.target.blur()}
-              min="0"
-              value={formData.precio_instalacion_completa || ""}
-              onChange={(e) =>
+            type="number"
+            onWheel={(e) => e.target.blur()} 
+            min="0" 
+            step="0.01" 
+            placeholder="0.00" 
+            value={formData.atributos_opcionales.instalacion.precio_instalacion_completa ?? ""} // Muestra el valor actual del campo, si es null o undefined, se muestra el placeholder
+              onChange={(e) => {
+                const valor = e.target.value;
+                // Al escribir, se guarda el valor como string temporal para permitir escritura libre (incluso vacío)
                 setFormData((prev) => ({
                   ...prev,
-                  precio_instalacion_completa: parseFloat(e.target.value),
+                  atributos_opcionales:{
+                    ...prev.atributos_opcionales,
+                    instalacion: {
+                      ...prev.atributos_opcionales.instalacion,
+                      precio_instalacion_completa: valor,
+                    }
+                  }
                 }))
-              }
+              }}
+              onBlur={(e) => {
+                const valor = e.target.value;
+                // Cuando el usuario sale del campo (blur), validamos:
+                // Si el campo quedó vacío, guardamos 0.00
+                // Si tiene valor, lo convertimos (parseFloat)
+                setFormData((prev) => ({
+                  ...prev,
+                  atributos_opcionales: {
+                    ...prev.atributos_opcionales,
+                    instalacion: {
+                      ...prev.atributos_opcionales.instalacion,
+                      precio_instalacion_completa: valor === "" ? 0.00 : parseFloat(valor)
+                    }
+                  }
+                }));
+              }}
             />
           </div>
 
           <div style={{ marginTop: "1rem" }}>
             <label>💵 Precio de instalación parcial (S/)</label>
             <input
-              type="number"
-              onWheel={(e) => e.target.blur()}
-              min="0"
-              value={formData.precio_instalacion_parcial || ""}
-              onChange={(e) =>
+            type="number"
+            onWheel={(e) => e.target.blur()} 
+            min="0" 
+            step="0.01" 
+            placeholder="0.00" 
+            value={formData.atributos_opcionales.instalacion.precio_instalacion_parcial ?? ""} // Muestra el valor actual del campo, si es null o undefined, se muestra el placeholder
+              onChange={(e) => {
+                const valor = e.target.value;
+                // Al escribir, se guarda el valor como string temporal para permitir escritura libre (incluso vacío)
                 setFormData((prev) => ({
                   ...prev,
-                  precio_instalacion_parcial: parseFloat(e.target.value),
+                  atributos_opcionales:{
+                    ...prev.atributos_opcionales,
+                    instalacion: {
+                      ...prev.atributos_opcionales.instalacion,
+                      precio_instalacion_parcial: valor,
+                    }
+                  }
                 }))
-              }
+              }}
+              onBlur={(e) => {
+                const valor = e.target.value;
+                // Cuando el usuario sale del campo (blur), validamos:
+                // Si el campo quedó vacío, guardamos 0.00
+                // Si tiene valor, lo convertimos (parseFloat)
+                setFormData((prev) => ({
+                  ...prev,
+                  atributos_opcionales: {
+                    ...prev.atributos_opcionales,
+                    instalacion: {
+                      ...prev.atributos_opcionales.instalacion,
+                      precio_instalacion_parcial: valor === "" ? 0.00 : parseFloat(valor)
+                    }
+                  }
+                }));
+              }}
             />
           </div>
 
@@ -98,11 +189,17 @@ export default function BloqueInstalacion({ formData, setFormData, errores }) {
             id="nota_instalacion"
             rows="4"
             placeholder="Ej: El precio es referente a 3 cuerpos de andamios"
-            value={formData.nota_instalacion || ""}
+            value={formData.atributos_opcionales.instalacion.nota_instalacion || ""}
             onChange={(e) =>
               setFormData((prev) => ({
                 ...prev,
-                nota_instalacion: e.target.value,
+                atributos_opcionales:{
+                  ...prev.atributos_opcionales,
+                  instalacion: {
+                    ...prev.atributos_opcionales.instalacion,
+                    nota_instalacion: e.target.value,
+                  }
+                }
               }))
             }
             style={{

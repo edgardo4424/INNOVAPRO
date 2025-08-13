@@ -12,6 +12,6 @@
 // 11 = Escuadras sin plataformas
 export const USOS_INSTALABLES = [1, 2, 3, 4]; 
 
-export const USOS_SIN_DESCUENTO = [3, 4, 5, 8, 11];
+export const USOS_SIN_DESCUENTO = [3, 4, 5, 7, 8, 11];
 
 export const USOS_SIN_DESPIECE = [6, 9];

@@ -1,13 +1,27 @@
 import { useEffect, useState } from "react";
 
+// Este componente es cuando OT ya ha generado el despiece y ha definido cuánta altura debe cubrir la escalera.
+// Pero ahora, es el turno del comercial de cerrar el círculo: debe revisar lo generado y confirmar que los tramos (bloques físicos de 2m o 1m) 
+// sumen exactamente lo que se necesita.
+// Mientras el usuario ajusta estos valores, un sistema silencioso valida todo en tiempo real. Si la suma es incorrecta, aparece una advertencia en rojo. 
+// Pero si coincide perfectamente, el sistema aprueba y felicita con un mensaje en verde.
+
 export default function BloqueEscaleraAcceso({ formData, setFormData }) {
+
   const [errorTramos, setErrorTramos] = useState(false);
 
+  // Almacenamos la altura total de la escalera que viene desde el backend
   const alturaTotal = formData.detalles_escaleras?.altura_total_general || 0;
+
+  // Tramos que permitiremos que el comercial modifique para cuadrar la altura total
   const tramos2m = parseInt(formData.detalles_escaleras?.tramos_2m || 0);
   const tramos1m = parseInt(formData.detalles_escaleras?.tramos_1m || 0);
+
+  // Guardamos el total y si es inválido mostramos "-"
   const totalCalculado = isNaN(tramos2m * 2 + tramos1m) ? "—" : tramos2m * 2 + tramos1m;
 
+  // Cada vez que cambian los tramos o la altura, revisamos si la suma es correcta
+  // Si no coincide mostramos el error
   useEffect(() => {
     const alturaEsperada = parseInt(alturaTotal);
     const alturaTramos = parseInt(totalCalculado);
@@ -34,14 +48,17 @@ export default function BloqueEscaleraAcceso({ formData, setFormData }) {
           <input
             type="number"
             onWheel={(e) => e.target.blur()}
-            value={formData.detalles_escaleras?.precio_tramo || ""}
+            value={formData.uso.detalles_escaleras?.precio_tramo || ""}
             onChange={(e) =>
               setFormData((prev) => ({
                 ...prev,
-                detalles_escaleras: {
-                  ...prev.detalles_escaleras,
-                  precio_tramo: parseFloat(e.target.value) || 0,
-                },
+                uso: {
+                  ...prev.uso,
+                  detalles_escaleras: {
+                    ...prev.uso.detalles_escaleras,
+                    precio_tramo: parseFloat(e.target.value) || 0,
+                  },
+                }
               }))
             }
           />
@@ -52,52 +69,61 @@ export default function BloqueEscaleraAcceso({ formData, setFormData }) {
           <input
             type="number"
             onWheel={(e) => e.target.blur()}
-            value={formData.detalles_escaleras?.altura_total_general || ""}
+            value={formData.uso.detalles_escaleras?.altura_total_general || ""}
             onChange={(e) =>
               setFormData((prev) => ({
                 ...prev,
-                detalles_escaleras: {
-                  ...prev.detalles_escaleras,
-                  altura_total_general: e.target.value || 0,
-                },
+                uso: {
+                  ...prev.uso,
+                  detalles_escaleras: {
+                    ...prev.uso.detalles_escaleras,
+                    altura_total_general: e.target.value || 0,
+                  },
+                }
               }))
             }
           />
         </div>
 
         <div>
-          <label style={{ fontWeight: "bold", color: "#ff7a00" }}>Tramos de 2.00 (m):</label>
+          <label style={{ fontWeight: "bold", color: "#ff7a00" }}>Tramos de 2 (m):</label>
           <input
             type="number"
             onWheel={(e) => e.target.blur()}
             min={0}
-            value={formData.detalles_escaleras?.tramos_2m ?? ""}
+            value={formData.uso.detalles_escaleras?.tramos_2m ?? ""}
             onChange={(e) =>
               setFormData((prev) => ({
                 ...prev,
-                detalles_escaleras: {
-                  ...prev.detalles_escaleras,
-                  tramos_2m: e.target.value === "" ? "" : parseInt(e.target.value),
-                },
+                uso: {
+                  ...prev.uso,
+                  detalles_escaleras: {
+                    ...prev.uso.detalles_escaleras,
+                    tramos_2m: e.target.value === "" ? "" : parseInt(e.target.value),
+                  },
+                }
               }))
             }
           />
         </div>
 
         <div>
-          <label style={{ fontWeight: "bold", color: "#ff7a00" }}>Tramos de 1.00 (m):</label>
+          <label style={{ fontWeight: "bold", color: "#ff7a00" }}>Tramos de 1 (m):</label>
           <input
             type="number"
             onWheel={(e) => e.target.blur()}
             min={0}
-            value={formData.detalles_escaleras?.tramos_1m ?? ""}
+            value={formData.uso.detalles_escaleras?.tramos_1m ?? ""}
             onChange={(e) =>
               setFormData((prev) => ({
                 ...prev,
-                detalles_escaleras: {
-                  ...prev.detalles_escaleras,
-                  tramos_1m: e.target.value === "" ? "" : parseInt(e.target.value),
-                },
+                uso: {
+                  ...prev.uso,
+                  detalles_escaleras: {
+                    ...prev.uso.detalles_escaleras,
+                    tramos_1m: e.target.value === "" ? "" : parseInt(e.target.value),
+                  },
+                }
               }))
             }
           />
