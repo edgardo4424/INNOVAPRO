@@ -1,0 +1,25 @@
+const Trabajador = require("../../domain/entities/trabajador");
+
+module.exports = async (
+   trabajadorData,
+   trabajadorRepository,
+   transaction = null
+) => {
+   const trabajador = new Trabajador(trabajadorData);
+   const errores = trabajador.validarCamposObligatorios(true);
+   if (errores.length > 0) {
+      return { codigo: 400, respuesta: { mensaje: errores } };
+   }
+   const nuevoTrabajadorData = trabajador.get(true);
+   const nuevoTrabajador = await trabajadorRepository.editar(
+      nuevoTrabajadorData,
+      transaction
+   );
+   return {
+      codigo: 201,
+      respuesta: {
+         mensaje: "Trabajador editado exitosamente",
+         trabajador: nuevoTrabajador,
+      },
+   };
+};

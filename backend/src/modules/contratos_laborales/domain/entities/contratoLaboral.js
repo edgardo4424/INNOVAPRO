@@ -1,18 +1,36 @@
 class ContratoLaboral {
-   constructor({ trabajador_id, fecha_inicio, fecha_fin, sueldo, regimen }) {
+   constructor({
+      id,
+      trabajador_id,
+      fecha_inicio,
+      fecha_fin,
+      sueldo,
+      regimen,
+      tipo_contrato,
+   }) {
+      this.id = id;
       this.trabajador_id = trabajador_id;
       this.fecha_inicio = fecha_inicio;
       this.fecha_fin = fecha_fin;
       this.sueldo = sueldo;
       this.regimen = regimen;
+      this.tipo_contrato = tipo_contrato;
    }
 
-   validar() {
+   validar(editar = false) {
       const errores = [];
-      console.log(this.sueldo);
-      
-      if (typeof this.trabajador_id !== "number" || isNaN(this.trabajador_id)) {
-         errores.push("El ID del trabajador debe ser un número válido.");
+
+      if (editar) {
+         if (!this.id) {
+            errores.push("Al editar el id es requerido");
+         }
+      } else {
+         if (
+            typeof this.trabajador_id !== "number" ||
+            isNaN(this.trabajador_id)
+         ) {
+            errores.push("El ID del trabajador debe ser un número válido.");
+         }
       }
 
       const inicio = new Date(this.fecha_inicio);
@@ -32,7 +50,7 @@ class ContratoLaboral {
          );
       }
 
-      if ( this.sueldo <= 1130) {
+      if (this.sueldo <= 1130) {
          errores.push("El sueldo debe ser un número mayor a 1130.");
       }
 
@@ -40,17 +58,35 @@ class ContratoLaboral {
       if (!regimenValido.includes(this.regimen)) {
          errores.push('El régimen debe ser "MYPE" o "GENERAL".');
       }
+      console.log('El tipo d eoctrato es: ',this.tipo_contrato);
+      
+      const contrato_valido = ["PLANILLA", "HONORARIOS"];
+      if (!contrato_valido.includes(this.tipo_contrato)) {
+         errores.push("El tipo de contrato no es válido");
+      }
 
       return errores;
    }
-   get() {
-      return {
-         trabajador_id: this.trabajador_id,
-         fecha_inicio: this.fecha_inicio,
-         fecha_fin: this.fecha_fin,
-         sueldo: this.sueldo,
-         regimen: this.regimen,
-      };
+   get(editar = false) {
+      if (editar) {
+         return {
+            contrato_id: this.id,
+            fecha_inicio: this.fecha_inicio,
+            fecha_fin: this.fecha_fin,
+            sueldo: this.sueldo,
+            regimen: this.regimen,
+            tipo_contrato: this.tipo_contrato,
+         };
+      } else {
+         return {
+            trabajador_id: this.trabajador_id,
+            fecha_inicio: this.fecha_inicio,
+            fecha_fin: this.fecha_fin,
+            sueldo: this.sueldo,
+            regimen: this.regimen,
+            tipo_contrato: this.tipo_contrato,
+         };
+      }
    }
 }
 
