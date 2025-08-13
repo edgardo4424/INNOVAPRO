@@ -16,7 +16,9 @@ const GestionGratificacion = () => {
         const fetchGratificacion = async () => {
             try {
                 setLoading(true);
+
                 const res = await gratificacionService.obtenerGratificaciones(filtro);
+
                 setGratificacion(res)
             } catch (error) {
             }
