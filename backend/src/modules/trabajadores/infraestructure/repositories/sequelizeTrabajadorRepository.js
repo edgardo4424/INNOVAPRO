@@ -3,8 +3,36 @@ const db = require("../../../../models");
 const EmpresaProveedora = db.empresas_proveedoras;
 const { Op, fn, col, where } = require("sequelize");
 class SequelizeTrabajadorRepository {
-   async crear(trabajadorData) {
-      const trabajador = await Trabajador.create(trabajadorData);
+   async crear(trabajadorData, transaction = null) {
+      const options = {};
+      if (transaction) {
+         options.transaction = transaction;
+      }
+      const trabajador = await Trabajador.create(trabajadorData, options);
+      return trabajador;
+   }
+
+   async editar(trabajadorData, transaction = null) {
+      const options = { where: { id: trabajadorData.trabajador_id } };
+      if (transaction) {
+         options.transaction = transaction;
+      }
+      const trabajador = await Trabajador.update(trabajadorData, options);
+      return trabajador;
+   }
+
+   async obtenerTrabajadorPorId(id) {
+      const trabajador = await Trabajador.findOne({
+         where: { id: id },
+         include: [
+            {
+               model: db.contratos_laborales,
+               as: "contratos_laborales",
+               where: { estado: 1 },
+               required: false,
+            },
+         ],
+      });
       return trabajador;
    }
    async obtenerTrabajadoresPorArea(areaId, fecha) {

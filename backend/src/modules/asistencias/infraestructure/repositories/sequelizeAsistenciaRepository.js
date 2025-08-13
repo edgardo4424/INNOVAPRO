@@ -1,4 +1,4 @@
-const { where } = require("sequelize");
+const { where, Op } = require("sequelize");
 const sequelize = require("../../../../config/db");
 const { Asistencia } = require("../models/asistenciaModel");
 const { Gasto } = require("../models/gastoModel");
@@ -150,6 +150,49 @@ class SequelizeAsistenciaRepository {
          throw new Error(error.message);
       }
    }
+
+   async obtenerHorasExtrasPorRangoFecha(trabajador_id, fechaInicio, fechaFin) {
+  try {
+
+
+    const asistencias = await Asistencia.findAll({
+      where: {
+        trabajador_id,
+        fecha: {
+          [Op.between]: [fechaInicio, fechaFin], // <-- inclusivo en ambos extremos
+        },
+      },
+      // Opcional: optimiza la consulta si solo necesitas horas_extras
+      attributes: ['horas_extras'],
+      raw: true,
+    });
+
+    return asistencias.reduce((total, a) => total + Number(a.horas_extras || 0), 0);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+ async obtenerCantidadFaltasPorRangoFecha(trabajador_id, fechaInicio, fechaFin) {
+  try {
+
+    const cantidadFaltas = await Asistencia.count({
+      where: {
+        trabajador_id,
+        estado_asistencia: "falto",
+        fecha: {
+          [Op.between]: [fechaInicio, fechaFin], // <-- inclusivo en ambos extremos
+        },
+      },
+    });
+
+    console.log('cantidadFaltas', cantidadFaltas);
+
+    return cantidadFaltas
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
 }
 
 module.exports = SequelizeAsistenciaRepository;

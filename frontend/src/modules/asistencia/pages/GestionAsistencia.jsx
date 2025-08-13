@@ -30,6 +30,8 @@ const GestionAsistencia = () => {
             area_id,
             fechaSeleccionada
          );
+         console.log(response.data.trabajadores);
+         
          setTrabajadores([...response.data.trabajadores] || []);
       } catch (err) {
          setError("Error al cargar los trabajadores.");

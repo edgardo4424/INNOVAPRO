@@ -13,11 +13,12 @@ const http = require("http"); // 🔥 Agregar esta línea si no está
 const socketIo = require("socket.io");
 const compression = require("compression");
 const helmet = require("helmet");
+const morgan = require("morgan");
 const db = require("./models"); // Importa Sequelize para la conexión
 const routes = require("./routes"); // Importa rutas
 
 // Iniciar el bot de telegram
-//require('./shared/utils/botTelegram');      
+//require('./shared/utils/botTelegram');
 
 const app = express();
 const server = http.createServer(app);
@@ -31,6 +32,7 @@ app.use(cors());
 app.use(express.json());
 app.use(compression()); // 🔥 Reduce el tamaño de las respuestas
 app.use(helmet()); // 🛡️ Protege contra ataques comunes
+app.use(morgan("dev")); // Registra las solicitudes en consola
 
 // ⏳ Timeout extendido sin cortar conexiones
 app.use((req, res, next) => {

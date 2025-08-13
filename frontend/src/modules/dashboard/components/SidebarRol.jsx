@@ -103,6 +103,7 @@ const modulesByRole = {
             { name: "Vacaciones", path: "/vacaciones" },
             { name: "Cts", path: "/cts" },
             { name: "Gratificacion", path: "/gratificacion" },
+            { name: "Bonos", path: "/bonos" },
 
          ],
       },
@@ -117,8 +118,19 @@ const modulesByRole = {
             { name: "Ventas ", path: "/asistencia/ventas?area_id=9" },
          ],
       },
-      { name: "Facturación", path: "/facturacion" },
+
+      {
+         group: "Facturación",
+         items: [
+            { name: "Generar Documentos", path: "/facturacion/generar" },
+            { name: "Listar Documentos", path: "/facturacion/facturas?page=1&limit=40" },
+            { name: "Lista Borradores", path: "/facturacion/borradores?page=1&limit=40" },
+            { name: "Facturas Anuladas", path: "/facturacion/anuladas" },
+         ],
+      },
+
       { name: "Planilla", path: "/planilla" },
+
    ],
    Ventas: [
       { name: "Gestión de Clientes", path: "/gestion-clientes" },

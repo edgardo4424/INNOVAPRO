@@ -41,14 +41,6 @@ const Trabajador = sequelize.define(
          type: DataTypes.STRING,
          allowNull: false,
       },
-      fecha_ingreso: {
-         type: DataTypes.DATE,
-         allowNull: false,
-      },
-      fecha_salida: {
-         type: DataTypes.DATE,
-         allowNull: true,
-      },
       sueldo_base: {
          type: DataTypes.INTEGER,
          allowNull: false,
@@ -70,10 +62,6 @@ const Trabajador = sequelize.define(
          allowNull: false,
          defaultValue: "activo",
       },
-      regimen: {
-         type: DataTypes.ENUM("GENERAL", "MYPE"),
-         allowNull: true,
-      },
    },
    {
       tableName: "trabajadores",
@@ -86,12 +74,18 @@ Trabajador.associate = (models) => {
       foreignKey: "trabajador_id",
       as: "asistencias",
    });
-
+   Trabajador.hasMany(models.contratos_laborales, {
+      foreignKey: "trabajador_id",
+      as: "contratos_laborales",
+   });
    Trabajador.hasMany(models.vacaciones, {
       foreignKey: "trabajador_id",
       as: "vacaciones",
    });
-
+   Trabajador.hasMany(models.bonos, {
+      foreignKey: "trabajador_id",
+      as: "bonos",
+   });
    Trabajador.belongsTo(models.empresas_proveedoras, {
       foreignKey: "filial_id",
       as: "empresa_proveedora",

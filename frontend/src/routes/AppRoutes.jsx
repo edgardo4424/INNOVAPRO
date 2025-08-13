@@ -18,6 +18,8 @@ import GestionTrabajadores from "@/modules/trabajadores/pages/GestionTrabajadore
 import GestionAsistencia from "@/modules/asistencia/pages/GestionAsistencia";
 import PlanillaEnConstruccion from "@/modules/planilla/pages/planilla";
 import GestionVacaciones from "@/modules/Beneficios/Pages/GestionVacaciones";
+import GestionBonos from "@/modules/Beneficios/Pages/GestionBonos";
+
 
 // Lazy load components
 const Login = lazy(() => import("@/modules/auth/pages/Login"));
@@ -61,9 +63,36 @@ const GestionCondiciones = lazy(() =>
 const GestionStockPiezas = lazy(() =>
    import("../modules/stockPiezas/pages/GestionStockPiezas")
 );
+
+//* Facturacion
+
 const Facturacion = lazy(() =>
-   import("../modules/factuacion/pages/Facturacion")
+   import("../modules/facturacion/pages/Facturacion")
 );
+
+const FacturaBoleta = lazy(() =>
+   import("../modules/facturacion/factura-boleta/FacturaBoleta")
+);
+const GuiaRemision = lazy(() =>
+   import("../modules/facturacion/guia-de-remision/GuiaRemision")
+);
+
+const FacturasAnuladas = lazy(() =>
+   import("../modules/facturacion/pages/FacturasAnuladas")
+);
+
+const ListaDocumentos = lazy(() =>
+   import("../modules/facturacion/list-documentos/ListaDocumentos")
+);
+
+const FacturaBorradores = lazy(() =>
+   import("../modules/facturacion/lista-borradores/ListaBorradores")
+);
+
+const GestionGratificacion = lazy(() =>
+   import("../modules/gratificacion/pages/GestionGratificacion")
+);
+
 
 export default function AppRoutes() {
    const Router =
@@ -151,10 +180,21 @@ export default function AppRoutes() {
 
                      <Route
                         element={
-                           <RoleGuard
-                              roles={["Gerencia", "Oficina Técnica", "Ventas"]}
-                           />
+                           <RoleGuard roles={["Gerencia", "Administracion", "Ventas"]} />
                         }
+                     >
+                        <Route
+                           path="condiciones"
+                           element={
+                              <WizardProvider>
+                                 <GestionCondiciones />
+                              </WizardProvider>
+                           }
+                        />
+                     </Route>
+
+                     <Route
+                        element={<RoleGuard roles={["Gerencia", "Ventas", "Oficina Técnica"]} />}
                      >
                         <Route
                            path="centro-atencion"
@@ -173,9 +213,63 @@ export default function AppRoutes() {
                               </WizardProvider>
                            }
                         />
-                        <Route 
-                           path="/facturacion" 
-                           element={<Facturacion />} 
+
+                     </Route>
+
+                     {/*    //************************INICIO-FACTURACION************************* */}
+                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
+                        <Route
+                           path="facturacion/generar"
+                           element={
+                              <Facturacion />
+                           }
+                        />
+                     </Route>
+                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
+                        <Route
+                           path="facturacion/generar/factura-boleta"
+                           element={
+                              <FacturaBoleta />
+                           }
+                        />
+                     </Route>
+
+                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
+                        <Route
+                           path="facturacion/generar/guia-de-remision/:tipoGuia"
+                           element={
+                              <GuiaRemision />
+                           }
+                        />
+                     </Route>
+
+                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
+                        <Route
+                           path="facturacion/facturas"
+                           element={<ListaDocumentos />}
+                        />
+                     </Route>
+
+                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
+                        <Route
+                           path="facturacion/anuladas"
+                           element={<FacturasAnuladas />}
+                        />
+                     </Route>
+
+                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
+                        <Route
+                           path="facturacion/borradores"
+                           element={<FacturaBorradores />}
+                        />
+                     </Route>
+                     {/*    //************************FINAL-FACTURACION************************* */}
+
+
+                     <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                        <Route
+                           path="crear-trabajador"
+                           element={<CrearTrabajador />}
                         />
                      </Route>
 
@@ -194,12 +288,35 @@ export default function AppRoutes() {
 
                      <>
                         {/* Rutas para el modulo de aistencia */}
-                        {/* <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                      
+                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
                            <Route
-                              path="asistencia/encofrados"
-                              element={<AsistenciaEncofrados />}
+                              path="asistencia/:tipo"
+                              element={<GestionAsistencia />}
                            />
-                        </Route> */}
+                        </Route>
+                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                           <Route
+                              path="planilla"
+                              element={<PlanillaEnConstruccion />}
+                           />
+                        </Route>
+                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                           <Route
+                              path="vacaciones"
+                              element={<GestionVacaciones />}
+                           />
+                        </Route>
+                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+
+                           <Route path="bonos" element={<GestionBonos />} />
+
+                           <Route
+                              path="gratificacion"
+                              element={<GestionGratificacion />}
+                           />
+
+                        </Route>
                      </>
                   </Route>
                </Route>

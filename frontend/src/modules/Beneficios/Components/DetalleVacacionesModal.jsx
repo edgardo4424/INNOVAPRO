@@ -1,85 +1,142 @@
 import {
-   AlertDialog,
-   AlertDialogAction,
-   AlertDialogCancel,
-   AlertDialogContent,
-   AlertDialogDescription,
-   AlertDialogFooter,
-   AlertDialogHeader,
-   AlertDialogTitle,
-   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+   Dialog,
+   DialogContent,
+   DialogDescription,
+   DialogHeader,
+   DialogTitle,
+   DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Calendar, Clock, AlertTriangle, CheckCircle, Eye } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 export default function DetalleVacacionesModal({ datosEmpleado }) {
-   const calcularDiasTrabajados = (fechaIngreso) => {
-      const inicio = new Date(fechaIngreso);
-      const hoy = new Date();
-      const diferenciaTiempo = Math.abs(hoy.getTime() - inicio.getTime());
-      const diferenciaDias = Math.ceil(
-         diferenciaTiempo / (1000 * 60 * 60 * 24)
+   const contratos = datosEmpleado.contratos_laborales || [];
+
+   const fechaIngreso = (() => {
+      if (contratos.length === 0) return null;
+      const ordenados = [...contratos].sort(
+         (a, b) => new Date(a.fecha_inicio) - new Date(b.fecha_inicio)
       );
-      return diferenciaDias;
+      return ordenados[0].fecha_inicio;
+   })();
+
+   const contarDiasLaborables = (inicio, fin) => {
+      let contador = 0;
+      const actual = new Date(inicio);
+      while (actual <= fin) {
+         const dia = actual.getDay();
+         if (dia !== 0 && dia !== 6) contador++; // lunes a viernes
+         actual.setDate(actual.getDate() + 1);
+      }
+      return contador;
    };
 
-   const calcularDiasVacacionesDisponibles = (fechaIngreso, regimen) => {
-      const diasTrabajados = calcularDiasTrabajados(fechaIngreso);
-      const añosTrabajados = Math.floor(diasTrabajados / 365);
+   const contarDiasLaborablesDelMes = (anio, mes) => {
+      let contador = 0;
+      const fecha = new Date(anio, mes, 1);
+      while (fecha.getMonth() === mes) {
+         const dia = fecha.getDay();
+         if (dia !== 0 && dia !== 6) contador++;
+         fecha.setDate(fecha.getDate() + 1);
+      }
+      return contador;
+   };
 
-      let diasPorAño = 0;
+   const sumarMeses = (fecha, cantidad) => {
+      const nuevaFecha = new Date(fecha);
+      nuevaFecha.setMonth(nuevaFecha.getMonth() + cantidad);
+      return nuevaFecha;
+   };
 
-      if (regimen?.toLowerCase() == "general") {
-         diasPorAño = 30;
-      } else if (regimen?.toLowerCase() == "mype") {
-         diasPorAño = 15;
-      } else {
-         diasPorAño = 0; // Por si viene mal el dato
+   const calcularDiasGenerados = () => {
+      const hoy = new Date();
+      let totalVacaciones = 0;
+
+      for (const contrato of contratos) {
+         const inicio = new Date(contrato.fecha_inicio);
+         const fin = new Date(contrato.fecha_fin);
+         const fechaFin = fin > hoy ? hoy : fin;
+         const meses = [];
+
+         let actual = new Date(inicio.getFullYear(), inicio.getMonth(), 1);
+         while (actual <= fechaFin) {
+            meses.push(new Date(actual));
+            actual = sumarMeses(actual, 1);
+         }
+
+         for (const inicioMes of meses) {
+            const anio = inicioMes.getFullYear();
+            const mes = inicioMes.getMonth();
+            const finMes = new Date(anio, mes + 1, 0);
+            const diasLaborablesTotales = contarDiasLaborablesDelMes(anio, mes);
+
+            const inicioReal = inicioMes < inicio ? inicio : inicioMes;
+            const finReal = finMes > fechaFin ? fechaFin : finMes;
+            const diasTrabajados = contarDiasLaborables(inicioReal, finReal);
+
+            const tasaVacaciones = contrato.regimen === "MYPE" ? 1.25 : 2.5;
+            const proporcionVacaciones =
+               (diasTrabajados / diasLaborablesTotales) * tasaVacaciones;
+
+            totalVacaciones += proporcionVacaciones;
+         }
       }
 
-      return añosTrabajados * diasPorAño;
+      return Math.floor(totalVacaciones);
    };
 
-   const diasTrabajados = calcularDiasTrabajados(datosEmpleado.fecha_ingreso);
-   const diasVacacionesDisponibles = calcularDiasVacacionesDisponibles(
-      datosEmpleado.fecha_ingreso,
-      datosEmpleado.regimen
-   );
-   const diasVacacionesTomados = datosEmpleado.vacaciones.reduce(
-      (total, vacacion) => total + vacacion.dias_tomados,
-      0
-   );
-   const diasVacacionesVendidos = datosEmpleado.vacaciones.reduce(
-      (total, vacacion) => total + vacacion.dias_vendidos,
-      0
-   );
-   const diasVacacionesUtilizados =
-      diasVacacionesTomados + diasVacacionesVendidos;
-
-   const diasVacacionesRestantes =
-      diasVacacionesDisponibles - diasVacacionesUtilizados;
-
    const formatearFecha = (fecha) => {
-      return new Date(fecha).toLocaleDateString("es-PE", {
+      if (
+         !fecha ||
+         typeof fecha !== "string" ||
+         !/^\d{4}-\d{2}-\d{2}$/.test(fecha)
+      ) {
+         return "Fecha inválida";
+      }
+
+      const [year, month, day] = fecha.split("-");
+      const fechaLocal = new Date(Number(year), Number(month) - 1, Number(day));
+
+      return fechaLocal.toLocaleDateString("es-PE", {
          day: "2-digit",
          month: "2-digit",
          year: "numeric",
       });
    };
 
-   const calcularDuracionVacaciones = (fechaInicio, fechaTermino) => {
+   const calcularDiasTrabajados = (fechaInicio) => {
       const inicio = new Date(fechaInicio);
-      const termino = new Date(fechaTermino);
-      const diferencia =
-         Math.ceil(
-            (termino.getTime() - inicio.getTime()) / (1000 * 60 * 60 * 24)
-         ) + 1;
-      return diferencia;
+      const hoy = new Date();
+      const diferenciaTiempo = Math.abs(hoy - inicio);
+      return Math.ceil(diferenciaTiempo / (1000 * 60 * 60 * 24));
    };
+
+   const calcularDuracionVacaciones = (fechaInicio, fechaFin) => {
+      const inicio = new Date(fechaInicio);
+      const fin = new Date(fechaFin);
+      return Math.ceil((fin - inicio) / (1000 * 60 * 60 * 24)) + 1;
+   };
+
+   const diasTrabajados = fechaIngreso
+      ? calcularDiasTrabajados(fechaIngreso)
+      : 0;
+
+   const diasTomados = datosEmpleado.vacaciones.reduce(
+      (sum, v) => sum + v.dias_tomados,
+      0
+   );
+
+   const diasVendidos = datosEmpleado.vacaciones.reduce(
+      (sum, v) => sum + v.dias_vendidos,
+      0
+   );
+
+   const diasGenerados = calcularDiasGenerados();
+   const diasTotales = diasTomados + diasVendidos;
+   const diasRestantes = diasGenerados - diasTotales;
 
    return (
       <Dialog>
@@ -102,12 +159,10 @@ export default function DetalleVacacionesModal({ datosEmpleado }) {
             </DialogHeader>
 
             <div className="space-y-4">
-               {/* Resumen de Vacaciones */}
                <Card>
                   <CardHeader className="pb-3">
                      <CardTitle className="text-lg flex items-center gap-2">
-                        <Calendar className="h-4 w-4" />
-                        Resumen de Vacaciones
+                        <Calendar className="h-4 w-4" /> Resumen de Vacaciones
                      </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -117,7 +172,7 @@ export default function DetalleVacacionesModal({ datosEmpleado }) {
                               Fecha de Ingreso
                            </p>
                            <p className="font-medium">
-                              {formatearFecha(datosEmpleado.fecha_ingreso)}
+                              {formatearFecha(fechaIngreso)}
                            </p>
                         </div>
                         <div>
@@ -133,7 +188,7 @@ export default function DetalleVacacionesModal({ datosEmpleado }) {
                      <div className="grid grid-cols-4 gap-4 text-center">
                         <div className="space-y-2">
                            <div className="text-2xl font-bold text-blue-600">
-                              {diasVacacionesDisponibles}
+                              {diasGenerados}
                            </div>
                            <p className="text-xs text-muted-foreground">
                               Días Generados
@@ -141,7 +196,7 @@ export default function DetalleVacacionesModal({ datosEmpleado }) {
                         </div>
                         <div className="space-y-2">
                            <div className="text-2xl font-bold text-green-600">
-                              {diasVacacionesTomados}
+                              {diasTomados}
                            </div>
                            <p className="text-xs text-muted-foreground">
                               Días Tomados
@@ -149,7 +204,7 @@ export default function DetalleVacacionesModal({ datosEmpleado }) {
                         </div>
                         <div className="space-y-2">
                            <div className="text-2xl font-bold text-orange-600">
-                              {diasVacacionesVendidos}
+                              {diasVendidos}
                            </div>
                            <p className="text-xs text-muted-foreground">
                               Días Vendidos
@@ -157,22 +212,20 @@ export default function DetalleVacacionesModal({ datosEmpleado }) {
                         </div>
                         <div className="space-y-2">
                            <div className="text-2xl font-bold text-purple-600">
-                              {diasVacacionesRestantes}
+                              {diasRestantes}
                            </div>
                            <p className="text-xs text-muted-foreground">
-                              Días Restantes
+                              Días Disponibles
                            </p>
                         </div>
                      </div>
                   </CardContent>
                </Card>
 
-               {/* Historial de Vacaciones */}
                <Card>
                   <CardHeader className="pb-3">
                      <CardTitle className="text-lg flex items-center gap-2">
-                        <Clock className="h-4 w-4" />
-                        Historial de Vacaciones
+                        <Clock className="h-4 w-4" /> Historial de Vacaciones
                      </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -198,7 +251,6 @@ export default function DetalleVacacionesModal({ datosEmpleado }) {
                                        días calendario
                                     </Badge>
                                  </div>
-
                                  <div className="grid grid-cols-2 gap-4 text-sm">
                                     <div>
                                        <p className="text-muted-foreground">
@@ -237,7 +289,6 @@ export default function DetalleVacacionesModal({ datosEmpleado }) {
                                        </p>
                                     </div>
                                  </div>
-
                                  {vacacion.observaciones && (
                                     <div>
                                        <p className="text-sm text-muted-foreground">
