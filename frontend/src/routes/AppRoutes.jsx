@@ -65,6 +65,11 @@ const Facturacion = lazy(() =>
    import("../modules/factuacion/pages/Facturacion")
 );
 
+const GestionGratificacion = lazy(() =>
+   import("../modules/gratificacion/pages/GestionGratificacion")
+);
+
+
 export default function AppRoutes() {
    const Router =
       process.env.NODE_ENV === "production" ? HashRouter : BrowserRouter;
@@ -245,7 +250,14 @@ export default function AppRoutes() {
                            />
                         </Route>
                         <Route element={<RoleGuard roles={["Gerencia"]} />}>
+
                            <Route path="bonos" element={<GestionBonos />} />
+
+                           <Route
+                              path="gratificacion"
+                              element={<GestionGratificacion />}
+                           />
+
                         </Route>
                      </>
                   </Route>
