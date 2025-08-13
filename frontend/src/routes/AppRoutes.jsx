@@ -16,6 +16,7 @@ import PlanillaEnConstruccion from "@/modules/planilla/pages/planilla";
 import GestionVacaciones from "@/modules/Beneficios/Pages/GestionVacaciones";
 import GestionBonos from "@/modules/Beneficios/Pages/GestionBonos";
 
+
 // Lazy load components
 const Login = lazy(() => import("@/modules/auth/pages/Login"));
 const GestionUsuarios = lazy(() =>
@@ -61,8 +62,28 @@ const GestionStockPiezas = lazy(() =>
    import("../modules/stockPiezas/pages/GestionStockPiezas")
 );
 
+//* Facturacion
 const Facturacion = lazy(() =>
-   import("../modules/factuacion/pages/Facturacion")
+   import("../modules/facturacion/pages/Facturacion")
+);
+
+const FacturaBoleta = lazy(() =>
+   import("../modules/facturacion/factura-boleta/FacturaBoleta")
+);
+const GuiaRemision = lazy(() =>
+   import("../modules/facturacion/guia-de-remision/GuiaRemision")
+);
+
+const FacturasAnuladas = lazy(() =>
+   import("../modules/facturacion/pages/FacturasAnuladas")
+);
+
+const ListaDocumentos = lazy(() =>
+   import("../modules/facturacion/list-documentos/ListaDocumentos")
+);
+
+const FacturaBorradores = lazy(() =>
+   import("../modules/facturacion/lista-borradores/ListaBorradores")
 );
 
 const GestionGratificacion = lazy(() =>
@@ -187,11 +208,7 @@ export default function AppRoutes() {
                      </Route>
 
                      <Route
-                        element={
-                           <RoleGuard
-                              roles={["Gerencia", "Ventas", "Oficina Técnica"]}
-                           />
-                        }
+                        element={<RoleGuard roles={["Gerencia", "Ventas", "Oficina Técnica"]} />}
                      >
                         <Route
                            path="stock/piezas"
@@ -206,8 +223,58 @@ export default function AppRoutes() {
                               </WizardProvider>
                            }
                         />
-                        <Route path="/facturacion" element={<Facturacion />} />
+
                      </Route>
+
+                     {/*    //************************INICIO-FACTURACION************************* */}
+                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
+                        <Route
+                           path="facturacion/generar"
+                           element={
+                              <Facturacion />
+                           }
+                        />
+                     </Route>
+                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
+                        <Route
+                           path="facturacion/generar/factura-boleta"
+                           element={
+                              <FacturaBoleta />
+                           }
+                        />
+                     </Route>
+
+                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
+                        <Route
+                           path="facturacion/generar/guia-de-remision/:tipoGuia"
+                           element={
+                              <GuiaRemision />
+                           }
+                        />
+                     </Route>
+
+                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
+                        <Route
+                           path="facturacion/facturas"
+                           element={<ListaDocumentos />}
+                        />
+                     </Route>
+
+                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
+                        <Route
+                           path="facturacion/anuladas"
+                           element={<FacturasAnuladas />}
+                        />
+                     </Route>
+
+                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
+                        <Route
+                           path="facturacion/borradores"
+                           element={<FacturaBorradores />}
+                        />
+                     </Route>
+                     {/*    //************************FINAL-FACTURACION************************* */}
+
 
                      <Route element={<RoleGuard roles={["Gerencia"]} />}>
                         <Route

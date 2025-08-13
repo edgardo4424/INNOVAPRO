@@ -175,6 +175,27 @@ const {
 } = require("../modules/cotizaciones/infrastructure/models/cotizacionesInstalacionesModel");
 db.cotizaciones_instalacion = CotizacionesInstalacion;
 
+// ? Facturacion
+const { Factura } = require('../modules/facturacion/infrastructure/models/facturaModel')
+db.factura = Factura;
+
+const {DetalleFactura} = require('../modules/facturacion/infrastructure/models/facturaDetalleModel')
+db.detalle_factura = DetalleFactura;
+
+const {FormaPagoFactura} = require('../modules/facturacion/infrastructure/models/formaPagoModel')
+db.forma_pago_factura = FormaPagoFactura;
+
+const {Leyenda} = require('../modules/facturacion/infrastructure/models/leyendaModel')
+db.legend_factura = Leyenda;
+
+const {SunatRespuesta} = require('../modules/facturacion/infrastructure/models/sunatRespuestaModel')
+db.sunat_respuesta = SunatRespuesta
+
+
+const {Borrador} = require('../modules/facturacion/infrastructure/models/borradorModel')
+db.borradores = Borrador;
+
+
 // ✅ Solo se asocian los que tienen .associate()
 if (db.contactos.associate) db.contactos.associate(db);
 if (db.clientes.associate) db.clientes.associate(db);
@@ -211,8 +232,18 @@ if (db.asistencias.associate) db.asistencias.associate(db);
 if (db.gastos.associate) db.gastos.associate(db);
 if (db.jornadas.associate) db.jornadas.associate(db);
 if (db.tipos_trabajo.associate) db.tipos_trabajo.associate(db);
+
+// ? Conexion Facturacion
+if(db.factura.associate) db.factura.associate(db);
+if(db.detalle_factura.associate) db.detalle_factura.associate(db);
+if(db.forma_pago_factura.associate) db.forma_pago_factura.associate(db);
+if(db.legend_factura.associate) db.legend_factura.associate(db)
+if(db.sunat_respuesta.associate) db.sunat_respuesta.associate(db)
+if(db.borradores.associate) db.borradores.associate(db)
+
 if (db.cargos) db.cargos.associate(db);
 if (db.areas) db.areas.associate(db);
+
 
 // Sequelize
 db.sequelize = sequelize;

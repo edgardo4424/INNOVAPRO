@@ -9,14 +9,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { Eye, FileDown, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import ColumnaGratificacion from "./ColumnaGratificacion";
+import ColumnaTotalGratificacion from "./ColumnaTotalGratificacion";
 
-const ListaGratificacion = ({ TipoGratificacion, gratificacion }) => {
+const ListaGratificacion = ({ gratificacion }) => {
   const { planilla, honorarios } = gratificacion
   const totalP = planilla.totales;
   const totalH = honorarios.totales;
-  console.log(gratificacion)
 
   return (
     <div className="w-full overflow-x-auto p-5 mb-10 flex flex-col bg-gray-100 border-2 rounded-xl shadow-xl">
@@ -74,7 +74,7 @@ const ListaGratificacion = ({ TipoGratificacion, gratificacion }) => {
               <>
                 <TableRow>
                   <TableCell
-                    colSpan={9}
+                    colSpan={20}
                     className="text-center bg-gray-200 text-black font-semibold"
                   >
                     Planilla
@@ -83,10 +83,7 @@ const ListaGratificacion = ({ TipoGratificacion, gratificacion }) => {
                 {planilla.trabajadores.map((e, index) => (
                   <ColumnaGratificacion key={index} e={e} index={index} />
                 ))}
-                <TableRow className={"bg-orange-100"}>
-                  <TableCell colSpan={5} className={"text-right"}>Total A Pagar:</TableCell>
-                  <TableCell colSpan={5} className={"text-left"}>{totalP.total_total_a_pagar}</TableCell>
-                </TableRow>
+                <ColumnaTotalGratificacion gratificacion={totalP} />
               </>
             )}
 
@@ -95,44 +92,16 @@ const ListaGratificacion = ({ TipoGratificacion, gratificacion }) => {
               <>
                 <TableRow>
                   <TableCell
-                    colSpan={9}
+                    colSpan={20}
                     className="text-center bg-gray-200 text-black font-semibold"
                   >
                     Honorarios
                   </TableCell>
                 </TableRow>
                 {honorarios.trabajadores.map((e, index) => (
-                  <TableRow>
-                    <TableCell>{e.numero_documento}</TableCell>
-                    <TableCell>
-                      {e.nombres} {e.apellidos}
-                    </TableCell>
-                    <TableCell>{e.regimen}</TableCell>
-                    <TableCell>{e.fecha_ingreso}</TableCell>
-                    <TableCell>{e.tiempo_laborado}</TableCell>
-                    <TableCell>{e.sueldo_base}</TableCell>
-                    <TableCell>{e.sueldo_bruto}</TableCell>
-                    <TableCell>{e.total_a_pagar}</TableCell>
-                    <TableCell className={"flex gap-x-4 items-center"}>
-
-                      <button className="border border-gray-400 rounded-md p-1">
-                        <Eye className="size-5" />
-                      </button>
-
-                      <button className="border border-gray-400 rounded-md p-1">
-                        <FileDown className="size-5" />
-                      </button>
-
-                      <button className="border text-white border-red-500 bg-red-500 rounded-md p-1">
-                        <span>Emitir gratificacion</span>
-                      </button>
-                    </TableCell>
-                  </TableRow>
+                  <ColumnaGratificacion key={index} e={e} index={index} />
                 ))}
-                <TableRow className={"bg-orange-100"}>
-                  <TableCell colSpan={5} className={"text-right"}>Total A Pagar:</TableCell>
-                  <TableCell colSpan={2} className={"text-left"}>{honorarios.total_total_a_pagar}</TableCell>
-                </TableRow>
+                <ColumnaTotalGratificacion gratificacion={totalH} />
               </>
             )}
           </TableBody>

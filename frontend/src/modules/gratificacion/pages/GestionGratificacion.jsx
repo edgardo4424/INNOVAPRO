@@ -1,36 +1,43 @@
-import { List, LoaderCircle, Table } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import Filtro from "../components/Filtro";
 import ListaGratificacion from "../components/ListaGratificacion";
 import gratificacionService from "../services/gratificacionService";
+import { viFiltro, viGratificacion } from "../utils/valorInicial";
 
 const GestionGratificacion = () => {
+    // ?? loading
     const [loading, setLoading] = useState(false);
-    const [gratificacion, setGratificacion] = useState(null);
-    const [filtro, setFiltro] = useState({
-        anio: "",
-        periodo: "",
-        filial_id: "",
-    });
+    // ?? Data
+    const [gratificacion, setGratificacion] = useState(viGratificacion);
+    const [filtroGratificacion, setFiltroGratificacion] = useState(viGratificacion);//* Data Filtrada
 
-        const fetchGratificacion = async () => {
-            try {
-                setLoading(true);
+    // ?? Filtro para la peticion
+    const [filtro, setFiltro] = useState(viFiltro);
 
-                const res = await gratificacionService.obtenerGratificaciones(filtro);
+    // ?? Filtro para la tabla
+    const [filtroTrabajador, setFiltroTrabajador] = useState("");
 
-                setGratificacion(res)
-            } catch (error) {
-            }
-            finally {
-                setLoading(false);
-            }
-        };
+    const fetchGratificacion = async () => {
+        try {
+            setLoading(true);
+            const res = await gratificacionService.obtenerGratificaciones(filtro);
+            setGratificacion(res)
+            setFiltroGratificacion(res);
+        } catch (error) {
+        }
+        finally {
+            setLoading(false);
+        }
+    };
 
-        const Buscar = () => {
-            fetchGratificacion();
-        };
+    const Buscar = () => {
+        fetchGratificacion();
+    };
 
+    useEffect(() => {
+
+    }, []);
 
     return (
         <div className="min-h-full flex-1  flex flex-col items-center">
@@ -52,8 +59,7 @@ const GestionGratificacion = () => {
             ) : (
                 gratificacion ? (
                     <div className="w-full px-7 ">
-                        <ListaGratificacion TipoGratificacion="Planilla" gratificacion={gratificacion} />
-                        {/* <ListaGratificacion TipoGratificacion="Honorarios" gratificacion={Gratificacion.honorarios} /> */}
+                        <ListaGratificacion gratificacion={filtroGratificacion} />
                     </div>
                 ) : (
                     <div className="w-full px-20  max-w-8xl min-h-[50vh] flex items-center">
@@ -68,4 +74,3 @@ const GestionGratificacion = () => {
 };
 
 export default GestionGratificacion;
-
