@@ -14,8 +14,7 @@ export default function BloqueEscuadras({ formData, setFormData }) {
   );
 
 
-  if (escuadras.length === 0) return null;
-  if (plataformas.length === 0) return null;
+  if (escuadras.length === 0 && plataformas.length === 0) return null;
 
   const [descuentoPorcentaje, setDescuentoPorcentaje] = useState(0);
 
@@ -61,9 +60,6 @@ export default function BloqueEscuadras({ formData, setFormData }) {
     }))
   }
 
-  
-  console.log("Escuadras", escuadras)
-
   // ✅ Estado local inicializado una sola vez
   const initialPrecios = {};
   let cantidad_escuadras = 0;
@@ -77,7 +73,7 @@ export default function BloqueEscuadras({ formData, setFormData }) {
     initialPrecios[p.pieza_id] = base.toFixed(2) ?? "0.00";
     cantidad_escuadras += p.total;
   }
-  console.log("Cantidad de escuadras : ", cantidad_escuadras )
+
   const [preciosLocales, setPreciosLocales] = useState(initialPrecios);
 
   const calcularResumen = (despiece) => {
@@ -190,29 +186,31 @@ export default function BloqueEscuadras({ formData, setFormData }) {
         );
       })}
 
-      <div className="wizard-section">
-        <h4 className="text-base font-semibold text-blue-700 mb-2">
-            🎯 Ajustar descuento para PLATAFORMAS
-        </h4>
-        <div className="flex items-center gap-3">
-            <input
-            type="number"
-            value={descuentoPorcentaje}
-            onChange={(e) => setDescuentoPorcentaje(e.target.value)}
-            onBlur={() => aplicarDescuentoPlataformas(parseFloat(descuentoPorcentaje))}
-            className="border p-2 rounded w-[100px]"
-            min={0}
-            max={100}
-            />
-            <span className="text-sm text-gray-600">%</span>
-        </div>
-        <p className="text-sm mt-2 text-gray-700">
-            Subtotal original: <strong>S/ {formatear(totalOriginal)}</strong><br />
-            Subtotal con descuento aplicado: <strong className="text-blue-800">S/ {formatear(totalActual)}</strong>
-        </p>
+      {plataformas.length > 0 && (
+        <div className="wizard-section">
+          <h4 className="text-base font-semibold text-blue-700 mb-2">
+              🎯 Ajustar descuento para PLATAFORMAS
+          </h4>
+          <div className="flex items-center gap-3">
+              <input
+              type="number"
+              value={descuentoPorcentaje}
+              onChange={(e) => setDescuentoPorcentaje(e.target.value)}
+              onBlur={() => aplicarDescuentoPlataformas(parseFloat(descuentoPorcentaje))}
+              className="border p-2 rounded w-[100px]"
+              min={0}
+              max={100}
+              />
+              <span className="text-sm text-gray-600">%</span>
+          </div>
+          <p className="text-sm mt-2 text-gray-700">
+              Subtotal original: <strong>S/ {formatear(totalOriginal)}</strong><br />
+              Subtotal con descuento aplicado: <strong className="text-blue-800">S/ {formatear(totalActual)}</strong>
+          </p>
 
-        <p className="text-xs mt-1 text-gray-500">Este descuento se aplicará sobre todas las plataformas.</p>
-      </div>
+          <p className="text-xs mt-1 text-gray-500">Este descuento se aplicará sobre todas las plataformas.</p>
+        </div>
+      )}
 
     </div>
   );

@@ -13,6 +13,7 @@ import BloqueInstalacion from "./paso-confirmacion/BloqueInstalacion";
 import BloqueDescuento from "./paso-confirmacion/BloqueDescuento";
 import BloqueEscaleraAcceso from "./paso-confirmacion/BloqueEscaleraAcceso";
 import BloqueEscaleraAccesoOT from "./paso-confirmacion/BloqueEscaleraAccesoOT";
+import BloqueColgantes from "./paso-confirmacion/BloqueColgantes";
 import DespieceAdicional from "./paso-confirmacion/DespieceAdicional"
 import Loader from "../../../../shared/components/Loader";
 
@@ -29,13 +30,16 @@ export default function PasoConfirmacion() {
   useCalculoTransporte(formData, setFormData); // Hook personalizado para calcular el transporte
 
   // Validación básica para determinar si todos los datos mínimos están listos 
-  
   const datosListos =
     formData.uso_id &&
     formData.zonas?.length &&
-    Array.isArray(formData.despiece) &&
-    formData.resumenDespiece !== undefined;
-
+    (
+      (Array.isArray(formData.despiece) && formData.despiece.length > 0) ||
+      formData.uso_id === 8 // Si es caso andamios colgantes, no requiere despiece
+    ) &&
+    (
+      formData.uso_id === 8 || formData.resumenDespiece !== undefined // Si no es andamio colgante, debe tener un resumen de despiece
+    )
 
   // Si el comercial desactiva los pernos, se eliminan del despiece
 
@@ -55,6 +59,11 @@ export default function PasoConfirmacion() {
     <div className="paso-formulario">
       <h3>Paso 5: Confirmación Final</h3>
 
+      {/* Si es andamio colgante renderizamos el siguiente bloque*/}
+      {formData.uso_id === 8 && (
+        <BloqueColgantes formData={formData} setFormData={setFormData} />
+      )}
+
       {/* La lógica del renderizado de este bloque se encuentra dentro del mismo */}
       <BloquePuntales formData={formData} setFormData={setFormData} />
 
@@ -62,7 +71,7 @@ export default function PasoConfirmacion() {
         <BloquePlataformaDescarga formData={formData} setFormData={setFormData} />
       )}
 
-      {formData.uso_id === 4 && ( // Si es caso escuadras mostrar este bloque
+      {(formData.uso_id === 4 || formData.uso_id === 11) && ( // Si es caso escuadras mostrar este bloque
         <BloqueEscuadras formData={formData} setFormData={setFormData} />
       )}
 
@@ -75,8 +84,10 @@ export default function PasoConfirmacion() {
       )}
 
       {/* Siempre mostraremos el resumen del despiece con sus condiciones dentro del mismo bloque */}
-      <ResumenDespiece formData={formData} />
-      
+      {formData.uso_id !== 8 && ( // Si no es andamio colgante, que es el unico uso que no requiere despiece
+        <ResumenDespiece formData={formData} />
+      )}
+
       {/* Si es escalera de acceso generado por Despiece de Oficina Técnica */}
       {formData.uso_id === 3 && formData.id && (
         <BloqueEscaleraAccesoOT formData={formData} setFormData={setFormData} />
@@ -108,12 +119,13 @@ export default function PasoConfirmacion() {
         <DespieceAdicional formData={formData} setFormData={setFormData} />
       )}
 
-      {/*
-        Siempre que exista pernos en el despiece renderiza el BloquePernos.
-        Además siempre consultaremos mediante el BloqueTransporte si se desea incluir o no.
-      */}
+      {/* Siempre que exista pernos en el despiece renderiza el BloquePernos. */}
       <BloquePernos formData={formData} setFormData={setFormData} errores={errores} />
-      <BloqueTransporte formData={formData} setFormData={setFormData} errores={errores} />
+
+      {/* Consultaremos mediante el BloqueTransporte si se desea incluir o no. */}
+      {formData.uso_id !== 8 && ( // Si no es andamio colgante, que es el unico uso que no requiere esta pregunta
+        <BloqueTransporte formData={formData} setFormData={setFormData} errores={errores} />
+      )}
       
       {/* Solo para los usos que sean instalables renderizamos el BloqueInstalacion */}
       {USOS_INSTALABLES.includes(formData.uso_id) && (

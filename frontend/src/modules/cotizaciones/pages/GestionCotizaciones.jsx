@@ -19,6 +19,8 @@ export default function GestionCotizaciones() {
       modalConfirmacion,
       cerrarModal,
       ejecutarDescarga,
+      solicitarCondiciones,
+      user,
    } = useGestionCotizaciones();
    
    const [cotizacionSeleccionadaId, setCotizacionSeleccionadaId] =
@@ -39,6 +41,8 @@ export default function GestionCotizaciones() {
             onDownloadPDF={confirmarDescargaPDF}
             setCotizacionPrevisualizada={setCotizacionSeleccionadaId}
             onContinuarWizard={continuarCotizacion}
+            onSolicitarCondicionesAlquiler={solicitarCondiciones}
+            user={user}
          />
 
           <AlertDialog open={modalConfirmacion.abierto} onOpenChange={cerrarModal}>

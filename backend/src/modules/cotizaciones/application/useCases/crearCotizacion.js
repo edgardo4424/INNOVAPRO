@@ -25,6 +25,8 @@ const {
 const ID_ESTADO_COTIZACION_POR_APROBAR = 3;
 
 module.exports = async (cotizacionData, cotizacionRepository) => {
+
+
   const transaction = await db.sequelize.transaction(); // Iniciar transacción
 
   try {
@@ -35,11 +37,11 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       despiece,
     } = cotizacionData;
 
-    if (despiece.length == 0)
+    /* if (despiece.length == 0)
       return {
         codigo: 400,
         respuesta: { mensaje: "No hay piezas en el despiece." },
-      };
+      }; */
 
     // 1. Calcular montos
     const resultados = calcularMontosCotizacion({
@@ -50,8 +52,8 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       zonas,
     });
 
-    console.log("resultados", resultados);
-
+    
+    console.log('holi');
     // 2. Insertar Despiece
 
     let dataParaDespiece = {
@@ -65,7 +67,15 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       dataParaDespiece.detalles_opcionales = cotizacion.detalles_escaleras;
     }
 
-    console.log("dataParaDespiece", dataParaDespiece);
+    if(uso_id == "4"){
+      // Si es escuadras con plataforma, se añade detalles_opcionales
+      dataParaDespiece.detalles_opcionales = cotizacion.detalles_escuadras;
+    }
+
+    if(uso_id == "8"){
+      // Si es colgante, se añade detalles_opcionales
+      dataParaDespiece.detalles_opcionales = cotizacion.detalles_colgantes
+    }
 
     // Valida los campos del despiece
     const errorCampos = Despiece.validarCamposObligatorios(
@@ -80,12 +90,16 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       transaction,
     });
 
+   
     const despiece_id = nuevoDespiece.id;
+
+    console.log('DESPEIEEEEEEEEECEEEEEE', despiece);
 
     // 3. Insertar Detalles del Despiece
 
     const detalles = mapearDetallesDespiece({ despiece, despiece_id });
 
+    console.log('detalles', detalles);
     // Validación de todos los registros de despiece
     for (const data of detalles) {
       const errorCampos = DespieceDetalle.validarCamposObligatorios(
@@ -93,7 +107,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
         "crear"
       );
       if (errorCampos) {
-        /* console.log("Registro inválido", data, "->", errorCampos); */
+        console.log("Registro inválido", data, "->", errorCampos);
         return {
           codigo: 400,
           respuesta: { mensaje: `Error en un registro: ${errorCampos}` },
@@ -175,7 +189,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       cotizacionFinal,
       transaction
     );
-
     // 6. Insertar precios de transporte
 
     if (cotizacion?.tiene_transporte) {
@@ -229,10 +242,16 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
           };
           break;
 
+          case "8":
+          // Colgante
+
+          break;
+
         default:
           break;
       }
 
+      console.log('datosParaCalcularCostoTransporte', datosParaCalcularCostoTransporte);
       const datosParaGuardarCotizacionesTransporte = (
         await calcularCostoTransporte(datosParaCalcularCostoTransporte)
       ).respuesta;
@@ -261,9 +280,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
           Number(cotizacion.costo_pernocte_transporte)
         ).toFixed(2),
       };
-
-      console.log("mapeoDataGuardar", mapeoDataGuardar);
-
       await db.cotizaciones_transporte.create(mapeoDataGuardar, {
         transaction,
       });

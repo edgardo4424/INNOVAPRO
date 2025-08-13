@@ -25,6 +25,10 @@ const Asistencia = sequelize.define(
          type: DataTypes.INTEGER,
          allowNull: true,
       },
+       horas_extras: {
+         type: DataTypes.INTEGER,
+         allowNull: true,
+      },
       estado_asistencia: {
          type: DataTypes.ENUM("presente", "falto", "tardanza","permiso","licencia","vacaciones","falta-justificada"),
          allowNull: false,

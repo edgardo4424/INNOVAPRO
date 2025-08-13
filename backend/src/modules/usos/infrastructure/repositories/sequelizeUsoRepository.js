@@ -7,8 +7,10 @@ class SequelizeUsoRepository {
   }
 
   async obtenerUsos() {
-    return await Uso.findAll();
-  }
+  return await Uso.findAll({
+    order: [['descripcion', 'ASC']]
+  });
+}
 
 }
 

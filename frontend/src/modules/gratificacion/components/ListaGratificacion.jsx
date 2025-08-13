@@ -17,7 +17,6 @@ const ListaGratificacion = ({ gratificacion }) => {
   const { planilla, honorarios } = gratificacion
   const totalP = planilla.totales;
   const totalH = honorarios.totales;
-  console.log(gratificacion)
 
   return (
     <div className="w-full overflow-x-auto p-5 mb-10 flex flex-col bg-gray-100 border-2 rounded-xl shadow-xl">

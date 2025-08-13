@@ -131,7 +131,51 @@ function agruparPuntalesPorZonaYAtributos(data) {
   return resultado;
 }
 
-function agruparPuntalesPorZonaYTipo(data) {
+function agruparEscuadrasPorZonaYAtributos(data) {
+  const resultado = [];
+
+  const zonasMap = new Map();
+
+  for (const item of data) {
+    const { zona, escuadra, tipoAnclaje,sobrecarga, factorSeguridad, cantidadEscuadrasTramo,tipoPlataforma, nota_zona } = item;
+    if (!zonasMap.has(zona)) {
+      zonasMap.set(zona, {
+        nota_zona,
+        atributosMap: new Map(),
+      });
+    }
+
+    const zonaObj = zonasMap.get(zona);
+    const clave = `${escuadra}|${tipoAnclaje}|${sobrecarga}|${factorSeguridad}|${tipoPlataforma}`;
+
+    if (zonaObj.atributosMap.has(clave)) {
+      zonaObj.atributosMap.get(clave).cantidadEscuadrasTramo += cantidadEscuadrasTramo;
+      zonaObj.atributosMap.get(clave).cantidad_uso += 1;
+    } else {
+      zonaObj.atributosMap.set(clave, {
+  escuadra,
+  tipoAnclaje,
+  sobrecarga,
+  factorSeguridad,
+  tipoPlataforma,
+  cantidadEscuadrasTramo: Number(cantidadEscuadrasTramo),
+  cantidad_uso: 1,
+});
+    }
+  }
+
+  for (const [zona, { nota_zona, atributosMap }] of zonasMap.entries()) {
+    resultado.push({
+      zona,
+      nota_zona,
+      atributos: Array.from(atributosMap.values()),
+    });
+  }
+
+  return resultado;
+}
+
+/* function agruparPuntalesPorZonaYTipo(data) {
   const resultado = [];
 
   const zonasMap = new Map();
@@ -169,7 +213,7 @@ function agruparPuntalesPorZonaYTipo(data) {
 
   return resultado;
 }
+ */
 
 
-
-module.exports = { mapearPorAtributos, agruparPorZonaYAtributos, agruparPorZona, agruparPuntalesPorZonaYAtributos, agruparPuntalesPorZonaYTipo };
+module.exports = { mapearPorAtributos, agruparPorZonaYAtributos, agruparPorZona, agruparPuntalesPorZonaYAtributos, agruparEscuadrasPorZonaYAtributos};

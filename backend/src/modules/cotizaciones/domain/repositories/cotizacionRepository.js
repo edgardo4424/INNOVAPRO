@@ -4,6 +4,7 @@ class CotizacionRepository {
     obtenerCotizacionPorId(id) { throw new Error("Método no implementado"); }
     actualizarCotizacion(id, cotizacion) { throw new Error("Método no implementado"); }
     eliminarCotizacion(id) { throw new Error("Método no implementado"); }
+    actualizarEstado(id, estado) { throw new Error("Método no implementado")}
 }
 
 module.exports = CotizacionRepository; // Exporta la clase para que pueda ser utilizada en otros módulos

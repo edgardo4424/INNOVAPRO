@@ -56,6 +56,12 @@ export function useRegistrarCotizacion(pasosLength) {
     if (formData.uso_id === 7 && formData.cantidad_plataformas) {
       extras.cantidad_plataformas = formData.cantidad_plataformas;
     }
+
+    if (formData.uso_id === 4 && formData.detalles_escuadras) {
+      // Escuadras con plataforma
+      extras.detalles_escuadras = formData.detalles_escuadras;
+    }
+    
     console.log("Parametros extras para el payload :", extras)
     return extras;
   }
@@ -139,6 +145,20 @@ export function useRegistrarCotizacion(pasosLength) {
           ...totales,
         }
       }
+
+      if (formDataAjustado.uso_id === 8 && formDataAjustado.detalles_colgantes) {
+        const zonas = formDataAjustado.zonas || [];
+        cotizacionExtras.detalles_colgantes = {
+          cantidad_colgantes: parseInt(zonas?.[0]?.atributos_formulario?.[0]?.cantidad || "1"),
+          precio_u_alquiler_soles: formDataAjustado.tipo_cotizacion === "Alquiler"
+            ? formDataAjustado.tarifa_colgantes || 0
+            : undefined,
+          precio_u_venta_soles: formDataAjustado.tipo_cotizacion === "Venta"
+            ? formDataAjustado.tarifa_colgantes || 0
+            : undefined,
+        };
+      }
+
       const payload = {
         uso_id: formDataAjustado.uso_id,
         zonas: Array.isArray(formDataAjustado.zonas) ? formDataAjustado.zonas : [],
@@ -148,7 +168,7 @@ export function useRegistrarCotizacion(pasosLength) {
           contacto_id: formDataAjustado.contacto_id,
           filial_id: formDataAjustado.filial_id,
           tipo_cotizacion: formDataAjustado.tipo_cotizacion,
-          tiene_transporte: formDataAjustado.tiene_transporte,
+          tiene_transporte: formDataAjustado.tiene_transporte || false,
           tipo_transporte: formDataAjustado.tipo_transporte,
           costo_tarifas_transporte: formDataAjustado.costo_tarifas_transporte || 0,
           costo_distrito_transporte: formDataAjustado.costo_distrito_transporte || 0,
@@ -172,6 +192,7 @@ export function useRegistrarCotizacion(pasosLength) {
       setPasoActual(pasosLength);
     } catch (error) {
       console.error("Error al guardar cotización", error.response?.data?.message || error.message);
+      toast.error("Error al guardar cotización ", error.respones?.data?.message || error.message);
     } finally {
       setGuardando(false);
     }

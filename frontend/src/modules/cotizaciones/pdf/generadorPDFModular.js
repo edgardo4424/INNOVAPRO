@@ -3,6 +3,7 @@ import generarPDFPuntales from "./plantillas/puntales/generarPDF";
 import generarPDFEscaleraAndamioFachada from "./plantillas/escalera_acceso_andamio_fachada/generarPDF";
 import generarPDFEscuadras from "./plantillas/escuadras/generarPDF";
 import generarPDFPlataformaDescarga from "./plantillas/plataforma_descarga/generarPDF"
+import generarPDFColgante from "./plantillas/andamio_colgante/generarPDF";
 
 
 export default function generarPDFPorUso({ uso_id, data, doc }) {
@@ -14,9 +15,13 @@ export default function generarPDFPorUso({ uso_id, data, doc }) {
       // Andamio de Fachada y Escalera de acceso comparten plantilla
       return generarPDFEscaleraAndamioFachada(doc, data);
     case 4:
+    case 11:
+      // Escuadras con y sin plataformas comparten plantilla
       return generarPDFEscuadras(doc, data);
     case 5:
       return generarPDFPuntales(doc, data);
+    case 8:
+      return generarPDFColgante(doc, data);
     case 7:
       return generarPDFPlataformaDescarga(doc, data);
     default:

@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { useWizardContext } from "../../context/WizardCotizacionContext";
 import Loader from "../../../../shared/components/Loader";
 import { useZonasCotizacion } from "../../hooks/paso-atributos/useZonasCotizacion";
+import { USOS_SIN_DESPIECE } from "../../constants/usos";
+import { useNavigate } from "react-router-dom";
 
 // Este componente representa el tercer paso del wizard para registrar una cotización.
 // Permite describir mediante atributos dinámicos las zonas con sus respectivos equipos.
@@ -10,6 +12,7 @@ import { useZonasCotizacion } from "../../hooks/paso-atributos/useZonasCotizacio
 // actualiza el estado del formulario según la selección del usuario.
 
 const PasoAtributos = () => {
+  const navigate = useNavigate();
   const { formData, setFormData, errores } = useWizardContext(); // Traemos el contexto del wizard donde se maneja el estado del formulario y los errores
   const {
     zonas,
@@ -35,7 +38,61 @@ const PasoAtributos = () => {
     setFormData((prev) => ({ ...prev, zonas }));
   }, [zonas]);
 
+  // Mostrar advertencia si el uso no tiene despiece automático
+  if (USOS_SIN_DESPIECE.includes(formData.uso_id)) {
+    return (
+      <div className="paso-formulario">
+        <h3>Paso 4: Atributos por Zona</h3>
+
+        <div
+          className="alerta-importante"
+          style={{
+            backgroundColor: "#fff3cd",
+            border: "1px solid #ffeeba",
+            marginTop: "20px",
+            paddingTop: "30px",
+            padding: "2rem",
+            borderRadius: "10px",
+            color: "#856404",
+            fontSize: "1rem",
+            lineHeight: "1.6",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+          }}
+        >
+          <h4 style={{ fontWeight: "bold", marginBottom: "1rem" }}>⚠ Este uso no genera atributos ni despiece automático</h4>
+          <p>
+            El uso que seleccionaste actualmente no cuenta con atributos definidos ni fórmulas automáticas para generar un despiece.
+          </p>
+          <p>
+            Si deseas continuar con este caso, te recomendamos registrar una <strong>Tarea de Apoyo Técnico</strong> para que el área de <strong>Oficina Técnica</strong> te ayude a generar el despiece manualmente.
+          </p>
+          <div style={{ marginTop: "2rem", textAlign: "center" }}>
+            <button
+              onClick={() => navigate("/registrar-tarea")}
+              style={{
+                backgroundColor: "#ff7b00",
+                color: "#fff",
+                padding: "10px 20px",
+                fontSize: "1rem",
+                border: "none",
+                borderRadius: "8px",
+                cursor: "pointer",
+                transition: "background-color 0.3s ease"
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#e66a00"}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#ff7b00"}
+            >
+              Ir al módulo Registrar Tarea
+            </button>
+          </div>
+
+        </div>
+      </div>
+    );
+  }
+
   if (loading || atributos.length === 0) return <Loader texto="Cargando atributos por zona..." />;
+
 
   const actualizarNotaZona = (zonaIndex, nuevaNota) => {
     setZonas((prev) => 
@@ -117,51 +174,56 @@ const PasoAtributos = () => {
           ))}
 
           {/* Botones para modificar cantidad de equipos por zona */}
-          <div className="botones-cantidad">
-            <button
-              type="button"
-              className="btn-cantidad"
-              onClick={() => eliminarEquipo(zonaIndex)}
-              disabled={zona.atributos_formulario.length <= 1}
-            >
-              −
-            </button>
-            <span className="cantidad-label">
-              {zona.atributos_formulario.length} equipo(s)
-            </span>
-            <button
-              type="button"
-              className="btn-cantidad"
-              onClick={() => agregarEquipo(zonaIndex)}
-            >
-              +
-            </button>
-          </div>
+          {formData.uso_id !== 8 && (
+            <div className="botones-cantidad">
+              <button
+                type="button"
+                className="btn-cantidad"
+                onClick={() => eliminarEquipo(zonaIndex)}
+                disabled={zona.atributos_formulario.length <= 1}
+              >
+                −
+              </button>
+              <span className="cantidad-label">
+                {zona.atributos_formulario.length} equipo(s)
+              </span>
+              <button
+                type="button"
+                className="btn-cantidad"
+                onClick={() => agregarEquipo(zonaIndex)}
+              >
+                +
+              </button>
+            </div>
+           )}
 
           <hr style={{ margin: "2rem 0" }} />
         </div>
       ))}
 
       {/* Botones para agregar/eliminar zonas */}
-      <div className="wizard-section" style={{ textAlign: "center", marginTop: "2rem" }}>
-        <p style={{ color: "#ff7b00", fontWeight: "bold", marginBottom: "0.6rem" }}>
-          Puedes agregar más zonas si el proyecto lo requiere.
-        </p>
-        <div className="botones-cantidad">
-          <button
-            type="button"
-            className="btn-cantidad"
-            onClick={eliminarZona}
-            disabled={zonas.length <= 1}
-          >
-            − Zona
-          </button>
-          <span className="cantidad-label">{zonas.length} zona(s)</span>
-          <button type="button" className="btn-cantidad" onClick={agregarZona}>
-            + Zona
-          </button>
+      {formData.uso_id !== 8 && (
+        <div className="wizard-section" style={{ textAlign: "center", marginTop: "2rem" }}>
+          <p style={{ color: "#ff7b00", fontWeight: "bold", marginBottom: "0.6rem" }}>
+            Puedes agregar más zonas si el proyecto lo requiere.
+          </p>
+          <div className="botones-cantidad">
+            <button
+              type="button"
+              className="btn-cantidad"
+              onClick={eliminarZona}
+              disabled={zonas.length <= 1}
+            >
+              − Zona
+            </button>
+            <span className="cantidad-label">{zonas.length} zona(s)</span>
+            <button type="button" className="btn-cantidad" onClick={agregarZona}>
+              + Zona
+            </button>
+          </div>
         </div>
-      </div>
+      )}
+      
 
       {errores?.atributos_formulario && (
         <p className="error-text" style={{ textAlign: "center" }}>

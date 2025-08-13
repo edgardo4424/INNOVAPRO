@@ -13,12 +13,9 @@ const CONST_ID_USO_PUNTALES = 5;
 
 async function generarDespiecePuntales(data) {
 
-  console.log('DATA', data);
-
   const resultadosPorZona = await Promise.all(
     data.map(async (dataPorZona) => {
       
-      console.log('dataPorZona', dataPorZona);
       const todosDespieces = calcularCantidadesPorCadaPiezaDePuntales(
         dataPorZona.atributos_formulario
       );
@@ -27,7 +24,6 @@ async function generarDespiecePuntales(data) {
       if (todosDespieces[0].length === 0)
         throw new Error("No hay piezas en la modulación. Ingrese bien los atributos");
 
-      console.log('todosDespieces', todosDespieces);
       const resultadoFinal = agruparPorPieza(todosDespieces,  dataPorZona.atributos_formulario.length);
       const subtotales = calcularSubtotales(resultadoFinal);
 

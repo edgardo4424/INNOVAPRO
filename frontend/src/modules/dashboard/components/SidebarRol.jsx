@@ -18,7 +18,7 @@ import {
    Boxes,
    ChevronDown,
    LogOut,
-   Settings,
+   ShieldCheck,
    ScrollText,
 } from "lucide-react";
 import {
@@ -65,8 +65,8 @@ const iconMap = {
    "Registrar Cotización": FileEdit,
    "Stock de Piezas": Boxes,
    Trabajadores: Users,
-   "Facturación":ScrollText
-
+   "Facturación":ScrollText,
+   "Gestión de Condiciones": ShieldCheck,
 };
 
 const modulesByRole = {
@@ -87,6 +87,7 @@ const modulesByRole = {
       { name: "Centro de Atención", path: "/centro-atencion" },
       { name: "Registrar Tarea", path: "/registrar-tarea" },
       { name: "Cotizaciones", path: "/cotizaciones" },
+      { name: "Gestión de condiciones", path: "/condiciones" },
       { name: "Registrar Cotización", path: "/cotizaciones/registrar" },
       { name: "Stock de Piezas", path: "/stock/piezas" },
       {
@@ -97,21 +98,27 @@ const modulesByRole = {
          ],
       },
       {
-         group: "Asistencia",
+         group: "Beneficios",
          items: [
-            { name: "Encofrados ", path: "/asistencia/encofrados" },
-            {
-               name: "Andamios Eléctricos",
-               path: "/asistencia/andamios-electricos",
-            },
-            { name: "Indek Andina", path: "/asistencia/indek-andina" },
-            {
-               name: "Innova Rental",
-               path: "/innova-rental",
-            },
+            { name: "Vacaciones", path: "/vacaciones" },
+            { name: "Cts", path: "/cts" },
+            { name: "Gratificacion", path: "/gratificacion" },
+            { name: "Bonos", path: "/bonos" },
+
          ],
       },
-      // { name: "Facturación", path: "/facturacion" },
+      {
+         group: "Asistencia",
+         items: [
+            { name: "Almacen ", path: "/asistencia/almacen?area_id=2" },
+            {
+               name: "Montadores",
+               path: "/asistencia/montadores?area_id=6",
+            },
+            { name: "Ventas ", path: "/asistencia/ventas?area_id=9" },
+         ],
+      },
+
       {
          group: "Facturación",
          items: [
@@ -121,6 +128,9 @@ const modulesByRole = {
             { name: "Facturas Anuladas", path: "/facturacion/anuladas" },
          ],
       },
+
+      { name: "Planilla", path: "/planilla" },
+
    ],
    Ventas: [
       { name: "Gestión de Clientes", path: "/gestion-clientes" },
@@ -137,14 +147,15 @@ const modulesByRole = {
       { name: "Stock de Piezas", path: "/stock/piezas" },
    ],
    Almacén: [],
-   Administración: [],
+   Administración: [
+      { name: "Gestión de condiciones", path: "/condiciones"},
+   ],
    Clientes: [],
 };
 
 const isPathActive = (currentPath, itemPath) => {
-   if (itemPath === "/" && currentPath === "/") return true;
-   if (itemPath !== "/" && currentPath.startsWith(itemPath)) return true;
-   return false;
+   const itemUrl = new URL(itemPath, window.location.origin); // para extraer pathname de itemPath
+   return currentPath.startsWith(itemUrl.pathname);
 };
 
 const getUserInitials = (name) => {

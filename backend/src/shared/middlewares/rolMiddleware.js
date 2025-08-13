@@ -1,5 +1,5 @@
 // 🔹 Middleware dinámico: permite uno o varios roles
-function tieneRol(rolesPermitidos = []) {
+function tieneRol(rolesPermitidos = ["Administracion", "Gerencia"]) {
     return (req, res, next) => {
       if (!req.usuario || !rolesPermitidos.includes(req.usuario.rol)) {
         return res.status(403).json({ mensaje: "Acceso denegado. Permisos insuficientes." });

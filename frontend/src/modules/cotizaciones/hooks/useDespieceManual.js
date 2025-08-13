@@ -12,23 +12,49 @@ export default function useDespieceManual({ tipoCotizacion, formData, onResumenC
     }
   }, [despieceManual]);
 
-  const agregarPieza = (pieza, cantidad) => {
+  const agregarPieza = (pieza, cantidad, precioManual) => {
     const yaExiste = despieceManual.find(p => p.id === pieza.id);
     if (yaExiste) return false;
 
     const pesoTotal = parseFloat(pieza.peso_kg) * cantidad;
 
-    const nueva = {
+    const esAlquiler = tipoCotizacion === "Alquiler";
+
+    let precioUnitario;
+    let subtotal;
+    let nueva = {
       ...pieza,
       cantidad,
       descripcion: `${pieza.descripcion}`,
-      subtotal_alquiler: (parseFloat(pieza.precio_alquiler_soles) * cantidad).toFixed(2),
-      subtotal_venta: (parseFloat(pieza.precio_venta_soles) * cantidad).toFixed(2),
-      peso_kg_total: pesoTotal
+      peso_kg_total: pesoTotal,
+      esAdicional: true,
     };
+
+    // Usamos manual si se proporcionó, sino el de base
+    if (esAlquiler) {
+      const precioManualAlquiler = parseFloat(precioManual || pieza.precio_alquiler_soles);
+      precioUnitario = precioManualAlquiler;
+      subtotal = precioUnitario * cantidad;
+
+      nueva.precio_unitario_alquiler = precioUnitario;
+      nueva.subtotal_alquiler = subtotal.toFixed(2);
+      nueva.precio_alquiler_soles = precioUnitario;
+      nueva.precio_manual_alquiler = precioManual ? parseFloat(precioManual) : null;
+
+    } else {
+      const precioManualVenta = parseFloat(precioManual || pieza.precio_venta_soles);
+      precioUnitario = precioManualVenta;
+      subtotal = precioUnitario * cantidad;
+
+      nueva.precio_unitario_venta = precioUnitario;
+      nueva.subtotal_venta = subtotal.toFixed(2);
+      nueva.precio_venta_soles = precioUnitario;
+      nueva.precio_manual_venta = precioManual ? parseFloat(precioManual) : null;
+    }
 
     setDespieceManual(prev => [...prev, nueva]);
     return true;
+
   };
 
   const eliminarPieza = (piezaId) => {

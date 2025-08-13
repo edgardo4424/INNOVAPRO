@@ -5,13 +5,14 @@ const { verificarToken } = require("../../../../shared/middlewares/authMiddlewar
 
 router.use(verificarToken); // Verificamos el token para todas las rutas
 
-// 📌 Rutas protegidas solo para Gerencia
 router.get("/", cotizacionController.obtenerCotizaciones);
 router.post("/", cotizacionController.crearCotizacion);
 router.post("/generar-pdf", cotizacionController.generarPdfCotizacion);
 router.post("/ot", cotizacionController.crearCotizacionConOT)
 router.get("/:id", cotizacionController.mostrarCotizacionPorId);
 
+// Ruta para solicitar condiciones de alquiler de una cotización 
+router.put("/:id/solicitar-condiciones", cotizacionController.solicitarCondiciones)
 
 /* router.put("/:id", cotizacionController.actualizarCotizacion);
 router.delete("/:id", cotizacionController.eliminarCotizacion); */

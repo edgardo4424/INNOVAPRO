@@ -39,23 +39,6 @@ export async function generarCuerpoPuntales(doc, data, startY = 120) {
   currentY += 6;
 
   // ⚙️ Detalles cotización
-  /* for (const zona of data.zonas || []) {
-    const zonaTitulo = `Zona ${zona.zona || "1"} - ${zona.nota_zona || "(DESCRIPCIÓN DE ZONA INDEFINIDA)"}`;
-    currentY = drawJustifiedText(doc, `**${zonaTitulo}**`, indent + 3, currentY, 170, 5.5, 10);
-
-    for (const equipo of zona.atributos || []) {
-      const descripcionEquipo = `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** Alquiler de ${equipo.cantidad || "(INDEFINIDO NÚMERO DE PUNTALES) en Zona: " + zona.zona} ${equipo.cantidad === 1 ? "Ud." : "Uds."} de ${data.uso?.nombre || "(NOMBRE DE EQUIPO INDEFINIDO)"} de ${equipo.tipoPuntal || "(LONGITUD INDEFINIDA)"}`;
-
-      const palabras = descripcionEquipo.split(/\s+/);
-      const aproxLineas = Math.ceil(palabras.length / 11);
-      const alturaEstimada = aproxLineas * 5;
-
-      currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimada);
-      currentY = drawJustifiedText(doc, descripcionEquipo, indent + box + 3, currentY, 170, 5.5, 10);
-    }
-
-    currentY += 4; // Espacio entre zonas
-  } */
 
   for (const zona of data.zonas || []) {
     const zonaTitulo = `Zona ${zona.zona || "1"} - ${zona.nota_zona || "(DESCRIPCIÓN DE ZONA INDEFINIDA)"}`;

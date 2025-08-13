@@ -39,7 +39,6 @@ const GestionGratificacion = () => {
 
     }, []);
 
-
     return (
         <div className="min-h-full flex-1  flex flex-col items-center">
             <div className="w-full px-4 max-w-7xl py-6 flex justify-between">
@@ -61,7 +60,6 @@ const GestionGratificacion = () => {
                 gratificacion ? (
                     <div className="w-full px-7 ">
                         <ListaGratificacion gratificacion={filtroGratificacion} />
-                        {/* <ListaGratificacion TipoGratificacion="Honorarios" gratificacion={Gratificacion.honorarios} /> */}
                     </div>
                 ) : (
                     <div className="w-full px-20  max-w-8xl min-h-[50vh] flex items-center">
@@ -76,4 +74,3 @@ const GestionGratificacion = () => {
 };
 
 export default GestionGratificacion;
-

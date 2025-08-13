@@ -1,0 +1,43 @@
+class Bono {
+   constructor({ id, trabajador_id, fecha, monto, observacion }) {
+      this.id = id;
+      this.trabajador_id = trabajador_id;
+      this.fecha = fecha;
+      this.monto = monto;
+      this.observacion = observacion;
+   }
+   validarCamposObligatorios(editar = false) {
+      let errores = [];
+      if (editar) {
+         if (!this.id) {
+            errores.push("Datos incompletos");
+         }
+      }
+      if (!this.trabajador_id) {
+         errores.push("El campo 'trabajador_id' es obligatorio.");
+      }
+      if (!this.fecha) {
+         errores.push("El campo 'fecha' es obligatorio.");
+      }
+      if (this.monto == null || this.monto === "") {
+         errores.push("El campo 'monto' es obligatorio.");
+      } else if (isNaN(this.monto) || this.monto <= 0) {
+         errores.push("El campo 'monto' debe ser un número positivo.");
+      }
+      return errores;
+   }
+   construirDatosBono(editar = false) {
+      let data = {
+         trabajador_id: this.trabajador_id,
+         fecha: this.fecha,
+         monto: this.monto,
+         observacion: this.observacion,
+      };
+      if (editar) {
+         data.bono_id = this.id;
+      }
+      return data;
+   }
+}
+
+module.exports = Bono;

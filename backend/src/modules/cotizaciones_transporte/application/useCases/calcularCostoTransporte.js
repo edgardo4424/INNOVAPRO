@@ -13,8 +13,6 @@ module.exports = async (
 
   const uso = await db.usos.findByPk(uso_id);
 
-  console.log('uso', uso);
-
   if (!uso) {
     return {
       codigo: 400,
@@ -44,8 +42,6 @@ module.exports = async (
 
   let unidad;
   let cantidadTotal;
-
-  console.log("grupo tarifa del backend", uso.grupo_tarifa)
 
   switch (uso.grupo_tarifa) {
     case "andamio_multidireccional":
@@ -88,7 +84,6 @@ module.exports = async (
     case "puntales":
       const { peso_total_tn: peso_total_tn_puntales, transporte_puntales } = cotizacionTransporteData;
 
-      console.log('transporte_puntales', transporte_puntales);
       if(transporte_puntales.length == 1){
 
         tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
@@ -122,7 +117,7 @@ module.exports = async (
             rango_hasta: { [Op.gte]: peso_total_tn_puntales },
           },
         });
-         console.log('tarifa_transporte_encontrado', tarifa_transporte_encontrado);
+         
         costo_tarifas_transporte = Number(
           tarifa_transporte_encontrado?.precio_soles || 0
         );
@@ -138,12 +133,16 @@ module.exports = async (
 
       break;
 
-    case "andamio_electrico":
+    case "andamio_electrico": // colgantes
+
+
+    const { cantidad: cantidad_colgantes } = cotizacionTransporteData;
+
       tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
         where: {
           grupo_tarifa: uso.grupo_tarifa,
-          rango_desde: { [Op.lt]: cantidad },
-          rango_hasta: { [Op.gte]: cantidad },
+          rango_desde: { [Op.lt]: cantidad_colgantes },
+          rango_hasta: { [Op.gte]: cantidad_colgantes },
         },
       });
 
@@ -151,13 +150,13 @@ module.exports = async (
         tarifa_transporte_encontrado?.precio_soles || 0
       );
       unidad = "Andamio";
-      cantidadTotal = cantidad;
+      cantidadTotal = cantidad_colgantes;
       break;
 
     case "plataformas_de_descarga":
       
       const { cantidad } = cotizacionTransporteData;
-      console.log("CANTIDAD RECIBIDA", cantidad)
+  
       tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
         where: {
           grupo_tarifa: uso.grupo_tarifa,
@@ -165,8 +164,6 @@ module.exports = async (
           rango_hasta: { [Op.gte]: cantidad },
         },
       });
-      console.log("Tarifa transporte encontrado", tarifa_transporte_encontrado)
-
       costo_tarifas_transporte = Number(
         tarifa_transporte_encontrado?.precio_soles || 0
       );
@@ -174,26 +171,34 @@ module.exports = async (
       cantidadTotal = cantidad;
       break;
 
-    case "escuadras":
+    case "escuadras_sin_plataforma":
       const { transporte_escuadras } = cotizacionTransporteData;
 
-      if (transporte_escuadras.length == 1) {
+      if (transporte_escuadras?.length == 1) {
         // Si hay un tipo de escuadra, el costo de tarifa transporte se calcula automaticamente
-
+        console.log('******')
+        console.log({
+          grupo_tarifa: uso.grupo_tarifa,
+          subtipo: transporte_escuadras[0].tipo_escuadra,
+          rango_desde: transporte_escuadras[0]?.cantidad ,
+          rango_hasta: transporte_escuadras[0]?.cantidad ,
+        });
         tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
           where: {
             grupo_tarifa: uso.grupo_tarifa,
             subtipo: transporte_escuadras[0].tipo_escuadra,
-            rango_desde: { [Op.lt]: transporte_escuadras.cantidad },
-            rango_hasta: { [Op.gte]: transporte_escuadras.cantidad },
+            rango_desde: { [Op.lte]: transporte_escuadras[0]?.cantidad },
+            rango_hasta: { [Op.gte]: transporte_escuadras[0]?.cantidad },
           },
         });
+
+        console.log('tarifa_transporte_encontrado', tarifa_transporte_encontrado);
 
         costo_tarifas_transporte = Number(
           tarifa_transporte_encontrado?.precio_soles || 0
         );
         unidad = "Und";
-        cantidadTotal = transporte_escuadras.cantidad;
+        cantidadTotal = transporte_escuadras[0]?.cantidad;
       } else {
         costo_tarifas_transporte = 0;
         unidad = "Und";
