@@ -103,6 +103,7 @@ const modulesByRole = {
             { name: "Vacaciones", path: "/vacaciones" },
             { name: "Cts", path: "/cts" },
             { name: "Gratificacion", path: "/gratificacion" },
+            { name: "Bonos", path: "/bonos" },
 
          ],
       },

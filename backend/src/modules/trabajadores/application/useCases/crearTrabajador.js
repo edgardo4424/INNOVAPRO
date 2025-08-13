@@ -5,7 +5,7 @@ module.exports = async (empleadoData, trabajadorRepository,transaction = null) =
     const trabajador = new Trabajador(empleadoData);
     
     
-   const errores = trabajador.validarCamposObligatorios("crear"); // Validamos campos obligatorios
+   const errores = trabajador.validarCamposObligatorios(); // Validamos campos obligatorios
    if (errores.length > 0)
       return { codigo: 400, respuesta: { mensaje: errores } };
 

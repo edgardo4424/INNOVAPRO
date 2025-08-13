@@ -33,6 +33,15 @@ const ContratoLaboral = sequelize.define(
          type: DataTypes.ENUM("MYPE", "GENERAL"),
          allowNull: false,
       },
+      tipo_contrato: {
+         type: DataTypes.ENUM("PLANILLA", "HONORARIOS"),
+         allowNull: false,
+      },
+      estado: {
+         type: DataTypes.BOOLEAN,
+         allowNull: false,
+         defaultValue: true, // activo
+      },
    },
    {
       tableName: "contratos_laborales",
@@ -46,4 +55,4 @@ ContratoLaboral.associate = (models) => {
    });
 };
 
-module.exports={ContratoLaboral}
+module.exports = { ContratoLaboral };
