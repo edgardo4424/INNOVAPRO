@@ -2,7 +2,6 @@
 // Se envuelve la app con los contextos globales y renderiza el componente principal <App/>
 // Aquí se conectan los cables principales de la aplicación: autenticación, notificaciones, facturación y estilos globales
 
-
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
@@ -20,25 +19,32 @@ import "./styles/notificaciones.css";
 import "./styles/registroTarea.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-  //<React.StrictMode> {/* Modo Stric que nos ayuda en desarrollo a encontrar bugs */}
-    <AuthProvider> {/* Se encarga de la sesión del usuario. */}
-      <NotificacionesProvider> {/* Gestiona el sistema de notificaciones. */}
-        <AppProviderFacturacion>{/* Provee datos específicos del módulo de facturación. */}
-          <App /> {/* Invocamos la APP principal que a su vez lanzará las rutas del sistema */}
-          <ToastContainer
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-          />
-        </AppProviderFacturacion>
-      </NotificacionesProvider>
-    </AuthProvider>
-  //</React.StrictMode>
-)
+   <React.StrictMode>
+      {" "}
+      {/* Modo Stric que nos ayuda en desarrollo a encontrar bugs */}
+      <AuthProvider>
+         {" "}
+         {/* Se encarga de la sesión del usuario. */}
+         <NotificacionesProvider>
+            {" "}
+            {/* Gestiona el sistema de notificaciones. */}
+            <AppProviderFacturacion>
+               {/* Provee datos específicos del módulo de facturación. */}
+               <App />{" "}
+               {/* Invocamos la APP principal que a su vez lanzará las rutas del sistema */}
+               <ToastContainer
+                  position="top-right"
+                  autoClose={5000}
+                  hideProgressBar={false}
+                  newestOnTop={false}
+                  closeOnClick
+                  rtl={false}
+                  pauseOnFocusLoss
+                  draggable
+                  pauseOnHover
+               />
+            </AppProviderFacturacion>
+         </NotificacionesProvider>
+      </AuthProvider>
+   </React.StrictMode>
+);
