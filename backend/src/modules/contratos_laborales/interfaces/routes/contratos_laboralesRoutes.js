@@ -7,9 +7,9 @@ const ContratoLaboralController = require("../controllers/contratoLaboralControl
 
 router.use(verificarToken); // Verificamos el token para todas las rutas
 
-router.post(
-   "/",
-   ContratoLaboralController.crearContratoLaboral
-);
+router.post("/", ContratoLaboralController.crearContratoLaboral);
+router.put("/", ContratoLaboralController.editarContratoLaboral);
+router.get("/:id", ContratoLaboralController.obtenerContratosPorTrabajadorId);
+router.delete("/:id", ContratoLaboralController.eliminarContratoLaboralPorId);
 
 module.exports = router;

@@ -14,8 +14,8 @@ const contratoSchema = yup.object({
          "La fecha fin debe ser posterior a la fecha de inicio"
       )
       .transform((value, originalValue) => new Date(originalValue))
-      .typeError("La fecha de inicio no es válida")
-      .required("La fecha de inicio es requerida"),
+      .typeError("La fecha de fin no es válida")
+      .required("La fecha de fin es requerida"),
    sueldo: yup
       .number()
       .transform((value, originalValue) => Number(originalValue))
@@ -26,6 +26,13 @@ const contratoSchema = yup.object({
       .string()
       .oneOf(["GENERAL", "MYPE"], "El régimen debe ser GENERAL o MYPE")
       .required("El régimen es obligatorio"),
+   tipo_contrato: yup
+      .string()
+      .oneOf(
+         ["PLANILLA", "HONORARIOS"],
+         "El tipo de contrato debe ser Planilla o RxH"
+      )
+      .required("El tipo de contrato es obligatorio"),
 });
 
 export const trabajadorSchema = (isEdit = false) =>
