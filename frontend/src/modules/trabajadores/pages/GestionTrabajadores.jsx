@@ -6,9 +6,11 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Users, DollarSign, Building, Loader2, AlertCircle } from "lucide-react"
+import { Search, Users, DollarSign, Building, Loader2, AlertCircle, Edit } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import trabajadoresService from "../services/trabajadoresService"
+import { Button } from "@/components/ui/button"
+import { useNavigate } from "react-router-dom"
 
 
 
@@ -20,7 +22,8 @@ export default function CompGestionTrabajadoresonent() {
   const [error, setError] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [areaFilter, setAreaFilter] = useState("all")
-  const [pensionFilter, setPensionFilter] = useState("all")
+  const [pensionFilter, setPensionFilter] = useState("all");
+  const navigate=useNavigate()
 
   // Función para cargar trabajadores
   const fetchTrabajadores = async () => {
@@ -135,13 +138,6 @@ export default function CompGestionTrabajadoresonent() {
           <h1 className="text-3xl font-bold">Gestión de Trabajadores</h1>
           <p className="text-muted-foreground">Administra y visualiza la información de tu personal</p>
         </div>
-        {/* <button
-          onClick={fetchTrabajadores}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center gap-2"
-        >
-          <Loader2 className="h-4 w-4" />
-          Actualizar
-        </button> */}
       </div>
 
       {/* Statistics Cards */}
@@ -255,7 +251,7 @@ export default function CompGestionTrabajadoresonent() {
                   <TableHead>Sueldo Base</TableHead>
                   <TableHead>Sistema Pensión</TableHead>
                   <TableHead>Beneficios</TableHead>
-                  {/* <TableHead>Estado</TableHead> */}
+                  <TableHead>Acciones</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -288,7 +284,7 @@ export default function CompGestionTrabajadoresonent() {
                       </div>
                     </TableCell>
 
-                    <TableCell>{formatDate(employee.fecha_ingreso)}</TableCell>
+                    <TableCell>{formatDate(employee.contrato_mas_antiguo?.fecha_inicio)}</TableCell>
 
                     <TableCell className="font-medium">{formatCurrency(employee.sueldo_base)}</TableCell>
 
@@ -312,12 +308,12 @@ export default function CompGestionTrabajadoresonent() {
                         )}
                       </div>
                     </TableCell>
-
-                    {/* <TableCell>
-                      <Badge variant={employee.estado === "activo" ? "default" : "destructive"} className="capitalize">
-                        {employee.estado}
-                      </Badge>
-                    </TableCell> */}
+                    <TableCell>
+                      <Button size={'icon'} className={"size-8"} variant={'outline'} 
+                      onClick={()=>navigate(`/editar-trabajador?id=${employee.id}`)}>
+                          <Edit/>
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

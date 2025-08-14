@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -8,9 +11,25 @@ import {
    SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import {
+   AlertDialog,
+   AlertDialogAction,
+   AlertDialogCancel,
+   AlertDialogContent,
+   AlertDialogDescription,
+   AlertDialogFooter,
+   AlertDialogHeader,
+   AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { CalendarIcon, Plus, Trash2 } from "lucide-react";
 
 const ContratosLaborales = ({ formData, setFormData, errors }) => {
+   // Estados para confirmar sueldo
+   const [confirmOpen, setConfirmOpen] = useState(false);
+   const [editIndex, setEditIndex] = useState(null);
+   const [prevSueldo, setPrevSueldo] = useState("");
+   const [tempSueldo, setTempSueldo] = useState("");
+
    const handleInputChange = (index, field, value) => {
       setFormData((prev) => ({
          ...prev,
@@ -44,8 +63,44 @@ const ContratosLaborales = ({ formData, setFormData, errors }) => {
       }));
    };
 
+   // Captura el sueldo previo al empezar a editar
+   const handleSueldoFocus = (index, value) => {
+      setEditIndex(index);
+      setPrevSueldo(value ?? "");
+   };
+
+   // Al salir del input, si cambió y no está vacío, pregunta confirmación
+   const handleSueldoBlur = (index, value) => {
+      const normalizedNew = value?.toString() ?? "";
+      const normalizedPrev = prevSueldo?.toString() ?? "";
+
+      // No abrir si no cambió o si está vacío
+      if (!normalizedNew || normalizedNew === normalizedPrev) return;
+
+      setEditIndex(index);
+      setTempSueldo(normalizedNew);
+      setConfirmOpen(true);
+   };
+
+   const confirmSueldo = () => {
+      // Por si acaso, asegura que quede el valor confirmado
+      if (editIndex !== null) {
+         handleInputChange(editIndex, "sueldo", tempSueldo);
+      }
+      setConfirmOpen(false);
+      setEditIndex(null);
+   };
+
+   const cancelSueldo = () => {
+      // Revertir al valor previo
+      if (editIndex !== null) {
+         handleInputChange(editIndex, "sueldo", prevSueldo);
+      }
+      setConfirmOpen(false);
+      setEditIndex(null);
+   };
+
    const canRemove = formData.contratos_laborales.length > 1;
-   console.log(errors);
 
    return (
       <>
@@ -92,7 +147,8 @@ const ContratosLaborales = ({ formData, setFormData, errors }) => {
                      </Button>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                     {/* Fecha de inicio */}
                      <div className="space-y-2">
                         <Label htmlFor={`fecha_inicio_${i}`}>
                            Fecha de Inicio *
@@ -109,13 +165,14 @@ const ContratosLaborales = ({ formData, setFormData, errors }) => {
                               )
                            }
                         />
-                        {errors[`contratos_laborales[${i}].fecha_inicio`] && (
+                        {errors?.[`contratos_laborales[${i}].fecha_inicio`] && (
                            <p className="text-xs text-red-500">
                               {errors[`contratos_laborales[${i}].fecha_inicio`]}
                            </p>
                         )}
                      </div>
 
+                     {/* Fecha de fin */}
                      <div className="space-y-2">
                         <Label htmlFor={`fecha_fin_${i}`}>Fecha de Fin *</Label>
                         <Input
@@ -126,13 +183,14 @@ const ContratosLaborales = ({ formData, setFormData, errors }) => {
                               handleInputChange(i, "fecha_fin", e.target.value)
                            }
                         />
-                        {errors[`contratos_laborales[${i}].fecha_fin`] && (
+                        {errors?.[`contratos_laborales[${i}].fecha_fin`] && (
                            <p className="text-xs text-red-500">
                               {errors[`contratos_laborales[${i}].fecha_fin`]}
                            </p>
                         )}
                      </div>
 
+                     {/* Sueldo */}
                      <div className="space-y-2">
                         <Label htmlFor={`sueldo_${i}`}>Sueldo *</Label>
                         <Input
@@ -141,18 +199,21 @@ const ContratosLaborales = ({ formData, setFormData, errors }) => {
                            min="0"
                            step="0.01"
                            value={c.sueldo}
+                           onFocus={(e) => handleSueldoFocus(i, e.target.value)}
                            onChange={(e) =>
                               handleInputChange(i, "sueldo", e.target.value)
                            }
+                           onBlur={(e) => handleSueldoBlur(i, e.target.value)}
                            placeholder="0.00"
                         />
-                        {errors[`contratos_laborales[${i}].sueldo`] && (
+                        {errors?.[`contratos_laborales[${i}].sueldo`] && (
                            <p className="text-xs text-red-500">
                               {errors[`contratos_laborales[${i}].sueldo`]}
                            </p>
                         )}
                      </div>
 
+                     {/* Régimen */}
                      <div className="space-y-2">
                         <Label htmlFor={`regimen_${i}`}>Régimen *</Label>
                         <Select
@@ -172,14 +233,18 @@ const ContratosLaborales = ({ formData, setFormData, errors }) => {
                               <SelectItem value="MYPE">Mype</SelectItem>
                            </SelectContent>
                         </Select>
-                        {errors[`contratos_laborales[${i}].regimen`] && (
+                        {errors?.[`contratos_laborales[${i}].regimen`] && (
                            <p className="text-xs text-red-500">
                               {errors[`contratos_laborales[${i}].regimen`]}
                            </p>
                         )}
                      </div>
+
+                     {/* Tipo de contrato */}
                      <div className="space-y-2">
-                        <Label htmlFor={`tipo_contrato_${i}`}>Tipo de contrato *</Label>
+                        <Label htmlFor={`tipo_contrato_${i}`}>
+                           Tipo de contrato *
+                        </Label>
                         <Select
                            value={c.tipo_contrato}
                            onValueChange={(value) =>
@@ -194,12 +259,20 @@ const ContratosLaborales = ({ formData, setFormData, errors }) => {
                            </SelectTrigger>
                            <SelectContent>
                               <SelectItem value="PLANILLA">Planilla</SelectItem>
-                              <SelectItem value="HONORARIOS">Recibo por honorarios</SelectItem>
+                              <SelectItem value="HONORARIOS">
+                                 Recibo por honorarios
+                              </SelectItem>
                            </SelectContent>
                         </Select>
-                        {errors[`contratos_laborales[${i}].tipo_contrato`] && (
+                        {errors?.[
+                           `contratos_laborales[${i}].tipo_contrato`
+                        ] && (
                            <p className="text-xs text-red-500">
-                              {errors[`contratos_laborales[${i}].tipo_contrato`]}
+                              {
+                                 errors[
+                                    `contratos_laborales[${i}].tipo_contrato`
+                                 ]
+                              }
                            </p>
                         )}
                      </div>
@@ -207,6 +280,26 @@ const ContratosLaborales = ({ formData, setFormData, errors }) => {
                </div>
             ))}
          </div>
+
+         {/* Diálogo de confirmación de sueldo */}
+         <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+            <AlertDialogContent>
+               <AlertDialogHeader>
+                  <AlertDialogTitle>Confirmar sueldo</AlertDialogTitle>
+                  <AlertDialogDescription>
+                     ¿Está seguro de que el sueldo es <b>{tempSueldo}</b>?
+                  </AlertDialogDescription>
+               </AlertDialogHeader>
+               <AlertDialogFooter>
+                  <AlertDialogCancel onClick={cancelSueldo}>
+                     Cancelar
+                  </AlertDialogCancel>
+                  <AlertDialogAction onClick={confirmSueldo}>
+                     Confirmar
+                  </AlertDialogAction>
+               </AlertDialogFooter>
+            </AlertDialogContent>
+         </AlertDialog>
       </>
    );
 };

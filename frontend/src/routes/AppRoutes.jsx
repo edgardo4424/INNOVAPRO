@@ -19,6 +19,7 @@ import GestionAsistencia from "@/modules/asistencia/pages/GestionAsistencia";
 import PlanillaEnConstruccion from "@/modules/planilla/pages/planilla";
 import GestionVacaciones from "@/modules/Beneficios/Pages/GestionVacaciones";
 import GestionBonos from "@/modules/Beneficios/Pages/GestionBonos";
+import EditarTrabajador from "@/modules/trabajadores/pages/EditarTrabajador";
 
 
 // Lazy load components
@@ -126,6 +127,10 @@ export default function AppRoutes() {
                         <Route
                            path="crear-trabajador"
                            element={<CrearTrabajador />}
+                        />
+                        <Route
+                           path="editar-trabajador"
+                           element={<EditarTrabajador />}
                         />
                         <Route
                            path="tabla-trabajadores"

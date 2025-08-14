@@ -20,7 +20,7 @@ const routes = require("./routes"); // Importa rutas
 // Iniciar el bot de telegram
 //require('./shared/utils/botTelegram');
 
-const app = express();
+const app = express();  
 const server = http.createServer(app);
 
 // 🔥 Detectamos si estamos en producción o desarrollo
