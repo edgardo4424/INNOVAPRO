@@ -7,7 +7,7 @@ module.exports = async (id, bonoRepository, transaction = null) => {
    }
    const bonos = await bonoRepository.obtenerBonosPorTrabajadorId(id, transaction);
    return {
-      codigo: 201,
+      codigo: 200,
       respuesta: {
          mensaje: "Bonos encontrados",
          bonos: bonos,

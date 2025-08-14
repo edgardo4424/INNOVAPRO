@@ -17,6 +17,7 @@ import "./styles/centroAtencion.css";
 import "./styles/cotizacionForm.css";
 import "./styles/notificaciones.css";
 import "./styles/registroTarea.css";
+import { Toaster } from "./components/ui/sonner.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
    <React.StrictMode>
@@ -31,6 +32,13 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <AppProviderFacturacion>
                {/* Provee datos específicos del módulo de facturación. */}
                <App />{" "}
+               <Toaster
+                  expand={true}
+                  theme="light"
+                  position="top-center"
+                  richColors
+                  closeButton
+               />
                {/* Invocamos la APP principal que a su vez lanzará las rutas del sistema */}
                <ToastContainer
                   position="top-right"

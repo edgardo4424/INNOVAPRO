@@ -40,6 +40,9 @@ db.vacaciones = Vacaciones;
 const { Bonos } = require("../modules/bonos/infraestructure/models/bonoModel");
 db.bonos = Bonos;
 
+const { AdelantoSueldo } = require("../modules/adelanto_sueldo/infraestructure/models/adelantoSueldoModel");
+db.adelanto_sueldo = AdelantoSueldo;
+
 const {
    Gasto,
 } = require("../modules/asistencias/infraestructure/models/gastoModel");
@@ -228,6 +231,7 @@ if (db.trabajadores.associate) db.trabajadores.associate(db);
 if (db.vacaciones.associate) db.vacaciones.associate(db);
 if (db.contratos_laborales.associate) db.contratos_laborales.associate(db);
 if (db.bonos.associate) db.bonos.associate(db);
+if (db.adelanto_sueldo.associate) db.adelanto_sueldo.associate(db);
 if (db.asistencias.associate) db.asistencias.associate(db);
 if (db.gastos.associate) db.gastos.associate(db);
 if (db.jornadas.associate) db.jornadas.associate(db);

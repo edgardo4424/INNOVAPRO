@@ -81,6 +81,9 @@ class SequelizeTrabajadorRepository {
 
    async obtenerTrabajadores() {
       const trabajadores = await Trabajador.findAll({
+         where:{
+            estado:"activo",
+         },
          include: [
             {
                model: db.cargos,
