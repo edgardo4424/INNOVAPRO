@@ -7,7 +7,7 @@ const {
   unificarDespiecesConTotales,
 } = require("../../helpers/despieceUtils");
 
-const db = require("../../../../../models");
+const db = require("../../../../../database/models");
 const { calcularCantidadesPorCadaPiezaDeElevador } = require("./calcularCantidadesPuntales");
 
 const CONST_ID_USO_ELEVADOR = 9;

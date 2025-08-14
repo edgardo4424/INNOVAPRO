@@ -1,5 +1,5 @@
 const CotizacionesTransporte = require("../../domain/entities/cotizaciones_transporte"); // Importamos la clase Obra
-const db = require("../../../../models");
+const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 const { Op } = require("sequelize");
 
 module.exports = async (

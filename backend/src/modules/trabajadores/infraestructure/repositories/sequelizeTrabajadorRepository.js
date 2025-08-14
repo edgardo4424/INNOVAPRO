@@ -1,5 +1,5 @@
 const { Trabajador } = require("../models/trabajadorModel");
-const db = require("../../../../models");
+const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 const EmpresaProveedora = db.empresas_proveedoras;
 const { Op, fn, col, where } = require("sequelize");
 class SequelizeTrabajadorRepository {

@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const db = require("../../models");
+const db = require("../../database/models");
 
 // 🔹 Middleware para verificar token
 async function verificarToken(req, res, next) {

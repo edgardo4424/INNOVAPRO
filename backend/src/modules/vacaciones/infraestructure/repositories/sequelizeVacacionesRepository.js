@@ -1,4 +1,4 @@
-const db = require("../../../../models");
+const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 const {
    Trabajador,
 } = require("../../../trabajadores/infraestructure/models/trabajadorModel");
