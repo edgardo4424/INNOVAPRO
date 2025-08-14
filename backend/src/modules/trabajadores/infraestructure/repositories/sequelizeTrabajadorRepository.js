@@ -92,9 +92,37 @@ class SequelizeTrabajadorRepository {
                   },
                ],
             },
+            {
+               model: db.contratos_laborales,
+               as: "contratos_laborales",
+               where: { estado: 1 },
+               required: false,
+            },
          ],
       });
-      return trabajadores;
+
+      const sanitizacion = trabajadores.map((tr) => {
+         const t = tr.get({ plain: true });
+
+         let contrato_mas_antiguo = null;
+         if (t.contratos_laborales.length > 0) {
+            contrato_mas_antiguo = t.contratos_laborales.reduce(
+               (antiguo, actual) => {
+                  return new Date(actual.fecha_inicio) <
+                     new Date(antiguo.fecha_inicio)
+                     ? actual
+                     : antiguo;
+               }
+            );
+         }
+
+         return {
+            ...t,
+            contrato_mas_antiguo,
+         };
+      });
+
+      return sanitizacion;
    }
 }
 
