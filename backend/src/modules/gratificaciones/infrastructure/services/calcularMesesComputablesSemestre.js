@@ -47,6 +47,7 @@ function mergeRangosConRegimen(contratos = []) {
       // Unificamos el rango extendiendo la fecha de fin
       const maxFin = moment.max(lastFinEff, curFinEff);
       last.fin = maxFin.isSame(INF, 'day') ? null : maxFin;
+      last.sueldo_base = r.sueldo_base
     } else {
       out.push(r);
     }

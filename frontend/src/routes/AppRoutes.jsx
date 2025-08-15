@@ -95,6 +95,10 @@ const GestionGratificacion = lazy(() =>
    import("../modules/gratificacion/pages/GestionGratificacion")
 );
 
+const GestionDataMantenimiento = lazy(() =>
+   import("../modules/dataMantenimiento/pages/GestionDataMantenimiento")
+);
+
 
 export default function AppRoutes() {
    const Router =
@@ -148,6 +152,11 @@ export default function AppRoutes() {
                         <Route
                            path="vacaciones"
                            element={<GestionVacaciones />}
+                        />
+
+                        <Route
+                           path="data-mantenimiento"
+                           element={<GestionDataMantenimiento />}
                         />
                      </Route>
 

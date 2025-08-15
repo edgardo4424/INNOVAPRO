@@ -131,6 +131,7 @@ const modulesByRole = {
       },
 
       { name: "Planilla", path: "/planilla" },
+      { name: "Datos de mantenimiento", path: "/data-mantenimiento" },
 
    ],
    Ventas: [
