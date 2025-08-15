@@ -20,6 +20,7 @@ import PlanillaEnConstruccion from "@/modules/planilla/pages/planilla";
 import GestionVacaciones from "@/modules/Beneficios/Pages/GestionVacaciones";
 import GestionBonos from "@/modules/Beneficios/Pages/GestionBonos";
 import EditarTrabajador from "@/modules/trabajadores/pages/EditarTrabajador";
+import GestionAdelantoSueldo from "@/modules/Beneficios/Pages/GestionAdelantosSueldo";
 
 
 // Lazy load components
@@ -315,6 +316,8 @@ export default function AppRoutes() {
                         <Route element={<RoleGuard roles={["Gerencia"]} />}>
 
                            <Route path="bonos" element={<GestionBonos />} />
+                           <Route path="adelanto-sueldo" element={<GestionAdelantoSueldo />} />
+
 
                            <Route
                               path="gratificacion"

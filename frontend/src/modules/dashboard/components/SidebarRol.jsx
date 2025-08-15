@@ -104,6 +104,7 @@ const modulesByRole = {
             { name: "Cts", path: "/cts" },
             { name: "Gratificacion", path: "/gratificacion" },
             { name: "Bonos", path: "/bonos" },
+            { name: "Adelanto de sueldo", path: "/adelanto-sueldo" },
 
          ],
       },

@@ -1,4 +1,4 @@
-class Bono {
+class AdelantoSueldo {
    constructor({ id, trabajador_id, fecha, monto, observacion }) {
       this.id = id;
       this.trabajador_id = trabajador_id;
@@ -26,19 +26,19 @@ class Bono {
       }
       return errores;
    }
-   construirDatosBono(editar = false) {
+   construirDatosAdelantoSueldo(editar = false) {
       let data = {
          fecha: this.fecha,
          monto: this.monto,
          observacion: this.observacion,
       };
       if (editar) {
-         data.bono_id = this.id;
-      } else{
-         data.trabajador_id= this.trabajador_id
+         data.adelanto_sueldo_id = this.id;
+      } else {
+         data.trabajador_id = this.trabajador_id;
       }
       return data;
    }
 }
 
-module.exports = Bono;
+module.exports = AdelantoSueldo;
