@@ -1,6 +1,7 @@
 const db = require("../../../../models"); // Llamamos los modelos sequalize de la base de datos
 const {
   calcularMesesComputablesSemestre,
+  obtenerUltimaFechaFin,
 } = require("../services/calcularMesesComputablesSemestre");
 const {
   calcularResumenGratificaciones,
@@ -71,7 +72,7 @@ class SequelizeFilialRepository {
     const filas = await Promise.all(
       Array.from(porTrabajador.values()).map(
         async ({ trabajador, contratos }) => {
-            console.log('trabajador', trabajador)
+       
           // 1) Meses por régimen
           const { porRegimen, totalMeses, detalleMensual } =
             calcularMesesComputablesSemestre(contratos, periodo, anio);
@@ -81,17 +82,18 @@ class SequelizeFilialRepository {
 
          const totalHorasExtras = await asistenciaRepository.obtenerHorasExtrasPorRangoFecha(trabajador.id, fechaInicio, fechaFin)
 
-         console.log('totalHorasExtras', totalHorasExtras);
         
          //console.log('totalHorasExtras', totalHorasExtras);
           const promedioHorasExtras = totalHorasExtras * MONTO_POR_HORA_EXTRA;
           const promedioBonoObra = await bonoRepository.obtenerBonoTotalDelTrabajadorPorRangoFecha(trabajador.id, fechaInicio, fechaFin); // TODO
 
-          console.log('PROMEDIOOOOOOOOOO BONO OBRA', promedioBonoObra);
           const noComputableDias = 0; // TODO: Falta calcular los dias no computables
           const noComputable = noComputableDias * MONTO_NO_COMPUTABLE;
 
            const faltasDias = await asistenciaRepository.obtenerCantidadFaltasPorRangoFecha(trabajador.id, fechaInicio, fechaFin); // Falta calcular la cantidad de faltas
+
+
+           const ultimaFechaFinContrato = obtenerUltimaFechaFin(contratos);
 
           // Nota: si el sueldo_base cambia por contrato, ya viene por cada parte (porRegimen.sueldo_base).
           // Aquí RC se arma por parte con su sueldo_base específico:
@@ -125,6 +127,7 @@ class SequelizeFilialRepository {
               tipo_contrato: p.tipo_contrato,
               regimen: p.regimen,
               fecha_inicio: p.fecha_inicio, // NUEVO CAMPO
+              fecha_fin: ultimaFechaFinContrato,
               meses: p.meses,
               factor: p.factor,
               sistema_salud: p.sistema_salud,
@@ -175,8 +178,6 @@ class SequelizeFilialRepository {
     // y clonar la lógica de resúmenes que ya tenías.
 
     const listaTrabajadores = mapearParaReporteGratificaciones(filas);
-
-    console.log("listaTrabajadores", listaTrabajadores);
 
     const listaTrabajadoresPlanilla = listaTrabajadores.filter(
       (trabajador) => trabajador.tipo_contrato == "PLANILLA"

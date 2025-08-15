@@ -12,11 +12,22 @@ import {
 import { Search } from "lucide-react";
 import ColumnaGratificacion from "./ColumnaGratificacion";
 import ColumnaTotalGratificacion from "./ColumnaTotalGratificacion";
+import { useState } from "react";
 
 const ListaGratificacion = ({ gratificacion }) => {
   const { planilla, honorarios } = gratificacion
   const totalP = planilla.totales;
   const totalH = honorarios.totales;
+
+  const [filtro, setFiltro] = useState("");
+
+  // Filtrar por nombres y apellidos (case-insensitive)
+  const filtrarTrabajadores = (trabajadores) =>
+    trabajadores.filter((t) =>
+        `${t.nombres} ${t.apellidos}`
+               .toLowerCase().toLowerCase().includes(filtro?.toLowerCase())
+    );
+
 
   return (
     <div className="w-full overflow-x-auto p-5 mb-10 flex flex-col bg-gray-100 border-2 rounded-xl shadow-xl">
@@ -25,7 +36,9 @@ const ListaGratificacion = ({ gratificacion }) => {
         <Input
           type="search"
           className="block w-full appearance-none px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-          placeholder="Buscar..."
+          placeholder="Buscar por nombres"
+          value={filtro}
+          onChange={(e) => setFiltro(e.target.value)}
         />
         <Search className="absolute right-3 top-1 text-gray-400" />
       </div>
@@ -40,6 +53,7 @@ const ListaGratificacion = ({ gratificacion }) => {
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Nombres y Apellidos</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Régimen</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Fecha Ingreso</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Fecha Cese</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Tiempo Laborado</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Base</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Asig. Fam.</TableHead>
@@ -80,7 +94,7 @@ const ListaGratificacion = ({ gratificacion }) => {
                     Planilla
                   </TableCell>
                 </TableRow>
-                {planilla.trabajadores.map((e, index) => (
+                 {filtrarTrabajadores(planilla.trabajadores).map((e, index) => (
                   <ColumnaGratificacion key={index} e={e} index={index} />
                 ))}
                 <ColumnaTotalGratificacion gratificacion={totalP} />
@@ -98,7 +112,7 @@ const ListaGratificacion = ({ gratificacion }) => {
                     Honorarios
                   </TableCell>
                 </TableRow>
-                {honorarios.trabajadores.map((e, index) => (
+                 {filtrarTrabajadores(honorarios.trabajadores).map((e, index) => (
                   <ColumnaGratificacion key={index} e={e} index={index} />
                 ))}
                 <ColumnaTotalGratificacion gratificacion={totalH} />
