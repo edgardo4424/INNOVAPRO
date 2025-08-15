@@ -22,9 +22,9 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { trabajadorSchema } from "../schema/trabajador.schema";
 import trabajadoresService from "../services/trabajadoresService";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { toast } from "react-toastify";
 import { mockCargos, mockFiliales } from "../mocks/mockFiliales_Cargos";
 import ContratosLaborales from "../components/ContratosLaborales";
+import { toast } from "sonner";
 
 const dataInicial = {
    filial_id: "",
@@ -43,7 +43,7 @@ const dataInicial = {
          fecha_fin: "",
          sueldo: "",
          regimen: "",
-         tipo_contrato:""
+         tipo_contrato: "",
       },
    ],
 };
@@ -97,7 +97,7 @@ export default function TrabajadorForm() {
                     fecha_fin: c?.fecha_fin ?? "",
                     sueldo: c?.sueldo ?? "",
                     regimen: c?.regimen ?? "",
-                    tipo_contrato:c?.tipo_contrato??""
+                    tipo_contrato: c?.tipo_contrato ?? "",
                  }))
                : dataInicial.contratos_laborales;
 
@@ -167,23 +167,18 @@ export default function TrabajadorForm() {
          setIsSubmitting(true);
 
          const dataToSubmit = buildPayload();
-         
+
          if (isEditMode) {
-            dataToSubmit.id=trabajador_id;
-            console.log(dataToSubmit);
-            
-            const response=await trabajadoresService.editarTrabajador(
+            dataToSubmit.id = trabajador_id;
+            const response = await trabajadoresService.editarTrabajador(
                dataToSubmit
             );
-            console.log('La repsuesta es : ',response);
-            
             toast.success("Trabajador actualizado con éxito");
          } else {
             await trabajadoresService.crearTrabajador(dataToSubmit);
             toast.success("Trabajador creado con éxito");
          }
-
-         // navigate("/tabla-trabajadores");
+         navigate("/tabla-trabajadores");
       } catch (error) {
          if (error && error.name === "ValidationError") {
             const newErrors =
@@ -426,7 +421,7 @@ export default function TrabajadorForm() {
                            Beneficios y Sistema de Pensión
                         </div>
 
-                        <div className="space-y-4">
+                        <div className="grid space-y-4 w-full  grid-cols-1 md:grid-cols-2">
                            <div className="flex items-center space-x-2">
                               <Checkbox
                                  id="asignacion_familiar"
@@ -444,7 +439,7 @@ export default function TrabajadorForm() {
                               </Label>
                            </div>
 
-                           <div className="space-y-2">
+                           <div className="space-y-2 ">
                               <Label htmlFor="sistema_pension">
                                  Sistema de Pensión *
                               </Label>
@@ -454,7 +449,7 @@ export default function TrabajadorForm() {
                                     handleInputChange("sistema_pension", value)
                                  }
                               >
-                                 <SelectTrigger>
+                                 <SelectTrigger className={"w-full"}>
                                     <SelectValue placeholder="Seleccione sistema de pensión" />
                                  </SelectTrigger>
                                  <SelectContent>
@@ -468,7 +463,7 @@ export default function TrabajadorForm() {
                                  </p>
                               )}
                            </div>
-
+{/* 
                            <div className="flex items-center space-x-2">
                               <Checkbox
                                  id="quinta_categoria"
@@ -484,7 +479,7 @@ export default function TrabajadorForm() {
                               <Label htmlFor="quinta_categoria">
                                  Quinta Categoría
                               </Label>
-                           </div>
+                           </div> */}
                         </div>
                      </div>
 
