@@ -7,7 +7,7 @@ const {
   unificarDespiecesConTotales,
 } = require("../../helpers/despieceUtils");
 
-const db = require("../../../../../models");
+const db = require("../../../../../database/models");
 const {
   calcularCantidadesPorCadaPiezaDeAndamioTrabajo,
 } = require("./calcularCantidadesAndamioTrabajo");

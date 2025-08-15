@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
 const { options } = require("../../interfaces/routes/bonosRoutes");
 const { Bonos } = require("../models/bonoModel");
-const db = require("../../../../models");
+const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 
 class SequelizeBonoRepository {
    async crearBono(bonoData) {

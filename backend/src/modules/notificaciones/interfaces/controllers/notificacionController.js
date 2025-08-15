@@ -1,4 +1,4 @@
-const db = require("../../../../models");
+const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 const obtenerNotificaciones = require("../../application/useCases/obtenerNotificaciones");
 const marcarComoLeida = require("../../application/useCases/marcarComoLeida");
 const SequelizeNotificacionesRepository = require("../../infrastructure/repositories/SequelizeNotificacionesRepository");

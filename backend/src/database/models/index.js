@@ -2,73 +2,73 @@
 
 const db = {};
 const { Sequelize, DataTypes } = require("sequelize");
-const sequelize = require("../config/db");
+const sequelize = require("../../config/db");
 
 // Módulos con modelos modernos y centralizados
 const {
    Cliente,
-} = require("../modules/clientes/infrastructure/models/clienteModel");
+} = require("../../modules/clientes/infrastructure/models/clienteModel");
 db.clientes = Cliente;
 
 const {
    Trabajador,
-} = require("../modules/trabajadores/infraestructure/models/trabajadorModel");
+} = require("../../modules/trabajadores/infraestructure/models/trabajadorModel");
 db.trabajadores = Trabajador;
 
 const {
    Cargo,
-} = require("../modules/trabajadores/infraestructure/models/cargoModel");
+} = require("../../modules/trabajadores/infraestructure/models/cargoModel");
 db.cargos = Cargo;
 const {
    Area,
-} = require("../modules/trabajadores/infraestructure/models/areaModel");
+} = require("../../modules/trabajadores/infraestructure/models/areaModel");
 db.areas = Area;
 
 const {
    Asistencia,
-} = require("../modules/asistencias/infraestructure/models/asistenciaModel");
+} = require("../../modules/asistencias/infraestructure/models/asistenciaModel");
 db.asistencias = Asistencia;
 
 const {
    ContratoLaboral,
-} = require("../modules/contratos_laborales/infraestructure/models/contratoLaboralModel");
+} = require("../../modules/contratos_laborales/infraestructure/models/contratoLaboralModel");
 db.contratos_laborales = ContratoLaboral;
 const {
    Vacaciones,
-} = require("../modules/vacaciones/infraestructure/models/vacacionesModel");
+} = require("../../modules/vacaciones/infraestructure/models/vacacionesModel");
 db.vacaciones = Vacaciones;
-const { Bonos } = require("../modules/bonos/infraestructure/models/bonoModel");
+const { Bonos } = require("../../modules/bonos/infraestructure/models/bonoModel");
 db.bonos = Bonos;
 
 const {
    Gasto,
-} = require("../modules/asistencias/infraestructure/models/gastoModel");
+} = require("../../modules/asistencias/infraestructure/models/gastoModel");
 db.gastos = Gasto;
 const {
    Jornada,
-} = require("../modules/asistencias/infraestructure/models/jornadaModel");
+} = require("../../modules/asistencias/infraestructure/models/jornadaModel");
 db.jornadas = Jornada;
 const {
    TipoTrabajo,
-} = require("../modules/asistencias/infraestructure/models/tipotrabajoModel");
+} = require("../../modules/asistencias/infraestructure/models/tipotrabajoModel");
 db.tipos_trabajo = TipoTrabajo;
 
-const { Obra } = require("../modules/obras/infrastructure/models/obraModel");
+const { Obra } = require("../../modules/obras/infrastructure/models/obraModel");
 db.obras = Obra;
 
 const {
    Filial,
-} = require("../modules/filiales/infrastructure/models/filialModel");
+} = require("../../modules/filiales/infrastructure/models/filialModel");
 db.empresas_proveedoras = Filial;
 
 const {
    Usuario,
-} = require("../modules/usuarios/infrastructure/models/usuarioModel");
+} = require("../../modules/usuarios/infrastructure/models/usuarioModel");
 db.usuarios = Usuario;
 
 const {
    Contacto,
-} = require("../modules/contactos/infrastructure/models/contactoModel");
+} = require("../../modules/contactos/infrastructure/models/contactoModel");
 db.contactos = Contacto;
 
 db.contacto_clientes = require("./contacto_clientes")(sequelize, DataTypes);
@@ -76,123 +76,107 @@ db.contacto_obras = require("./contacto_obras")(sequelize, DataTypes);
 
 const {
    Notificaciones,
-} = require("../modules/notificaciones/infrastructure/models/notificacionModel");
+} = require("../../modules/notificaciones/infrastructure/models/notificacionModel");
 db.notificaciones = Notificaciones;
 
-const {
-   ContriSUNAT,
-} = require("../modules/sunat/infrastructure/models/contrisunat");
-db.contrisunat = ContriSUNAT;
-
-const { Ubigeo } = require("../modules/sunat/infrastructure/models/ubigeos");
-db.ubigeos = Ubigeo;
-
-// Cotizaciones
-db.cotizaciones = require("./cotizaciones")(sequelize, DataTypes);
-db.cotizacion_detalles = require("./cotizacion_detalles")(sequelize, DataTypes);
-
 // Condiciones de alquiler
-const CondicionAlquiler = require("../modules/cotizaciones/infrastructure/models/condicionAlquilerModel");
+const CondicionAlquiler = require("../../modules/cotizaciones/infrastructure/models/condicionAlquilerModel");
 db.condiciones_alquiler = CondicionAlquiler;
 
-// Productos
-db.ProductoServicio = require("./productos_servicios")(sequelize, DataTypes);
-db.EmpresaProducto = require("./empresa_producto")(sequelize, DataTypes);
-
 // Tareas
-const { Tarea } = require("../modules/tareas/infrastructure/models/tareaModel");
+const { Tarea } = require("../../modules/tareas/infrastructure/models/tareaModel");
 db.tareas = Tarea;
 
 // Familias Piezas
 const {
    FamiliaPieza,
-} = require("../modules/familias_piezas/infrastructure/models/familiaPiezaModel");
+} = require("../../modules/familias_piezas/infrastructure/models/familiaPiezaModel");
 db.familias_piezas = FamiliaPieza;
 
-const { Pieza } = require("../modules/piezas/infrastructure/models/piezaModel");
+const { Pieza } = require("../../modules/piezas/infrastructure/models/piezaModel");
 db.piezas = Pieza;
 
 const {
    Despiece,
-} = require("../modules/despieces/infrastructure/models/despieceModel");
+} = require("../../modules/despieces/infrastructure/models/despieceModel");
 db.despieces = Despiece;
 
 const {
    DespieceDetalle,
-} = require("../modules/despieces_detalles/infrastructure/models/despieceDetalleModel");
+} = require("../../modules/despieces_detalles/infrastructure/models/despieceDetalleModel");
 db.despieces_detalle = DespieceDetalle;
 
-const { Uso } = require("../modules/usos/infrastructure/models/usoModel");
+const { Uso } = require("../../modules/usos/infrastructure/models/usoModel");
 db.usos = Uso;
 
 const {
    PiezasUsos,
-} = require("../modules/piezas_usos/infrastructure/models/piezasUsosModel");
+} = require("../../modules/piezas_usos/infrastructure/models/piezasUsosModel");
 db.piezas_usos = PiezasUsos;
 
 const {
    Atributo,
-} = require("../modules/atributos/infrastructure/models/atributoModel");
+} = require("../../modules/atributos/infrastructure/models/atributoModel");
 db.atributos = Atributo;
 
 const {
    AtributosValor,
-} = require("../modules/atributos_valor/infrastructure/models/atributosValorModel");
+} = require("../../modules/atributos_valor/infrastructure/models/atributosValorModel");
 db.atributos_valor = AtributosValor;
 
 const {
    Cotizacion,
-} = require("../modules/cotizaciones/infrastructure/models/cotizacionModel");
+} = require("../../modules/cotizaciones/infrastructure/models/cotizacionModel");
 db.cotizaciones = Cotizacion;
 
 const {
    EstadosCotizacion,
-} = require("../modules/estados_cotizacion/infrastructure/models/estadosCotizacionModel");
+} = require("../../modules/estados_cotizacion/infrastructure/models/estadosCotizacionModel");
 db.estados_cotizacion = EstadosCotizacion;
 
 const {
    TarifasTransporte,
-} = require("../modules/tarifas_transporte/infrastructure/models/tarifasTransporteModel");
+} = require("../../modules/tarifas_transporte/infrastructure/models/tarifasTransporteModel");
 db.tarifas_transporte = TarifasTransporte;
 
 const {
    DistritosTransporte,
-} = require("../modules/distritos_transporte/infrastructure/models/distritosTransporteModel");
+} = require("../../modules/distritos_transporte/infrastructure/models/distritosTransporteModel");
 db.distritos_transporte = DistritosTransporte;
 
 const {
    CostosPernocteTransporte,
-} = require("../modules/cotizaciones/costos_pernocte_transporte/infrastructure/models/costosPernocteTransporteModel");
+} = require("../../modules/cotizaciones/costos_pernocte_transporte/infrastructure/models/costosPernocteTransporteModel");
 db.costos_pernocte_transporte = CostosPernocteTransporte;
 
 const {
    CotizacionesTransporte,
-} = require("../modules/cotizaciones_transporte/infrastructure/models/cotizacionesTransporteModel");
+} = require("../../modules/cotizaciones_transporte/infrastructure/models/cotizacionesTransporteModel");
 db.cotizaciones_transporte = CotizacionesTransporte;
 
 const {
    CotizacionesInstalacion,
-} = require("../modules/cotizaciones/infrastructure/models/cotizacionesInstalacionesModel");
+} = require("../../modules/cotizaciones/infrastructure/models/cotizacionesInstalacionesModel");
 db.cotizaciones_instalacion = CotizacionesInstalacion;
 
 // ? Facturacion
-const { Factura } = require('../modules/facturacion/infrastructure/models/facturaModel')
+const { Factura } = require('../../modules/facturacion/infrastructure/models/facturaModel')
 db.factura = Factura;
 
-const {DetalleFactura} = require('../modules/facturacion/infrastructure/models/facturaDetalleModel')
+const {DetalleFactura} = require('../../modules/facturacion/infrastructure/models/facturaDetalleModel')
 db.detalle_factura = DetalleFactura;
 
-const {FormaPagoFactura} = require('../modules/facturacion/infrastructure/models/formaPagoModel')
+const {FormaPagoFactura} = require('../../modules/facturacion/infrastructure/models/formaPagoModel')
 db.forma_pago_factura = FormaPagoFactura;
 
-const {Leyenda} = require('../modules/facturacion/infrastructure/models/leyendaModel')
+const {Leyenda} = require('../../modules/facturacion/infrastructure/models/leyendaModel')
 db.legend_factura = Leyenda;
 
-const {SunatRespuesta} = require('../modules/facturacion/infrastructure/models/sunatRespuestaModel')
+const {SunatRespuesta} = require('../../modules/facturacion/infrastructure/models/sunatRespuestaModel')
 db.sunat_respuesta = SunatRespuesta
 
 
-const {Borrador} = require('../modules/facturacion/infrastructure/models/borradorModel')
+const {Borrador} = require('../../modules/facturacion/infrastructure/models/borradorModel')
 db.borradores = Borrador;
 
 
@@ -200,15 +184,11 @@ db.borradores = Borrador;
 if (db.contactos.associate) db.contactos.associate(db);
 if (db.clientes.associate) db.clientes.associate(db);
 if (db.obras.associate) db.obras.associate(db);
-if (db.ProductoServicio.associate) db.ProductoServicio.associate(db);
-if (db.EmpresaProducto.associate) db.EmpresaProducto.associate(db);
 if (db.empresas_proveedoras.associate) db.empresas_proveedoras.associate(db);
 if (db.cotizaciones.associate) db.cotizaciones.associate(db);
-if (db.cotizacion_detalles.associate) db.cotizacion_detalles.associate(db);
 if (db.condiciones_alquiler.associate) db.condiciones_alquiler.associate(db);
 if (db.tareas.associate) db.tareas.associate(db);
 if (db.notificaciones.associate) db.notificaciones.associate(db);
-if (db.contrisunat.associate) db.contrisunat.associate(db);
 if (db.familias_piezas.associate) db.familias_piezas.associate(db);
 if (db.piezas.associate) db.piezas.associate(db);
 if (db.despieces.associate) db.despieces.associate(db);

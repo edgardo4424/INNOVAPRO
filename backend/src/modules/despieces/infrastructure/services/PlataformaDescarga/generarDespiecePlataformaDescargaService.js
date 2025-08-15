@@ -7,7 +7,7 @@ const {
   unificarDespiecesConTotales,
 } = require("../../helpers/despieceUtils");
 
-const db = require("../../../../../models");
+const db = require("../../../../../database/models");
 const { calcularCantidadesPorCadaPiezaDePlataformaDescarga } = require("./calcularCantidadesPlataformaDescarga");
 
 const CONST_ID_USO_PLATAFORMA_DESCARGA = 7;

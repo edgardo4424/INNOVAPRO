@@ -4,7 +4,7 @@ const notificacionRepository = new SequelizeNotificacionesRepository(); // Insta
 const { emitirNotificacionPrivada } = require("../../../notificaciones/infrastructure/services/emisorNotificaciones");
 const { enviarNotificacionTelegram } = require("../../../notificaciones/infrastructure/services/enviarNotificacionTelegram");
 
-const db = require("../../../../models");
+const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 
 module.exports = async (cotizacionId, cotizacionRepository) => {
   const cotizacion = await cotizacionRepository.obtenerPorId(cotizacionId); // Obtengo la cotización por ID 

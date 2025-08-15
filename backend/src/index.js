@@ -14,7 +14,7 @@ const socketIo = require("socket.io");
 const compression = require("compression");
 const helmet = require("helmet");
 const morgan = require("morgan");
-const db = require("./models"); // Importa Sequelize para la conexión
+const db = require("./database/models"); // Importa Sequelize para la conexión
 const routes = require("./routes"); // Importa rutas
 
 // Iniciar el bot de telegram

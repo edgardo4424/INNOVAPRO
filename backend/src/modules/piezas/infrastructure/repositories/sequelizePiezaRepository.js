@@ -1,5 +1,5 @@
 const { Pieza } = require("../models/piezaModel");
-const db = require("../../../../models"); // Llamamos los modelos sequalize de la base de datos
+const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos // Llamamos los modelos sequalize de la base de datos
 
 class SequelizePiezaRepository {
   getModel() {

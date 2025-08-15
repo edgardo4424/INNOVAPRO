@@ -1,4 +1,4 @@
-const db = require("../../../../../models");
+const db = require("../../../../../database/models");
 const { agruparPorZonaYAtributos, agruparEscuadrasPorZonaYAtributos } = require("../mapearAtributosDelPdfService");
 const { mapearAtributosValor } = require("../mapearAtributosValorService");
 

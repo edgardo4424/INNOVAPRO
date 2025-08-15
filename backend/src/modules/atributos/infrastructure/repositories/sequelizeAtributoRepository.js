@@ -1,5 +1,5 @@
 const { Atributo } = require("../models/atributoModel");
-const db = require("../../../../models");
+const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 
 class SequelizeAtributoRepository {
   

@@ -7,7 +7,7 @@ const {
   unificarDespiecesConTotales,
 } = require("../../helpers/despieceUtils");
 
-const db = require("../../../../../models");
+const db = require("../../../../../database/models");
 const { calcularCantidadesPorCadaPiezaDeEscuadras } = require("./calcularCantidadesEscuadras");
 
 const CONST_ID_USO_ESCUADRAS_CON_PLATAFORMAS = 4;

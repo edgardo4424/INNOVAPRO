@@ -1,4 +1,4 @@
-const db = require("../../../../models");
+const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 const { mapearDetallesDespiece } = require("./mapearDetallesDespieceService");
 
 async function actualizarDespiecesDetalle({ despiece_id, despiece, transaction }) {
