@@ -173,7 +173,7 @@ const {FormaPagoFactura} = require('../../modules/facturacion/infrastructure/mod
 db.forma_pago_factura = FormaPagoFactura;
 
 
-const {LegendFactura} = require('../modules/facturacion/infrastructure/models/legendFacturaModel')
+const {LegendFactura} = require('../../modules/facturacion/infrastructure/models/legendFacturaModel')
 db.legend_factura = LegendFactura;
 
 const {SunatRespuesta} = require('../../modules/facturacion/infrastructure/models/sunatRespuestaModel')
