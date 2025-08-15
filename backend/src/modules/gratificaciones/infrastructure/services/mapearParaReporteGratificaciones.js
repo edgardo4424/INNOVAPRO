@@ -1,9 +1,10 @@
+const { obtenerUltimaFechaFin } = require("./calcularMesesComputablesSemestre");
+
 function mapearParaReporteGratificaciones(trabajadoresRaw) {
   return trabajadoresRaw.flatMap(t => {
-    console.log('t', t);
 
     return t.partes_por_regimen.map(parte => {
-        console.log('parte', parte);
+
       const fila = {
         tipo_documento: t.tipo_documento,
         numero_documento: t.numero_documento,

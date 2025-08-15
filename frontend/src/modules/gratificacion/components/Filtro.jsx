@@ -14,11 +14,14 @@ import gratificacionService from "../services/gratificacionService";
 const Filtro = ({ filtro, setFiltro, Buscar }) => {
     const [filiales, setFiliales] = useState([]);
 
+ 
     useEffect(() => {
         const ObtenerFiliales = async () => {
             try {
                 const res = await gratificacionService.obtenerFiliales();
+                console.log('res', res);
                 setFiliales(res);
+                //setFiltro({ ...filtro, filial_id: res?.[0]?.id });
             } catch (error) {
                 console.log(error);
             }

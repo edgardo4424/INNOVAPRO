@@ -9,13 +9,15 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Eye, FileDown } from "lucide-react";
+import { formatearFecha } from "../utils/formatearFecha";
 const ColumnaGratificacion = ({key, e, index}) => {
     return (
         <TableRow key={key} className={"text-xs"}>
             <TableCell className="text-right">{e.numero_documento}</TableCell>
             <TableCell className="text-right">{e.nombres} {e.apellidos}</TableCell>
             <TableCell className="text-right">{e.regimen}</TableCell>
-            <TableCell className="text-right">{e.fecha_ingreso}</TableCell>
+            <TableCell className="text-right">{formatearFecha(e.fecha_ingreso)}</TableCell>
+            <TableCell className="text-right">{formatearFecha(e.fecha_fin)}</TableCell>
             <TableCell className="text-right">{e.tiempo_laborado}</TableCell>
             <TableCell className="text-right">{e.sueldo_base}</TableCell>
             <TableCell className="text-right">{e.asig_familiar}</TableCell>
