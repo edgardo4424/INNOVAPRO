@@ -36,6 +36,10 @@ const Factura = sequelize.define(
         empresa_Ruc: {
             type: DataTypes.STRING,
             allowNull: true,
+            references: {
+                model: "ruc_facturacion",
+                key: "ruc",
+            }
         },
         cliente_Tipo_Doc: {
             type: DataTypes.STRING,
