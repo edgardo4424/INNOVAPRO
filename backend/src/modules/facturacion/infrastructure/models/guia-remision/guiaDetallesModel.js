@@ -1,49 +1,49 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("../../../../config/db");
+const sequelize = require("../../../../../config/db");
 
-const FormaPagoFactura = sequelize.define(
-    "forma_pago_factura",
+const GuiaDetalles = sequelize.define(
+    "guia_detalles",
     {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
         },
-        factura_id: {
+        guia_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: "factura",
+                model: "guias_de_remision",
                 key: "id",
             },
         },
-        tipo: {
+        unidad: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        monto: {
-            type: DataTypes.DECIMAL(12, 2),
+        cantidad: {
+            type: DataTypes.DECIMAL(10, 2),
             allowNull: false,
         },
-        cuota: {
-            type: DataTypes.INTEGER,
+        cod_producto: {
+            type: DataTypes.STRING,
             allowNull: false,
         },
-        fecha_Pago: {
-            type: DataTypes.DATE,
+        descripcion: {
+            type: DataTypes.STRING,
             allowNull: false,
         },
     },
     {
         timestamps: false,
-        tableName: "forma_pago_factura",
+        tableName: "guia_detalles",
     }
 );
 
-FormaPagoFactura.associate = (models) => {
-    FormaPagoFactura.belongsTo(models.factura, {
-        foreignKey: "factura_id",
+GuiaDetalles.associate = (models) => {
+    GuiaDetalles.belongsTo(models.guias_de_remision, {
+        foreignKey: "guia_id",
     });
-};
+}
 
-module.exports = { FormaPagoFactura };
+module.exports = { GuiaDetalles }

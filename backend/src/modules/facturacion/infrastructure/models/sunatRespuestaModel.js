@@ -17,6 +17,22 @@ const SunatRespuesta = sequelize.define(
                 key: "id",
             },
         },
+        guia_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+                model: "guias_de_remision",
+                key: "id",
+            },
+        },
+        nota_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+                model: "notas_credito_debito",
+                key: "id",
+            },
+        },
         hash: {
             type: DataTypes.TEXT,
             allowNull: false,
@@ -54,7 +70,12 @@ SunatRespuesta.associate = (models) => {
     SunatRespuesta.belongsTo(models.factura, {
         foreignKey: "factura_id",
     });
-
+    SunatRespuesta.belongsTo(models.guias_de_remision, {
+        foreignKey: "guia_id",
+    });
+    SunatRespuesta.belongsTo(models.notas_credito_debito, {
+        foreignKey: "nota_id",
+    });
 };
 
 module.exports = { SunatRespuesta };

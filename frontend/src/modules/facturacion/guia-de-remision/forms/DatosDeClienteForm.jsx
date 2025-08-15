@@ -10,7 +10,7 @@ import {
 import { useGuiaTransporte } from "@/context/Factura/GuiaTransporteContext";
 import { Search } from "lucide-react";
 import { toast } from "react-toastify";
-import facturacionService from "../../service/FacturacionService";
+import factilizaService from "../../service/FactilizaService";
 
 const DatosDeClienteForm = () => {
 
@@ -33,7 +33,7 @@ const DatosDeClienteForm = () => {
         }
 
         try {
-            const promise = facturacionService.metodoOpcional(
+            const promise = factilizaService.metodoOpcional(
                 cliente_Tipo_Doc,
                 cliente_Num_Doc
             );

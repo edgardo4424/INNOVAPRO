@@ -87,6 +87,7 @@ const DatosGuiaEnvioPrivadoForm = () => {
     }, [partidaUbigeoInput]);
 
     const handleSelectPartidaUbigeo = (ubigeo) => {
+        console.log("el pto ubigeo de mrd que no se coloca bn mrd", ubigeo);
         setPartidaUbigeoInput(`${ubigeo.DISTRITO}, ${ubigeo.PROVINCIA}, ${ubigeo.DEPARTAMENTO}`);
         setGuiaTransporte((prevGuiaTransporte) => ({
             ...prevGuiaTransporte,
@@ -133,6 +134,7 @@ const DatosGuiaEnvioPrivadoForm = () => {
     }, [llegadaUbigeoInput]);
 
     const handleSelectLlegadaUbigeo = (ubigeo) => {
+        console.log("el pto ubigeo de mrd que no se coloca bn mrd", ubigeo)
         setLlegadaUbigeoInput(`${ubigeo.DISTRITO}, ${ubigeo.PROVINCIA}, ${ubigeo.DEPARTAMENTO}`);
         setGuiaTransporte((prevGuiaTransporte) => ({
             ...prevGuiaTransporte,
@@ -292,7 +294,7 @@ const DatosGuiaEnvioPrivadoForm = () => {
                         value={partidaUbigeoInput}
                         onChange={handlePartidaInputChange}
                         onFocus={handlePartidaFocus}
-                        onBlur={handlePartidaBlur}
+                        // onBlur={handlePartidaBlur}
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                         autoComplete="off"
                     />
@@ -301,7 +303,7 @@ const DatosGuiaEnvioPrivadoForm = () => {
                             {filteredPartidaUbigeos.map((ubigeo) => (
                                 <li
                                     key={ubigeo.IDDIST}
-                                    className="px-3 py-2 cursor-pointer hover:bg-gray-100 text-sm"
+                                    className="px-3 py-2 cursor-pointer hover:bg-gray-100 text-sm bg-red-500"
                                     onClick={() => handleSelectPartidaUbigeo(ubigeo)}
                                 >
                                     {ubigeo.DISTRITO}, {ubigeo.PROVINCIA}, {ubigeo.DEPARTAMENTO} ({ubigeo.IDDIST})
@@ -343,7 +345,7 @@ const DatosGuiaEnvioPrivadoForm = () => {
                         value={llegadaUbigeoInput}
                         onChange={handleLlegadaInputChange}
                         onFocus={handleLlegadaFocus}
-                        onBlur={handleLlegadaBlur}
+                        // onBlur={handleLlegadaBlur}
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                         autoComplete="off"
                     />

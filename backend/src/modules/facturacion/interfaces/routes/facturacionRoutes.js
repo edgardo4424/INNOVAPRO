@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const facturaController = require("../controllers/facturaController");
 const borradorController = require("../controllers/borradorController");
+const guiaRemisionController = require("../controllers/guiaRemisionController");
 
 // * BORRADOR
 router.post("/borrador/crear", borradorController.crearBorrador);
@@ -17,6 +18,7 @@ router.get("/correlativo", facturaController.obtenerCorrelativo);
 router.get("/mtc", facturaController.obtenerMTCconRuc);
 
 // * GUIA DE REMISION
+router.post("/guia-remision/crear", guiaRemisionController.crearGuiaRemision);
 
 // * NOTA DE CREDITO
 module.exports = router;

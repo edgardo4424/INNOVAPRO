@@ -1,5 +1,5 @@
 import { FacturaValidarEstados, PagoValidarEstados, ProductoValidarEstados, valorIncialPago, ValorInicialFactura, valorInicialProducto } from "@/modules/facturacion/factura-boleta/utils/valoresInicial";
-import facturacionService from "@/modules/facturacion/service/FacturacionService";
+import factilizaService from "@/modules/facturacion/service/FactilizaService";
 import facturaService from "@/modules/facturacion/service/FacturaService";
 import numeroALeyenda from "@/modules/facturacion/utils/numeroALeyenda";
 import { validarModal } from "@/modules/facturacion/utils/validarModal";
@@ -334,7 +334,7 @@ export function FacturaBoletaProvider({ children }) {
     const emitirFactura = async () => {
         let result = { success: false, message: "Error desconocido al emitir la factura", data: null };
         try {
-            const { status, success, message, data } = await facturacionService.enviarFactura(factura)
+            const { status, success, message, data } = await factilizaService.enviarFactura(factura)
 
 
             if (status === 200 && success) {

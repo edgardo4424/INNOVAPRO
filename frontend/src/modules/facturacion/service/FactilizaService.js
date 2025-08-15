@@ -6,7 +6,7 @@ const getRequest = async (api, endpoint) => {
     return res.data;
 };
 
-const facturacionService = {
+const factilizaService = {
 
 
     // !!! FACTURACION
@@ -59,4 +59,4 @@ const facturacionService = {
 };
 
 
-export default facturacionService
+export default factilizaService

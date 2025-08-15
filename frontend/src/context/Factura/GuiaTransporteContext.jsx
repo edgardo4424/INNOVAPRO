@@ -1,5 +1,5 @@
 import { validarFormulario } from "@/modules/facturacion/guia-de-remision/utils/validarFormulario";
-import facturacionService from "@/modules/facturacion/service/FacturacionService";
+import factilizaService from "@/modules/facturacion/service/FactilizaService";
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -40,7 +40,7 @@ export function GuiaTransporteProvider({ children }) {
 
     const EmitirGuia = async () => {
         try {
-            const { status, succes, message, data } = await facturacionService.enviarGuia(guiaTransporte)
+            const { status, succes, message, data } = await factilizaService.enviarGuia(guiaTransporte)
             console.log(status, succes, message, data);
             return { success: true, message, data };
         } catch (error) {

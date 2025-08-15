@@ -7,7 +7,7 @@ const guiaPrivada = {
     observacion: "",
     fecha_Emision: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
 
-    empresa_Ruc: "20607086215",
+    empresa_Ruc: "10749283781",
 
     cliente_Tipo_Doc: "6",
     cliente_Num_Doc: "20603021933",

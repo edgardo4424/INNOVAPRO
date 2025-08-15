@@ -10,7 +10,7 @@ import {
 import { useGuiaTransporte } from "@/context/Factura/GuiaTransporteContext";
 import { choferInicialPrivado } from "../utils/valoresIncialGuia";
 import { Search, Trash } from "lucide-react";
-import facturacionService from "../../service/FacturacionService";
+import factilizaService from "../../service/FactilizaService";
 import { toast } from "react-toastify";
 
 const ChoferPrivadoForm = () => {
@@ -57,7 +57,7 @@ const ChoferPrivadoForm = () => {
         }
 
         try {
-            const promise = facturacionService.metodoOpcional(
+            const promise = factilizaService.metodoOpcional(
                 "licencia",
                 chofer.nro_doc
             );

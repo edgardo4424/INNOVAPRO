@@ -1,7 +1,7 @@
-const { Factura } = require("../models/facturaModel");
-const { DetalleFactura } = require("../models/facturaDetalleModel");
-const { FormaPagoFactura } = require("../models/formaPagoModel");
-const { LegendFactura } = require("../models/legendFacturaModel");
+const { Factura } = require("../models/factura-boleta/facturaModel");
+const { DetalleFactura } = require("../models/factura-boleta/facturaDetalleModel");
+const { FormaPagoFactura } = require("../models/factura-boleta/formaPagoModel");
+const { LegendFactura } = require("../models/factura-boleta/legendFacturaModel");
 const { SunatRespuesta } = require("../models/sunatRespuestaModel");
 const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 const { Op } = require("sequelize");

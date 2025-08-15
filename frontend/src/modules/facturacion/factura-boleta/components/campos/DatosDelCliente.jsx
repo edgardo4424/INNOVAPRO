@@ -8,7 +8,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
-import facturacionService from "@/modules/facturacion/service/FacturacionService";
+import factilizaService from "@/modules/facturacion/service/FactilizaService";
 import { Search } from "lucide-react";
 import { toast } from "react-toastify";
 
@@ -36,7 +36,7 @@ const DatosDelCliente = () => {
         }
 
         try {
-            const promise = facturacionService.metodoOpcional(
+            const promise = factilizaService.metodoOpcional(
                 cliente_Tipo_Doc,
                 cliente_Num_Doc
             );

@@ -24,7 +24,7 @@ module.exports = async (body, borradorRepository) => {
                 success: false,
                 message: "El borrador no se creo correctamente.",
                 data: null,
-                status: 201
+                status: 400
             }
         };
     }
