@@ -4,18 +4,43 @@
     "lockfileVersion": 3,
     "main": "src/index.js",
     "scripts": {
+
         "dev": "nodemon src/index.js",
-        "test": "jest",
         "start": "node src/index.js",
+        "test": "jest",
+
+        
         "migrate": "sequelize-cli db:migrate --env development",
-        "migrate:undo": "sequelize-cli db:migrate:undo --env development",
         "migrate:status": "sequelize-cli db:migrate:status --env development",
+        "migrate:undo": "sequelize-cli db:migrate:undo --env development",
+        "migrate:undo:all": "sequelize-cli db:migrate:undo:all --env development",
+        "migrate:redo": "npm run migrate:undo && npm run migrate",
+
+
+        "crear:migracion": "sequelize-cli migration:create --env development --name",
+        
+        "crear:modelo": "sequelize-cli model:generate --env development",
+        "crear:seed": "sequelize-cli seed:generate --env development",
+
+        
         "seed": "sequelize-cli db:seed:all --env development",
         "seed:undo": "sequelize-cli db:seed:undo:all --env development",
-        "migrate:prod": "sequelize-cli db:migrate --env production",
-        "seed:prod": "sequelize-cli db:seed:all --env production",
+        "seed:one": "sequelize-cli db:seed --env development",
+        "seed:undo:one": "sequelize-cli db:seed:undo --env development",
+
+    
+        "db:create": "sequelize-cli db:create --env development",
+        "db:drop": "sequelize-cli db:drop --env development",
         "db:check": "node scripts/db-check.js",
-        "db:create": "sequelize-cli db:create --env development"
+
+        
+        "migrate:prod": "sequelize-cli db:migrate --env production",
+        "migrate:status:prod": "sequelize-cli db:migrate:status --env production",
+        "migrate:undo:prod": "sequelize-cli db:migrate:undo --env production",
+        "migrate:undo:all:prod": "sequelize-cli db:migrate:undo:all --env production",
+        "seed:prod": "sequelize-cli db:seed:all --env production",
+        "seed:undo:prod": "sequelize-cli db:seed:undo:all --env production"
+
     },
     "dependencies": {
         "axios": "^1.8.4",
