@@ -78,7 +78,7 @@ const DetalleFactura = sequelize.define(
 
 DetalleFactura.associate = (models) => {
     DetalleFactura.belongsTo(models.factura, {
-        foreignKey: "factura_id",
+        foreignKey: "empresa_Ruc",
     });
 
 };

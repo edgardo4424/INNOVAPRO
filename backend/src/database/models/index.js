@@ -179,6 +179,9 @@ db.legend_factura = LegendFactura;
 const {SunatRespuesta} = require('../../modules/facturacion/infrastructure/models/sunatRespuestaModel')
 db.sunat_respuesta = SunatRespuesta
 
+const {RucFacturacion} = require('../../modules/facturacion/infrastructure/models/rucFacturacionModel')
+db.ruc_facturacion = RucFacturacion
+
 
 const {Borrador} = require('../../modules/facturacion/infrastructure/models/borradorModel')
 db.borradores = Borrador;
@@ -224,6 +227,7 @@ if(db.detalle_factura.associate) db.detalle_factura.associate(db);
 if(db.forma_pago_factura.associate) db.forma_pago_factura.associate(db);
 if(db.legend_factura.associate) db.legend_factura.associate(db)
 if(db.sunat_respuesta.associate) db.sunat_respuesta.associate(db)
+if(db.ruc_facturacion.associate) db.ruc_facturacion.associate(db)
 if(db.borradores.associate) db.borradores.associate(db)
 
 if (db.cargos) db.cargos.associate(db);
