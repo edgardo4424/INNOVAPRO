@@ -186,7 +186,6 @@ class SequelizeAsistenciaRepository {
       },
     });
 
-    console.log('cantidadFaltas', cantidadFaltas);
 
     return cantidadFaltas
   } catch (error) {

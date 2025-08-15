@@ -11,16 +11,18 @@ const {
 } = require("../services/mapearParaReporteGratificaciones");
 
 const SequelizeAsistenciaRepository = require("../../../asistencias/infraestructure/repositories/sequelizeAsistenciaRepository");
+const SequelizeDataMantenimientoRepository = require("../../../data_mantenimiento/infrastructure/repositories/sequelizeDataMantenimientoRepository");
 const SequelizeBonoRepository = require("../../../bonos/infraestructure/repositories/sequelizeBonoRepository");
 
 
 const asistenciaRepository = new SequelizeAsistenciaRepository();
 const bonoRepository = new SequelizeBonoRepository()
+const dataMantenimientoRepository = new SequelizeDataMantenimientoRepository();
 
-const MONTO_POR_HORA_EXTRA = 10;
-const MONTO_ASIGNACION_FAMILIAR = 102.5;
-const MONTO_NO_COMPUTABLE = 10;
-const MONTO_FALTA_POR_DIA = 10;
+//const MONTO_POR_HORA_EXTRA = 10;
+//const MONTO_ASIGNACION_FAMILIAR = 102.5;
+//const MONTO_NO_COMPUTABLE = 10;
+//const MONTO_FALTA_POR_DIA = 10;
 
 class SequelizeFilialRepository {
   async obtenerGratificaciones() {
@@ -32,7 +34,21 @@ class SequelizeFilialRepository {
   }
 
   async calcularGratificaciones(periodo, anio, filial_id) {
-    const SALUD_PORC = { ESSALUD: 0.09, EPS: 0.0675 };
+
+          const MONTO_ASIGNACION_FAMILIAR = Number((await dataMantenimientoRepository.obtenerPorCodigo('valor_asignacion_familiar')).valor);
+          console.log('MONTO_ASIGNACION_FAMILIAR', MONTO_ASIGNACION_FAMILIAR);
+
+          const MONTO_FALTA_POR_DIA = Number((await dataMantenimientoRepository.obtenerPorCodigo('valor_falta')).valor);
+          console.log('MONTO_FALTA_POR_DIA', MONTO_FALTA_POR_DIA);
+
+          const MONTO_POR_HORA_EXTRA = Number((await dataMantenimientoRepository.obtenerPorCodigo('valor_hora_extra')).valor);
+          console.log('MONTO_POR_HORA_EXTRA', MONTO_POR_HORA_EXTRA);
+
+          const MONTO_NO_COMPUTABLE = Number((await dataMantenimientoRepository.obtenerPorCodigo('valor_no_computable')).valor);
+          console.log('MONTO_NO_COMPUTABLE', MONTO_NO_COMPUTABLE);
+
+          const PORCENTAJE_BONIFICACION_ESSALUD = Number((await dataMantenimientoRepository.obtenerPorCodigo('valor_bonificacion_essalud')).valor);
+          console.log('PORCENTAJE_BONIFICACION_ESSALUD', PORCENTAJE_BONIFICACION_ESSALUD);
 
     const contratos = await db.contratos_laborales.findAll({
       include: [
@@ -77,28 +93,32 @@ class SequelizeFilialRepository {
           const { porRegimen, totalMeses, detalleMensual } =
             calcularMesesComputablesSemestre(contratos, periodo, anio);
 
+
           // 2) Componentes comunes de RC (si RC se calcula igual para todo el semestre)
           const asignacionFamiliar = trabajador.asignacion_familiar ? MONTO_ASIGNACION_FAMILIAR : 0;
 
          const totalHorasExtras = await asistenciaRepository.obtenerHorasExtrasPorRangoFecha(trabajador.id, fechaInicio, fechaFin)
 
-        
+          
          //console.log('totalHorasExtras', totalHorasExtras);
+
           const promedioHorasExtras = totalHorasExtras * MONTO_POR_HORA_EXTRA;
           const promedioBonoObra = await bonoRepository.obtenerBonoTotalDelTrabajadorPorRangoFecha(trabajador.id, fechaInicio, fechaFin); // TODO
 
           const noComputableDias = 0; // TODO: Falta calcular los dias no computables
           const noComputable = noComputableDias * MONTO_NO_COMPUTABLE;
 
-           const faltasDias = await asistenciaRepository.obtenerCantidadFaltasPorRangoFecha(trabajador.id, fechaInicio, fechaFin); // Falta calcular la cantidad de faltas
-
-
            const ultimaFechaFinContrato = obtenerUltimaFechaFin(contratos);
 
           // Nota: si el sueldo_base cambia por contrato, ya viene por cada parte (porRegimen.sueldo_base).
           // Aquí RC se arma por parte con su sueldo_base específico:
-          const partes = porRegimen.map((p) => {
+          const partes = await Promise.all(porRegimen.map(async(p) => {
+
+            console.log('P', p);
+
+             const faltasDias = await asistenciaRepository.obtenerCantidadFaltasPorRangoFecha(trabajador.id, p.fecha_inicio, p.fecha_fin); // Falta calcular la cantidad de faltas
      
+             console.log('faltasDias', faltasDias);
             const RC = +(
               p.sueldo_base +
               asignacionFamiliar +
@@ -112,7 +132,7 @@ class SequelizeFilialRepository {
             //const gratiNeta = +Math.max(0, gratiBruta - faltasMonto).toFixed(2);
             const gratiNeta = gratiBruta - faltasMonto - noComputable;
 
-            const bonifPct = SALUD_PORC[p.sistema_salud] ?? 0.09;
+            const bonifPct = (PORCENTAJE_BONIFICACION_ESSALUD/100);
             const bonificacion = +(gratiNeta * bonifPct).toFixed(2);
 
             const renta5ta = 0,
@@ -146,7 +166,9 @@ class SequelizeFilialRepository {
               adelantos,
               total,
             };
-          });
+          }));
+
+          console.log('PARTES', partes);
 
           // 3) Consolidado (sumas de partes)
           const sum = (k) => partes.reduce((a, x) => a + Number(x[k] || 0), 0);

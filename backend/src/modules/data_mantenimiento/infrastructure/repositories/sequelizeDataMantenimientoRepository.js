@@ -1,6 +1,6 @@
 const { DataMantenimiento } = require("../models/dataMantenimientoModel");
 
-class SequelizeDataRepositoryRepository {
+class SequelizeDataRepository {
     getModel() {
         return require('../models/dataMantenimientoModel').DataMantenimiento; 
     }
@@ -28,4 +28,4 @@ class SequelizeDataRepositoryRepository {
 
 }
 
-module.exports = SequelizeDataRepositoryRepository; 
+module.exports = SequelizeDataRepository; 
