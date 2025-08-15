@@ -6,6 +6,7 @@ const trabajadoresService = {
    editarTrabajador: (data) => api.put("/trabajadores", data),
    obtenerTrabajadorPorId: (id) => api.get(`/trabajadores/${id}`),
    getTrabajadores: () => api.get("/trabajadores"),
+   dataMantenimiento:()=>api.get("/data_mantemiento")
 };
 
 export default trabajadoresService;

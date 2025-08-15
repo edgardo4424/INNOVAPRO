@@ -12,6 +12,9 @@ class SequelizeDataRepositoryRepository {
     async obtenerPorId(id) {
         return await DataMantenimiento.findByPk(id); 
     }
+    async obtenerPorCodigo(codigo) {
+        return await DataMantenimiento.findOne({where:{codigo:codigo}}); 
+    }
 
     async actualizarDataMantenimiento(id, dataMantenimiento) {
         const mantenimiento = await DataMantenimiento.findByPk(id); 

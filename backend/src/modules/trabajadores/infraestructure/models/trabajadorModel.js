@@ -11,7 +11,7 @@ const Trabajador = sequelize.define(
       },
       filial_id: {
          type: DataTypes.INTEGER,
-         allowNull: false,
+         allowNull: true,
          references: {
             model: "empresas_proveedoras",
             key: "id",
@@ -61,6 +61,19 @@ const Trabajador = sequelize.define(
          type: DataTypes.ENUM("activo", "inactivo"),
          allowNull: false,
          defaultValue: "activo",
+      },
+      filiales_asignadas: {
+         type: DataTypes.JSON,
+         allowNull: true,
+         validate: {
+            validacionRol(value) {
+               if (value && ![1, 14].includes(this.cargo_id)) {
+                  throw new Error(
+                     "Solo Gerente (4) o CEO (6) pueden tener filiales_asignadas"
+                  );
+               }
+            },
+         },
       },
    },
    {
