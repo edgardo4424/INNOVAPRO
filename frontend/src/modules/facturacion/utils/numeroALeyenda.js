@@ -4,7 +4,8 @@ function numeroALeyenda(nro) {
         return "Número inválido";
     }
 
-    const unidades = ['', 'UN', 'DOS', 'TRES', 'CUATRO', 'CINCO', 'SEIS', 'SIETE', 'OCHO', 'NUEVE'];
+    // Corregido: 'UN' debe estar en la posición 1
+    const unidades = ['', 'UNO', 'DOS', 'TRES', 'CUATRO', 'CINCO', 'SEIS', 'SIETE', 'OCHO', 'NUEVE'];
     const decenas = ['', 'DIEZ', 'VEINTE', 'TREINTA', 'CUARENTA', 'CINCUENTA', 'SESENTA', 'SETENTA', 'OCHENTA', 'NOVENTA'];
     const especialesDiez = ['DIEZ', 'ONCE', 'DOCE', 'TRECE', 'CATORCE', 'QUINCE', 'DIECISEIS', 'DIECISIETE', 'DIECIOCHO', 'DIECINUEVE'];
     const centenas = ['', 'CIENTO', 'DOSCIENTOS', 'TRESCIENTOS', 'CUATROCIENTOS', 'QUINIENTOS', 'SEISCIENTOS', 'SETECIENTOS', 'OCHOCIENTOS', 'NOVECIENTOS'];
@@ -12,6 +13,7 @@ function numeroALeyenda(nro) {
     function convertirGrupo(num) {
         let texto = '';
         if (num === 100) return 'CIEN';
+        
         if (num > 99) {
             texto += centenas[Math.floor(num / 100)] + ' ';
             num %= 100;
@@ -24,25 +26,37 @@ function numeroALeyenda(nro) {
             texto += especialesDiez[num % 10] + ' ';
             num = 0;
         }
+        // Corregido: Se añade la palabra 'Y' cuando es necesario
         if (num > 0) {
+            if (texto !== '' && num > 0 && Math.floor((num + 100) / 10) !== 0 && (num > 0 || (num % 10 !== 0))) {
+                if (Math.floor(num / 100) === 0 && Math.floor((num + 100) / 10) !== 0) {
+                    texto += 'Y ';
+                }
+            }
             texto += unidades[num] + ' ';
         }
         return texto.trim();
     }
-
+    
     const [parteEntera, parteDecimal] = numero.toFixed(2).split('.').map(Number);
 
     let textoEntero = '';
-    if (parteEntera === 0) {
+    
+    // Corregido: Se maneja el caso de 'UN' para la parte entera
+    if (parteEntera === 1) {
+      textoEntero = 'UNO';
+    } else if (parteEntera === 0) {
         textoEntero = 'CERO';
-    } else if (parteEntera < 100) {
-        textoEntero = convertirGrupo(parteEntera);
     } else if (parteEntera < 1000) {
         textoEntero = convertirGrupo(parteEntera);
     } else if (parteEntera < 1000000) {
         const miles = Math.floor(parteEntera / 1000);
         const resto = parteEntera % 1000;
-        textoEntero = convertirGrupo(miles) + ' MIL';
+        if (miles === 1) {
+            textoEntero = 'MIL';
+        } else {
+            textoEntero = convertirGrupo(miles) + ' MIL';
+        }
         if (resto > 0) {
             textoEntero += ' ' + convertirGrupo(resto);
         }
@@ -51,15 +65,14 @@ function numeroALeyenda(nro) {
         const restoMillones = parteEntera % 1000000;
         textoEntero = (millones === 1 ? 'UN MILLÓN' : convertirGrupo(millones) + ' MILLONES');
         if (restoMillones > 0) {
-            textoEntero += ' ' + numeroALeyenda(restoMillones).replace(' CON 00/100 SOLES', ''); // Recursively handle remaining part
+            textoEntero += ' ' + numeroALeyenda(restoMillones).replace(' CON 00/100 SOLES', '');
         }
     }
 
     const textoDecimal = parteDecimal.toString().padStart(2, '0');
 
-    return `SON ${textoEntero} CON ${textoDecimal}/100 SOLES`.replace(/\s+/g, ' ').trim();
+    return `SON: ${textoEntero} CON ${textoDecimal}/100 SOLES`.replace(/\s+/g, ' ').trim();
 }
-
 // Ejemplo de uso:
 // console.log(numeroALeyenda(118));     // SON CIENTO DIECIOCHO CON 00/100 SOLES
 // console.log(numeroALeyenda(1.50));    // SON UN CON 50/100 SOLES

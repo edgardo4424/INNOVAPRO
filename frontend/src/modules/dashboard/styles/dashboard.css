@@ -420,3 +420,19 @@
 }
 
 }
+
+
+
+/* oculta la barra, mantiene el scroll funcional */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE/Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;             /* Chrome/Safari/Opera */
+}
+
+/* si quieres DESACTIVAR el scroll por completo (recorta el contenido) */
+.overflow-hidden-important {
+  overflow: hidden !important;
+}

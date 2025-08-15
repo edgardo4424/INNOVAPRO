@@ -185,8 +185,8 @@ db.detalle_factura = DetalleFactura;
 const {FormaPagoFactura} = require('../modules/facturacion/infrastructure/models/formaPagoModel')
 db.forma_pago_factura = FormaPagoFactura;
 
-const {Leyenda} = require('../modules/facturacion/infrastructure/models/leyendaModel')
-db.legend_factura = Leyenda;
+const {LegendFactura} = require('../modules/facturacion/infrastructure/models/legendFacturaModel')
+db.legend_factura = LegendFactura;
 
 const {SunatRespuesta} = require('../modules/facturacion/infrastructure/models/sunatRespuestaModel')
 db.sunat_respuesta = SunatRespuesta

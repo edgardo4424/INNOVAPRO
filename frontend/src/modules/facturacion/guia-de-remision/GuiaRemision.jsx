@@ -1,13 +1,11 @@
-import { Info, Link } from 'lucide-react';
-import { use, useEffect, useState } from 'react';
+import { useGuiaTransporte } from '@/context/Factura/GuiaTransporteContext';
+import { Info } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getGuiaRemisionTemplate } from '../utils/guiaRemisionTemplates'; // Asegúrate de que la ruta sea correcta
+import GuiaMismaEmpresa from './components/guias/GuiaMismaEmpresa';
 import GuiaPrivado from './components/guias/GuiaPrivado';
 import GuiaPublico from './components/guias/GuiaPublico';
-import { useGuiaTransporte } from '@/context/Factura/GuiaTransporteContext';
 import { guiaMismaEmpresa, guiaMismaEmpresaValidar, guiaPrivada, guiaPrivadaValidar, guiaPublica, guiaPublicaValidar } from './utils/valoresIncialGuia';
-import GuiaMismaEmpresa from './components/guias/GuiaMismaEmpresa';
-import { Button } from '@/components/ui/button';
 
 const GuiaRemision = () => {
 

@@ -6,7 +6,7 @@ const borradorController = require("../controllers/borradorController");
 // * BORRADOR
 router.post("/borrador/crear", borradorController.crearBorrador);
 router.get("/borradores", borradorController.obtenerBorrador);
-router.get("/borrador/obtener/:id", borradorController.obtenerBorradorPorId);
+router.get("/borrador", borradorController.obtenerBorradorPorId);
 router.patch("/borrador/eliminar/:id", borradorController.eliminarBorrador);
 
 // * FACTURA - BOLETAA

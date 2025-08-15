@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../../../config/db");
 
-const Leyenda = sequelize.define(
+const LegendFactura = sequelize.define(
     "legend_factura",
     {
         id: {
@@ -30,9 +30,9 @@ const Leyenda = sequelize.define(
     tableName: "legend_factura",
 });
 
-Leyenda.associate = (models) => {
-    Leyenda.belongsTo(models.factura, {
+LegendFactura.associate = (models) => {
+    LegendFactura.belongsTo(models.factura, {
         foreignKey: "factura_id",
     });
 }
-module.exports = { Leyenda }
+module.exports = { LegendFactura }

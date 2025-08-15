@@ -52,7 +52,7 @@ const DatosDelComprobante = () => {
             if (estado) {
                 setFactura((prevValores) => ({
                     ...prevValores,
-                    correlativo: tipoDoc === "Factura" ? correlativos.factura : correlativos.boleta,
+                    correlativo: tipoDoc === "Factura" ? `${correlativos.factura}` : `${correlativos.boleta}`,
                 }))
                 setCorrelativoEstado(false);
                 setLoadingCorrelativo(false);

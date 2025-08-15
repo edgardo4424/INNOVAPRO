@@ -28,8 +28,12 @@ const facturaService = {
         const res = await api.get(`/facturacion/borradores${query}`);
         return res.data;
     },
-    eliminarBorrador: async (id) => {
-        const res = await api.patch(`/facturacion//eliminar-borrador/${id}`);
+    obtenerBorradorConId: async (borrador_id) => {
+        const res = await api.get(`/facturacion/borrador?id=${borrador_id}`);
+        return res.data;
+    },
+    eliminarBorrador: async (borrador_id) => {
+        const res = await api.patch(`/facturacion/borrador/eliminar/${borrador_id}`);
         return res.data;
     }
 }
