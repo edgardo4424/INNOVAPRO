@@ -22,7 +22,7 @@ const AdelantoSueldo = sequelize.define(
          allowNull: false,
       },
       monto: {
-         type: DataTypes.FLOAT,
+         type: DataTypes.DECIMAL(10,2),
          allowNull: false,
       },
       observacion: {

@@ -40,7 +40,7 @@ db.vacaciones = Vacaciones;
 const { Bonos } = require("../../modules/bonos/infraestructure/models/bonoModel");
 db.bonos = Bonos;
 
-const { AdelantoSueldo } = require("../modules/adelanto_sueldo/infraestructure/models/adelantoSueldoModel");
+const { AdelantoSueldo } = require("../../modules/adelanto_sueldo/infraestructure/models/adelantoSueldoModel");
 db.adelanto_sueldo = AdelantoSueldo;
 
 const {
