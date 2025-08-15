@@ -125,7 +125,7 @@ const modulesByRole = {
          items: [
             { name: "Generar Documentos", path: "/facturacion/generar" },
             { name: "Listar Documentos", path: "/facturacion/facturas?page=1&limit=40" },
-            { name: "Lista Borradores", path: "/facturacion/borradores?page=1&limit=40" },
+            { name: "Lista Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
             { name: "Facturas Anuladas", path: "/facturacion/anuladas" },
          ],
       },
@@ -203,7 +203,7 @@ export function AppSidebar() {
          <Collapsible
             key={group.group}
             defaultOpen={hasActiveItem}
-            className="group/collapsible"
+            className="group/collapsible scroll-hidden"
          >
             <SidebarMenuItem>
                <CollapsibleTrigger asChild>
@@ -239,7 +239,7 @@ export function AppSidebar() {
    };
 
    return (
-      <Sidebar collapsible="icon" variant="inset">
+      <Sidebar collapsible="icon" variant="inset" className="no-scrollbar">
          <SidebarHeader>
             <SidebarMenu>
                <SidebarMenuItem>
@@ -271,7 +271,7 @@ export function AppSidebar() {
             </SidebarMenu>
          </SidebarHeader>
 
-         <SidebarContent>
+         <SidebarContent className="no-scrollbar">
             <SidebarGroup>
                <SidebarGroupContent>
                   <SidebarMenu>

@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useMemo } from "react";
-import facturaService from "../service/FacturaService";
 import { ChevronLeft, ChevronRight, Download, EyeIcon, LoaderCircle } from "lucide-react";
-import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import ModalVisualizarDocumento from "../components/modal/ModalVisualizarDocumento";
+import facturaService from "../service/FacturaService";
 
 const ListaDocumentos = () => {
     const [facturas, setFacturas] = useState([]);
@@ -15,7 +15,7 @@ const ListaDocumentos = () => {
 
     const [searchParams, setSearchParams] = useSearchParams();
 
-    // leer de la URL
+    //?? leer de la URL
     const page = Number(searchParams.get("page") || 1);
     const limit = Number(searchParams.get("limit") || 10);
     const num_doc = searchParams.get("num_doc") || "";
@@ -23,10 +23,10 @@ const ListaDocumentos = () => {
     const fec_des = searchParams.get("fec_des") || "";
     const fec_ast = searchParams.get("fec_ast") || "";
 
-    // estado controlado de filtros
+    // ?? estado controlado de filtros
     const [filtro, setFiltro] = useState({ page, limit, num_doc, tip_doc, fec_des, fec_ast });
 
-    // Sincroniza estado local si cambian los searchParams
+    // ?? Sincroniza estado local si cambian los searchParams
     useEffect(() => {
         setFiltro({ page, limit, num_doc, tip_doc, fec_des, fec_ast });
     }, [page, limit, num_doc, tip_doc, fec_des, fec_ast]);
@@ -46,7 +46,7 @@ const ListaDocumentos = () => {
     const obtenerFacturas = async () => {
         setLoading(true);
         try {
-            // si tu service acepta string:
+            // ?? si tu service acepta string:
             const query = buildQueryParams();
             const { estado, total, facturas } = await facturaService.obtenerTodasLasFacturas(query);
 
@@ -66,8 +66,8 @@ const ListaDocumentos = () => {
 
     useEffect(() => {
         obtenerFacturas();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchParams]); // cada que cambien los params, recarga
+        // ?? eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchParams]); // ?? cada que cambien los params, recarga
 
     const applyFilters = () => {
         const params = {};
@@ -100,7 +100,7 @@ const ListaDocumentos = () => {
         <div className="w-full flex flex-col items-center px-4 md:px-2 py-6">
             <div className="w-full max-w-6xl">
                 <div className="flex items-center justify-between mb-6 ">
-                    <h2 className="text-2xl md:text-3xl font-bold text-blue-600">
+                    <h2 className="text-2xl md:text-3xl font-bold">
                         Lista de Documentos
                     </h2>
                 </div>
@@ -191,7 +191,7 @@ const ListaDocumentos = () => {
             ) : (
                 <div className="overflow-x-auto border-1 rounded-xl border-gray-300 ">
                     <table className="min-w-full bg-white rounded-xl shadow-md overflow-hidden">
-                        <thead className="bg-blue-600 text-white">
+                        <thead className="bg-innova-blue text-white">
                             <tr>
                                 <th className="py-3 px-3 text-left text-sm font-semibold uppercase tracking-wider">Serie-Correlativo</th>
                                 <th className="py-3 px-3 text-left text-sm font-semibold uppercase tracking-wider">Fecha Emision</th>

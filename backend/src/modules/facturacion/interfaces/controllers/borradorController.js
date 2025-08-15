@@ -33,7 +33,7 @@ const borradorController={
     },
     async obtenerBorradorPorId(req, res) {
         try {
-            const { id } = req.params
+            const { id } = req.query
             const { codigo, respuesta } = await obtenerBorradorPorId(id, borradorRepository)
             res.status(codigo).json(respuesta)
         } catch (error) {

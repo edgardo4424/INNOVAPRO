@@ -20,68 +20,72 @@ class SequelizeBorradorRepository {
         };
     }
 
-    async listarBorradores(
-        page = 1,
-        limit = 10,
-        tipo_borrador,
-        empresa_ruc,
-        cliente_num_doc,
-        cliente_razon_social,
-        usuario_id,
-        fec_des,
-        fec_ast
-    ) {
- 
-        const pageNumber = parseInt(page);
-        const limitNumber = parseInt(limit);
 
-        const offset = (pageNumber - 1) * limitNumber;
-
-        let where = {};
-        let include = [];
-
-
-        if (tipo_borrador) {
-            where.tipo_borrador = tipo_borrador;
-        }
-
-        if (empresa_ruc) {
-            where.empresa_ruc = { [Op.like]: `%${empresa_ruc}%` };
-        }
-
-        //? Filtro por número de documento del cliente, usando búsqueda parcial.
-        if (cliente_num_doc) {
-            where.cliente_num_doc = { [Op.like]: `%${cliente_num_doc}%` };
-        }
-
-        //? Filtro por razón social del cliente, usando búsqueda parcial.
-        if (cliente_razon_social) {
-            where.cliente_razon_social = { [Op.like]: `%${cliente_razon_social}%` };
-        }
-
-        //? Filtro por usuario asociado al borrador, utilizando la relación.
-        if (usuario_id) {
-            where.usuario_id = usuario_id;
-        }
-
-        //? Filtro por rango de fechas de emisión.
-        if (fec_des && fec_ast) {
-            where.fecha_Emision = {
-                [Op.between]: [fec_des, fec_ast],
-            };
-        } else if (fec_des) {
-            where.fecha_Emision = {
-                [Op.gte]: fec_des,
-            };
-        } else if (fec_ast) {
-            where.fecha_Emision = {
-                [Op.lte]: fec_ast,
-            };
-        }
-
-        //? Realiza la consulta a la base de datos con todos los filtros y paginación.
+    async listarBorradores(query) {
         try {
-            const resultado = await Borrador.findAll({
+            const {
+                page = 1,
+                limit,
+                tipo_doc,
+                empresa_ruc,
+                cliente_num_doc,
+                cliente_razon_social,
+                usuario_id,
+                fec_des,
+                fec_ast,
+            } = query;
+
+            const sane = (v) => {
+                if (v === null || v === undefined) return undefined;
+                if (typeof v === "string") {
+                    const t = v.trim();
+                    if (!t || t.toLowerCase() === "null" || t.toLowerCase() === "undefined") return undefined;
+                    return t;
+                }
+                return v;
+            };
+
+            // Usa NUEVAS variables (no reasignes las const del destructuring)
+            const nTipoDoc = sane(tipo_doc);
+            const nEmpresaRuc = sane(empresa_ruc);
+            const nClienteNumDoc = sane(cliente_num_doc);
+            const nClienteRazonSocial = sane(cliente_razon_social);
+            const nUsuarioId = sane(usuario_id);
+            const nFecDes = sane(fec_des);
+            const nFecAst = sane(fec_ast);
+
+            const pageNumber = Number.parseInt(page, 10) || 1;
+            const limitNumber = limit ? Number.parseInt(limit, 10) : undefined;
+            const offset = limitNumber ? (pageNumber - 1) * limitNumber : undefined;
+
+            const where = {};
+
+            if (nTipoDoc && nTipoDoc.toLowerCase() !== "todos") {
+                where.tipo_borrador = nTipoDoc;
+            }
+            if (nEmpresaRuc) {
+                where.empresa_ruc = { [Op.like]: `%${nEmpresaRuc}%` };
+            }
+            if (nClienteNumDoc) {
+                where.cliente_num_doc = { [Op.like]: `%${nClienteNumDoc}%` };
+            }
+            if (nClienteRazonSocial) {
+                where.cliente_razon_social = { [Op.like]: `%${nClienteRazonSocial}%` };
+            }
+            if (nUsuarioId) {
+                where.usuario_id = nUsuarioId;
+            }
+
+            // Rango de fechas (asegúrate que el atributo del modelo sea exactamente 'fecha_Emision')
+            if (nFecDes && nFecAst) {
+                where.fecha_Emision = { [Op.between]: [nFecDes, nFecAst] };
+            } else if (nFecDes) {
+                where.fecha_Emision = { [Op.gte]: nFecDes };
+            } else if (nFecAst) {
+                where.fecha_Emision = { [Op.lte]: nFecAst };
+            }
+
+            const { count, rows } = await Borrador.findAndCountAll({
                 attributes: [
                     "id",
                     "tipo_borrador",
@@ -93,22 +97,40 @@ class SequelizeBorradorRepository {
                     "fecha_Emision",
                 ],
                 where,
-                include,
                 offset,
                 limit: limitNumber,
             });
-            //? Retorna el resultado de la consulta.
-            return resultado;
+
+            return {
+                success: true,
+                message: "Borradores listados correctamente.",
+                data: rows,
+                metadata: {
+                    totalRecords: count,
+                    currentPage: pageNumber,
+                    totalPages: limitNumber ? Math.ceil(count / limitNumber) : 1,
+                },
+            };
         } catch (error) {
-            return [];
+            console.error("Error al listar borradores:", error);
+            return {
+                success: false,
+                message: "Error al listar los borradores.",
+                data: null,
+                error: error.message,
+            };
         }
     }
+
+
+
     async obtenerBorradorPorId(id) {
         const result = await Borrador.findOne({
             where: {
                 id,
             },
         });
+        console.log(result);
         if (!result) {
             return {
                 success: false,

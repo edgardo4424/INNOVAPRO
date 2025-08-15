@@ -1,7 +1,7 @@
 const { Factura } = require("../models/facturaModel");
-const { FacturaDetalle } = require("../models/facturaDetalleModel");
-const { FormaPago } = require("../models/formaPagoModel");
-const { Leyenda } = require("../models/leyendaModel");
+const { DetalleFactura } = require("../models/facturaDetalleModel");
+const { FormaPagoFactura } = require("../models/formaPagoModel");
+const { LegendFactura } = require("../models/legendFacturaModel");
 const { SunatRespuesta } = require("../models/sunatRespuestaModel");
 const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 const { Op } = require("sequelize");
@@ -117,9 +117,9 @@ class SequelizeFacturaRepository {
     async obtenerFactura(id) {
         const factura = await Factura.findByPk(id, {
             include: [
-                { model: FacturaDetalle },
-                { model: FormaPago },
-                { model: Leyenda },
+                { model: DetalleFactura },
+                { model: FormaPagoFactura },
+                { model: LegendFactura },
                 { model: SunatRespuesta },
             ],
         });
@@ -212,7 +212,7 @@ class SequelizeFacturaRepository {
             //* 2. Crear los Detalles de la Factura
             const createdDetalles = [];
             for (const detalleData of data.detalle) {
-                const detalle = await FacturaDetalle.create(
+                const detalle = await DetalleFactura.create(
                     {
                         factura_id: factura.id,
                         ...detalleData,
@@ -232,7 +232,7 @@ class SequelizeFacturaRepository {
             //* 3. Crear las Formas de Pago
             const createdFormasPago = [];
             for (const formaPagoData of data.formas_pagos) {
-                const formaPago = await FormaPago.create(
+                const formaPago = await FormaPagoFactura.create(
                     {
                         factura_id: factura.id,
                         ...formaPagoData,
@@ -249,7 +249,7 @@ class SequelizeFacturaRepository {
             //* 4. Crear las Leyendas
             const createdLeyendas = [];
             for (const leyendaData of data.leyendas) {
-                const leyenda = await Leyenda.create(
+                const leyenda = await LegendFactura.create(
                     {
                         factura_id: factura.id,
                         ...leyendaData,

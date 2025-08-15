@@ -54,6 +54,7 @@ export default function ModalVisualizarDocumento({ id_documento, setIdDocumento,
                     return;
                 }
 
+                console.log("este es la factura seleccionada: ", rawFactura);
                 const factura = {
                     id: rawFactura.id,
                     tipo_operacion: rawFactura.tipo_Operacion,
@@ -95,9 +96,9 @@ export default function ModalVisualizarDocumento({ id_documento, setIdDocumento,
                     descuento_factor: rawFactura.descuento_factor,
                     descuento_monto: rawFactura.descuento_monto,
 
-                    detalle: rawFactura.factura_detalles ?? [],
-                    forma_pago: rawFactura.formas_pagos ?? [],
-                    legend: rawFactura.leyendas ?? [],
+                    detalle: rawFactura.detalle_facturas ?? [],
+                    forma_pago: rawFactura.forma_pago_facturas ?? [],
+                    legend: rawFactura.legend_facturas ?? [],
                 };
         console.log(factura);
                 setFactura(factura);
@@ -187,8 +188,8 @@ export default function ModalVisualizarDocumento({ id_documento, setIdDocumento,
                                                             <td className="py-2 px-4 text-sm">{item.cantidad}</td>
                                                             <td className="py-2 px-4 text-sm">{item.unidad}</td>
                                                             <td className="py-2 px-4 text-sm">{item.descripcion}</td>
-                                                            <td className="py-2 px-4 text-right text-sm">{item.monto_Valor_Unitario?.toFixed?.(2) ?? "0.00"}</td>
-                                                            <td className="py-2 px-4 text-right text-sm">{item.monto_Precio_Unitario?.toFixed?.(2) ?? "0.00"}</td>
+                                                            <td className="py-2 px-4 text-right text-sm">{item.monto_Valor_Unitario ?? "0.00"}</td>
+                                                            <td className="py-2 px-4 text-right text-sm">{item.monto_Precio_Unitario ?? "0.00"}</td>
                                                             <td className="py-2 px-4 text-right text-sm">
                                                                 {(item.monto_Precio_Unitario ?? 0) }
                                                             </td>

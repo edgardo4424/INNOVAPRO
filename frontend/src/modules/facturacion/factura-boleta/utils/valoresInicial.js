@@ -8,7 +8,7 @@ const ValorInicialFactura = {
     correlativo: "",
     tipo_Moneda: "PEN",
     fecha_Emision: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
-    empresa_Ruc: "20607086215",
+    empresa_Ruc: "10749283781",//?? nuevo ruc de prueba
 
     // ?Datos del cliente
     cliente_Tipo_Doc: "",
@@ -34,19 +34,6 @@ const ValorInicialFactura = {
     observaciones: "", //? nuevo campo solo para bd
     usuario_id: 1, //* cambiar a el usuario logeado
 
-    // ?campos para detraccion
-    detraccion_cod_bien_detraccion: "",
-    detraccion_cod_medio_pago: "",
-    detraccion_cta_banco: "",
-    detraccion_percent: 0,
-    detraccion_mount: 0,
-
-    // ?campos descuento
-    descuento_cod_tipo: "",
-    descuento_monto_base: 0,
-    descuento_factor: 0,
-    descuento_monto: 0,
-
     // ?Lista de Productos
     detalle: [],
 
@@ -61,6 +48,21 @@ const ValorInicialFactura = {
         },
     ],
 };
+
+const camposDetraccion = {
+    detraccion_cod_bien_detraccion: "",
+    detraccion_cod_medio_pago: "",
+    detraccion_cta_banco: "",
+    detraccion_percent: 0,
+    detraccion_mount: 0,
+}
+
+const camposDescuento = {
+    descuento_cod_tipo: "",
+    descuento_monto_base: 0,
+    descuento_factor: 0,
+    descuento_monto: 0,
+}
 
 const valorInicialProducto = {
     unidad: "",
