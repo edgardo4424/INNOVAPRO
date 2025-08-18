@@ -11,16 +11,14 @@ const {
 } = require("../services/mapearParaReporteGratificaciones");
 
 const SequelizeAsistenciaRepository = require("../../../asistencias/infraestructure/repositories/sequelizeAsistenciaRepository");
+const SequelizeDataMantenimientoRepository = require("../../../data_mantenimiento/infrastructure/repositories/sequelizeDataMantenimientoRepository");
 const SequelizeBonoRepository = require("../../../bonos/infraestructure/repositories/sequelizeBonoRepository");
-
+const SequelizeAdelantoSueldoRepository = require("../../../adelanto_sueldo/infraestructure/repositories/sequlizeAdelantoSueldoRepository");
 
 const asistenciaRepository = new SequelizeAsistenciaRepository();
-const bonoRepository = new SequelizeBonoRepository()
-
-const MONTO_POR_HORA_EXTRA = 10;
-const MONTO_ASIGNACION_FAMILIAR = 102.5;
-const MONTO_NO_COMPUTABLE = 10;
-const MONTO_FALTA_POR_DIA = 10;
+const bonoRepository = new SequelizeBonoRepository();
+const dataMantenimientoRepository = new SequelizeDataMantenimientoRepository();
+const adelantoSueldoRepository = new SequelizeAdelantoSueldoRepository();
 
 class SequelizeFilialRepository {
   async obtenerGratificaciones() {
@@ -32,7 +30,58 @@ class SequelizeFilialRepository {
   }
 
   async calcularGratificaciones(periodo, anio, filial_id) {
-    const SALUD_PORC = { ESSALUD: 0.09, EPS: 0.0675 };
+    const MONTO_ASIGNACION_FAMILIAR = Number(
+      (
+        await dataMantenimientoRepository.obtenerPorCodigo(
+          "valor_asignacion_familiar"
+        )
+      ).valor
+    );
+    console.log("MONTO_ASIGNACION_FAMILIAR", MONTO_ASIGNACION_FAMILIAR);
+
+    const MONTO_FALTA_POR_DIA = Number(
+      (await dataMantenimientoRepository.obtenerPorCodigo("valor_falta")).valor
+    );
+    console.log("MONTO_FALTA_POR_DIA", MONTO_FALTA_POR_DIA);
+
+    const MONTO_POR_HORA_EXTRA = Number(
+      (await dataMantenimientoRepository.obtenerPorCodigo("valor_hora_extra"))
+        .valor
+    );
+    console.log("MONTO_POR_HORA_EXTRA", MONTO_POR_HORA_EXTRA);
+
+    const MONTO_NO_COMPUTABLE = Number(
+      (
+        await dataMantenimientoRepository.obtenerPorCodigo(
+          "valor_no_computable"
+        )
+      ).valor
+    );
+    console.log("MONTO_NO_COMPUTABLE", MONTO_NO_COMPUTABLE);
+
+    const PORCENTAJE_BONIFICACION_ESSALUD = Number(
+      (
+        await dataMantenimientoRepository.obtenerPorCodigo(
+          "valor_bonificacion_essalud"
+        )
+      ).valor
+    );
+    console.log(
+      "PORCENTAJE_BONIFICACION_ESSALUD",
+      PORCENTAJE_BONIFICACION_ESSALUD
+    );
+
+    const PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO = Number(
+      (
+        await dataMantenimientoRepository.obtenerPorCodigo(
+          "valor_desc_quinta_categoria_no_domiciliado"
+        )
+      ).valor
+    );
+    console.log(
+      "PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO",
+      PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO
+    );
 
     const contratos = await db.contratos_laborales.findAll({
       include: [
@@ -56,97 +105,129 @@ class SequelizeFilialRepository {
       porTrabajador.get(tid).contratos.push(c.get({ plain: true }));
     }
 
-     let fechaInicio, fechaFin;
+    let fechaInicio, fechaFin;
 
     switch (periodo) {
-      case 'JULIO':      // semestre ene-jun
+      case "JULIO": // semestre ene-jun
         fechaInicio = `${anio}-01-01`;
-        fechaFin    = `${anio}-06-30`;  // <-- junio tiene 30
+        fechaFin = `${anio}-06-30`; // <-- junio tiene 30
         break;
-      case 'DICIEMBRE':  // semestre jul-dic
+      case "DICIEMBRE": // semestre jul-dic
         fechaInicio = `${anio}-07-01`;
-        fechaFin    = `${anio}-12-31`;
-        break;           // <-- faltaba
+        fechaFin = `${anio}-12-31`;
+        break; // <-- faltaba
     }
 
     const filas = await Promise.all(
       Array.from(porTrabajador.values()).map(
         async ({ trabajador, contratos }) => {
-       
           // 1) Meses por régimen
           const { porRegimen, totalMeses, detalleMensual } =
             calcularMesesComputablesSemestre(contratos, periodo, anio);
-
-          // 2) Componentes comunes de RC (si RC se calcula igual para todo el semestre)
-          const asignacionFamiliar = trabajador.asignacion_familiar ? MONTO_ASIGNACION_FAMILIAR : 0;
-
-         const totalHorasExtras = await asistenciaRepository.obtenerHorasExtrasPorRangoFecha(trabajador.id, fechaInicio, fechaFin)
-
         
-         //console.log('totalHorasExtras', totalHorasExtras);
+          // 2) Componentes comunes de RC (si RC se calcula igual para todo el semestre)
+          const asignacionFamiliar = trabajador.asignacion_familiar
+            ? MONTO_ASIGNACION_FAMILIAR
+            : 0;
+
+          const totalHorasExtras =
+            await asistenciaRepository.obtenerHorasExtrasPorRangoFecha(
+              trabajador.id,
+              fechaInicio,
+              fechaFin
+            );
+
+          //console.log('totalHorasExtras', totalHorasExtras);
+
           const promedioHorasExtras = totalHorasExtras * MONTO_POR_HORA_EXTRA;
-          const promedioBonoObra = await bonoRepository.obtenerBonoTotalDelTrabajadorPorRangoFecha(trabajador.id, fechaInicio, fechaFin); // TODO
+          const promedioBonoObra =
+            await bonoRepository.obtenerBonoTotalDelTrabajadorPorRangoFecha(
+              trabajador.id,
+              fechaInicio,
+              fechaFin
+            ); // TODO
 
           const noComputableDias = 0; // TODO: Falta calcular los dias no computables
           const noComputable = noComputableDias * MONTO_NO_COMPUTABLE;
 
-           const faltasDias = await asistenciaRepository.obtenerCantidadFaltasPorRangoFecha(trabajador.id, fechaInicio, fechaFin); // Falta calcular la cantidad de faltas
-
-
-           const ultimaFechaFinContrato = obtenerUltimaFechaFin(contratos);
+          const ultimaFechaFinContrato = obtenerUltimaFechaFin(contratos);
 
           // Nota: si el sueldo_base cambia por contrato, ya viene por cada parte (porRegimen.sueldo_base).
           // Aquí RC se arma por parte con su sueldo_base específico:
-          const partes = porRegimen.map((p) => {
-     
-            const RC = +(
-              p.sueldo_base +
-              asignacionFamiliar +
-              promedioHorasExtras +
-              promedioBonoObra
-            ).toFixed(2);
-            const gratiBruta = +(RC * p.factor * (p.meses / 6)).toFixed(2);
+          const partes = await Promise.all(
+            porRegimen.map(async (p) => {
+              const faltasDias =
+                await asistenciaRepository.obtenerCantidadFaltasPorRangoFecha(
+                  trabajador.id,
+                  p.fecha_inicio,
+                  p.fecha_fin
+                ); // Falta calcular la cantidad de faltas
 
-            // Faltas: si llevaras por mes, podrías repartir por proporción de meses
-            const faltasMonto = faltasDias * MONTO_FALTA_POR_DIA;
-            //const gratiNeta = +Math.max(0, gratiBruta - faltasMonto).toFixed(2);
-            const gratiNeta = gratiBruta - faltasMonto - noComputable;
+              const RC = +(
+                p.sueldo_base +
+                asignacionFamiliar +
+                promedioHorasExtras +
+                promedioBonoObra
+              ).toFixed(2);
+              const gratiBruta = +(RC * p.factor * (p.meses / 6)).toFixed(2);
 
-            const bonifPct = SALUD_PORC[p.sistema_salud] ?? 0.09;
-            const bonificacion = +(gratiNeta * bonifPct).toFixed(2);
+              // Faltas: si llevaras por mes, podrías repartir por proporción de meses
+              const faltasMonto = faltasDias * MONTO_FALTA_POR_DIA;
+              //const gratiNeta = +Math.max(0, gratiBruta - faltasMonto).toFixed(2);
+              const gratiNeta = gratiBruta - faltasMonto - noComputable;
 
-            const renta5ta = 0,
-              adelantos = 0;
-            const total = +(
-              gratiNeta +
-              bonificacion -
-              (renta5ta + adelantos)
-            ).toFixed(2);
+              const bonifPct = PORCENTAJE_BONIFICACION_ESSALUD / 100;
+              const bonificacion = +(gratiNeta * bonifPct).toFixed(2);
 
-            return {
-              tipo_contrato: p.tipo_contrato,
-              regimen: p.regimen,
-              fecha_inicio: p.fecha_inicio, // NUEVO CAMPO
-              fecha_fin: ultimaFechaFinContrato,
-              meses: p.meses,
-              factor: p.factor,
-              sistema_salud: p.sistema_salud,
-              sueldo_base: p.sueldo_base,
-              asignacion_familiar: asignacionFamiliar,
-              promedio_horas_extras: promedioHorasExtras,
-              promedio_bono_obra: promedioBonoObra,
-              rc: RC,
-              gratificacion_bruta: gratiBruta,
-              faltas_dias: faltasDias,
-              faltas_monto: faltasMonto,
-              no_computable: noComputable,
-              gratificacion_neta: gratiNeta,
-              bonificacion_extraordinaria: bonificacion,
-              renta_5ta: renta5ta,
-              adelantos,
-              total,
-            };
-          });
+              let renta5ta = 0; // Verificar si califica renta 5ta categoria No domiciliado
+
+              if(p.domiciliado){
+                renta5ta = +(gratiNeta * PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO).toFixed(2);
+              }
+
+              const totalAdelantosSueldo =
+                await adelantoSueldoRepository.obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
+                  trabajador.id,
+                  p.fecha_inicio,
+                  p.fecha_fin
+                );
+
+              const total = +(
+                gratiNeta +
+                bonificacion -
+                (renta5ta + totalAdelantosSueldo)
+              ).toFixed(2);
+
+              const fechaFin =
+                contratos.length == 1
+                  ? ultimaFechaFinContrato
+                  : p.fecha_terminacion_anticipada || p.fecha_fin;
+
+              return {
+                tipo_contrato: p.tipo_contrato,
+                regimen: p.regimen,
+                fecha_inicio: p.fecha_inicio, // NUEVO CAMPO
+                fecha_fin: fechaFin,
+                meses: p.meses,
+                factor: p.factor,
+                sistema_salud: p.sistema_salud,
+                sueldo_base: p.sueldo_base,
+                asignacion_familiar: asignacionFamiliar,
+                promedio_horas_extras: promedioHorasExtras,
+                promedio_bono_obra: promedioBonoObra,
+                rc: RC,
+                gratificacion_bruta: gratiBruta,
+                faltas_dias: faltasDias,
+                faltas_monto: faltasMonto,
+                no_computable: noComputable,
+                gratificacion_neta: gratiNeta,
+                bonificacion_extraordinaria: bonificacion,
+                renta_5ta: renta5ta,
+                adelantos: totalAdelantosSueldo,
+                total,
+              };
+            })
+          );
 
           // 3) Consolidado (sumas de partes)
           const sum = (k) => partes.reduce((a, x) => a + Number(x[k] || 0), 0);

@@ -1,8 +1,10 @@
+
+import { useState } from "react";
+
 import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -10,9 +12,9 @@ import {
 } from "@/components/ui/table";
 
 import { Search } from "lucide-react";
-import ColumnaGratificacion from "./ColumnaGratificacion";
-import ColumnaTotalGratificacion from "./ColumnaTotalGratificacion";
-import { useState } from "react";
+
+import RowGratificacion from "@/modules/gratificacion/components/RowGratificacion";
+import RowTotalGratificacion from "@/modules/gratificacion/components/RowTotalGratificacion";
 
 const ListaGratificacion = ({ gratificacion }) => {
   const { planilla, honorarios } = gratificacion
@@ -32,7 +34,7 @@ const ListaGratificacion = ({ gratificacion }) => {
   return (
     <div className="w-full overflow-x-auto p-5 mb-10 flex flex-col bg-gray-100 border-2 rounded-xl shadow-xl">
       <h1 className="text-2xl font-bold pb-6">Trabajadores</h1>
-      <div className="relative w-[300px]">
+      <div className="relative">
         <Input
           type="search"
           className="block w-full appearance-none px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -45,7 +47,7 @@ const ListaGratificacion = ({ gratificacion }) => {
 
       <div className="relative py-4">
         <Table>
-          <TableCaption>A list of your recent invoices.</TableCaption>
+          {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
           <TableHeader>
             <TableRow className={"bg-gray-800 text-xs "}>
               {/* Estas celdas abarcan 2 filas porque no tienen sub-encabezados */}
@@ -95,9 +97,9 @@ const ListaGratificacion = ({ gratificacion }) => {
                   </TableCell>
                 </TableRow>
                  {filtrarTrabajadores(planilla.trabajadores).map((e, index) => (
-                  <ColumnaGratificacion key={index} e={e} index={index} />
+                  <RowGratificacion key={index} e={e} index={index} />
                 ))}
-                <ColumnaTotalGratificacion gratificacion={totalP} />
+                <RowTotalGratificacion gratificacion={totalP} />
               </>
             )}
 
@@ -113,9 +115,9 @@ const ListaGratificacion = ({ gratificacion }) => {
                   </TableCell>
                 </TableRow>
                  {filtrarTrabajadores(honorarios.trabajadores).map((e, index) => (
-                  <ColumnaGratificacion key={index} e={e} index={index} />
+                  <RowTotalGratificacion key={index} e={e} index={index} />
                 ))}
-                <ColumnaTotalGratificacion gratificacion={totalH} />
+                <RowTotalGratificacion gratificacion={totalH} />
               </>
             )}
           </TableBody>
