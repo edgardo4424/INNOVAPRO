@@ -1,8 +1,8 @@
 export const mockFiliales = [
-   { id: 1, nombre: "ENCOFRADOS INNOVA S.A.C." },
-   { id: 2, nombre: "ANDAMIOS ELECTRICOS INNOVA S.A.C." },
-   { id: 3, nombre: "INDEK ANDINA E.I.R.L" },
-   { id: 4, nombre: "INNOVA RENTAL MAQUINARIA SAC" },
+   { id: 1, razon_social: "ENCOFRADOS INNOVA S.A.C." },
+   { id: 2, razon_social: "ANDAMIOS ELECTRICOS INNOVA S.A.C." },
+   { id: 3, razon_social: "INDEK ANDINA E.I.R.L" },
+   { id: 4, razon_social: "INNOVA RENTAL MAQUINARIA SAC" },
 ];
 export const mockCargos = [
    { id: 1, nombre: "Gerente general" },

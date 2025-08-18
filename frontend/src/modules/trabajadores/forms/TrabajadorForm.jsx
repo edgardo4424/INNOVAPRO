@@ -25,6 +25,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { mockCargos, mockFiliales } from "../mocks/mockFiliales_Cargos";
 import ContratosLaborales from "../components/ContratosLaborales";
 import { toast } from "sonner";
+import { default as SelectMultiple } from "react-select";
 
 const dataInicial = {
    filial_id: "",
@@ -48,6 +49,17 @@ const dataInicial = {
    ],
 };
 
+const calcularQuintaCategoria = (sueldo, valor_uit) => {
+   const sueldo_anual = sueldo * 12;
+   const sieteUit = valor_uit * 7;
+   console.log(sueldo_anual, sieteUit);
+   console.log(sueldo_anual > sieteUit);
+   if (sueldo_anual > sieteUit) {
+      return true;
+   }
+   return false;
+};
+
 export default function TrabajadorForm() {
    const navigate = useNavigate();
    const [searchParams] = useSearchParams();
@@ -60,21 +72,34 @@ export default function TrabajadorForm() {
    const [cargos, setCargos] = useState([]);
    const [errors, setErrors] = useState({});
    const [isSubmitting, setIsSubmitting] = useState(false);
+   const [valorUit, setValorUit] = useState(null);
 
    // estados para fetch de edición
    const [isLoading, setIsLoading] = useState(false);
    const [fetchError, setFetchError] = useState("");
+   const [filialesElegidas, setFilialesElegidas] = useState([]);
 
    // mock de filiales/cargos (reemplaza por tu fetch real si aplica)
+   const fetchDataInicial = async () => {
+      try {
+         const res = await trabajadoresService.dataMantenimiento();
+         const res_ = await trabajadoresService.getFiliales();
+         console.log(res_.data);
+
+         setFiliales(res_.data);
+         setValorUit(res.data.valor);
+      } catch (error) {
+         toast.error("No se pudo obtener la uit");
+      }
+   };
    useEffect(() => {
-      setFiliales(mockFiliales);
       setCargos(mockCargos);
+      fetchDataInicial();
    }, []);
 
    // cargar trabajador si es edición
    useEffect(() => {
       let ignore = false;
-
       async function fetchTrabajador() {
          if (!isEditMode) return;
          setIsLoading(true);
@@ -143,15 +168,25 @@ export default function TrabajadorForm() {
    const buildPayload = () => {
       const ultimoContrato = formData.contratos_laborales.at(-1);
       return {
-         filial_id: parseInt(formData.filial_id),
+         filial_id:
+            formData.cargo_id == 1 || formData.cargo_id == 14
+               ? null
+               : formData.filial_id,
+         filiales_asignadas:
+            formData.cargo_id == 1 || formData.cargo_id == 14
+               ? filialesElegidas
+               : null,
          nombres: formData.nombres.trim(),
          apellidos: formData.apellidos.trim(),
          tipo_documento: formData.tipo_documento,
          numero_documento: formData.numero_documento.trim(),
          asignacion_familiar: formData.asignacion_familiar,
          sistema_pension: formData.sistema_pension,
-         quinta_categoria: formData.quinta_categoria,
-         cargo_id: parseInt(formData.cargo_id),
+         quinta_categoria: calcularQuintaCategoria(
+            ultimoContrato.sueldo,
+            valorUit
+         ),
+         cargo_id: formData.cargo_id,
          contratos_laborales: formData.contratos_laborales,
          sueldo_base: ultimoContrato ? ultimoContrato.sueldo : "",
       };
@@ -159,14 +194,18 @@ export default function TrabajadorForm() {
 
    const handleSubmit = async (e) => {
       e.preventDefault();
-
+      if (!valorUit) return;
+      const isGerente = ["1", "14"].includes(formData.cargo_id);
       try {
-         await trabajadorSchema(isEditMode).validate(formData, {
-            abortEarly: false,
-         });
          setIsSubmitting(true);
 
          const dataToSubmit = buildPayload();
+         const res = await trabajadorSchema(isEditMode, isGerente).validate(
+            dataToSubmit,
+            {
+               abortEarly: false,
+            }
+         );
 
          if (isEditMode) {
             dataToSubmit.id = trabajador_id;
@@ -180,6 +219,8 @@ export default function TrabajadorForm() {
          }
          navigate("/tabla-trabajadores");
       } catch (error) {
+         console.log(error);
+
          if (error && error.name === "ValidationError") {
             const newErrors =
                error.inner?.reduce((acc, curr) => {
@@ -205,7 +246,7 @@ export default function TrabajadorForm() {
    };
 
    return (
-      <div className="mx-auto p-6">
+      <div className="w-full max-w-[52rem] p-6 ">
          <Card className="shadow-none">
             <CardHeader>
                <CardTitle className="flex items-center gap-2 text-[#1b274a]">
@@ -252,29 +293,61 @@ export default function TrabajadorForm() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                            <div className="space-y-2">
                               <Label htmlFor="filial_id">Filial *</Label>
-                              <Select
-                                 value={formData.filial_id}
-                                 onValueChange={(value) =>
-                                    handleInputChange("filial_id", value)
-                                 }
-                              >
-                                 <SelectTrigger>
-                                    <SelectValue placeholder="Seleccione una filial" />
-                                 </SelectTrigger>
-                                 <SelectContent>
-                                    {filiales.map((filial) => (
-                                       <SelectItem
-                                          key={filial.id}
-                                          value={filial.id.toString()}
-                                       >
-                                          {filial.nombre}
-                                       </SelectItem>
-                                    ))}
-                                 </SelectContent>
-                              </Select>
+
+                              {formData.cargo_id == 1 ||
+                              formData.cargo_id == 14 ? (
+                                 <SelectMultiple
+                                    isMulti
+                                    options={filiales.map((f) => ({
+                                       value: f.id,
+                                       label: f.razon_social || f.nombre,
+                                    }))}
+                                    value={filiales
+                                       .filter((f) =>
+                                          filialesElegidas?.includes(f.id)
+                                       )
+                                       .map((f) => ({
+                                          value: f.id,
+                                          label: f.razon_social || f.nombre,
+                                       }))}
+                                    onChange={(selected) =>
+                                       setFilialesElegidas(
+                                          selected.map((s) => s.value)
+                                       )
+                                    }
+                                    placeholder="Selecciona filiales..."
+                                    menuPlacement="top"
+                                 />
+                              ) : (
+                                 <Select
+                                    value={formData.filial_id}
+                                    onValueChange={(value) =>
+                                       handleInputChange("filial_id", value)
+                                    }
+                                 >
+                                    <SelectTrigger className={"w-full"}>
+                                       <SelectValue placeholder="Seleccione una filial" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                       {filiales.map((filial) => (
+                                          <SelectItem
+                                             key={filial.id}
+                                             value={filial.id.toString()}
+                                          >
+                                             {filial.razon_social}
+                                          </SelectItem>
+                                       ))}
+                                    </SelectContent>
+                                 </Select>
+                              )}
                               {errors.filial_id && (
                                  <p className="text-sm text-red-500">
                                     {errors.filial_id}
+                                 </p>
+                              )}
+                              {errors.filiales_asignadas && (
+                                 <p className="text-sm text-red-500">
+                                    {errors.filiales_asignadas}
                                  </p>
                               )}
                            </div>
@@ -287,7 +360,7 @@ export default function TrabajadorForm() {
                                     handleInputChange("cargo_id", value)
                                  }
                               >
-                                 <SelectTrigger>
+                                 <SelectTrigger className={"w-full"}>
                                     <SelectValue placeholder="Seleccione un cargo" />
                                  </SelectTrigger>
                                  <SelectContent>
@@ -463,23 +536,6 @@ export default function TrabajadorForm() {
                                  </p>
                               )}
                            </div>
-{/* 
-                           <div className="flex items-center space-x-2">
-                              <Checkbox
-                                 id="quinta_categoria"
-                                 checked={formData.quinta_categoria}
-                                 className="data-[state=checked]:bg-[#1b274a] border-[#1b274a]/50 data-[state=checked]:border-[#1b274a]/80"
-                                 onCheckedChange={(checked) =>
-                                    handleInputChange(
-                                       "quinta_categoria",
-                                       !!checked
-                                    )
-                                 }
-                              />
-                              <Label htmlFor="quinta_categoria">
-                                 Quinta Categoría
-                              </Label>
-                           </div> */}
                         </div>
                      </div>
 
@@ -492,7 +548,13 @@ export default function TrabajadorForm() {
                         >
                            Cancelar
                         </Button>
-                        <Button type="submit" disabled={isSubmitting}>
+                        <Button
+                           type="submit"
+                           disabled={isSubmitting}
+                           className={
+                              "bg-innova-blue hover:bg-innova-blue/90 cursor-pointer"
+                           }
+                        >
                            {isSubmitting
                               ? isEditMode
                                  ? "Guardando..."

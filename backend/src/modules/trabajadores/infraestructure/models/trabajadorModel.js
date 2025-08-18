@@ -67,9 +67,9 @@ const Trabajador = sequelize.define(
          allowNull: true,
          validate: {
             validacionRol(value) {
-               if (value && ![1, 14].includes(this.cargo_id)) {
+               if (value && !["1", "14"].includes(this.cargo_id)) {
                   throw new Error(
-                     "Solo Gerente (4) o CEO (6) pueden tener filiales_asignadas"
+                     "Solo Gerente (1) o CEO (14) pueden tener filiales_asignadas"
                   );
                }
             },

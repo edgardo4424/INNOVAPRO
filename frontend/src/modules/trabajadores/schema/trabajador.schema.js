@@ -35,7 +35,7 @@ const contratoSchema = yup.object({
       .required("El tipo de contrato es obligatorio"),
 });
 
-export const trabajadorSchema = (isEdit = false) =>
+export const trabajadorSchema = (isEdit = false, isGerente = false) =>
    yup.object().shape({
       ...(isEdit && {
          id: yup
@@ -44,13 +44,50 @@ export const trabajadorSchema = (isEdit = false) =>
             .positive("ID debe ser un número positivo")
             .required("El ID es requerido en edición"),
       }),
-      filial_id: yup
-         .number()
-         .transform((value, originalValue) =>
-            originalValue === "" ? null : value
-         )
-         .nullable()
-         .required("La filial es requerida"),
+      ...(isGerente
+         ? {
+              filiales_asignadas: yup
+                 .array()
+                 .of(
+                    yup
+                       .number()
+                       .transform((value, originalValue) => {
+                          if (
+                             originalValue === "" ||
+                             originalValue === null ||
+                             originalValue === undefined
+                          ) {
+                             return null;
+                          }
+                          const parsed = Number(originalValue);
+                          return isNaN(parsed) ? null : parsed;
+                       })
+                       .integer("Debe ser un número entero")
+                       .positive("Debe ser un número positivo")
+                 )
+                 .min(1, "Debe asignar al menos una filial")
+                 .required("Las filiales asignadas son requeridas"),
+              filial_id: yup.mixed().nullable().notRequired(),
+           }
+         : {
+              filial_id: yup
+                 .number()
+                 .transform((value, originalValue) => {
+                    if (
+                       originalValue === "" ||
+                       originalValue === null ||
+                       originalValue === undefined
+                    ) {
+                       return null;
+                    }
+                    const parsed = Number(originalValue);
+                    return isNaN(parsed) ? null : parsed;
+                 })
+                 .nullable()
+                 .required("La filial es requerida"),
+              filiales_asignadas: yup.mixed().notRequired(),
+           }),
+
       nombres: yup.string().required("El nombre es requerido"),
       apellidos: yup.string().required("El apellido es requerido"),
       tipo_documento: yup
@@ -76,11 +113,17 @@ export const trabajadorSchema = (isEdit = false) =>
          .required("La quinta categoría es requerida"),
       cargo_id: yup
          .number()
-         .transform((value, originalValue) =>
-            originalValue === "" ? null : value
-         )
+         .transform((value, originalValue) => {
+            if (
+               originalValue === "" ||
+               originalValue === null ||
+               originalValue === undefined
+            ) {
+               return null;
+            }
+            const parsed = Number(originalValue);
+            return isNaN(parsed) ? null : parsed;
+         })
          .nullable()
          .required("El cargo es obligatorio"),
-
-      // estado y fecha_salida no se validan según tu requerimiento
    });
