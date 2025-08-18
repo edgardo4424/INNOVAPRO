@@ -26,7 +26,7 @@ function mapearParaReporteGratificaciones(trabajadoresRaw) {
         no_computable: (t.no_computable || 0).toFixed(2),
         grat_despues_descuento: parte.gratificacion_neta.toFixed(2),
         bonificac_essalud: parte.bonificacion_extraordinaria.toFixed(2),
-        rent_quint_cat: (parte.renta_5ta || 0).toFixed(2),
+        rent_quint_cat_no_domiciliado: (parte.renta_5ta || 0).toFixed(2),
         mont_adelanto: (parte.adelantos || 0).toFixed(2),
         total_a_pagar: parte.total.toFixed(2)
       };

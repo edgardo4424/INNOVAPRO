@@ -102,6 +102,16 @@ module.exports = {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
+         {
+          id: 11,
+          codigo: "valor_desc_quinta_categoria_no_domiciliado",
+          nombre: "Valor Renta 5ta / No domiciliado",
+          descripcion:
+            "Porcentaje de descuento para trabajadores no domiciliados en Perú.",
+          valor: 30.0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
       ],
       {}
     );

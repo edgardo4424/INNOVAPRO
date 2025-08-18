@@ -12,10 +12,6 @@ import trabajadoresService from "../services/trabajadoresService"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
 
-
-
-
-
 export default function CompGestionTrabajadoresonent() {
   const [trabajadores, setTrabajadores] = useState([])
   const [loading, setLoading] = useState(true)

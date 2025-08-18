@@ -7,10 +7,12 @@ const parse = (s) => s ? moment.tz(s, 'YYYY-MM-DD', true, TZ) : null;
 const factorPorRegimen = (r) => (r === 'GENERAL' ? 1 : r === 'MYPE' ? 0.5 : 0);
 
 function mergeRangosConRegimen(contratos = []) {
+
   const arr = contratos
     .map(c => ({
       fecha_inicio: c.fecha_inicio,
       fecha_fin: c.fecha_terminacion_anticipada || c.fecha_fin,
+      fecha_terminacion_anticipada: c.fecha_terminacion_anticipada,
       ini: parse(c.fecha_inicio),
       fin: (c.fecha_terminacion_anticipada || c.fecha_fin) ? parse(c.fecha_terminacion_anticipada || c.fecha_fin) : null,
       regimen: c.regimen || 'GENERAL',
@@ -39,6 +41,7 @@ function mergeRangosConRegimen(contratos = []) {
       const maxFin = moment.max(lastFinEff, curFinEff);
       last.fin = maxFin.isSame(INF, 'day') ? null : maxFin;
       last.sueldo_base = r.sueldo_base; // Actualizamos al último sueldo
+      last.fecha_fin = r.fecha_fin; // Actualizamos la fecha de fin
     } else {
       out.push(r);
     }
@@ -83,6 +86,7 @@ function calcularMesesComputablesSemestre(contratos, periodo, anio) {
     let regimenAsignado = null;
     if (mesCompletoPorRegimen.length > 0) {
       const elegido = mesCompletoPorRegimen[mesCompletoPorRegimen.length - 1];
+     
       const key = `${elegido.regimen}|${elegido.sistema_salud}|${elegido.tipo_contrato}`;
       regimenAsignado = key;
 
@@ -92,6 +96,7 @@ function calcularMesesComputablesSemestre(contratos, periodo, anio) {
           attrs: {
             fecha_inicio: elegido.fecha_inicio,
             fecha_fin: elegido.fecha_fin,
+            fecha_terminacion_anticipada: elegido.fecha_terminacion_anticipada,
             regimen: elegido.regimen,
             sistema_salud: elegido.sistema_salud,
             tipo_contrato: elegido.tipo_contrato,
@@ -117,6 +122,7 @@ function calcularMesesComputablesSemestre(contratos, periodo, anio) {
   const porRegimen = Array.from(contadores.values()).map(x => ({
     fecha_inicio: x.attrs.fecha_inicio,
     fecha_fin: x.attrs.fecha_fin,
+    fecha_terminacion_anticipada: x.attrs.fecha_terminacion_anticipada,
     regimen: x.attrs.regimen,
     meses: x.meses,
     factor: x.attrs.factor,

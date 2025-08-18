@@ -1,22 +1,25 @@
+import { useState } from "react";
 import { LoaderCircle } from "lucide-react";
-import { useEffect, useState } from "react";
 import Filtro from "../components/Filtro";
 import ListaGratificacion from "../components/ListaGratificacion";
 import gratificacionService from "../services/gratificacionService";
-import { viFiltro, viGratificacion } from "../utils/valorInicial";
+import { viGratificacion } from "../utils/valorInicial";
+import { format } from "date-fns";
 
 const GestionGratificacion = () => {
     // ?? loading
     const [loading, setLoading] = useState(false);
+
     // ?? Data
     const [gratificacion, setGratificacion] = useState(viGratificacion);
     const [filtroGratificacion, setFiltroGratificacion] = useState(viGratificacion);//* Data Filtrada
 
+    const periodo = format(new Date(), 'MM-dd') < '07-01' ? 'JULIO' : 'DICIEMBRE'
+    
     // ?? Filtro para la peticion
-    const [filtro, setFiltro] = useState(viFiltro);
-
-    // ?? Filtro para la tabla
-    const [filtroTrabajador, setFiltroTrabajador] = useState("");
+    const [filtro, setFiltro] = useState({
+        anio: (new Date().getFullYear())+"", periodo: periodo, filial_id: "1" 
+    });
 
     const fetchGratificacion = async () => {
         try {
@@ -35,9 +38,6 @@ const GestionGratificacion = () => {
         fetchGratificacion();
     };
 
-    useEffect(() => {
-
-    }, []);
 
     return (
         <div className="min-h-full flex-1  flex flex-col items-center">
