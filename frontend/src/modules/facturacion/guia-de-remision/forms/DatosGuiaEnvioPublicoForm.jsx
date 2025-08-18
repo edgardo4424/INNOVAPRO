@@ -190,29 +190,42 @@ const DatosGuiaEnvioPublicoForm = () => {
                     >
                         Código de Traslado
                     </Label>
-                    <Input
-                        type="text"
-                        id="guia_Envio_Cod_Traslado"
+                    <Select
                         name="guia_Envio_Cod_Traslado"
                         value={guia_Envio_Cod_Traslado}
-                        onChange={handleChange}
-                        className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
-                    />
+                        onValueChange={(e) => {
+                            handleSelectChange(e, "guia_Envio_Cod_Traslado");
+                        }}
+                    >
+                        <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> {/* Estilo de borde mejorado */}
+                            <SelectValue placeholder="Selecciona un codigo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="01">01 - Venta</SelectItem>
+                            <SelectItem value="02">02 - Compra</SelectItem>
+                            <SelectItem value="04">04 - Consignación</SelectItem>
+                            <SelectItem value="05">05 - Devolución</SelectItem>
+                            <SelectItem value="06">06 - Recojo de bienes transformados</SelectItem>
+                            <SelectItem value="07">07 - Traslado entre establecimientos de la misma empresa</SelectItem>
+                            <SelectItem value="08">08 - Importación</SelectItem>
+                            <SelectItem value="09">09 - Exportación</SelectItem>
+                            <SelectItem value="13">13 - Otros</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
-                <div>
+                <div className="col-span-2">
                     <Label
                         htmlFor="guia_Envio_Cod_Traslado"
                         className="block text-sm font-semibold text-gray-700 text-left mb-1"
                     >
-                        Código de Traslado
+                        Descripción de Traslado
                     </Label>
                     <Input
                         type="text"
                         id="guia_Envio_Des_Traslado"
                         name="guia_Envio_Des_Traslado"
                         value={guia_Envio_Des_Traslado}
-                        // onChange={handleChange}
-
+                        onChange={handleChange}
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                     />
                 </div>

@@ -1,9 +1,9 @@
-module.exports = async (facturaRepository) => {
+module.exports = async (guiaRemisionRepository) => {
     // * Llamamos al repositorio para obtener todas las facturas
-    const ultimosCorrelativos = await facturaRepository.correlativo();
+    const {correlativo_guia} = await guiaRemisionRepository.correlativo();
 
     // ? si no encuenta  ningun correlativo
-    if (!ultimosCorrelativos)
+    if (!correlativo_guia)
         return {
             codigo: 200,
             respuesta: {
@@ -19,7 +19,7 @@ module.exports = async (facturaRepository) => {
         respuesta: {
             mensaje: "Se encontro correctamente los correlativo",
             estado: true,
-            correlativos: ultimosCorrelativos,
+            correlativos: String(correlativo_guia),
         },
     };
 };

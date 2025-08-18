@@ -9,7 +9,7 @@ const GuiaRemision = sequelize.define(
             autoIncrement: true,
             primaryKey: true,
         },
-        tipo_doc: {
+        tipo_Doc: {
             type: DataTypes.STRING,
             allowNull: false,
         },
@@ -25,67 +25,67 @@ const GuiaRemision = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
-        fecha_emision: {
+        fecha_Emision: {
             type: DataTypes.DATE,
             allowNull: false,
         },
-        empresa_ruc: {
+        empresa_Ruc: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        cliente_tipo_doc: {
+        cliente_Tipo_Doc: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        cliente_num_doc: {
+        cliente_Num_Doc: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        cliente_razon_social: {
+        cliente_Razon_Social: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        cliente_direccion: {
+        cliente_Direccion: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        guia_envio_cod_traslado: {
+        guia_Envio_Cod_Traslado: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        guia_envio_mod_traslado: {
+        guia_Envio_Mod_Traslado: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        guia_envio_peso_total: {
+        guia_Envio_Peso_Total: {
             type: DataTypes.DECIMAL(10, 2),
             allowNull: true,
         },
-        guia_envio_und_peso_total: {
+        guia_Envio_Und_Peso_Total: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        guia_envio_fec_traslado: {
+        guia_Envio_Fec_Traslado: {
             type: DataTypes.DATE,
             allowNull: true,
         },
-        guia_envio_partida_ubigeo: {
+        guia_Envio_Partida_Ubigeo: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        guia_envio_partida_direccion: {
+        guia_Envio_Partida_Direccion: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        guia_envio_llegada_ubigeo: {
+        guia_Envio_Llegada_Ubigeo: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        guia_envio_llegada_direccion: {
+        guia_Envio_Llegada_Direccion: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        estado_documento: {
+        estado_Documento: {
             type: DataTypes.STRING,
             allowNull: true,
         },
@@ -93,7 +93,7 @@ const GuiaRemision = sequelize.define(
             type: DataTypes.BOOLEAN,
             allowNull: true,
         },
-        id_base_dato: {
+        id_Base_Dato: {
             type: DataTypes.STRING,
             allowNull: true,
         },
@@ -101,27 +101,27 @@ const GuiaRemision = sequelize.define(
             type: DataTypes.INTEGER,
             allowNull: true,
         },
-        guia_envio_des_traslado: {
+        guia_Envio_Des_Traslado: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        guia_envio_vehiculo_placa: {
+        guia_Envio_Vehiculo_Placa: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        guia_envio_partida_ruc: {
+        guia_Envio_Partida_Ruc: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        guia_envio_partida_cod_local: {
+        guia_Envio_Partida_Cod_Local: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        guia_envio_llegada_ruc: {
+        guia_Envio_Llegada_Ruc: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        guia_envio_llegada_cod_local: {
+        guia_Envio_Llegada_Cod_Local: {
             type: DataTypes.STRING,
             allowNull: true,
         },

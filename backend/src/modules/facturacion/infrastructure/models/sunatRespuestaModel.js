@@ -11,7 +11,7 @@ const SunatRespuesta = sequelize.define(
         },
         factura_id: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true,
             references: {
                 model: "facturas",
                 key: "id",
@@ -35,7 +35,7 @@ const SunatRespuesta = sequelize.define(
         },
         hash: {
             type: DataTypes.TEXT,
-            allowNull: false,
+            allowNull: true,
         },
         cdr_zip: {
             type: DataTypes.TEXT,
@@ -43,19 +43,19 @@ const SunatRespuesta = sequelize.define(
         },
         sunat_success: {
             type: DataTypes.BOOLEAN,
-            allowNull: false,
+            allowNull: true,
         },
         cdr_response_id: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         cdr_response_code: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         cdr_response_description: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         created_at: {
             type: DataTypes.DATE,

@@ -15,7 +15,7 @@ import { useEffect, useMemo, useState } from "react";
 const DatosGuiaEnvioPrivadoForm = () => {
     const { guiaTransporte, setGuiaTransporte } = useGuiaTransporte();
 
-    // Estados locales para los inputs de ubigeo y su visibilidad de sugerencias
+    // ?? Estados locales para los inputs de ubigeo y su visibilidad de sugerencias
     const [partidaUbigeoInput, setPartidaUbigeoInput] = useState('');
     const [showPartidaSuggestions, setShowPartidaSuggestions] = useState(false);
 
@@ -87,7 +87,6 @@ const DatosGuiaEnvioPrivadoForm = () => {
     }, [partidaUbigeoInput]);
 
     const handleSelectPartidaUbigeo = (ubigeo) => {
-        console.log("el pto ubigeo de mrd que no se coloca bn mrd", ubigeo);
         setPartidaUbigeoInput(`${ubigeo.DISTRITO}, ${ubigeo.PROVINCIA}, ${ubigeo.DEPARTAMENTO}`);
         setGuiaTransporte((prevGuiaTransporte) => ({
             ...prevGuiaTransporte,
@@ -134,7 +133,6 @@ const DatosGuiaEnvioPrivadoForm = () => {
     }, [llegadaUbigeoInput]);
 
     const handleSelectLlegadaUbigeo = (ubigeo) => {
-        console.log("el pto ubigeo de mrd que no se coloca bn mrd", ubigeo)
         setLlegadaUbigeoInput(`${ubigeo.DISTRITO}, ${ubigeo.PROVINCIA}, ${ubigeo.DEPARTAMENTO}`);
         setGuiaTransporte((prevGuiaTransporte) => ({
             ...prevGuiaTransporte,
@@ -147,10 +145,6 @@ const DatosGuiaEnvioPrivadoForm = () => {
         if (llegadaUbigeoInput.length > 0) {
             setShowLlegadaSuggestions(true);
         }
-    };
-
-    const handleLlegadaBlur = () => {
-        setTimeout(() => setShowLlegadaSuggestions(false), 100);
     };
 
     const handleChange = (e) => {
@@ -192,14 +186,28 @@ const DatosGuiaEnvioPrivadoForm = () => {
                     >
                         Código de Traslado
                     </Label>
-                    <Input
-                        type="text"
-                        id="guia_Envio_Cod_Traslado"
+                    <Select
                         name="guia_Envio_Cod_Traslado"
                         value={guia_Envio_Cod_Traslado}
-                        onChange={handleChange}
-                        className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
-                    />
+                        onValueChange={(e) => {
+                            handleSelectChange(e, "guia_Envio_Cod_Traslado");
+                        }}
+                    >
+                        <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> {/* Estilo de borde mejorado */}
+                            <SelectValue placeholder="Selecciona un codigo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="01">01 - Venta</SelectItem>
+                            <SelectItem value="02">02 - Compra</SelectItem>
+                            <SelectItem value="04">04 - Consignación</SelectItem>
+                            <SelectItem value="05">05 - Devolución</SelectItem>
+                            <SelectItem value="06">06 - Recojo de bienes transformados</SelectItem>
+                            <SelectItem value="07">07 - Traslado entre establecimientos de la misma empresa</SelectItem>
+                            <SelectItem value="08">08 - Importación</SelectItem>
+                            <SelectItem value="09">09 - Exportación</SelectItem>
+                            <SelectItem value="13">13 - Otros</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
                 <div>
                     <Label
@@ -208,58 +216,69 @@ const DatosGuiaEnvioPrivadoForm = () => {
                     >
                         Modalidad de Traslado
                     </Label>
-                    <Input
-                        type="text"
-                        id="guia_Envio_Mod_Traslado"
+                    <Select
                         name="guia_Envio_Mod_Traslado"
                         value={guia_Envio_Mod_Traslado}
-                        onChange={handleChange}
-                        className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
-                    />
-                </div>
-                <div>
-                    <Label
-                        htmlFor="guia_Envio_Peso_Total"
-                        className="block text-sm font-semibold text-gray-700 text-left mb-1"
-                    >
-                        Peso Total
-                    </Label>
-                    <Input
-                        type="number"
-                        id="guia_Envio_Peso_Total"
-                        name="guia_Envio_Peso_Total"
-                        value={guia_Envio_Peso_Total}
-                        onChange={handleChange}
-                        className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
-                        step="0.01"
-                    />
-                </div>
-                <div>
-                    <Label
-                        htmlFor="guia_Envio_Und_Peso_Total"
-                        className="block text-sm font-semibold text-gray-700 text-left mb-1"
-                    >
-                        Unidad de Peso
-                    </Label>
-                    <Select
-                        name="guia_Envio_Und_Peso_Total"
-                        value={guia_Envio_Und_Peso_Total}
-                        onValueChange={(e) => {
-                            handleSelectChange(e, "guia_Envio_Und_Peso_Total");
-                        }}
+                        // onValueChange={(e) => {
+                        //     handleSelectChange(e, "guia_Envio_Mod_Traslado");
+                        // }}
+                        disabled
                     >
                         <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> {/* Estilo de borde mejorado */}
-                            <SelectValue placeholder="Selecciona un unidad de peso" />
+                            <SelectValue placeholder="Selecciona un codigo" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="KGM">KGM - Kilogramo</SelectItem>
-                            <SelectItem value="TNE">TNE - Tonelada</SelectItem>
-                            <SelectItem value="GRM">GRM - Gramo</SelectItem>
-                            <SelectItem value="LBR">LBR - Libra</SelectItem>
-                            <SelectItem value="ONZ">ONZ - Onza</SelectItem>
+                            <SelectItem value="01">01 - Transporte público</SelectItem>
+                            <SelectItem value="02">02 - Transporte privado</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
+                <div className="flex gap-x-2">
+                    <div>
+                        <Label
+                            htmlFor="guia_Envio_Peso_Total"
+                            className="block text-sm font-semibold text-gray-700 text-left mb-1"
+                        >
+                            Peso Total
+                        </Label>
+                        <Input
+                            type="number"
+                            id="guia_Envio_Peso_Total"
+                            name="guia_Envio_Peso_Total"
+                            value={guia_Envio_Peso_Total || ""}
+                            onChange={handleChange}
+                            className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
+                            step="0.01"
+                        />
+                    </div>
+                    <div>
+                        <Label
+                            htmlFor="guia_Envio_Und_Peso_Total"
+                            className="block text-sm font-semibold text-gray-700 text-left mb-1"
+                        >
+                            Unidad de Peso
+                        </Label>
+                        <Select
+                            name="guia_Envio_Und_Peso_Total"
+                            value={guia_Envio_Und_Peso_Total}
+                            onValueChange={(e) => {
+                                handleSelectChange(e, "guia_Envio_Und_Peso_Total");
+                            }}
+                        >
+                            <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> {/* Estilo de borde mejorado */}
+                                <SelectValue placeholder="Selecciona un unidad de peso" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="KGM">KGM - Kilogramo</SelectItem>
+                                <SelectItem value="TNE">TNE - Tonelada</SelectItem>
+                                <SelectItem value="GRM">GRM - Gramo</SelectItem>
+                                <SelectItem value="LBR">LBR - Libra</SelectItem>
+                                <SelectItem value="ONZ">ONZ - Onza</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+
                 <div>
                     <Label
                         htmlFor="guia_Envio_Fec_Traslado"

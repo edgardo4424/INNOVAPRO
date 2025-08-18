@@ -36,7 +36,6 @@ class SequelizeGuiaRemisionRepository {
                 throw new Error("No se pudo crear la Guia de Remision.");
             }
             createdGuia.guia = guia;
-            console.log("GUIA CREADA", guia);
 
             // * 2. Crear los Detalles de la Guia
             const createdDetalles = [];
@@ -90,8 +89,8 @@ class SequelizeGuiaRemisionRepository {
             // * Si todas las operaciones fueron exitosas, confirma la transacción.
             await transaction.commit();
             return {
-                suscess: true,
-                message: "Factura y sus componentes creados con éxito.",
+                success: true,
+                message: "Guia de Remision y sus componentes creados con éxito.",
                 data: createdGuia
             }
         } catch (error) {
@@ -111,13 +110,9 @@ class SequelizeGuiaRemisionRepository {
     }
 
     async correlativo() {
-        const correlativoGuia = await GuiaRemision.max('correlativo', {
-            where: {
-                estado: 'EMITIDA'
-            }
-        });
+        const correlativoGuia = await GuiaRemision.max('correlativo');
         return {
-            guia: correlativoGuia + 1
+            correlativo_guia: SequelizeGuiaRemisionRepository.toNumber(correlativoGuia) + 1
         }
     }
 }

@@ -11,27 +11,30 @@ export function GuiaTransporteProvider({ children }) {
 
     const [tipoGuia, setTipoGuia] = useState(null);
 
-    const validarPaso = async (paso) => {
+    const validarGuia = async (paso) => {
         try {
             const { errores, validos, message } = await validarFormulario(tipoGuia, guiaTransporte);
 
-            if (errores && Object.keys(errores).length > 0) {
-                setGuiaTransporteValida((prev) => ({
-                    ...prev,
-                    ...errores,
-                }));
+            if (!validos) {
+                // Encuentra el primer error y lo muestra en un toast
+                const primerError = Object.values(errores)[0];
+                if (primerError) {
+                    toast.error(primerError);
+                } else {
+                    toast.error("El formulario contiene errores. Revise los campos.");
+                }
+
+                // Opcional: Si quieres guardar todos los errores en el estado
+                setGuiaTransporteValida(errores);
+
+                return false;
             } else {
-                setGuiaTransporteValida(null);
+                toast.success(message);
+                // El formulario es válido
+                setGuiaTransporteValida({}); // Limpia los errores del estado si todo es válido
+                return true;
             }
 
-            if (!validos && message) {
-                toast.error(message);
-                return false;
-            } else if (validos && message) {
-                // Optionally, show a success toast if validation passes
-                // toast.success(message);
-            }
-            return validos;
         } catch (error) {
             toast.error(error.message || "Error al validar la guía de remisión.");
             return false;
@@ -40,15 +43,14 @@ export function GuiaTransporteProvider({ children }) {
 
     const EmitirGuia = async () => {
         try {
-            const { status, succes, message, data } = await factilizaService.enviarGuia(guiaTransporte)
-            console.log(status, succes, message, data);
-            return { success: true, message, data };
+            const { status, success, message, data } = await factilizaService.enviarGuia(guiaTransporte)
+            console.log(status, success, message, data);
+            return { success, message, data, status };
         } catch (error) {
             console.error(error);
-            return error;
+            return { success: false, message:error.response.data.message, data: null, status: error.response.status };
         }
     }
-
 
 
     return (
@@ -58,7 +60,7 @@ export function GuiaTransporteProvider({ children }) {
                 setGuiaTransporte,
                 guiaTransporteValida,
                 setGuiaTransporteValida,
-                validarPaso,
+                validarGuia,
                 setTipoGuia,
                 EmitirGuia
             }}

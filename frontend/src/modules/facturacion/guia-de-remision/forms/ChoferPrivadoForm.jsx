@@ -57,27 +57,16 @@ const ChoferPrivadoForm = () => {
         }
 
         try {
-            const promise = factilizaService.metodoOpcional(
-                "licencia",
-                chofer.nro_doc
-            );
+            const { data: data_inf, status: status_inf, success: suscces_inf } = await factilizaService.obtenerPersonaPorDni(chofer.nro_doc);
 
-            toast.promise(
-                promise,
-                {
-                    loading: "Buscando información del chofer...",
-                    success: "Información del chofer encontrada exitosamente.",
-                    error: "Ocurrió un error al buscar la información del chofer. Intenta de nuevo.",
-                }
-            );
+            const { data: data_lic, status: status_lic, success: suscces_lic } = await factilizaService.obtenerLicenciaPorDni(chofer.nro_doc);
 
-            const { data, status, success } = await promise;
-
-            if (status === 200 && success) {
-                // Asegúrate de que los nombres de las propiedades coincidan con la respuesta de tu API
-                const nombres = data.nombres || '';
-                const apellidos = `${data.apellido_paterno || ''} ${data.apellido_materno || ''}`.trim();
-                const licencia = data.licencia?.numero || data.lincencia?.numero || ''; // Ajuste para posible typo en 'lincencia'
+            if (status_inf == 200 && status_lic == 200) {
+                toast.success('Chofer Encontrado')
+                // ?? Asegúrate de que los nombres de las propiedades coincidan con la respuesta de tu API
+                const nombres = data_inf.nombres || '';
+                const apellidos = `${data_inf.apellido_paterno || ''} ${data_inf.apellido_materno || ''}`.trim();
+                const licencia = data_lic.licencia?.numero || ''; 
 
                 setGuiaTransporte((prev) => ({
                     ...prev,

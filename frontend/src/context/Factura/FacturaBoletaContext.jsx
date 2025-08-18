@@ -2,8 +2,8 @@ import { FacturaValidarEstados, PagoValidarEstados, ProductoValidarEstados, valo
 import factilizaService from "@/modules/facturacion/service/FactilizaService";
 import facturaService from "@/modules/facturacion/service/FacturaService";
 import numeroALeyenda from "@/modules/facturacion/utils/numeroALeyenda";
-import { validarModal } from "@/modules/facturacion/utils/validarModal";
-import { validarPasos } from "@/modules/facturacion/utils/validarPasos";
+import { validarModal } from "@/modules/facturacion/factura-boleta/utils/validarModal";
+import { validarPasos } from "@/modules/facturacion/factura-boleta/utils/validarPasos";
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -349,8 +349,6 @@ export function FacturaBoletaProvider({ children }) {
 
                 const facturaCopia = { ...factura, estado: "EMITIDA", sunat_respuesta: sunat_respuest };
                 // ?Intentar registrar en base de datos
-                console.log("*************************FACTURA EMITIDA*************************");
-                console.log(facturaCopia);
                 const dbResult = await registrarBaseDatos(facturaCopia);
 
                 if (dbResult.success) {
@@ -359,7 +357,6 @@ export function FacturaBoletaProvider({ children }) {
                     result = { success: false, message: dbResult.mensaje || "Factura emitida a SUNAT, pero no se pudo registrar en la base de datos.", data: facturaCopia };
                 }
             } else {
-                console.error("*****MEGA ERROR ALV: ", status, success, message, data, "*****",);
                 result = { success: false, message: message, detailed_message: data.error.message || "Error desconocido al enviar la factura.", data: null };
             }
         } catch (error) {
@@ -390,8 +387,6 @@ export function FacturaBoletaProvider({ children }) {
                     return toast.error("Para crear un borrador, por favor complete los datos del comprobante y del cliente.")
                 }
             }
-            console.log("*************************REGISTRANDO EN BASE DE DATOS*************************");
-            console.log(documento);
             const { status, success } = await toast.promise(
                 facturaService.registrarFactura(documento),
                 {

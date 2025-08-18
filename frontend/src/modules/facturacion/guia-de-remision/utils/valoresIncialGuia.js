@@ -3,7 +3,7 @@
 const guiaPrivada = {
     tipo_Doc: "09",
     serie: "T001",
-    correlativo: "1",
+    correlativo: "",
     observacion: "",
     fecha_Emision: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
 
@@ -18,7 +18,7 @@ const guiaPrivada = {
     guia_Envio_Mod_Traslado: "02",
     guia_Envio_Peso_Total: 1.56,
     guia_Envio_Und_Peso_Total: "KGM",
-    guia_Envio_Fec_Traslado: "",
+    guia_Envio_Fec_Traslado: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
 
     guia_Envio_Vehiculo_Placa: "AXI325",
 
@@ -35,10 +35,10 @@ const guiaPrivada = {
         {
             tipo: "",
             tipo_doc: "1",
-            nro_doc: "44004477",
-            licencia: "0001122085",
-            nombres: "JUAN PEREZ",
-            apellidos: "BENITO CRUZ",
+            nro_doc: "10400310",
+            licencia: "",
+            nombres: "",
+            apellidos: "",
         },
     ],
     detalle: [

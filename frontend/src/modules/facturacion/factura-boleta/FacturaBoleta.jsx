@@ -64,8 +64,8 @@ const FacturaBoleta = () => {
         }
     };
     return (
-        <div className="min-h-screen w-full flex flex-col items-center px-4 md:px-8 py-6">
-            <div className="w-full max-w-6xl">
+        <div className="min-h-screen w-full flex flex-col items-center px-4 md:px-8 py-6 bg-gray-100">
+            <div className="w-full max-w-6xl ">
                 <div className="flex items-center justify-between mb-6 ">
                     <h2 className="text-2xl md:text-3xl font-bold text-blue-600">
                         Generar Factura / Boleta
@@ -75,7 +75,7 @@ const FacturaBoleta = () => {
 
                 {/* Form content */}
                 <div
-                    className=" shadow-xl border border-gray-400  rounded-3xl  p-4  transition-all duration-300 mb-6"
+                    className=" shadow-xl border bg-white border-gray-400  rounded-3xl  p-4  transition-all duration-300 mb-6"
                 >
                     {/* Form */}
                     {/* Datos del comprobante */}

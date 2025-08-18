@@ -19,6 +19,7 @@ router.get("/mtc", facturaController.obtenerMTCconRuc);
 
 // * GUIA DE REMISION
 router.post("/guia-remision/crear", guiaRemisionController.crearGuiaRemision);
+router.get("/guia-remision/correlativo", guiaRemisionController.obtenerCorrelativo);
 
 // * NOTA DE CREDITO
 module.exports = router;

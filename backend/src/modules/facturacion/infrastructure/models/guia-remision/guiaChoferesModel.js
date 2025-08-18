@@ -18,31 +18,31 @@ const GuiaChoferes = sequelize.define(
         },
         tipo_doc: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         nro_doc: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         nombres: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         tipo: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         licencia: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         apellidos: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         nro_mtc: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
     },
     {

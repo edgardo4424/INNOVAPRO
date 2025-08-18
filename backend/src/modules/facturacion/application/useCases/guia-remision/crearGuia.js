@@ -16,20 +16,21 @@ module.exports = async (body, guiaRemisionRepository) => {
     const { detalle, chofer, sunat_respuesta, ...guia } = body;
 
     const guiaRemision = {
-        detalles: detalle,
-        choferes: chofer,
+        detalle: detalle,
+        chofer: chofer,
         sunat_respuesta
     }
 
     guiaRemision.guia = guia;
-    const resultadoCreacion = await guiaRemisionRepository.crear(guiaRemision);
+    const { success, message, data: resultadoCreacion } = await guiaRemisionRepository.crear(guiaRemision);
 
-    if (!resultadoCreacion.success) {
+    console.log("resultadoCreacion", success, message, resultadoCreacion);
+    if (!success) {
         return {
             codigo: 400,
             respuesta: {
-                success: false,
-                message: "La guia de remision no se creo correctamente.",
+                success: success,
+                message: message || "La guia de remision no se creo correctamente.",
                 data: null,
                 status: 400
             }
@@ -39,8 +40,8 @@ module.exports = async (body, guiaRemisionRepository) => {
     return {
         codigo: 201,
         respuesta: {
-            success: true,
-            message: "La guia de remision se creo correctamente.",
+            success: success,
+            message: message || "La guia de remision se creo correctamente.",
             data: null,
             status: 201
         }

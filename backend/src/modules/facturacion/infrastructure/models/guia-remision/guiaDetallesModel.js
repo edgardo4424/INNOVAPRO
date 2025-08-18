@@ -25,7 +25,7 @@ const GuiaDetalles = sequelize.define(
             type: DataTypes.DECIMAL(10, 2),
             allowNull: false,
         },
-        cod_producto: {
+        cod_Producto: {
             type: DataTypes.STRING,
             allowNull: false,
         },

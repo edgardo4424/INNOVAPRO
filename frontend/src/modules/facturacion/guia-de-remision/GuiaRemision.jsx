@@ -17,9 +17,6 @@ const GuiaRemision = () => {
 
     const [loading, setLoading] = useState(true);
 
-
-    const [showTooltip, setShowTooltip] = useState(false);
-
     const asignacionGuia = () => {
 
         if (tipoGuia == "transporte-privado") {
@@ -63,19 +60,6 @@ const GuiaRemision = () => {
         }
     };
 
-    const getTooltipContent = (tipo) => {
-        switch (tipo) {
-            case 'transporte-privado':
-                return 'Aquí puedes generar la guía para el transporte de mercancías utilizando tu propia flota o vehículos.';
-            case 'transporte-publico':
-                return 'Esta sección te permite emitir guías de remisión cuando la mercancía es enviada a través de una empresa de transporte público.';
-            case 'traslado-misma-empresa':
-                return 'Utiliza esta opción para registrar el movimiento de bienes entre diferentes sucursales o almacenes de tu misma empresa.';
-            default:
-                return 'No se pudo obtener el contenido del tooltip';
-        }
-    };
-
 
     // Si la plantilla aún no se ha cargado (ej. tipo no válido o aún cargando)
     if (loading && guiaTransporte === null) {
@@ -111,7 +95,6 @@ const GuiaRemision = () => {
 
     // Si llegamos aquí, guiaTransporte ya tiene la plantilla cargada
     const tituloPagina = getTituloGuia(tipoGuia);
-    const tooltipText = getTooltipContent(tipoGuia);
 
     return (
         <div className="min-h-screen w-full flex flex-col items-center  md:px-8 py-6 bg-gray-100">
@@ -121,32 +104,6 @@ const GuiaRemision = () => {
                         {tituloPagina}
                     </h2>
                 </div>
-
-                <div className="flex items-center justify-between  p-3 flex-col">
-                    <div className='flex items-center gap-3'>
-                        <p className="text-gray-700 text-sm md:text-lg">
-                            Estás generando una guía de remisión para:{' '}
-                            <span className="font-semibold text-blue-700">
-                                {tipoGuia.replace(/-/g, ' ').toUpperCase()}
-                            </span>
-                        </p>
-                        <div
-                            className="relative flex items-center group cursor-help "
-                            onMouseEnter={() => setShowTooltip(true)}
-                            onMouseLeave={() => setShowTooltip(false)}
-                        >
-                            <Info className="text-blue-500 w-5 h-5" />
-                            {showTooltip && (
-                                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 p-3 bg-gray-800 text-white md:text-sm  text-xs rounded-md shadow-lg z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ">
-                                    {tooltipText}
-                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 w-3 h-3 bg-gray-800 rotate-45 transform origin-bottom-left -mb-1"></div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-
 
                 {tipoGuia === 'transporte-privado' ? (
                     <GuiaPrivado />

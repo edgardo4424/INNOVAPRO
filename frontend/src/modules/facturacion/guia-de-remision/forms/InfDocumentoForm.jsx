@@ -8,15 +8,32 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar22 } from "../../factura-boleta/components/Calendar22";
 import { useGuiaTransporte } from "@/context/Factura/GuiaTransporteContext";
+import { LoaderCircle, Search, SquarePen } from "lucide-react";
+import { useState } from "react";
+import { Calendar22 } from "../../factura-boleta/components/Calendar22";
+import facturaService from "../../service/FacturaService";
+import { toast } from "react-toastify";
 
 const InfDocumentoForm = () => {
 
     const { guiaTransporte, setGuiaTransporte } = useGuiaTransporte();
 
     const { tipo_Doc, serie, correlativo, observacion } = guiaTransporte;
+    const [correlativoEstado, setCorrelativoEstado] = useState(false);
+    const [serieEstado, setSerieEstado] = useState(false);
+    const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
 
+
+    const activarCorrelativo = (e) => {
+        e.preventDefault();
+        setCorrelativoEstado(!correlativoEstado);
+    }
+    const activarSerie = (e) => {
+        console.log("clicl")
+        e.preventDefault();
+        setSerieEstado(!serieEstado);
+    }
     const handleChange = (e) => {
         const { name, value } = e.target;
         const newValue = typeof value === 'string' ? value.toUpperCase() : value;
@@ -31,6 +48,33 @@ const InfDocumentoForm = () => {
             ...prevValores,
             [name]: value,
         }));
+    };
+
+
+    const buscarCorrelativo = async (e) => {
+        e.preventDefault();
+        try {
+            setLoadingCorrelativo(true);
+            // Lógica para buscar el correlativo
+            const { mensaje, estado, correlativos } = await facturaService.obtenerCorrelativoGuia();
+
+
+            if (estado) {
+                setGuiaTransporte({
+                    ...guiaTransporte,
+                    correlativo: correlativos
+                })
+            }
+
+            setCorrelativoEstado(false);
+            setLoadingCorrelativo(false);
+
+        } catch (error) {
+            toast.error('Error al obtener el correlativo: ' + error.message);
+            setLoadingCorrelativo(false);
+        } finally {
+            setLoadingCorrelativo(false);
+        }
     };
 
     return (
@@ -71,14 +115,20 @@ const InfDocumentoForm = () => {
                     >
                         Serie
                     </Label>
-                    <Input
-                        type="text"
-                        id="serie"
-                        name="serie"
-                        value={serie}
-                        onChange={handleChange}
-                        className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none text-sm"
-                    />
+                    <div className="relative w-full">
+                        <Input
+                            type="text"
+                            id="serie"
+                            name="serie"
+                            className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none text-sm"
+                            value={serie}
+                            onChange={handleChange}
+                            disabled={!serieEstado}
+                        />
+                        <button onClick={activarSerie} className={`absolute right-2 top-1/2 transform -translate-y-1/2 ${serieEstado ? "text-blue-500" : "text-gray-400"} `}>
+                            <SquarePen />
+                        </button>
+                    </div>
                 </div>
                 <div>
                     <Label
@@ -87,14 +137,28 @@ const InfDocumentoForm = () => {
                     >
                         Correlativo
                     </Label>
-                    <Input
-                        type="text"
-                        id="correlativo"
-                        name="correlativo"
-                        value={correlativo}
-                        onChange={handleChange}
-                        className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none text-sm"
-                    />
+                    <div className="flex justify-between gap-x-2">
+                        <div className="relative w-full">
+                            <Input
+                                type="text"
+                                id="correlativo"
+                                name="correlativo"
+                                value={correlativo}
+                                onChange={handleChange}
+                                disabled={!correlativoEstado}
+                                className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none text-sm"
+                            />
+                            <button onClick={activarCorrelativo} className={`absolute right-2 top-1/2 transform -translate-y-1/2 ${correlativoEstado ? "text-blue-500" : "text-gray-400"} `}>
+                                <SquarePen />
+                            </button>
+                        </div>
+                        <button className={`bg-blue-500 hover:bg-blue-600  cursor-pointer  text-white rounded-md px-2 `}
+                            disabled={correlativoEstado}
+                        onClick={(e) => buscarCorrelativo(e)}
+                        >
+                            {loadingCorrelativo ? <LoaderCircle className="w-4 h-4 animate-spin" /> : <Search />}
+                        </button>
+                    </div>
                 </div>
                 <div className="col-span-1 md:col-span-2 lg:col-span-2">
                     <Label
