@@ -51,28 +51,9 @@ import {
 } from "lucide-react";
 import beneficiosService from "../services/beneficiosService";
 import { toast } from "sonner";
+import { formatoDinero } from "../utils/formatoDinero";
+import { formatoFechaBeneficios } from "../utils/formatoFechaBeneficios";
 
-// --------- helpers ----------
-const formatMoney = (v) =>
-   Number(v ?? 0).toLocaleString("es-PE", {
-      style: "currency",
-      currency: "PEN",
-      minimumFractionDigits: 2,
-   });
-
-const formatDate = (iso) => {
-   try {
-      const d = new Date(iso);
-      if (Number.isNaN(d.getTime())) return iso;
-      return d.toLocaleDateString("es-PE", {
-         year: "numeric",
-         month: "2-digit",
-         day: "2-digit",
-      });
-   } catch {
-      return iso;
-   }
-};
 
 const GestionAdelantoSueldo = () => {
    const [adelantoSueldos, setAdelantoSueldos] = useState([]);
@@ -97,11 +78,9 @@ const GestionAdelantoSueldo = () => {
          setLoading(true);
          const res = await beneficiosService.getAdelantos();
          const trab = await beneficiosService.getTrabajadores();
-         setTrabajadores(trab.data);
          const raw = res?.data?.adelantos_sueldo ?? res?.data ?? [];
          const list = Array.isArray(raw) ? raw : [raw];
-         console.log(list);
-
+         setTrabajadores(trab.data);
          setAdelantoSueldos(list);
       } catch (e) {
          console.log(e);
@@ -179,9 +158,7 @@ const GestionAdelantoSueldo = () => {
             monto: Number(form.monto || 0),
             observacion: form.observacion,
          };
-         if (viewMode === "crear") {
-            console.log(payload);
-            
+         if (viewMode === "crear") {            
             await beneficiosService.crearAdelantoSaldo(payload);
             toast.success('Adelanto de sueldo agregado.')            
          } else if (viewMode === "editar" && editing) { 
@@ -193,8 +170,7 @@ const GestionAdelantoSueldo = () => {
          setDialogOpen(false);
          await fetchAdelantoSueldos();
       } catch (e) {
-        console.log(e);
-        
+        toast.error(e?.response?.data?.message ?? e?.message ?? "No se pudo guardar el adelanto de sueldo");
       }
    };
 
@@ -296,10 +272,10 @@ const GestionAdelantoSueldo = () => {
                                        {t.numero_documento ?? "-"}
                                     </td>
                                     <td className="px-4 py-3">
-                                       {formatDate(b.fecha)}
+                                       {formatoFechaBeneficios(b.fecha)}
                                     </td>
                                     <td className="px-4 py-3">
-                                       {formatMoney(b.monto)}
+                                       {formatoDinero(b.monto)}
                                     </td>
                                     <td
                                        className="px-4 py-3 max-w-[320px] truncate"
@@ -471,7 +447,7 @@ const GestionAdelantoSueldo = () => {
                         />
                         {form.monto && (
                            <p className="text-xs text-gray-500">
-                              Prevista: {formatMoney(form.monto)}
+                              Prevista: {formatoDinero(form.monto)}
                            </p>
                         )}
                      </div>
