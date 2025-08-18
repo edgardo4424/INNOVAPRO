@@ -1,3 +1,5 @@
+// const isGerente = [1, 14].includes(formData.cargo_id);
+
 class Trabajador {
    constructor({
       id,
@@ -11,6 +13,7 @@ class Trabajador {
       quinta_categoria,
       tipo_documento,
       cargo_id,
+      filiales_asignadas,
    }) {
       (this.id = id),
          (this.filial_id = filial_id),
@@ -23,18 +26,27 @@ class Trabajador {
          (this.sistema_pension = sistema_pension),
          (this.quinta_categoria = quinta_categoria),
          (this.cargo_id = cargo_id);
+      this.filiales_asignadas = filiales_asignadas;
    }
 
    validarCamposObligatorios(editar = false) {
       const errores = [];
+      const isGerente = ["1", "14"].includes(this.cargo_id);
       if (editar) {
          if (!this.id) {
             errores.push("El id es inválido");
          }
       }
-      if (this.filial_id <= 0) {
-         errores.push("filial_id inválido");
+      if (isGerente) {
+         if (this.filiales_asignadas.length < 1) {
+            errores.push("Filiales invalidas");
+         }
+      } else {
+         if (this.filial_id <= 0) {
+            errores.push("filial_id inválido");
+         }
       }
+
       if (!this.nombres || !this.apellidos) {
          errores.push("Nombres o apellidos invalidos");
       }
@@ -75,8 +87,9 @@ class Trabajador {
    }
 
    get(editar = false) {
+      const isGerente = ["1","14"].includes(this.cargo_id);
+
       const datos = {
-         filial_id: this.filial_id,
          nombres: this.nombres,
          apellidos: this.apellidos,
          tipo_documento: this.tipo_documento,
@@ -89,6 +102,11 @@ class Trabajador {
       };
       if (editar) {
          datos.trabajador_id = this.id;
+      }
+      if (isGerente) {
+         datos.filiales_asignadas = this.filiales_asignadas;
+      } else {
+         datos.filial_id = this.filial_id;
       }
       return datos;
    }

@@ -8,7 +8,11 @@ const beneficiosService = {
    getTrabajadores:()=>api.get("/trabajadores"),
    crearAdelantoSaldo:(data)=>api.post("/adelanto_sueldo",data),
    editarAdelantoSueldo:(data)=>api.put("/adelanto_sueldo",data),
-   eliminarAdelantoSueldo:(id)=>api.delete(`adelanto_sueldo/${id}`)
+   eliminarAdelantoSueldo:(id)=>api.delete(`adelanto_sueldo/${id}`),
+   crearBono:(data)=>api.post("/bonos",data),
+   editarBono:(data)=>api.put("/bonos",data),
+   eliminarBono:(id)=>api.delete(`/bonos/${id}`)
+
 };
 
 export default beneficiosService;
