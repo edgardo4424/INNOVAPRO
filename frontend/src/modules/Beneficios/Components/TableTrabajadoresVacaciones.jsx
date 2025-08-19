@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Eye } from "lucide-react";
 import DetalleVacacionesModal from "./DetalleVacacionesModal";
+import { obtenerContratoActual } from "../utils/contrato_actual";
 
 const TableTrabajadoresVacaciones = ({ filteredEmployees }) => {
    const fechaIngreso = (contratos) => {
@@ -17,6 +18,7 @@ const TableTrabajadoresVacaciones = ({ filteredEmployees }) => {
       );
       return ordenados[0].fecha_inicio;
    };
+   console.log(filteredEmployees);
 
    return (
       <div className="overflow-x-auto">
@@ -49,6 +51,9 @@ const TableTrabajadoresVacaciones = ({ filteredEmployees }) => {
                      (sum, vac) => sum + vac.dias_vendidos,
                      0
                   );
+                  const filialActual = obtenerContratoActual(
+                     employee.contratos_laborales
+                  );
 
                   return (
                      <tr
@@ -60,7 +65,9 @@ const TableTrabajadoresVacaciones = ({ filteredEmployees }) => {
                               <div className="font-medium">{`${employee.nombres} ${employee.apellidos}`}</div>
                               <div className="text-sm text-gray-500">
                                  Ingreso:{" "}
-                                 {fechaIngreso(employee.contratos_laborales) ? fechaIngreso(employee.contratos_laborales) : "No disponible"}
+                                 {fechaIngreso(employee.contratos_laborales)
+                                    ? fechaIngreso(employee.contratos_laborales)
+                                    : "No disponible"}
                               </div>
                            </div>
                         </td>
@@ -69,14 +76,11 @@ const TableTrabajadoresVacaciones = ({ filteredEmployees }) => {
                               <Tooltip>
                                  <TooltipTrigger asChild>
                                     <div className="truncate text-sm lowercase">
-                                       {
-                                          employee.empresa_proveedora
-                                             .razon_social
-                                       }
+                                       {filialActual.razon_social}
                                     </div>
                                  </TooltipTrigger>
                                  <TooltipContent>
-                                    {employee.empresa_proveedora.razon_social}
+                                    {filialActual.razon_social}
                                  </TooltipContent>
                               </Tooltip>
                            </TooltipProvider>

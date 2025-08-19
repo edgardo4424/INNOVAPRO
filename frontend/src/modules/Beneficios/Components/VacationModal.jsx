@@ -105,6 +105,7 @@ export function VacationModal({ empleados, fetchEmployees }) {
             0
          ),
          contratos_laborales: empleado?.contratos_laborales || [],
+         asignacion_familiar:empleado?.asignacion_familiar||null
       };
 
       try {
