@@ -1,11 +1,8 @@
-import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Facturacion = () => {
-    const [FormSelect, setFormSelect] = useState(1);
-    const [activeTab, setActiveTab] = useState("facturaBoleta"); // New state for active tab
-    const { validarPaso } = useFacturaBoleta();
+const Emitir = () => {
+    const [activeTab, setActiveTab] = useState("facturaBoleta");
 
     const navigate = useNavigate();
 
@@ -31,31 +28,6 @@ const Facturacion = () => {
                             </p>
                         </div>
 
-                        {/* PDF documento */}
-                        {/* <div
-                            className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
-                            onClick={() => console.log("Ver PDF Factura/Boleta")}
-                        >
-                            <h3 className="text-xl font-semibold text-blue-700 mb-2">
-                                Ver PDF Documento
-                            </h3>
-                            <p className="text-gray-600 text-sm">
-                                Visualiza y descarga tus facturas o boletas en formato PDF.
-                            </p>
-                        </div> */}
-
-                        {/* XML documento */}
-                        {/* <div
-                            className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
-                            onClick={() => console.log("Descargar XML Factura/Boleta")}
-                        >
-                            <h3 className="text-xl font-semibold text-blue-700 mb-2">
-                                Descargar XML Documento
-                            </h3>
-                            <p className="text-gray-600 text-sm">
-                                Obtén el archivo XML de tus comprobantes electrónicos.
-                            </p>
-                        </div> */}
                     </div>
                 );
             case "notaCreditoDebito":
@@ -74,31 +46,6 @@ const Facturacion = () => {
                             </p>
                         </div>
 
-                        {/* PDF Nota */}
-                        {/* <div
-                            className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
-                            onClick={() => console.log("Ver PDF Nota")}
-                        >
-                            <h3 className="text-xl font-semibold text-blue-700 mb-2">
-                                Ver PDF Nota
-                            </h3>
-                            <p className="text-gray-600 text-sm">
-                                Visualiza y descarga tus notas en formato PDF.
-                            </p>
-                        </div> */}
-
-                        {/* XML Nota */}
-                        {/* <div
-                            className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
-                            onClick={() => console.log("Descargar XML Nota")}
-                        >
-                            <h3 className="text-xl font-semibold text-blue-700 mb-2">
-                                Descargar XML Nota
-                            </h3>
-                            <p className="text-gray-600 text-sm">
-                                Obtén el archivo XML de tus notas de crédito/débito.
-                            </p>
-                        </div> */}
                     </div>
                 );
             case "guiaRemision":
@@ -143,31 +90,7 @@ const Facturacion = () => {
                             </p>
                         </div>
 
-                        {/* PDF Guia */}
-                        {/* <div
-                            className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
-                            onClick={() => console.log("Ver PDF Guía")}
-                        >
-                            <h3 className="text-xl font-semibold text-blue-700 mb-2">
-                                Ver PDF Guía
-                            </h3>
-                            <p className="text-gray-600 text-sm">
-                                Visualiza y descarga tus guías de remisión en formato PDF.
-                            </p>
-                        </div> */}
 
-                        {/* XML Guia */}
-                        {/* <div
-                            className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
-                            onClick={() => console.log("Descargar XML Guía")}
-                        >
-                            <h3 className="text-xl font-semibold text-blue-700 mb-2">
-                                Descargar XML Guía
-                            </h3>
-                            <p className="text-gray-600 text-sm">
-                                Obtén el archivo XML de tus guías de remisión electrónicas.
-                            </p>
-                        </div> */}
                     </div>
                 );
             default:
@@ -179,8 +102,8 @@ const Facturacion = () => {
         <div className="min-h-screen w-full flex flex-col items-center px-4 md:px-8 py-6 ">
             <div className="w-full max-w-7xl">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-8">
-                    <h2 className="text-3xl md:text-4xl font-extrabold text-blue-700">
+                <div className="flex items-center justify-between mb-3">
+                    <h2 className="text-3xl font-extrabold md:text-2xl">
                         Módulo de Facturación Electrónica
                     </h2>
                 </div>
@@ -193,7 +116,7 @@ const Facturacion = () => {
                             className={`${activeTab === "facturaBoleta"
                                 ? "border-blue-600 text-blue-600"
                                 : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg focus:outline-none`}
+                                } whitespace-nowrap cursor-pointer py-4 px-1 border-b-2 font-medium text-lg focus:outline-none`}
                         >
                             Factura y Boleta
                         </button>
@@ -202,7 +125,7 @@ const Facturacion = () => {
                             className={`${activeTab === "notaCreditoDebito"
                                 ? "border-blue-600 text-blue-600"
                                 : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg focus:outline-none`}
+                                } whitespace-nowrap cursor-pointer py-4 px-1 border-b-2 font-medium text-lg focus:outline-none`}
                         >
                             Notas de Crédito/Débito
                         </button>
@@ -211,7 +134,7 @@ const Facturacion = () => {
                             className={`${activeTab === "guiaRemision"
                                 ? "border-blue-600 text-blue-600"
                                 : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg focus:outline-none`}
+                                } whitespace-nowrap cursor-pointer py-4 px-1 border-b-2 font-medium text-lg focus:outline-none`}
                         >
                             Guías de Remisión
                         </button>
@@ -228,4 +151,4 @@ const Facturacion = () => {
     );
 };
 
-export default Facturacion;
+export default Emitir;

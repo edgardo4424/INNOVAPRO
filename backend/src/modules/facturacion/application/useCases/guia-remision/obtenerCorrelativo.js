@@ -19,7 +19,7 @@ module.exports = async (guiaRemisionRepository) => {
         respuesta: {
             mensaje: "Se encontro correctamente los correlativo",
             estado: true,
-            correlativos: String(correlativo_guia),
+            correlativos: correlativo_guia,
         },
     };
 };

@@ -4,15 +4,15 @@ import { useState } from "react";
 import ModalEnviarGuia from "./ModalEnviarGuia";
 
 export default function ModalVisualizarGuiaPrivada() {
-    // Obtenemos el objeto 'guiaTransporte' de nuestro contexto
+    // ?? Obtenemos el objeto 'guiaTransporte' de nuestro contexto
     const { guiaTransporte } = useGuiaTransporte();
 
-    // Estado para controlar la visibilidad del modal
+    // ?? Estado para controlar la visibilidad del modal
     const [open, setOpen] = useState(false);
 
     const [isOpen, setIsOpen] = useState(false);
 
-    // Funciones para abrir y cerrar el modal
+    // ?? Funciones para abrir y cerrar el modal
     const closeModal = () => {
         setIsOpen(false);
     };
@@ -21,18 +21,18 @@ export default function ModalVisualizarGuiaPrivada() {
         setIsOpen(true);
     };
 
-    // --- Funciones de ayuda para obtener descripciones y formatos ---
+    // ?? --- Funciones de ayuda para obtener descripciones y formatos ---
 
-    // Helper para obtener la descripción del tipo de documento de la guía
+    // ?? Helper para obtener la descripción del tipo de documento de la guía
     const getTipoDocGuiaDescription = (typeCode) => {
         switch (typeCode) {
             case "09": return "GUÍA DE REMISIÓN ELECTRÓNICA";
-            // Puedes añadir más tipos de documentos de guía si los manejas
+            // ?? Puedes añadir más tipos de documentos de guía si los manejas
             default: return "DOCUMENTO DE GUÍA NO ESPECIFICADO";
         }
     };
 
-    // Helper para obtener la descripción del tipo de documento del cliente/destinatario
+    // ?? Helper para obtener la descripción del tipo de documento del cliente/destinatario
     const getClientDocTypeDescription = (typeCode) => {
         switch (typeCode) {
             case "6": return "RUC";
@@ -42,7 +42,7 @@ export default function ModalVisualizarGuiaPrivada() {
         }
     };
 
-    // Helper para obtener la descripción de la modalidad de traslado
+    // ?? Helper para obtener la descripción de la modalidad de traslado
     const getModalidadTrasladoDescription = (code) => {
         switch (code) {
             case "01": return "TRANSPORTE PÚBLICO";
@@ -51,7 +51,7 @@ export default function ModalVisualizarGuiaPrivada() {
         }
     };
 
-    // Helper para obtener la descripción del motivo de traslado
+    // ?? Helper para obtener la descripción del motivo de traslado
     const getMotivoTrasladoDescription = (code) => {
         switch (code) {
             case "01": return "VENTA";
@@ -66,7 +66,7 @@ export default function ModalVisualizarGuiaPrivada() {
         }
     };
 
-    // Helper para formatear fechas (asumiendo formato ISO 8601 como "YYYY-MM-DDTHH:mm:ss-ZZ:ZZ")
+    // ?? Helper para formatear fechas (asumiendo formato ISO 8601 como "YYYY-MM-DDTHH:mm:ss-ZZ:ZZ")
     const formatDate = (dateString) => {
         if (!dateString) return '';
         try {
@@ -74,7 +74,7 @@ export default function ModalVisualizarGuiaPrivada() {
             return date.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
         } catch (e) {
             console.error("Error formatting date:", e);
-            return dateString.split('T')[0]; // Fallback a YYYY-MM-DD si hay error
+            return dateString.split('T')[0]; // ?? Fallback a YYYY-MM-DD si hay error
         }
     };
 

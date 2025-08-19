@@ -6,7 +6,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import ModalVisualizarBorrador from "../components/modal/ModalVisualizarBorrador";
 import facturaService from "../service/FacturaService";
-import FiltroBorradores from "./components/FiltroBorradores";
+import FiltroTabla from "../components/FiltroTabla";
 import PaginacionBorradores from "./components/PaginacionBorradores";
 import TablaBorradores from "./components/TablaBorradores";
 import ModalEliminarBorrador from "./modal/ModalEliminarBorrador";
@@ -148,7 +148,7 @@ const ListaBorradores = () => {
       </div>
 
       {/* --- Contenedor de Filtros --- */}
-      <FiltroBorradores
+      <FiltroTabla
         filtro={filtro}
         setFiltro={setFiltro}
         documentTypes={documentTypes}

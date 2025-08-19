@@ -1,7 +1,7 @@
 import React from 'react'
 import { toast } from 'react-toastify';
 
-const FiltroBorradores = ({ filtro, setFiltro, documentTypes, handleAplicarFiltros }) => {
+const FiltroTabla = ({ filtro, setFiltro, documentTypes, handleAplicarFiltros }) => {
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 mb-8 p-6 bg-white rounded-xl shadow-md items-end border-2">
             <div className="flex flex-col">
@@ -113,4 +113,4 @@ const FiltroBorradores = ({ filtro, setFiltro, documentTypes, handleAplicarFiltr
     )
 }
 
-export default FiltroBorradores
+export default FiltroTabla

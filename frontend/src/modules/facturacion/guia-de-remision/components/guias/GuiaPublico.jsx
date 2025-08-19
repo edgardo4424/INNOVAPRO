@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ChoferPublicoForm from '../../forms/ChoferPublicoForm';
+import TransportistaPublicoForm from '../../forms/TransportistaPublicoForm';
 import DatosDeClienteForm from '../../forms/DatosDeClienteForm';
 import DatosDeEmpresaForm from '../../forms/DatosDeEmpresaForm';
 import DatosGuiaEnvioPublicoForm from '../../forms/DatosGuiaEnvioPublicoForm';
@@ -8,6 +8,7 @@ import InfDocumentoForm from '../../forms/InfDocumentoForm';
 import ModalVisualizarGuiaPublico from '../modal/ModalVisualizarGuiaPublico';
 
 const GuiaPublico = () => {
+    
 
     return (
         <div className='container mx-auto px-4 py-8 sm:px-6 lg:px-8'> {/* Adjusted padding for better mobile fit */}
@@ -27,11 +28,8 @@ const GuiaPublico = () => {
                 {/* Sección de Guía de Envío */}
                 <DatosGuiaEnvioPublicoForm />
 
-                {/* Sección de Estado y Otros */}
-                {/* <EstadoYOtrosDatosForm /> */}
-
                 {/* Sección de Transportista */}
-                <ChoferPublicoForm />
+                <TransportistaPublicoForm />
 
                 {/* Sección de Detalle de Productos */}
                 <DetalleProductoForm />

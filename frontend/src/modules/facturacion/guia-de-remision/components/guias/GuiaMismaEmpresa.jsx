@@ -1,6 +1,6 @@
 import DatosDeClienteForm from "../../forms/DatosDeClienteForm";
 import DatosDeEmpresaForm from "../../forms/DatosDeEmpresaForm";
-import DatosGuiaEnvioPrivadoForm from "../../forms/DatosGuiaEnvioPrivadoForm";
+import DatosGuiaEnvioMismaEmpresaForm from "../../forms/DatosGuiaEnvioMismaEmpresaForm";
 import DetalleProductoForm from "../../forms/DetalleProductoForm";
 import InfDocumentoForm from "../../forms/InfDocumentoForm";
 import ModalVisualizarGuiaMismaEmpresa from "../modal/ModalVisualizarGuiaMismaEmpresa";
@@ -23,8 +23,8 @@ const GuiaMismaEmpresa = () => {
                 {/* Sección de Datos del Cliente */}
                 <DatosDeClienteForm />
 
-                {/* Sección de Guía de Envío */}
-                <DatosGuiaEnvioPrivadoForm />
+                {/* Sección de Guía de Envío - Traslado Misma Empresa */}
+                <DatosGuiaEnvioMismaEmpresaForm />
 
 
                 {/* Sección de Detalle de Productos */}

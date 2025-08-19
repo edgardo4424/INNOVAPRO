@@ -1,28 +1,6 @@
 module.exports = async (body, guiaRemisionRepository) => {
 
-    // const { success, message, data } = GuiaRemision.crear(body);
-
-    // if (!success) {
-    //     return {
-    //         codigo: 400,
-    //         respuesta: {
-    //             success: success,
-    //             message: message,
-    //             data: null,
-    //         },
-    //     };
-    // }
-
-    const { detalle, chofer, sunat_respuesta, ...guia } = body;
-
-    const guiaRemision = {
-        detalle: detalle,
-        chofer: chofer,
-        sunat_respuesta
-    }
-
-    guiaRemision.guia = guia;
-    const { success, message, data: resultadoCreacion } = await guiaRemisionRepository.crear(guiaRemision);
+    const { success, message, data: resultadoCreacion } = await guiaRemisionRepository.crear(body);
 
     console.log("resultadoCreacion", success, message, resultadoCreacion);
     if (!success) {

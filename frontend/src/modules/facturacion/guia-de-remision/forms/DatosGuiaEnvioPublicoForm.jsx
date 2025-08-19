@@ -37,6 +37,8 @@ const DatosGuiaEnvioPublicoForm = () => {
 
     } = guiaTransporte;
 
+
+
     useEffect(() => {
         // Inicializar Ubigeo de Partida
         if (guia_Envio_Partida_Ubigeo) {
@@ -170,7 +172,29 @@ const DatosGuiaEnvioPublicoForm = () => {
         }
     };
 
+    const opcionesCodigos = [
+        { value: "01", descripcion: "VENTA" },
+        { value: "02", descripcion: "VENTA SUJETA A CONFIRMACION DEL COMPRADOR" },
+        { value: "04", descripcion: "TRASLADO ENTRE ESTABLECIMIENTOS DE LA MISMA EMPRESA" },
+        { value: "08", descripcion: "IMPORTACION" },
+        { value: "09", descripcion: "EXPORTACION" },
+        { value: "13", descripcion: "OTROS" },
+        { value: "14", descripcion: "VENTA CON ENTREGA A TERCEROS" },
+        { value: "18", descripcion: "TRASLADO EMISOR ITINERANTE DE COMPROBANTES DE PAGO" },
+        { value: "19", descripcion: "TRASLADO A ZONA PRIMARIA" },
+        { value: "20", descripcion: "TRASLADO POR EMISOR ITINERANTE (COMPROBANTE DE PAGO)" },
+    ];
+
+
     const handleSelectChange = (value, name) => {
+        if (name == "guia_Envio_Cod_Traslado") {
+            setGuiaTransporte((prevValores) => ({
+                ...prevValores,
+                [name]: value,
+                guia_Envio_Des_Traslado: opcionesCodigos.find((opcion) => opcion.value === value)?.descripcion,
+            }));
+        }
+
         setGuiaTransporte((prevValores) => ({
             ...prevValores,
             [name]: value,
@@ -201,15 +225,16 @@ const DatosGuiaEnvioPublicoForm = () => {
                             <SelectValue placeholder="Selecciona un codigo" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="01">01 - Venta</SelectItem>
-                            <SelectItem value="02">02 - Compra</SelectItem>
-                            <SelectItem value="04">04 - Consignación</SelectItem>
-                            <SelectItem value="05">05 - Devolución</SelectItem>
-                            <SelectItem value="06">06 - Recojo de bienes transformados</SelectItem>
-                            <SelectItem value="07">07 - Traslado entre establecimientos de la misma empresa</SelectItem>
-                            <SelectItem value="08">08 - Importación</SelectItem>
-                            <SelectItem value="09">09 - Exportación</SelectItem>
-                            <SelectItem value="13">13 - Otros</SelectItem>
+                            <SelectItem value="01" descripcion="VENTA">01 - Venta</SelectItem>
+                            <SelectItem value="02" descripcion="VENTA SUJETA A CONFIRMACION DEL COMPRADOR">02 - Venta sujeta a confirmación del comprador</SelectItem>
+                            <SelectItem value="04" descripcion="TRASLADO ENTRE ESTABLECIMIENTOS DE LA MISMA EMPRESA">04 - Traslado entre establecimientos de la misma empresa</SelectItem>
+                            <SelectItem value="08" descripcion="IMPORTACION">08 - Importación</SelectItem>
+                            <SelectItem value="09" descripcion="EXPORTACION">09 - Exportación</SelectItem>
+                            <SelectItem value="13" descripcion="OTROS">13 - Otros</SelectItem>
+                            <SelectItem value="14" descripcion="VENTA CON ENTREGA A TERCEROS">14 - Venta con entrega a terceros</SelectItem>
+                            <SelectItem value="18" descripcion="TRASLADO EMISOR ITINERANTE DE COMPROBANTES DE PAGO">18 - Traslado emisor itinerante CP</SelectItem>
+                            <SelectItem value="19" descripcion="TRASLADO A ZONA PRIMARIA">19 - Traslado a zona primaria</SelectItem>
+                            <SelectItem value="20" descripcion="TRASLADO POR EMISOR ITINERANTE (COMPROBANTE DE PAGO)">20 - Traslado por emisor itinerante (comprobante de pago)</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -225,7 +250,8 @@ const DatosGuiaEnvioPublicoForm = () => {
                         id="guia_Envio_Des_Traslado"
                         name="guia_Envio_Des_Traslado"
                         value={guia_Envio_Des_Traslado}
-                        onChange={handleChange}
+                        // onChange={handleChange}
+                        disabled
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                     />
                 </div>

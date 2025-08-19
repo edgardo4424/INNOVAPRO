@@ -68,8 +68,8 @@ const GestionStockPiezas = lazy(() =>
 
 //* Facturacion
 
-const Facturacion = lazy(() =>
-   import("../modules/facturacion/pages/Facturacion")
+const Emitir = lazy(() =>
+   import("../modules/facturacion/pages/Emitir")
 );
 
 const FacturaBoleta = lazy(() =>
@@ -83,8 +83,8 @@ const FacturasAnuladas = lazy(() =>
    import("../modules/facturacion/pages/FacturasAnuladas")
 );
 
-const ListaDocumentos = lazy(() =>
-   import("../modules/facturacion/list-documentos/ListaDocumentos")
+const Bandeja = lazy(() =>
+   import("../modules/facturacion/pages/Bandeja")
 );
 
 const FacturaBorradores = lazy(() =>
@@ -225,45 +225,36 @@ export default function AppRoutes() {
                      {/*    //************************INICIO-FACTURACION************************* */}
                      <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
                         <Route
-                           path="facturacion/generar"
+                           path="facturacion/emitir"
                            element={
-                              <Facturacion />
+                              <Emitir />
                            }
                         />
-                     </Route>
-                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
+
                         <Route
                            path="facturacion/generar/factura-boleta"
                            element={
                               <FacturaBoleta />
                            }
                         />
-                     </Route>
 
-                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
                         <Route
                            path="facturacion/generar/guia-de-remision/:tipoGuia"
                            element={
                               <GuiaRemision />
                            }
                         />
-                     </Route>
 
-                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
                         <Route
-                           path="facturacion/facturas"
-                           element={<ListaDocumentos />}
+                           path="facturacion/bandeja"
+                           element={<Bandeja />}
                         />
-                     </Route>
 
-                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
                         <Route
                            path="facturacion/anuladas"
                            element={<FacturasAnuladas />}
                         />
-                     </Route>
 
-                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
                         <Route
                            path="facturacion/borradores"
                            element={<FacturaBorradores />}
@@ -294,7 +285,6 @@ export default function AppRoutes() {
 
                      <>
                         {/* Rutas para el modulo de aistencia */}
-                      
                         <Route element={<RoleGuard roles={["Gerencia"]} />}>
                            <Route
                               path="asistencia/:tipo"

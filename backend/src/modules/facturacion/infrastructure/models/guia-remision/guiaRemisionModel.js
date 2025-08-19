@@ -125,6 +125,14 @@ const GuiaRemision = sequelize.define(
             type: DataTypes.STRING,
             allowNull: true,
         },
+        body: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        },
+        estado: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
     },
     {
         timestamps: false,

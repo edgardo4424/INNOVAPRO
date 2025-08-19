@@ -7,6 +7,7 @@ const guiaPrivada = {
     observacion: "",
     fecha_Emision: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
 
+    estado_Documento: "0",
     empresa_Ruc: "10749283781",
 
     cliente_Tipo_Doc: "6",
@@ -27,18 +28,17 @@ const guiaPrivada = {
     guia_Envio_Llegada_Ubigeo: "",
     guia_Envio_Llegada_Direccion: "",
 
-    estado_Documento: "0",
-    manual: false,
-    id_Base_Dato: "15265",
+    // manual: false,
+    // id_Base_Dato: "15265",
 
     chofer: [
         {
-            tipo: "",
+            tipo: "Principal",
             tipo_doc: "1",
             nro_doc: "10400310",
-            licencia: "",
-            nombres: "",
-            apellidos: "",
+            licencia: "Q10400310",
+            nombres: "CARLOS EDGARDO",
+            apellidos: "DELGADO RIVERA",
         },
     ],
     detalle: [
@@ -59,6 +59,7 @@ const guiaPrivadaValidar = {
     observacion: false,
     fecha_Emision: false,
 
+    estado_Documento: false,
     empresa_Ruc: false,
 
     cliente_Tipo_Doc: false,
@@ -79,9 +80,8 @@ const guiaPrivadaValidar = {
     guia_Envio_Llegada_Ubigeo: false,
     guia_Envio_Llegada_Direccion: false,
 
-    estado_Documento: false,
-    manual: false,
-    id_Base_Dato: false,
+    // manual: false,
+    // id_Base_Dato: false,
 
     chofer: [
         {
@@ -112,42 +112,43 @@ const guiaPublica = {
     observacion: "PRUEBA DE GUIA",
     fecha_Emision: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
 
-    empresa_Ruc: "20607086215",
+    estado_Documento: "0",
+    empresa_Ruc: "10749283781",
 
     cliente_Tipo_Doc: "6",
     cliente_Num_Doc: "20604915351",
     cliente_Razon_Social: "MEN GRAPH S.A.C.",
-    cliente_Direccion: "-",
+    cliente_Direccion: "CAL.MANTARO NRO. 515 URB. CHACRA COLORADA",
 
     guia_Envio_Cod_Traslado: "01",
     guia_Envio_Des_Traslado: "VENTA",
     guia_Envio_Mod_Traslado: "01",
     guia_Envio_Peso_Total: 10,
     guia_Envio_Und_Peso_Total: "KGM",
-    guia_Envio_Fec_Traslado: "",
+    guia_Envio_Fec_Traslado: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
     guia_Envio_Partida_Ubigeo: "150203",
     guia_Envio_Partida_Direccion: "AV. CACEREES 459",
     guia_Envio_Llegada_Ubigeo: "150204",
     guia_Envio_Llegada_Direccion: "AV. LA MARINA 569",
 
-    estado_Documento: "0",
-    manual: false,
-    id_Base_Dato: "15265",
-    chofer: [
-        {
-            tipo_doc: "6",
-            nro_doc: "20000000002",
-            nombres: "TRANSPORTES S.A.C",
-            nro_mtc: "0001",
-        },
-    ],
+    // manual: false,
+    // id_Base_Dato: "15265",
+
+    transportista:
+    {
+        tipo_doc: "6",
+        nro_doc: "20607663549",
+        razon_Social: "TRANSPORTES VILCHEZ CARGO EXPRES S.A.C.",
+        nro_mtc: "15145209CNG",
+    },
+
 
     detalle: [
         {
-            unidad: "",
-            cantidad: 0,
-            cod_Producto: "",
-            descripcion: "",
+            unidad: "KGM",
+            cantidad: 1.56,
+            cod_Producto: "140",
+            descripcion: "PRODUCTO 1",
         },
     ],
 };
@@ -160,6 +161,7 @@ const guiaPublicaValidar = {
     observacion: false,
     fecha_Emision: false,
 
+    estado_Documento: false,
     empresa_Ruc: false,
 
     cliente_Tipo_Doc: false,
@@ -179,9 +181,8 @@ const guiaPublicaValidar = {
     guia_Envio_Llegada_Ubigeo: false,
     guia_Envio_Llegada_Direccion: false,
 
-    estado_Documento: false,
-    manual: false,
-    id_Base_Dato: false,
+    // manual: false,
+    // id_Base_Dato: false,
 
     chofer: [
         {
@@ -203,49 +204,47 @@ const guiaPublicaValidar = {
 
 // ? GUIA DE REMISION MISMA EMPRESA
 // ** VALORES INICIAL
-const guiaMismaEmpresa = {
+const guiaMismaEmpresa =  {
     tipo_Doc: "09",
     serie: "T001",
     correlativo: "1",
     observacion: "PRUEBA DE GUIA",
     fecha_Emision: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
-
-    empresa_Ruc: "20607086215",
+    
+    estado_Documento: "0",
+    empresa_Ruc: "10749283781",
 
     cliente_Tipo_Doc: "6",
-    cliente_Num_Doc: "20604915351",
-    cliente_Razon_Social: "MEN GRAPH S.A.C.",
-    cliente_Direccion: "-",
+    cliente_Num_Doc: "10749283781",
+    cliente_Razon_Social: "SAMANIEGO DE LA CRUZ ANGHIELO ALEX",
+    cliente_Direccion: "MZA. L LOTE. 4 A.H.  VIRGEN DE CHAPI",
 
-    guia_Envio_Cod_Traslado: "01",
+    guia_Envio_Cod_Traslado: "04",
     guia_Envio_Mod_Traslado: "02",
     guia_Envio_Peso_Total: 12.5,
     guia_Envio_Und_Peso_Total: "KGM",
-    guia_Envio_Fec_Traslado: "2024-12-31T13:21:12-05:00",
+    guia_Envio_Fec_Traslado: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
 
     guia_Envio_Partida_Ubigeo: "150203",
     guia_Envio_Partida_Direccion: "AV. CACEREES 459",
-    guia_Envio_Partida_Ruc: "20000000001",
+    guia_Envio_Partida_Ruc: "10749283781",
     guia_Envio_Partida_Cod_Local: "00001",
 
     guia_Envio_Llegada_Ubigeo: "150204",
     guia_Envio_Llegada_Direccion: "AV. LA MARINA 569",
-    guia_Envio_Llegada_Ruc: "20000000001",
+    guia_Envio_Llegada_Ruc: "10749283781",
     guia_Envio_Llegada_Cod_Local: "00002",
-
-    estado_Documento: "0",
-    manual: false,
-    id_Base_Dato: "15265",
 
     detalle: [
         {
             unidad: "KGM",
-            cantidad: 1.56,
-            cod_Producto: "140",
-            descripcion: "PRODUCTO 1",
-        },
-    ],
-};
+            cantidad: 1,
+            cod_Producto: "104",
+            descripcion: "ALITA DE POLLO NACIONAL"
+        }
+    ]
+}
+
 
 // !! VALORES VALIDACION
 const guiaMismaEmpresaValidar = {
@@ -300,12 +299,6 @@ const choferInicialPrivado = {
     nombres: "",
     apellidos: "",
 };
-const choferInicialPublico = {
-    tipo_doc: "1",
-    nro_doc: "",
-    nombres: "",
-    nro_mtc: "",
-};
 
 const detalleInicial = {
     unidad: "",
@@ -324,7 +317,6 @@ export {
     guiaMismaEmpresaValidar,
 
     choferInicialPrivado,
-    choferInicialPublico,
 
     detalleInicial,
 };

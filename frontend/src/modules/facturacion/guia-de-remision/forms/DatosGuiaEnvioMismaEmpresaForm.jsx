@@ -12,7 +12,7 @@ import { useGuiaTransporte } from "@/context/Factura/GuiaTransporteContext";
 import { Ubigeos } from "../utils/ubigeo";
 import { useEffect, useMemo, useState } from "react";
 
-const DatosGuiaEnvioPrivadoForm = () => {
+const DatosGuiaEnvioMismaEmpresaForm = () => {
     const { guiaTransporte, setGuiaTransporte } = useGuiaTransporte();
 
     // ?? Estados locales para los inputs de ubigeo y su visibilidad de sugerencias
@@ -33,8 +33,6 @@ const DatosGuiaEnvioPrivadoForm = () => {
         guia_Envio_Partida_Direccion,
         guia_Envio_Llegada_Ubigeo,
         guia_Envio_Llegada_Direccion,
-
-        guia_Envio_Vehiculo_Placa
     } = guiaTransporte;
 
     useEffect(() => {
@@ -197,18 +195,8 @@ const DatosGuiaEnvioPrivadoForm = () => {
                             <SelectValue placeholder="Selecciona un codigo" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="01">01 - Venta</SelectItem>
-                            <SelectItem value="02">02 - Venta sujeta a confirmación del comprador</SelectItem>
                             <SelectItem value="04">04 - Traslado entre establecimientos de la misma empresa</SelectItem>
-                            <SelectItem value="08">08 - Importación</SelectItem>
-                            <SelectItem value="09">09 - Exportación</SelectItem>
-                            <SelectItem value="13">13 - Otros</SelectItem>
-                            <SelectItem value="14">14 - Venta con entrega a terceros</SelectItem>
-                            <SelectItem value="18">18 - Traslado emisor itinerante CP</SelectItem>
-                            <SelectItem value="19">19 - Traslado a zona primaria</SelectItem>
-                            <SelectItem value="20">20 - Traslado por emisor itinerante (comprobante de pago)</SelectItem>
                         </SelectContent>
-
                     </Select>
                 </div>
                 <div>
@@ -235,50 +223,48 @@ const DatosGuiaEnvioPrivadoForm = () => {
                         </SelectContent>
                     </Select>
                 </div>
-                <div className="flex gap-x-2">
-                    <div>
-                        <Label
-                            htmlFor="guia_Envio_Peso_Total"
-                            className="block text-sm font-semibold text-gray-700 text-left mb-1"
-                        >
-                            Peso Total
-                        </Label>
-                        <Input
-                            type="number"
-                            id="guia_Envio_Peso_Total"
-                            name="guia_Envio_Peso_Total"
-                            value={guia_Envio_Peso_Total || ""}
-                            onChange={handleChange}
-                            className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
-                            step="0.01"
-                        />
-                    </div>
-                    <div>
-                        <Label
-                            htmlFor="guia_Envio_Und_Peso_Total"
-                            className="block text-sm font-semibold text-gray-700 text-left mb-1"
-                        >
-                            Unidad de Peso
-                        </Label>
-                        <Select
-                            name="guia_Envio_Und_Peso_Total"
-                            value={guia_Envio_Und_Peso_Total}
-                            onValueChange={(e) => {
-                                handleSelectChange(e, "guia_Envio_Und_Peso_Total");
-                            }}
-                        >
-                            <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> {/* Estilo de borde mejorado */}
-                                <SelectValue placeholder="Selecciona un unidad de peso" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="KGM">KGM - Kilogramo</SelectItem>
-                                <SelectItem value="TNE">TNE - Tonelada</SelectItem>
-                                <SelectItem value="GRM">GRM - Gramo</SelectItem>
-                                <SelectItem value="LBR">LBR - Libra</SelectItem>
-                                <SelectItem value="ONZ">ONZ - Onza</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
+                <div>
+                    <Label
+                        htmlFor="guia_Envio_Peso_Total"
+                        className="block text-sm font-semibold text-gray-700 text-left mb-1"
+                    >
+                        Peso Total
+                    </Label>
+                    <Input
+                        type="number"
+                        id="guia_Envio_Peso_Total"
+                        name="guia_Envio_Peso_Total"
+                        value={guia_Envio_Peso_Total || ""}
+                        onChange={handleChange}
+                        className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
+                        step="0.01"
+                    />
+                </div>
+                <div>
+                    <Label
+                        htmlFor="guia_Envio_Und_Peso_Total"
+                        className="block text-sm font-semibold text-gray-700 text-left mb-1"
+                    >
+                        Unidad de Peso
+                    </Label>
+                    <Select
+                        name="guia_Envio_Und_Peso_Total"
+                        value={guia_Envio_Und_Peso_Total}
+                        onValueChange={(e) => {
+                            handleSelectChange(e, "guia_Envio_Und_Peso_Total");
+                        }}
+                    >
+                        <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> {/* Estilo de borde mejorado */}
+                            <SelectValue placeholder="Selecciona un unidad de peso" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="KGM">KGM - Kilogramo</SelectItem>
+                            <SelectItem value="TNE">TNE - Tonelada</SelectItem>
+                            <SelectItem value="GRM">GRM - Gramo</SelectItem>
+                            <SelectItem value="LBR">LBR - Libra</SelectItem>
+                            <SelectItem value="ONZ">ONZ - Onza</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
 
                 <div>
@@ -402,27 +388,9 @@ const DatosGuiaEnvioPrivadoForm = () => {
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                     />
                 </div>
-                <div className="col-span-1 md:col-span-2 lg:col-span-1">
-                    {" "}
-                    {/* Made address span full width on small screens too */}
-                    <Label
-                        htmlFor="guia_Envio_Llegada_Direccion"
-                        className="block text-sm font-semibold text-gray-700 text-left mb-1"
-                    >
-                        Placa del Vehiculo
-                    </Label>
-                    <Input
-                        type="text"
-                        id="guia_Envio_Vehiculo_Placa"
-                        name="guia_Envio_Vehiculo_Placa"
-                        value={guia_Envio_Vehiculo_Placa}
-                        onChange={handleChange}
-                        className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
-                    />
-                </div>
             </div>
         </div>
     );
 };
 
-export default DatosGuiaEnvioPrivadoForm;
+export default DatosGuiaEnvioMismaEmpresaForm;
