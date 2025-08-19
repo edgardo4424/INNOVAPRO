@@ -22,6 +22,7 @@ class Vacaciones {
    #dias_usados_vendidos;
    #observaciones;
    #contratos_laborales;
+   #importe_dias_vendidos;
 
    constructor({
       trabajador_id,
@@ -33,6 +34,7 @@ class Vacaciones {
       dias_usados_vendidos,
       observaciones,
       contratos_laborales,
+      importe_dias_vendidos
    }) {
       this.#trabajador_id = trabajador_id;
       this.#fecha_inicio = fecha_inicio;
@@ -43,6 +45,7 @@ class Vacaciones {
       this.#dias_usados_vendidos = dias_usados_vendidos;
       this.#observaciones = observaciones;
       this.#contratos_laborales = contratos_laborales;
+      this.#importe_dias_vendidos=importe_dias_vendidos
    }
 
    validarCampos() {
@@ -186,6 +189,7 @@ class Vacaciones {
          dias_usados_vendidos: this.#dias_usados_vendidos,
          observaciones: this.#observaciones,
          contratos_laborales: this.#contratos_laborales,
+         importe_dias_vendidos:this.#importe_dias_vendidos
       };
    }
 }

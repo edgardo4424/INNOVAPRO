@@ -34,6 +34,11 @@ const Bonos = sequelize.define(
          allowNull: false,
          defaultValue: true, // activo
       },
+      tipo: {
+         type: DataTypes.ENUM("simple", "bono_nocturno", "escolaridad"),
+         allowNull: false,
+         defaultValue: "simple",
+      },
    },
    {
       tableName: "bonos",

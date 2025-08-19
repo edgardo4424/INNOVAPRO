@@ -42,6 +42,14 @@ const ContratoLaboral = sequelize.define(
          allowNull: false,
          defaultValue: true, // activo
       },
+      filial_id: {
+         type: DataTypes.INTEGER,
+         allowNull: true,
+         references: {
+            model: "empresas_proveedoras",
+            key: "id",
+         },
+      },
    },
    {
       tableName: "contratos_laborales",
@@ -52,6 +60,10 @@ ContratoLaboral.associate = (models) => {
    ContratoLaboral.belongsTo(models.trabajadores, {
       foreignKey: "trabajador_id",
       as: "trabajador",
+   });
+   ContratoLaboral.belongsTo(models.empresas_proveedoras, {
+      foreignKey: "filial_id",
+      as: "empresa_proveedora",
    });
 };
 

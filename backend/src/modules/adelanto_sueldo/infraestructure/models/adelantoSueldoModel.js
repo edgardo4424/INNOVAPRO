@@ -22,7 +22,7 @@ const AdelantoSueldo = sequelize.define(
          allowNull: false,
       },
       monto: {
-         type: DataTypes.DECIMAL(10,2),
+         type: DataTypes.DECIMAL(10, 2),
          allowNull: false,
       },
       observacion: {
@@ -33,6 +33,11 @@ const AdelantoSueldo = sequelize.define(
          type: DataTypes.BOOLEAN,
          allowNull: false,
          defaultValue: true, // activo
+      },
+      tipo: {
+         type: DataTypes.ENUM("simple", "gratificacion", "cts"),
+         allowNull: false,
+         defaultValue: "simple",
       },
    },
    {

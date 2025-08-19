@@ -7,6 +7,7 @@ class ContratoLaboral {
       sueldo,
       regimen,
       tipo_contrato,
+      filial_id,
    }) {
       this.id = id;
       this.trabajador_id = trabajador_id;
@@ -15,6 +16,7 @@ class ContratoLaboral {
       this.sueldo = sueldo;
       this.regimen = regimen;
       this.tipo_contrato = tipo_contrato;
+      this.filial_id = filial_id;
    }
 
    validar(editar = false) {
@@ -32,7 +34,9 @@ class ContratoLaboral {
             errores.push("El ID del trabajador debe ser un número válido.");
          }
       }
-
+      if (isNaN(this.filial_id)) {
+         errores.push("El ID de la filial debe ser un número válido.");
+      }
       const inicio = new Date(this.fecha_inicio);
       const fin = new Date(this.fecha_fin);
 
@@ -58,8 +62,8 @@ class ContratoLaboral {
       if (!regimenValido.includes(this.regimen)) {
          errores.push('El régimen debe ser "MYPE" o "GENERAL".');
       }
-      console.log('El tipo d eoctrato es: ',this.tipo_contrato);
-      
+      console.log("El tipo d eoctrato es: ", this.tipo_contrato);
+
       const contrato_valido = ["PLANILLA", "HONORARIOS"];
       if (!contrato_valido.includes(this.tipo_contrato)) {
          errores.push("El tipo de contrato no es válido");
@@ -72,6 +76,7 @@ class ContratoLaboral {
          return {
             contrato_id: this.id,
             fecha_inicio: this.fecha_inicio,
+            filial_id: this.filial_id,
             fecha_fin: this.fecha_fin,
             sueldo: this.sueldo,
             regimen: this.regimen,
@@ -80,6 +85,7 @@ class ContratoLaboral {
       } else {
          return {
             trabajador_id: this.trabajador_id,
+            filial_id: this.filial_id,
             fecha_inicio: this.fecha_inicio,
             fecha_fin: this.fecha_fin,
             sueldo: this.sueldo,
