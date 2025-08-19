@@ -58,7 +58,7 @@ Filial.associate = (models) => {
    Filial.hasMany(models.cotizaciones, {
       foreignKey: "filial_id",
    });
-   Filial.hasMany(models.trabajadores, {
+   Filial.hasMany(models.contratos_laborales, {
     foreignKey: "filial_id",
   });
 };

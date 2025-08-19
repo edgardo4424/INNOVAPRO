@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { CalendarIcon, Plus, Trash2 } from "lucide-react";
 
-const ContratosLaborales = ({ formData, setFormData, errors }) => {
+const ContratosLaborales = ({ formData, setFormData, errors, filiales }) => {
    // Estados para confirmar sueldo
    const [confirmOpen, setConfirmOpen] = useState(false);
    const [editIndex, setEditIndex] = useState(null);
@@ -47,6 +47,7 @@ const ContratosLaborales = ({ formData, setFormData, errors }) => {
          sueldo: "",
          regimen: "",
          tipo_contrato: "",
+         filial_id: "",
       };
       setFormData((prev) => ({
          ...prev,
@@ -63,6 +64,8 @@ const ContratosLaborales = ({ formData, setFormData, errors }) => {
       }));
    };
 
+   console.log(formData.contratos_laborales);
+   
    // Captura el sueldo previo al empezar a editar
    const handleSueldoFocus = (index, value) => {
       setEditIndex(index);
@@ -238,6 +241,29 @@ const ContratosLaborales = ({ formData, setFormData, errors }) => {
                               {errors[`contratos_laborales[${i}].regimen`]}
                            </p>
                         )}
+                     </div>
+                     <div className="space-y-2">
+                        <Label>Empresa asociada</Label>
+                        <Select
+                           value={c.filial_id}
+                           onValueChange={(value) =>
+                              handleInputChange(i,"filial_id", value)
+                           }
+                        >
+                           <SelectTrigger className={"w-full"}>
+                              <SelectValue placeholder="Seleccione una filial" />
+                           </SelectTrigger>
+                           <SelectContent>
+                              {filiales.map((filial) => (
+                                 <SelectItem
+                                    key={filial.id}
+                                    value={filial.id.toString()}
+                                 >
+                                    {filial.razon_social}
+                                 </SelectItem>
+                              ))}
+                           </SelectContent>
+                        </Select>
                      </div>
 
                      {/* Tipo de contrato */}

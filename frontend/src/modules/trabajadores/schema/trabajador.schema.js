@@ -44,50 +44,6 @@ export const trabajadorSchema = (isEdit = false, isGerente = false) =>
             .positive("ID debe ser un número positivo")
             .required("El ID es requerido en edición"),
       }),
-      ...(isGerente
-         ? {
-              filiales_asignadas: yup
-                 .array()
-                 .of(
-                    yup
-                       .number()
-                       .transform((value, originalValue) => {
-                          if (
-                             originalValue === "" ||
-                             originalValue === null ||
-                             originalValue === undefined
-                          ) {
-                             return null;
-                          }
-                          const parsed = Number(originalValue);
-                          return isNaN(parsed) ? null : parsed;
-                       })
-                       .integer("Debe ser un número entero")
-                       .positive("Debe ser un número positivo")
-                 )
-                 .min(1, "Debe asignar al menos una filial")
-                 .required("Las filiales asignadas son requeridas"),
-              filial_id: yup.mixed().nullable().notRequired(),
-           }
-         : {
-              filial_id: yup
-                 .number()
-                 .transform((value, originalValue) => {
-                    if (
-                       originalValue === "" ||
-                       originalValue === null ||
-                       originalValue === undefined
-                    ) {
-                       return null;
-                    }
-                    const parsed = Number(originalValue);
-                    return isNaN(parsed) ? null : parsed;
-                 })
-                 .nullable()
-                 .required("La filial es requerida"),
-              filiales_asignadas: yup.mixed().notRequired(),
-           }),
-
       nombres: yup.string().required("El nombre es requerido"),
       apellidos: yup.string().required("El apellido es requerido"),
       tipo_documento: yup
@@ -101,9 +57,6 @@ export const trabajadorSchema = (isEdit = false, isGerente = false) =>
          .array()
          .of(contratoSchema)
          .min(1, "Debe haber al menos un trabajo"),
-      asignacion_familiar: yup
-         .boolean()
-         .required("La asignación familiar es requerida"),
       sistema_pension: yup
          .string()
          .oneOf(["AFP", "ONP"], "Sistema de pensión no válido")

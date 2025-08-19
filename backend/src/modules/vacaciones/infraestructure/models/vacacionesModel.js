@@ -37,6 +37,11 @@ const Vacaciones = sequelize.define(
          type: DataTypes.STRING,
          allowNull: true,
       },
+      importe_dias_vendidos: {
+         type: DataTypes.DECIMAL(10, 2),
+         allowNull: true,
+         defaultValue: 0,
+      },
    },
    {
       tableName: "vacaciones",

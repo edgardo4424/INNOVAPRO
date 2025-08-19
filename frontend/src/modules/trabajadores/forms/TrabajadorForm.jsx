@@ -34,6 +34,8 @@ const dataInicial = {
    tipo_documento: "",
    numero_documento: "",
    asignacion_familiar: false,
+   asignacion_familiar_fecha: null,
+   domiciliado: false,
    sistema_pension: "",
    quinta_categoria: false,
    cargo_id: "",
@@ -123,6 +125,7 @@ export default function TrabajadorForm() {
                     sueldo: c?.sueldo ?? "",
                     regimen: c?.regimen ?? "",
                     tipo_contrato: c?.tipo_contrato ?? "",
+                    filial_id: c?.filial_id.toString() ?? "",
                  }))
                : dataInicial.contratos_laborales;
 
@@ -133,7 +136,9 @@ export default function TrabajadorForm() {
                apellidos: t.apellidos ?? "",
                tipo_documento: t.tipo_documento ?? "",
                numero_documento: t.numero_documento ?? "",
-               asignacion_familiar: !!t.asignacion_familiar,
+               asignacion_familiar: t.asignacion_familiar ? true : false, // checkbox
+               asignacion_familiar_fecha: t.asignacion_familiar ?? null, // guardamos la fecha real
+               domiciliado: !!t.domiciliado,
                sistema_pension: t.sistema_pension ?? "",
                quinta_categoria: !!t.quinta_categoria,
                cargo_id: (t.cargo_id ?? "").toString(),
@@ -180,7 +185,8 @@ export default function TrabajadorForm() {
          apellidos: formData.apellidos.trim(),
          tipo_documento: formData.tipo_documento,
          numero_documento: formData.numero_documento.trim(),
-         asignacion_familiar: formData.asignacion_familiar,
+         asignacion_familiar: formData.asignacion_familiar_fecha,
+         domiciliado: formData.domiciliado,
          sistema_pension: formData.sistema_pension,
          quinta_categoria: calcularQuintaCategoria(
             ultimoContrato.sueldo,
@@ -200,20 +206,23 @@ export default function TrabajadorForm() {
          setIsSubmitting(true);
 
          const dataToSubmit = buildPayload();
-         const res = await trabajadorSchema(isEditMode, isGerente).validate(
-            dataToSubmit,
-            {
-               abortEarly: false,
-            }
-         );
 
          if (isEditMode) {
             dataToSubmit.id = trabajador_id;
+            await trabajadorSchema(isEditMode).validate(dataToSubmit, {
+               abortEarly: false,
+            });
+            console.log('ediar',dataToSubmit);
+            
             const response = await trabajadoresService.editarTrabajador(
                dataToSubmit
             );
             toast.success("Trabajador actualizado con éxito");
          } else {
+            await trabajadorSchema(isEditMode).validate(dataToSubmit, {
+               abortEarly: false,
+            });
+
             await trabajadoresService.crearTrabajador(dataToSubmit);
             toast.success("Trabajador creado con éxito");
          }
@@ -285,112 +294,15 @@ export default function TrabajadorForm() {
                {!isLoading && !fetchError && (
                   <form onSubmit={handleSubmit} className="space-y-6">
                      {/* Información de la Empresa */}
-                     <div className="space-y-4">
-                        <div className="flex items-center gap-2 text-lg font-semibold">
-                           <Building2 className="h-5 w-5 text-[#1b274a]" />
-                           Información de la Empresa
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                           <div className="space-y-2">
-                              <Label htmlFor="filial_id">Filial *</Label>
-
-                              {formData.cargo_id == 1 ||
-                              formData.cargo_id == 14 ? (
-                                 <SelectMultiple
-                                    isMulti
-                                    options={filiales.map((f) => ({
-                                       value: f.id,
-                                       label: f.razon_social || f.nombre,
-                                    }))}
-                                    value={filiales
-                                       .filter((f) =>
-                                          filialesElegidas?.includes(f.id)
-                                       )
-                                       .map((f) => ({
-                                          value: f.id,
-                                          label: f.razon_social || f.nombre,
-                                       }))}
-                                    onChange={(selected) =>
-                                       setFilialesElegidas(
-                                          selected.map((s) => s.value)
-                                       )
-                                    }
-                                    placeholder="Selecciona filiales..."
-                                    menuPlacement="top"
-                                 />
-                              ) : (
-                                 <Select
-                                    value={formData.filial_id}
-                                    onValueChange={(value) =>
-                                       handleInputChange("filial_id", value)
-                                    }
-                                 >
-                                    <SelectTrigger className={"w-full"}>
-                                       <SelectValue placeholder="Seleccione una filial" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                       {filiales.map((filial) => (
-                                          <SelectItem
-                                             key={filial.id}
-                                             value={filial.id.toString()}
-                                          >
-                                             {filial.razon_social}
-                                          </SelectItem>
-                                       ))}
-                                    </SelectContent>
-                                 </Select>
-                              )}
-                              {errors.filial_id && (
-                                 <p className="text-sm text-red-500">
-                                    {errors.filial_id}
-                                 </p>
-                              )}
-                              {errors.filiales_asignadas && (
-                                 <p className="text-sm text-red-500">
-                                    {errors.filiales_asignadas}
-                                 </p>
-                              )}
-                           </div>
-
-                           <div className="space-y-2">
-                              <Label htmlFor="cargo_id">Cargo *</Label>
-                              <Select
-                                 value={formData.cargo_id}
-                                 onValueChange={(value) =>
-                                    handleInputChange("cargo_id", value)
-                                 }
-                              >
-                                 <SelectTrigger className={"w-full"}>
-                                    <SelectValue placeholder="Seleccione un cargo" />
-                                 </SelectTrigger>
-                                 <SelectContent>
-                                    {cargos.map((cargo) => (
-                                       <SelectItem
-                                          key={cargo.id}
-                                          value={cargo.id.toString()}
-                                       >
-                                          {cargo.nombre}
-                                       </SelectItem>
-                                    ))}
-                                 </SelectContent>
-                              </Select>
-                              {errors.cargo_id && (
-                                 <p className="text-sm text-red-500">
-                                    {errors.cargo_id}
-                                 </p>
-                              )}
-                           </div>
-                        </div>
-                     </div>
 
                      {/* Información Personal */}
-                     <div className="space-y-4">
-                        <div className="flex items-center gap-2 text-lg font-semibold">
+                     <article className="space-y-4">
+                        <section className="flex items-center gap-2 text-lg font-semibold">
                            <User className="h-5 w-5 text-[#1b274a]" />
                            Información Personal
-                        </div>
+                        </section>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
                            <div className="space-y-2">
                               <Label htmlFor="nombres">Nombres *</Label>
                               <Input
@@ -427,9 +339,9 @@ export default function TrabajadorForm() {
                                  </p>
                               )}
                            </div>
-                        </div>
+                        </section>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
                            <div className="space-y-2">
                               <Label htmlFor="tipo_documento">
                                  Tipo de Documento *
@@ -440,7 +352,7 @@ export default function TrabajadorForm() {
                                     handleInputChange("tipo_documento", value)
                                  }
                               >
-                                 <SelectTrigger>
+                                 <SelectTrigger className={"w-full"}>
                                     <SelectValue placeholder="Seleccione tipo de documento" />
                                  </SelectTrigger>
                                  <SelectContent>
@@ -478,13 +390,44 @@ export default function TrabajadorForm() {
                                  </p>
                               )}
                            </div>
-                        </div>
-                     </div>
+                        </section>
+                        <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                           <div className="space-y-2">
+                              <Label htmlFor="cargo_id">Cargo *</Label>
+                              <Select
+                                 value={formData.cargo_id}
+                                 onValueChange={(value) =>
+                                    handleInputChange("cargo_id", value)
+                                 }
+                              >
+                                 <SelectTrigger className={"w-full"}>
+                                    <SelectValue placeholder="Seleccione un cargo" />
+                                 </SelectTrigger>
+                                 <SelectContent>
+                                    {cargos.map((cargo) => (
+                                       <SelectItem
+                                          key={cargo.id}
+                                          value={cargo.id.toString()}
+                                       >
+                                          {cargo.nombre}
+                                       </SelectItem>
+                                    ))}
+                                 </SelectContent>
+                              </Select>
+                              {errors.cargo_id && (
+                                 <p className="text-sm text-red-500">
+                                    {errors.cargo_id}
+                                 </p>
+                              )}
+                           </div>
+                        </section>
+                     </article>
 
                      <ContratosLaborales
                         formData={formData}
                         setFormData={setFormData}
                         errors={errors}
+                        filiales={filiales}
                      />
 
                      {/* Beneficios y Sistema de Pensión */}
@@ -497,18 +440,42 @@ export default function TrabajadorForm() {
                         <div className="grid space-y-4 w-full  grid-cols-1 md:grid-cols-2">
                            <div className="flex items-center space-x-2">
                               <Checkbox
+                                 id="domiciliado"
+                                 checked={formData.domiciliado}
+                                 className="data-[state=checked]:bg-[#1b274a] border-[#1b274a]/50 data-[state=checked]:border-[#1b274a]/80"
+                                 onCheckedChange={(checked) =>
+                                    handleInputChange("domiciliado", !!checked)
+                                 }
+                              />
+                              <Label htmlFor="domiciliado">Domiciliado</Label>
+                           </div>
+                           <div className="flex items-center space-x-2">
+                              <Checkbox
                                  id="asignacion_familiar"
                                  checked={formData.asignacion_familiar}
                                  className="data-[state=checked]:bg-[#1b274a] border-[#1b274a]/50 data-[state=checked]:border-[#1b274a]/80"
-                                 onCheckedChange={(checked) =>
+                                 onCheckedChange={(checked) => {
                                     handleInputChange(
                                        "asignacion_familiar",
                                        !!checked
-                                    )
-                                 }
+                                    );
+                                    handleInputChange(
+                                       "asignacion_familiar",
+                                       !!checked
+                                    );
+                                    handleInputChange(
+                                       "asignacion_familiar_fecha",
+                                       checked
+                                          ? new Date()
+                                               .toISOString()
+                                               .split("T")[0]
+                                          : null
+                                    );
+                                 }}
                               />
-                              <Label htmlFor="asignacion_familiar">
-                                 Asignación Familiar
+
+                              <Label htmlFor="domiciliado">
+                                 Asignacion Familiar
                               </Label>
                            </div>
 
