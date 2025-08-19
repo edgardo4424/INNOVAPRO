@@ -46,7 +46,7 @@ const UserMenu = ({ names, logout }) => {
                   }}
                >
                   <LogOut className="" />
-                  <span>Log out</span>
+                  <span>Salir sesión</span>
                </div>
             </DropdownMenuItem>
          </DropdownMenuContent>

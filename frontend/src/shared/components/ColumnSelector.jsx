@@ -56,8 +56,8 @@ export function ColumnSelector({
    return (
       <Dialog open={open} onOpenChange={setOpen}>
          <DialogTrigger asChild>
-            <Button variant="outline" size="sm" className={`mb-6 ${className}`}>
-               <Settings className="h-4 w-4 mr-2 " />
+            <Button variant="outline" size="sm" className={`mb-5 text-xs ${className}`}>
+               <Settings className="h-4 w-4 mr-2" />
                Columnas
             </Button>
          </DialogTrigger>

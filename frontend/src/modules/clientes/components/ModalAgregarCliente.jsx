@@ -136,7 +136,7 @@ export default function ModalAgregarCliente({ agregarCliente }) {
    return (
       <AlertDialog open={open} onOpenChange={setOpen}>
          <AlertDialogTrigger asChild>
-            <Button className="btn-agregar">
+            <Button variant={"secondary"}>
                <BadgePlus />
                <span className="hidden md:block">Agregar Cliente</span>
             </Button>

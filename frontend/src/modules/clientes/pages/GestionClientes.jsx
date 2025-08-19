@@ -28,7 +28,8 @@ export default function GestionClientes() {
       <div className="min-h-full flex-1  flex flex-col items-center">
          <ModuloNavegacion />
 
-         <div className="w-full max-w-7xl flex flex-row-reverse md:flex-row justify-between px-4 my-6 items-center gap-4">
+<div className="p-3 md:py-4 md:px-6 w-full">
+         <div className="w-full max-w-7xl flex flex-row-reverse md:flex-row justify-between items-center gap-4 mb-5">
             <ModalAgregarCliente agregarCliente={agregarCliente} />
             <div className="relative flex-1 w-full md:max-w-80 ">
                <Input
@@ -60,6 +61,7 @@ export default function GestionClientes() {
             usuariosPorPagina={clientesPorPagina}
             setUsuariosPorPagina={setClientesPorPagina}
          />
+      </div>
       </div>
    );
 }

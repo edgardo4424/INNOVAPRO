@@ -72,7 +72,7 @@ export default function TablaUsuarios({ usuarios, onEliminar, onSubmit }) {
 
    
    return (
-      <div className="w-full px-4 max-w-7xl">
+      <div className="w-full max-w-7xl">
          <div className="flex justify-end">
             <ColumnSelector
                visibleColumns={visibleColumns}

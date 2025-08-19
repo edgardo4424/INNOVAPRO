@@ -25,7 +25,7 @@ export default function ModalAgregarContacto({ clientes, obras, onSubmit }) {
    return (
       <AlertDialog open={open} onOpenChange={setOpen}>
          <AlertDialogTrigger asChild>
-            <Button className="btn-agregar">
+            <Button variant={"secondary"}>
                <UserPlus />
                <span className="hidden md:block">Agregar Contacto</span>
             </Button>
@@ -34,7 +34,7 @@ export default function ModalAgregarContacto({ clientes, obras, onSubmit }) {
             <AlertDialogHeader>
                <AlertDialogTitle>Agrega un nuevo contacto</AlertDialogTitle>
                <AlertDialogDescription>
-                  Ingresa los dato correctamente para crear un contacto
+                  Ingresa los datos correctamente para crear un contacto
                </AlertDialogDescription>
             </AlertDialogHeader>
             <ContactoForm

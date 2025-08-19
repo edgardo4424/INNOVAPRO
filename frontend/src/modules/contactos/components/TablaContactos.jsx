@@ -18,9 +18,7 @@ export default function TablaContactos({
    clientes,
    obras,
 }) {
-   if (contactos.length === 0) {
-      return <p>No hay contactos registrados.</p>;
-   }
+  
 
    const [visibleColumns, setVisibleColumns] = useState({
       nombre: true,
@@ -40,6 +38,16 @@ export default function TablaContactos({
       { id: "obras", label: "Obras" },
       { id: "acciones", label: "Acciones" },
    ];
+
+   if (contactos.length === 0) {
+      return (
+         <div className="flex items-center justify-center py-12">
+            <p className="text-muted-foreground">
+               No hay contactos registrados.
+            </p>
+         </div>
+      );
+   }
 
    
 
@@ -154,7 +162,7 @@ export default function TablaContactos({
       },
    ];
    return (
-      <div className="w-full  px-4 max-w-7xl">
+      <div className="w-full max-w-7xl">
          <div className="flex justify-end">
             <ColumnSelector
                visibleColumns={visibleColumns}

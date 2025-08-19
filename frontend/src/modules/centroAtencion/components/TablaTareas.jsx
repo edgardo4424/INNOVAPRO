@@ -1,4 +1,3 @@
-"use client";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,7 +14,6 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 
 import { Eye, Clipboard, ShieldUser } from "lucide-react";
 import { useMemo } from "react";
-import DataTable from "react-data-table-component";
 
 const statusConfig = {
    Pendiente: {
@@ -248,7 +246,7 @@ export default function TablaTareas({
       selectAllRowsItemText: "Todos",
    };
    return (
-      <div className="w-full px-4 max-w-7xl">
+      <div className="w-full max-w-7xl">
          <AgGridReact
             rowData={tareas}
             columnDefs={columns}

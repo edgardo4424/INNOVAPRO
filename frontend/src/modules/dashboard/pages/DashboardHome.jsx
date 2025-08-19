@@ -2,6 +2,7 @@ import { Clock, BarChart3, Users, Shield, TrendingUp } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import EstadisticasStock from "../components/EstadisticasStock";
+import Typography from "@/components/ui/Typography";
 
   export default function DashboardHome() {
  
@@ -116,7 +117,7 @@ import EstadisticasStock from "../components/EstadisticasStock";
       // </Card>
 
       <div className=" min-h-full flex-1  flex flex-col items-center p-4"> 
-        <h2 className="self-start text-start mt-2 mb-6 text-3xl font-semibold text-neutral-800">Resumen del Stock de Piezas</h2>
+         <Typography.Title>Resumen del Stock de Piezas</Typography.Title>
         <EstadisticasStock/>
       </div>
     );

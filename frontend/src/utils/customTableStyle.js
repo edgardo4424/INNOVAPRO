@@ -12,7 +12,7 @@ export const customStylesTable = {
             borderTopWidth: "1px",
             borderTopColor: "#e5e7eb",
             backgroundColor: "#f9fafb",
-            minHeight: "48px",
+            minHeight: "45px",
          },
       },
       headCells: {
@@ -26,7 +26,7 @@ export const customStylesTable = {
       },
       rows: {
          style: {
-            minHeight: "56px",
+            minHeight: "45px",
             "&:hover": {
                backgroundColor: "#f9fafb",
             },

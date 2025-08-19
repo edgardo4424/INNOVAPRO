@@ -26,16 +26,17 @@ export default function GestionEmpresas() {
    return (
       <div className="min-h-full flex-1  flex flex-col items-center ">
          <ModuloNavegacion />
+          <div className="p-3 md:py-4 md:px-6 w-full">
          {/* 🔍 Buscador + botón */}
-         <div className="w-full max-w-7xl flex flex-row-reverse md:flex-row justify-between px-4 my-6  items-center gap-4">
+         <div className="w-full max-w-7xl flex flex-row-reverse md:flex-row justify-between items-center gap-4 mb-5">
             <ModalAgregarEmpresa onSubmit={agregarEmpresa} />
-            <div className="relative flex-1 w-full md:max-w-80 ">
+            <div className="relative flex-1 w-full md:max-w-100">
                <Input
                   type="text"
                   placeholder="Buscar por razón social, RUC, representante..."
                   value={busqueda}
                   onChange={(e) => setBusqueda(e.target.value)}
-                  className="w-full pr-14 md:pr-0"
+                  className="w-full"
                />
                <X
                   onClick={() => setBusqueda("")}
@@ -61,6 +62,7 @@ export default function GestionEmpresas() {
             setUsuariosPorPagina={setEmpresasPorPagina}
             usuariosPorPagina={empresasPorPagina}
          />
+      </div>
       </div>
    );
 }

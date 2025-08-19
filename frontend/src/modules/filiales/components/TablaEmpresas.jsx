@@ -12,10 +12,7 @@ import { ColumnSelector } from "@/shared/components/ColumnSelector";
 import { customStylesTable } from "@/utils/customTableStyle";
 
 export default function TablaEmpresas({ empresas, onEditar, onEliminar }) {
-   if (empresas.length === 0) {
-      return <p>No hay empresas registradas.</p>;
-   }
-
+   
    const [visibleColumns, setVisibleColumns] = useState({
       razon_social: true,
       ruc: true,
@@ -36,6 +33,16 @@ export default function TablaEmpresas({ empresas, onEditar, onEliminar }) {
       { id: "telefono", label: "Teléfono" },
       { id: "acciones", label: "Acciones" },
    ];
+
+   if (empresas.length === 0) {
+      return (
+         <div className="flex items-center justify-center py-12">
+            <p className="text-muted-foreground">
+               No hay filiales registradas.
+            </p>
+         </div>
+      );
+   }
 
    const columns = [
       {
@@ -141,7 +148,7 @@ export default function TablaEmpresas({ empresas, onEditar, onEliminar }) {
    
 
    return (
-      <div className="w-full  px-4 max-w-7xl">
+      <div className="w-full max-w-7xl">
          <div className="flex justify-end">
             <ColumnSelector
                visibleColumns={visibleColumns}

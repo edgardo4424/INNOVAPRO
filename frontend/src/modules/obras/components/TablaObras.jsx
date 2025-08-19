@@ -7,10 +7,36 @@ import {
 import { Edit, Trash2 } from "lucide-react";
 import DataTable from "react-data-table-component";
 import ModalEditarObra from "./ModalEditarObra";
+import { useState } from "react";
+import { ColumnSelector } from "@/shared/components/ColumnSelector";
 export default function TablaObras({ obras, onSubmit, onEditar, onEliminar }) {
-   if (obras.length === 0) {
-      return <p>No hay obras registradas.</p>;
+   
+   console.log('obras', obras);
+   const [visibleColumns, setVisibleColumns] = useState({
+         nombre: true,
+         direccion: true,
+         ubicacion: true,
+         estado: true,
+         acciones: true,
+      });
+      const columnOptions = [
+         { id: "nombre", label: "Nombre" },
+         { id: "direccion", label: "Dirección" },
+         { id: "ubicacion", label: "Ubicación" },
+         { id: "estado", label: "Estado" },
+         { id: "acciones", label: "Acciones" },
+      ];
+
+    if (obras.length === 0) {
+      return (
+         <div className="flex items-center justify-center py-12">
+            <p className="text-muted-foreground">
+               No hay obras registradas.
+            </p>
+         </div>
+      );
    }
+
    const columns = [
       {
          name: "Nombre",
@@ -25,24 +51,28 @@ export default function TablaObras({ obras, onSubmit, onEditar, onEliminar }) {
                <TooltipContent>{row.nombre || "—"}</TooltipContent>
             </Tooltip>
          ),
+         omit: !visibleColumns.nombre,
       },
       {
          name: "Dirección",
          selector: (row) => row.direccion || "—",
          sortable: true,
          grow: 2,
+         omit: !visibleColumns.direccion,
       },
       {
          name: "Ubicación",
          selector: (row) => `${row.ubicacion || "—"}`,
          sortable: true,
          grow: 1,
+         omit: !visibleColumns.ubicacion,
       },
       {
-         name: "estado",
+         name: "Estado",
          selector: (row) => row.estado || "—",
          sortable: true,
          grow: 2,
+         omit: !visibleColumns.estado,
       },
       {
          name: "Acciones",
@@ -67,6 +97,7 @@ export default function TablaObras({ obras, onSubmit, onEditar, onEliminar }) {
          ),
          ignoreRowClick: true,
          width: "120px",
+         omit: !visibleColumns.acciones,
       },
    ];
    const customStyles = {
@@ -116,7 +147,15 @@ export default function TablaObras({ obras, onSubmit, onEditar, onEliminar }) {
       },
    };
    return (
-      <div className="w-full px-4">
+      <div className="w-full max-w-7xl">
+
+          <div className="flex justify-end">
+                     <ColumnSelector
+                        visibleColumns={visibleColumns}
+                        setVisibleColumns={setVisibleColumns}
+                        columnOptions={columnOptions}
+                     />
+                  </div>
          <DataTable
             columns={columns}
             data={obras}

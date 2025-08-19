@@ -28,7 +28,7 @@ export default function Paginacion({
 
  
 
-      <div className="w-full max-w-7xl flex flex-col md:flex-row items-end  justify-between md:items-center px-8 mt-2 mb-16 gap-4 text-neutral-600">
+      <div className="text-xs w-full max-w-7xl flex flex-col md:flex-row items-end  justify-between md:items-center px-8 mt-2 mb-16 gap-4 text-neutral-600">
          <div className="flex items-center gap-2">
             <p>Filas por página:</p>
             <Select

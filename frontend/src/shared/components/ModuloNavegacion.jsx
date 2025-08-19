@@ -15,6 +15,7 @@ import {
    UserCheck,
    Users,
 } from "lucide-react";
+import Typography from "@/components/ui/Typography";
 
 export default function ModuloNavegacion() {
    const { user } = useAuth();
@@ -24,7 +25,7 @@ export default function ModuloNavegacion() {
    const iconMap = {
       Dashboard: LayoutDashboard,
       "Gestión de Usuarios": Users,
-      "Gestión de Filiales de Innova": Building2,
+      "Gestión de Filiales": Building2,
       "Gestión de Clientes": UserCheck,
       "Gestión de Contactos": Contact,
       "Gestión de Obras": Hammer,
@@ -36,7 +37,7 @@ export default function ModuloNavegacion() {
    const modulesByRole = {
       Gerencia: [
          { name: "Gestión de Usuarios", path: "/gestion-usuarios" },
-         { name: "Gestión de Filiales de Innova", path: "/gestion-empresas" },
+         { name: "Gestión de Filiales", path: "/gestion-empresas" },
          { name: "Gestión de Clientes", path: "/gestion-clientes" },
          { name: "Gestión de Contactos", path: "/gestion-contactos" },
          { name: "Gestión de Obras", path: "/gestion-obras" },
@@ -78,28 +79,24 @@ export default function ModuloNavegacion() {
 
    const Icon = iconMap[modules[currentIndex].name] || LayoutDashboard;
    return (
-      <header className=" py-4 md:py-0 shadow-sm border-b border-slate-200 w-full ">
-         <div className="max-w-7xl mx-auto px-4 ">
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between min-h-16 gap-4 ">
+      <header className=" p-5 md:py-0 shadow-xs border-b border-slate-200 w-full ">
+        
+            <div className="flex flex-col md:flex-row justify-between min-h-16 gap-4">
                {/* Logo and Title */}
-               <div className="flex items-center space-x-3">
-                  <div className="flex items-center justify-center w-10 h-10 bg-blue-600 rounded-lg">
+               <div className="flex justify-center items-center gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 bg-primary rounded-lg">
                      <Icon className="w-6 h-6 text-white" />
                   </div>
 
-                  <div>
-                     <h1 className="text-xl font-bold text-slate-900">
-                        {modules[currentIndex].name}
-                     </h1>
-                  </div>
+                  <Typography.Title> {modules[currentIndex].name}</Typography.Title>
                </div>
 
                {/* Navigation Buttons */}
-               <div className="flex items-center md:space-x-3 flex-col   space-y-3 md:space-y-0 md:flex-row ">
+               <div className="flex justify-center items-center gap-3">
                   {moduloAnterior && (
                      <Button
                         variant="outline"
-                        className="flex items-center space-x-2 hover:bg-slate-50 transition-colors w-full md:w-auto"
+                        className="flex items-center transition-colors md:w-[164px] text-xs"
                         onClick={irModuloAnterior}
                      >
                         <ArrowLeft className="w-4 h-4" />
@@ -108,7 +105,7 @@ export default function ModuloNavegacion() {
                   )}
                   {moduloSiguiente && (
                      <Button
-                        className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 transition-colors w-full md:w-auto"
+                        className="flex items-center transition-colors md:w-[164px] text-xs"
                         onClick={irModuloSiguiente}
                      >
                         <span> {moduloSiguiente.name} </span>
@@ -117,7 +114,7 @@ export default function ModuloNavegacion() {
                   )}
                </div>
             </div>
-         </div>
+      
       </header>
    );
 }

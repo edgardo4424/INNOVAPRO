@@ -27,7 +27,7 @@ export default function ModalAgregarUsuario({
    return (
       <AlertDialog open={open} onOpenChange={setOpen}>
          <AlertDialogTrigger asChild>
-            <Button className="btn-agregar">
+            <Button variant={"secondary"}>
                <UserPlus />
                <span className="hidden md:block">Crear Usuario</span>
             </Button>

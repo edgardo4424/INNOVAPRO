@@ -148,7 +148,7 @@ export default function UsuarioForm({
             <Button variant="outline" onClick={handleCancel}>
                Cancelar
             </Button>
-            <Button className="bg-sky-950" type="submit" form="form-usuario">
+            <Button type="submit" form="form-usuario">
                {esCrear ? "Crear Usuario" : "Actualizar Usuario"}
             </Button>
          </AlertDialogFooter>

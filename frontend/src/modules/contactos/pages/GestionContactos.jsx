@@ -29,8 +29,9 @@ export default function GestionContactos() {
       <div className="min-h-full flex-1  flex flex-col items-center">
          <ModuloNavegacion />
 
+<div className="p-3 md:py-4 md:px-6 w-full">
          {/* 🔍 Buscador + Moda de agregar oontacto */}
-         <div className="w-full max-w-7xl flex flex-row-reverse md:flex-row justify-between px-4 my-6 items-center gap-4">
+         <div className="w-full max-w-7xl flex flex-row-reverse md:flex-row justify-between items-center gap-4 mb-5">
             <ModalAgregarContacto
                clientes={clientes}
                obras={obras}
@@ -42,7 +43,7 @@ export default function GestionContactos() {
                   placeholder="Buscar contacto"
                   value={busqueda}
                   onChange={(e) => setBusqueda(e.target.value)}
-                  className="w-full pr-14 md:pr-0"
+                  className="w-full"
                />
                <X
                   onClick={() => setBusqueda("")}
@@ -70,6 +71,7 @@ export default function GestionContactos() {
             setPaginaActual={setPaginaActual}
             usuariosPorPagina={contactosPorPagina}
          />
+      </div>
       </div>
    );
 }
