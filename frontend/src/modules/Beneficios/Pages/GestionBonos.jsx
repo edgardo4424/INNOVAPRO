@@ -73,6 +73,7 @@ const GestionBonos = () => {
       fecha: "",
       monto: "",
       observacion: "",
+      tipo: "",
    });
 
    const fetchBonos = async () => {
@@ -83,7 +84,7 @@ const GestionBonos = () => {
          const raw = res?.data?.bonos ?? res?.data ?? [];
          const list = Array.isArray(raw) ? raw : [raw];
          setBonos(list);
-         console.log(trab.data);
+         console.log(list);
 
          setTrabajadores(trab.data);
       } catch (e) {
@@ -121,6 +122,7 @@ const GestionBonos = () => {
          fecha: new Date().toISOString().slice(0, 10),
          monto: "",
          observacion: "",
+         tipo: "",
       });
       setDialogOpen(true);
    };
@@ -133,6 +135,7 @@ const GestionBonos = () => {
          fecha: bono.fecha ?? "",
          monto: String(bono.monto ?? ""),
          observacion: bono.observacion ?? "",
+         tipo: bono.tipo ?? "",
       });
       setDialogOpen(true);
    };
@@ -145,6 +148,7 @@ const GestionBonos = () => {
          fecha: bono.fecha ?? "",
          monto: String(bono.monto ?? ""),
          observacion: bono.observacion ?? "",
+         tipo: bono.tipo ?? "",
       });
       setDialogOpen(true);
    };
@@ -159,12 +163,13 @@ const GestionBonos = () => {
             fecha: form.fecha,
             monto: Number(form.monto || 0),
             observacion: form.observacion,
+            tipo: form.tipo,
          };
          if (viewMode === "crear") {
             await beneficiosService.crearBono(payload);
             toast.success("Bono creado correctamente");
          } else if (viewMode === "editar" && editing) {
-          payload.id=editing.id;
+            payload.id = editing.id;
             await beneficiosService.editarBono(payload);
             toast.success("Bono actualizado correctamente");
          }
@@ -258,6 +263,7 @@ const GestionBonos = () => {
                            <th className="px-4 py-3 font-medium">DNI</th>
                            <th className="px-4 py-3 font-medium">Fecha</th>
                            <th className="px-4 py-3 font-medium">Monto</th>
+                           <th className="px-4 py-3 font-medium">Tipo</th>
                            <th className="px-4 py-3 font-medium">
                               Observación
                            </th>
@@ -307,6 +313,9 @@ const GestionBonos = () => {
                                     </td>
                                     <td className="px-4 py-3">
                                        {formatoDinero(b.monto)}
+                                    </td>
+                                    <td className="px-4 py-3 " >
+                                       {b.tipo ?? "-"}
                                     </td>
                                     <td
                                        className="px-4 py-3 max-w-[320px] truncate"
@@ -420,9 +429,9 @@ const GestionBonos = () => {
                      </DialogDescription>
                   </DialogHeader>
 
-                  <div className="space-y-4">
+                  <div className="space-y-2">
                      {/* Trabajador */}
-                     <div className="grid gap-2">
+                     <div className="grid gap-1">
                         <Label>Trabajador</Label>
                         <Select
                            value={form.trabajador_id}
@@ -432,7 +441,9 @@ const GestionBonos = () => {
                                  trabajador_id: val,
                               }))
                            }
-                           disabled={viewMode === "ver"||viewMode === "editar"}
+                           disabled={
+                              viewMode === "ver" || viewMode === "editar"
+                           }
                         >
                            <SelectTrigger className="w-full">
                               <SelectValue placeholder="Seleccione un trabajador" />
@@ -448,8 +459,35 @@ const GestionBonos = () => {
                         </Select>
                      </div>
 
+                     {/* Tipo de bono */}
+                     <div className="grid gap-1">
+                        <Label>Tipo de bono</Label>
+                        <Select
+                           value={form.tipo}
+                           onValueChange={(val) =>
+                              setForm((prevForm) => ({
+                                 ...prevForm,
+                                 tipo: val,
+                              }))
+                           }
+                        >
+                           <SelectTrigger className={"w-full"}>
+                              <SelectValue placeholder="Selecciona el tipo de bono" />
+                           </SelectTrigger>
+                           <SelectContent>
+                              <SelectItem value={"simple"}>Simple</SelectItem>
+                              <SelectItem value={"bono_nocturno"}>
+                                 Nocturno
+                              </SelectItem>
+                              <SelectItem value={"escolaridad"}>
+                                 Escolaridad
+                              </SelectItem>
+                           </SelectContent>
+                        </Select>
+                     </div>
+
                      {/* Fecha */}
-                     <div className="grid gap-2">
+                     <div className="grid gap-1">
                         <Label>Fecha</Label>
                         <Input
                            type="date"
@@ -462,7 +500,7 @@ const GestionBonos = () => {
                      </div>
 
                      {/* Monto */}
-                     <div className="grid gap-2">
+                     <div className="grid gap-1">
                         <Label>Monto (PEN)</Label>
                         <Input
                            type="number"
@@ -482,7 +520,7 @@ const GestionBonos = () => {
                      </div>
 
                      {/* Observación */}
-                     <div className="grid gap-2">
+                     <div className="grid gap-1">
                         <Label>Observación</Label>
                         <Textarea
                            placeholder="Motivo del bono..."

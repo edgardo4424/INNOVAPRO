@@ -212,8 +212,8 @@ export default function TrabajadorForm() {
             await trabajadorSchema(isEditMode).validate(dataToSubmit, {
                abortEarly: false,
             });
-            console.log('ediar',dataToSubmit);
-            
+            console.log("ediar", dataToSubmit);
+
             const response = await trabajadoresService.editarTrabajador(
                dataToSubmit
             );
@@ -420,6 +420,17 @@ export default function TrabajadorForm() {
                                  </p>
                               )}
                            </div>
+                           <div className="flex items-center space-x-2 pl-4 ">
+                              <Checkbox
+                                 id="domiciliado"
+                                 checked={formData.domiciliado}
+                                 className="data-[state=checked]:bg-[#1b274a] border-[#1b274a]/50 data-[state=checked]:border-[#1b274a]/80"
+                                 onCheckedChange={(checked) =>
+                                    handleInputChange("domiciliado", !!checked)
+                                 }
+                              />
+                              <Label htmlFor="domiciliado">Domiciliado</Label>
+                           </div>
                         </section>
                      </article>
 
@@ -438,17 +449,6 @@ export default function TrabajadorForm() {
                         </div>
 
                         <div className="grid space-y-4 w-full  grid-cols-1 md:grid-cols-2">
-                           <div className="flex items-center space-x-2">
-                              <Checkbox
-                                 id="domiciliado"
-                                 checked={formData.domiciliado}
-                                 className="data-[state=checked]:bg-[#1b274a] border-[#1b274a]/50 data-[state=checked]:border-[#1b274a]/80"
-                                 onCheckedChange={(checked) =>
-                                    handleInputChange("domiciliado", !!checked)
-                                 }
-                              />
-                              <Label htmlFor="domiciliado">Domiciliado</Label>
-                           </div>
                            <div className="flex items-center space-x-2">
                               <Checkbox
                                  id="asignacion_familiar"
@@ -474,7 +474,7 @@ export default function TrabajadorForm() {
                                  }}
                               />
 
-                              <Label htmlFor="domiciliado">
+                              <Label htmlFor="asignacion_familiar">
                                  Asignacion Familiar
                               </Label>
                            </div>

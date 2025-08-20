@@ -67,9 +67,6 @@ export default function GestionVacaciones() {
                .includes(searchTerm.toLowerCase()) ||
             emp.cargo?.area?.nombre
                ?.toLowerCase()
-               .includes(searchTerm.toLowerCase()) ||
-            emp.empresa_proveedora?.razon_social
-               ?.toLowerCase()
                .includes(searchTerm.toLowerCase())
       );
    }, [searchTerm, employees]);
