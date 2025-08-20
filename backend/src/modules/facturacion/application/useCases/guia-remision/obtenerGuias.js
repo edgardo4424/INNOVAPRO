@@ -1,12 +1,13 @@
-module.exports = async (facturaRepository, query) => {
+// use case: obtenerBorradores.js
+module.exports = async (guiaRepository, query) => {
     try {
-        const resp = await facturaRepository.obtenerFacturas(query);
+        const resp = await guiaRepository.listarGuias(query);
 
         if (!resp || resp.success === false) {
             return {
                 codigo: 500,
                 respuesta: {
-                    mensaje: resp?.message || "Error al listar los documentos.",
+                    mensaje: resp?.message || "Error al listar las guias.",
                     estado: false,
                     error: resp?.error || null,
                 },
@@ -21,7 +22,7 @@ module.exports = async (facturaRepository, query) => {
         return {
             codigo: 200,
             respuesta: {
-                mensaje: isEmpty ? "Documentos no encontrados" : "Documentos encontrados",
+                mensaje: isEmpty ? "Guias no encontrados" : "Guias encontrados",
                 estado: true,
                 total: totalRecords,
                 datos: data,
@@ -42,11 +43,11 @@ module.exports = async (facturaRepository, query) => {
                 },
             },
         };
-    } catch (error) {
+    } catch (e) {
         return {
             codigo: 500,
             respuesta: {
-                mensaje: "Error inesperado al obtener borradores.",
+                mensaje: "Error inesperado al obtener guias.",
                 estado: false,
                 error: e.message,
             },

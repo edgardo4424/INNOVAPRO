@@ -10,7 +10,7 @@ import {
 import { useGuiaTransporte } from "@/context/Factura/GuiaTransporteContext";
 import { Search } from "lucide-react";
 import { toast } from "react-toastify";
-import factilizaService from "../../service/FactilizaService";
+import factilizaService from "../../../service/FactilizaService";
 
 const DatosDeClienteForm = () => {
 

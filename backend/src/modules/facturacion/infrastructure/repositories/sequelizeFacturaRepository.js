@@ -11,107 +11,113 @@ class SequelizeFacturaRepository {
         return value != null ? parseFloat(value) : 0;
     }
 
-    async obtenerFacturas(tipo = "TODAS", page = 1, limit = 10, num_doc, tip_doc, fec_des, fec_ast) {
-        console.log("🚚 Atributos para obtener facturas desde el repository:", {
-            tipo,
-            page,
-            limit,
-            num_doc,
-            tip_doc,
-            fec_des,
-            fec_ast,
-        });
+    async obtenerFacturas(query) {
+        try {
 
-        // ? CONVERTIMOS A NÚMEROS los parámetros de paginación
-        const pageNumber = parseInt(page);
-        const limitNumber = parseInt(limit);
+            const {
+                page = 1,
+                limit,
+                tipo_doc,
+                empresa_ruc,
+                cliente_num_doc,
+                cliente_razon_social,
+                usuario_id,
+                fec_des,
+                fec_ast,
+            } = query;
+            const sane = (v) => {
+                if (v === null || v === undefined) return undefined;
+                if (typeof v === "string") {
+                    const t = v.trim();
+                    if (!t || t.toLowerCase() === "null" || t.toLowerCase() === "undefined") return undefined;
+                    return t;
+                }
+                return v;
+            };
 
-        // ? Aplica paginación
-        const offset = (pageNumber - 1) * limitNumber;
+            // Usa NUEVAS variables (no reasignes las const del destructuring)
+            const nTipoDoc = sane(tipo_doc);
+            const nEmpresaRuc = sane(empresa_ruc);
+            const nClienteNumDoc = sane(cliente_num_doc);
+            const nClienteRazonSocial = sane(cliente_razon_social);
+            const nUsuarioId = sane(usuario_id);
+            const nFecDes = sane(fec_des);
+            const nFecAst = sane(fec_ast);
 
-        // ? Aplica condicional
-        let where = {};
-        let include = [];
+            const pageNumber = Number.parseInt(page, 10) || 1;
+            const limitNumber = limit ? Number.parseInt(limit, 10) : undefined;
+            const offset = limitNumber ? (pageNumber - 1) * limitNumber : undefined;
 
-        if (tipo.toUpperCase() === "TODAS") {
-            include.push({
-                model: SunatRespuesta,
-                attributes: ["hash", "cdr_response_id"],
-            });
-        } else {
-            where = {
-                [Op.and]: [
-                    { estado: tipo },
+            const where = {};
+
+            if (nTipoDoc) {
+                where.tipo_doc = nTipoDoc;
+            }
+            if (nEmpresaRuc) {
+                where.empresa_ruc = { [Op.like]: `%${nEmpresaRuc}%` };
+            }
+            if (nClienteNumDoc) {
+                where.cliente_num_doc = { [Op.like]: `%${nClienteNumDoc}%` };
+            }
+            if (nClienteRazonSocial) {
+                where.cliente_razon_social = { [Op.like]: `%${nClienteRazonSocial}%` };
+            }
+            if (nUsuarioId) {
+                where.usuario_id = nUsuarioId;
+            }
+
+            // Rango de fechas (asegúrate que el atributo del modelo sea exactamente 'fecha_Emision')
+            if (nFecDes && nFecAst) {
+                where.fecha_Emision = { [Op.between]: [nFecDes, nFecAst] };
+            } else if (nFecDes) {
+                where.fecha_Emision = { [Op.gte]: nFecDes };
+            } else if (nFecAst) {
+                where.fecha_Emision = { [Op.lte]: nFecAst };
+            }
+
+
+            const {count, rows} = await Factura.findAndCountAll({
+                attributes: [
+                    "id",
+                    "tipo_operacion",
+                    "tipo_doc",
+                    "serie",
+                    "correlativo",
+                    "tipo_moneda",
+                    "fecha_emision",
+                    "empresa_ruc",
+                    "cliente_num_doc",
+                    "cliente_razon_social",
+                    "monto_igv",
+                    "total_impuestos",
+                    "valor_venta",
+                    "sub_total",
+                    "monto_imp_venta",
+                    "estado",
                 ],
-            };
-            include.push({
-                model: SunatRespuesta,
-                attributes: ["hash", "cdr_response_id"],
+                where,
+                offset,
+                limit: limitNumber,
             });
-        }
-
-        // ? Aplica filtros
-        // 🔍 Filtros adicionales opcionales
-        if (num_doc) {
-            where.cliente_num_doc = { [Op.like]: `%${num_doc}%` };
-        }
-
-        if (tip_doc) {
-            where.tipo_doc = tip_doc;
-        }
-
-        if (fec_des && fec_ast) {
-            where.fecha_emision = {
-                [Op.between]: [fec_des, fec_ast],
-            };
-        } else if (fec_des) {
-            where.fecha_emision = {
-                [Op.gte]: fec_des,
-            };
-        } else if (fec_ast) {
-            where.fecha_emision = {
-                [Op.lte]: fec_ast,
-            };
-        }
-        const facturas = await Factura.findAll({
-            attributes: [
-                "id",
-                "tipo_operacion",
-                "tipo_doc",
-                "serie",
-                "correlativo",
-                "tipo_moneda",
-                "fecha_emision",
-                "empresa_ruc",
-                "cliente_num_doc",
-                "cliente_razon_social",
-                "monto_igv",
-                "total_impuestos",
-                "valor_venta",
-                "sub_total",
-                "monto_imp_venta",
-                "estado",
-            ],
-            where,
-            include,
-            offset,
-            limit: limitNumber,
-        });
-
-        console.log("FACTURAS ENCONTRADAS CON FILTRO", facturas.length);
-
-        return facturas.map((factura) => {
-            const plain = factura.get({ plain: true });
 
             return {
-                ...plain,
-                monto_igv: parseFloat(plain.monto_igv),
-                total_impuestos: parseFloat(plain.total_impuestos),
-                valor_venta: parseFloat(plain.valor_venta),
-                sub_total: parseFloat(plain.sub_total),
-                monto_imp_venta: parseFloat(plain.monto_imp_venta),
+                success: true,
+                message: "Documentos listados correctamente.",
+                data: rows,
+                metadata: {
+                    totalRecords: count,
+                    currentPage: pageNumber,
+                    totalPages: limitNumber ? Math.ceil(count / limitNumber) : 1,
+                },
             };
-        });
+        } catch (error) {
+            return {
+                success: false,
+                message: "Error al listar los documentos.",
+                data: null,
+                error: error.message,
+            };
+        }
     }
 
     async obtenerFactura(id) {

@@ -1,9 +1,10 @@
+import { BrushCleaning } from 'lucide-react';
 import React from 'react'
 import { toast } from 'react-toastify';
 
-const FiltroTabla = ({ filtro, setFiltro, documentTypes, handleAplicarFiltros }) => {
+const FiltroTabla = ({ filtro, setFiltro, documentTypes, handleAplicarFiltros,handleLimpiarFiltros }) => {
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 mb-8 p-6 bg-white rounded-xl shadow-md items-end border-2">
+        <div className="relative grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 mb-8 p-6 bg-white rounded-xl shadow-md items-end border-2">
             <div className="flex flex-col">
                 <label
                     htmlFor="search"
@@ -103,12 +104,23 @@ const FiltroTabla = ({ filtro, setFiltro, documentTypes, handleAplicarFiltros })
             </div>
 
             {/* Botón para "Aplicar Filtros" (en una app real, esto activaría el filtrado) */}
-            <button
-                className="col-span-1 sm:col-span-2 md:col-span-1 lg:col-span-1 mt-auto px-6 py-3 bg-innova-blue cursor-pointer text-white font-bold rounded-lg shadow-md hover:scale-102 transition duration-300"
-                onClick={handleAplicarFiltros}
-            >
-                Aplicar Filtros
-            </button>
+            {/* Contenedor para los botones de acción */}
+            <div className="flex flex-col lg:flex-row gap-2 mt-auto">
+                <button
+                    className="px-6 py-1 bg-innova-blue cursor-pointer text-white font-bold rounded-lg shadow-md hover:scale-102 transition duration-300"
+                    onClick={handleAplicarFiltros}
+                >
+                    Aplicar Filtros
+                </button>
+                <button
+                    className="cursor-pointer text-innova-blue text-sm font-bold rounded-lg shadow-md border-2 border-innova-blue hover:bg-innova-blue hover:text-white transition duration-300"
+                onClick={handleLimpiarFiltros}
+                >
+                    <BrushCleaning className="inline-block " />
+                    Limpiar
+                </button>
+
+            </div>
         </div>
     )
 }

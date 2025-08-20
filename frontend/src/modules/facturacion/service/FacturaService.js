@@ -47,6 +47,10 @@ const facturaService = {
         const res = await api.get('/facturacion/guia-remision/correlativo');
         return res.data
     },
+    obtenerTodasLasGuiasRemision: async (query) => {
+        const res = await api.get(`/facturacion/guia-remision${query}`);
+        return res.data;
+    },
     obtenerMtc: async (ruc) => {
         const res = await api.get(`/facturacion/mtc?ruc=${ruc}`);
         return res.data

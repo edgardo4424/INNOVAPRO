@@ -10,7 +10,7 @@ import {
 import { useGuiaTransporte } from "@/context/Factura/GuiaTransporteContext";
 import { choferInicialPrivado } from "../utils/valoresIncialGuia";
 import { Search, Trash } from "lucide-react";
-import factilizaService from "../../service/FactilizaService";
+import factilizaService from "../../../service/FactilizaService";
 import { toast } from "react-toastify";
 
 const ChoferPrivadoForm = () => {

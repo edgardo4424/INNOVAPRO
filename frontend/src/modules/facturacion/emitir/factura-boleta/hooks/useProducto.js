@@ -1,4 +1,4 @@
-import productoService from "../../service/ProductoService";
+import productoService from "../../../service/ProductoService";
 
 const useProducto = () => {
     const ObtenerProductos = async () => {

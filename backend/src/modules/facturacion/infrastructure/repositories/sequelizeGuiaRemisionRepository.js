@@ -109,6 +109,108 @@ class SequelizeGuiaRemisionRepository {
         }
     }
 
+    async listarGuias(query) {
+        try {
+            const {
+                page = 1,
+                limit,
+                tipo_doc,
+                empresa_ruc,
+                cliente_num_doc,
+                cliente_razon_social,
+                usuario_id,
+                fec_des,
+                fec_ast,
+            } = query;
+
+            const sane = (v) => {
+                if (v === null || v === undefined) return undefined;
+                if (typeof v === "string") {
+                    const t = v.trim();
+                    if (!t || t.toLowerCase() === "null" || t.toLowerCase() === "undefined") return undefined;
+                    return t;
+                }
+                return v;
+            };
+
+            // Usa NUEVAS variables (no reasignes las const del destructuring)
+            const nTipoDoc = sane(tipo_doc);
+            const nEmpresaRuc = sane(empresa_ruc);
+            const nClienteNumDoc = sane(cliente_num_doc);
+            const nClienteRazonSocial = sane(cliente_razon_social);
+            const nUsuarioId = sane(usuario_id);
+            const nFecDes = sane(fec_des);
+            const nFecAst = sane(fec_ast);
+
+            const pageNumber = Number.parseInt(page, 10) || 1;
+            const limitNumber = limit ? Number.parseInt(limit, 10) : undefined;
+            const offset = limitNumber ? (pageNumber - 1) * limitNumber : undefined;
+
+            const where = {};
+
+            if (nTipoDoc && nTipoDoc.toLowerCase() !== "todos") {
+                where.tipo_borrador = nTipoDoc;
+            }
+            if (nEmpresaRuc) {
+                where.empresa_ruc = { [Op.like]: `%${nEmpresaRuc}%` };
+            }
+            if (nClienteNumDoc) {
+                where.cliente_num_doc = { [Op.like]: `%${nClienteNumDoc}%` };
+            }
+            if (nClienteRazonSocial) {
+                where.cliente_razon_social = { [Op.like]: `%${nClienteRazonSocial}%` };
+            }
+            if (nUsuarioId) {
+                where.usuario_id = nUsuarioId;
+            }
+
+            // Rango de fechas (asegúrate que el atributo del modelo sea exactamente 'fecha_Emision')
+            if (nFecDes && nFecAst) {
+                where.fecha_Emision = { [Op.between]: [nFecDes, nFecAst] };
+            } else if (nFecDes) {
+                where.fecha_Emision = { [Op.gte]: nFecDes };
+            } else if (nFecAst) {
+                where.fecha_Emision = { [Op.lte]: nFecAst };
+            }
+
+            const { count, rows } = await GuiaRemision.findAndCountAll({
+                attributes: [
+                    "id",
+                    "tipo_doc",
+                    "serie",
+                    "correlativo",
+                    "fecha_emision",
+                    "empresa_ruc",
+                    "cliente_num_doc",
+                    "cliente_razon_social",
+                    "usuario_id",
+                    "estado",
+                ],
+                where,
+                offset,
+                limit: limitNumber,
+            })
+
+            return {
+                success: true,
+                message: "Guias listadas correctamente.",
+                data: rows,
+                metadata: {
+                    totalRecords: count,
+                    currentPage: pageNumber,
+                    totalPages: limitNumber ? Math.ceil(count / limitNumber) : 1,
+                },
+            };
+        } catch (error) {
+            return {
+                success: false,
+                message: "Error al listar los documentos.",
+                data: null,
+                error: error.message,
+            };
+        }
+    }
+
     async correlativo() {
         const [lastGuiaRemision] = await GuiaRemision.findAll({
             order: [['id', 'DESC']],

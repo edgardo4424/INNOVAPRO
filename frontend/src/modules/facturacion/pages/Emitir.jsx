@@ -1,14 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Emitir = () => {
     const [activeTab, setActiveTab] = useState("facturaBoleta");
 
-    const navigate = useNavigate();
-
-    const navegarAOtrasRutas = (ruta) => {
-        navigate(ruta);
-    };
 
     const renderContent = () => {
         switch (activeTab) {
@@ -16,9 +12,9 @@ const Emitir = () => {
                 return (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {/* Generar Factura / Boleta de venta */}
-                        <div
+                        <Link
+                            to="factura-boleta"
                             className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
-                            onClick={() => navegarAOtrasRutas("/facturacion/generar/factura-boleta")}
                         >
                             <h3 className="text-xl font-semibold text-blue-700 mb-2">
                                 Generar Factura / Boleta
@@ -26,7 +22,7 @@ const Emitir = () => {
                             <p className="text-gray-600 text-sm">
                                 Crea y emite nuevas facturas o boletas de venta de forma rápida y sencilla.
                             </p>
-                        </div>
+                        </Link>
 
                     </div>
                 );
@@ -34,9 +30,9 @@ const Emitir = () => {
                 return (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {/* Enviar Nota */}
-                        <div
+                        <Link
+                            to="nota-credito-debito"
                             className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
-                            onClick={() => console.log("Enviar Nota de Crédito/Débito")}
                         >
                             <h3 className="text-xl font-semibold text-blue-700 mb-2">
                                 Generar Nota
@@ -44,7 +40,7 @@ const Emitir = () => {
                             <p className="text-gray-600 text-sm">
                                 Crea y envía notas de crédito o débito para ajustar tus comprobantes.
                             </p>
-                        </div>
+                        </Link>
 
                     </div>
                 );
@@ -52,9 +48,9 @@ const Emitir = () => {
                 return (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {/* Transporte privado */}
-                        <div
+                        <Link
+                            to="guia/transporte-privado"
                             className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
-                            onClick={() => navegarAOtrasRutas("/facturacion/generar/guia-de-remision/transporte-privado")}
                         >
                             <h3 className="text-xl font-semibold text-blue-700 mb-2">
                                 Transporte Privado
@@ -62,12 +58,12 @@ const Emitir = () => {
                             <p className="text-gray-600 text-sm">
                                 Emite guías de remisión para traslados con tu propio transporte.
                             </p>
-                        </div>
+                        </Link>
 
                         {/* Transporte público */}
-                        <div
+                        <Link
+                            to="guia/transporte-publico"
                             className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
-                            onClick={() => navegarAOtrasRutas("/facturacion/generar/guia-de-remision/transporte-publico")}
                         >
                             <h3 className="text-xl font-semibold text-blue-700 mb-2">
                                 Transporte Público
@@ -75,12 +71,12 @@ const Emitir = () => {
                             <p className="text-gray-600 text-sm">
                                 Genera guías de remisión para envíos a través de transportistas públicos.
                             </p>
-                        </div>
+                        </Link>
 
                         {/* Traslado misma empresa */}
-                        <div
+                        <Link
+                            to="guia/traslado-misma-empresa"
                             className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
-                            onClick={() => navegarAOtrasRutas("/facturacion/generar/guia-de-remision/traslado-misma-empresa")}
                         >
                             <h3 className="text-xl font-semibold text-blue-700 mb-2">
                                 Traslado Misma Empresa
@@ -88,7 +84,7 @@ const Emitir = () => {
                             <p className="text-gray-600 text-sm">
                                 Utiliza esta opción para movimientos de bienes entre tus propias sucursales.
                             </p>
-                        </div>
+                        </Link>
 
 
                     </div>

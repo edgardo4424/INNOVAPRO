@@ -1,9 +1,9 @@
-import { FacturaValidarEstados, PagoValidarEstados, ProductoValidarEstados, valorIncialPago, ValorInicialFactura, valorInicialProducto } from "@/modules/facturacion/factura-boleta/utils/valoresInicial";
+import { FacturaValidarEstados, PagoValidarEstados, ProductoValidarEstados, valorIncialPago, ValorInicialFactura, valorInicialProducto } from "@/modules/facturacion/emitir/factura-boleta/utils/valoresInicial";
 import factilizaService from "@/modules/facturacion/service/FactilizaService";
 import facturaService from "@/modules/facturacion/service/FacturaService";
 import numeroALeyenda from "@/modules/facturacion/utils/numeroALeyenda";
-import { validarModal } from "@/modules/facturacion/factura-boleta/utils/validarModal";
-import { validarPasos } from "@/modules/facturacion/factura-boleta/utils/validarPasos";
+import { validarModal } from "@/modules/facturacion/emitir/factura-boleta/utils/validarModal";
+import { validarPasos } from "@/modules/facturacion/emitir/factura-boleta/utils/validarPasos";
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 

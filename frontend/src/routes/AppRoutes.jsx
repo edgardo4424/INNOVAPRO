@@ -68,27 +68,20 @@ const GestionStockPiezas = lazy(() =>
 
 //* Facturacion
 
-const Emitir = lazy(() =>
-   import("../modules/facturacion/pages/Emitir")
-);
-
-const FacturaBoleta = lazy(() =>
-   import("../modules/facturacion/factura-boleta/FacturaBoleta")
-);
-const GuiaRemision = lazy(() =>
-   import("../modules/facturacion/guia-de-remision/GuiaRemision")
+const EmitirRoutes = lazy(() =>
+   import("../modules/facturacion/routes/EmitirRoutes")
 );
 
 const FacturasAnuladas = lazy(() =>
    import("../modules/facturacion/pages/FacturasAnuladas")
 );
 
-const Bandeja = lazy(() =>
-   import("../modules/facturacion/pages/Bandeja")
+const BandejaRoutes = lazy(() =>
+   import("../modules/facturacion/routes/BandejaRoutes")
 );
 
-const FacturaBorradores = lazy(() =>
-   import("../modules/facturacion/lista-borradores/ListaBorradores")
+const Borrador = lazy(() =>
+   import("../modules/facturacion/pages/Borrador")
 );
 
 const GestionGratificacion = lazy(() =>
@@ -225,29 +218,15 @@ export default function AppRoutes() {
                      {/*    //************************INICIO-FACTURACION************************* */}
                      <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
                         <Route
-                           path="facturacion/emitir"
+                           path="facturacion/emitir/*"
                            element={
-                              <Emitir />
+                              <EmitirRoutes />
                            }
                         />
 
                         <Route
-                           path="facturacion/generar/factura-boleta"
-                           element={
-                              <FacturaBoleta />
-                           }
-                        />
-
-                        <Route
-                           path="facturacion/generar/guia-de-remision/:tipoGuia"
-                           element={
-                              <GuiaRemision />
-                           }
-                        />
-
-                        <Route
-                           path="facturacion/bandeja"
-                           element={<Bandeja />}
+                           path="facturacion/bandeja/*"
+                           element={<BandejaRoutes />}
                         />
 
                         <Route
@@ -257,7 +236,7 @@ export default function AppRoutes() {
 
                         <Route
                            path="facturacion/borradores"
-                           element={<FacturaBorradores />}
+                           element={<Borrador />}
                         />
                      </Route>
                      {/*    //************************FINAL-FACTURACION************************* */}

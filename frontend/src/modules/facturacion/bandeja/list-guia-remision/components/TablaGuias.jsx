@@ -1,19 +1,18 @@
 import { Download, EyeIcon } from 'lucide-react';
 import React from 'react'
 
-const TablaDocumentos = ({ documentos, setIdDocumento, setModalOpen }) => {
+const TablaGuias = ({ documentos, setIdDocumento, setModalOpen, setModalDescargar,setGuiaADescargar}) => {
     return (
         <table className="min-w-full bg-white rounded-xl shadow-md overflow-hidden">
             <thead className="bg-innova-blue text-white">
                 <tr>
+                    <th className="py-3 px-3 text-left text-xs font-semibold uppercase tracking-wider">ID</th>
                     <th className="py-3 px-3 text-left text-xs font-semibold uppercase tracking-wider">Tipo Doc</th>
                     <th className="py-3 px-3 text-left text-xs font-semibold uppercase tracking-wider">Serie-Correlativo</th>
                     <th className="py-3 px-3 text-left text-xs font-semibold uppercase tracking-wider">Fecha Emision</th>
                     <th className="py-3 px-3 text-left text-xs font-semibold uppercase tracking-wider">Empresa RUC</th>
                     <th className="py-3 px-3 text-left text-xs font-semibold uppercase tracking-wider">Nro. Doc - Cliente</th>
-                    <th className="py-3 px-3 text-left text-xs font-semibold uppercase tracking-wider">Valor Venta</th>
-                    <th className="py-3 px-3 text-left text-xs font-semibold uppercase tracking-wider">Sub Total</th>
-                    <th className="py-3 px-3 text-left text-xs font-semibold uppercase tracking-wider">Monto Imp. Venta</th>
+                    {/* <th className="py-3 px-3 text-left text-xs font-semibold uppercase tracking-wider">Usuario</th> */}
                     <th className="py-3 px-3 text-left text-xs font-semibold uppercase tracking-wider">Estado</th>
                     <th className="py-3 px-3 text-left text-xs font-semibold uppercase tracking-wider">Acciones</th>
                 </tr>
@@ -21,6 +20,7 @@ const TablaDocumentos = ({ documentos, setIdDocumento, setModalOpen }) => {
             <tbody>
                 {documentos.map((factura, index) => (
                     <tr key={factura.id} className={`${index % 2 === 0 ? "bg-white" : "bg-gray-50"} border-b border-gray-200`}>
+                        <td className="py-3 px-6 text-xs text-gray-700">{factura.id}</td>
                         <td className="py-3 px-6 text-xs text-gray-700">{factura.tipo_doc}</td>
                         <td className="py-3 px-6 text-xs text-gray-700">{`${factura.serie}-${factura.correlativo}`}</td>
                         <td className="py-3 px-6 text-xs text-gray-700">
@@ -32,9 +32,7 @@ const TablaDocumentos = ({ documentos, setIdDocumento, setModalOpen }) => {
                                 ? `${factura.cliente_num_doc} - ${factura.cliente_razon_social}`
                                 : factura.cliente_razon_social}
                         </td>
-                        <td className="py-3 px-6 text-xs text-gray-700 font-medium">{`${factura.tipo_moneda} ${factura.valor_venta.toFixed(2)}`}</td>
-                        <td className="py-3 px-6 text-xs text-gray-700 font-medium">{`${factura.tipo_moneda} ${factura.sub_total.toFixed(2)}`}</td>
-                        <td className="py-3 px-6 text-xs text-gray-700 font-medium">{`${factura.tipo_moneda} ${factura.monto_imp_venta.toFixed(2)}`}</td>
+                        {/* <td className="py-3 px-6 text-xs text-gray-700">{factura.usuario_id}</td> */}
                         <td className={`py-3 px-6 text-xs font-semibold ${factura.estado === "Anulada" ? "text-red-500" : "text-green-500"} `}>
                             {factura.estado}
                         </td>
@@ -43,7 +41,9 @@ const TablaDocumentos = ({ documentos, setIdDocumento, setModalOpen }) => {
                                 <button onClick={() => { setIdDocumento(factura.id); setModalOpen(true); }}>
                                     <EyeIcon className="h-5 w-5 cursor-pointer hover:text-blue-500" />
                                 </button>
+                                <button onClick={() => { setIdDocumento(factura.id); setModalDescargar(true); setGuiaADescargar({ serie: factura.serie, correlativo: factura.correlativo }); }}>
                                 <Download className="h-5 w-5 cursor-pointer hover:text-green-500" />
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -53,4 +53,5 @@ const TablaDocumentos = ({ documentos, setIdDocumento, setModalOpen }) => {
     )
 }
 
-export default TablaDocumentos
+export default TablaGuias
+

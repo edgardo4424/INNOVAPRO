@@ -12,7 +12,7 @@ import { useGuiaTransporte } from "@/context/Factura/GuiaTransporteContext";
 import { LoaderCircle, Search, SquarePen } from "lucide-react";
 import { useState } from "react";
 import { Calendar22 } from "../../factura-boleta/components/Calendar22";
-import facturaService from "../../service/FacturaService";
+import facturaService from "../../../service/FacturaService";
 import { toast } from "react-toastify";
 
 const InfDocumentoForm = () => {

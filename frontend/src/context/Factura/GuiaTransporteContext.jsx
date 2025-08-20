@@ -1,5 +1,5 @@
-import { validarFormulario } from "@/modules/facturacion/guia-de-remision/utils/validarFormulario";
-import { guiaMismaEmpresa, guiaPrivada, guiaPublica } from "@/modules/facturacion/guia-de-remision/utils/valoresIncialGuia";
+import { validarFormulario } from "@/modules/facturacion/emitir/guia-de-remision/utils/validarFormulario";
+import { guiaMismaEmpresa, guiaPrivada, guiaPublica } from "@/modules/facturacion/emitir/guia-de-remision/utils/valoresIncialGuia";
 import factilizaService from "@/modules/facturacion/service/FactilizaService";
 import facturaService from "@/modules/facturacion/service/FacturaService";
 import { createContext, useContext, useEffect, useState } from "react";

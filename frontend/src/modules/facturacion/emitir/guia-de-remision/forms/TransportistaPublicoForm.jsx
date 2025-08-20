@@ -11,7 +11,7 @@ import { useGuiaTransporte } from "@/context/Factura/GuiaTransporteContext";
 
 import { Search, Trash } from "lucide-react";
 import { toast } from "react-toastify";
-import facturaService from "../../service/FacturaService";
+import facturaService from "../../../service/FacturaService";
 
 const TransportistaPublicoForm = () => {
     const { guiaTransporte, setGuiaTransporte } = useGuiaTransporte();

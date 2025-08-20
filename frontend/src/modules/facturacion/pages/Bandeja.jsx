@@ -1,14 +1,6 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 const Bandeja = () => {
-
-    const navigate = useNavigate();
-
-    const navegarAOtrasRutas = (ruta) => {
-        navigate(ruta);
-    };
-
 
     return (
         <div className="min-h-screen  max-w-7xl mx-auto flex flex-col w-full items-center px-4 md:px-8 py-6 ">
@@ -21,9 +13,9 @@ const Bandeja = () => {
 
             <div className='h-full my-20'>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
-                    <div
+                    <Link
+                        to="factura-boleta?page=1&limit=10"
                         className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
-                        onClick={() => navegarAOtrasRutas("/facturacion/bandeja/factura-boleta")}
                     >
                         <h3 className="text-xl font-semibold text-blue-700 mb-2">
                             Factura Electrónica y Boleta de Venta Electrónica
@@ -31,10 +23,10 @@ const Bandeja = () => {
                         <p className="text-gray-600 text-sm">
                             Documentos emitidos por la empresa
                         </p>
-                    </div>
-                    <div
+                    </Link>
+                    <Link
+                        to="nota-credito-debito?page=1&limit=10"
                         className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
-                        onClick={() => navegarAOtrasRutas("/facturacion/bandeja/nota-credito-debito")}
                     >
                         <h3 className="text-xl font-semibold text-blue-700 mb-2">
                             Nota de Crédito y Nota de Débito
@@ -42,10 +34,10 @@ const Bandeja = () => {
                         <p className="text-gray-600 text-sm">
                             Documentos que se emiten para rectificar o anular un comprobante
                         </p>
-                    </div>
-                    <div
+                    </Link>
+                    <Link
+                        to="guia-remision?page=1&limit=10"
                         className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow duration-300 border border-gray-200"
-                        onClick={() => navegarAOtrasRutas("/facturacion/generar/guia-de-remision")}
                     >
                         <h3 className="text-xl font-semibold text-blue-700 mb-2">
                             Guía de Remisión
@@ -53,7 +45,7 @@ const Bandeja = () => {
                         <p className="text-gray-600 text-sm">
                             Documento que se emite para transportar bienes o mercaderías
                         </p>
-                    </div>
+                    </Link>
                 </div>
             </div>
         </div>

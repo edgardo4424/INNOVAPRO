@@ -6,8 +6,8 @@ import FormaDePago from "./components/campos/FormaDePago";
 import MontoyProductos from "./components/campos/MontoyProductos";
 import DatosDeDetraccion from "./components/campos/DatosDeDetraccion";
 import { useSearchParams } from "react-router-dom";
-import { formatearBorrador } from "../utils/formatearBorrador";
-import facturaService from "../service/FacturaService";
+import { formatearBorrador } from "../../utils/formatearBorrador";
+import facturaService from "../../service/FacturaService";
 import { toast } from "react-toastify";
 import { ValorInicialFactura } from "./utils/valoresInicial";
 

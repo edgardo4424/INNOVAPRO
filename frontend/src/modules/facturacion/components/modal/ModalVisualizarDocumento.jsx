@@ -115,7 +115,7 @@ export default function ModalVisualizarDocumento({ id_documento, setIdDocumento,
         <>
 
             {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 bg-opacity-10 animate-fade-in">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 bg-opacity-10 backdrop-blur-xs animate-fade-in">
                     <div className="relative w-full max-w-4xl p-6 bg-white shadow-2xl rounded-xl animate-scale-in overflow-y-auto max-h-[95vh]">
                         <button
                             className="absolute top-4 right-4 text-gray-500 hover:text-red-600 transition-colors duration-200"

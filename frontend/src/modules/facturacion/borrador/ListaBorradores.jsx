@@ -82,7 +82,7 @@ const ListaBorradores = () => {
       } else {
         // toast.info(mensaje); // si no hay datos, mensaje informativo
         setDocumentos([]);
-        setTotalPages(1);
+        setTotalPages(0);
         setCurrentPage(1);
         setTotalRecords(0);
       }
@@ -141,7 +141,7 @@ const ListaBorradores = () => {
     <div className=" max-w-7xl mx-auto flex flex-col items-center px-4 md:px-2 py-6">
       <div className="w-full max-w-6xl">
         <div className="flex items-center justify-between mb-6 ">
-          <h2 className="text-2xl md:text-3xl font-bold text-blue-600">
+          <h2 className="text-2xl md:text-3xl font-bold ">
             Lista de Borradores
           </h2>
         </div>
@@ -171,7 +171,7 @@ const ListaBorradores = () => {
             </h2>
           </div>
         ) : (
-          <div className="overflow-x-auto w-full border-1 rounded-xl border-gray-300 ">
+          <div className="overflow-x-auto  ">
             {/* --- Tabla de Borradores --- */}
             <TablaBorradores
               documentos={documentos}
