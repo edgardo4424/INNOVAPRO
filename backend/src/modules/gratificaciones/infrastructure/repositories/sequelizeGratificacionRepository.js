@@ -20,16 +20,39 @@ const bonoRepository = new SequelizeBonoRepository();
 const dataMantenimientoRepository = new SequelizeDataMantenimientoRepository();
 const adelantoSueldoRepository = new SequelizeAdelantoSueldoRepository();
 
-class SequelizeFilialRepository {
-  async obtenerGratificaciones() {
-    const usuarios = await db.usuarios.findAll();
+const { CierreGratificacion } = require("../models/CierreGratificacionModel");
+const { Gratificacion } = require("../models/GratificacionModel");
+const { obtenerFechasInicioFinParaCalculo } = require("../services/obtenerFechasInicioFinParaCalculo");
 
-    console.table(usuarios);
 
-    return usuarios;
+class SequelizeGratificacionRepository {
+  async obtenerGratificacionesCerradas(periodo, anio, filial_id, transaction = null) {
+    
+     let periodoBuscar;
+    switch (periodo) {
+      case "JULIO":
+        periodoBuscar = `${anio}-07`;
+        break;
+      case "DICIEMBRE":
+        periodoBuscar = `${anio}-12`;
+        break;
+    
+      default:
+        break;
+    }
+
+    const cierreGratificacion = await CierreGratificacion.findOne({
+      where: { periodo: periodoBuscar, filial_id }, transaction
+    });
+    
+    const gratificacionesCerradas = await Gratificacion.findAll({
+      where: { cierre_id: cierreGratificacion.id }, transaction
+    });
+    return gratificacionesCerradas
+
   }
 
-  async calcularGratificaciones(periodo, anio, filial_id) {
+  async calcularGratificaciones(periodo, anio, filial_id, transaction = null) {
     const MONTO_ASIGNACION_FAMILIAR = Number(
       (
         await dataMantenimientoRepository.obtenerPorCodigo(
@@ -84,18 +107,21 @@ class SequelizeFilialRepository {
     );
 
     const contratos = await db.contratos_laborales.findAll({
+      where: {
+        filial_id: filial_id,
+        estado: true,
+        tipo_contrato: "PLANILLA"
+      },
       include: [
         {
           model: db.trabajadores,
           as: "trabajador",
-          where: {
-            filial_id: filial_id,
-          },
         },
       ],
       raw: false,
+      transaction
     });
-
+   
     // Agrupar por trabajador
     const porTrabajador = new Map();
     for (const c of contratos) {
@@ -103,19 +129,6 @@ class SequelizeFilialRepository {
       if (!porTrabajador.has(tid))
         porTrabajador.set(tid, { trabajador: c.trabajador, contratos: [] });
       porTrabajador.get(tid).contratos.push(c.get({ plain: true }));
-    }
-
-    let fechaInicio, fechaFin;
-
-    switch (periodo) {
-      case "JULIO": // semestre ene-jun
-        fechaInicio = `${anio}-01-01`;
-        fechaFin = `${anio}-06-30`; // <-- junio tiene 30
-        break;
-      case "DICIEMBRE": // semestre jul-dic
-        fechaInicio = `${anio}-07-01`;
-        fechaFin = `${anio}-12-31`;
-        break; // <-- faltaba
     }
 
     const filas = await Promise.all(
@@ -130,25 +143,7 @@ class SequelizeFilialRepository {
             ? MONTO_ASIGNACION_FAMILIAR
             : 0;
 
-          const totalHorasExtras =
-            await asistenciaRepository.obtenerHorasExtrasPorRangoFecha(
-              trabajador.id,
-              fechaInicio,
-              fechaFin
-            );
-
-          //console.log('totalHorasExtras', totalHorasExtras);
-
-          const promedioHorasExtras = totalHorasExtras * MONTO_POR_HORA_EXTRA;
-          const promedioBonoObra =
-            await bonoRepository.obtenerBonoTotalDelTrabajadorPorRangoFecha(
-              trabajador.id,
-              fechaInicio,
-              fechaFin
-            ); // TODO
-
-          const noComputableDias = 0; // TODO: Falta calcular los dias no computables
-          const noComputable = noComputableDias * MONTO_NO_COMPUTABLE;
+         
 
           const ultimaFechaFinContrato = obtenerUltimaFechaFin(contratos);
 
@@ -156,12 +151,58 @@ class SequelizeFilialRepository {
           // Aquí RC se arma por parte con su sueldo_base específico:
           const partes = await Promise.all(
             porRegimen.map(async (p) => {
+
+              // Calcular fechaInicio y fechaFin para calcular horas extras, bonos, cantidad faltas y dias no computables del semestre
+              // Si el periodo es JULIO y la fecha de inicio no entra en el semestre,
+              // se toma la fecha de inicio del siguiente semestre.
+
+             const {fechaInicioCalculo, fechaFinCalculo } = obtenerFechasInicioFinParaCalculo(periodo, anio, p.fecha_inicio, p.fecha_fin);
+
+
+               const totalHorasExtras =
+            await asistenciaRepository.obtenerHorasExtrasPorRangoFecha(
+              trabajador.id,
+             fechaInicioCalculo,
+                  fechaFinCalculo
+            );
+            
+          const bonoTotalDelTrabajador =
+            await bonoRepository.obtenerBonoTotalDelTrabajadorPorRangoFecha(
+              trabajador.id,
+               fechaInicioCalculo,
+                  fechaFinCalculo
+            ); // TODO
+
+            console.log({
+              fechaInicio: fechaInicioCalculo,
+              fechaFin: fechaFinCalculo,
+              trabajador_id: trabajador.id
+            });
+            console.log('BONO TOTAL DEL TRABAJADOR', bonoTotalDelTrabajador);
+
+          const promedioBonoObra = Number((bonoTotalDelTrabajador / p.meses).toFixed(2));
+
+          console.log('promedioBonoObra', promedioBonoObra);
+
+          //console.log('totalHorasExtras', totalHorasExtras);
+
+          const promedioHorasExtras = Number(((totalHorasExtras * MONTO_POR_HORA_EXTRA) / p.meses).toFixed(2));
+
               const faltasDias =
                 await asistenciaRepository.obtenerCantidadFaltasPorRangoFecha(
                   trabajador.id,
-                  p.fecha_inicio,
-                  p.fecha_fin
+                  fechaInicioCalculo,
+                  fechaFinCalculo
                 ); // Falta calcular la cantidad de faltas
+
+                const diasNoComputables = await asistenciaRepository.obtenerDiasNoComputablesPorRangoFecha(
+            trabajador.id,
+            fechaInicioCalculo,
+            fechaFinCalculo
+          )
+
+          const noComputable = diasNoComputables * MONTO_NO_COMPUTABLE;
+
 
               const RC = +(
                 p.sueldo_base +
@@ -181,15 +222,15 @@ class SequelizeFilialRepository {
 
               let renta5ta = 0; // Verificar si califica renta 5ta categoria No domiciliado
 
-              if(p.domiciliado){
-                renta5ta = +(gratiNeta * PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO).toFixed(2);
+              if(!trabajador.domiciliado){
+                renta5ta = +(gratiNeta * (PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO / 100)).toFixed(2);
               }
 
               const totalAdelantosSueldo =
                 await adelantoSueldoRepository.obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
                   trabajador.id,
-                  p.fecha_inicio,
-                  p.fecha_fin
+                  fechaInicioCalculo,
+                  fechaFinCalculo
                 );
 
               const total = +(
@@ -246,6 +287,7 @@ class SequelizeFilialRepository {
             numero_documento: trabajador.numero_documento,
             nombres: trabajador.nombres,
             apellidos: trabajador.apellidos,
+            trabajador_id: trabajador.id,
             //detalle_mensual: detalleMensual,   // opcional para auditoría/UI
             partes_por_regimen: partes, // <-- aquí tienes MYPE vs GENERAL separados
             consolidado,
@@ -258,21 +300,13 @@ class SequelizeFilialRepository {
     // puedes mirar en cada fila sus partes_por_regimen[*].tipo_contrato,
     // y clonar la lógica de resúmenes que ya tenías.
 
-    const listaTrabajadores = mapearParaReporteGratificaciones(filas);
+    const listaTrabajadoresPlanilla = mapearParaReporteGratificaciones(filas);
 
-    const listaTrabajadoresPlanilla = listaTrabajadores.filter(
-      (trabajador) => trabajador.tipo_contrato == "PLANILLA"
-    );
-    const listaTrabajadoresHonorarios = listaTrabajadores.filter(
-      (trabajador) => trabajador.tipo_contrato == "HONORARIO"
-    );
 
     const totalesPlanilla = calcularResumenGratificaciones(
       listaTrabajadoresPlanilla
     );
-    const totalesHonorarios = calcularResumenGratificaciones(
-      listaTrabajadoresHonorarios
-    );
+   
 
     console.table(listaTrabajadoresPlanilla);
     //console.table(totalesHonorarios)
@@ -282,13 +316,89 @@ class SequelizeFilialRepository {
         trabajadores: listaTrabajadoresPlanilla,
         totales: listaTrabajadoresPlanilla.length > 0 ? totalesPlanilla : null,
       },
-      honorarios: {
-        trabajadores: listaTrabajadoresHonorarios,
-        totales:
-          listaTrabajadoresHonorarios.length > 0 ? totalesHonorarios : null,
-      },
+    
     };
+  }
+
+  async insertarCierreGratificacion(data, transaction = null) {
+     const options = {};
+      if (transaction) {
+         options.transaction = transaction;
+      }
+    
+    const cierreGratificacion = await CierreGratificacion.create(data, options);
+    return cierreGratificacion
+  }
+
+  async insertarVariasGratificaciones(data, transaction = null) {
+     const options = {};
+      if (transaction) {
+         options.transaction = transaction;
+      }
+    
+    const gratificaciones = await Gratificacion.bulkCreate(data, options);
+    return gratificaciones
+  }
+
+  async insertarUnaGratificacion(data, transaction = null) {
+     const options = {};
+      if (transaction) {
+         options.transaction = transaction;
+      }
+    
+    const gratificacion = await Gratificacion.create(data, options);
+    return gratificacion
+  }
+
+  async obtenerCierreGratificacion(periodo, anio, filial_id, transaction = null) {
+
+    let periodoBuscar;
+    switch (periodo) {
+      case "JULIO":
+        periodoBuscar = `${anio}-07`;
+        break;
+      case "DICIEMBRE":
+        periodoBuscar = `${anio}-12`;
+        break;
+    
+      default:
+        break;
+    }
+    const cierreGratificacion = await CierreGratificacion.findOne({
+      where: { periodo: periodoBuscar, filial_id }, transaction
+    });
+ 
+    return cierreGratificacion;
+  }
+
+  async obtenerGratificacionPorTrabajador(periodo, anio,filial_id, trabajador_id,  transaction = null){
+    let periodoBuscar;
+    switch (periodo) {
+      case "JULIO":
+        periodoBuscar = `${anio}-07`;
+        break;
+      case "DICIEMBRE":
+        periodoBuscar = `${anio}-12`;
+        break;
+    
+      default:
+        break;
+    }
+    const gratificacionPorTrabajador = await Gratificacion.findOne({
+      where: { trabajador_id, periodo: periodoBuscar, filial_id }, transaction
+    });
+   
+    return gratificacionPorTrabajador;
+  }
+
+  async actualizarCierreGratificacion(cierre_id, data, transaction = null) {
+    const options = {};
+    if (transaction) {
+      options.transaction = transaction;
+    }
+    const cierreGratificacion = await CierreGratificacion.update(data, { where: { id: cierre_id } }, options);
+    return cierreGratificacion;
   }
 }
 
-module.exports = SequelizeFilialRepository; // Exporta la clase para que pueda ser utilizada en otros módulos
+module.exports = SequelizeGratificacionRepository; // Exporta la clase para que pueda ser utilizada en otros módulos

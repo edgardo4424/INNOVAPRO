@@ -7,7 +7,9 @@ const { verificarToken } = require("../../../../shared/middlewares/authMiddlewar
 router.use(verificarToken); // Verificamos el token y el rol de Gerente para todas las rutas
 
 // 📌 Rutas protegidas solo para Gerencia
-router.get("/", gratificacionController.obtenerGratificaciones);
+router.post("/", gratificacionController.obtenerGratificacionesCerradas);
 router.post("/calcular", gratificacionController.calcularGratificaciones)
+router.post("/cierre", gratificacionController.cierreGratificaciones)
+router.post("/cierre-por-trabajador", gratificacionController.cierreGratificacionPorTrabajador)
 
 module.exports = router;

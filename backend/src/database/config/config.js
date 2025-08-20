@@ -16,6 +16,7 @@ const common = {
       supportBigNumbers: true,
       bigNumberStrings: true
     },
+     timezone: "-05:00", // ⬅️ HORA PERUANA
     define: {
         charset: "utf8mb4",
         collate: "utf8mb4_general_ci" 
