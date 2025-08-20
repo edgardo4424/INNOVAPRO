@@ -19,7 +19,6 @@ import RowTotalGratificacion from "@/modules/gratificacion/components/RowTotalGr
 const ListaGratificacion = ({ gratificacion }) => {
   const { planilla, honorarios } = gratificacion
   const totalP = planilla.totales;
-  const totalH = honorarios.totales;
 
   const [filtro, setFiltro] = useState("");
 
@@ -103,23 +102,7 @@ const ListaGratificacion = ({ gratificacion }) => {
               </>
             )}
 
-            {/* Render Trabajadores Honorarios */}
-            {honorarios.trabajadores.length > 0 && (
-              <>
-                <TableRow>
-                  <TableCell
-                    colSpan={20}
-                    className="text-center bg-gray-200 text-black font-semibold"
-                  >
-                    Honorarios
-                  </TableCell>
-                </TableRow>
-                 {filtrarTrabajadores(honorarios.trabajadores).map((e, index) => (
-                  <RowTotalGratificacion key={index} e={e} index={index} />
-                ))}
-                <RowTotalGratificacion gratificacion={totalH} />
-              </>
-            )}
+           
           </TableBody>
         </Table>
       </div>
