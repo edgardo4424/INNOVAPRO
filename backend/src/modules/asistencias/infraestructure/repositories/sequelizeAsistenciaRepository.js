@@ -192,6 +192,27 @@ class SequelizeAsistenciaRepository {
     throw new Error(error.message);
   }
 }
+
+ async obtenerAsistenciasPorRangoFecha(trabajador_id, fechaInicio, fechaFin) {
+  try {
+   console.log('inicio',fechaInicio);
+   console.log('Fin',fechaFin);
+   
+   
+    const asistencias = await Asistencia.findAll({
+      where: {
+        trabajador_id,
+        fecha: {
+          [Op.between]: [fechaInicio, fechaFin], 
+        },
+      },
+      order: [["fecha", "ASC"]],
+    });
+    return asistencias
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
 }
 
 module.exports = SequelizeAsistenciaRepository;

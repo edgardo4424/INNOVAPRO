@@ -18,7 +18,7 @@ const Asistencia = sequelize.define(
          },
       },
       fecha: {
-         type: DataTypes.DATE,
+         type: DataTypes.DATEONLY,
          allowNull: false,
       },
       horas_trabajadas: {
