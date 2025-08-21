@@ -208,6 +208,12 @@ class SequelizeAsistenciaRepository {
       order: [["fecha", "ASC"]],
     });
     return asistencias
+    }
+    catch(error){
+         console.log(error);
+         
+    }
+   }
 async obtenerDiasNoComputablesPorRangoFecha(trabajador_id, fechaInicio, fechaFin) {
   try {
 
