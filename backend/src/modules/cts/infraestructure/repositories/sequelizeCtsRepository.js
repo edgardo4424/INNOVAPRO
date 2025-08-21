@@ -2,8 +2,8 @@ const db = require("../../../../database/models");
 const SequelizeAsistenciaRepository = require("../../../asistencias/infraestructure/repositories/sequelizeAsistenciaRepository");
 const SequelizeBonoRepository = require("../../../bonos/infraestructure/repositories/sequelizeBonoRepository");
 const SequelizeDataRepository = require("../../../data_mantenimiento/infrastructure/repositories/sequelizeDataMantenimientoRepository");
-const calculaPromedioBonos = require("../services/calculoBonos");
-const calcularPromedioHorasExtras = require("../services/calculoHorasEsxtras");
+const calculaPromedioBonos = require("../../../../services/calculoBonos");
+const calcularPromedioHorasExtras = require("../../../../services/calculoHorasEsxtras");
 
 const dataMantenimientoRepository = new SequelizeDataRepository();
 const bonosRepository = new SequelizeBonoRepository();
