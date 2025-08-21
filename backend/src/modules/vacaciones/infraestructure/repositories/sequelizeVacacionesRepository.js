@@ -3,11 +3,16 @@ const {
    Trabajador,
 } = require("../../../trabajadores/infraestructure/models/trabajadorModel");
 const { Vacaciones } = require("../models/vacacionesModel");
+const SequelizeDataMantenimientoRepository = require("../../../data_mantenimiento/infrastructure/repositories/sequelizeDataMantenimientoRepository");
+
+const dataMantenimientoRepository = new SequelizeDataMantenimientoRepository();
 
 class SequelizeVacacionesRepository {
-   async crear(vacacionesData) {
+   async crear(vacacionesData, importe_dias_vendidos) {
+      vacacionesData.importe_dias_vendidos = importe_dias_vendidos;
+      console.log("paso la asignación", vacacionesData.importe_dias_vendidos);
       const vacaciones = await Vacaciones.create(vacacionesData);
-      return vacaciones;
+      return true;
    }
 
    async obtenerVacacionesTrabajadores() {
@@ -19,25 +24,24 @@ class SequelizeVacacionesRepository {
                required: false,
             },
             {
-               model: db.empresas_proveedoras,
-               as: "empresa_proveedora",
-               required: false,
-            },
-            {
-               model:db.cargos,
-               as:"cargo",
-               include:[
+               model: db.cargos,
+               as: "cargo",
+               include: [
                   {
-                     model:db.areas,
-                     as:"area"
-                  }
-               ]
+                     model: db.areas,
+                     as: "area",
+                  },
+               ],
             },
             {
-               model:db.contratos_laborales,
-               as:"contratos_laborales"
-
-            }
+               model: db.contratos_laborales,
+               as: "contratos_laborales",
+               where: { estado: 1 },
+               include: {
+                  model: db.empresas_proveedoras,
+                  as: "empresa_proveedora",
+               },
+            },
          ],
       });
 

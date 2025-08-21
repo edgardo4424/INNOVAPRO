@@ -154,7 +154,6 @@ class SequelizeAsistenciaRepository {
    async obtenerHorasExtrasPorRangoFecha(trabajador_id, fechaInicio, fechaFin) {
   try {
 
-
     const asistencias = await Asistencia.findAll({
       where: {
         trabajador_id,
@@ -163,7 +162,7 @@ class SequelizeAsistenciaRepository {
         },
       },
       // Opcional: optimiza la consulta si solo necesitas horas_extras
-      attributes: ['horas_extras'],
+      //attributes: ['horas_extras'],
       raw: true,
     });
 
@@ -209,6 +208,21 @@ class SequelizeAsistenciaRepository {
       order: [["fecha", "ASC"]],
     });
     return asistencias
+async obtenerDiasNoComputablesPorRangoFecha(trabajador_id, fechaInicio, fechaFin) {
+  try {
+
+    const cantidadDias = await Asistencia.count({
+      where: {
+        trabajador_id,
+        estado_asistencia: "licencia_sin_goce",
+        fecha: {
+          [Op.between]: [fechaInicio, fechaFin], // <-- inclusivo en ambos extremos
+        },
+      },
+    });
+
+
+    return cantidadDias
   } catch (error) {
     throw new Error(error.message);
   }

@@ -14,9 +14,21 @@ const socket = io(SOCKET_URL, { // Iniciamos la conexión con el backend Websock
   withCredentials: true,
   allowEIO3: true,
   autoConnect: false,
+  reconnection:false
 });
 
 // Aquí hacemos la conexión manualmente porque pusimos el autoConnect false
-socket.connect();
+export const conectarSocket = () => {
+  if (!socket.connected) {
+    socket.connect();
+  }
+};
+
+// Función para desconectar manualmente
+export const desconectarSocket = () => {
+  if (socket.connected) {
+    socket.disconnect();
+  }
+};
 
 export default socket;

@@ -81,8 +81,8 @@ class SequelizeTrabajadorRepository {
 
    async obtenerTrabajadores() {
       const trabajadores = await Trabajador.findAll({
-         where:{
-            estado:"activo",
+         where: {
+            estado: "activo",
          },
          include: [
             {
@@ -100,6 +100,10 @@ class SequelizeTrabajadorRepository {
                as: "contratos_laborales",
                where: { estado: 1 },
                required: false,
+               include: {
+                  model: db.empresas_proveedoras,
+                  as: "empresa_proveedora",
+               },
             },
          ],
       });

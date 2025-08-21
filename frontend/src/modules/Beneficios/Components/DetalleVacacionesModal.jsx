@@ -154,7 +154,7 @@ export default function DetalleVacacionesModal({ datosEmpleado }) {
                <DialogDescription>
                   {datosEmpleado.cargo.nombre} (
                   {datosEmpleado.cargo.area.nombre}) -{" "}
-                  {datosEmpleado.empresa_proveedora.razon_social}
+                  {/* {datosEmpleado.empresa_proveedora.razon_social} */}
                </DialogDescription>
             </DialogHeader>
 

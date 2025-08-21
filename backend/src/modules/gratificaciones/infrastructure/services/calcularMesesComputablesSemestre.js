@@ -18,7 +18,7 @@ function mergeRangosConRegimen(contratos = []) {
       regimen: c.regimen || 'GENERAL',
       sistema_salud: c.sistema_salud || 'ESSALUD',
       tipo_contrato: c.tipo_contrato || 'PLANILLA',
-      sueldo_base: Number(c.sueldo ?? 0)
+      sueldo_base: Number(c.sueldo ?? 0),
     }))
     .filter(r => r.ini && r.ini.isValid())
     .sort((a,b) => a.ini.valueOf() - b.ini.valueOf());
@@ -150,4 +150,4 @@ function obtenerUltimaSueldo(contratos = []) {
   }, null);
 }
 
-module.exports = { calcularMesesComputablesSemestre, obtenerUltimaFechaFin, obtenerUltimaSueldo };
+module.exports = { calcularMesesComputablesSemestre, obtenerUltimaFechaFin, obtenerUltimaSueldo, factorPorRegimen };
