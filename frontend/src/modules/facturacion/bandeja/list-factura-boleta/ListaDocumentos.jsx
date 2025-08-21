@@ -7,17 +7,20 @@ import ModalVisualizarDocumento from "../../components/modal/ModalVisualizarDocu
 import facturaService from "../../service/FacturaService";
 import TablaDocumentos from "./components/TablaDocumentos";
 import PaginacionBorradores from "../../borrador/components/PaginacionBorradores";
+import ModalDescargaDocumento from "./components/ModalDescargaDocumento";
 
 const ListaDocumentos = () => {
     const navigate = useNavigate();
 
-    const [guias, setGuias] = useState([]);
+    const [documentos, setDocumentos] = useState([]);
     const [loading, setLoading] = useState(true);
 
     // ?? modales
     const [modalVisualizar, setModalVisualizar] = useState(false);
     const [modalDescargar, setModalDescargar] = useState(false);
+    // ?? identificador
     const [idDocumento, setIdDocumento] = useState("");
+    const [documentoADescargar, setDocumentoADescargar] = useState({});
 
     const [filtro, setFiltro] = useState({
         page: 1,
@@ -74,12 +77,12 @@ const ListaDocumentos = () => {
 
 
             if (estado) {
-                setGuias(datos);
+                setDocumentos(datos);
                 setTotalPages(meta?.totalPages || 1);
                 setCurrentPage(meta?.page || 1);
                 setTotalRecords(total);
             } else {
-                setGuias([]);
+                setDocumentos([]);
                 setTotalPages(0);
                 setCurrentPage(0);
                 setTotalRecords(0);
@@ -165,7 +168,7 @@ const ListaDocumentos = () => {
                             Cargando...
                         </h2>
                     </div>
-                ) : guias.length === 0 ? (
+                ) : documentos.length === 0 ? (
                     <div className="w-full max-w-6xl">
                         <div className="flex items-center justify-between mb-6"></div>
                         <h2 className="text-2xl md:text-3xl font-bold text-blue-600">
@@ -175,9 +178,11 @@ const ListaDocumentos = () => {
                 ) : (
                     <div className="overflow-x-auto  ">
                         <TablaDocumentos
-                            documentos={guias}
+                            documentos={documentos}
                             setModalOpen={setModalVisualizar}
-                            setIdDocumento={setIdDocumento} />
+                            setModalDescargar={setModalDescargar}
+                            setIdDocumento={setIdDocumento}
+                            setDocumentoADescargar={setDocumentoADescargar} />
 
                         {/* Modal */}
                         {modalVisualizar && idDocumento && (
@@ -185,6 +190,15 @@ const ListaDocumentos = () => {
                                 id_documento={idDocumento}
                                 setModalOpen={setModalVisualizar}
                                 setIdDocumento={setIdDocumento}
+                            />
+                        )}
+                        {modalDescargar && idDocumento && (
+                            <ModalDescargaDocumento
+                                id_documento={idDocumento}
+                                setIdDocumento={setIdDocumento}
+                                setModalOpen={setModalDescargar}
+                                documentoADescargar={documentoADescargar}
+                                setDocumentoADescargar={setDocumentoADescargar}
                             />
                         )}
                     </div>

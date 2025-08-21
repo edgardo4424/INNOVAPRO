@@ -1,7 +1,7 @@
 import { Download, EyeIcon } from 'lucide-react';
 import React from 'react'
 
-const TablaGuias = ({ documentos, setIdDocumento, setModalOpen, setModalDescargar,setGuiaADescargar}) => {
+const TablaGuias = ({ documentos, setIdDocumento, setModalOpen, setModalDescargar, setGuiaADescargar }) => {
     return (
         <table className="min-w-full bg-white rounded-xl shadow-md overflow-hidden">
             <thead className="bg-innova-blue text-white">
@@ -42,7 +42,7 @@ const TablaGuias = ({ documentos, setIdDocumento, setModalOpen, setModalDescarga
                                     <EyeIcon className="h-5 w-5 cursor-pointer hover:text-blue-500" />
                                 </button>
                                 <button onClick={() => { setIdDocumento(factura.id); setModalDescargar(true); setGuiaADescargar({ serie: factura.serie, correlativo: factura.correlativo }); }}>
-                                <Download className="h-5 w-5 cursor-pointer hover:text-green-500" />
+                                    <Download className="h-5 w-5 cursor-pointer hover:text-green-500" />
                                 </button>
                             </div>
                         </td>

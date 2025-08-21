@@ -340,7 +340,7 @@ export function FacturaBoletaProvider({ children }) {
             if (status === 200 && success) {
                 const sunat_respuest = {
                     hash: data.hash,
-                    // cdr_zip: data.sunatResponse.cdrZip, // Descomentar si es necesario
+                    cdr_zip: data.sunatResponse.cdrZip, // Descomentar si es necesario
                     sunat_success: data.sunatResponse.success,
                     cdr_response_id: data.sunatResponse.cdrResponse.id,
                     cdr_response_code: data.sunatResponse.cdrResponse.code,

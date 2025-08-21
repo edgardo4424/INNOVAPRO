@@ -12,7 +12,7 @@ import ModalDescargaGuia from "./components/ModalDescargaGuia";
 const ListaGuiaRemision = () => {
     const navigate = useNavigate();
 
-    const [facturas, setFacturas] = useState([]);
+    const [guias, setGuias] = useState([]);
     const [loading, setLoading] = useState(true);
 
     // ?? modales
@@ -77,12 +77,12 @@ const ListaGuiaRemision = () => {
 
 
             if (estado) {
-                setFacturas(datos);
+                setGuias(datos);
                 setTotalPages(meta?.totalPages || 1);
                 setCurrentPage(meta?.page || 1);
                 setTotalRecords(total);
             } else {
-                setFacturas([]);
+                setGuias([]);
                 setTotalPages(0);
                 setCurrentPage(0);
                 setTotalRecords(0);
@@ -166,7 +166,7 @@ const ListaGuiaRemision = () => {
                             Cargando...
                         </h2>
                     </div>
-                ) : facturas.length === 0 ? (
+                ) : guias.length === 0 ? (
                     <div className="w-full max-w-6xl">
                         <div className="flex items-center justify-between mb-6"></div>
                         <h2 className="text-2xl md:text-3xl font-bold text-blue-600">
@@ -176,7 +176,7 @@ const ListaGuiaRemision = () => {
                 ) : (
                     <div className="overflow-x-auto  ">
                         <TablaGuias
-                            documentos={facturas}
+                            documentos={guias}
                             setModalOpen={setModalOpen}
                             setModalDescargar={setModalDescargar}
                             setIdDocumento={setIdDocumento}

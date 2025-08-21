@@ -31,7 +31,7 @@ const camposRequeridosGlobal = [
     },
 ];
 
-export function validarFormulario(tipo, Guia) {
+export async function validarFormulario(tipo, Guia) {
     if (!Guia) {
         console.error("Error: 'Guia' object is missing in validarFormulario call for", tipo);
         return { errores: null, validos: false, message: "Error interno de validación: Formulario no proporcionado." };
@@ -61,7 +61,7 @@ export function validarFormulario(tipo, Guia) {
             { key: "guia_Envio_Des_Traslado", name: "Destino de Traslado" },
             { key: "guia_Envio_Mod_Traslado", name: "Modalidad de Traslado" },
             {
-                key: "chofer",
+                key: "transportiasta",
                 name: "Chofer",
                 camposRequeridos: [
                     { key: "tipo_doc", name: "Tipo de Documento del Chofer" },

@@ -356,7 +356,7 @@ const ProductoForm = ({ closeModal }) => {
                         name="descripcion"
                         value={productoActual.descripcion}
                         onChange={handleInputChange}
-                        className="border-1 border-gray-400 h-15 p-2 resize-none rounded-xl "
+                        className="border-1 border-gray-400  p-2 resize-none rounded-xl h-40"
                     />
                     <span
                         className={`text-red-500 text-sm ${productoValida.descripcion ? "block" : "hidden"

@@ -17,9 +17,7 @@ export const bandejaRoutesConfig = [
             { index: true, element: <Emitir /> },
             { path: 'factura-boleta', element: <FacturaBoleta /> },
             { path: 'guia/:tipoGuia', element: <GuiaRemision /> },
-            { path: 'guia/:tipoGuia', element: <GuiaRemision /> },
-            { path: 'guia/:tipoGuia', element: <GuiaRemision /> },
-            { path: 'factura-boleta', element: <ListaDocumentos /> },
+            // { path: 'factura-boleta', element: <ListaDocumentos /> },
             // { path: 'nota-credito-debito', element: <NotasCreditoDebito /> },
         ]
     }

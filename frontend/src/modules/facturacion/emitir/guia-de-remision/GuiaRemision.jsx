@@ -1,5 +1,4 @@
 import { useGuiaTransporte } from "@/context/Factura/GuiaTransporteContext";
-import { Info } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import GuiaMismaEmpresa from "./components/guias/GuiaMismaEmpresa";
@@ -7,11 +6,8 @@ import GuiaPrivado from "./components/guias/GuiaPrivado";
 import GuiaPublico from "./components/guias/GuiaPublico";
 import {
     guiaMismaEmpresa,
-    guiaMismaEmpresaValidar,
     guiaPrivada,
-    guiaPrivadaValidar,
-    guiaPublica,
-    guiaPublicaValidar,
+    guiaPublica
 } from "./utils/valoresIncialGuia";
 
 const GuiaRemision = () => {
@@ -19,8 +15,8 @@ const GuiaRemision = () => {
 
     const {
         setGuiaTransporte,
-        setGuiaTransporteValida,
         setTipoGuia,
+        setGuiaTransporteValida,
     } = useGuiaTransporte();
 
     const { tipoGuia } = useParams();
@@ -33,25 +29,22 @@ const GuiaRemision = () => {
             case "transporte-privado":
                 setGuiaCargada(<GuiaPrivado />);
                 setGuiaTransporte(guiaPrivada);
-                setGuiaTransporteValida(guiaPrivadaValidar);
                 setTipoGuia("PRIVADO");
                 break;
             case "transporte-publico":
                 setGuiaCargada(<GuiaPublico />);
                 setGuiaTransporte(guiaPublica);
-                setGuiaTransporteValida(guiaPublicaValidar);
                 setTipoGuia("PUBLICO");
                 break;
             case "traslado-misma-empresa":
                 setGuiaCargada(<GuiaMismaEmpresa />);
                 setGuiaTransporte(guiaMismaEmpresa);
-                setGuiaTransporteValida(guiaMismaEmpresaValidar);
                 setTipoGuia("MISMA_EMPRESA");
                 break;
             default:
                 setGuiaCargada(null);
                 setGuiaTransporte(null);
-                setGuiaTransporteValida(null);
+                setGuiaTransporteValida({});
                 setTipoGuia(null);
                 break;
         }

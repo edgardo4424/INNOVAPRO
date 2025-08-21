@@ -1,7 +1,7 @@
 import { Download, EyeIcon } from 'lucide-react';
 import React from 'react'
 
-const TablaDocumentos = ({ documentos, setIdDocumento, setModalOpen }) => {
+const TablaDocumentos = ({ documentos, setIdDocumento, setModalOpen, setModalDescargar, setDocumentoADescargar }) => {
     return (
         <table className="min-w-full bg-white rounded-xl shadow-md overflow-hidden">
             <thead className="bg-innova-blue text-white">
@@ -35,7 +35,7 @@ const TablaDocumentos = ({ documentos, setIdDocumento, setModalOpen }) => {
                         <td className="py-3 px-6 text-xs text-gray-700 font-medium">{`${factura.tipo_moneda} ${factura.valor_venta}`}</td>
                         <td className="py-3 px-6 text-xs text-gray-700 font-medium">{`${factura.tipo_moneda} ${factura.sub_total}`}</td>
                         <td className="py-3 px-6 text-xs text-gray-700 font-medium">{`${factura.tipo_moneda} ${factura.monto_imp_venta}`}</td>
-                        <td className={`py-3 px-6 text-xs font-semibold ${factura.estado === "Anulada" ? "text-red-500" : "text-green-500"} `}>
+                        <td className={`py-3 px-6 text-sm font-semibold ${factura.estado === "RECHAZADA" ? "text-red-500" : "text-green-500"} `}>
                             {factura.estado}
                         </td>
                         <td className="py-3 px-6">
@@ -43,8 +43,9 @@ const TablaDocumentos = ({ documentos, setIdDocumento, setModalOpen }) => {
                                 <button onClick={() => { setIdDocumento(factura.id); setModalOpen(true); }}>
                                     <EyeIcon className="h-5 w-5 cursor-pointer hover:text-blue-500" />
                                 </button>
-                                <Download className="h-5 w-5 cursor-pointer hover:text-green-500" />
-                            </div>
+                                <button onClick={() => { setIdDocumento(factura.id); setModalDescargar(true); setDocumentoADescargar({ serie: factura.serie, correlativo: factura.correlativo, numRuc: factura.empresa_ruc, tipoDoc: factura.tipo_doc, numDocumentoComprobante: factura.cliente_num_doc }); }}>
+                                    <Download className="h-5 w-5 cursor-pointer hover:text-green-500" />
+                                </button>                            </div>
                         </td>
                     </tr>
                 ))}
