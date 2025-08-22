@@ -214,6 +214,31 @@ class SequelizeAsistenciaRepository {
          
     }
    }
+
+   async obtenerFaltasPorRangoFecha(trabajador_id, fechaInicio, fechaFin) {
+  try {
+   console.log('inicio',fechaInicio);
+   console.log('Fin',fechaFin);
+   
+   
+    const asistencias = await Asistencia.findAll({
+      where: {
+        trabajador_id,
+        estado_asistencia: 'falto',
+        fecha: {
+          [Op.between]: [fechaInicio, fechaFin], 
+        },
+      },
+      order: [["fecha", "ASC"]],
+    });
+    return asistencias
+    }
+    catch(error){
+         console.log(error);
+         
+    }
+   }
+
 async obtenerDiasNoComputablesPorRangoFecha(trabajador_id, fechaInicio, fechaFin) {
   try {
 

@@ -4,8 +4,11 @@ const obtenerGratificacionesCerradas = require('../../application/useCases/obten
 const calcularGratificaciones = require('../../application/useCases/calcularGratificaciones');
 const cierreGratificaciones = require('../../application/useCases/cierreGratificaciones'); 
 const cierreGratificacionPorTrabajador = require('../../application/useCases/cierreGratificacionPorTrabajador');
+const obtenerGratificacionPorTrabajador = require('../../application/useCases/obtenerGratificacionPorTrabajador');
 
 const gratificacionRepository = new sequelizeGratificacionRepository(); // Instancia del repositorio de gratifaciones
+
+const db = require("../../../../database/models");
 
 const GratificacionController = {
    
@@ -50,10 +53,26 @@ const GratificacionController = {
     },
 
     async cierreGratificacionPorTrabajador(req, res) {
+        const transaction = await db.sequelize.transaction(); // Iniciar transacción
         try {
+            
             const { periodo, anio, filial_id, trabajador_id } = req.body;
             const usuario_cierre_id = req.usuario.id
-             const gratificacionPorTrabajador = await cierreGratificacionPorTrabajador(usuario_cierre_id, periodo, anio, filial_id, trabajador_id, gratificacionRepository); // Llamamos al caso de uso para obtener todos los gratificaciones
+             const gratificacionPorTrabajador = await cierreGratificacionPorTrabajador(usuario_cierre_id, periodo, anio, filial_id, trabajador_id, gratificacionRepository, transaction); // Llamamos al caso de uso para obtener todos los gratificaciones
+           await transaction.commit(); // ✔ Confirmar transacción
+            res.status(gratificacionPorTrabajador.codigo).json(gratificacionPorTrabajador.respuesta); // 🔥 Siempre devuelve un array, aunque esté vacío
+        } catch (error) {
+             await transaction.rollback(); // ❌ Deshacer todo si algo falla
+            console.log('error',error);
+            res.status(500).json({ error: error.message }); // Respondemos con un error
+        }
+    },
+
+     async obtenerGratificacionPorTrabajador(req, res) {
+        try {
+            const { periodo, anio, filial_id, trabajador_id } = req.body;
+            
+             const gratificacionPorTrabajador = await obtenerGratificacionPorTrabajador(periodo, anio, filial_id, trabajador_id, gratificacionRepository); // Llamamos al caso de uso para obtener todos los gratificaciones
            
             res.status(gratificacionPorTrabajador.codigo).json(gratificacionPorTrabajador.respuesta); // 🔥 Siempre devuelve un array, aunque esté vacío
         } catch (error) {

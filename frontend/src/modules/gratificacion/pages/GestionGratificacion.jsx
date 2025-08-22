@@ -14,14 +14,14 @@ const GestionGratificacion = () => {
     const [gratificacion, setGratificacion] = useState(viGratificacion);
     const [filtroGratificacion, setFiltroGratificacion] = useState(viGratificacion);//* Data Filtrada
 
-    const periodo = format(new Date(), 'MM-dd') < '07-01' ? 'JULIO' : 'DICIEMBRE'
+    const periodo = format(new Date(), 'MM-dd') < '07-17' ? 'JULIO' : 'DICIEMBRE'
     
     // ?? Filtro para la peticion
     const [filtro, setFiltro] = useState({
         anio: (new Date().getFullYear())+"", periodo: periodo, filial_id: "1" 
     });
 
-    const fetchGratificacion = async () => {
+    const buscarGratificacion = async () => {
         try {
             setLoading(true);
             const res = await gratificacionService.obtenerGratificaciones(filtro);
@@ -34,11 +34,6 @@ const GestionGratificacion = () => {
         }
     };
 
-    const Buscar = () => {
-        fetchGratificacion();
-    };
-
-
     return (
         <div className="min-h-full flex-1  flex flex-col items-center">
             <div className="w-full px-4 max-w-7xl py-6 flex justify-between">
@@ -46,7 +41,7 @@ const GestionGratificacion = () => {
                     <h2 className=" text-2xl md:text-3xl font-bold text-gray-800 !text-start">
                         Gestión de Gratificaciones
                     </h2>
-                    <Filtro filtro={filtro} setFiltro={setFiltro} Buscar={Buscar} />
+                    <Filtro filtro={filtro} setFiltro={setFiltro} Buscar={buscarGratificacion} />
                 </div>
             </div>
             {loading ? (

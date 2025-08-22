@@ -11,5 +11,7 @@ router.post("/", gratificacionController.obtenerGratificacionesCerradas);
 router.post("/calcular", gratificacionController.calcularGratificaciones)
 router.post("/cierre", gratificacionController.cierreGratificaciones)
 router.post("/cierre-por-trabajador", gratificacionController.cierreGratificacionPorTrabajador)
+router.post("/por-trabajador", gratificacionController.obtenerGratificacionPorTrabajador)
+
 
 module.exports = router;
