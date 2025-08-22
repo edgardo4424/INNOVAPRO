@@ -1,6 +1,6 @@
 import { useGuiaTransporte } from "@/context/Factura/GuiaTransporteContext"; // Importamos el contexto correcto
 import { Eye, X } from "lucide-react"; // Solo necesitamos Eye y X para previsualizar
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ModalEnviarGuia from "./ModalEnviarGuia";
 
 export default function ModalVisualizarGuiaPrivada() {
@@ -87,7 +87,7 @@ export default function ModalVisualizarGuiaPrivada() {
                 className="py-3 px-6 rounded-lg bg-green-600 text-white font-semibold text-lg hover:bg-green-700 transition duration-300 ease-in-out shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 flex gap-x-2 items-center justify-center"
             >
                 <Eye size={24} />
-                <span className="hidden md:block">Previsualizar Guía</span>
+                <span className="hidden md:block">Previsualizar </span>
             </button>
 
             {/* Overlay y Contenido del Modal */}

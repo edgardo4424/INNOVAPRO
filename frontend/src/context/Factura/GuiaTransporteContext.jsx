@@ -18,7 +18,7 @@ export function GuiaTransporteProvider({ children }) {
             const { errores, validos, message } = await validarFormulario(tipoGuia, guiaTransporte);
 
             if (!validos) {
-                // Encuentra el primer error y lo muestra en un toast
+                // *Encuentra el primer error y lo muestra en un toast
                 const primerError = Object.values(errores)[0];
                 if (primerError) {
                     toast.error(primerError);
@@ -26,14 +26,13 @@ export function GuiaTransporteProvider({ children }) {
                     toast.error("El formulario contiene errores. Revise los campos.");
                 }
 
-                // Opcional: Si quieres guardar todos los errores en el estado
+                // *Opcional: Si quieres guardar todos los errores en el estado
                 setGuiaTransporteValida(errores);
 
                 return false;
             } else {
                 toast.success(message);
-                // El formulario es válido
-                setGuiaTransporteValida({}); // Limpia los errores del estado si todo es válido
+                setGuiaTransporteValida(null); // ?Limpia los errores del estado si todo es válido
                 return true;
             }
 

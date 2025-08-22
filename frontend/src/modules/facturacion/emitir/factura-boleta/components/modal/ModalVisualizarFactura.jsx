@@ -65,7 +65,7 @@ export default function ModalVisualizarFactura() {
                 className="py-3 px-6 rounded-lg bg-green-600 text-white font-semibold text-lg hover:bg-green-700 transition duration-300 ease-in-out shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 flex gap-x-2 items-center justify-center"
             >
                 <Eye size={24} />
-                <span className="hidden md:block">Pre visualizar</span>
+                <span className="hidden md:block">Previsualizar</span>
             </button>
 
             {/* Modal Overlay and Content */}

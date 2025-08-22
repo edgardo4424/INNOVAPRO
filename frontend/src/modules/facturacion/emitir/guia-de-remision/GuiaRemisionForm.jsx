@@ -10,7 +10,7 @@ import {
     guiaPublica
 } from "./utils/valoresIncialGuia";
 
-const GuiaRemision = () => {
+const GuiaRemisionForm = () => {
     const navigate = useNavigate();
 
     const {
@@ -123,4 +123,4 @@ const GuiaRemision = () => {
     );
 };
 
-export default GuiaRemision;
+export default GuiaRemisionForm;

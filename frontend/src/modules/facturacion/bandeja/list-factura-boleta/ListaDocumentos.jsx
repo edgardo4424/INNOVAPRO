@@ -1,13 +1,13 @@
-import { ChevronLeft, ChevronRight, LoaderCircle } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import PaginacionBorradores from "../../borrador/components/PaginacionBorradores";
 import FiltroTabla from "../../components/FiltroTabla";
 import ModalVisualizarDocumento from "../../components/modal/ModalVisualizarDocumento";
 import facturaService from "../../service/FacturaService";
-import TablaDocumentos from "./components/TablaDocumentos";
-import PaginacionBorradores from "../../borrador/components/PaginacionBorradores";
 import ModalDescargaDocumento from "./components/ModalDescargaDocumento";
+import TablaDocumentos from "./components/TablaDocumentos";
 
 const ListaDocumentos = () => {
     const navigate = useNavigate();
@@ -21,6 +21,7 @@ const ListaDocumentos = () => {
     // ?? identificador
     const [idDocumento, setIdDocumento] = useState("");
     const [documentoADescargar, setDocumentoADescargar] = useState({});
+    const [documentoAVisualizar, setDocumentoAVisualizar] = useState({});
 
     const [filtro, setFiltro] = useState({
         page: 1,
@@ -182,14 +183,15 @@ const ListaDocumentos = () => {
                             setModalOpen={setModalVisualizar}
                             setModalDescargar={setModalDescargar}
                             setIdDocumento={setIdDocumento}
-                            setDocumentoADescargar={setDocumentoADescargar} />
+                            setDocumentoADescargar={setDocumentoADescargar}
+                            setDocumentoAVisualizar={setDocumentoAVisualizar} />
 
                         {/* Modal */}
-                        {modalVisualizar && idDocumento && (
+                        {modalVisualizar && documentoAVisualizar && (
                             <ModalVisualizarDocumento
-                                id_documento={idDocumento}
                                 setModalOpen={setModalVisualizar}
-                                setIdDocumento={setIdDocumento}
+                                documentoAVisualizar={documentoAVisualizar}
+                                setDocumentoAVisualizar={setDocumentoAVisualizar}
                             />
                         )}
                         {modalDescargar && idDocumento && (

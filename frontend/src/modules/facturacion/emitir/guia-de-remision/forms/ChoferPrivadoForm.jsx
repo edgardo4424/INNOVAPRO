@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/select";
 import { useGuiaTransporte } from "@/context/Factura/GuiaTransporteContext";
 import { choferInicialPrivado } from "../utils/valoresIncialGuia";
-import { Search, Trash } from "lucide-react";
+import { Search, Trash, UserRoundPlus } from "lucide-react";
 import factilizaService from "../../../service/FactilizaService";
 import { toast } from "react-toastify";
 
@@ -66,7 +66,7 @@ const ChoferPrivadoForm = () => {
                 // ?? Asegúrate de que los nombres de las propiedades coincidan con la respuesta de tu API
                 const nombres = data_inf.nombres || '';
                 const apellidos = `${data_inf.apellido_paterno || ''} ${data_inf.apellido_materno || ''}`.trim();
-                const licencia = data_lic.licencia?.numero || ''; 
+                const licencia = data_lic.licencia?.numero || '';
 
                 setGuiaTransporte((prev) => ({
                     ...prev,
@@ -92,14 +92,14 @@ const ChoferPrivadoForm = () => {
     };
 
     return (
-        <div>
-            <h2 className="text-2xl font-semibold mb-6 text-blue-800 border-b pb-2">
+        <div className="mb-8">
+            <h2 className="text-2xl  font-semibold mb-6 text-blue-800 border-b pb-2">
                 Datos del Chofer
             </h2>
             {guiaTransporte.chofer.map((chofer, index) => (
                 <div
                     key={index}
-                    className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-6 mb-6 p-6 border border-gray-400 shadow-lg rounded-md"
+                    className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-6 mb-6 p-6 border border-gray-400  rounded-md"
                 >
                     {/* Botón para eliminar chofer (visible si hay más de uno) */}
                     {index > 0 && (
@@ -242,13 +242,15 @@ const ChoferPrivadoForm = () => {
                     </div>
                 </div>
             ))}
-            <div className="flex justify-start mb-8">
+            <div className="">
                 <button
                     type="button"
                     onClick={addChofer}
-                    className="px-5 py-2 cursor-pointer bg-green-600 text-white font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 w-full sm:w-auto text-left"
+                    className="px-5 flex justify-center items-center gap-x-2 py-2 cursor-pointer bg-green-600 text-white font-medium rounded-md hover:bg-green-700 w-full md:w-auto"
                 >
-                    Agregar Transportista
+                    <UserRoundPlus className="size-6 md:size-7" />
+                    <span className="w-full text-center">
+                        Agregar Chofer</span>
                 </button>
             </div>
         </div>

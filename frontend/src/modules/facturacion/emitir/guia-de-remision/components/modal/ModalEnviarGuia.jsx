@@ -8,7 +8,7 @@ import { useGuiaTransporte } from "@/context/Factura/GuiaTransporteContext";
 import { AlertCircle, CheckCircle, CircleAlert, ClipboardPlus, LoaderCircle, TriangleAlert, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
-const ModalEnviarGuia = ({ open, setOpen, ClosePreviu }) => {
+const ModalEnviarGuia = ({ open, setOpen, ClosePreviu, guiaTransporteValida }) => {
     const { EmitirGuia, validarGuia } = useGuiaTransporte();
 
     // * Estados unificados para el modal
@@ -16,6 +16,8 @@ const ModalEnviarGuia = ({ open, setOpen, ClosePreviu }) => {
     const [status, setStatus] = useState("idle"); // 'idle' | 'loading' | 'success' | 'error' | 'details'
     const [displayMessage, setDisplayMessage] = useState("");
     const [detailedMessage, setDetailedMessage] = useState("");
+
+    const [validado, setValidado] = useState(false);
 
     // * Resetear estados cuando el modal se abre/cierra
     useEffect(() => {
@@ -70,7 +72,7 @@ const ModalEnviarGuia = ({ open, setOpen, ClosePreviu }) => {
         setDisplayMessage("");
         setDetailedMessage("");
         setIsLoading(false);
-        ClosePreviu();
+        // ClosePreviu();
     };
 
     // Helper para determinar el contenido a mostrar
@@ -127,12 +129,26 @@ const ModalEnviarGuia = ({ open, setOpen, ClosePreviu }) => {
         }
     };
 
+    useEffect(() => {
+        setValidado(false);
+        const validar = async () => {
+            let result = await validarGuia();
+            if (!result) {
+                closeModal();
+                setValidado(false);
+            } else {
+                setValidado(true);
+            }
+        }
+        if (open) {
+            validar();
+        }
+    }, [open]);
+
+
+
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
-            {/* Los botones de trigger están fuera del modal, lo cual es correcto */}
-            <button onClick={validarGuia} className="py-1 px-3 bg-orange-500 hover:bg-orange-600 text-white rounded-md">
-                Verificar Guia
-            </button>
             <AlertDialogTrigger asChild>
                 <Button>
                     <ClipboardPlus />
@@ -141,17 +157,21 @@ const ModalEnviarGuia = ({ open, setOpen, ClosePreviu }) => {
                     </span>
                 </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent className="flex flex-col gap-4">
-                <button
-                    className="absolute top-4 right-4 text-gray-500 hover:text-red-600 cursor-pointer"
-                    onClick={closeModal}
-                >
-                    <X />
-                </button>
-                <div className="w-full flex flex-col items-center p-10 bg-gray-100 rounded-md shadow-md">
-                    {renderContent()}
-                </div>
-            </AlertDialogContent>
+            {
+                validado &&
+                <AlertDialogContent className="flex flex-col gap-4">
+                    <button
+                        className="absolute top-4 right-4 text-gray-500 hover:text-red-600 cursor-pointer"
+                        onClick={closeModal}
+                    >
+                        <X />
+                    </button>
+
+                    <div className="w-full flex flex-col items-center p-10 bg-gray-100 rounded-md shadow-md">
+                        {renderContent()}
+                    </div>
+                </AlertDialogContent>
+            }
         </AlertDialog>
     );
 };

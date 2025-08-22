@@ -61,13 +61,13 @@ export async function validarFormulario(tipo, Guia) {
             { key: "guia_Envio_Des_Traslado", name: "Destino de Traslado" },
             { key: "guia_Envio_Mod_Traslado", name: "Modalidad de Traslado" },
             {
-                key: "transportiasta",
-                name: "Chofer",
+                key: "transportista",
+                name: "Transportista",
                 camposRequeridos: [
-                    { key: "tipo_doc", name: "Tipo de Documento del Chofer" },
-                    { key: "nro_doc", name: "N° Documento del Chofer" },
-                    { key: "nombres", name: "Nombres del Chofer" },
-                    { key: "nro_mtc", name: "N° MTC del Chofer" },
+                    { key: "tipo_doc", name: "Tipo de Documento del Transportista" },
+                    { key: "nro_doc", name: "N° Documento del Transportista" },
+                    { key: "razon_Social", name: "Nombres del Transportista" },
+                    { key: "nro_mtc", name: "N° MTC del Transportista" },
                 ]
             },
         ];

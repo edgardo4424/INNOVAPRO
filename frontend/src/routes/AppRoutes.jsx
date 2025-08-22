@@ -68,6 +68,14 @@ const GestionStockPiezas = lazy(() =>
 
 //* Facturacion
 
+const FacturaBoleta = lazy(() =>
+   import("../modules/facturacion/pages/FacturaBoleta")
+);
+
+const GuiaRemision = lazy(() =>
+   import("../modules/facturacion/pages/GuiaRemision")
+);
+
 const EmitirRoutes = lazy(() =>
    import("../modules/facturacion/routes/EmitirRoutes")
 );
@@ -92,7 +100,7 @@ const GestionGratificacion = lazy(() =>
 export default function AppRoutes() {
    const Router =
       process.env.NODE_ENV === "production" ? HashRouter : BrowserRouter; // REVISAR PARA CAMBIAR SIEMPRE A BROWSER
-   
+
    const LOGIN_PATH =
       process.env.NODE_ENV === "production" ? "/#/login" : "/login";
 
@@ -102,7 +110,7 @@ export default function AppRoutes() {
          <Suspense fallback={<LoaderInnova />}>
             <Routes>
                {/* Ruta pública */}
-               <Route path = {LOGIN_PATH} element={<Login />} />
+               <Route path={LOGIN_PATH} element={<Login />} />
                {/* Rutas protegidas */}
                <Route path="/" element={<ProtectedRoute />}> {/* TODO EL DASHBOARD PROTEGIDO */}
                   <Route element={<DashboardLayout />}>
@@ -217,6 +225,20 @@ export default function AppRoutes() {
 
                      {/*    //************************INICIO-FACTURACION************************* */}
                      <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
+                        <Route
+                           path="facturacion/factura-boleta"
+                           element={
+                              <FacturaBoleta />
+                           }
+                        />
+
+                        <Route
+                           path="facturacion/guia-remision"
+                           element={
+                              <GuiaRemision />
+                           }
+                        />
+
                         <Route
                            path="facturacion/emitir/*"
                            element={

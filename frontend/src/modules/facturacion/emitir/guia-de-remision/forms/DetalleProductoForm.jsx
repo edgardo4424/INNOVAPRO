@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/select";
 import { useGuiaTransporte } from "@/context/Factura/GuiaTransporteContext";
 import React from "react";
-import { Trash } from "lucide-react"; // Importamos el icono de bote de basura
+import { Package, Trash } from "lucide-react"; // Importamos el icono de bote de basura
 import { Textarea } from "@/components/ui/textarea";
 
 // Define el estado inicial para un nuevo detalle de producto
@@ -79,7 +79,7 @@ const DetalleProductoForm = () => {
             {guiaTransporte.detalle.map((item, index) => (
                 <div
                     key={index}
-                    className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-4 gap-x-6 mb-6 p-6 border border-gray-400 shadow-lg rounded-md"
+                    className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-4 gap-x-6 mb-6 p-6 border border-gray-400 rounded-md"
                 >
                     {/* Botón para eliminar un detalle de producto (visible si hay más de uno) */}
                     {index > 0 && (
@@ -180,9 +180,12 @@ const DetalleProductoForm = () => {
                 <button
                     type="button"
                     onClick={addDetalle}
-                    className="px-5 py-2 cursor-pointer bg-green-600 text-white font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 w-full sm:w-auto text-left"
+                    className="px-5 flex justify-center items-center gap-x-2 py-2 cursor-pointer bg-green-600 text-white font-medium rounded-md hover:bg-green-700 w-full md:w-auto"
                 >
-                    Agregar Producto
+                    <Package className="size-6 md:size-7" />
+                    <span className="w-full text-center">
+                        Agregar Producto
+                    </span>
                 </button>
             </div>
         </div>

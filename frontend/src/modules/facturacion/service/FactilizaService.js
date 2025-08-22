@@ -37,7 +37,7 @@ const factilizaService = {
         return res.data;
     },
 
-    // ============ CONSULTAS DOCUMENTOS ============
+    // ?? ============ CONSULTAS DOCUMENTOS ============
     consultarDocumentoJson: async (documento) => {
         const res = await apiFactilizaConsultasDocumentos.post(
             `/documento-cabecera/documento-detallado`,

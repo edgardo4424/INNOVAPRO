@@ -1,11 +1,10 @@
 // src/modules/facturacion/routes/BandejaRoutes.js
 
 import { useRoutes } from 'react-router-dom';
-import ListaDocumentos from '../bandeja/list-factura-boleta/ListaDocumentos';
+import FacturaBoletaForm from '../emitir/factura-boleta/FacturaBoletaForm';
+import GuiaRemisionForm from '../emitir/guia-de-remision/GuiaRemisionForm';
 import EmitirLayout from '../layout/EmitirLayout';
 import Emitir from '../pages/Emitir';
-import FacturaBoleta from '../emitir/factura-boleta/FacturaBoleta';
-import GuiaRemision from '../emitir/guia-de-remision/GuiaRemision';
 
 export const bandejaRoutesConfig = [
     {
@@ -15,8 +14,8 @@ export const bandejaRoutesConfig = [
         children: [
             // Estas son las rutas anidadas
             { index: true, element: <Emitir /> },
-            { path: 'factura-boleta', element: <FacturaBoleta /> },
-            { path: 'guia/:tipoGuia', element: <GuiaRemision /> },
+            { path: 'factura-boleta', element: <FacturaBoletaForm /> },
+            { path: 'guia/:tipoGuia', element: <GuiaRemisionForm /> },
             // { path: 'factura-boleta', element: <ListaDocumentos /> },
             // { path: 'nota-credito-debito', element: <NotasCreditoDebito /> },
         ]

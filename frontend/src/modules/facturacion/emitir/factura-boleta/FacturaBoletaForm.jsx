@@ -11,7 +11,7 @@ import facturaService from "../../service/FacturaService";
 import { toast } from "react-toastify";
 import { ValorInicialFactura } from "./utils/valoresInicial";
 
-const FacturaBoleta = () => {
+const FacturaBoletaForm = () => {
     const { factura, setFactura } = useFacturaBoleta();
 
     const [searchParams] = useSearchParams();
@@ -109,4 +109,4 @@ const FacturaBoleta = () => {
     );
 };
 
-export default FacturaBoleta;
+export default FacturaBoletaForm;

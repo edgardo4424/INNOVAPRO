@@ -123,6 +123,9 @@ const modulesByRole = {
       {
          group: "Facturación",
          items: [
+            { name: "Factura y Boleta", path: "/facturacion/factura-boleta" },
+            { name: "Guia de Remision", path: "/facturacion/guia-remision" },
+            { name: "Nota de Credito y Debito", path: "/facturacion/nota-credito" },
             { name: "Emitir", path: "/facturacion/emitir" },
             { name: "Bandeja", path: "/facturacion/bandeja" },
             { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },

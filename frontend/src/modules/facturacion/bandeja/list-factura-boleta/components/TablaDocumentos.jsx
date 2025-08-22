@@ -1,7 +1,7 @@
 import { Download, EyeIcon } from 'lucide-react';
 import React from 'react'
 
-const TablaDocumentos = ({ documentos, setIdDocumento, setModalOpen, setModalDescargar, setDocumentoADescargar }) => {
+const TablaDocumentos = ({ documentos, setIdDocumento, setModalOpen, setModalDescargar, setDocumentoADescargar, setDocumentoAVisualizar }) => {
     return (
         <table className="min-w-full bg-white rounded-xl shadow-md overflow-hidden">
             <thead className="bg-innova-blue text-white">
@@ -40,7 +40,7 @@ const TablaDocumentos = ({ documentos, setIdDocumento, setModalOpen, setModalDes
                         </td>
                         <td className="py-3 px-6">
                             <div className="flex justify-start gap-x-2">
-                                <button onClick={() => { setIdDocumento(factura.id); setModalOpen(true); }}>
+                                <button onClick={() => { setIdDocumento(factura.id); setModalOpen(true); setDocumentoAVisualizar({ correlativo: String(factura.correlativo), serie: factura.serie, empresa_ruc: factura.empresa_ruc, tipo_doc: factura.tipo_doc }) }}>
                                     <EyeIcon className="h-5 w-5 cursor-pointer hover:text-blue-500" />
                                 </button>
                                 <button onClick={() => { setIdDocumento(factura.id); setModalDescargar(true); setDocumentoADescargar({ serie: factura.serie, correlativo: factura.correlativo, numRuc: factura.empresa_ruc, tipoDoc: factura.tipo_doc, numDocumentoComprobante: factura.cliente_num_doc }); }}>

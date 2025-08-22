@@ -12,7 +12,7 @@ const GuiaPrivado = () => {
     return (
         <div className="container max-w-6xl mx-auto ">
             <form
-                onSubmit={(e) => {e.preventDefault();}}
+                onSubmit={(e) => { e.preventDefault(); }}
                 className=" shadow-xl border border-gray-400 bg-white  rounded-3xl  p-10  transition-all duration-300 mb-6"
             >
                 {/* Sección de Documento Principal */}
@@ -41,14 +41,10 @@ const GuiaPrivado = () => {
                     <div className="flex gap-x-3">
                         <button
                             type="submit"
-                            className="px-6 py-3 bg-blue-700 text-white font-medium rounded-md hover:bg-blue-800 focus:outline-none focus:ring-2 cursor-pointer"
-                        >
+                            className="py-3 px-4 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-600 cursor-pointer ">
                             Guardar
                         </button>
-                        <button
-                            type="submit"
-                            className="px-6 py-3 bg-red-700 text-white font-medium rounded-md hover:bg-red-800 focus:outline-none focus:ring-2 cursor-pointer"
-                        >
+                        <button className="py-3 px-4 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 cursor-pointer ">
                             Cancelar
                         </button>
                     </div>

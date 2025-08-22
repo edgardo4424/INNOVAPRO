@@ -1,282 +1,379 @@
-import { useEffect, useState } from "react";
-import { EyeIcon, X } from "lucide-react";
-import facturaService from "../../service/FacturaService";
+import { X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import factilizaService from "../../service/FactilizaService";
+import DocumentoSkeleton from "../../bandeja/list-factura-boleta/components/DocumentoSkeleton";
 import { toast } from "react-toastify";
 
-export default function ModalVisualizarDocumento({ id_documento, setIdDocumento, setModalOpen }) {
+export default function ModalVisualizarDocumento({
+    setModalOpen,
+    documentoAVisualizar,
+    setDocumentoAVisualizar,
+}) {
     const [factura, setFactura] = useState(null);
     const [isOpen, setIsOpen] = useState(true);
 
+    // Helpers
     const closeModal = () => {
         setIsOpen(false);
-        setIdDocumento("");
-        setModalOpen(false);
+        setModalOpen?.(false);
+        setDocumentoAVisualizar?.({});
     };
 
-    const getTipoDocDescription = (typeCode) => {
-        switch (typeCode) {
-            case "01": return "FACTURA ELECTRÓNICA";
-            case "03": return "BOLETA DE VENTA ELECTRÓNICA";
-            case "07": return "NOTA DE CRÉDITO ELECTRÓNICA";
-            case "08": return "NOTA DE DÉBITO ELECTRÓNICA";
-            default: return "DOCUMENTO NO ESPECIFICADO";
-        }
+    const onBackdropClick = (e) => {
+        // Cierra solo si el click fue en el backdrop
+        if (e.target === e.currentTarget) closeModal();
     };
 
-    const formatDate = (dateString) => {
-        if (!dateString) return "";
+    const currency = (value, code = "PEN") => {
+        const n = Number(value ?? 0);
         try {
-            const date = new Date(dateString);
-            return date.toLocaleDateString("es-PE", { day: "2-digit", month: "2-digit", year: "numeric" });
+            return new Intl.NumberFormat("es-PE", {
+                style: "currency",
+                currency: code || "PEN",
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(n);
         } catch {
-            return (dateString.split?.("T")?.[0]) || dateString;
+            return `${code} ${n.toFixed(2)}`;
         }
     };
 
-    const getClientDocTypeDescription = (typeCode) => {
-        switch (typeCode) {
-            case "6": return "RUC";
-            case "1": return "DNI";
-            case "4": return "CARNET DE EXTRANJERÍA";
-            default: return "OTRO";
+    const formatDateTime = (dateStr) => {
+        if (!dateStr) return "";
+        const d = new Date(dateStr);
+        if (isNaN(d)) return dateStr;
+        return d.toLocaleString("es-PE", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            // hour: "2-digit",
+            // minute: "2-digit",
+        });
+    };
+
+    const tipoDocLabel = (code) => {
+        switch (code) {
+            case "01":
+                return "FACTURA ELECTRÓNICA";
+            case "03":
+                return "BOLETA DE VENTA ELECTRÓNICA";
+            case "07":
+                return "NOTA DE CRÉDITO ELECTRÓNICA";
+            case "08":
+                return "NOTA DE DÉBITO ELECTRÓNICA";
+            default:
+                return "DOCUMENTO ELECTRÓNICO";
         }
     };
 
+    const tipoDocCliente = (code) => {
+        switch (String(code)) {
+            case "6":
+                return "RUC";
+            case "1":
+                return "DNI";
+            case "4":
+                return "CARNET DE EXTRANJERÍA";
+            default:
+                return "OTRO";
+        }
+    };
+
+    // Cargar documento con el NUEVO shape {status, success, message, data}
     useEffect(() => {
-        if (!isOpen || !id_documento) return;
+        if (!isOpen || !documentoAVisualizar) return;
 
-        const BuscarDocumento = async () => {
+        (async () => {
             try {
-                const { mensaje, estado, factura: rawFactura } = await facturaService.obtenerDocumentoConId(id_documento);
+                const resp = await factilizaService.consultarDocumentoJson(documentoAVisualizar);
 
-                if (!estado) {
-                    toast.error(mensaje || "No se pudo obtener el documento");
+                const ok = resp?.success ?? resp?.estado ?? true;
+                if (!ok) {
+                    toast.error(resp?.message);
+                    closeModal();
                     return;
                 }
+                const raw = resp?.data ?? resp; // fallback
 
-                console.log("este es la factura seleccionada: ", rawFactura);
-                const factura = {
-                    id: rawFactura.id,
-                    tipo_operacion: rawFactura.tipo_Operacion,
-                    tipo_doc: rawFactura.tipo_Doc,
-                    serie: rawFactura.serie,
-                    correlativo: rawFactura.correlativo,
-                    tipo_moneda: rawFactura.tipo_Moneda,
-                    fecha_emision: rawFactura.fecha_Emision,
-                    empresa_ruc: rawFactura.empresa_Ruc,
+                // Mapeo tolerante a nombres
+                const F = {
+                    id: raw.id,
+                    tipo_doc: raw.tipo_Doc ?? raw.tipo_doc ?? raw.tipoComprobante,
+                    serie: raw.serie,
+                    correlativo:
+                        raw.correlativo ?? raw.numero ?? raw.correlativo_Comprobante,
+                    tipo_moneda: raw.tipo_Moneda ?? raw.moneda ?? "PEN",
+                    fecha_emision: raw.fecha_Emision ?? raw.fechaEmision ?? raw.fecha_emision,
+                    empresa_ruc: raw.empresa_Ruc ?? raw.rucEmisor,
+                    empresa_nombre:
+                        raw.empresa_Razon_Social ?? raw.razonSocialEmisor ?? "INDEK ANDINA E.I.R.L",
+                    empresa_direccion:
+                        raw.empresa_Direccion ??
+                        raw.direccionEmisor ??
+                        "AV. ALFREDO BENAVIDES NRO. 1579 INT. 602 URB. SAN JORGE",
 
-                    cliente_tipo_doc: rawFactura.cliente_Tipo_Doc,
-                    cliente_num_doc: rawFactura.cliente_Num_Doc,
-                    cliente_razon_social: rawFactura.cliente_Razon_Social,
-                    cliente_direccion: rawFactura.cliente_Direccion,
+                    cliente_tipo_doc: raw.cliente_Tipo_Doc ?? raw.tipoDocReceptor,
+                    cliente_num_doc: raw.cliente_Num_Doc ?? raw.numDocReceptor,
+                    cliente_razon_social:
+                        raw.cliente_Razon_Social ?? raw.razonSocialReceptor ?? "",
+                    cliente_direccion: raw.cliente_Direccion ?? raw.direccionReceptor ?? "",
 
-                    monto_oper_gravadas: rawFactura.monto_Oper_Gravadas,
-                    monto_oper_exoneradas: rawFactura.monto_Oper_Exoneradas,
-                    monto_igv: rawFactura.monto_Igv,
-                    total_impuestos: rawFactura.total_Impuestos,
-                    valor_venta: rawFactura.valor_Venta,
-                    sub_total: rawFactura.sub_Total,
-                    monto_imp_venta: rawFactura.monto_Imp_Venta,
+                    detalle:
+                        raw.detalle_facturas ??
+                        raw.detalle ??
+                        raw.items ??
+                        [],
 
-                    estado_documento: rawFactura.estado_Documento,
-                    estado: rawFactura.estado,
-                    observaciones: rawFactura.observaciones,
-                    manual: rawFactura.manual,
-                    id_base_dato: rawFactura.id_Base_Dato,
-                    usuario_id: rawFactura.usuario_id,
+                    // Totales
+                    monto_oper_gravadas:
+                        raw.monto_Oper_Gravadas ?? raw.opGravadas ?? raw.totalGravada,
+                    monto_oper_exoneradas:
+                        raw.monto_Oper_Exoneradas ?? raw.opExoneradas ?? 0,
+                    total_impuestos:
+                        raw.total_Impuestos ?? raw.igv ?? raw.totalIgv ?? 0,
+                    sub_total: raw.sub_Total ?? raw.importeTotal ?? raw.total ?? 0,
 
-                    detraccion_cod_bien_detraccion: rawFactura.detraccion_cod_bien_detraccion,
-                    detraccion_cod_medio_pago: rawFactura.detraccion_cod_medio_pago,
-                    detraccion_cta_banco: rawFactura.detraccion_cta_banco,
-                    detraccion_percent: rawFactura.detraccion_percent,
-                    detraccion_mount: rawFactura.detraccion_mount,
-
-                    descuento_cod_tipo: rawFactura.descuento_cod_tipo,
-                    descuento_monto_base: rawFactura.descuento_monto_base,
-                    descuento_factor: rawFactura.descuento_factor,
-                    descuento_monto: rawFactura.descuento_monto,
-
-                    detalle: rawFactura.detalle_facturas ?? [],
-                    forma_pago: rawFactura.forma_pago_facturas ?? [],
-                    legend: rawFactura.legend_facturas ?? [],
+                    // Complementos
+                    forma_pago: raw.forma_pago_facturas ?? raw.formaPago ?? [],
+                    legend: raw.legend ?? raw.legend ?? [],
+                    observaciones: raw.observaciones ?? "",
+                    tipo_pago: raw.tipoPago ?? "CONTADO",
                 };
-        console.log(factura);
-                setFactura(factura);
-            } catch (e) {
-                console.error(e);
-                toast.error("Error al obtener el documento");
-            }
-        };
 
-        BuscarDocumento();
-    }, [isOpen, id_documento]);
+                console.log("F", F.legend);
+
+                setFactura(F);
+            } catch (e) {
+                toast.error(e.response.data.message || "Error al obtener el documento");
+                closeModal();
+            }
+        })();
+    }, [isOpen, documentoAVisualizar]);
+
+
+    const numeroDoc = useMemo(() => {
+        if (!factura) return "";
+        return `${factura.serie ?? ""}-${String(factura.correlativo ?? "").padStart(1, "0")}`;
+    }, [factura]);
+
+    if (!isOpen) return null;
 
     return (
-        <>
+        <div
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-[1px] animate-fade-in"
+            onClick={onBackdropClick}
+        >
+            <div
+                // ref={cardRef}
+                role="dialog"
+                aria-modal="true"
+                className="relative p-1 w-full max-w-5xl bg-white rounded-2xl shadow-2xl border border-gray-100 max-h-[95vh] overflow-y-auto animate-scale-in"
+                onClick={(e) => e.stopPropagation()}
+            >
+                {/* X close */}
+                <button
+                    className="absolute cursor-pointer top-2 right-2 p-2 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 focus:outline-none"
+                    aria-label="Cerrar"
+                    onClick={closeModal}
+                >
+                    <X size={20} />
+                </button>
 
-            {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 bg-opacity-10 backdrop-blur-xs animate-fade-in">
-                    <div className="relative w-full max-w-4xl p-6 bg-white shadow-2xl rounded-xl animate-scale-in overflow-y-auto max-h-[95vh]">
-                        <button
-                            className="absolute top-4 right-4 text-gray-500 hover:text-red-600 transition-colors duration-200"
-                            onClick={closeModal}
-                            aria-label="Cerrar"
-                        >
-                            <X size={24} />
-                        </button>
-
-                        <div className="mb-6 text-center border-b pb-4">
-                            <h2 className="text-3xl font-bold text-blue-800 mb-2">
-                                Detalle del documento
-                            </h2>
-                            <p className="text-lg text-gray-700">
-                                Revisa los detalles de tu documento antes de emitirlo.
-                            </p>
-                        </div>
-
-                        {!factura ? (
-                            <p className="text-center text-gray-500">Cargando...</p>
-                        ) : (
-                            <div className="border border-gray-300 p-6 rounded-lg bg-gray-50 text-gray-800">
-                                {/* Cabecera */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 pb-4 border-b border-gray-200">
-                                    <div>
-                                        <p className="text-xl font-bold text-blue-700">TU EMPRESA S.A.C.</p>
-                                        <p className="text-sm">RUC: {factura.empresa_ruc}</p>
-                                        <p className="text-sm">DIRECCIÓN: [Tu dirección de empresa aquí]</p>
+                {/* Contenido */}
+                <div className="p-6 md:p-8">
+                    {!factura ? (
+                        <DocumentoSkeleton />
+                    ) : (
+                        <div className="space-y-6">
+                            {/* Header */}
+                            <div className="rounded-xl border border-gray-200 bg-white">
+                                <div className="px-6 py-6 md:py-8 grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+                                    <div className="col-span-2">
+                                        <h1 className="text-2xl md:text-3xl font-bold text-blue-700">
+                                            {factura.empresa_nombre}
+                                        </h1>
+                                        <p className="mt-2 text-sm text-gray-700">
+                                            {factura.empresa_ruc}
+                                        </p>
+                                        <p className="text-sm text-gray-700">
+                                            {factura.empresa_direccion}
+                                        </p>
                                     </div>
-                                    <div className="text-right border border-blue-400 p-4 rounded-md bg-blue-50">
-                                        <p className="text-lg font-bold">{getTipoDocDescription(factura.tipo_doc)}</p>
-                                        <p className="text-2xl font-extrabold text-blue-900">
-                                            {factura.serie}-{factura.correlativo}
+                                    <div className="md:text-center">
+                                        <p className="text-lg font-semibold text-gray-700">
+                                            {tipoDocLabel(factura.tipo_doc)}
+                                        </p>
+                                        <p className="text-2xl  font-extrabold text-gray-700 tracking-wide">
+                                            {numeroDoc}
+                                        </p>
+                                        <p className="mt-4 text-sm text-gray-600">
+                                            <span className="font-semibold">Fecha de emisión: </span>
+                                            {formatDateTime(factura.fecha_emision)}
                                         </p>
                                     </div>
                                 </div>
+                            </div>
 
-                                {/* Cliente */}
-                                <div className="mb-6 p-4 border border-gray-200 rounded-md bg-white">
-                                    <h3 className="font-bold text-md mb-2 text-gray-600 border-b pb-1">DATOS DEL CLIENTE:</h3>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                                        <p><strong>Tipo Doc.:</strong> {getClientDocTypeDescription(factura.cliente_tipo_doc)}</p>
-                                        <p><strong>Nro. Doc.:</strong> {factura.cliente_num_doc}</p>
-                                        <p className="col-span-full"><strong>Razón Social/Nombre:</strong> {factura.cliente_razon_social}</p>
-                                        <p className="col-span-full"><strong>Dirección:</strong> {factura.cliente_direccion || "N/A"}</p>
-                                        <p className="col-span-full"><strong>Fecha de Emisión:</strong> {formatDate(factura.fecha_emision)}</p>
+                            {/* Cliente + Pago (dos columnas) */}
+                            <div className="rounded-xl border border-gray-200 bg-white">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+                                    <div>
+                                        <h3 className="text-sm font-bold text-gray-600 mb-3">
+                                            CLIENTE
+                                        </h3>
+                                        <div className="text-sm text-gray-800 space-y-1">
+                                            <div className="grid grid-cols-[110px_1fr] gap-x-2">
+                                                <span className="text-gray-700 font-semibold">Razón social:</span>
+                                                <span className="font-medium">
+                                                    {factura.cliente_razon_social || "—"}
+                                                </span>
+                                                <span className="text-gray-700 font-semibold">Dirección:</span>
+                                                <span className="font-medium">
+                                                    {factura.cliente_direccion || "—"}
+                                                </span>
+                                                <span className="text-gray-700 font-semibold">Tipo doc.:</span>
+                                                <span className="font-medium">
+                                                    {tipoDocCliente(factura.cliente_tipo_doc)}
+                                                </span>
+                                                <span className="text-gray-700 font-semibold">Número doc.:</span>
+                                                <span className="font-medium">
+                                                    {factura.cliente_num_doc || "—"}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h3 className="text-sm font-bold text-gray-600 mb-3">
+                                            DETALLES DEL PAGO
+                                        </h3>
+                                        <div className="text-sm text-gray-800 space-y-1">
+                                            <div className="grid grid-cols-[110px_1fr] gap-x-2">
+                                                <span className="text-gray-700 font-semibold">Moneda:</span>
+                                                <span className="font-medium">
+                                                    {factura.tipo_moneda}
+                                                </span>
+                                                <span className="text-gray-700 font-semibold">Total:</span>
+                                                <span className="font-medium">
+                                                    {currency(factura.sub_total, factura.tipo_moneda)}
+                                                </span>
+                                                <span className="text-gray-700 font-semibold">Tipo de pago:</span>
+                                                <span className="font-medium">{factura.tipo_pago}</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                {/* Detalle */}
-                                <div className="mb-6">
-                                    <h3 className="font-bold text-md mb-2 text-gray-600 border-b pb-1">DETALLE DE PRODUCTOS/SERVICIOS:</h3>
-                                    <div className="overflow-x-auto rounded-md border border-gray-200">
-                                        <table className="min-w-full bg-white">
-                                            <thead className="bg-gray-100">
-                                                <tr>
-                                                    <th className="py-2 px-4 border-b text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Cant.</th>
-                                                    <th className="py-2 px-4 border-b text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Unidad</th>
-                                                    <th className="py-2 px-4 border-b text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Descripción</th>
-                                                    <th className="py-2 px-4 border-b text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">V. Unit.</th>
-                                                    <th className="py-2 px-4 border-b text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">P. Unit.</th>
-                                                    <th className="py-2 px-4 border-b text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Total</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {factura.detalle?.length ? (
-                                                    factura.detalle.map((item, index) => (
-                                                        <tr key={index} className="hover:bg-gray-50 border-b last:border-b-0">
-                                                            {console.log(item)}
-                                                            <td className="py-2 px-4 text-sm">{item.cantidad}</td>
-                                                            <td className="py-2 px-4 text-sm">{item.unidad}</td>
-                                                            <td className="py-2 px-4 text-sm">{item.descripcion}</td>
-                                                            <td className="py-2 px-4 text-right text-sm">{item.monto_Valor_Unitario ?? "0.00"}</td>
-                                                            <td className="py-2 px-4 text-right text-sm">{item.monto_Precio_Unitario ?? "0.00"}</td>
-                                                            <td className="py-2 px-4 text-right text-sm">
-                                                                {(item.monto_Precio_Unitario ?? 0) }
-                                                            </td>
-                                                        </tr>
-                                                    ))
-                                                ) : (
-                                                    <tr>
-                                                        <td colSpan="6" className="py-4 text-center text-gray-500">
-                                                            No hay productos en el detalle.
-                                                        </td>
-                                                    </tr>
-                                                )}
-                                            </tbody>
-                                        </table>
-                                    </div>
+                            {/* Tabla de items */}
+                            <div className="rounded-xl border border-gray-200 overflow-hidden bg-white">
+                                <div className="bg-gray-100 text-gray-600 text-xs font-semibold uppercase tracking-wide grid grid-cols-12 px-6 py-3">
+                                    <div className="col-span-2">Código</div>
+                                    <div className="col-span-5">Producto</div>
+                                    <div className="col-span-2 text-right">Precio unitario</div>
+                                    <div className="col-span-1 text-right">Cantidad</div>
+                                    <div className="col-span-2 text-right">Total</div>
                                 </div>
 
-                                {/* Observaciones */}
-                                <div className="mb-6">
-                                    <h3 className="font-bold text-md mb-2 text-gray-600 border-b pb-1">OBSERVACIONES:</h3>
-                                    <div className="p-4 border border-gray-200 rounded-md bg-white text-sm text-gray-800">
-                                        {factura.observaciones || "No hay observaciones registradas."}
+                                <div className="divide-y divide-gray-200">
+                                    {(factura.detalle?.length ? factura.detalle : []).map(
+                                        (it, idx) => {
+                                            const codigo =
+                                                it.codigo ?? it.codProducto ?? it.codigo_Item ?? "";
+                                            const descripcion =
+                                                it.descripcion ?? it.descripcion_Item ?? it.producto ?? "";
+                                            const precioUnit =
+                                                it.monto_Precio_Unitario ??
+                                                it.precioUnitario ??
+                                                it.precio_unitario ??
+                                                0;
+                                            const cantidad =
+                                                it.cantidad ?? it.qty ?? it.cant ?? 0;
+                                            const total =
+                                                it.monto_Total ?? it.total ?? precioUnit * cantidad;
+                                            const tipo_unidad = it.unidad ?? it.unidad_Item ?? "";
+
+                                            return (
+                                                <div
+                                                    key={idx}
+                                                    className="grid grid-cols-12 px-6 py-3 text-sm text-gray-800"
+                                                >
+                                                    <div className="col-span-2">{codigo || "—"}</div>
+                                                    <div className="col-span-5">{descripcion}</div>
+                                                    <div className="col-span-2 text-right">
+                                                        {currency(precioUnit, factura.tipo_moneda)}
+                                                    </div>
+                                                    <div className="col-span-1 text-right">
+                                                        {Number(cantidad ?? 0).toFixed(2) + " " + tipo_unidad}
+                                                    </div>
+                                                    <div className="col-span-2 text-right font-medium">
+                                                        {currency(total, factura.tipo_moneda)}
+                                                    </div>
+                                                </div>
+                                            );
+                                        }
+                                    )}
+
+                                    {!factura.detalle?.length && (
+                                        <div className="px-6 py-6 text-center text-sm text-gray-500">
+                                            No hay productos en el detalle.
+                                        </div>
+                                    )}
+                                </div>
+
+                            </div>
+
+                            {/* Leyenda + Totales */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Leyenda/nota */}
+                                <div className="rounded-xl border border-gray-200 bg-white p-6">
+                                    <div className="text-sm">
+                                        <span className="font-semibold">Leyenda:</span>
+                                        <p className="mt-2 text-gray-800">
+                                            {factura.legend?.[0]?.legend_Value ??
+                                                "—"}
+                                        </p>
                                     </div>
                                 </div>
 
                                 {/* Totales */}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                    <div>
-                                        <h3 className="font-bold text-md mb-2 text-gray-600 border-b pb-1">FORMA DE PAGO:</h3>
-                                        {factura.forma_pago?.length ? (
-                                            <ul className="list-disc list-inside text-sm text-gray-700">
-                                                {factura.forma_pago.map((pago, index) => (
-                                                    <li key={index} className="mb-1">
-                                                        {pago.tipo} - {pago.monto} {factura.tipo_moneda}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        ) : (
-                                            <p className="text-sm text-gray-500">No se han registrado formas de pago.</p>
-                                        )}
-
-                                        {factura.legend?.length > 0 && (
-                                            <div className="mt-4 pt-2 border-t border-gray-200">
-                                                <p className="font-semibold text-blue-700 text-sm">
-                                                    {factura.legend[0].legend_value}
-                                                </p>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <div className="text-right p-4 border border-gray-200 rounded-md bg-white">
-                                        <p className="flex justify-between text-sm mb-1">
-                                            <span className="font-semibold text-gray-700">Op. Gravadas:</span>
-                                            <span className="text-gray-900">
-                                                {factura.tipo_moneda} {factura.monto_oper_gravadas ?? "0.00"}
+                                <div className="rounded-xl border border-gray-200 bg-white p-6">
+                                    <div className="space-y-2 text-sm">
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-600">Op. gravadas:</span>
+                                            <span className="font-medium">
+                                                {currency(factura.monto_oper_gravadas, factura.tipo_moneda)}
                                             </span>
-                                        </p>
-                                        <p className="flex justify-between text-sm mb-1">
-                                            <span className="font-semibold text-gray-700">Op. Exoneradas:</span>
-                                            <span className="text-gray-900">
-                                                {factura.tipo_moneda} {factura.monto_oper_exoneradas ?? "0.00"}
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-600">IGV:</span>
+                                            <span className="font-medium">
+                                                {currency(factura.total_impuestos, factura.tipo_moneda)}
                                             </span>
-                                        </p>
-                                        <p className="flex justify-between text-sm mb-1">
-                                            <span className="font-semibold text-gray-700">IGV (18%):</span>
-                                            <span className="text-gray-900">
-                                                {factura.tipo_moneda} {factura.total_impuestos ?? "0.00"}
-                                            </span>
-                                        </p>
-                                        <p className="flex justify-between text-lg font-bold mt-4 pt-4 border-t-2 border-gray-300 text-blue-800">
-                                            <span>TOTAL:</span>
+                                        </div>
+                                        <div className="pt-3 mt-2 border-t flex justify-between text-base font-bold">
+                                            <span>Precio de venta:</span>
                                             <span>
-                                                {factura.tipo_moneda} {factura.sub_total}
+                                                {currency(factura.sub_total, factura.tipo_moneda)}
                                             </span>
-                                        </p>
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div className="text-center text-xs text-gray-500 mt-6 pt-4 border-t border-gray-200">
-                                    <p>Documento Generado por tu Sistema de Facturación.</p>
-                                    <p>Para consultas, contáctanos al [Tu Teléfono] o [Tu Email]</p>
                                 </div>
                             </div>
-                        )}
-                    </div>
+
+                            {/* Nota inferior */}
+                            <div className="text-xs text-gray-500 rounded-xl border border-gray-200 bg-white p-6">
+                                <p className="font-medium">Nota:</p>
+                                <p className="mt-1">
+                                    Gracias por elegir nuestros productos. Esperamos que disfrutes
+                                    de tu compra y que nos tengas en cuenta para futuras
+                                    adquisiciones. ¡Gracias por confiar en nosotros!
+                                </p>
+                            </div>
+                        </div>
+                    )}
                 </div>
-            )}
-        </>
+            </div>
+        </div>
     );
 }
