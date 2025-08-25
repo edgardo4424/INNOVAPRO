@@ -27,7 +27,9 @@ const {
 } = require("../services/obtenerFechasInicioFinParaCalculo");
 const calculaPromedioBonos = require("../../../../services/calculoBonos");
 const calcularPromedioHorasExtras = require("../../../../services/calculoHorasEsxtras");
-
+const {
+  calcularMontoFaltasPorRango,
+} = require("../../../../services/calculoMontoFaltas");
 
 class SequelizeGratificacionRepository {
   async obtenerGratificacionesCerradas(
@@ -147,11 +149,7 @@ class SequelizeGratificacionRepository {
           const { porRegimen, totalMeses, detalleMensual } =
             calcularMesesComputablesSemestre(contratos, periodo, anio);
 
-          // 2) Componentes comunes de RC (si RC se calcula igual para todo el semestre)
-          const asignacionFamiliar = trabajador.asignacion_familiar
-            ? MONTO_ASIGNACION_FAMILIAR
-            : 0;
-
+       
           const ultimaFechaFinContrato = obtenerUltimaFechaFin(contratos);
 
           // Nota: si el sueldo_base cambia por contrato, ya viene por cada parte (porRegimen.sueldo_base).
@@ -185,15 +183,24 @@ class SequelizeGratificacionRepository {
                   fechaFinCalculo
                 );
 
+              const bonosDelTrabajador = bonosDelTrabajadorPorFecha.map(
+                (b) => b.dataValues
+              );
+              const asistenciasDelTrabajador = asistencias.map(
+                (b) => b.dataValues
+              );
+
               const promedioBonoObra = calculaPromedioBonos(
-                bonosDelTrabajadorPorFecha,
+                bonosDelTrabajador,
                 6
               );
               const promedioHorasExtras = calcularPromedioHorasExtras(
-                asistencias,
+                asistenciasDelTrabajador,
                 MONTO_POR_HORA_EXTRA,
                 6
               );
+
+              console.log('promedioHorasExtras',promedioHorasExtras);
 
               const faltasDias =
                 await asistenciaRepository.obtenerCantidadFaltasPorRangoFecha(
@@ -209,7 +216,14 @@ class SequelizeGratificacionRepository {
                   fechaFinCalculo
                 );
 
-              const noComputable = diasNoComputables * MONTO_NO_COMPUTABLE;
+              const noComputable = diasNoComputables * MONTO_NO_COMPUTABLE;7
+
+              // Asignacion familiar
+              const asignacionFamiliar =
+                (trabajador.asignacion_familiar &&
+                (new Date(trabajador.asignacion_familiar) <= new Date(fechaFinCalculo)))
+                  ? MONTO_ASIGNACION_FAMILIAR
+                  : 0;
 
               const RC = +(
                 p.sueldo_base +
@@ -427,33 +441,6 @@ class SequelizeGratificacionRepository {
       options
     );
     return cierreGratificacion;
-  }
-
-  async obtenerTotalGratificacionPorTrabajador(
-    periodo,
-    anio,
-    filial_id,
-    trabajador_id,
-    transaction = null
-  ) {
-    let periodoBuscar;
-    switch (periodo) {
-      case "JULIO":
-        periodoBuscar = `${anio}-07`;
-        break;
-      case "DICIEMBRE":
-        periodoBuscar = `${anio}-12`;
-        break;
-
-      default:
-        break;
-    }
-    const gratificacionPorTrabajador = await Gratificacion.findOne({
-      where: { trabajador_id, periodo: periodoBuscar, filial_id },
-      transaction,
-    });
-
-    return Number(gratificacionPorTrabajador.total_pagar);
   }
 }
 

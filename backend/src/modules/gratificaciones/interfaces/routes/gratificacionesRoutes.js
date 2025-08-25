@@ -10,7 +10,7 @@ router.use(verificarToken); // Verificamos el token y el rol de Gerente para tod
 router.post("/", gratificacionController.obtenerGratificacionesCerradas);
 router.post("/calcular", gratificacionController.calcularGratificaciones)
 router.post("/cierre", gratificacionController.cierreGratificaciones)
-router.post("/cierre-por-trabajador", gratificacionController.cierreGratificacionPorTrabajador)
+router.post("/cierre-por-trabajador", gratificacionController.cierreGratificacionTruncaPorTrabajador)
 router.post("/por-trabajador", gratificacionController.obtenerGratificacionPorTrabajador)
 
 

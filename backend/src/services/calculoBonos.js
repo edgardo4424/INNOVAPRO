@@ -1,4 +1,5 @@
 const calculaPromedioBonos = (bonos,meses_computados) => {
+   
    const objBonosPorMeses = new Map();
    for (const b of bonos) {
       const mes = b.fecha.substring(5, 7);
