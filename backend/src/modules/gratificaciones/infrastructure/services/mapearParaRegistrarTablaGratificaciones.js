@@ -35,7 +35,7 @@ function mapearParaRegistrarTablaGratificaciones(registros, periodo, anio, filia
     meses_computables: Number(r?.tiempo_laborado.split(" ")[0]),
     gratificacion_bruta: r.gratificacion_semestral,
     faltas_dias: r.falta_dias,
-    faltas_monto: r.falta_importe,
+    faltas_monto: -(r.falta_importe),
     no_computable: r.no_computable,
     gratificacion_neta: r.grat_despues_descuento,
     bonificacion_extraordinaria: r.bonificac_essalud,
