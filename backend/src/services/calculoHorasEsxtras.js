@@ -3,6 +3,7 @@ const calcularPromedioHorasExtras = (
    valor_hora_extra,
    meses_computados
 ) => {
+
    const objAsistenciasHE = new Map();
    for (const a of asistencias) {
       const mes = a.fecha.substring(5, 7);
@@ -25,8 +26,8 @@ const calcularPromedioHorasExtras = (
    }
    const promedioHorasExtras = sumatoriaHE / meses_computados;
 
-
    return  parseFloat(promedioHorasExtras.toFixed(2))
+
 };
 
 module.exports = calcularPromedioHorasExtras;

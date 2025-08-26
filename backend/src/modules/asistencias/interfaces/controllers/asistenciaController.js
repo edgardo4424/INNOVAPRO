@@ -4,6 +4,7 @@ const crearAsistenciaSimple = require("../../application/useCases/crearAsistenci
 const actualizarAsistenciaSimple = require("../../application/useCases/actualizarAsistenciaSimple");
 
 const SequelizeAsistenciaRepository = require("../../infraestructure/repositories/sequelizeAsistenciaRepository");
+const obtenerFaltasTrabajadorPorRangoFecha = require("../../application/useCases/obtenerFaltasTrabajadorPorRangoFecha");
 
 const asistenciaRepository = new SequelizeAsistenciaRepository();
 const AsistenciaController = {
@@ -65,6 +66,18 @@ const AsistenciaController = {
       } catch (error) {
          console.log(error);
 
+         res.status(500).json({ error: error.message });
+      }
+   },
+
+   async obtenerFaltasPorRangoFecha(req, res) {
+      try {
+         const { trabajador_id, fecha_inicio, fecha_fin } = req.body;
+
+         const faltas = await obtenerFaltasTrabajadorPorRangoFecha(trabajador_id, fecha_inicio, fecha_fin, asistenciaRepository);
+         res.status(faltas.codigo).json(faltas.respuesta);
+      } catch (error) {
+         console.log(error);
          res.status(500).json({ error: error.message });
       }
    },

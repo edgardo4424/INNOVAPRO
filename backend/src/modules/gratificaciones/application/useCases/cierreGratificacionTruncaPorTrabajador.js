@@ -9,11 +9,10 @@ module.exports = async (
   anio,
   filial_id,
   trabajador_id,
-  gratificacionRepository
-  /* transaction = null */
+  gratificacionRepository,
+  transaction = null
 ) => {
-  const transaction = await db.sequelize.transaction(); // Iniciar transacción
-  try {
+
     // Validar periodo
     if (!["JULIO", "DICIEMBRE"].includes(periodo)) {
       return { codigo: 400, respuesta: { mensaje: "Periodo inválido" } };
@@ -29,6 +28,10 @@ module.exports = async (
         trabajador_id,
         transaction
       );
+
+      
+      let cierreId = null;
+
 
     if (gratificacionDelTrabajador && gratificacionDelTrabajador?.locked_at) {
       return {
@@ -48,8 +51,6 @@ module.exports = async (
           filial_id,
           transaction
         );
-
-      let cierreId = null;
 
       if (!cierreGratificacion) {
         // Registrar el registro de la tabla cierres_gratificaciones
@@ -80,35 +81,22 @@ module.exports = async (
       } else {
         // Registrar la grati del trabajador
         // Calcular gratificaciones
-        const gratificaciones =
-          await gratificacionRepository.calcularGratificaciones(
+        const gratificacionesTrab =
+          await gratificacionRepository.calcularGratificacionTruncaPorTrabajador(
             periodo,
             anio,
             filial_id,
+            trabajador_id,
             transaction
           );
 
-        // Verificar si hay gratificaciones para registrar
-        if (gratificaciones.planilla.trabajadores.length === 0) {
-          return {
-            codigo: 400,
-            respuesta: { mensaje: "No hay gratificaciones para calcular" },
-          };
-        }
-
-        // Obtener solo la grati del trabajador
-        const gratificacionDelTrabajador =
-          gratificaciones.planilla.trabajadores.filter((gratificacion) => {
-            return gratificacion.trabajador_id == trabajador_id;
-          });
+          const gratificacionDelTrabajador = gratificacionesTrab.planilla.trabajadores; 
 
         // Verificar si hay gratificaciones para registrar
         if (gratificacionDelTrabajador.length === 0) {
           return {
             codigo: 400,
-            respuesta: {
-              mensaje: "No se encontró la gratificacion del trabajador",
-            },
+            respuesta: { mensaje: "No hay gratificaciones del trabajador" },
           };
         }
 
@@ -127,20 +115,13 @@ module.exports = async (
         );
       }
     }
-    await transaction.commit(); // ✔ Confirmar transacción
 
+ 
     return {
       codigo: 201,
       respuesta: {
         mensaje: "Se registro la gratificacion del trabajador exitosamente",
       },
     };
-  } catch (error) {
-    console.error("Error en cierre de gratificaciones:", error);
-    await transaction.rollback(); // ❌ Deshacer todo si algo falla
-    return {
-      codigo: 500,
-      respuesta: { mensaje: "Error al realizar el cierre de gratificaciones" },
-    };
-  }
+  
 };

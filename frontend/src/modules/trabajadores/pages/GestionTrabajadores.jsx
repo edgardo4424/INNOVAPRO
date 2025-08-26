@@ -323,7 +323,7 @@ export default function CompGestionTrabajadoresonent() {
                                        <div className="text-sm text-muted-foreground">
                                           Filial:{" "}
                                           <span className="text-xs truncate lowercase">
-                                             {filialActual.razon_social}
+                                             {filialActual?.razon_social}
                                           </span>
                                        </div>
                                     </div>
