@@ -152,87 +152,112 @@ class SequelizeAsistenciaRepository {
    }
 
    async obtenerHorasExtrasPorRangoFecha(trabajador_id, fechaInicio, fechaFin) {
-  try {
+      try {
+         const asistencias = await Asistencia.findAll({
+            where: {
+               trabajador_id,
+               fecha: {
+                  [Op.between]: [fechaInicio, fechaFin], // <-- inclusivo en ambos extremos
+               },
+            },
+            // Opcional: optimiza la consulta si solo necesitas horas_extras
+            //attributes: ['horas_extras'],
+            raw: true,
+         });
 
-    const asistencias = await Asistencia.findAll({
-      where: {
-        trabajador_id,
-        fecha: {
-          [Op.between]: [fechaInicio, fechaFin], // <-- inclusivo en ambos extremos
-        },
-      },
-      // Opcional: optimiza la consulta si solo necesitas horas_extras
-      //attributes: ['horas_extras'],
-      raw: true,
-    });
-
-    return asistencias.reduce((total, a) => total + Number(a.horas_extras || 0), 0);
-  } catch (error) {
-    throw new Error(error.message);
-  }
-}
-
- async obtenerCantidadFaltasPorRangoFecha(trabajador_id, fechaInicio, fechaFin) {
-  try {
-
-    const cantidadFaltas = await Asistencia.count({
-      where: {
-        trabajador_id,
-        estado_asistencia: "falto",
-        fecha: {
-          [Op.between]: [fechaInicio, fechaFin], // <-- inclusivo en ambos extremos
-        },
-      },
-    });
-
-
-    return cantidadFaltas
-  } catch (error) {
-    throw new Error(error.message);
-  }
-}
-
- async obtenerAsistenciasPorRangoFecha(trabajador_id, fechaInicio, fechaFin) {
-  try {
-   console.log('inicio',fechaInicio);
-   console.log('Fin',fechaFin);
-   
-   
-    const asistencias = await Asistencia.findAll({
-      where: {
-        trabajador_id,
-        fecha: {
-          [Op.between]: [fechaInicio, fechaFin], 
-        },
-      },
-      order: [["fecha", "ASC"]],
-    });
-    return asistencias
-    }
-    catch(error){
-         console.log(error);
-         
-    }
+         return asistencias.reduce(
+            (total, a) => total + Number(a.horas_extras || 0),
+            0
+         );
+      } catch (error) {
+         throw new Error(error.message);
+      }
    }
-async obtenerDiasNoComputablesPorRangoFecha(trabajador_id, fechaInicio, fechaFin) {
-  try {
 
-    const cantidadDias = await Asistencia.count({
-      where: {
-        trabajador_id,
-        estado_asistencia: "licencia_sin_goce",
-        fecha: {
-          [Op.between]: [fechaInicio, fechaFin], // <-- inclusivo en ambos extremos
-        },
-      },
-    });
+   async obtenerCantidadFaltasPorRangoFecha(
+      trabajador_id,
+      fechaInicio,
+      fechaFin
+   ) {
+      try {
+         const cantidadFaltas = await Asistencia.count({
+            where: {
+               trabajador_id,
+               estado_asistencia: "falto",
+               fecha: {
+                  [Op.between]: [fechaInicio, fechaFin], // <-- inclusivo en ambos extremos
+               },
+            },
+         });
 
+         return cantidadFaltas;
+      } catch (error) {
+         throw new Error(error.message);
+      }
+   }
 
-    return cantidadDias
-  } catch (error) {
-    throw new Error(error.message);
-  }
-}
+   async obtenerAsistenciasPorRangoFecha(trabajador_id, fechaInicio, fechaFin) {
+      try {
+         console.log("inicio", fechaInicio);
+         console.log("Fin", fechaFin);
+
+         const asistencias = await Asistencia.findAll({
+            where: {
+               trabajador_id,
+               fecha: {
+                  [Op.between]: [fechaInicio, fechaFin],
+               },
+            },
+            order: [["fecha", "ASC"]],
+         });
+         return asistencias;
+      } catch (error) {
+         console.log(error);
+      }
+   }
+   async obtenerDiasNoComputablesPorRangoFecha(
+      trabajador_id,
+      fechaInicio,
+      fechaFin
+   ) {
+      try {
+         const cantidadDias = await Asistencia.count({
+            where: {
+               trabajador_id,
+               estado_asistencia: "licencia_sin_goce",
+               fecha: {
+                  [Op.between]: [fechaInicio, fechaFin], // <-- inclusivo en ambos extremos
+               },
+            },
+         });
+
+         return cantidadDias;
+      } catch (error) {
+         throw new Error(error.message);
+      }
+   }
+
+   async obtenerCantidadFaltasJustificadas(
+      trabajador_id,
+      fechaInicio,
+      fechaFin
+   ) {
+      try {
+         const cantidadFaltas = await Asistencia.count({
+            where: {
+               trabajador_id,
+               estado_asistencia: "falta-justificada",
+               fecha: {
+                  [Op.between]: [fechaInicio, fechaFin], // <-- inclusivo en ambos extremos
+               },
+            },
+         });
+
+         return cantidadFaltas;
+      } catch (error) {
+         throw new Error(error.message);
+      }
+   }
 }
 
 module.exports = SequelizeAsistenciaRepository;

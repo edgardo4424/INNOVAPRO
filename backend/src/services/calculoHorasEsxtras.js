@@ -4,7 +4,6 @@ const calcularPromedioHorasExtras = (
    meses_computados
 ) => {
    const objAsistenciasHE = new Map();
-
    for (const a of asistencias) {
       const mes = a.fecha.substring(5, 7);
       if (a.horas_extras > 0) {
@@ -14,7 +13,6 @@ const calcularPromedioHorasExtras = (
          objAsistenciasHE.get(mes).asistencias.push(a);
       }
    }
-   console.log("Meses acumulados de HE: ", objAsistenciasHE.size);
    if (objAsistenciasHE.size < 3) return null;
 
    let sumatoriaHE = 0;
@@ -25,12 +23,10 @@ const calcularPromedioHorasExtras = (
 
       sumatoriaHE += Number(calculo_monto);
    }
-   console.log("suamtoria monto de Horas Extras: ", sumatoriaHE);
    const promedioHorasExtras = sumatoriaHE / meses_computados;
-   console.log(
-      "Promedio monto de Horas extras: ",
-      parseFloat(promedioHorasExtras.toFixed(2))
-   );
+
+
+   return  parseFloat(promedioHorasExtras.toFixed(2))
 };
 
 module.exports = calcularPromedioHorasExtras;
