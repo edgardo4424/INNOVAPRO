@@ -8,8 +8,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { useFacturaBoleta } from '@/context/Factura/FacturaBoletaContext';
-import { useEffect, useState } from 'react';
+import { useFacturaBoleta } from '@/modules/facturacion/context/FacturaBoletaContext';
+import { useEffect } from 'react';
 import ModalListaDeProductos from '../components/modal/ModalListaDeProductos';
 
 const ProductoForm = ({ closeModal }) => {
@@ -95,7 +95,7 @@ const ProductoForm = ({ closeModal }) => {
     }
 
     return (
-        <div className='max-h-[50dvh] min-h-[40dvh] overflow-y-auto col-span-4 w-full'>
+        <div className='max-h-[60vh] min-h-[40dvh] overflow-y-auto col-span-4 w-full'>
             <div className='w-full flex justify-end'>
                 <ModalListaDeProductos />
             </div>

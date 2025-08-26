@@ -7,13 +7,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
+import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
 import factilizaService from "@/modules/facturacion/service/FactilizaService";
 import { Search } from "lucide-react";
 import { toast } from "react-toastify";
 
 const DatosDelCliente = () => {
-    const { factura, setFactura, facturaValida, } = useFacturaBoleta();
+    const { factura, setFactura,  } = useFacturaBoleta();
 
     const {
         cliente_Tipo_Doc,
@@ -92,7 +92,7 @@ const DatosDelCliente = () => {
                 Datos del Cliente
             </h1>
             <form
-                className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-5 md:gap-x-6 md:gap-y-8"
+                className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-5 md:gap-x-6 md:gap-y-8"
                 onSubmit={handleBuscar}
             >
                 {/* Tipo de Documento */}
@@ -117,12 +117,6 @@ const DatosDelCliente = () => {
                             )}
                         </SelectContent>
                     </Select>
-                    <span
-                        className={`text-red-500 text-sm mt-1 ${facturaValida.cliente_Tipo_Doc ? "block" : "hidden"
-                            }`}
-                    >
-                        Debes seleccionar el tipo de documento del cliente.
-                    </span>
                 </div>
 
                 {/* Número de Documento */}
@@ -145,12 +139,6 @@ const DatosDelCliente = () => {
                             <Search className="h-5 w-5" />
                         </button>
                     </div>
-                    <span
-                        className={`text-red-500 text-sm mt-1 ${facturaValida.cliente_Num_Doc ? "block" : "hidden"
-                            }`}
-                    >
-                        Debes ingresar el número de documento del cliente.
-                    </span>
                 </div>
 
                 {/* Razón Social */}
@@ -165,16 +153,10 @@ const DatosDelCliente = () => {
                         value={cliente_Razon_Social || ""}
                         onChange={handleInputChange}
                     />
-                    <span
-                        className={`text-red-500 text-sm mt-1 ${facturaValida.cliente_Razon_Social ? "block" : "hidden"
-                            }`}
-                    >
-                        Debes ingresar la razón social del cliente.
-                    </span>
                 </div>
 
                 {/* Dirección */}
-                <div className="flex flex-col gap-1 col-span-1">
+                <div className="flex flex-col gap-1 col-span-1 lg:col-span-3">
                     <Label htmlFor="cliente_direccion">Dirección</Label>
                     <Input
                         type="text"

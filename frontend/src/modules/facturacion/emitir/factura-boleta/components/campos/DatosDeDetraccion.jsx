@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState } from "react";
-import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
+import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
 
 const DatosDeDetraccion = () => {
     const { factura } = useFacturaBoleta();
@@ -175,11 +175,11 @@ const DatosDeDetraccion = () => {
                             <>
                                 {/* Tipo de Venta */}
                                 <div className="flex flex-col gap-2">
-                                    <Label htmlFor= "detraccion_cod_bien_detraccion">
+                                    <Label htmlFor="detraccion_cod_bien_detraccion">
                                         Tipo de Detracción <span className="text-red-500">*</span>
                                     </Label>
                                     <Select
-                                        name= "detraccion_cod_bien_detraccion"
+                                        name="detraccion_cod_bien_detraccion"
                                         disabled={!formData.habilitado}
                                         value={formData.tipoVenta}
                                         onValueChange={(value) =>
@@ -190,54 +190,37 @@ const DatosDeDetraccion = () => {
                                             <SelectValue placeholder="Selecciona un tipo de venta" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {/* <SelectItem value="001">Azúcar</SelectItem> */}
-                                            {/* <SelectItem value="003">Alcohol etílico</SelectItem> */}
-                                            {/* <SelectItem value="004">Recursos hidrobiológicos</SelectItem> */}
-                                            {/* <SelectItem value="005">Maíz amarillo duro</SelectItem> */}
-                                            {/* <SelectItem value="006">Algodón</SelectItem> */}
-                                            {/* <SelectItem value="007">Caña de azúcar</SelectItem> */}
-                                            {/* <SelectItem value="008">Madera</SelectItem> */}
-                                            {/* <SelectItem value="009">Arena y piedra</SelectItem> */}
-                                            {/* <SelectItem value="010">Residuos, subproductos, desechos, recortes y desperdicios</SelectItem> */}
-                                            {/* <SelectItem value="011">Bienes del inciso A) del Apéndice I de la Ley del IGV</SelectItem> */}
-                                            <SelectItem value="012">
-                                                Intermediación laboral y tercerización
-                                            </SelectItem>
-                                            {/* <SelectItem value="013">Animales vivos</SelectItem> */}
-                                            {/* <SelectItem value="014">Carnes y despojos comestibles</SelectItem> */}
-                                            {/* <SelectItem value="015">Abonos, cueros y pieles de origen animal</SelectItem> */}
-                                            {/* <SelectItem value="016">Aceite de pescado</SelectItem> */}
-                                            {/* <SelectItem value="017">Harina, polvo y “pellets” de pescado, crustáceos, moluscos y demás invertebrados acuáticos</SelectItem> */}
-                                            {/* <SelectItem value="018">Embarcaciones pesqueras</SelectItem> */}
-                                            <SelectItem value="019">
-                                                Arrendamiento de bienes muebles
-                                            </SelectItem>
-                                            <SelectItem value="020">
-                                                Mantenimiento y reparación de bienes muebles
-                                            </SelectItem>
-                                            <SelectItem value="021">Movimiento de carga</SelectItem>
-                                            <SelectItem value="022">
-                                                Otros servicios empresariales
-                                            </SelectItem>
-                                            {/* <SelectItem value="023">Leche</SelectItem> */}
-                                            {/* <SelectItem value="024">Comisión mercantil</SelectItem> */}
-                                            {/* <SelectItem value="025">Fabricación de bienes por encargo</SelectItem> */}
-                                            <SelectItem value="026">
-                                                Servicio de transporte de personas
-                                            </SelectItem>
-                                            {/* <SelectItem value="029">Algodón en rama sin desmontar</SelectItem> */}
-                                            <SelectItem value="030">
-                                                Contratos de construcción
-                                            </SelectItem>
-                                            {/* <SelectItem value="031">Oro gravado con el IGV</SelectItem> */}
-                                            {/* <SelectItem value="032">Páprika y otros frutos de los géneros capsicum o pimienta</SelectItem> */}
+                                            {/* <SelectItem value="001">001 - Azúcar</SelectItem> */}
+                                            {/* <SelectItem value="003">002 - Alcohol etílico</SelectItem> */}
+                                            {/* <SelectItem value="004">004 - Recursos hidrobiológicos</SelectItem> */}
+                                            {/* <SelectItem value="005">005 - Maíz amarillo duro</SelectItem> */}
+                                            {/* <SelectItem value="006">006 - Algodón</SelectItem> */}
+                                            {/* <SelectItem value="007">007 - Caña de azúcar</SelectItem> */}
+                                            {/* <SelectItem value="008">008 - Madera</SelectItem> */}
+                                            {/* <SelectItem value="009">009 - Arena y piedra</SelectItem> */}
+                                            {/* <SelectItem value="010">010 - Residuos, subproductos, desechos, recortes y desperdicios</SelectItem> */}
+                                            {/* <SelectItem value="011">011 - Bienes del inciso A) del Apéndice I de la Ley del IGV</SelectItem> */}
+                                            <SelectItem value="012">012 - Intermediación laboral y tercerización</SelectItem>
+                                            {/* <SelectItem value="013">013 - Animales vivos</SelectItem> */}
+                                            {/* <SelectItem value="014">014 - Carnes y despojos comestibles</SelectItem> */}
+                                            {/* <SelectItem value="015">015 - Abonos, cueros y pieles de origen animal</SelectItem> */}
+                                            {/* <SelectItem value="016">016 - Aceite de pescado</SelectItem> */}
+                                            {/* <SelectItem value="017">017 - Harina, polvo y “pellets” de pescado, crustáceos, moluscos y demás invertebrados acuáticos</SelectItem> */}
+                                            {/* <SelectItem value="018">018 - Embarcaciones pesqueras</SelectItem> */}
+                                            <SelectItem value="019">019 - Arrendamiento de bienes muebles</SelectItem>
+                                            <SelectItem value="020">020 - Mantenimiento y reparación de bienes muebles</SelectItem>
+                                            <SelectItem value="021">021 - Movimiento de carga</SelectItem>
+                                            <SelectItem value="022">022 - Otros servicios empresariales</SelectItem>
+                                            {/* <SelectItem value="023">023 - Leche</SelectItem> */}
+                                            {/* <SelectItem value="024">024 - Comisión mercantil</SelectItem> */}
+                                            {/* <SelectItem value="025">025 - Fabricación de bienes por encargo</SelectItem> */}
+                                            <SelectItem value="026">026 - Servicio de transporte de personas</SelectItem>
+                                            {/* <SelectItem value="029">029 - Algodón en rama sin desmontar</SelectItem> */}
+                                            <SelectItem value="030">030 - Contratos de construcción</SelectItem>
+                                            {/* <SelectItem value="031">031 - Oro gravado con el IGV</SelectItem> */}
+                                            {/* <SelectItem value="032">032 - Páprika y otros frutos de los géneros capsicum o pimienta</SelectItem> */}
                                         </SelectContent>
                                     </Select>
-                                    {errors.tipoVenta && (
-                                        <span className="text-red-500 text-sm">
-                                            {errors.tipoVenta}
-                                        </span>
-                                    )}
                                 </div>
 
                                 {/* Código de medio de pago */}
@@ -246,21 +229,45 @@ const DatosDeDetraccion = () => {
                                         Código de Medio de Pago{" "}
                                         <span className="text-red-500">*</span>
                                     </Label>
-                                    <Input
-                                        type="text"
+
+                                    <Select
                                         id="detraccion_cod_medio_pago"
-                                        placeholder="Ej: 001"
+
+                                        name="detraccion_cod_medio_pago"
                                         disabled={!formData.habilitado}
                                         value={formData.codigoMedioPago}
-                                        onChange={(e) =>
-                                            handleInputChange("codigoMedioPago", e.target.value)
+                                        onValueChange={(value) =>
+                                            handleInputChange("codigoMedioPago", value)
                                         }
-                                    />
-                                    {errors.codigoMedioPago && (
-                                        <span className="text-red-500 text-sm">
-                                            {errors.codigoMedioPago}
-                                        </span>
-                                    )}
+                                    >
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Selecciona cod. medio de pago" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="001">001 - Depósito en cuenta.  SUNAT</SelectItem>
+                                            <SelectItem value="002">002 - Giro.  SUNAT</SelectItem>
+                                            <SelectItem value="003">003 - Transferencia de fondos.  SUNAT</SelectItem>
+                                            <SelectItem value="004">004 - Orden de pago.  SUNAT</SelectItem>
+                                            <SelectItem value="005">005 - Tarjeta de débito.  SUNAT</SelectItem>
+                                            <SelectItem value="006">006 - Tarjeta de crédito emitida en el país por una empresa del sistema financiero.  SUNAT</SelectItem>
+                                            <SelectItem value="007">007 - Cheques con la cláusula “no negociable”, “intransferible”, “no a la orden” u otra equivalente.  SUNAT</SelectItem>
+                                            <SelectItem value="008">008 - Efectivo (cuando no existe obligación de usar medio de pago).  SUNAT</SelectItem>
+                                            <SelectItem value="009">009 - Efectivo (en los demás casos).  SUNAT</SelectItem>
+                                            <SelectItem value="010">010 - Medios de pago usados en comercio exterior.  SUNAT</SelectItem>
+                                            <SelectItem value="011">011 - Documentos emitidos por EDPYMES y cooperativas no autorizadas a captar depósitos.  SUNAT</SelectItem>
+                                            <SelectItem value="012">012 - Tarjeta de crédito (país o exterior) emitida por empresa no perteneciente al sistema financiero.  SUNAT</SelectItem>
+                                            <SelectItem value="013">013 - Tarjetas de crédito emitidas en el exterior por bancos o financieras no domiciliadas.  SUNAT</SelectItem>
+                                            <SelectItem value="101">101 - Transferencias – comercio exterior.  SUNAT</SelectItem>
+                                            <SelectItem value="102">102 - Cheques bancarios – comercio exterior.  SUNAT</SelectItem>
+                                            <SelectItem value="103">103 - Orden de pago simple – comercio exterior.  SUNAT</SelectItem>
+                                            <SelectItem value="104">104 - Orden de pago documentario – comercio exterior.  SUNAT</SelectItem>
+                                            <SelectItem value="105">105 - Remesa simple – comercio exterior.  SUNAT</SelectItem>
+                                            <SelectItem value="106">106 - Remesa documentaria – comercio exterior.  SUNAT</SelectItem>
+                                            <SelectItem value="107">107 - Carta de crédito simple – comercio exterior.  SUNAT</SelectItem>
+                                            <SelectItem value="108">108 - Carta de crédito documentario – comercio exterior.  SUNAT</SelectItem>
+                                            <SelectItem value="999">999 - Otros medios de pago.  SUNAT</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                 </div>
 
                                 {/* Cuenta de banco */}
@@ -278,22 +285,17 @@ const DatosDeDetraccion = () => {
                                             handleInputChange("cuentaBanco", e.target.value)
                                         }
                                     />
-                                    {errors.cuentaBanco && (
-                                        <span className="text-red-500 text-sm">
-                                            {errors.cuentaBanco}
-                                        </span>
-                                    )}
                                 </div>
 
                                 {/* Porcentaje de detracción */}
                                 <div className="flex flex-col gap-2">
-                                    <Label htmlFor= "detraccion_percent">
+                                    <Label htmlFor="detraccion_percent">
                                         Porcentaje de Detracción (%){" "}
                                         <span className="text-red-500">*</span>
                                     </Label>
                                     <Input
                                         type="number"
-                                        id= "detraccion_percent"
+                                        id="detraccion_percent"
                                         placeholder="Ej: 12.00"
                                         step="0.01"
                                         min="0"
@@ -304,22 +306,17 @@ const DatosDeDetraccion = () => {
                                             handleInputChange("porcentajeDetraccion", e.target.value)
                                         }
                                     />
-                                    {errors.porcentajeDetraccion && (
-                                        <span className="text-red-500 text-sm">
-                                            {errors.porcentajeDetraccion}
-                                        </span>
-                                    )}
                                 </div>
 
                                 {/* Monto de detracción */}
                                 <div className="flex flex-col gap-2 sm:col-span-1">
-                                    <Label htmlFor= "detraccion_mount">
+                                    <Label htmlFor="detraccion_mount">
                                         Monto de Detracción (S/){" "}
                                         <span className="text-red-500">*</span>
                                     </Label>
                                     <Input
                                         type="number"
-                                        id= "detraccion_mount"
+                                        id="detraccion_mount"
                                         placeholder="Ej: 120.00"
                                         step="0.01"
                                         min="0"
@@ -329,11 +326,6 @@ const DatosDeDetraccion = () => {
                                             handleInputChange("montoDetraccion", e.target.value)
                                         }
                                     />
-                                    {errors.montoDetraccion && (
-                                        <span className="text-red-500 text-sm">
-                                            {errors.montoDetraccion}
-                                        </span>
-                                    )}
                                 </div>
                             </>
                         )}

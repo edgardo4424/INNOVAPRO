@@ -17,9 +17,6 @@ const camposRequeridosGlobal = [
     { key: "guia_Envio_Partida_Direccion", name: "Partida Dirección" },
     { key: "guia_Envio_Llegada_Ubigeo", name: "Llegada Ubigeo" },
     { key: "guia_Envio_Llegada_Direccion", name: "Llegada Dirección" },
-    // { key: "estado_Documento", name: "Estado del Documento" },
-    // { key: "manual" },
-    // { key: "id_Base_Dato" },
     {
         key: "detalle",
         camposRequeridos: [

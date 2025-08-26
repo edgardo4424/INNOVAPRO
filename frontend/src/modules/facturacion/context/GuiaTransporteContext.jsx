@@ -1,17 +1,22 @@
 import { validarFormulario } from "@/modules/facturacion/emitir/guia-de-remision/utils/validarFormulario";
-import { guiaMismaEmpresa, guiaPrivada, guiaPublica } from "@/modules/facturacion/emitir/guia-de-remision/utils/valoresIncialGuia";
+import { guiaInical,  ValoresInterno, ValoresPrivado, ValoresPublico } from "@/modules/facturacion/emitir/guia-de-remision/utils/valoresIncialGuia";
 import factilizaService from "@/modules/facturacion/service/FactilizaService";
 import facturaService from "@/modules/facturacion/service/FacturaService";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { toast } from "react-toastify";
 
 const GuiaTransporteContext = createContext();
 
 export function GuiaTransporteProvider({ children }) {
-    const [guiaTransporte, setGuiaTransporte] = useState(null);
+    const [guiaTransporte, setGuiaTransporte] = useState(guiaInical);// ?Datos de guia que abarcan los 3 casos
+
+    const [guiaDatosPrivado, setGuiaDatosPrivado] = useState(ValoresPrivado);
+    const [guiaDatosPublico, setGuiaDatosPublico] = useState(ValoresPublico);
+    const [guiaDatosInternos, setGuiaDatosInternos] = useState(ValoresInterno);
+
     const [guiaTransporteValida, setGuiaTransporteValida] = useState(null);
 
-    const [tipoGuia, setTipoGuia] = useState(null);
+    const [tipoGuia, setTipoGuia] = useState("transporte-privado");
 
     const validarGuia = async () => {
         try {
@@ -146,7 +151,14 @@ export function GuiaTransporteProvider({ children }) {
                 setGuiaTransporte,
                 guiaTransporteValida,
                 setGuiaTransporteValida,
+                guiaDatosPrivado,
+                setGuiaDatosPrivado,
+                guiaDatosPublico,
+                setGuiaDatosPublico,
+                guiaDatosInternos,
+                setGuiaDatosInternos,
                 validarGuia,
+                tipoGuia,
                 setTipoGuia,
                 EmitirGuia
             }}

@@ -8,7 +8,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useGuiaTransporte } from "@/context/Factura/GuiaTransporteContext";
+import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext";
 import { LoaderCircle, Search, SquarePen } from "lucide-react";
 import { useState } from "react";
 import { Calendar22 } from "../../factura-boleta/components/Calendar22";
@@ -17,7 +17,7 @@ import { toast } from "react-toastify";
 
 const InfDocumentoForm = () => {
 
-    const { guiaTransporte, setGuiaTransporte } = useGuiaTransporte();
+    const { guiaTransporte, setGuiaTransporte, tipoGuia, setTipoGuia } = useGuiaTransporte();
 
     const { tipo_Doc, serie, correlativo, observacion } = guiaTransporte;
     const [correlativoEstado, setCorrelativoEstado] = useState(false);
@@ -89,6 +89,32 @@ const InfDocumentoForm = () => {
                         htmlFor="tipo_Doc"
                         className="block text-sm text-gray-700 text-left mb-1 font-semibold"
                     >
+                        Tipo de Guia a Emitir
+                    </Label>
+                    <Select
+                        name="tipo_operacion"
+                        value={tipoGuia}
+                        onValueChange={(e) => {
+                            setTipoGuia(e);
+                        }}
+                    >
+                        <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> {/* Estilo de borde mejorado */}
+                            <SelectValue placeholder="Selecciona un tipo de Documento" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="transporte-privado">Guia de Remision - Transporte Privado</SelectItem>
+                            <SelectItem value="transporte-publico">Guia de Remision - Transporte Publico</SelectItem>
+                            <SelectItem value="traslado-misma-empresa">Nota de Remision - Traslado Interno</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                {/* Added gap-y for vertical spacing on small screens */}
+                <div>
+                    <Label
+                        htmlFor="tipo_Doc"
+                        className="block text-sm text-gray-700 text-left mb-1 font-semibold"
+                    >
                         Tipo de Documento
                     </Label>
                     <Select
@@ -154,27 +180,11 @@ const InfDocumentoForm = () => {
                         </div>
                         <button className={`bg-blue-500 hover:bg-blue-600  cursor-pointer  text-white rounded-md px-2 `}
                             disabled={correlativoEstado}
-                        onClick={(e) => buscarCorrelativo(e)}
+                            onClick={(e) => buscarCorrelativo(e)}
                         >
                             {loadingCorrelativo ? <LoaderCircle className="w-4 h-4 animate-spin" /> : <Search />}
                         </button>
                     </div>
-                </div>
-                <div className="col-span-1 md:col-span-2 lg:col-span-2">
-                    <Label
-                        htmlFor="observacion"
-                        className="block text-sm text-gray-700 text-left mb-1 font-semibold"
-                    >
-                        Observación
-                    </Label>
-                    <Textarea
-                        id="observacion"
-                        name="observacion"
-                        value={observacion}
-                        onChange={handleChange}
-                        rows="2"
-                        className="h-22 px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 text-sm"
-                    ></Textarea>
                 </div>
                 <div>
                     <Label
@@ -193,6 +203,23 @@ const InfDocumentoForm = () => {
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none text-sm"
                     />
                 </div>
+                <div className="col-span-1 md:col-span-2 lg:col-span-3">
+                    <Label
+                        htmlFor="observacion"
+                        className="block text-sm text-gray-700 text-left mb-1 font-semibold"
+                    >
+                        Observación
+                    </Label>
+                    <Textarea
+                        id="observacion"
+                        name="observacion"
+                        value={observacion}
+                        onChange={handleChange}
+                        rows="2"
+                        className="h-22 px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 text-sm"
+                    ></Textarea>
+                </div>
+
             </div>
         </div>
     );

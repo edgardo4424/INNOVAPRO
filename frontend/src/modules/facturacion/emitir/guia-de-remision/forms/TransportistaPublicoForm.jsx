@@ -7,21 +7,21 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { useGuiaTransporte } from "@/context/Factura/GuiaTransporteContext";
+import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext";
 
 import { Search, Trash } from "lucide-react";
 import { toast } from "react-toastify";
 import facturaService from "../../../service/FacturaService";
 
 const TransportistaPublicoForm = () => {
-    const { guiaTransporte, setGuiaTransporte } = useGuiaTransporte();
+    const { guiaDatosPublico, setGuiaDatosPublico } = useGuiaTransporte();
 
 
 
     const handleBuscar = async (e, index) => {
         e.preventDefault();
 
-        const transportista = guiaTransporte.transportista[index];
+        const transportista = guiaDatosPublico.transportista[index];
 
         if (transportista.nro_doc.length !== 11) {
             toast.error("El número de documento del chofer debe tener 11 dígitos.");
@@ -44,7 +44,7 @@ const TransportistaPublicoForm = () => {
                 const nombres = data.razon_social || '';
                 const nro_mtc = data.codigo_mtc || '';
 
-                setGuiaTransporte((prev) => ({
+                setGuiaDatosPublico((prev) => ({
                     ...prev,
                     transportista: prev.transportista.map((c, i) => {
                         if (i === index) {
@@ -72,7 +72,7 @@ const TransportistaPublicoForm = () => {
                 Datos del Transportista
             </h2>
             <div
-                className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-y-4 gap-x-6 mb-6 p-6 border border-gray-400 shadow-lg rounded-md"
+                className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-y-4 gap-x-6 mb-6 p-6 border border-gray-400  rounded-md"
             >
 
                 <div>
@@ -84,7 +84,7 @@ const TransportistaPublicoForm = () => {
                     </Label>
                     <Select
                         name="tipo_doc"
-                        value={guiaTransporte.transportista.tipo_doc}
+                        value={guiaDatosPublico.transportista.tipo_doc}
                         // onValueChange={(value) => handleChange(value, "tipo_doc", index)}
                     >
                         <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm">
@@ -108,7 +108,7 @@ const TransportistaPublicoForm = () => {
                             type="text"
                             id={`chofer-nro_doc`}
                             name="nro_doc"
-                            value={guiaTransporte.transportista.nro_doc}
+                            value={guiaDatosPublico.transportista.nro_doc}
                             // onChange={(e) => handleChange(e.target.value.slice(0, 11), e.target.name, index)}
                             className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                             maxLength={11}
@@ -133,7 +133,7 @@ const TransportistaPublicoForm = () => {
                         type="text"
                         id={`chofer-nombres`}
                         name="nombres"
-                        value={guiaTransporte.transportista.razon_Social}
+                        value={guiaDatosPublico.transportista.razon_Social}
                         // onChange={(e) => handleChange(e.target.value, e.target.name, index)}
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                     />
@@ -149,7 +149,7 @@ const TransportistaPublicoForm = () => {
                         type="text"
                         id={`chofer-nro_mtc`}
                         name="nro_mtc"
-                        value={guiaTransporte.transportista.nro_mtc}
+                        value={guiaDatosPublico.transportista.nro_mtc}
                         // onChange={(e) => handleChange(e.target.value, e.target.name, index)}
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                     />

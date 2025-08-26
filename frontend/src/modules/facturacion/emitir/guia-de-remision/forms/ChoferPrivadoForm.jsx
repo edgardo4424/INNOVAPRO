@@ -7,18 +7,18 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { useGuiaTransporte } from "@/context/Factura/GuiaTransporteContext";
+import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext";
 import { choferInicialPrivado } from "../utils/valoresIncialGuia";
 import { Search, Trash, UserRoundPlus } from "lucide-react";
 import factilizaService from "../../../service/FactilizaService";
 import { toast } from "react-toastify";
 
 const ChoferPrivadoForm = () => {
-    const { guiaTransporte, setGuiaTransporte } = useGuiaTransporte();
+    const { guiaDatosPrivado, setGuiaDatosPrivado } = useGuiaTransporte();
 
     // Función unificada para manejar cambios en inputs y selects
     const handleChange = (value, name, index) => {
-        setGuiaTransporte(prev => ({
+        setGuiaDatosPrivado(prev => ({
             ...prev,
             chofer: prev.chofer.map((chofer, i) =>
                 i === index ? { ...chofer, [name]: value } : chofer
@@ -28,7 +28,7 @@ const ChoferPrivadoForm = () => {
 
     // Función para agregar un nuevo chofer
     const addChofer = () => {
-        setGuiaTransporte(prev => ({
+        setGuiaDatosPrivado(prev => ({
             ...prev,
             chofer: [
                 ...prev.chofer,
@@ -39,7 +39,7 @@ const ChoferPrivadoForm = () => {
 
     // Función para eliminar un chofer
     const removeChofer = (index) => {
-        setGuiaTransporte(prev => ({
+        setGuiaDatosPrivado(prev => ({
             ...prev,
             chofer: prev.chofer.filter((_, i) => i !== index),
         }));
@@ -49,7 +49,7 @@ const ChoferPrivadoForm = () => {
     const handleBuscar = async (e, index) => {
         e.preventDefault();
 
-        const chofer = guiaTransporte.chofer[index];
+        const chofer = guiaDatosPrivado.chofer[index];
 
         if (!chofer.nro_doc) {
             toast.error("Por favor, ingresa el número de documento del chofer.");
@@ -68,7 +68,7 @@ const ChoferPrivadoForm = () => {
                 const apellidos = `${data_inf.apellido_paterno || ''} ${data_inf.apellido_materno || ''}`.trim();
                 const licencia = data_lic.licencia?.numero || '';
 
-                setGuiaTransporte((prev) => ({
+                setGuiaDatosPrivado((prev) => ({
                     ...prev,
                     chofer: prev.chofer.map((c, i) => {
                         if (i === index) {
@@ -96,7 +96,7 @@ const ChoferPrivadoForm = () => {
             <h2 className="text-2xl  font-semibold mb-6 text-blue-800 border-b pb-2">
                 Datos del Chofer
             </h2>
-            {guiaTransporte.chofer.map((chofer, index) => (
+            {guiaDatosPrivado.chofer.map((chofer, index) => (
                 <div
                     key={index}
                     className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-6 mb-6 p-6 border border-gray-400  rounded-md"

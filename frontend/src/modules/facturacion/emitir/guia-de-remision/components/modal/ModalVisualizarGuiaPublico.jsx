@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useGuiaTransporte } from "@/context/Factura/GuiaTransporteContext"; // Importamos el contexto correcto
+import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext"; // Importamos el contexto correcto
 import { Eye, X } from "lucide-react"; // Solo necesitamos Eye y X para previsualizar
 import ModalEnviarGuia from "./ModalEnviarGuia";
 

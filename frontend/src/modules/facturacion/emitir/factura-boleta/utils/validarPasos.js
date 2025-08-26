@@ -1,216 +1,116 @@
+// La misma función de utilidad para verificar valores nulos o vacíos.
+function isNullOrEmpty(value) {
+    return value === undefined || value === null || (typeof value === 'string' && value.trim() === '');
+}
 
-export function validarPasos(pasoActual, Factura) {
-
+export async function validarFacturaCompleta(Factura) {
     if (!Factura) {
-        console.error("Error: 'Factura' object is missing in validarPasos call for", pasoActual);
-        return { errores: null, validos: false, message: "Error interno de validación: Factura no proporcionada." };
-    }
-
-    if (pasoActual === "DatosDelComprobante") {
-        const camposRequeridos = [
-            { key: "tipo_Operacion" },
-            { key: "tipo_Doc" },
-            { key: "serie" },
-            { key: "correlativo" },
-            { key: "tipo_Moneda" },
-            { key: "fecha_Emision" },
-            { key: "empresa_Ruc" },
-        ];
-
-        const errores = {};
-
-        for (const campo of camposRequeridos) {
-            const valor = Factura[campo.key];
-            if (!valor || valor.toString().trim() === "") {
-                errores[campo.key] = true;
-            } else {
-                errores[campo.key] = false
-            }
-        }
-
-        const hayErrores = Object.values(errores).some((val) => val === true);
-
-        if (hayErrores) {
-            return {
-                errores,
-                validos: false,
-                message: "⚠️ Verifica los datos del comprobante"
-            };
-        }
-
-
-        return {
-            errores: camposRequeridos.reduce((acc, curr) => {
-                acc[curr.key] = false;
-                return acc;
-            }, {}),
-            validos: true,
-            message: ""
-        };
-    }
-
-
-
-    if (pasoActual === "DatosDelCliente") {
-        const camposRequeridos = [
-            { key: "cliente_Tipo_Doc" },
-            { key: "cliente_Num_Doc" },
-            { key: "cliente_Razon_Social" },
-        ];
-
-        const errores = {};
-
-        for (const campo of camposRequeridos) {
-            const valor = Factura[campo.key];
-            if (!valor || valor.toString().trim() === "") {
-                errores[campo.key] = true;
-            } else {
-                errores[campo.key] = false
-            }
-        }
-
-        const hayErrores = Object.values(errores).some((val) => val === true);
-
-        if (hayErrores) {
-            return {
-                errores,
-                validos: false,
-                message: "⚠️ Verifica los datos del comprobante"
-            };
-        }
-
-
-        return {
-            errores: camposRequeridos.reduce((acc, curr) => {
-                acc[curr.key] = false;
-                return acc;
-            }, {}),
-            validos: true,
-            message: ""
-        };
-    }
-
-    if (pasoActual === "DatosDelProducto") {
-        if (!Factura.detalle || Factura.detalle.length === 0) {
-            return {
-                errores: null,
-                validos: false,
-                message: "⚠️ Debes ingresar al menos un producto en el detalle."
-            };
-        }
-
-        const allProductsValid = Factura.detalle.every(item =>
-            (typeof item.cantidad === 'number' && item.cantidad > 0) &&
-            (item.descripcion && typeof item.descripcion === 'string' && item.descripcion.trim() !== "") &&
-            (typeof item.monto_Valor_Unitario === 'number' && item.monto_Valor_Unitario > 0)
-        );
-
-        if (!allProductsValid) {
-            return {
-                errores: null,
-                validos: false,
-                message: "⚠️ Algunos productos tienen datos incompletos o inválidos (cantidad, descripción, o valor unitario)."
-            };
-        }
-
         return {
             errores: null,
-            validos: true,
-            message: ""
+            validos: false,
+            message: "Error interno de validación: Factura no proporcionada."
         };
     }
 
+    const errores = {};
+    let validos = true;
 
-    if (pasoActual === "FormaDePago") {
+    // Campos globales requeridos (Comprobante y Cliente)
+    const camposGlobales = [
+        { key: "tipo_Operacion", name: "Tipo de Operación" },
+        { key: "tipo_Doc", name: "Tipo de Documento" },
+        { key: "serie", name: "Serie" },
+        { key: "correlativo", name: "Correlativo" },
+        { key: "tipo_Moneda", name: "Tipo de Moneda" },
+        { key: "fecha_Emision", name: "Fecha de Emisión" },
+        { key: "empresa_Ruc", name: "RUC de la Empresa" },
+        { key: "cliente_Tipo_Doc", name: "Tipo de Documento del Cliente" },
+        { key: "cliente_Num_Doc", name: "N° Documento del Cliente" },
+        { key: "cliente_Razon_Social", name: "Razón Social del Cliente" },
+    ];
+
+    // Campos anidados requeridos (Detalle y Forma de Pago)
+    const camposAnidados = [
+        {
+            key: "detalle",
+            name: "Detalle de Productos",
+            camposRequeridos: [
+                { key: "unidad", name: "Unidad" },
+                { key: "cantidad", name: "Cantidad" },
+                { key: "cod_Producto", name: "Código de Producto" },
+                { key: "descripcion", name: "Descripción" },
+                { key: "monto_Valor_Unitario", name: "Valor Unitario" },
+            ]
+        },
+        {
+            key: "forma_pago",
+            name: "Forma de Pago",
+            camposRequeridos: [
+                { key: "tipo", name: "Tipo de Pago" },
+                { key: "monto", name: "Monto del Pago" }
+            ]
+        }
+    ];
+
+    // 1. Validar campos globales
+    camposGlobales.forEach(campo => {
+        if (isNullOrEmpty(Factura[campo.key])) {
+            errores[campo.key] = `El campo '${campo.name}' es requerido.`;
+            validos = false;
+        }
+    });
+
+    // 2. Validar campos anidados (Detalle y Forma de Pago)
+    camposAnidados.forEach(campo => {
+        const nestedData = Factura[campo.key];
+
+        if (isNullOrEmpty(nestedData) || nestedData.length === 0) {
+            errores[campo.key] = `El campo '${campo.name}' no puede estar vacío.`;
+            validos = false;
+            return;
+        }
+
+        nestedData.forEach((item, index) => {
+            campo.camposRequeridos.forEach(subCampo => {
+                if (isNullOrEmpty(item[subCampo.key])) {
+                    errores[`${campo.key}[${index}].${subCampo.key}`] = `El campo '${subCampo.name}' del ${campo.name} n° ${index + 1} es requerido.`;
+                    validos = false;
+                }
+            });
+        });
+    });
+
+    // 3. Validaciones específicas (montos y sumas)
+    if (Factura.detalle && Factura.detalle.length > 0) {
+        const montoProductosValid = Factura.detalle.every(item =>
+            typeof item.cantidad === 'number' && item.cantidad > 0 &&
+            typeof item.monto_Valor_Unitario === 'number' && item.monto_Valor_Unitario > 0
+        );
+
+        if (!montoProductosValid) {
+            errores.detalle_valores = "Las cantidades y valores unitarios deben ser números mayores a 0.";
+            validos = false;
+        }
+    }
+
+    if (Factura.forma_pago && Factura.forma_pago.length > 0) {
         const montoTotalPagos = Factura.forma_pago.reduce(
             (total, pago) => total + (parseFloat(pago.monto) || 0),
             0
         );
-
         const montoTotalFactura = parseFloat(Factura.monto_Imp_Venta || 0);
-        const pagosCompletos = montoTotalPagos >= montoTotalFactura;
 
-        if (Factura.forma_pago.length == 0) {
-            return {
-                errores: null,
-                validos: false,
-                message: "⚠️ Debes ingresar al menos un Pago. 1"
-            };
+        if (montoTotalPagos < montoTotalFactura) {
+            errores.forma_pago_monto = "La suma de los pagos no cubre el monto total de la factura.";
+            validos = false;
         }
-        if (!pagosCompletos) {
-            return {
-                errores: null,
-                validos: false,
-                message: "⚠️ Debes ingresar al menos un Pago. 2"
-            };
-        }
-        return {
-            errores: null,
-            validos: true,
-            message: ""
-        };
     }
 
-    // if (pasoActual === "ValidaCionTotal") {
-    //     const { validos: validosComprobante } = validarPasos("DatosDelComprobante");
-    //     const { validos: validosCliente } = validarPasos("DatosDelCliente");
-    //     const { validos: validosProductos } = validarPasos("DatosDelProducto");
-    //     const { validos: validosFormaDePago } = validarPasos("FormaDePago");
-    //     if(!validosComprobante || !validosCliente || !validosProductos || !validosFormaDePago){
-    //         return {
-    //             errores: null,
-    //             validos: false,
-    //             message: "⚠️ Factura no válida"
-    //         };
-    //     }
-    //     return {
-    //         errores: null,
-    //         validos: true,
-    //         message: ""
-    //     };
-    // }
-    if (pasoActual === "ValidaCionTotal") {
-        // Pass Factura to sub-validations
-        const { validos: validosComprobante, message: msgComprobante } = validarPasos("DatosDelComprobante", Factura);
-        if (!validosComprobante) return { errores: null, validos: false, message: msgComprobante };
-
-        const { validos: validosCliente, message: msgCliente } = validarPasos("DatosDelCliente", Factura);
-        if (!validosCliente) return { errores: null, validos: false, message: msgCliente };
-
-        const { validos: validosProductos, message: msgProductos } = validarPasos("DatosDelProducto", Factura);
-        if (!validosProductos) return { errores: null, validos: false, message: msgProductos };
-
-        const { validos: validosFormaDePago, message: msgFormaDePago } = validarPasos("FormaDePago", Factura);
-        if (!validosFormaDePago) return { errores: null, validos: false, message: msgFormaDePago };
-
-        // If all sub-validations pass
-        return {
-            errores: null,
-            validos: true,
-            message: "🎉 ¡Factura lista para emitir!"
-        };
-    }
-
-    if (pasoActual === "validarBorrador") {
-        // Pass Factura to sub-validations
-        const { validos: validosComprobante, message: msgComprobante } = validarPasos("DatosDelComprobante", Factura);
-        if (!validosComprobante) return { errores: null, validos: false, message: msgComprobante };
-
-        const { validos: validosCliente, message: msgCliente } = validarPasos("DatosDelCliente", Factura);
-        if (!validosCliente) return { errores: null, validos: false, message: msgCliente };
-
-        // const { validos: validosProductos, message: msgProductos } = validarPasos("DatosDelProducto", Factura);
-        // if (!validosProductos) return { errores: null, validos: false, message: msgProductos };
-
-        // const { validos: validosFormaDePago, message: msgFormaDePago } = validarPasos("FormaDePago", Factura);
-        // if (!validosFormaDePago) return { errores: null, validos: false, message: msgFormaDePago };
-
-        // If all sub-validations pass
-        return {
-            errores: null,
-            validos: true,
-            message: "🎉 ¡Factura lista para emitir!"
-        };
-    }
-
+    // 4. Devolver el resultado
+    return {
+        errores,
+        validos,
+        message: validos ? "🎉 ¡Factura lista para emitir!" : "⚠️ El formulario contiene errores. Por favor, revísalos."
+    };
 }
+

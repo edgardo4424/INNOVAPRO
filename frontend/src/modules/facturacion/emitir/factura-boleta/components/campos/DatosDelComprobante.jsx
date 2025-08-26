@@ -7,7 +7,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
+import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
 import { Calendar22 } from "../Calendar22";
 import { useEffect, useState } from "react";
 import { LoaderCircle, Search, SquarePen } from "lucide-react";
@@ -15,7 +15,7 @@ import facturaService from "@/modules/facturacion/service/FacturaService";
 import { toast } from "react-toastify";
 
 const DatosDelComprobante = () => {
-    const { factura, setFactura, facturaValida } = useFacturaBoleta();
+    const { factura, setFactura } = useFacturaBoleta();
     const [correlativoEstado, setCorrelativoEstado] = useState(false);
     const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
 
@@ -76,7 +76,7 @@ const DatosDelComprobante = () => {
     return (
         <div className="overflow-y-auto p-4 sm:p-6 lg:px-8 lg:py-4">
             <h1 className="text-2xl font-bold py-3 text-gray-800">Datos del Comprobante</h1>
-            <form action="" className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-5 md:gap-x-6 md:gap-y-8"> {/* Grid más flexible */}
+            <form action="" className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-5 md:gap-x-6 md:gap-y-8"> {/* Grid más flexible */}
                 {/* Tipo de Operacion */}
                 <div className="flex flex-col gap-1 col-span-full sm:col-span-1"> {/* Col-span-full para que ocupe todo el ancho en móviles */}
                     <Label htmlFor="tipo_operacion">Tipo de Venta</Label>
@@ -106,38 +106,6 @@ const DatosDelComprobante = () => {
                             <SelectItem value="1001">Operaciones Gravadas</SelectItem>
                         </SelectContent>
                     </Select>
-                    <span
-                        className={`text-red-500 text-sm mt-1 ${facturaValida.tipo_Operacion ? "block" : "hidden"
-                            }`}
-                    >
-                        Debes seleccionar el tipo de operación.
-                    </span>
-                </div>
-
-                {/* Tipo de Documento */}
-                <div className="flex flex-col gap-1 col-span-full sm:col-span-1">
-                    <Label htmlFor="tipo_doc">Tipo de Documento</Label>
-                    <Select
-                        value={factura.tipo_Doc}
-                        name="tipo_Doc"
-                        onValueChange={(e) => {
-                            handleSelectChange(e, "tipo_Doc");
-                        }}
-                    >
-                        <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm">
-                            <SelectValue placeholder="Selecciona un tipo de documento" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="01">FACTURA</SelectItem>
-                            <SelectItem value="03">BOLETA</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <span
-                        className={`text-red-500 text-sm mt-1 ${facturaValida.tipo_Doc ? "block" : "hidden"
-                            }`}
-                    >
-                        Debes seleccionar el tipo de documento.
-                    </span>
                 </div>
 
                 {/* Serie */}
@@ -151,14 +119,8 @@ const DatosDelComprobante = () => {
                         className="border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
                         value={factura.serie || ""}
                         onChange={handleInputChange}
-                        // disabled
+                    // disabled
                     />
-                    <span
-                        className={`text-red-500 text-sm mt-1 ${facturaValida.serie ? "block" : "hidden"
-                            }`}
-                    >
-                        Debes ingresar la serie del comprobante.
-                    </span>
                 </div>
 
                 {/* Correlativo */}
@@ -184,12 +146,26 @@ const DatosDelComprobante = () => {
                             {loadingCorrelativo ? <LoaderCircle className="w-4 h-4 animate-spin" /> : <Search />}
                         </button>
                     </div>
-                    <span
-                        className={`text-red-500 text-sm mt-1 ${facturaValida.correlativo ? "block" : "hidden"
-                            }`}
+                </div>
+
+                {/* Tipo de Documento */}
+                <div className="flex flex-col gap-1 col-span-full sm:col-span-1">
+                    <Label htmlFor="tipo_doc">Tipo de Documento</Label>
+                    <Select
+                        value={factura.tipo_Doc}
+                        name="tipo_Doc"
+                        onValueChange={(e) => {
+                            handleSelectChange(e, "tipo_Doc");
+                        }}
                     >
-                        Debes ingresar el correlativo del comprobante.
-                    </span>
+                        <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm">
+                            <SelectValue placeholder="Selecciona un tipo de documento" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="01">FACTURA</SelectItem>
+                            <SelectItem value="03">BOLETA</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
 
                 {/* Tipo de Moneda */}
@@ -210,12 +186,6 @@ const DatosDelComprobante = () => {
                             <SelectItem value="USD">DÓLAR</SelectItem>
                         </SelectContent>
                     </Select>
-                    <span
-                        className={`text-red-500 text-sm mt-1 ${facturaValida.tipo_Moneda ? "block" : "hidden"
-                            }`}
-                    >
-                        Debes ingresar el tipo de moneda.
-                    </span>
                 </div>
 
                 {/* Fecha Emision */}
@@ -226,12 +196,6 @@ const DatosDelComprobante = () => {
                         setDato={setFactura}
                         tipo="fecha_Emision"
                     />
-                    <span
-                        className={`text-red-500 text-sm mt-1 ${facturaValida.fecha_Emision ? "block" : "hidden"
-                            }`}
-                    >
-                        Debes ingresar la fecha de emisión.
-                    </span>
                 </div>
 
                 {/* Ruc de la empresa */}
@@ -266,12 +230,6 @@ const DatosDelComprobante = () => {
                             label="Indek Andina e.I.R.L | Grupo Innova"
                         />
                     </datalist>
-                    <span
-                        className={`text-red-500 text-sm mt-1 ${facturaValida.empresa_Ruc ? "block" : "hidden"
-                            }`}
-                    >
-                        Debes ingresar el ruc de la empresa.
-                    </span>
                 </div>
             </form>
         </div>

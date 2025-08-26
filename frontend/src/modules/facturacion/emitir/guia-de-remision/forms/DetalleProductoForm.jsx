@@ -7,7 +7,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { useGuiaTransporte } from "@/context/Factura/GuiaTransporteContext";
+import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext";
 import React from "react";
 import { Package, Trash } from "lucide-react"; // Importamos el icono de bote de basura
 import { Textarea } from "@/components/ui/textarea";

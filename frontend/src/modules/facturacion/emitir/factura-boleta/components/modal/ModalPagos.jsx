@@ -7,7 +7,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
+import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
 import { ClipboardPlus, X } from "lucide-react";
 import { useState } from "react";
 import PagoForm from "../../forms/PagoForm";

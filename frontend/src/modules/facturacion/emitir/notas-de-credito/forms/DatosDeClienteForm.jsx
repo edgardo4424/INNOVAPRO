@@ -7,91 +7,17 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext";
 import { Search } from "lucide-react";
-import { toast } from "react-toastify";
-import factilizaService from "../../../service/FactilizaService";
 
 const DatosDeClienteForm = () => {
 
-    const { guiaTransporte, setGuiaTransporte } = useGuiaTransporte();
+    let Forma = {}
+    const { cliente_Tipo_Doc, cliente_Num_Doc, cliente_Razon_Social, cliente_Direccion } = Forma;
 
-    const { cliente_Tipo_Doc, cliente_Num_Doc, cliente_Razon_Social, cliente_Direccion } = guiaTransporte;
-
-
-    const handleBuscar = async (e) => {
-        e.preventDefault();
-
-        if (!cliente_Tipo_Doc) {
-            toast.error("Debes seleccionar el tipo de documento del cliente.");
-            return;
-        }
-
-        if (!cliente_Num_Doc?.trim()) {
-            toast.error("Debes ingresar el número de documento del cliente.");
-            return;
-        }
-
-        try {
-            const promise = factilizaService.metodoOpcional(
-                cliente_Tipo_Doc,
-                cliente_Num_Doc
-            );
-            toast.promise(
-                promise,
-                {
-                    pending: "Buscando información del cliente",
-                    success: "Información encontrada",
-                    error: "Ocurrió un error al buscar la información del cliente",
-                }
-            );
-            const { data, status, success } = await promise;
-            console.log("data", data);
-
-            if (status === 200 && success) {
-                let razonSocial = "";
-                let direccion = "";
-
-                if (cliente_Tipo_Doc === "1") {
-                    razonSocial = data.nombre_completo;
-                    direccion = data.direccion_completa;
-                } else if (cliente_Tipo_Doc === "6") {
-                    razonSocial = data.nombre_o_razon_social;
-                    direccion = data.direccion;
-                } else if (cliente_Tipo_Doc === "4") {
-                    razonSocial = `${data.nombres} ${data.apellido_paterno} ${data.apellido_materno}`;
-                }
-
-                setGuiaTransporte((prev) => ({
-                    ...prev,
-                    cliente_Razon_Social: razonSocial,
-                    cliente_Direccion: direccion,
-                }));
-            }
-        } catch (error) {
-            console.error("Error al buscar:", error);
-            toast.error("Ocurrió un error al buscar la información del cliente.");
-        }
-    };
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setGuiaTransporte((prevGuiaTransporte) => ({
-            ...prevGuiaTransporte,
-            [name]: value,
-        }));
-    };
-
-    const handleSelectChange = (value, name) => {
-        setGuiaTransporte((prevValores) => ({
-            ...prevValores,
-            [name]: value,
-        }));
-    };
+    
 
     return (
-        <div>
-            {" "}
+        <div className=" p-4 sm:px-6 lg:px-8 ">
             <h2 className="text-2xl font-semibold mb-2 flex">
                 Datos del Cliente
             </h2>
@@ -105,10 +31,10 @@ const DatosDeClienteForm = () => {
                     </Label>
                     <Select
                         name="cliente_Tipo_Doc"
-                        value={cliente_Tipo_Doc}
-                        onValueChange={(e) => {
-                            handleSelectChange(e, "cliente_Tipo_Doc");
-                        }}
+                        // value={cliente_Tipo_Doc}
+                        // onValueChange={(e) => {
+                        //     handleSelectChange(e, "cliente_Tipo_Doc");
+                        // }}
                     >
                         <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm">
                             <SelectValue placeholder="Selecciona un tipo de Documento" />
@@ -132,12 +58,12 @@ const DatosDeClienteForm = () => {
                             type="number"
                             id="cliente_Num_Doc"
                             name="cliente_Num_Doc"
-                            value={cliente_Num_Doc}
-                            onChange={handleChange}
+                            // value={cliente_Num_Doc}
+                            // onChange={handleChange}
                             className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                         />
                         <button
-                            onClick={handleBuscar}
+                            // onClick={handleBuscar}
                             className="p-2 bg-blue-500 rounded-md text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 cursor-pointer"
                         >
                             <Search className="h-5 w-5" />
@@ -155,8 +81,8 @@ const DatosDeClienteForm = () => {
                         type="text"
                         id="cliente_Razon_Social"
                         name="cliente_Razon_Social"
-                        value={cliente_Razon_Social}
-                        onChange={handleChange}
+                        // value={cliente_Razon_Social}
+                        // onChange={handleChange}
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                     />
                 </div>
@@ -171,14 +97,14 @@ const DatosDeClienteForm = () => {
                         type="text"
                         id="cliente_Direccion"
                         name="cliente_Direccion"
-                        value={cliente_Direccion}
-                        onChange={handleChange}
+                        // value={cliente_Direccion}
+                        // onChange={handleChange}
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                     />
                 </div>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default DatosDeClienteForm;
+export default DatosDeClienteForm

@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { ClipboardPlus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import ProductoForm from "../../forms/ProductoForm";
-import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
+import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
 
 export default function ModalProducto({open, setOpen}) {
 
@@ -56,8 +56,8 @@ export default function ModalProducto({open, setOpen}) {
     return (
         <AlertDialog open={open} onOpenChange={setOpen} >
             <AlertDialogTrigger asChild>
-                <Button className="btn-agregar">
-                    <ClipboardPlus />
+            <Button className="bg-blue-500 hover:scale-105 hover:bg-blue-600 cursor-pointer">
+            <ClipboardPlus />
                     <span className="hidden md:block">Nuevo Producto</span>
                 </Button>
             </AlertDialogTrigger>

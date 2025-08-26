@@ -8,7 +8,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
+import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
 import { Calendar22 } from "../components/Calendar22";
 import { toast } from "react-toastify";
 const PagoForm = ({ closeModal }) => {

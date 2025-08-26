@@ -180,7 +180,7 @@ export default function ModalVisualizarDocumento({
                 </button>
 
                 {/* Contenido */}
-                <div className="p-6 md:p-8">
+                    <div className="p-6 md:p-8 ">
                     {!factura ? (
                         <DocumentoSkeleton />
                     ) : (

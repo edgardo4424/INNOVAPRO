@@ -8,12 +8,12 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Calendar22 } from "../../factura-boleta/components/Calendar22";
-import { useGuiaTransporte } from "@/context/Factura/GuiaTransporteContext";
+import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext";
 import { Ubigeos } from "../utils/ubigeo";
 import { useEffect, useMemo, useState } from "react";
 
 const DatosGuiaEnvioPrivadoForm = () => {
-    const { guiaTransporte, setGuiaTransporte } = useGuiaTransporte();
+    const { guiaDatosPrivado, setGuiaDatosPrivado } = useGuiaTransporte();
 
     // ?? Estados locales para los inputs de ubigeo y su visibilidad de sugerencias
     const [partidaUbigeoInput, setPartidaUbigeoInput] = useState('');
@@ -35,7 +35,7 @@ const DatosGuiaEnvioPrivadoForm = () => {
         guia_Envio_Llegada_Direccion,
 
         guia_Envio_Vehiculo_Placa
-    } = guiaTransporte;
+    } = guiaDatosPrivado;
 
     useEffect(() => {
         // Inicializar Ubigeo de Partida
@@ -65,7 +65,7 @@ const DatosGuiaEnvioPrivadoForm = () => {
         setPartidaUbigeoInput(value);
         // Si el usuario borra el texto, también limpia el IDDIST en el contexto
         if (value === '') {
-            setGuiaTransporte((prevGuiaTransporte) => ({
+            setGuiaDatosPrivado((prevGuiaTransporte) => ({
                 ...prevGuiaTransporte,
                 guia_Envio_Partida_Ubigeo: '',
             }));
@@ -88,7 +88,7 @@ const DatosGuiaEnvioPrivadoForm = () => {
 
     const handleSelectPartidaUbigeo = (ubigeo) => {
         setPartidaUbigeoInput(`${ubigeo.DISTRITO}, ${ubigeo.PROVINCIA}, ${ubigeo.DEPARTAMENTO}`);
-        setGuiaTransporte((prevGuiaTransporte) => ({
+        setGuiaDatosPrivado((prevGuiaTransporte) => ({
             ...prevGuiaTransporte,
             guia_Envio_Partida_Ubigeo: ubigeo.IDDIST, // Setea solo el IDDIST
         }));
@@ -111,7 +111,7 @@ const DatosGuiaEnvioPrivadoForm = () => {
         setLlegadaUbigeoInput(value);
         // Si el usuario borra el texto, también limpia el IDDIST en el contexto
         if (value === '') {
-            setGuiaTransporte((prevGuiaTransporte) => ({
+            setGuiaDatosPrivado((prevGuiaTransporte) => ({
                 ...prevGuiaTransporte,
                 guia_Envio_Llegada_Ubigeo: '',
             }));
@@ -134,7 +134,7 @@ const DatosGuiaEnvioPrivadoForm = () => {
 
     const handleSelectLlegadaUbigeo = (ubigeo) => {
         setLlegadaUbigeoInput(`${ubigeo.DISTRITO}, ${ubigeo.PROVINCIA}, ${ubigeo.DEPARTAMENTO}`);
-        setGuiaTransporte((prevGuiaTransporte) => ({
+        setGuiaDatosPrivado((prevGuiaTransporte) => ({
             ...prevGuiaTransporte,
             guia_Envio_Llegada_Ubigeo: ubigeo.IDDIST, //!! Setea solo el IDDIST
         }));
@@ -154,12 +154,12 @@ const DatosGuiaEnvioPrivadoForm = () => {
             if (isNaN(parsedValue)) {
                 return; // Si no es un número, no hace nada
             }
-            setGuiaTransporte((prevGuiaTransporte) => ({
+            setGuiaDatosPrivado((prevGuiaTransporte) => ({
                 ...prevGuiaTransporte,
                 [name]: parsedValue,
             }));
         } else {
-            setGuiaTransporte((prevGuiaTransporte) => ({
+            setGuiaDatosPrivado((prevGuiaTransporte) => ({
                 ...prevGuiaTransporte,
                 [name]: value.toUpperCase(),
             }));
@@ -167,7 +167,7 @@ const DatosGuiaEnvioPrivadoForm = () => {
     };
 
     const handleSelectChange = (value, name) => {
-        setGuiaTransporte((prevValores) => ({
+        setGuiaDatosPrivado((prevValores) => ({
             ...prevValores,
             [name]: value,
         }));
@@ -290,8 +290,8 @@ const DatosGuiaEnvioPrivadoForm = () => {
                     </Label>
                     <Calendar22
                         tipo={"guia_Envio_Fec_Traslado"}
-                        Dato={guiaTransporte}
-                        setDato={setGuiaTransporte}
+                        Dato={guiaDatosPrivado}
+                        setDato={setGuiaDatosPrivado}
                         type="datetime-local"
                         id="guia_Envio_Fec_Traslado"
                         name="guia_Envio_Fec_Traslado"

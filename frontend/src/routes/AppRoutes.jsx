@@ -2,25 +2,27 @@
 // Controla toda la navegación interna del sistema: define rutas públicas y privadas, aplica protección por sesión, 
 // restricciones por rol, y carga condicionalmente los módulos usando lazy loading.
 
-import React, { Suspense, lazy } from "react";
+import GestionAsistencia from "@/modules/asistencia/pages/GestionAsistencia";
+import GestionAdelantoSueldo from "@/modules/Beneficios/Pages/GestionAdelantosSueldo";
+import GestionBonos from "@/modules/Beneficios/Pages/GestionBonos";
+import GestionVacaciones from "@/modules/Beneficios/Pages/GestionVacaciones";
+import { WizardProvider } from "@/modules/cotizaciones/context/WizardCotizacionContext";
+import { FacturaBoletaProvider } from "@/modules/facturacion/context/FacturaBoletaContext";
+import { GuiaTransporteProvider } from "@/modules/facturacion/context/GuiaTransporteContext";
+import PlanillaEnConstruccion from "@/modules/planilla/pages/planilla";
+import EditarTrabajador from "@/modules/trabajadores/pages/EditarTrabajador";
+import GestionTrabajadores from "@/modules/trabajadores/pages/GestionTrabajadores";
+import LoaderInnova from "@/shared/components/LoaderInnova";
+import { Suspense, lazy } from "react";
 import {
    BrowserRouter,
    HashRouter,
-   Routes,
-   Route,
    Navigate,
+   Route,
+   Routes,
 } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 import RoleGuard from "./rol.guard";
-import LoaderInnova from "@/shared/components/LoaderInnova";
-import { WizardProvider } from "@/modules/cotizaciones/context/WizardCotizacionContext";
-import GestionTrabajadores from "@/modules/trabajadores/pages/GestionTrabajadores";
-import GestionAsistencia from "@/modules/asistencia/pages/GestionAsistencia";
-import PlanillaEnConstruccion from "@/modules/planilla/pages/planilla";
-import GestionVacaciones from "@/modules/Beneficios/Pages/GestionVacaciones";
-import GestionBonos from "@/modules/Beneficios/Pages/GestionBonos";
-import EditarTrabajador from "@/modules/trabajadores/pages/EditarTrabajador";
-import GestionAdelantoSueldo from "@/modules/Beneficios/Pages/GestionAdelantosSueldo";
 
 
 // Lazy load components
@@ -74,6 +76,10 @@ const FacturaBoleta = lazy(() =>
 
 const GuiaRemision = lazy(() =>
    import("../modules/facturacion/pages/GuiaRemision")
+);
+
+const NotaCredito = lazy(() =>
+   import("../modules/facturacion/pages/NotaCredito")
 );
 
 const EmitirRoutes = lazy(() =>
@@ -228,14 +234,25 @@ export default function AppRoutes() {
                         <Route
                            path="facturacion/factura-boleta"
                            element={
-                              <FacturaBoleta />
+                              <FacturaBoletaProvider>
+                                 <FacturaBoleta />
+                              </FacturaBoletaProvider>
                            }
                         />
 
                         <Route
-                           path="facturacion/guia-remision"
+                           path="facturacion/guia-remision/:tipoGuia"
                            element={
-                              <GuiaRemision />
+                              <GuiaTransporteProvider>
+                                 <GuiaRemision />
+                              </GuiaTransporteProvider>
+                           }
+                        />
+
+                        <Route
+                           path="facturacion/nota-credito"
+                           element={
+                              <NotaCredito />
                            }
                         />
 
@@ -260,6 +277,7 @@ export default function AppRoutes() {
                            path="facturacion/borradores"
                            element={<Borrador />}
                         />
+
                      </Route>
                      {/*    //************************FINAL-FACTURACION************************* */}
 

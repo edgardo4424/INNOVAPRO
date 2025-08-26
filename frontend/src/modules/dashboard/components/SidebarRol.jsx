@@ -124,7 +124,7 @@ const modulesByRole = {
          group: "Facturación",
          items: [
             { name: "Factura y Boleta", path: "/facturacion/factura-boleta" },
-            { name: "Guia de Remision", path: "/facturacion/guia-remision" },
+            { name: "Guia de Remision", path: "/facturacion/guia-remision/transporte-privado" },
             { name: "Nota de Credito y Debito", path: "/facturacion/nota-credito" },
             { name: "Emitir", path: "/facturacion/emitir" },
             { name: "Bandeja", path: "/facturacion/bandeja" },
@@ -228,6 +228,7 @@ export function AppSidebar() {
                               <SidebarMenuSubButton
                                  onClick={() => navigate(subItem.path)}
                                  isActive={isActive}
+                                 className="cursor-pointer"
                               >
                                  <span>{subItem.name}</span>
                               </SidebarMenuSubButton>

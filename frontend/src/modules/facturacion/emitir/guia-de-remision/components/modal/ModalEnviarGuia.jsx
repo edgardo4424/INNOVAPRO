@@ -4,7 +4,7 @@ import {
     AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { useGuiaTransporte } from "@/context/Factura/GuiaTransporteContext";
+import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext";
 import { AlertCircle, CheckCircle, CircleAlert, ClipboardPlus, LoaderCircle, TriangleAlert, X } from "lucide-react";
 import { useEffect, useState } from "react";
 

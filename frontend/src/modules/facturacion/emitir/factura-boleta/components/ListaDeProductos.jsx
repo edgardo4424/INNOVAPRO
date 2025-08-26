@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { useEffect, useState } from "react";
 import useProducto from "../hooks/useProducto";
-import { useFacturaBoleta } from "@/context/Factura/FacturaBoletaContext";
+import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
 
 const ListaDeProductos = ({ closeModal }) => {
 

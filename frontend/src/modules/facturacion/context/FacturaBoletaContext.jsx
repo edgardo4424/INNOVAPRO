@@ -1,11 +1,12 @@
-import { FacturaValidarEstados, PagoValidarEstados, ProductoValidarEstados, valorIncialPago, ValorInicialFactura, valorInicialProducto } from "@/modules/facturacion/emitir/factura-boleta/utils/valoresInicial";
+import { PagoValidarEstados, ProductoValidarEstados, valorIncialPago, ValorInicialFactura, valorInicialProducto } from "@/modules/facturacion/emitir/factura-boleta/utils/valoresInicial";
 import factilizaService from "@/modules/facturacion/service/FactilizaService";
 import facturaService from "@/modules/facturacion/service/FacturaService";
 import numeroALeyenda from "@/modules/facturacion/utils/numeroALeyenda";
-import { validarModal } from "@/modules/facturacion/emitir/factura-boleta/utils/validarModal";
-import { validarPasos } from "@/modules/facturacion/emitir/factura-boleta/utils/validarPasos";
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { validarModal } from "../emitir/factura-boleta/utils/validarModal";
+import { validarFacturaCompleta } from "../emitir/factura-boleta/utils/validarPasos";
+
 
 const FacturaBoletaContext = createContext();
 
@@ -15,7 +16,7 @@ export function FacturaBoletaProvider({ children }) {
 
     const [factura, setFactura] = useState(ValorInicialFactura);
 
-    const [facturaValida, setFacturaValida] = useState(FacturaValidarEstados);
+    const [facturaValida, setFacturaValida] = useState(null);
 
     const [productoActual, setProductoActual] = useState(valorInicialProducto);
 
@@ -36,20 +37,30 @@ export function FacturaBoletaProvider({ children }) {
 
     const [facturaValidaParaGuardar, setFacturaValidaParaGuardar] = useState(false);
 
-    const validarPaso = async (paso) => {
+    const validarFactura = async () => {
         try {
-            const { errores, validos, message } = await validarPasos(paso, factura);
-            if (errores) {
-                setFacturaValida((prev) => ({
-                    ...prev,
-                    ...errores,
-                }));
-            }
-            if (!validos && message) {
-                toast.error(message);
+            const { errores, validos, message } = await validarFacturaCompleta(factura);
+            console.log(errores);
+            console.log(validos);
+            console.log(message);
+            if (!validos) {
+                // *Encuentra el primer error y lo muestra en un toast
+                const primerError = Object.values(errores)[0];
+                if (primerError) {
+                    toast.error(primerError);
+                } else {
+                    toast.error("El formulario contiene errores. Revise los campos.");
+                }
+
+                // *Opcional: Si quieres guardar todos los errores en el estado
+                setFacturaValida(errores);
+
                 return false;
+            } else {
+                toast.success(message);
+                setFacturaValida(null); // ?Limpia los errores del estado si todo es válido
+                return true;
             }
-            return true;
         } catch (error) {
             toast.error(error.message || "Error al validar factura");
             return false;
@@ -213,11 +224,6 @@ export function FacturaBoletaProvider({ children }) {
         }));
     }, [factura.monto_Imp_Venta, factura.forma_pago]);
 
-    useEffect(() => {
-        const { validos, message } = validarPasos("ValidaCionTotal", factura);
-        console.log(message);
-        setFacturaValidaParaGuardar(validos);
-    }, [factura]);
 
     // TODO LOS USEEFFECT DE LOS FORMULARIOS DE LOS MODALES ------- FINAL
 
@@ -382,7 +388,7 @@ export function FacturaBoletaProvider({ children }) {
                 return { success: false, mensaje: "No se pudo registrar la factura" }
             }
             if (documento.estado !== "EMITIDA") {
-                const esValido = await validarPaso("validarBorrador")
+                const esValido = await validarFactura("validarBorrador")
                 if (!esValido) {
                     return toast.error("Para crear un borrador, por favor complete los datos del comprobante y del cliente.")
                 }
@@ -424,7 +430,7 @@ export function FacturaBoletaProvider({ children }) {
             value={{
                 factura,
                 setFactura,
-                validarPaso,
+                validarFactura,
                 validarCampos,
                 facturaValida,
                 productoValida,
