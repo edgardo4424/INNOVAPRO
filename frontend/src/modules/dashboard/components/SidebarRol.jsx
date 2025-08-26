@@ -101,7 +101,7 @@ const modulesByRole = {
          group: "Beneficios",
          items: [
             { name: "Vacaciones", path: "/vacaciones" },
-            { name: "Cts", path: "/cts" },
+            { name: "Cts", path: "/gestion-cts" },
             { name: "Gratificacion", path: "/gratificacion" },
             { name: "Bonos", path: "/bonos" },
             { name: "Adelanto de sueldo", path: "/adelanto-sueldo" },
