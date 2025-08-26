@@ -315,7 +315,7 @@ export default function AppRoutes() {
                         </Route>
                         <Route element={<RoleGuard roles={["Gerencia"]} />}>
                            <Route
-                              path="planilla"
+                              path="planilla-semanal"
                               element={<PlanillaEnConstruccion />}
                            />
                         </Route>

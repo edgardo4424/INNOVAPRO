@@ -75,8 +75,8 @@ const Filtro = ({ filtro, setFiltro, Buscar }) => {
                 <SelectValue placeholder="Selecciona el periodo" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="JULIO">Primer Periodo</SelectItem>
-                <SelectItem value="DICIEMBRE">Segundo Periodo</SelectItem>
+                <SelectItem value="JULIO">Julio</SelectItem>
+                <SelectItem value="DICIEMBRE">Diciembre</SelectItem>
               </SelectContent>
             </Select>
           </div>

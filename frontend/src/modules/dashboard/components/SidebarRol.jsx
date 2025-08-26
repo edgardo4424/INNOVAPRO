@@ -130,7 +130,14 @@ const modulesByRole = {
          ],
       },
 
-      { name: "Planilla", path: "/planilla" },
+      {
+         group: "Planilla",
+         items: [
+            { name: "Planilla semanal", path: "/planilla-semanal" },
+            { name: "Planilla mensual", path: "/planilla-mensual" },
+        
+         ],
+      },
       { name: "Datos de mantenimiento", path: "/data-mantenimiento" },
 
    ],
