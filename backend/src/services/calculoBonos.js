@@ -16,6 +16,8 @@ const calculaPromedioBonos = (bonos,meses_computados) => {
    }
    console.log("sumatoria de bonos", sumatoriaBonos);
    const promedioBonosCts = sumatoriaBonos / meses_computados;
+   console.log('BoNOS: ',parseFloat(promedioBonosCts.toFixed(2)));
+   
    return parseFloat(promedioBonosCts.toFixed(2));
 };
 

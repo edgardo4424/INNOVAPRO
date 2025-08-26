@@ -9,5 +9,6 @@ router.use(verificarToken); // Verificamos el token y el rol de Gerente para tod
 // // 📌 Rutas protegidas solo para Gerencia
 // router.get("/", gratificacionController.obtenerGratificaciones);
 router.post("/calcular", ctsController.calcularCts)
+router.post("/cts-individual", ctsController.calcularCtsIndividual)
 
 module.exports = router;

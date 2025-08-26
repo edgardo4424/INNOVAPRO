@@ -65,6 +65,9 @@ const GestionCondiciones = lazy(() =>
 const GestionStockPiezas = lazy(() =>
    import("../modules/stockPiezas/pages/GestionStockPiezas")
 );
+const GestionCts = lazy(() =>
+   import("../modules/cts/pages/GestionCts")
+);
 
 //* Facturacion
 
@@ -326,7 +329,7 @@ export default function AppRoutes() {
 
                            <Route path="bonos" element={<GestionBonos />} />
                            <Route path="adelanto-sueldo" element={<GestionAdelantoSueldo />} />
-
+                           <Route path="gestion-cts" element={<GestionCts/>}/>
 
                            <Route
                               path="gratificacion"
