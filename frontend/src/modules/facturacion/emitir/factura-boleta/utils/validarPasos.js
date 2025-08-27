@@ -37,7 +37,7 @@ export async function validarFacturaCompleta(Factura) {
             camposRequeridos: [
                 { key: "unidad", name: "Unidad" },
                 { key: "cantidad", name: "Cantidad" },
-                { key: "cod_Producto", name: "Código de Producto" },
+                // { key: "cod_Producto", name: "Código de Producto" },
                 { key: "descripcion", name: "Descripción" },
                 { key: "monto_Valor_Unitario", name: "Valor Unitario" },
             ]

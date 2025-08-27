@@ -22,7 +22,7 @@ export default function ModalPagos() {
     );
 
     const montoTotalFactura = parseFloat(factura.monto_Imp_Venta || 0);
-    const pagosCompletos = montoTotalPagos >= montoTotalFactura;
+    const pagosCompletos = montoTotalPagos.toFixed(2) >= montoTotalFactura;
 
 
     const [open, setOpen] = useState(false);
@@ -35,7 +35,8 @@ export default function ModalPagos() {
             <div className="flex md:items-end justify-start items-start">
 
                 <AlertDialogTrigger asChild>
-                    <Button className="btn-agregar" disabled={pagosCompletos}>
+                    <Button className="bg-blue-500 hover:scale-105 hover:bg-blue-600 cursor-pointer"
+                        disabled={pagosCompletos}>
                         <ClipboardPlus />
                         <span className="hidden md:block">Nuevo Pago</span>
                     </Button>

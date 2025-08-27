@@ -1,14 +1,14 @@
+import { useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { useFacturaBoleta } from "../../context/FacturaBoletaContext";
-import ModalVisualizarFactura from "./components/modal/ModalVisualizarFactura";
+import facturaService from "../../service/FacturaService";
+import { formatearBorrador } from "../../utils/formatearBorrador";
+import DatosDeDetraccion from "./components/campos/DatosDeDetraccion";
 import DatosDelCliente from "./components/campos/DatosDelCliente";
 import DatosDelComprobante from "./components/campos/DatosDelComprobante";
 import FormaDePago from "./components/campos/FormaDePago";
 import MontoyProductos from "./components/campos/MontoyProductos";
-import DatosDeDetraccion from "./components/campos/DatosDeDetraccion";
-import { useSearchParams } from "react-router-dom";
-import { formatearBorrador } from "../../utils/formatearBorrador";
-import facturaService from "../../service/FacturaService";
-import { toast } from "react-toastify";
+import ModalVisualizarFactura from "./components/modal/ModalVisualizarFactura";
 import { ValorInicialFactura } from "./utils/valoresInicial";
 
 const FacturaBoletaForm = () => {

@@ -1,4 +1,4 @@
-import { PagoValidarEstados, ProductoValidarEstados, valorIncialPago, ValorInicialFactura, valorInicialProducto } from "@/modules/facturacion/emitir/factura-boleta/utils/valoresInicial";
+import { PagoValidarEstados, ProductoValidarEstados, valorIncialDetracion, valorIncialPago, ValorInicialFactura, valorInicialProducto } from "@/modules/facturacion/emitir/factura-boleta/utils/valoresInicial";
 import factilizaService from "@/modules/facturacion/service/FactilizaService";
 import facturaService from "@/modules/facturacion/service/FacturaService";
 import numeroALeyenda from "@/modules/facturacion/utils/numeroALeyenda";
@@ -12,9 +12,9 @@ const FacturaBoletaContext = createContext();
 
 export function FacturaBoletaProvider({ children }) {
 
-    const [correlativos, setCorrelativos] = useState("000001");
-
     const [factura, setFactura] = useState(ValorInicialFactura);
+
+    const [detraccion, setDetraccion] = useState(valorIncialDetracion);
 
     const [facturaValida, setFacturaValida] = useState(null);
 
@@ -35,14 +35,10 @@ export function FacturaBoletaProvider({ children }) {
     const [pagoValida, setPagoValida] = useState(PagoValidarEstados);
 
 
-    const [facturaValidaParaGuardar, setFacturaValidaParaGuardar] = useState(false);
 
     const validarFactura = async () => {
         try {
             const { errores, validos, message } = await validarFacturaCompleta(factura);
-            console.log(errores);
-            console.log(validos);
-            console.log(message);
             if (!validos) {
                 // *Encuentra el primer error y lo muestra en un toast
                 const primerError = Object.values(errores)[0];
@@ -100,40 +96,6 @@ export function FacturaBoletaProvider({ children }) {
     };
 
     // TODO LOS USEEFFECT DE LOS FORMULARIOS DE LOS MODALES ------- INICIO
-    useEffect(() => {
-        let newSerie = "";
-        let newCorrelativo = "";
-
-        switch (factura.tipo_Doc) {
-            case "01": // Factura
-                newSerie = "F001";
-                setFactura((prev) => ({ ...prev, cliente_Tipo_Doc: "6" }));
-                newCorrelativo = (correlativos.facturas + 1).toString().padStart(8, "0");
-                break;
-            case "03": // Boleta
-                newSerie = "B001";
-                newCorrelativo = (correlativos.boletas + 1).toString().padStart(8, "0");
-                break;
-            case "07": // Nota de Crédito
-                newSerie = "NC01";
-                newCorrelativo = (correlativos.notasCredito + 1).toString().padStart(8, "0");
-                break;
-            case "08": // Nota de Débito
-                newSerie = "ND01";
-                newCorrelativo = (correlativos.notasDebito + 1).toString().padStart(8, "0");
-                break;
-            default:
-                newSerie = "";
-                newCorrelativo = "";
-                break;
-        }
-
-        setFactura((prev) => ({
-            ...prev,
-            serie: newSerie,
-        }));
-
-    }, [factura.tipo_Doc]);
 
     useEffect(() => {
         if (!productoActual.cod_Producto) return;
@@ -320,10 +282,6 @@ export function FacturaBoletaProvider({ children }) {
             edicion: true,
             index,
         });
-        setFactura((prevFactura) => ({
-            ...prevFactura,
-            forma_pago: [],
-        }));
     };
 
     const eliminarProducto = () => {
@@ -430,6 +388,8 @@ export function FacturaBoletaProvider({ children }) {
             value={{
                 factura,
                 setFactura,
+                detraccion,
+                setDetraccion,
                 validarFactura,
                 validarCampos,
                 facturaValida,
@@ -440,6 +400,8 @@ export function FacturaBoletaProvider({ children }) {
                 editarProducto,
                 edicionProducto,
                 setEdicionProducto,
+                setProductoValida,
+                setPagoValida,
                 eliminarProducto,
                 agregarProducto,
                 TotalProducto,
@@ -448,7 +410,6 @@ export function FacturaBoletaProvider({ children }) {
                 setPagoActual,
                 agregarPago,
                 emitirFactura,
-                facturaValidaParaGuardar,
                 registrarBaseDatos
             }}
         >

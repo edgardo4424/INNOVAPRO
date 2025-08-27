@@ -13,7 +13,7 @@ import { Ubigeos } from "../utils/ubigeo";
 import { useEffect, useMemo, useState } from "react";
 
 const DatosGuiaEnvioMismaEmpresaForm = () => {
-    const { guiaDatosInternos, setGuiaDatosInternos } = useGuiaTransporte();
+    const { guiaDatosInternos, setGuiaDatosInternos, guiaTransporte, setGuiaTransporte } = useGuiaTransporte();
 
     // ?? Estados locales para los inputs de ubigeo y su visibilidad de sugerencias
     const [partidaUbigeoInput, setPartidaUbigeoInput] = useState('');
@@ -24,7 +24,10 @@ const DatosGuiaEnvioMismaEmpresaForm = () => {
 
     const {
         guia_Envio_Cod_Traslado,
-        guia_Envio_Mod_Traslado,
+        guia_Envio_Mod_Traslado
+    } = guiaDatosInternos;
+
+    const {
         guia_Envio_Peso_Total,
         guia_Envio_Und_Peso_Total,
         guia_Envio_Fec_Traslado,
@@ -33,7 +36,7 @@ const DatosGuiaEnvioMismaEmpresaForm = () => {
         guia_Envio_Partida_Direccion,
         guia_Envio_Llegada_Ubigeo,
         guia_Envio_Llegada_Direccion,
-    } = guiaDatosInternos;
+    } = guiaTransporte;
 
     useEffect(() => {
         // Inicializar Ubigeo de Partida
@@ -63,7 +66,7 @@ const DatosGuiaEnvioMismaEmpresaForm = () => {
         setPartidaUbigeoInput(value);
         // Si el usuario borra el texto, también limpia el IDDIST en el contexto
         if (value === '') {
-            setGuiaDatosInternos((prevGuiaTransporte) => ({
+            setGuiaTransporte((prevGuiaTransporte) => ({
                 ...prevGuiaTransporte,
                 guia_Envio_Partida_Ubigeo: '',
             }));
@@ -86,7 +89,7 @@ const DatosGuiaEnvioMismaEmpresaForm = () => {
 
     const handleSelectPartidaUbigeo = (ubigeo) => {
         setPartidaUbigeoInput(`${ubigeo.DISTRITO}, ${ubigeo.PROVINCIA}, ${ubigeo.DEPARTAMENTO}`);
-        setGuiaDatosInternos((prevGuiaTransporte) => ({
+        setGuiaTransporte((prevGuiaTransporte) => ({
             ...prevGuiaTransporte,
             guia_Envio_Partida_Ubigeo: ubigeo.IDDIST, // Setea solo el IDDIST
         }));
@@ -109,7 +112,7 @@ const DatosGuiaEnvioMismaEmpresaForm = () => {
         setLlegadaUbigeoInput(value);
         // Si el usuario borra el texto, también limpia el IDDIST en el contexto
         if (value === '') {
-            setGuiaDatosInternos((prevGuiaTransporte) => ({
+            setGuiaTransporte((prevGuiaTransporte) => ({
                 ...prevGuiaTransporte,
                 guia_Envio_Llegada_Ubigeo: '',
             }));
@@ -132,7 +135,7 @@ const DatosGuiaEnvioMismaEmpresaForm = () => {
 
     const handleSelectLlegadaUbigeo = (ubigeo) => {
         setLlegadaUbigeoInput(`${ubigeo.DISTRITO}, ${ubigeo.PROVINCIA}, ${ubigeo.DEPARTAMENTO}`);
-        setGuiaDatosInternos((prevGuiaTransporte) => ({
+        setGuiaTransporte((prevGuiaTransporte) => ({
             ...prevGuiaTransporte,
             guia_Envio_Llegada_Ubigeo: ubigeo.IDDIST, //!! Setea solo el IDDIST
         }));
@@ -152,12 +155,12 @@ const DatosGuiaEnvioMismaEmpresaForm = () => {
             if (isNaN(parsedValue)) {
                 return; // Si no es un número, no hace nada
             }
-            setGuiaDatosInternos((prevGuiaTransporte) => ({
+            setGuiaTransporte((prevGuiaTransporte) => ({
                 ...prevGuiaTransporte,
                 [name]: parsedValue,
             }));
         } else {
-            setGuiaDatosInternos((prevGuiaTransporte) => ({
+            setGuiaTransporte((prevGuiaTransporte) => ({
                 ...prevGuiaTransporte,
                 [name]: value.toUpperCase(),
             }));
@@ -165,7 +168,13 @@ const DatosGuiaEnvioMismaEmpresaForm = () => {
     };
 
     const handleSelectChange = (value, name) => {
-        setGuiaDatosInternos((prevValores) => ({
+        if(name == "guia_Envio_Cod_Traslado"){
+            setGuiaDatosInternos((prevValores) => ({
+                ...prevValores,
+                guia_Envio_Cod_Traslado: opcionesCodigos.find((opcion) => opcion.value === value)?.descripcion,
+            }));
+        }
+        setGuiaTransporte((prevValores) => ({
             ...prevValores,
             [name]: value,
         }));
@@ -209,9 +218,6 @@ const DatosGuiaEnvioMismaEmpresaForm = () => {
                     <Select
                         name="guia_Envio_Mod_Traslado"
                         value={guia_Envio_Mod_Traslado}
-                        // onValueChange={(e) => {
-                        //     handleSelectChange(e, "guia_Envio_Mod_Traslado");
-                        // }}
                         disabled
                     >
                         <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> {/* Estilo de borde mejorado */}
@@ -277,7 +283,7 @@ const DatosGuiaEnvioMismaEmpresaForm = () => {
                     <Calendar22
                         tipo={"guia_Envio_Fec_Traslado"}
                         Dato={guiaDatosInternos}
-                        setDato={setGuiaDatosInternos}
+                        setDato={setGuiaTransporte}
                         type="datetime-local"
                         id="guia_Envio_Fec_Traslado"
                         name="guia_Envio_Fec_Traslado"

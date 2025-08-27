@@ -9,10 +9,10 @@ import { ChevronDownIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 // ...
 
-export function Calendar22({ tipo, Dato, setDato }) {
+export function Calendar22({ tipo, Dato, setDato, value }) {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState(
-    Dato && Dato[tipo] ? new Date(Dato[tipo]) : undefined
+    value ? new Date(value) : Dato && Dato[tipo] ? new Date(Dato[tipo]) : undefined
   );
 
   // ✅ Actualiza la fecha local si cambia el valor en Dato
@@ -70,3 +70,4 @@ export function Calendar22({ tipo, Dato, setDato }) {
     </div>
   );
 }
+

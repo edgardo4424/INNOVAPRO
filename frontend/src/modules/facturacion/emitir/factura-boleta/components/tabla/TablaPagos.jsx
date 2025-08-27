@@ -8,9 +8,10 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
+import { Button } from "@/components/ui/button";
 
 const TablaPagos = () => {
-    const { factura } = useFacturaBoleta();
+    const { factura , setFactura} = useFacturaBoleta();
     const { forma_pago: ListaDePago } = factura;
 
     return (
@@ -58,3 +59,4 @@ const TablaPagos = () => {
 };
 
 export default TablaPagos;
+

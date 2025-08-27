@@ -90,7 +90,7 @@ export default function ModalVisualizarFactura() {
             {/* Modal Overlay and Content */}
             {isOpen && (
                 <div
-                    className="fixed inset-0  flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs animate-fade-in"
+                    className="fixed inset-0  z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs animate-fade-in"
                 >
                     <div
                         className="relative p-1 w-full max-w-5xl bg-white rounded-2xl shadow-2xl border border-gray-100 max-h-[95vh] overflow-y-auto animate-scale-in"

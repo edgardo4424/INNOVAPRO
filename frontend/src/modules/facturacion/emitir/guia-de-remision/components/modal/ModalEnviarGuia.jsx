@@ -36,24 +36,24 @@ const ModalEnviarGuia = ({ open, setOpen, ClosePreviu, guiaTransporteValida }) =
 
         try {
             // Esperamos el resultado de la emisión
-            const result = await EmitirGuia();
+            const {success,message, status, data,} = await EmitirGuia();
 
-            console.log("el resultado de la emision es: ", result);
+            console.log("el resultado de la emision es: ", message);
             // Lógica unificada para manejar la respuesta
-            if (result.success && result.status === 200 || result.status === 201) {
+            if (success && status === 200 || status === 201) {
                 // Caso de éxito
                 setStatus("success");
-                setDisplayMessage(result.message || "Guía emitida con éxito.");
-            } else if (result.data?.error) {
+                setDisplayMessage(message || "Guía emitida con éxito.");
+            } else if (data?.error) {
                 // Caso de error "detallado" (por ejemplo, desde la API)
                 setStatus("details");
-                setDisplayMessage(result.message);
-                setDetailedMessage(result.data.details || ""); // Si hay más detalles, los guardamos aquí
+                setDisplayMessage(message);
+                setDetailedMessage(data.details || ""); // Si hay más detalles, los guardamos aquí
             } else {
                 // Cualquier otro caso que no sea un éxito directo
                 setStatus("error");
-                setDisplayMessage(result.message || "Error al emitir la guía.");
-                setDetailedMessage(result.detailedMessage || "");
+                setDisplayMessage(message || "Error al emitir la guía.");
+                setDetailedMessage(detailedMessage || "");
             }
         } catch (err) {
             // Manejo de errores de red o del sistema

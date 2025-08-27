@@ -13,7 +13,7 @@ import { Ubigeos } from "../utils/ubigeo";
 import { useEffect, useMemo, useState } from "react";
 
 const DatosGuiaEnvioPublicoForm = () => {
-    const { guiaDatosPublico, setGuiaDatosPublico } = useGuiaTransporte();
+    const { guiaDatosPublico, setGuiaDatosPublico, guiaTransporte, setGuiaTransporte } = useGuiaTransporte();
 
     // Estados locales para los inputs de ubigeo y su visibilidad de sugerencias
     const [partidaUbigeoInput, setPartidaUbigeoInput] = useState('');
@@ -26,6 +26,10 @@ const DatosGuiaEnvioPublicoForm = () => {
         guia_Envio_Cod_Traslado,
         guia_Envio_Des_Traslado,
         guia_Envio_Mod_Traslado,
+
+    } = guiaDatosPublico;
+
+    const {
         guia_Envio_Peso_Total,
         guia_Envio_Und_Peso_Total,
         guia_Envio_Fec_Traslado,
@@ -34,8 +38,7 @@ const DatosGuiaEnvioPublicoForm = () => {
         guia_Envio_Partida_Direccion,
         guia_Envio_Llegada_Ubigeo,
         guia_Envio_Llegada_Direccion,
-
-    } = guiaDatosPublico;
+    } = guiaTransporte
 
 
 
@@ -67,7 +70,7 @@ const DatosGuiaEnvioPublicoForm = () => {
         setPartidaUbigeoInput(value);
         // Si el usuario borra el texto, también limpia el IDDIST en el contexto
         if (value === '') {
-            setGuiaDatosPublico((prevGuiaTransporte) => ({
+            setGuiaTransporte((prevGuiaTransporte) => ({
                 ...prevGuiaTransporte,
                 guia_Envio_Partida_Ubigeo: '',
             }));
@@ -90,7 +93,7 @@ const DatosGuiaEnvioPublicoForm = () => {
 
     const handleSelectPartidaUbigeo = (ubigeo) => {
         setPartidaUbigeoInput(`${ubigeo.DISTRITO}, ${ubigeo.PROVINCIA}, ${ubigeo.DEPARTAMENTO}`);
-        setGuiaDatosPublico((prevGuiaTransporte) => ({
+        setGuiaTransporte((prevGuiaTransporte) => ({
             ...prevGuiaTransporte,
             guia_Envio_Partida_Ubigeo: ubigeo.IDDIST, // Setea solo el IDDIST
         }));
@@ -113,7 +116,7 @@ const DatosGuiaEnvioPublicoForm = () => {
         setLlegadaUbigeoInput(value);
         // Si el usuario borra el texto, también limpia el IDDIST en el contexto
         if (value === '') {
-            setGuiaDatosPublico((prevGuiaTransporte) => ({
+            setGuiaTransporte((prevGuiaTransporte) => ({
                 ...prevGuiaTransporte,
                 guia_Envio_Llegada_Ubigeo: '',
             }));
@@ -136,7 +139,7 @@ const DatosGuiaEnvioPublicoForm = () => {
 
     const handleSelectLlegadaUbigeo = (ubigeo) => {
         setLlegadaUbigeoInput(`${ubigeo.DISTRITO}, ${ubigeo.PROVINCIA}, ${ubigeo.DEPARTAMENTO}`);
-        setGuiaDatosPublico((prevGuiaTransporte) => ({
+        setGuiaTransporte((prevGuiaTransporte) => ({
             ...prevGuiaTransporte,
             guia_Envio_Llegada_Ubigeo: ubigeo.IDDIST, //!! Setea solo el IDDIST
         }));
@@ -155,17 +158,23 @@ const DatosGuiaEnvioPublicoForm = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        if (name === 'guia_Envio_Peso_Total') {
+        if (name === 'guia_Envio_Mod_Traslado') {
+            setGuiaDatosPublico((prevGuiaTransporte) => ({
+                ...prevGuiaTransporte,
+                [name]: value,
+            }));
+        }
+        else if (name === 'guia_Envio_Peso_Total') {
             const parsedValue = parseFloat(value);
             if (isNaN(parsedValue)) {
                 return; // Si no es un número, no hace nada
             }
-            setGuiaDatosPublico((prevGuiaTransporte) => ({
+            setGuiaTransporte((prevGuiaTransporte) => ({
                 ...prevGuiaTransporte,
                 [name]: parsedValue,
             }));
         } else {
-            setGuiaDatosPublico((prevGuiaTransporte) => ({
+            setGuiaTransporte((prevGuiaTransporte) => ({
                 ...prevGuiaTransporte,
                 [name]: value,
             }));
@@ -195,7 +204,7 @@ const DatosGuiaEnvioPublicoForm = () => {
             }));
         }
 
-        setGuiaDatosPublico((prevValores) => ({
+        setGuiaTransporte((prevValores) => ({
             ...prevValores,
             [name]: value,
         }));
@@ -262,14 +271,19 @@ const DatosGuiaEnvioPublicoForm = () => {
                     >
                         Modalidad de Traslado
                     </Label>
-                    <Input
-                        type="text"
-                        id="guia_Envio_Mod_Traslado"
+                    <Select
                         name="guia_Envio_Mod_Traslado"
                         value={guia_Envio_Mod_Traslado}
-                        onChange={handleChange}
-                        className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
-                    />
+                        disabled
+                    >
+                        <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> {/* Estilo de borde mejorado */}
+                            <SelectValue placeholder="Selecciona un codigo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="01">01 - Transporte público</SelectItem>
+                            <SelectItem value="02">02 - Transporte privado</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
                 <div>
                     <Label
@@ -324,7 +338,7 @@ const DatosGuiaEnvioPublicoForm = () => {
                     <Calendar22
                         tipo={"guia_Envio_Fec_Traslado"}
                         Dato={guiaDatosPublico}
-                        setDato={setGuiaDatosPublico}
+                        setDato={setGuiaTransporte}
                         type="datetime-local"
                         id="guia_Envio_Fec_Traslado"
                         name="guia_Envio_Fec_Traslado"

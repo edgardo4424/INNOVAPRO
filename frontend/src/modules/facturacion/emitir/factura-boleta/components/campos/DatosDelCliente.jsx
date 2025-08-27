@@ -10,10 +10,13 @@ import {
 import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
 import factilizaService from "@/modules/facturacion/service/FactilizaService";
 import { Search } from "lucide-react";
+import { useState } from "react";
 import { toast } from "react-toastify";
+import ModalListaDeClientes from "../modal/ModalListaDeClientes";
 
 const DatosDelCliente = () => {
-    const { factura, setFactura,  } = useFacturaBoleta();
+    const { factura, setFactura, } = useFacturaBoleta();
+    const [open, setOpen] = useState(false);
 
     const {
         cliente_Tipo_Doc,
@@ -88,9 +91,12 @@ const DatosDelCliente = () => {
 
     return (
         <div className="overflow-y-auto p-4 sm:p-6 lg:px-8 lg:py-4">
-            <h1 className="text-2xl font-bold py-3 text-gray-800">
-                Datos del Cliente
-            </h1>
+            <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-bold py-3  text-gray-800">
+                    Datos del Cliente
+                </h1>
+                <ModalListaDeClientes />
+            </div>
             <form
                 className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-5 md:gap-x-6 md:gap-y-8"
                 onSubmit={handleBuscar}

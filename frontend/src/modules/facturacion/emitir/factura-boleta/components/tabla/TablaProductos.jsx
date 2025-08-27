@@ -11,12 +11,10 @@ import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaCon
 import DetalleProducto from "../DetalleProducto";
 
 const TablaProductos = ({ setOpen }) => {
-    const { factura, TotalProducto, editarProducto } = useFacturaBoleta();
-    const { detalle: listaProductos } = factura;
+    const { factura, editarProducto } = useFacturaBoleta();
+    const { detalle: listaProductos, tipo_Moneda } = factura;
 
     const seleccionarProducto = async (producto, index) => {
-        console.log("index", index);
-        console.log("producto seleccionado", producto);
         await editarProducto(index);
         setOpen(true);
     };
@@ -76,15 +74,15 @@ const TablaProductos = ({ setOpen }) => {
                                 <TableCell>{producto.unidad || ""}</TableCell>
                                 <TableCell>{producto.cantidad ?? ""}</TableCell>
 
-                                <TableCell>S/. {producto.monto_Valor_Unitario ?? 0}</TableCell>
-                                <TableCell>S/. {producto.monto_Precio_Unitario ?? 0}</TableCell>
-                                <TableCell>S/. {producto.monto_Valor_Venta ?? 0}</TableCell>
+                                <TableCell>{tipo_Moneda == "USD" ? "$ " : "S/. "} {producto.monto_Valor_Unitario ?? 0}</TableCell>
+                                <TableCell>{tipo_Moneda == "USD" ? "$ " : "S/. "}  {producto.monto_Precio_Unitario ?? 0}</TableCell>
+                                <TableCell>{tipo_Moneda == "USD" ? "$ " : "S/. "}  {producto.monto_Valor_Venta ?? 0}</TableCell>
 
                                 <TableCell>{producto.porcentaje_Igv ?? ""}%</TableCell>
-                                <TableCell>S/. {producto.igv ?? 0}</TableCell>
-                                <TableCell>S/. {producto.monto_Base_Igv ?? 0}</TableCell>
+                                <TableCell>{tipo_Moneda == "USD" ? "$ " : "S/. "}  {producto.igv ?? 0}</TableCell>
+                                <TableCell>{tipo_Moneda == "USD" ? "$ " : "S/. "}  {producto.monto_Base_Igv ?? 0}</TableCell>
                                 <TableCell>{producto.tip_Afe_Igv || ""}</TableCell>
-                                <TableCell>S/. {producto.total_Impuestos ?? 0}</TableCell>
+                                <TableCell>{tipo_Moneda == "USD" ? "$ " : "S/. "}  {producto.total_Impuestos ?? 0}</TableCell>
 
                                 <TableCell>{producto.factor_Icbper ?? ""}</TableCell>
                             </TableRow>

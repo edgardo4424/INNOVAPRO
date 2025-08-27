@@ -9,12 +9,15 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { useFacturaBoleta } from '@/modules/facturacion/context/FacturaBoletaContext';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import ModalListaDeProductos from '../components/modal/ModalListaDeProductos';
+import { ProductoValidarEstados } from '../utils/valoresInicial';
 
 const ProductoForm = ({ closeModal }) => {
-    const { agregarProducto, productoActual, setProductoActual, edicionProducto, validarCampos, productoValida, eliminarProducto } = useFacturaBoleta();
+    const { agregarProducto, productoActual, setProductoActual, edicionProducto, validarCampos, productoValida, eliminarProducto, setProductoValida } = useFacturaBoleta();
 
+
+    const [activeButton, setActiveButton] = useState(false);
     const handleInputChange = (e) => {
         const { name, value } = e.target;
 
@@ -81,6 +84,7 @@ const ProductoForm = ({ closeModal }) => {
 
 
     const handleAgregar = async () => {
+        setActiveButton(true);
         const validar = await validarCampos("producto");
         if (validar === false) {
             return;
@@ -93,6 +97,11 @@ const ProductoForm = ({ closeModal }) => {
         eliminarProducto();
         closeModal();
     }
+
+    useEffect(() => {
+        setActiveButton(false);
+        setProductoValida(ProductoValidarEstados)
+    }, [])
 
     return (
         <div className='max-h-[60vh] min-h-[40dvh] overflow-y-auto col-span-4 w-full'>
@@ -160,8 +169,7 @@ const ProductoForm = ({ closeModal }) => {
                         </SelectContent>
                     </Select>
                     <span
-                        className={`text-red-500 text-sm ${productoValida.unidad ? "block" : "hidden"
-                            }`}
+                        className={`text-red-500 text-sm ${productoValida.unidad ? "block" : "hidden"}`}
                     >
                         Debes ingresar la unidad del producto.
                     </span>
@@ -378,6 +386,7 @@ const ProductoForm = ({ closeModal }) => {
                     Cancelar
                 </Button>
                 <Button
+                    disabled={activeButton}
                     onClick={handleAgregar}
                     form="form-producto" className={"cursor-pointer bg-blue-600 hover:bg-blue-800 w-full md:w-auto"}> {/* Full width on small, auto on medium+ */}
                     Guardar

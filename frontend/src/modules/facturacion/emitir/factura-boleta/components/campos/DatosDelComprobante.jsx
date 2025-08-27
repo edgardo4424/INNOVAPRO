@@ -91,19 +91,17 @@ const DatosDelComprobante = () => {
                             <SelectValue placeholder="Selecciona un tipo de operación" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="0101">Venta Interna</SelectItem>
-                            <SelectItem value="0102">Exportación</SelectItem>
-                            <SelectItem value="0103">No Domiciliados</SelectItem>
-                            {/* <SelectItem value="0104">Venta Interna – Anticipos</SelectItem>
-                            <SelectItem value="0105">Venta Itinerante</SelectItem>
-                            <SelectItem value="0106">Factura Guía</SelectItem>
-                            <SelectItem value="0107">Venta Arroz Pilado</SelectItem>
-                            <SelectItem value="0108">
-                                Factura - Comprobante de Percepción
-                            </SelectItem>
-                            <SelectItem value="0110">Factura - Guía remitente</SelectItem>
-                            <SelectItem value="0111">Factura - Guía transportista</SelectItem> */}
-                            <SelectItem value="1001">Operaciones Gravadas</SelectItem>
+                            <SelectItem value="0101">Venta Interna - (0101)</SelectItem>
+                            <SelectItem value="0102">Exportación - (0102)</SelectItem>
+                            <SelectItem value="0103">No Domiciliados - (0103)</SelectItem>
+                            {/* <SelectItem value="0104">Venta Interna – Anticipos - (0104)</SelectItem>
+                            <SelectItem value="0105">Venta Itinerante - (0105)</SelectItem>
+                            <SelectItem value="0106">Factura Guía - (0106)</SelectItem>
+                            <SelectItem value="0107">Venta Arroz Pilado - (0107)</SelectItem>
+                            <SelectItem value="0108">Factura - Comprobante de Percepción - (0108)</SelectItem>
+                            <SelectItem value="0110">Factura - Guía remitente - (0110)</SelectItem>
+                            <SelectItem value="0111">Factura - Guía transportista - (0111)</SelectItem> */}
+                            <SelectItem value="1001">Operaciones Gravadas - (1001)</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -199,37 +197,26 @@ const DatosDelComprobante = () => {
                 </div>
 
                 {/* Ruc de la empresa */}
-                <div className="flex flex-col gap-1 col-span-full sm:col-span-1">
+                <div className="flex flex-col gap-1 col-span-full sm:col-span-1 md:col-span-2">
                     <Label htmlFor="empresa_Ruc">Ruc de la empresa</Label>
-                    <input
-                        list="ruc-options"
-                        type="text"
+                    <Select
+                        value={factura.empresa_Ruc}
                         name="empresa_Ruc"
-                        id="empresa_Ruc"
-                        placeholder="Ruc de la empresa"
-                        className="border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-                        value={factura.empresa_Ruc || ""}
-                        onChange={handleInputChange}
-                    />
-                    <datalist id="ruc-options">
-                        <option value="20607086215" label="RUC DE PRUEBA" />
-                        <option
-                            value="20603021933"
-                            label="Innova Rental Maquinaria Sac | Grupo Innova"
-                        />
-                        <option
-                            value="20562974998"
-                            label="Encofrados Innova S.a.C. | Grupo Innova"
-                        />
-                        <option
-                            value="20602696643"
-                            label="Andamios Electricos Innova S.a.C. | Grupo Innova"
-                        />
-                        <option
-                            value="20555389052"
-                            label="Indek Andina e.I.R.L | Grupo Innova"
-                        />
-                    </datalist>
+                        onValueChange={(e) => {
+                            handleSelectChange(e, "empresa_Ruc");
+                        }}
+                    >
+                        <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> 
+                            <SelectValue placeholder="Selecciona un codigo"/>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="10749283781">RUC DE PRUEBA - 10749283781</SelectItem>
+                            <SelectItem value="20603021933">Innova Rental Maquinaria Sac | Grupo Innova - 20603021933</SelectItem>
+                            <SelectItem value="20562974998">Encofrados Innova S.a.C. | Grupo Innova - 20562974998</SelectItem>
+                            <SelectItem value="20602696643">Andamios Electricos Innova S.a.C. | Grupo Innova - 20602696643</SelectItem>
+                            <SelectItem value="20555389052">Indek Andina e.I.R.L | Grupo Innova - 20555389052</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
             </form>
         </div>

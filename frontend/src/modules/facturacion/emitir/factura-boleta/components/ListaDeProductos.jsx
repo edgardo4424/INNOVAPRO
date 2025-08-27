@@ -16,7 +16,7 @@ import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaCon
 const ListaDeProductos = ({ closeModal }) => {
 
     const { ObtenerProductos } = useProducto();
-    const { productoActual, setProductoActual } = useFacturaBoleta();
+    const { productoActual, setProductoActual, factura } = useFacturaBoleta();
 
     const [piezasDisponibles, setPiezasDisponibles] = useState([]);
     const [filtro, setFiltro] = useState("");
@@ -38,7 +38,9 @@ const ListaDeProductos = ({ closeModal }) => {
     );
 
     const handleClick = (pieza) => {
-        const valorUnitario = parseFloat(pieza.precio_venta_soles) || 0;
+
+        const valorUnitario = factura.tipo_Moneda == "USD" ? parseFloat(pieza.precio_venta_dolares) : parseFloat(pieza.precio_venta_soles) || 0;
+
         const tipAfeIgv = "10"; // Se asume que es gravado
 
         // Valores IGV solo si tipo de afectación es "10"
@@ -62,7 +64,7 @@ const ListaDeProductos = ({ closeModal }) => {
             ...productoActual,
             cod_Producto: pieza.item,
             descripcion: pieza.descripcion,
-            // unidad: pieza.unidad,
+            unidad: "NIU",
             cantidad: 1,
             monto_Valor_Unitario: valorUnitario,
             monto_Base_Igv,
@@ -107,15 +109,15 @@ const ListaDeProductos = ({ closeModal }) => {
                                 <TableHead>Peso kg</TableHead>
                                 <TableHead>Precio USD</TableHead>
                                 <TableHead>Precio PEN</TableHead>
-                                <TableHead>Precio Alquiler PEN</TableHead>
-                                <TableHead>Stock</TableHead>
+                                {/* <TableHead>Precio Alquiler PEN</TableHead> */}
+                                {/* <TableHead>Stock</TableHead> */}
                             </TableRow>
                         </TableHeader>
 
                         <TableBody className="bg-gray-200">
                             {piezasFiltradas.length === 0 ? (
                                 <TableRow>
-                                    <TableCell className="text-center py-6 text-gray-500 italic">
+                                    <TableCell colSpan={6} className="text-center py-6 text-gray-500 italic">
                                         ⚠️ No hay productos que coincidan con la búsqueda.
                                     </TableCell>
                                 </TableRow>
@@ -130,8 +132,8 @@ const ListaDeProductos = ({ closeModal }) => {
                                         <TableCell>{item.peso_kg || ""}</TableCell>
                                         <TableCell>{item.precio_venta_dolares || ""}</TableCell>
                                         <TableCell>{item.precio_venta_soles || ""}</TableCell>
-                                        <TableCell>{item.precio_alquiler_soles || ""}</TableCell>
-                                        <TableCell>{item.stock_actual || ""}</TableCell>
+                                        {/* <TableCell>{item.precio_alquiler_soles || ""}</TableCell> */}
+                                        {/* <TableCell>{item.stock_actual || ""}</TableCell> */}
                                     </TableRow>
                                 ))
                             )}

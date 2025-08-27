@@ -55,7 +55,7 @@ export async function validarFormulario(tipo, Guia) {
         ];
     } else if (tipo == "PUBLICO") {
         camposRequeridosEspecificos = [
-            { key: "guia_Envio_Des_Traslado", name: "Destino de Traslado" },
+            { key: "guia_Envio_Des_Traslado", name: "Descripción de Traslado" },
             { key: "guia_Envio_Mod_Traslado", name: "Modalidad de Traslado" },
             {
                 key: "transportista",

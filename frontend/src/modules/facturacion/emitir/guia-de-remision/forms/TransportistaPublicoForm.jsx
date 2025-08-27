@@ -9,19 +9,31 @@ import {
 } from "@/components/ui/select";
 import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext";
 
-import { Search, Trash } from "lucide-react";
+import { Search } from "lucide-react";
 import { toast } from "react-toastify";
 import facturaService from "../../../service/FacturaService";
+import { useState } from "react";
 
 const TransportistaPublicoForm = () => {
+
     const { guiaDatosPublico, setGuiaDatosPublico } = useGuiaTransporte();
+    const [loadingBtn, setLoadingBtn] = useState(false);
 
 
+    const handleChange = (value, name) => {
+        setGuiaDatosPublico((prev) => ({
+            ...prev,
+            transportista: {
+                ...prev.transportista,
+                [name]: value
+            },
+        }));
+    };
 
-    const handleBuscar = async (e, index) => {
-        e.preventDefault();
-
-        const transportista = guiaDatosPublico.transportista[index];
+    const handleBuscar = async () => {
+        // e.preventDefault();
+        setLoadingBtn(true);
+        const transportista = guiaDatosPublico.transportista;
 
         if (transportista.nro_doc.length !== 11) {
             toast.error("El número de documento del chofer debe tener 11 dígitos.");
@@ -46,16 +58,11 @@ const TransportistaPublicoForm = () => {
 
                 setGuiaDatosPublico((prev) => ({
                     ...prev,
-                    transportista: prev.transportista.map((c, i) => {
-                        if (i === index) {
-                            return {
-                                ...c,
-                                nombres,
-                                nro_mtc
-                            };
-                        }
-                        return c;
-                    })
+                    transportista: {
+                        ...prev.transportista,
+                        razon_Social: nombres,
+                        nro_mtc: nro_mtc,
+                    },
                 }));
             } else {
                 // toast.error(mensaje || "No se encontró información del transportista.");
@@ -63,8 +70,12 @@ const TransportistaPublicoForm = () => {
         } catch (error) {
             // console.error("Error al buscar:", error);
             // toast.error("Hubo un problema al conectar con el servicio de búsqueda.");
+        }finally{
+            setLoadingBtn(false);
         }
     };
+
+
 
     return (
         <div>
@@ -85,13 +96,12 @@ const TransportistaPublicoForm = () => {
                     <Select
                         name="tipo_doc"
                         value={guiaDatosPublico.transportista.tipo_doc}
-                        // onValueChange={(value) => handleChange(value, "tipo_doc", index)}
+                        onValueChange={(e) => handleChange(e.target.value, e.target.name)}
                     >
                         <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm">
                             <SelectValue placeholder="Selecciona un tipo de Documento" />
                         </SelectTrigger>
                         <SelectContent>
-                            {/* <SelectItem value="1">DNI - Documento Nacional de Identidad</SelectItem> */}
                             <SelectItem value="6">RUC</SelectItem>
                         </SelectContent>
                     </Select>
@@ -109,13 +119,14 @@ const TransportistaPublicoForm = () => {
                             id={`chofer-nro_doc`}
                             name="nro_doc"
                             value={guiaDatosPublico.transportista.nro_doc}
-                            // onChange={(e) => handleChange(e.target.value.slice(0, 11), e.target.name, index)}
+                            onChange={(e) => handleChange(e.target.value, e.target.name)}
                             className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                             maxLength={11}
                         />
                         <button
                             type="button" // Importante: usa type="button" para evitar que el botón envíe el formulario
-                            onClick={(e) => handleBuscar(e, index)}
+                            onClick={handleBuscar}
+                            disabled={loadingBtn}
                             className="p-2 bg-blue-500 rounded-md text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 cursor-pointer"
                         >
                             <Search className="h-5 w-5" />
@@ -132,9 +143,9 @@ const TransportistaPublicoForm = () => {
                     <Input
                         type="text"
                         id={`chofer-nombres`}
-                        name="nombres"
+                        name="razon_Social"
                         value={guiaDatosPublico.transportista.razon_Social}
-                        // onChange={(e) => handleChange(e.target.value, e.target.name, index)}
+                        onChange={(e) => handleChange(e.target.value, e.target.name)}
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                     />
                 </div>
@@ -150,7 +161,7 @@ const TransportistaPublicoForm = () => {
                         id={`chofer-nro_mtc`}
                         name="nro_mtc"
                         value={guiaDatosPublico.transportista.nro_mtc}
-                        // onChange={(e) => handleChange(e.target.value, e.target.name, index)}
+                        onChange={(e) => handleChange(e.target.value, e.target.name)}
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                     />
                 </div>

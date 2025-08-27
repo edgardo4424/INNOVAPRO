@@ -1,5 +1,5 @@
-import { Input } from "@/components/ui/input";
 import { Button } from '@/components/ui/button';
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
     Select,
@@ -9,10 +9,13 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
-import { Calendar22 } from "../components/Calendar22";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { Calendar22 } from "../components/Calendar22";
+import { PagoValidarEstados } from '../utils/valoresInicial';
+import { Calculator } from 'lucide-react';
 const PagoForm = ({ closeModal }) => {
-    const { factura, agregarPago, pagoActual, pagoValida, setPagoActual, validarCampos } = useFacturaBoleta();
+    const { factura, agregarPago, pagoActual, pagoValida, setPagoActual, validarCampos, setPagoValida } = useFacturaBoleta();
 
     const { forma_pago: ListaDePago } = factura;
 
@@ -21,11 +24,19 @@ const PagoForm = ({ closeModal }) => {
         0
     );
 
+    const [activeButton, setActiveButton] = useState(false);
+
+    // ?? Datos para calculadora
+    const [showCalculadora, setShowCalculadora] = useState(false);
+    const [daysToAdd, setDaysToAdd] = useState("");
+
+
     const montoTotalFactura = parseFloat(factura.monto_Imp_Venta || 0);
     const pagosCompletos = montoTotalPagos >= montoTotalFactura;
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-    
+
         // Permitir que el campo quede vacío sin bloquearlo
         if (value === "") {
             setPagoActual({
@@ -34,32 +45,52 @@ const PagoForm = ({ closeModal }) => {
             });
             return;
         }
-    
+
         const valorNumerico = parseFloat(value);
-    
+
         // Validación: No permitir negativos ni NaN
         if (isNaN(valorNumerico) || valorNumerico < 0) {
             return;
         }
-    
+
         // Validar solo si es el campo 'monto'
         if (name === "monto") {
             const previo = parseFloat(pagoActual.monto) || 0;
             const sumaReal = montoTotalPagos - previo + valorNumerico;
-    
+
             if (sumaReal > montoTotalFactura) {
                 return;
             }
         }
-    
+
         setPagoActual({
             ...pagoActual,
             [name]: valorNumerico,
         });
     };
-    
-    
 
+
+    // Función para calcular la nueva fecha al añadir días
+    const handleCalculateDate = () => {
+        const days = parseInt(daysToAdd, 10);
+        if (isNaN(days)) {
+            toast.error("Por favor, ingresa un número válido de días.", { position: "top-right" });
+            return;
+        }
+
+        const newDate = new Date();
+        newDate.setDate(newDate.getDate() + days);
+
+        // Actualiza el estado con la nueva fecha en formato ISO
+        setPagoActual({
+            ...pagoActual,
+            fecha_Pago: newDate.toISOString().split('T')[0],
+        });
+
+        // Oculta el input de la calculadora
+        setShowCalculadora(false);
+        setDaysToAdd(""); // Limpiar el input
+    };
 
 
 
@@ -95,8 +126,12 @@ const PagoForm = ({ closeModal }) => {
         agregarPago();
         closeModal();
     };
-    
 
+
+    useEffect(() => {
+        setActiveButton(false);
+        setPagoValida(PagoValidarEstados)
+    }, [])
 
     return (
         <div className=" overflow-y-auto  col-span-4 w-full">
@@ -166,13 +201,40 @@ const PagoForm = ({ closeModal }) => {
 
                 {/* Fecha Emision */}
                 <div className="flex flex-col gap-1 col-span-4 md:col-span-2">
-                    <Label>Fecha Vencimineto</Label>
+                    <div className='flex justify-between'>
+                        <Label>Fecha de Pago:</Label>
+                        <button
+                            onClick={(e) => { e.preventDefault(); setShowCalculadora(!showCalculadora) }}
+                            className='bg-purple-700 text-white p-1 rounded-md cursor-pointer'>
+                            <Calculator />
+                        </button>
+                    </div>
                     <Calendar22 Dato={pagoActual} setDato={setPagoActual} tipo={"fecha_Pago"} />
                     {
                         pagoValida.fecha_Pago && (
                             <span className="text-red-500 text-sm">
                                 Debes ingresar una fecha
                             </span>
+                        )
+                    }
+                    {
+                        showCalculadora && (
+                            <div className="mt-2 flex items-center space-x-2">
+                                <Input
+                                    type="number"
+                                    placeholder="Días"
+                                    value={daysToAdd}
+                                    onChange={(e) => setDaysToAdd(e.target.value)}
+                                    className="w-24 border-1 border-gray-400"
+                                />
+                                <Button
+                                    type="button"
+                                    onClick={handleCalculateDate}
+                                    className="bg-green-600 hover:bg-green-800 text-white"
+                                >
+                                    Aplicar
+                                </Button>
+                            </div>
                         )
                     }
                 </div>
@@ -184,6 +246,7 @@ const PagoForm = ({ closeModal }) => {
                     Cancelar
                 </Button>
                 <Button
+                    disabled={activeButton}
                     onClick={handleAgregar}
                     form="form-producto" className={"bg-blue-600 hover:bg-blue-800"}>
                     Guardar

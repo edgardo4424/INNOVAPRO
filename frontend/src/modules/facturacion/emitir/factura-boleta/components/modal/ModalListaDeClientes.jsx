@@ -7,11 +7,11 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Box, ClipboardPlus, X } from "lucide-react";
+import { UserRoundSearch, X } from "lucide-react";
 import { useState } from "react";
-import ListaDeProductos from "../ListaDeProductos";
+import ListaDeCientes from "../ListaDeClientes";
 
-export default function ModalListaDeProductos() {
+export default function ModalListaDeClientes() {
 
 
     const [open, setOpen] = useState(false);
@@ -22,9 +22,9 @@ export default function ModalListaDeProductos() {
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
-                <Button className="bg-green-500 hover:bg-green-600 cursor-pointer">
-                    <Box />
-                    <span className="hidden md:block">Buscar Producto</span>
+                <Button className="bg-blue-500 hover:bg-blue-600 cursor-pointer">
+                    <UserRoundSearch />
+                    <span className="hidden md:block">Buscar Cliente</span>
                 </Button>
             </AlertDialogTrigger>
 
@@ -39,13 +39,13 @@ export default function ModalListaDeProductos() {
 
                 {/* 🧾 Encabezado */}
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Bucar Tu Producto</AlertDialogTitle>
+                    <AlertDialogTitle>Bucar Tu Cliente</AlertDialogTitle>
                     <AlertDialogDescription className="text-center">
                         Ingresa el Nombre
                     </AlertDialogDescription>
                 </AlertDialogHeader>
 
-                <ListaDeProductos closeModal={closeModal} />
+                <ListaDeCientes closeModal={closeModal} />
 
             </AlertDialogContent>
         </AlertDialog>

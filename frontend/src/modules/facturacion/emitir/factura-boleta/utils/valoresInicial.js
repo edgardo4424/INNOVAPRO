@@ -87,6 +87,14 @@ const valorIncialPago = {
     fecha_Pago: "",
 };
 
+const valorIncialDetracion = {
+    detraccion_cod_bien_detraccion: "014",
+    detraccion_cod_medio_pago: "001",
+    detraccion_cta_banco: "0004-3342343243",
+    detraccion_percent: 4.00,
+    detraccion_mount: 37.76,
+}
+
 // ?? VALORES INICIALES ---- FIN
 
 // !! ESTADOS ---- INICIO
@@ -132,6 +140,7 @@ const PagoValidarEstados = {
 
 export {
     ValorInicialFactura,
+    valorIncialDetracion,
     FacturaValidarEstados,
     valorInicialProducto,
     ProductoValidarEstados,
