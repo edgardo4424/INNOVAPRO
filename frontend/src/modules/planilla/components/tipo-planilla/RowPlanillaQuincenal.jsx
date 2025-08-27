@@ -2,9 +2,10 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { Eye, FileDown } from "lucide-react";
 
 const RowPlanillaQuincenal = ({ key, e, index }) => {
+  console.log('e', e);
   return (
     <TableRow key={key} className={"text-xs"}>
-      <TableCell className="text-right">{e.tiempo_documento}</TableCell>
+      <TableCell className="text-right">{e.tipo_documento}</TableCell>
       <TableCell className="text-right">{e.numero_documento}</TableCell>
 
       <TableCell className="text-right">
@@ -13,14 +14,18 @@ const RowPlanillaQuincenal = ({ key, e, index }) => {
       <TableCell className="text-right">{e.dias_laborados}</TableCell>
       <TableCell className="text-right">{e.sueldo_base}</TableCell>
       <TableCell className="text-right">{e.sueldo_quincenal}</TableCell>
+      <TableCell className="text-right">{e.asignacion_familiar}</TableCell>
+
       <TableCell className="text-right">{e.sueldo_bruto}</TableCell>
 
       <TableCell className="text-right">{e.onp}</TableCell>
       <TableCell className="text-right">{e.eps}</TableCell>
       <TableCell className="text-right">{e.afp}</TableCell>
       <TableCell className="text-right">{e.seguro}</TableCell>
+      <TableCell className="text-right">{e?.quinta_categoria}</TableCell>
+
       <TableCell className="text-right">{e.total_descuentos}</TableCell>
-      <TableCell className="text-right">{e.total_pagar}</TableCell>
+      <TableCell className="text-right">{e.total_a_pagar}</TableCell>
 
 
 {/*       <TableCell className={"flex gap-x-4 items-center"}>

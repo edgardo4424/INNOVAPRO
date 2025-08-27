@@ -37,11 +37,30 @@ class SequelizePlanillaRepository {
      ( await dataMantenimientoRepository.obtenerPorCodigo("valor_seguro")).valor
     );
 
+     const PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT = Number(
+     ( await dataMantenimientoRepository.obtenerPorCodigo("valor_comision_afp_habitat")).valor
+    );
+     const PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA= Number(
+     ( await dataMantenimientoRepository.obtenerPorCodigo("valor_comision_integra")).valor
+    );
+
+    const PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA= Number(
+     ( await dataMantenimientoRepository.obtenerPorCodigo("valor_comision_prima")).valor
+    );
+
+    const PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO= Number(
+     ( await dataMantenimientoRepository.obtenerPorCodigo("valor_comision_profuturo")).valor
+    );
+
     const dataMantenimiento = {
       PORCENTAJE_DESCUENTO_ONP,
       PORCENTAJE_DESCUENTO_EPS,
       PORCENTAJE_DESCUENTO_AFP,
       PORCENTAJE_DESCUENTO_SEGURO,
+      PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT,
+      PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA,
+      PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA,
+      PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO,
     };
 
     const fechaInicioMes = moment(`${fecha_anio_mes}-01`)
@@ -74,6 +93,8 @@ class SequelizePlanillaRepository {
         filial_id: filial_id,
         estado: true,
         tipo_contrato: "HONORARIOS",
+         fecha_inicio: { [db.Sequelize.Op.lte]: fechaFinMes },
+        fecha_fin: { [db.Sequelize.Op.gte]: fechaInicioMes },
       },
       include: [
         {
@@ -85,16 +106,20 @@ class SequelizePlanillaRepository {
       transaction,
     });
 
+    console.log('contratosRxh', contratosRxh);
+
     const listaPlanillaTipoPlanilla = [];
     
     for (const contrato of contratosPlanilla) {
       const trabajador = contrato.trabajador;
 
       const sistema_pension = trabajador.sistema_pension; // 'ONP' o 'AFP'
+      const tipo_afp = trabajador.tipo_afp; // 'HABITAT', 'INTEGRA', 'PRIMA', 'PROFUTURO' o null si es ONP
 
       let onp = 0;
       let afp = 0;
       let seguro = 0;
+      let comision = 0;
 
       const sueldoBase = Number(contrato.sueldo);
       const sueldoQuincenal = +(sueldoBase / 2).toFixed(2);
@@ -124,17 +149,38 @@ class SequelizePlanillaRepository {
           (sueldoBruto * dataMantenimiento.PORCENTAJE_DESCUENTO_SEGURO) /
           100
         ).toFixed(2);
+
+        switch (tipo_afp) {
+            case "HABITAT":
+                comision = +(
+                  (sueldoBruto * PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT) /
+                  100
+                ).toFixed(2);
+                break;
+            case "INTEGRA":
+                comision = +(
+                  (sueldoBruto * PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA) /
+                  100
+                ).toFixed(2);
+                break;
+            case "PRIMA":
+                comision = +(
+                  (sueldoBruto * PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA) /
+                  100
+                ).toFixed(2);
+                break;
+            case "PROFUTURO":
+                comision = +(
+                  (sueldoBruto * PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO) /
+                  100
+                ).toFixed(2);
+                break;
+            default:
+                break;
+        }
       }
 
-      const eps =
-        trabajador?.sistema_salud === "EPS"   // EPS o ESSALUD
-          ? +(
-              (sueldoBruto * dataMantenimiento.PORCENTAJE_DESCUENTO_EPS) /
-              100
-            ).toFixed(2)
-          : 0;
-
-      const totalDescuentos = +(onp + eps + afp + seguro).toFixed(2);
+      const totalDescuentos = +(onp + afp + seguro).toFixed(2);
       const totalAPagar = +(sueldoBruto - totalDescuentos).toFixed(2);
 
       listaPlanillaTipoPlanilla.push({
@@ -151,6 +197,7 @@ class SequelizePlanillaRepository {
         eps,
         afp,
         seguro,
+        comision,
         total_descuentos: totalDescuentos,
         total_a_pagar: totalAPagar,
       });
@@ -174,7 +221,6 @@ class SequelizePlanillaRepository {
         total_a_pagar: totalAPagar,
       });
     }
-
 
     return {
       planilla: {
