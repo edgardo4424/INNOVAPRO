@@ -109,6 +109,12 @@ const modulesByRole = {
          ],
       },
       {
+         group: "Retenciones",
+         items: [
+            { name: "Quinta Categoría", path: "/retenciones/calculoQuintaCategoria" },
+         ],
+      },
+      {
          group: "Asistencia",
          items: [
             { name: "Almacen ", path: "/asistencia/almacen?area_id=2" },
@@ -119,7 +125,6 @@ const modulesByRole = {
             { name: "Ventas ", path: "/asistencia/ventas?area_id=9" },
          ],
       },
-
       {
          group: "Facturación",
          items: [
@@ -158,6 +163,12 @@ const modulesByRole = {
    Almacén: [],
    Administración: [
       { name: "Gestión de condiciones", path: "/condiciones"},
+      {
+         group: "Retenciones",
+         items: [
+            { name: "Quinta Categoría", path: "/retenciones/calculoQuintaCategoria" },
+         ],
+      },
    ],
    Clientes: [],
 };
