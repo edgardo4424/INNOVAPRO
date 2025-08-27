@@ -9,7 +9,6 @@ const { CierreGratificacion } = require("../models/CierreGratificacionModel");
 const { Gratificacion } = require("../models/GratificacionModel");
 const { calcularComponentesGratificaciones } = require("../services/calcularComponentesGratificacion");
 
-
 class SequelizeGratificacionRepository {
   async obtenerGratificacionesCerradas(
     periodo,
@@ -182,7 +181,6 @@ class SequelizeGratificacionRepository {
       where: { periodo: periodoBuscar, filial_id },
       transaction,
     });
-
     return cierreGratificacion;
   }
 

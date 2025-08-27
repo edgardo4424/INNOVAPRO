@@ -2,16 +2,28 @@
 // Controla toda la navegación interna del sistema: define rutas públicas y privadas, aplica protección por sesión, 
 // restricciones por rol, y carga condicionalmente los módulos usando lazy loading.
 
-import React, { Suspense, lazy } from "react";
+import GestionAsistencia from "@/modules/asistencia/pages/GestionAsistencia";
+import GestionAdelantoSueldo from "@/modules/Beneficios/Pages/GestionAdelantosSueldo";
+import GestionBonos from "@/modules/Beneficios/Pages/GestionBonos";
+import GestionVacaciones from "@/modules/Beneficios/Pages/GestionVacaciones";
+import { WizardProvider } from "@/modules/cotizaciones/context/WizardCotizacionContext";
+import { FacturaBoletaProvider } from "@/modules/facturacion/context/FacturaBoletaContext";
+import { GuiaTransporteProvider } from "@/modules/facturacion/context/GuiaTransporteContext";
+import PlanillaEnConstruccion from "@/modules/planilla/pages/planilla";
+import EditarTrabajador from "@/modules/trabajadores/pages/EditarTrabajador";
+import GestionTrabajadores from "@/modules/trabajadores/pages/GestionTrabajadores";
+import LoaderInnova from "@/shared/components/LoaderInnova";
+import { Suspense, lazy } from "react";
 import {
    BrowserRouter,
    HashRouter,
-   Routes,
-   Route,
    Navigate,
+   Route,
+   Routes,
 } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 import RoleGuard from "./rol.guard";
+
 import LoaderInnova from "@/shared/components/LoaderInnova";
 import { WizardProvider } from "@/modules/cotizaciones/context/WizardCotizacionContext";
 import GestionTrabajadores from "@/modules/trabajadores/pages/GestionTrabajadores";
@@ -22,7 +34,6 @@ import GestionBonos from "@/modules/Beneficios/Pages/GestionBonos";
 import EditarTrabajador from "@/modules/trabajadores/pages/EditarTrabajador";
 import GestionAdelantoSueldo from "@/modules/Beneficios/Pages/GestionAdelantosSueldo";
 import PlanillaQuincenal from "@/modules/planilla/pages/PlanillaQuincenal";
-
 
 // Lazy load components
 const Login = lazy(() => import("@/modules/auth/pages/Login"));
@@ -72,32 +83,42 @@ const GestionCts = lazy(() =>
 
 //* Facturacion
 
-const Facturacion = lazy(() =>
-   import("../modules/facturacion/pages/Facturacion")
+const FacturaBoleta = lazy(() =>
+   import("../modules/facturacion/pages/FacturaBoleta")
 );
 
-const FacturaBoleta = lazy(() =>
-   import("../modules/facturacion/factura-boleta/FacturaBoleta")
-);
 const GuiaRemision = lazy(() =>
-   import("../modules/facturacion/guia-de-remision/GuiaRemision")
+   import("../modules/facturacion/pages/GuiaRemision")
+);
+
+const NotaCredito = lazy(() =>
+   import("../modules/facturacion/pages/NotaCredito")
+);
+
+const EmitirRoutes = lazy(() =>
+   import("../modules/facturacion/routes/EmitirRoutes")
 );
 
 const FacturasAnuladas = lazy(() =>
    import("../modules/facturacion/pages/FacturasAnuladas")
 );
 
-const ListaDocumentos = lazy(() =>
-   import("../modules/facturacion/list-documentos/ListaDocumentos")
+const BandejaRoutes = lazy(() =>
+   import("../modules/facturacion/routes/BandejaRoutes")
 );
 
-const FacturaBorradores = lazy(() =>
-   import("../modules/facturacion/lista-borradores/ListaBorradores")
+const Borrador = lazy(() =>
+   import("../modules/facturacion/pages/Borrador")
 );
 
 const GestionGratificacion = lazy(() =>
    import("../modules/gratificacion/pages/GestionGratificacion")
 );
+
+
+//* Facturacion
+const CalculoQuintaCategoria = lazy(() =>
+   import("../modules/retenciones/pages/CalculoQuintaCategoria")
 
 const GestionDataMantenimiento = lazy(() =>
    import("../modules/dataMantenimiento/pages/GestionDataMantenimiento")
@@ -107,7 +128,7 @@ const GestionDataMantenimiento = lazy(() =>
 export default function AppRoutes() {
    const Router =
       process.env.NODE_ENV === "production" ? HashRouter : BrowserRouter; // REVISAR PARA CAMBIAR SIEMPRE A BROWSER
-   
+
    const LOGIN_PATH =
       process.env.NODE_ENV === "production" ? "/#/login" : "/login";
 
@@ -117,7 +138,7 @@ export default function AppRoutes() {
          <Suspense fallback={<LoaderInnova />}>
             <Routes>
                {/* Ruta pública */}
-               <Route path = {LOGIN_PATH} element={<Login />} />
+               <Route path={LOGIN_PATH} element={<Login />} />
                {/* Rutas protegidas */}
                <Route path="/" element={<ProtectedRoute />}> {/* TODO EL DASHBOARD PROTEGIDO */}
                   <Route element={<DashboardLayout />}>
@@ -238,49 +259,52 @@ export default function AppRoutes() {
                      {/*    //************************INICIO-FACTURACION************************* */}
                      <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
                         <Route
-                           path="facturacion/generar"
+                           path="facturacion/factura-boleta"
                            element={
-                              <Facturacion />
+                              <FacturaBoletaProvider>
+                                 <FacturaBoleta />
+                              </FacturaBoletaProvider>
                            }
                         />
-                     </Route>
-                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
+
                         <Route
-                           path="facturacion/generar/factura-boleta"
+                           path="facturacion/guia-remision/:tipoGuia"
                            element={
-                              <FacturaBoleta />
+                              <GuiaTransporteProvider>
+                                 <GuiaRemision />
+                              </GuiaTransporteProvider>
                            }
                         />
-                     </Route>
 
-                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
                         <Route
-                           path="facturacion/generar/guia-de-remision/:tipoGuia"
+                           path="facturacion/nota-credito"
                            element={
-                              <GuiaRemision />
+                              <NotaCredito />
                            }
                         />
-                     </Route>
 
-                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
                         <Route
-                           path="facturacion/facturas"
-                           element={<ListaDocumentos />}
+                           path="facturacion/emitir/*"
+                           element={
+                              <EmitirRoutes />
+                           }
                         />
-                     </Route>
 
-                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
+                        <Route
+                           path="facturacion/bandeja/*"
+                           element={<BandejaRoutes />}
+                        />
+
                         <Route
                            path="facturacion/anuladas"
                            element={<FacturasAnuladas />}
                         />
-                     </Route>
 
-                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
                         <Route
                            path="facturacion/borradores"
-                           element={<FacturaBorradores />}
+                           element={<Borrador />}
                         />
+
                      </Route>
                      {/*    //************************FINAL-FACTURACION************************* */}
 
@@ -303,11 +327,15 @@ export default function AppRoutes() {
                               </WizardProvider>
                            }
                         />
+                        
+                        <Route
+                           path="retenciones/calculoQuintaCategoria"
+                           element={<CalculoQuintaCategoria />}
+                        />
                      </Route>
 
                      <>
                         {/* Rutas para el modulo de aistencia */}
-                      
                         <Route element={<RoleGuard roles={["Gerencia"]} />}>
                            <Route
                               path="asistencia/:tipo"

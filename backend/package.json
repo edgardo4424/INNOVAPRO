@@ -8,6 +8,11 @@
         "dev": "nodemon src/index.js",
         "start": "node src/index.js",
         "test": "jest",
+        
+        "test:quinta": "jest src/modules/quintaCategoria/tests --verbose --runInBand",
+        "test:quinta:watch": "jest src/modules/quintaCategoria/tests --watch",
+        "test:quinta:cov": "jest src/modules/quintaCategoria/tests --coverage",
+
 
         
         "migrate": "sequelize-cli db:migrate --env development",
@@ -20,7 +25,7 @@
         "crear:migracion": "sequelize-cli migration:create --env development --name",
         
         "crear:modelo": "sequelize-cli model:generate --env development",
-        "crear:seed": "sequelize-cli seed:generate --env development",
+        "crear:seed": "sequelize-cli seed:generate --env development --name",
 
         
         "seed": "sequelize-cli db:seed:all --env development",

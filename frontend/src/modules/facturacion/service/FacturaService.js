@@ -35,6 +35,25 @@ const facturaService = {
     eliminarBorrador: async (borrador_id) => {
         const res = await api.patch(`/facturacion/borrador/eliminar/${borrador_id}`);
         return res.data;
+    },
+
+    // * ENDPOINTS GUIA REMISION
+    
+    registrarGuiaRemision: async (guia) => {
+        const res = await api.post(`/facturacion/guia-remision/crear`, guia);
+        return res.data;
+    },
+    obtenerCorrelativoGuia: async () =>{
+        const res = await api.get('/facturacion/guia-remision/correlativo');
+        return res.data
+    },
+    obtenerTodasLasGuiasRemision: async (query) => {
+        const res = await api.get(`/facturacion/guia-remision${query}`);
+        return res.data;
+    },
+    obtenerMtc: async (ruc) => {
+        const res = await api.get(`/facturacion/mtc?ruc=${ruc}`);
+        return res.data
     }
 }
 

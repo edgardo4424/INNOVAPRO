@@ -109,6 +109,12 @@ const modulesByRole = {
          ],
       },
       {
+         group: "Retenciones",
+         items: [
+            { name: "Quinta Categoría", path: "/retenciones/calculoQuintaCategoria" },
+         ],
+      },
+      {
          group: "Asistencia",
          items: [
             { name: "Almacen ", path: "/asistencia/almacen?area_id=2" },
@@ -119,14 +125,16 @@ const modulesByRole = {
             { name: "Ventas ", path: "/asistencia/ventas?area_id=9" },
          ],
       },
-
       {
          group: "Facturación",
          items: [
-            { name: "Generar Documentos", path: "/facturacion/generar" },
-            { name: "Listar Documentos", path: "/facturacion/facturas?page=1&limit=40" },
-            { name: "Lista Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
-            { name: "Facturas Anuladas", path: "/facturacion/anuladas" },
+            { name: "Factura y Boleta", path: "/facturacion/factura-boleta" },
+            { name: "Guia de Remision", path: "/facturacion/guia-remision/transporte-privado" },
+            { name: "Nota de Credito y Debito", path: "/facturacion/nota-credito" },
+            { name: "Emitir", path: "/facturacion/emitir" },
+            { name: "Bandeja", path: "/facturacion/bandeja" },
+            { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
+            { name: "Anulados", path: "/facturacion/anuladas" },
          ],
       },
 
@@ -158,6 +166,12 @@ const modulesByRole = {
    Almacén: [],
    Administración: [
       { name: "Gestión de condiciones", path: "/condiciones"},
+      {
+         group: "Retenciones",
+         items: [
+            { name: "Quinta Categoría", path: "/retenciones/calculoQuintaCategoria" },
+         ],
+      },
    ],
    Clientes: [],
 };
@@ -233,6 +247,7 @@ export function AppSidebar() {
                               <SidebarMenuSubButton
                                  onClick={() => navigate(subItem.path)}
                                  isActive={isActive}
+                                 className="cursor-pointer"
                               >
                                  <span>{subItem.name}</span>
                               </SidebarMenuSubButton>
