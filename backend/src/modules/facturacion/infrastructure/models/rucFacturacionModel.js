@@ -13,7 +13,7 @@ const RucFacturacion = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
-        nombre: {
+        razon_social: {
             type: DataTypes.STRING,
             allowNull: false,
         },

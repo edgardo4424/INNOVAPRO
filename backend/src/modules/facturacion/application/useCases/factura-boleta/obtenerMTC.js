@@ -43,10 +43,12 @@ module.exports = async (ruc) => {
             const mensajeTexto = await mensajeElement.innerText();
             if (mensajeTexto.includes('No se encontraron resultados')) {
                 return {
-                    codigo: 200,
+                    codigo: 400,
                     respuesta: {
+                        status: 400,
                         mensaje: "No se encontraron resultados",
-                        estado: false
+                        estado: false,
+                        data: null
                     }
                 };
             }
@@ -67,14 +69,25 @@ module.exports = async (ruc) => {
         return {
             codigo: 200,
             respuesta: {
-                codigo_mtc: codigo.trim(),
-                razon_social: razon.trim(),
-                ruc: rucExtra.trim(),
+                mensaje: "MTC encontrado",
+                estado: true,
+                data: {
+                    status: 200,
+                    codigo_mtc: codigo.trim(),
+                    razon_social: razon.trim(),
+                    ruc: rucExtra.trim(),
+                }
             }
         };
     } catch (err) {
         console.error('❌ Error al consultar MTC:', err);
-        return { codigo: 500, error: 'Error al consultar MTC' };
+        return {
+            codigo: 500, respuesta: {
+                mensaje: "Error al consultar MTC",
+                estado: false,
+                data: null
+            }
+        };
     } finally {
         // ** Cerramos el navegador headless
         // ** para liberar recursos del sistema

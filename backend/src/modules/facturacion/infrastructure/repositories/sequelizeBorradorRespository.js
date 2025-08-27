@@ -1,4 +1,4 @@
-const { Borrador } = require("../models/borradorModel");
+const { Borrador } = require("../models/borrador/borradorModel");
 const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 const { Op } = require("sequelize");
 

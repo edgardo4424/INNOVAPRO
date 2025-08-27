@@ -128,10 +128,13 @@ const modulesByRole = {
       {
          group: "Facturación",
          items: [
-            { name: "Generar Documentos", path: "/facturacion/generar" },
-            { name: "Listar Documentos", path: "/facturacion/facturas?page=1&limit=40" },
-            { name: "Lista Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
-            { name: "Facturas Anuladas", path: "/facturacion/anuladas" },
+            { name: "Factura y Boleta", path: "/facturacion/factura-boleta" },
+            { name: "Guia de Remision", path: "/facturacion/guia-remision/transporte-privado" },
+            { name: "Nota de Credito y Debito", path: "/facturacion/nota-credito" },
+            { name: "Emitir", path: "/facturacion/emitir" },
+            { name: "Bandeja", path: "/facturacion/bandeja" },
+            { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
+            { name: "Anulados", path: "/facturacion/anuladas" },
          ],
       },
 
@@ -244,6 +247,7 @@ export function AppSidebar() {
                               <SidebarMenuSubButton
                                  onClick={() => navigate(subItem.path)}
                                  isActive={isActive}
+                                 className="cursor-pointer"
                               >
                                  <span>{subItem.name}</span>
                               </SidebarMenuSubButton>
