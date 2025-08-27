@@ -35,7 +35,7 @@ const contratoSchema = yup.object({
       .required("El tipo de contrato es obligatorio"),
 });
 
-export const trabajadorSchema = (isEdit = false) =>
+export const trabajadorSchema = (isEdit = false, isGerente = false) =>
    yup.object().shape({
       ...(isEdit && {
          id: yup
@@ -44,13 +44,6 @@ export const trabajadorSchema = (isEdit = false) =>
             .positive("ID debe ser un número positivo")
             .required("El ID es requerido en edición"),
       }),
-      filial_id: yup
-         .number()
-         .transform((value, originalValue) =>
-            originalValue === "" ? null : value
-         )
-         .nullable()
-         .required("La filial es requerida"),
       nombres: yup.string().required("El nombre es requerido"),
       apellidos: yup.string().required("El apellido es requerido"),
       tipo_documento: yup
@@ -64,9 +57,6 @@ export const trabajadorSchema = (isEdit = false) =>
          .array()
          .of(contratoSchema)
          .min(1, "Debe haber al menos un trabajo"),
-      asignacion_familiar: yup
-         .boolean()
-         .required("La asignación familiar es requerida"),
       sistema_pension: yup
          .string()
          .oneOf(["AFP", "ONP"], "Sistema de pensión no válido")
@@ -76,11 +66,17 @@ export const trabajadorSchema = (isEdit = false) =>
          .required("La quinta categoría es requerida"),
       cargo_id: yup
          .number()
-         .transform((value, originalValue) =>
-            originalValue === "" ? null : value
-         )
+         .transform((value, originalValue) => {
+            if (
+               originalValue === "" ||
+               originalValue === null ||
+               originalValue === undefined
+            ) {
+               return null;
+            }
+            const parsed = Number(originalValue);
+            return isNaN(parsed) ? null : parsed;
+         })
          .nullable()
          .required("El cargo es obligatorio"),
-
-      // estado y fecha_salida no se validan según tu requerimiento
    });

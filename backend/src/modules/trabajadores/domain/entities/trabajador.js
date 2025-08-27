@@ -1,7 +1,7 @@
+
 class Trabajador {
    constructor({
       id,
-      filial_id,
       nombres,
       apellidos,
       numero_documento,
@@ -11,9 +11,9 @@ class Trabajador {
       quinta_categoria,
       tipo_documento,
       cargo_id,
+      domiciliado,
    }) {
       (this.id = id),
-         (this.filial_id = filial_id),
          (this.nombres = nombres),
          (this.apellidos = apellidos),
          (this.tipo_documento = tipo_documento),
@@ -23,6 +23,7 @@ class Trabajador {
          (this.sistema_pension = sistema_pension),
          (this.quinta_categoria = quinta_categoria),
          (this.cargo_id = cargo_id);
+      this.domiciliado = domiciliado;
    }
 
    validarCamposObligatorios(editar = false) {
@@ -32,17 +33,10 @@ class Trabajador {
             errores.push("El id es inválido");
          }
       }
-      if (this.filial_id <= 0) {
-         errores.push("filial_id inválido");
-      }
       if (!this.nombres || !this.apellidos) {
          errores.push("Nombres o apellidos invalidos");
       }
-      if (
-         this.tipo_documento !== "DNI" &&
-         this.tipo_documento !== "CE" &&
-         this.tipo_documento !== "PTP"
-      ) {
+      if (this.tipo_documento !== "DNI" && this.tipo_documento !== "CE") {
          errores.push("El tipo de documento es invalido");
       }
       if (!this.numero_documento || !this.numero_documento.trim()) {
@@ -51,10 +45,10 @@ class Trabajador {
       if (this.sueldo_base < 1130) {
          errores.push("El sueldo base es invalido");
       }
-      if (
-         this.asignacion_familiar === null ||
-         this.asignacion_familiar === undefined
-      ) {
+      if (this.domiciliado === null || this.domiciliado === undefined) {
+         errores.push("Dato domiciliado inválida");
+      }
+      if (this.asignacion_familiar === undefined) {
          errores.push("Asignacion familiar inválida");
       }
       if (this.sistema_pension !== "AFP" && this.sistema_pension !== "ONP") {
@@ -75,21 +69,23 @@ class Trabajador {
    }
 
    get(editar = false) {
+      
       const datos = {
-         filial_id: this.filial_id,
          nombres: this.nombres,
          apellidos: this.apellidos,
          tipo_documento: this.tipo_documento,
          numero_documento: this.numero_documento,
          sueldo_base: this.sueldo_base,
-         asignacion_familiar: this.asignacion_familiar,
+         asignacion_familiar:this.asignacion_familiar,
          sistema_pension: this.sistema_pension,
          quinta_categoria: this.quinta_categoria,
          cargo_id: this.cargo_id,
+         domiciliado:this.domiciliado
       };
       if (editar) {
          datos.trabajador_id = this.id;
       }
+
       return datos;
    }
 }

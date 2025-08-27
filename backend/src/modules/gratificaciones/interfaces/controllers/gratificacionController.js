@@ -1,19 +1,24 @@
 const sequelizeGratificacionRepository = require('../../infrastructure/repositories/sequelizeGratificacionRepository'); // Importamos el repositorio de Gratificaciones
 
-const obtenerGratificaciones = require('../../application/useCases/obtenerGratificaciones'); // Importamos el caso de uso para obtener todos los Gratificaciones
+const obtenerGratificacionesCerradas = require('../../application/useCases/obtenerGratificacionesCerradas'); // Importamos el caso de uso para obtener todos los Gratificaciones
 const calcularGratificaciones = require('../../application/useCases/calcularGratificaciones');
+const cierreGratificaciones = require('../../application/useCases/cierreGratificaciones'); 
 
+const obtenerGratificacionPorTrabajador = require('../../application/useCases/obtenerGratificacionPorTrabajador');
 
 const gratificacionRepository = new sequelizeGratificacionRepository(); // Instancia del repositorio de gratifaciones
+
+const db = require("../../../../database/models");
+const cierreGratificacionTruncaPorTrabajador = require('../../application/useCases/cierreGratificacionTruncaPorTrabajador');
 
 const GratificacionController = {
    
 
-    async obtenerGratificaciones(req, res) {
+    async obtenerGratificacionesCerradas(req, res) {
         try {
-            const gratifiaciones = await obtenerGratificaciones(gratificacionRepository); // Llamamos al caso de uso para obtener todos los gratifiaciones
+            const gratificacionesCerradas = await obtenerGratificacionesCerradas(req.body, gratificacionRepository); // Llamamos al caso de uso para obtener todos los gratificacionesCerradas
            
-            res.status(200).json(gratifiaciones.respuesta); // 🔥 Siempre devuelve un array, aunque esté vacío
+            res.status(200).json(gratificacionesCerradas.respuesta); // 🔥 Siempre devuelve un array, aunque esté vacío
         } catch (error) {
             console.log('error',error);
             res.status(500).json({ error: error.message }); // Respondemos con un error
@@ -25,14 +30,63 @@ const GratificacionController = {
         try {
             const { periodo, anio, filial_id } = req.body;
 
-            const gratifiaciones = await calcularGratificaciones(periodo, anio, filial_id, gratificacionRepository); // Llamamos al caso de uso para obtener todos los gratifiaciones
+            console.log({
+                periodo,
+                anio,
+                filial_id
+            });
+
+            const gratificaciones = await calcularGratificaciones(periodo, anio, filial_id, gratificacionRepository); // Llamamos al caso de uso para obtener todos los gratificaciones
            
-            res.status(200).json(gratifiaciones.respuesta); // 🔥 Siempre devuelve un array, aunque esté vacío
+            res.status(gratificaciones.codigo).json(gratificaciones.respuesta); // 🔥 Siempre devuelve un array, aunque esté vacío
         } catch (error) {
             console.log('error',error);
             res.status(500).json({ error: error.message }); // Respondemos con un error
         }
     },
+
+     async cierreGratificaciones(req, res) {
+        try {
+            const { periodo, anio, filial_id } = req.body;
+            const usuario_cierre_id = req.usuario.id
+
+            const gratificaciones = await cierreGratificaciones(usuario_cierre_id, periodo, anio, filial_id, gratificacionRepository); // Llamamos al caso de uso para obtener todos los gratificaciones
+           
+            res.status(gratificaciones.codigo).json(gratificaciones.respuesta); // 🔥 Siempre devuelve un array, aunque esté vacío
+        } catch (error) {
+            console.log('error',error);
+            res.status(500).json({ error: error.message }); // Respondemos con un error
+        }
+    },
+
+    async cierreGratificacionTruncaPorTrabajador(req, res) {
+        const transaction = await db.sequelize.transaction(); // Iniciar transacción
+        try {
+            
+            const { periodo, anio, filial_id, trabajador_id } = req.body;
+            const usuario_cierre_id = req.usuario.id
+             const gratificacionPorTrabajador = await cierreGratificacionTruncaPorTrabajador(usuario_cierre_id, periodo, anio, filial_id, trabajador_id, gratificacionRepository, transaction); // Llamamos al caso de uso para obtener todos los gratificaciones
+           await transaction.commit(); // ✔ Confirmar transacción
+            res.status(gratificacionPorTrabajador.codigo).json(gratificacionPorTrabajador.respuesta); // 🔥 Siempre devuelve un array, aunque esté vacío
+        } catch (error) {
+             await transaction.rollback(); // ❌ Deshacer todo si algo falla
+            console.log('error',error);
+            res.status(500).json({ error: error.message }); // Respondemos con un error
+        }
+    },
+
+     async obtenerGratificacionPorTrabajador(req, res) {
+        try {
+            const { periodo, anio, filial_id, trabajador_id } = req.body;
+            
+             const gratificacionPorTrabajador = await obtenerGratificacionPorTrabajador(periodo, anio, filial_id, trabajador_id, gratificacionRepository); // Llamamos al caso de uso para obtener todos los gratificaciones
+           
+            res.status(gratificacionPorTrabajador.codigo).json(gratificacionPorTrabajador.respuesta); // 🔥 Siempre devuelve un array, aunque esté vacío
+        } catch (error) {
+            console.log('error',error);
+            res.status(500).json({ error: error.message }); // Respondemos con un error
+        }
+    }
 
 };
 

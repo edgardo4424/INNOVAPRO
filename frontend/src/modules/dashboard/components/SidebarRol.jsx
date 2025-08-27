@@ -101,7 +101,7 @@ const modulesByRole = {
          group: "Beneficios",
          items: [
             { name: "Vacaciones", path: "/vacaciones" },
-            { name: "Cts", path: "/cts" },
+            { name: "Cts", path: "/gestion-cts" },
             { name: "Gratificacion", path: "/gratificacion" },
             { name: "Bonos", path: "/bonos" },
             { name: "Adelanto de sueldo", path: "/adelanto-sueldo" },
@@ -135,7 +135,15 @@ const modulesByRole = {
          ],
       },
 
-      { name: "Planilla", path: "/planilla" },
+      {
+         group: "Planilla",
+         items: [
+            { name: "Planilla semanal", path: "/planilla-semanal" },
+            { name: "Planilla mensual", path: "/planilla-mensual" },
+        
+         ],
+      },
+      { name: "Datos de mantenimiento", path: "/data-mantenimiento" },
 
    ],
    Ventas: [

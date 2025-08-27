@@ -1,208 +1,325 @@
 const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos // Llamamos los modelos sequalize de la base de datos
-const {
-  calcularMesesComputablesSemestre,
-  obtenerUltimaFechaFin,
-} = require("../services/calcularMesesComputablesSemestre");
-const {
-  calcularResumenGratificaciones,
-} = require("../services/calcularResumenGratificaciones");
-const {
-  mapearParaReporteGratificaciones,
-} = require("../services/mapearParaReporteGratificaciones");
-
-const SequelizeAsistenciaRepository = require("../../../asistencias/infraestructure/repositories/sequelizeAsistenciaRepository");
-const SequelizeBonoRepository = require("../../../bonos/infraestructure/repositories/sequelizeBonoRepository");
 
 
-const asistenciaRepository = new SequelizeAsistenciaRepository();
-const bonoRepository = new SequelizeBonoRepository()
+const SequelizeDataMantenimientoRepository = require("../../../data_mantenimiento/infrastructure/repositories/sequelizeDataMantenimientoRepository");
 
-const MONTO_POR_HORA_EXTRA = 10;
-const MONTO_ASIGNACION_FAMILIAR = 102.5;
-const MONTO_NO_COMPUTABLE = 10;
-const MONTO_FALTA_POR_DIA = 10;
+const dataMantenimientoRepository = new SequelizeDataMantenimientoRepository();
 
-class SequelizeFilialRepository {
-  async obtenerGratificaciones() {
-    const usuarios = await db.usuarios.findAll();
+const { CierreGratificacion } = require("../models/CierreGratificacionModel");
+const { Gratificacion } = require("../models/GratificacionModel");
+const { calcularComponentesGratificaciones } = require("../services/calcularComponentesGratificacion");
 
-    return usuarios;
+class SequelizeGratificacionRepository {
+  async obtenerGratificacionesCerradas(
+    periodo,
+    anio,
+    filial_id,
+    transaction = null
+  ) {
+    let periodoBuscar;
+    switch (periodo) {
+      case "JULIO":
+        periodoBuscar = `${anio}-07`;
+        break;
+      case "DICIEMBRE":
+        periodoBuscar = `${anio}-12`;
+        break;
+
+      default:
+        break;
+    }
+
+    const cierreGratificacion = await CierreGratificacion.findOne({
+      where: { periodo: periodoBuscar, filial_id },
+      transaction,
+    });
+
+    const gratificacionesCerradas = await Gratificacion.findAll({
+      where: { cierre_id: cierreGratificacion.id },
+      transaction,
+    });
+    return gratificacionesCerradas;
   }
 
-  async calcularGratificaciones(periodo, anio, filial_id) {
-    const SALUD_PORC = { ESSALUD: 0.09, EPS: 0.0675 };
+  async calcularGratificaciones(periodo, anio, filial_id, transaction = null) {
+    const MONTO_ASIGNACION_FAMILIAR = Number(
+      (
+        await dataMantenimientoRepository.obtenerPorCodigo(
+          "valor_asignacion_familiar"
+        )
+      ).valor
+    );
+    console.log("MONTO_ASIGNACION_FAMILIAR", MONTO_ASIGNACION_FAMILIAR);
+
+    const MONTO_FALTA_POR_DIA = Number(
+      (await dataMantenimientoRepository.obtenerPorCodigo("valor_falta")).valor
+    );
+    console.log("MONTO_FALTA_POR_DIA", MONTO_FALTA_POR_DIA);
+
+    const MONTO_POR_HORA_EXTRA = Number(
+      (await dataMantenimientoRepository.obtenerPorCodigo("valor_hora_extra"))
+        .valor
+    );
+    console.log("MONTO_POR_HORA_EXTRA", MONTO_POR_HORA_EXTRA);
+
+    const MONTO_NO_COMPUTABLE = Number(
+      (
+        await dataMantenimientoRepository.obtenerPorCodigo(
+          "valor_no_computable"
+        )
+      ).valor
+    );
+    console.log("MONTO_NO_COMPUTABLE", MONTO_NO_COMPUTABLE);
+
+    const PORCENTAJE_BONIFICACION_ESSALUD = Number(
+      (
+        await dataMantenimientoRepository.obtenerPorCodigo(
+          "valor_bonificacion_essalud"
+        )
+      ).valor
+    );
+    console.log(
+      "PORCENTAJE_BONIFICACION_ESSALUD",
+      PORCENTAJE_BONIFICACION_ESSALUD
+    );
+
+    const PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO = Number(
+      (
+        await dataMantenimientoRepository.obtenerPorCodigo(
+          "valor_desc_quinta_categoria_no_domiciliado"
+        )
+      ).valor
+    );
+
+    console.log(
+      "PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO",
+      PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO
+    );
+
+    const dataMantenimiento = {
+      MONTO_ASIGNACION_FAMILIAR,
+      MONTO_FALTA_POR_DIA,
+      MONTO_POR_HORA_EXTRA,
+      MONTO_NO_COMPUTABLE,
+      PORCENTAJE_BONIFICACION_ESSALUD,
+      PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO,
+    }
 
     const contratos = await db.contratos_laborales.findAll({
+      where: {
+        filial_id: filial_id,
+        estado: true,
+        tipo_contrato: "PLANILLA",
+      },
       include: [
         {
           model: db.trabajadores,
           as: "trabajador",
-          where: {
-            filial_id: filial_id,
-          },
         },
       ],
       raw: false,
+      transaction,
     });
 
-    // Agrupar por trabajador
-    const porTrabajador = new Map();
-    for (const c of contratos) {
-      const tid = c.trabajador_id;
-      if (!porTrabajador.has(tid))
-        porTrabajador.set(tid, { trabajador: c.trabajador, contratos: [] });
-      porTrabajador.get(tid).contratos.push(c.get({ plain: true }));
-    }
-
-     let fechaInicio, fechaFin;
-
-    switch (periodo) {
-      case 'JULIO':      // semestre ene-jun
-        fechaInicio = `${anio}-01-01`;
-        fechaFin    = `${anio}-06-30`;  // <-- junio tiene 30
-        break;
-      case 'DICIEMBRE':  // semestre jul-dic
-        fechaInicio = `${anio}-07-01`;
-        fechaFin    = `${anio}-12-31`;
-        break;           // <-- faltaba
-    }
-
-    const filas = await Promise.all(
-      Array.from(porTrabajador.values()).map(
-        async ({ trabajador, contratos }) => {
-       
-          // 1) Meses por régimen
-          const { porRegimen, totalMeses, detalleMensual } =
-            calcularMesesComputablesSemestre(contratos, periodo, anio);
-
-          // 2) Componentes comunes de RC (si RC se calcula igual para todo el semestre)
-          const asignacionFamiliar = trabajador.asignacion_familiar ? MONTO_ASIGNACION_FAMILIAR : 0;
-
-         const totalHorasExtras = await asistenciaRepository.obtenerHorasExtrasPorRangoFecha(trabajador.id, fechaInicio, fechaFin)
-
-        
-         //console.log('totalHorasExtras', totalHorasExtras);
-          const promedioHorasExtras = totalHorasExtras * MONTO_POR_HORA_EXTRA;
-          const promedioBonoObra = await bonoRepository.obtenerBonoTotalDelTrabajadorPorRangoFecha(trabajador.id, fechaInicio, fechaFin); // TODO
-
-          const noComputableDias = 0; // TODO: Falta calcular los dias no computables
-          const noComputable = noComputableDias * MONTO_NO_COMPUTABLE;
-
-           const faltasDias = await asistenciaRepository.obtenerCantidadFaltasPorRangoFecha(trabajador.id, fechaInicio, fechaFin); // Falta calcular la cantidad de faltas
-
-
-           const ultimaFechaFinContrato = obtenerUltimaFechaFin(contratos);
-
-          // Nota: si el sueldo_base cambia por contrato, ya viene por cada parte (porRegimen.sueldo_base).
-          // Aquí RC se arma por parte con su sueldo_base específico:
-          const partes = porRegimen.map((p) => {
-     
-            const RC = +(
-              p.sueldo_base +
-              asignacionFamiliar +
-              promedioHorasExtras +
-              promedioBonoObra
-            ).toFixed(2);
-            const gratiBruta = +(RC * p.factor * (p.meses / 6)).toFixed(2);
-
-            // Faltas: si llevaras por mes, podrías repartir por proporción de meses
-            const faltasMonto = faltasDias * MONTO_FALTA_POR_DIA;
-            //const gratiNeta = +Math.max(0, gratiBruta - faltasMonto).toFixed(2);
-            const gratiNeta = gratiBruta - faltasMonto - noComputable;
-
-            const bonifPct = SALUD_PORC[p.sistema_salud] ?? 0.09;
-            const bonificacion = +(gratiNeta * bonifPct).toFixed(2);
-
-            const renta5ta = 0,
-              adelantos = 0;
-            const total = +(
-              gratiNeta +
-              bonificacion -
-              (renta5ta + adelantos)
-            ).toFixed(2);
-
-            return {
-              tipo_contrato: p.tipo_contrato,
-              regimen: p.regimen,
-              fecha_inicio: p.fecha_inicio, // NUEVO CAMPO
-              fecha_fin: ultimaFechaFinContrato,
-              meses: p.meses,
-              factor: p.factor,
-              sistema_salud: p.sistema_salud,
-              sueldo_base: p.sueldo_base,
-              asignacion_familiar: asignacionFamiliar,
-              promedio_horas_extras: promedioHorasExtras,
-              promedio_bono_obra: promedioBonoObra,
-              rc: RC,
-              gratificacion_bruta: gratiBruta,
-              faltas_dias: faltasDias,
-              faltas_monto: faltasMonto,
-              no_computable: noComputable,
-              gratificacion_neta: gratiNeta,
-              bonificacion_extraordinaria: bonificacion,
-              renta_5ta: renta5ta,
-              adelantos,
-              total,
-            };
-          });
-
-          // 3) Consolidado (sumas de partes)
-          const sum = (k) => partes.reduce((a, x) => a + Number(x[k] || 0), 0);
-          const consolidado = {
-            meses_computables: totalMeses,
-            gratificacion_bruta: +sum("gratificacion_bruta").toFixed(2),
-            gratificacion_neta: +sum("gratificacion_neta").toFixed(2),
-            bonificacion_extraordinaria: +sum(
-              "bonificacion_extraordinaria"
-            ).toFixed(2),
-            total: +sum("total").toFixed(2),
-          };
-
-          return {
-            tipo_documento: trabajador.tipo_documento,
-            numero_documento: trabajador.numero_documento,
-            nombres: trabajador.nombres,
-            apellidos: trabajador.apellidos,
-            //detalle_mensual: detalleMensual,   // opcional para auditoría/UI
-            partes_por_regimen: partes, // <-- aquí tienes MYPE vs GENERAL separados
-            consolidado,
-          };
-        }
-      )
-    );
-
-    // Si quieres seguir separando por tipo de contrato (planilla/honorario),
-    // puedes mirar en cada fila sus partes_por_regimen[*].tipo_contrato,
-    // y clonar la lógica de resúmenes que ya tenías.
-
-    const listaTrabajadores = mapearParaReporteGratificaciones(filas);
-
-    const listaTrabajadoresPlanilla = listaTrabajadores.filter(
-      (trabajador) => trabajador.tipo_contrato == "PLANILLA"
-    );
-    const listaTrabajadoresHonorarios = listaTrabajadores.filter(
-      (trabajador) => trabajador.tipo_contrato == "HONORARIO"
-    );
-
-    const totalesPlanilla = calcularResumenGratificaciones(
-      listaTrabajadoresPlanilla
-    );
-    const totalesHonorarios = calcularResumenGratificaciones(
-      listaTrabajadoresHonorarios
-    );
-
-    return {
-      planilla: {
-        trabajadores: listaTrabajadoresPlanilla,
-        totales: listaTrabajadoresPlanilla.length > 0 ? totalesPlanilla : null,
-      },
-      honorarios: {
-        trabajadores: listaTrabajadoresHonorarios,
-        totales:
-          listaTrabajadoresHonorarios.length > 0 ? totalesHonorarios : null,
-      },
-    };
+    return await calcularComponentesGratificaciones(
+      contratos,
+      periodo,
+      anio,
+      dataMantenimiento
+    )
   }
+
+  async insertarCierreGratificacion(data, transaction = null) {
+    const options = {};
+    if (transaction) {
+      options.transaction = transaction;
+    }
+
+    const cierreGratificacion = await CierreGratificacion.create(data, options);
+    return cierreGratificacion;
+  }
+
+  async insertarVariasGratificaciones(data, transaction = null) {
+    const options = {};
+    if (transaction) {
+      options.transaction = transaction;
+    }
+
+    const gratificaciones = await Gratificacion.bulkCreate(data, options);
+    return gratificaciones;
+  }
+
+  async insertarUnaGratificacion(data, transaction = null) {
+    const options = {};
+    if (transaction) {
+      options.transaction = transaction;
+    }
+
+    const gratificacion = await Gratificacion.create(data, options);
+    return gratificacion;
+  }
+
+  async obtenerCierreGratificacion(
+    periodo,
+    anio,
+    filial_id,
+    transaction = null
+  ) {
+    let periodoBuscar;
+    switch (periodo) {
+      case "JULIO":
+        periodoBuscar = `${anio}-07`;
+        break;
+      case "DICIEMBRE":
+        periodoBuscar = `${anio}-12`;
+        break;
+
+      default:
+        break;
+    }
+    const cierreGratificacion = await CierreGratificacion.findOne({
+      where: { periodo: periodoBuscar, filial_id },
+      transaction,
+    });
+    return cierreGratificacion;
+  }
+
+  async obtenerGratificacionPorTrabajador(
+    periodo,
+    anio,
+    filial_id,
+    trabajador_id,
+    transaction = null
+  ) {
+    let periodoBuscar;
+    switch (periodo) {
+      case "JULIO":
+        periodoBuscar = `${anio}-07`;
+        break;
+      case "DICIEMBRE":
+        periodoBuscar = `${anio}-12`;
+        break;
+
+      default:
+        break;
+    }
+    const gratificacionPorTrabajador = await Gratificacion.findOne({
+      where: { trabajador_id, periodo: periodoBuscar, filial_id },
+      transaction,
+    });
+
+    return gratificacionPorTrabajador;
+  }
+
+  async actualizarCierreGratificacion(cierre_id, data, transaction = null) {
+    const options = {};
+    if (transaction) {
+      options.transaction = transaction;
+    }
+    const cierreGratificacion = await CierreGratificacion.update(
+      data,
+      { where: { id: cierre_id } },
+      options
+    );
+    return cierreGratificacion;
+  }
+
+  async calcularGratificacionTruncaPorTrabajador(periodo, anio, filial_id, trabajador_id, transaction = null) {
+    
+    console.log({
+      periodo, anio, filial_id, trabajador_id
+    });
+
+    const MONTO_ASIGNACION_FAMILIAR = Number(
+      (
+        await dataMantenimientoRepository.obtenerPorCodigo(
+          "valor_asignacion_familiar"
+        )
+      ).valor
+    );
+    console.log("MONTO_ASIGNACION_FAMILIAR", MONTO_ASIGNACION_FAMILIAR);
+
+    const MONTO_FALTA_POR_DIA = Number(
+      (await dataMantenimientoRepository.obtenerPorCodigo("valor_falta")).valor
+    );
+    console.log("MONTO_FALTA_POR_DIA", MONTO_FALTA_POR_DIA);
+
+    const MONTO_POR_HORA_EXTRA = Number(
+      (await dataMantenimientoRepository.obtenerPorCodigo("valor_hora_extra"))
+        .valor
+    );
+    console.log("MONTO_POR_HORA_EXTRA", MONTO_POR_HORA_EXTRA);
+
+    const MONTO_NO_COMPUTABLE = Number(
+      (
+        await dataMantenimientoRepository.obtenerPorCodigo(
+          "valor_no_computable"
+        )
+      ).valor
+    );
+    console.log("MONTO_NO_COMPUTABLE", MONTO_NO_COMPUTABLE);
+
+    const PORCENTAJE_BONIFICACION_ESSALUD = Number(
+      (
+        await dataMantenimientoRepository.obtenerPorCodigo(
+          "valor_bonificacion_essalud"
+        )
+      ).valor
+    );
+    console.log(
+      "PORCENTAJE_BONIFICACION_ESSALUD",
+      PORCENTAJE_BONIFICACION_ESSALUD
+    );
+
+    const PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO = Number(
+      (
+        await dataMantenimientoRepository.obtenerPorCodigo(
+          "valor_desc_quinta_categoria_no_domiciliado"
+        )
+      ).valor
+    );
+
+    console.log(
+      "PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO",
+      PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO
+    );
+
+    const dataMantenimiento = {
+      MONTO_ASIGNACION_FAMILIAR,
+      MONTO_FALTA_POR_DIA,
+      MONTO_POR_HORA_EXTRA,
+      MONTO_NO_COMPUTABLE,
+      PORCENTAJE_BONIFICACION_ESSALUD,
+      PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO,
+    }
+
+    const contratos = await db.contratos_laborales.findAll({
+      where: {
+        filial_id: filial_id,
+        trabajador_id: trabajador_id,
+        estado: true,
+        tipo_contrato: "PLANILLA",
+      },
+      include: [
+        {
+          model: db.trabajadores,
+          as: "trabajador",
+        },
+      ],
+      raw: false,
+      transaction,
+    });
+
+    return await calcularComponentesGratificaciones(
+      contratos,
+      periodo,
+      anio,
+      dataMantenimiento,
+    )
+  }
+
+  
+  
 }
 
-module.exports = SequelizeFilialRepository; // Exporta la clase para que pueda ser utilizada en otros módulos
+module.exports = SequelizeGratificacionRepository; // Exporta la clase para que pueda ser utilizada en otros módulos

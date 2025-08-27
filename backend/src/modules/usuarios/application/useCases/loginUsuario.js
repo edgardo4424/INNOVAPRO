@@ -28,7 +28,7 @@ module.exports = async (datoslogin, usuarioRepository ) => {
     const token = jwt.sign(
         { id: usuario.id, rol: usuario.rol },
         process.env.JWT_SECRET, // Usamos la variable de entorno para la clave secreta del token
-        { expiresIn: '8h' } // El token expirará en 8 horas
+        { expiresIn: process.env.EXPIRE_IN } // El token expirará en 8 horas
     )
 
     return { codigo: 200, respuesta: { token, usuario: { id: usuario.id, nombre: usuario.nombre, email: usuario.email,id_chat:usuario.id_chat, rol: usuario.rol } } }; // Retornamos el token y los datos del usuario

@@ -51,28 +51,8 @@ import {
 } from "lucide-react";
 import beneficiosService from "../services/beneficiosService";
 import { toast } from "sonner";
-
-// --------- helpers ----------
-const formatMoney = (v) =>
-   Number(v ?? 0).toLocaleString("es-PE", {
-      style: "currency",
-      currency: "PEN",
-      minimumFractionDigits: 2,
-   });
-
-const formatDate = (iso) => {
-   try {
-      const d = new Date(iso);
-      if (Number.isNaN(d.getTime())) return iso;
-      return d.toLocaleDateString("es-PE", {
-         year: "numeric",
-         month: "2-digit",
-         day: "2-digit",
-      });
-   } catch {
-      return iso;
-   }
-};
+import { formatoDinero } from "../utils/formatoDinero";
+import { formatoFechaBeneficios } from "../utils/formatoFechaBeneficios";
 
 const GestionAdelantoSueldo = () => {
    const [adelantoSueldos, setAdelantoSueldos] = useState([]);
@@ -90,6 +70,7 @@ const GestionAdelantoSueldo = () => {
       monto: "",
       observacion: "",
       estado: true,
+      tipo: "",
    });
 
    const fetchAdelantoSueldos = async () => {
@@ -97,11 +78,9 @@ const GestionAdelantoSueldo = () => {
          setLoading(true);
          const res = await beneficiosService.getAdelantos();
          const trab = await beneficiosService.getTrabajadores();
-         setTrabajadores(trab.data);
          const raw = res?.data?.adelantos_sueldo ?? res?.data ?? [];
          const list = Array.isArray(raw) ? raw : [raw];
-         console.log(list);
-
+         setTrabajadores(trab.data);
          setAdelantoSueldos(list);
       } catch (e) {
          console.log(e);
@@ -139,6 +118,7 @@ const GestionAdelantoSueldo = () => {
          monto: "",
          observacion: "",
          estado: true,
+         tipo: "",
       });
       setDialogOpen(true);
    };
@@ -152,6 +132,7 @@ const GestionAdelantoSueldo = () => {
          monto: String(adelanto.monto ?? ""),
          observacion: adelanto.observacion ?? "",
          estado: Boolean(adelanto.estado),
+         tipo: adelanto.tipo ?? "",
       });
       setDialogOpen(true);
    };
@@ -165,6 +146,7 @@ const GestionAdelantoSueldo = () => {
          monto: String(adelanto.monto ?? ""),
          observacion: adelanto.observacion ?? "",
          estado: Boolean(adelanto.estado),
+         tipo: adelanto.tipo ?? "",
       });
       setDialogOpen(true);
    };
@@ -178,23 +160,24 @@ const GestionAdelantoSueldo = () => {
             fecha: form.fecha,
             monto: Number(form.monto || 0),
             observacion: form.observacion,
+            tipo: form.tipo,
          };
          if (viewMode === "crear") {
-            console.log(payload);
-            
             await beneficiosService.crearAdelantoSaldo(payload);
-            toast.success('Adelanto de sueldo agregado.')            
-         } else if (viewMode === "editar" && editing) { 
-            payload.id=editing.id;                       
-           beneficiosService.editarAdelantoSueldo(payload);
-           toast.success('Trabajador editado. ')
-           
+            toast.success("Adelanto de sueldo agregado.");
+         } else if (viewMode === "editar" && editing) {
+            payload.id = editing.id;
+            beneficiosService.editarAdelantoSueldo(payload);
+            toast.success("Trabajador editado. ");
          }
          setDialogOpen(false);
          await fetchAdelantoSueldos();
       } catch (e) {
-        console.log(e);
-        
+         toast.error(
+            e?.response?.data?.message ??
+               e?.message ??
+               "No se pudo guardar el adelanto de sueldo"
+         );
       }
    };
 
@@ -202,10 +185,9 @@ const GestionAdelantoSueldo = () => {
       try {
          await beneficiosService.eliminarAdelantoSueldo(adelanto.id);
          await fetchAdelantoSueldos();
-         toast.success('Adelanto de sueldo eliminado.')
+         toast.success("Adelanto de sueldo eliminado.");
       } catch (e) {
-        console.log(e);
-        
+         console.log(e);
       }
    };
 
@@ -223,7 +205,10 @@ const GestionAdelantoSueldo = () => {
                   </p>
                </div>
                <div className="flex gap-2">
-                  <Button onClick={openCreate} className="bg-innova-blue hover:bg-innova-blue/90">
+                  <Button
+                     onClick={openCreate}
+                     className="bg-innova-blue hover:bg-innova-blue/90"
+                  >
                      Nuevo Adelanto <PlusCircle className="ml-2 h-5 w-5" />
                   </Button>
                </div>
@@ -251,6 +236,7 @@ const GestionAdelantoSueldo = () => {
                            </th>
                            <th className="px-4 py-3 font-medium">Fecha</th>
                            <th className="px-4 py-3 font-medium">Monto</th>
+                           <th className="px-4 py-3 font-medium">Tipo</th>
                            <th className="px-4 py-3 font-medium">
                               Observación
                            </th>
@@ -296,10 +282,16 @@ const GestionAdelantoSueldo = () => {
                                        {t.numero_documento ?? "-"}
                                     </td>
                                     <td className="px-4 py-3">
-                                       {formatDate(b.fecha)}
+                                       {formatoFechaBeneficios(b.fecha)}
                                     </td>
                                     <td className="px-4 py-3">
-                                       {formatMoney(b.monto)}
+                                       {formatoDinero(b.monto)}
+                                    </td>
+                                    <td
+                                       className="px-4 py-3 max-w-[320px] truncate"
+                                       title={b.tipo ?? ""}
+                                    >
+                                       {b.tipo ?? "-"}
                                     </td>
                                     <td
                                        className="px-4 py-3 max-w-[320px] truncate"
@@ -307,6 +299,7 @@ const GestionAdelantoSueldo = () => {
                                     >
                                        {b.observacion ?? "-"}
                                     </td>
+
                                     <td className="px-4 py-3">
                                        <div className="flex justify-end">
                                           <DropdownMenu>
@@ -415,9 +408,9 @@ const GestionAdelantoSueldo = () => {
                      </DialogDescription>
                   </DialogHeader>
 
-                  <div className="space-y-4">
+                  <div className="space-y-2">
                      {/* Trabajador */}
-                     <div className="grid gap-2">
+                     <div className="grid gap-1">
                         <Label>Trabajador</Label>
                         <Select
                            value={form.trabajador_id}
@@ -443,8 +436,33 @@ const GestionAdelantoSueldo = () => {
                         </Select>
                      </div>
 
+                     {/* Tipo de adelanto de sueldo */}
+                     <div className="grid gap-1">
+                        <Label>Tipo de adelanto</Label>
+                        <Select
+                           value={form.tipo}
+                           onValueChange={(val) =>
+                              setForm((prevForm) => ({
+                                 ...prevForm,
+                                 tipo: val,
+                              }))
+                           }
+                        >
+                           <SelectTrigger className={"w-full"}>
+                              <SelectValue placeholder="Selecciona el tipo de adelanto" />
+                           </SelectTrigger>
+                           <SelectContent>
+                              <SelectItem value={"simple"}>Simple</SelectItem>
+                              <SelectItem value={"gratificacion"}>
+                                 Gratificación
+                              </SelectItem>
+                              <SelectItem value={"cts"}>CTS</SelectItem>
+                           </SelectContent>
+                        </Select>
+                     </div>
+
                      {/* Fecha */}
-                     <div className="grid gap-2">
+                     <div className="grid gap-1">
                         <Label>Fecha</Label>
                         <Input
                            type="date"
@@ -457,7 +475,7 @@ const GestionAdelantoSueldo = () => {
                      </div>
 
                      {/* Monto */}
-                     <div className="grid gap-2">
+                     <div className="grid gap-1">
                         <Label>Monto (PEN)</Label>
                         <Input
                            type="number"
@@ -471,13 +489,13 @@ const GestionAdelantoSueldo = () => {
                         />
                         {form.monto && (
                            <p className="text-xs text-gray-500">
-                              Prevista: {formatMoney(form.monto)}
+                              Prevista: {formatoDinero(form.monto)}
                            </p>
                         )}
                      </div>
 
                      {/* Observación */}
-                     <div className="grid gap-2">
+                     <div className="grid gap-1">
                         <Label>Observación</Label>
                         <Textarea
                            placeholder="Motivo del adelanto de sueldo..."

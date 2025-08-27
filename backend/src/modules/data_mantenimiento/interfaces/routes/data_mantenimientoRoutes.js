@@ -9,6 +9,7 @@ router.use(verificarToken); // Verificamos el token y el rol de Gerente para tod
 // 📌 Rutas protegidas solo para Gerencia
 router.get("/", dataMantenimientoController.obtenerDataMantenimiento);
 router.get("/:id", dataMantenimientoController.obtenerDataMantenimientoPorId);
-router.put("/:id", dataMantenimientoController.actualizarDataMantenimiento)
+router.get("/codigo/:codigo", dataMantenimientoController.obtenerDataMantenimientoPorCodigo);
+router.put("/:id", dataMantenimientoController.actualizarDataMantenimiento);
 
 module.exports = router;

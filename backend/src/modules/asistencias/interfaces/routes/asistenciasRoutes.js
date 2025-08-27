@@ -11,4 +11,6 @@ router.post("/", AsistenciaController.crearAsistencia);
 router.put("/", AsistenciaController.actualizarAsistencia);
 router.post("/simple", AsistenciaController.crearAsistenciaSimple);
 router.put("/simple", AsistenciaController.actualizarAsistenciaSimple);
+router.post("/faltas-por-trabajador", AsistenciaController.obtenerFaltasPorRangoFecha);
+
 module.exports = router;

@@ -1,11 +1,12 @@
-const { obtenerUltimaFechaFin } = require("./calcularMesesComputablesSemestre");
 
 function mapearParaReporteGratificaciones(trabajadoresRaw) {
+
   return trabajadoresRaw.flatMap(t => {
 
     return t.partes_por_regimen.map(parte => {
 
       const fila = {
+        trabajador_id: t.trabajador_id,
         tipo_documento: t.tipo_documento,
         numero_documento: t.numero_documento,
         nombres: t.nombres,
@@ -23,10 +24,10 @@ function mapearParaReporteGratificaciones(trabajadoresRaw) {
         gratificacion_semestral: parte.gratificacion_bruta.toFixed(2),
         falta_dias: (parte.faltas_dias || 0).toString(),
         falta_importe: (-parte.faltas_monto).toFixed(2),
-        no_computable: (t.no_computable || 0).toFixed(2),
+        no_computable: (parte.no_computable || 0).toFixed(2),
         grat_despues_descuento: parte.gratificacion_neta.toFixed(2),
         bonificac_essalud: parte.bonificacion_extraordinaria.toFixed(2),
-        rent_quint_cat: (parte.renta_5ta || 0).toFixed(2),
+        rent_quint_cat_no_domiciliado: (parte.renta_5ta || 0).toFixed(2),
         mont_adelanto: (parte.adelantos || 0).toFixed(2),
         total_a_pagar: parte.total.toFixed(2)
       };

@@ -4,19 +4,6 @@ const sequelize = require("../../../../config/db");
 const Trabajador = sequelize.define(
    "trabajadores",
    {
-      id: {
-         type: DataTypes.INTEGER,
-         autoIncrement: true,
-         primaryKey: true,
-      },
-      filial_id: {
-         type: DataTypes.INTEGER,
-         allowNull: false,
-         references: {
-            model: "empresas_proveedoras",
-            key: "id",
-         },
-      },
       cargo_id: {
          type: DataTypes.INTEGER,
          allowNull: false,
@@ -46,8 +33,8 @@ const Trabajador = sequelize.define(
          allowNull: false,
       },
       asignacion_familiar: {
-         type: DataTypes.BOOLEAN,
-         allowNull: false,
+         type: DataTypes.DATEONLY,
+         allowNull: true,
       },
       sistema_pension: {
          type: DataTypes.ENUM("AFP", "ONP"),
@@ -61,6 +48,11 @@ const Trabajador = sequelize.define(
          type: DataTypes.ENUM("activo", "inactivo"),
          allowNull: false,
          defaultValue: "activo",
+      },
+      domiciliado: {
+         type: DataTypes.BOOLEAN,
+         allowNull: false,
+         defaultValue: false,
       },
    },
    {
@@ -89,10 +81,6 @@ Trabajador.associate = (models) => {
    Trabajador.hasMany(models.adelanto_sueldo, {
       foreignKey: "trabajador_id",
       as: "adelanto_sueldo",
-   });
-   Trabajador.belongsTo(models.empresas_proveedoras, {
-      foreignKey: "filial_id",
-      as: "empresa_proveedora",
    });
    Trabajador.belongsTo(models.cargos, {
       foreignKey: "cargo_id",

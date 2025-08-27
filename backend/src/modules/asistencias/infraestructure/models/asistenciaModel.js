@@ -18,7 +18,7 @@ const Asistencia = sequelize.define(
          },
       },
       fecha: {
-         type: DataTypes.DATE,
+         type: DataTypes.DATEONLY,
          allowNull: false,
       },
       horas_trabajadas: {
@@ -30,7 +30,7 @@ const Asistencia = sequelize.define(
          allowNull: true,
       },
       estado_asistencia: {
-         type: DataTypes.ENUM("presente", "falto", "tardanza","permiso","licencia","vacaciones","falta-justificada"),
+         type: DataTypes.ENUM("presente", "falto", "tardanza","permiso","licencia_sin_goce","licencia_con_goce","vacaciones","falta-justificada"),
          allowNull: false,
       },
    },

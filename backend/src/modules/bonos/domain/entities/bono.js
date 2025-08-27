@@ -1,10 +1,11 @@
 class Bono {
-   constructor({ id, trabajador_id, fecha, monto, observacion }) {
+   constructor({ id, trabajador_id, fecha, monto, observacion, tipo }) {
       this.id = id;
       this.trabajador_id = trabajador_id;
       this.fecha = fecha;
       this.monto = monto;
       this.observacion = observacion;
+      this.tipo = tipo;
    }
    validarCamposObligatorios(editar = false) {
       let errores = [];
@@ -12,9 +13,10 @@ class Bono {
          if (!this.id) {
             errores.push("Datos incompletos");
          }
-      }
-      if (!this.trabajador_id) {
-         errores.push("El campo 'trabajador_id' es obligatorio.");
+      } else {
+         if (!this.trabajador_id) {
+            errores.push("El campo 'trabajador_id' es obligatorio.");
+         }
       }
       if (!this.fecha) {
          errores.push("El campo 'fecha' es obligatorio.");
@@ -24,6 +26,10 @@ class Bono {
       } else if (isNaN(this.monto) || this.monto <= 0) {
          errores.push("El campo 'monto' debe ser un número positivo.");
       }
+      const options = ["simple", "bono_nocturno", "escolaridad"];
+      if (!options.includes(this.tipo)) {
+         errores.push("El tipo de bono no existe");
+      }
       return errores;
    }
    construirDatosBono(editar = false) {
@@ -31,11 +37,12 @@ class Bono {
          fecha: this.fecha,
          monto: this.monto,
          observacion: this.observacion,
+         tipo: this.tipo,
       };
       if (editar) {
          data.bono_id = this.id;
-      } else{
-         data.trabajador_id= this.trabajador_id
+      } else {
+         data.trabajador_id = this.trabajador_id;
       }
       return data;
    }

@@ -64,6 +64,9 @@ const GestionCondiciones = lazy(() =>
 const GestionStockPiezas = lazy(() =>
    import("../modules/stockPiezas/pages/GestionStockPiezas")
 );
+const GestionCts = lazy(() =>
+   import("../modules/cts/pages/GestionCts")
+);
 
 //* Facturacion
 
@@ -94,9 +97,13 @@ const GestionGratificacion = lazy(() =>
    import("../modules/gratificacion/pages/GestionGratificacion")
 );
 
+
 //* Facturacion
 const CalculoQuintaCategoria = lazy(() =>
    import("../modules/retenciones/pages/CalculoQuintaCategoria")
+
+const GestionDataMantenimiento = lazy(() =>
+   import("../modules/dataMantenimiento/pages/GestionDataMantenimiento")
 );
 
 
@@ -152,6 +159,11 @@ export default function AppRoutes() {
                         <Route
                            path="vacaciones"
                            element={<GestionVacaciones />}
+                        />
+
+                        <Route
+                           path="data-mantenimiento"
+                           element={<GestionDataMantenimiento />}
                         />
                      </Route>
 
@@ -312,7 +324,7 @@ export default function AppRoutes() {
                         </Route>
                         <Route element={<RoleGuard roles={["Gerencia"]} />}>
                            <Route
-                              path="planilla"
+                              path="planilla-semanal"
                               element={<PlanillaEnConstruccion />}
                            />
                         </Route>
@@ -326,7 +338,7 @@ export default function AppRoutes() {
 
                            <Route path="bonos" element={<GestionBonos />} />
                            <Route path="adelanto-sueldo" element={<GestionAdelantoSueldo />} />
-
+                           <Route path="gestion-cts" element={<GestionCts/>}/>
 
                            <Route
                               path="gratificacion"
