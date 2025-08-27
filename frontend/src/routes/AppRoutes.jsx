@@ -24,15 +24,6 @@ import {
 import ProtectedRoute from "./ProtectedRoute";
 import RoleGuard from "./rol.guard";
 
-import LoaderInnova from "@/shared/components/LoaderInnova";
-import { WizardProvider } from "@/modules/cotizaciones/context/WizardCotizacionContext";
-import GestionTrabajadores from "@/modules/trabajadores/pages/GestionTrabajadores";
-import GestionAsistencia from "@/modules/asistencia/pages/GestionAsistencia";
-import PlanillaEnConstruccion from "@/modules/planilla/pages/planilla";
-import GestionVacaciones from "@/modules/Beneficios/Pages/GestionVacaciones";
-import GestionBonos from "@/modules/Beneficios/Pages/GestionBonos";
-import EditarTrabajador from "@/modules/trabajadores/pages/EditarTrabajador";
-import GestionAdelantoSueldo from "@/modules/Beneficios/Pages/GestionAdelantosSueldo";
 import PlanillaQuincenal from "@/modules/planilla/pages/PlanillaQuincenal";
 
 // Lazy load components
@@ -118,7 +109,7 @@ const GestionGratificacion = lazy(() =>
 
 //* Facturacion
 const CalculoQuintaCategoria = lazy(() =>
-   import("../modules/retenciones/pages/CalculoQuintaCategoria")
+   import("../modules/retenciones/pages/CalculoQuintaCategoria"))
 
 const GestionDataMantenimiento = lazy(() =>
    import("../modules/dataMantenimiento/pages/GestionDataMantenimiento")
