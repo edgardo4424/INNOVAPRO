@@ -57,10 +57,10 @@ class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository 
         cl.fecha_fin,
         cl.fecha_terminacion_anticipada,
         cl.estado AS estado_contrato,
+        cl.filial_id,
         t.numero_documento,
-        t.filial_id,
         t.estado AS estado_trabajador,
-        (dm.valor * t.asignacion_familiar) AS valor_asignacion_familiar
+        (CASE WHEN t.asignacion_familiar IS NULL THEN 0 ELSE dm.valor END) AS valor_asignacion_familiar
       FROM contratos_laborales cl
       JOIN trabajadores t ON t.id = cl.trabajador_id
       CROSS JOIN (
