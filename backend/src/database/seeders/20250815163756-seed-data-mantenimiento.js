@@ -124,7 +124,16 @@ module.exports = {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
-        
+        {
+          id: 13,
+          codigo: "deduccion_fija_uit",
+          nombre: "Deducción Fija UIT",
+          descripcion:
+            "Deducción fija para trabajadores",
+          valor: 7.0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
       ],
       {}
     );
