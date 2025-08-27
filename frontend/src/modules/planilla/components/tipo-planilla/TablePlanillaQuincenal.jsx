@@ -1,0 +1,104 @@
+
+import { useState } from "react";
+
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+import { Search } from "lucide-react";
+import RowPlanillaQuincenal from "./RowPlanillaQuincenal";
+import RowTotalPlanillaQuincenal from "./RowTotalPlanillaQuincenal";
+
+/* import RowGratificacion from "@/modules/gratificacion/components/RowGratificacion";
+import RowTotalGratificacion from "@/modules/gratificacion/components/RowTotalGratificacion"; */
+
+const TablePlanillaQuincenal = ({ planillaQuincenalTipoPlanilla, total }) => {
+
+
+  console.log('planillaQuincenalTipoPlanilla', planillaQuincenalTipoPlanilla);
+  const [filtro, setFiltro] = useState("");
+ 
+  // Filtrar por nombres y apellidos (case-insensitive)
+  const filtrarTrabajadores = (trabajadores) =>
+    trabajadores.filter((t) =>
+        `${t.nombres} ${t.apellidos}`
+               .toLowerCase().toLowerCase().includes(filtro?.toLowerCase())
+    );
+
+
+  return (
+    <div className="w-full overflow-x-auto p-5 mb-10 flex flex-col bg-gray-100 border-2 rounded-xl shadow-xl">
+      <h1 className="text-2xl font-bold pb-6">Planilla</h1>
+      <div className="relative">
+        <Input
+          type="search"
+          className="block w-full appearance-none px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Buscar por nombres"
+          value={filtro}
+          onChange={(e) => setFiltro(e.target.value)}
+        />
+        <Search className="absolute right-3 top-1 text-gray-400" />
+      </div>
+
+      <div className="py-4">
+        <Table>
+          {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
+          <TableHeader>
+            <TableRow className={"bg-gray-800 text-xs "}>
+              {/* Estas celdas abarcan 2 filas porque no tienen sub-encabezados */}
+               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Tipo Doc</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">N° Doc</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Nombres y Apellidos</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Dias Laborados</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Base</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Quincenal</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Asig. Fam.</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Bruto</TableHead>
+
+              {/* Grupo DESCUENTOS AL TRABAJADOR ocupa 6 columnas */}
+              <TableHead colSpan={6} className="text-center border-r h-5 text-white border-black">DESCUENTOS AL TRABAJADOR</TableHead>
+
+              {/* El resto también va con rowSpan */}
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Total Descuentos</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Neto</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Total a Pagar</TableHead>
+            </TableRow>
+
+            {/* Sub-encabezados del grupo FALTAS */}
+            <TableRow className={"bg-gray-800 text-xs "}>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">ONP</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">EPS Primera Quincena</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">AFP Ap. Oblig</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Seguro</TableHead>
+              {/* <TableHead rowSpan={2} className="text-center border-r text-white border-black">Comisión</TableHead> */}
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">5ta Categ.</TableHead>
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {/* Render Trabajadores Planilla */}
+            {planillaQuincenalTipoPlanilla.length > 0 && (
+              <>
+                
+                 {filtrarTrabajadores(planillaQuincenalTipoPlanilla).map((e, index) => (
+                  <RowPlanillaQuincenal key={index} e={e} index={index} />
+                ))}
+                {/* <RowTotalPlanillaQuincenal total={total} /> */}
+              </>
+            )}
+
+           
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  );
+};
+
+export default TablePlanillaQuincenal;

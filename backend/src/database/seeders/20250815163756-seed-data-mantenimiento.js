@@ -18,24 +18,6 @@ module.exports = {
         },
         {
           id: 2,
-          codigo: "valor_seguro",
-          nombre: "Porcentaje de Seguro",
-          descripcion: "Porcentaje aplicado para calcular el seguro de salud.",
-          valor: 1.37,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          id: 3,
-          codigo: "valor_afp",
-          nombre: "Porcentaje AFP",
-          descripcion: "Tasa aplicada para el descuento de AFP del trabajador.",
-          valor: 10.0,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          id: 4,
           codigo: "valor_onp",
           nombre: "Porcentaje ONP",
           descripcion:
@@ -44,8 +26,38 @@ module.exports = {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
+         {
+          id: 3,
+          codigo: "valor_eps",
+          nombre: "Descuento EPS",
+          descripcion:
+            "Porcentaje aplicado por EPS al trabajador",
+          valor: 2.25,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 4,
+          codigo: "valor_afp",
+          nombre: "Porcentaje AFP",
+          descripcion: "Tasa aplicada para el descuento de AFP del trabajador.",
+          valor: 10.0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
         {
           id: 5,
+          codigo: "valor_seguro",
+          nombre: "Porcentaje de Seguro",
+          descripcion: "Porcentaje aplicado para calcular el seguro de salud.",
+          valor: 1.37,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        
+        
+        {
+          id: 6,
           codigo: "valor_asignacion_familiar",
           nombre: "Asignación Familiar",
           descripcion:
@@ -55,7 +67,7 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          id: 6,
+          id: 7,
           codigo: "valor_hora_extra",
           nombre: "Monto por Hora Extra",
           descripcion: "Remuneración adicional por cada hora extra trabajada.",
@@ -64,7 +76,7 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          id: 7,
+          id: 8,
           codigo: "valor_desc_quinta_categoria",
           nombre: "Descuento Quinta Categoría",
           descripcion: "Porcentaje de impuesto a la renta de quinta categoría.",
@@ -73,7 +85,7 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          id: 8,
+          id: 9,
           codigo: "valor_no_computable",
           nombre: "Monto No Computable",
           descripcion:
@@ -83,7 +95,7 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          id: 9,
+          id: 10,
           codigo: "valor_falta",
           nombre: "Monto por Falta",
           descripcion:
@@ -93,7 +105,7 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          id: 10,
+          id: 11,
           codigo: "valor_bonificacion_essalud",
           nombre: "Valor Bonificación ESSALUD",
           descripcion:
@@ -103,7 +115,7 @@ module.exports = {
           updatedAt: new Date(),
         },
          {
-          id: 11,
+          id: 12,
           codigo: "valor_desc_quinta_categoria_no_domiciliado",
           nombre: "Valor Renta 5ta / No domiciliado",
           descripcion:
@@ -112,6 +124,7 @@ module.exports = {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
+        
       ],
       {}
     );

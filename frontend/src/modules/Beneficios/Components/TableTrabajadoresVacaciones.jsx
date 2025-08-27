@@ -76,11 +76,11 @@ const TableTrabajadoresVacaciones = ({ filteredEmployees }) => {
                               <Tooltip>
                                  <TooltipTrigger asChild>
                                     <div className="truncate text-sm lowercase">
-                                       {filialActual.razon_social}
+                                       {filialActual?.razon_social}
                                     </div>
                                  </TooltipTrigger>
                                  <TooltipContent>
-                                    {filialActual.razon_social}
+                                    {filialActual?.razon_social}
                                  </TooltipContent>
                               </Tooltip>
                            </TooltipProvider>
