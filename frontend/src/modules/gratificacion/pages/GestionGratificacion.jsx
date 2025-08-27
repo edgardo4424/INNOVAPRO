@@ -1,24 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LoaderCircle } from "lucide-react";
 import Filtro from "../components/Filtro";
-import ListaGratificacion from "../components/ListaGratificacion";
+import TableGratificacion from "../components/TableGratificacion";
 import gratificacionService from "../services/gratificacionService";
 import { viGratificacion } from "../utils/valorInicial";
 import { format } from "date-fns";
 
 const GestionGratificacion = () => {
+
+     const [filiales, setFiliales] = useState([])
+
     // ?? loading
     const [loading, setLoading] = useState(false);
 
     // ?? Data
     const [gratificacion, setGratificacion] = useState(viGratificacion);
-    const [filtroGratificacion, setFiltroGratificacion] = useState(viGratificacion);//* Data Filtrada
 
     const periodo = format(new Date(), 'MM-dd') < '07-17' ? 'JULIO' : 'DICIEMBRE'
     
     // ?? Filtro para la peticion
     const [filtro, setFiltro] = useState({
-        anio: (new Date().getFullYear())+"", periodo: periodo, filial_id: "1" 
+        anio: (new Date().getFullYear())+"", periodo: periodo, filial_id: "1"
     });
 
     const buscarGratificacion = async () => {
@@ -26,13 +28,27 @@ const GestionGratificacion = () => {
             setLoading(true);
             const res = await gratificacionService.obtenerGratificaciones(filtro);
             setGratificacion(res)
-            setFiltroGratificacion(res);
         } catch (error) {
         }
         finally {
             setLoading(false);
         }
     };
+
+
+  useEffect(() => {
+    const obtenerFiliales = async () => {
+      try {
+        const res = await gratificacionService.obtenerFiliales();
+        console.log("res", res);
+        setFiliales(res);
+        setFiltro({ ...filtro, filial_id: res?.[0]?.id });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    obtenerFiliales();
+  }, []);
 
     return (
         <div className="min-h-full flex-1  flex flex-col items-center">
@@ -41,7 +57,7 @@ const GestionGratificacion = () => {
                     <h2 className=" text-2xl md:text-3xl font-bold text-gray-800 !text-start">
                         Gestión de Gratificaciones
                     </h2>
-                    <Filtro filtro={filtro} setFiltro={setFiltro} Buscar={buscarGratificacion} />
+                    <Filtro filiales={filiales} filtro={filtro} setFiltro={setFiltro} Buscar={buscarGratificacion} />
                 </div>
             </div>
             {loading ? (
@@ -54,7 +70,7 @@ const GestionGratificacion = () => {
             ) : (
                 gratificacion ? (
                     <div className="w-full px-7 ">
-                        <ListaGratificacion gratificacion={filtroGratificacion} />
+                        <TableGratificacion gratificacion={gratificacion} />
                     </div>
                 ) : (
                     <div className="w-full px-20  max-w-8xl min-h-[50vh] flex items-center">

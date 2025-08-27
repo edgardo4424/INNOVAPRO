@@ -7,11 +7,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { Check, Funnel, RotateCcw } from "lucide-react";
+import { Check, Funnel } from "lucide-react";
 
 const Filtro = ({ filiales, filtro, setFiltro, Buscar }) => {
- 
 
+  
   return (
     <div className=" pt-8 flex gap-x-5  bg-red-">
       <div className="flex flex-col items-center justify-between w-full gap-x-5 border-2 border-gray-300 p-4 rounded-2xl">
@@ -27,7 +27,35 @@ const Filtro = ({ filiales, filtro, setFiltro, Buscar }) => {
                     </div> */}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-7  w-full gap-4">
-          {/* Select de año */}
+         
+          {/* Select del mes */}
+          <div className="md:col-span-2">
+            <Select
+              name="periodo"
+              value={filtro.periodo}
+              onValueChange={(v) => setFiltro((p) => ({ ...p, periodo: v }))}
+            >
+              <SelectTrigger className="w-full border-1 border-gray-400">
+                <SelectValue placeholder="Selecciona el mes" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="01">Enero</SelectItem>
+                <SelectItem value="02">Febrero</SelectItem>
+                <SelectItem value="03">Marzo</SelectItem>
+                <SelectItem value="04">Abril</SelectItem>
+                <SelectItem value="05">Mayo</SelectItem>
+                <SelectItem value="06">Junio</SelectItem>
+                <SelectItem value="07">Julio</SelectItem>
+                <SelectItem value="08">Agosto</SelectItem>
+                <SelectItem value="09">Setiembre</SelectItem>
+                <SelectItem value="10">Octubre</SelectItem>
+                <SelectItem value="11">Noviembre</SelectItem>
+                <SelectItem value="12">Diciembre</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+           {/* Select de año */}
           <div className="md:col-span-2">
             <Select
               name="anio"
@@ -48,22 +76,6 @@ const Filtro = ({ filiales, filtro, setFiltro, Buscar }) => {
             </Select>
           </div>
 
-          {/* Select de semestre */}
-          <div className="md:col-span-2">
-            <Select
-              name="periodo"
-              value={filtro.periodo}
-              onValueChange={(v) => setFiltro((p) => ({ ...p, periodo: v }))}
-            >
-              <SelectTrigger className="w-full border-1 border-gray-400">
-                <SelectValue placeholder="Selecciona el periodo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="JULIO">Julio</SelectItem>
-                <SelectItem value="DICIEMBRE">Diciembre</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
 
           {/* Select de filial */}
           <div className="md:col-span-2">

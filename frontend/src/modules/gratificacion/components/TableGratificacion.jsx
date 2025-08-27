@@ -16,12 +16,12 @@ import { Search } from "lucide-react";
 import RowGratificacion from "@/modules/gratificacion/components/RowGratificacion";
 import RowTotalGratificacion from "@/modules/gratificacion/components/RowTotalGratificacion";
 
-const ListaGratificacion = ({ gratificacion }) => {
+const TableGratificacion = ({ gratificacion }) => {
   const { planilla, honorarios } = gratificacion
   const totalP = planilla.totales;
 
   const [filtro, setFiltro] = useState("");
-
+ 
   // Filtrar por nombres y apellidos (case-insensitive)
   const filtrarTrabajadores = (trabajadores) =>
     trabajadores.filter((t) =>
@@ -110,4 +110,4 @@ const ListaGratificacion = ({ gratificacion }) => {
   );
 };
 
-export default ListaGratificacion;
+export default TableGratificacion;

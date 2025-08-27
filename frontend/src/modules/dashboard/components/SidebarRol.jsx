@@ -141,7 +141,7 @@ const modulesByRole = {
       {
          group: "Planilla",
          items: [
-            { name: "Planilla semanal", path: "/planilla-semanal" },
+            { name: "Planilla quincenal", path: "/planilla-quincenal" },
             { name: "Planilla mensual", path: "/planilla-mensual" },
         
          ],
