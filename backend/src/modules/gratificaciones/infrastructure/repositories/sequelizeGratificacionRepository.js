@@ -26,8 +26,6 @@ class SequelizeFilialRepository {
   async obtenerGratificaciones() {
     const usuarios = await db.usuarios.findAll();
 
-    console.table(usuarios);
-
     return usuarios;
   }
 
@@ -192,9 +190,6 @@ class SequelizeFilialRepository {
     const totalesHonorarios = calcularResumenGratificaciones(
       listaTrabajadoresHonorarios
     );
-
-    console.table(listaTrabajadoresPlanilla);
-    //console.table(totalesHonorarios)
 
     return {
       planilla: {

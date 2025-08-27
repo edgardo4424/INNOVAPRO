@@ -31,4 +31,11 @@ const common = {
 module.exports = {
     development: {...common, logging: false},
     production: {...common, logging: false},
+    test: {
+      username: "root",
+      password: "",
+      database: "innova_test",
+      host: "127.0.0.1",
+      dialect: "mysql"
+    }
 }

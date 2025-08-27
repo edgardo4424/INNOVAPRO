@@ -127,7 +127,7 @@ class SequelizeAsistenciaRepository {
             estado_asistencia: asistenciaData.estado_asistencia,
             fecha: asistenciaData.fecha,
          });
-         console.log(asistencia);
+         
       } catch (error) {
          console.error(error);
          throw new Error(error.message);
@@ -185,8 +185,6 @@ class SequelizeAsistenciaRepository {
         },
       },
     });
-
-    console.log('cantidadFaltas', cantidadFaltas);
 
     return cantidadFaltas
   } catch (error) {

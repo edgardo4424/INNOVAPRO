@@ -8,6 +8,11 @@
         "dev": "nodemon src/index.js",
         "start": "node src/index.js",
         "test": "jest",
+        
+        "test:quinta": "jest src/modules/quintaCategoria/tests --verbose --runInBand",
+        "test:quinta:watch": "jest src/modules/quintaCategoria/tests --watch",
+        "test:quinta:cov": "jest src/modules/quintaCategoria/tests --coverage",
+
 
         
         "migrate": "sequelize-cli db:migrate --env development",

@@ -1,0 +1,60 @@
+// Combobox para buscar trabajadores de manera dinámica
+import { useEffect, useMemo, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { displayTrabajador } from "../utils/ui";
+
+export default function TrabajadorCombobox({ trabajadores, value, onSelect, disabled, dense}) {
+  const [open, setOpen] = useState(false);
+
+  const selectedLabel = useMemo(() => {
+    const t = trabajadores?.find(t => Number(t.id) === Number(value));
+    return t ? displayTrabajador(t).label : "Seleccionar trabajador";
+  }, [trabajadores, value]);
+
+  const handleSelect = (id) => {
+    onSelect?.(Number(id));
+    setOpen(false);
+  };
+
+  // Cierra al cambiar la lista o el valor (defensivo)
+  useEffect(() => { setOpen(false); }, [value, trabajadores?.length]);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <div
+            className={[
+                "relative flex items-center rounded-md border border-input bg-background",
+                "px-2 w-full overflow-hidden",
+                dense ? "h-7 text-[11px]" : "h-9 text-sm",
+                disabled ? "opacity-50 pointer-events-none" : "cursor-pointer",
+            ].join(" ")}
+            aria-haspopup="listbox"
+            aria-expanded="false"
+        >
+            <span className="truncate pr-5">{selectedLabel}</span>
+        </div>
+      </PopoverTrigger>
+      <PopoverContent className={["p-0", dense ? "w-[360px]" : "w-[420px]"].join(" ")}>
+        <Command>
+          <CommandInput placeholder="Escribe para buscar trabajador..." className={dense ? "h-8 text-xs" : ""} />
+          <CommandList>
+            <CommandEmpty>Sin resultados</CommandEmpty>
+            <CommandGroup>
+              {trabajadores?.map((t) => {
+                const label = displayTrabajador(t).label;
+                return (
+                  <CommandItem key={t.id} value={label} onSelect={() => handleSelect(t.id)}>
+                    {label}
+                  </CommandItem>
+                );
+              })}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+}

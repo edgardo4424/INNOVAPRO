@@ -22,7 +22,6 @@ import GestionBonos from "@/modules/Beneficios/Pages/GestionBonos";
 import EditarTrabajador from "@/modules/trabajadores/pages/EditarTrabajador";
 import GestionAdelantoSueldo from "@/modules/Beneficios/Pages/GestionAdelantosSueldo";
 
-
 // Lazy load components
 const Login = lazy(() => import("@/modules/auth/pages/Login"));
 const DashboardHome = lazy(() =>
@@ -93,6 +92,11 @@ const FacturaBorradores = lazy(() =>
 
 const GestionGratificacion = lazy(() =>
    import("../modules/gratificacion/pages/GestionGratificacion")
+);
+
+//* Facturacion
+const CalculoQuintaCategoria = lazy(() =>
+   import("../modules/retenciones/pages/CalculoQuintaCategoria")
 );
 
 
@@ -289,6 +293,11 @@ export default function AppRoutes() {
                                  <GestionCondiciones />
                               </WizardProvider>
                            }
+                        />
+                        
+                        <Route
+                           path="retenciones/calculoQuintaCategoria"
+                           element={<CalculoQuintaCategoria />}
                         />
                      </Route>
 
