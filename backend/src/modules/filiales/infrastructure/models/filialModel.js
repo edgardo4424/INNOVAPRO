@@ -61,6 +61,9 @@ Filial.associate = (models) => {
    Filial.hasMany(models.contratos_laborales, {
     foreignKey: "filial_id",
   });
+  Filial.hasMany(models.cts, {
+    foreignKey: "filial_id",
+  });
 };
 
 module.exports = { Filial }; // Exporta el modelo para que pueda ser utilizado en otros módulos

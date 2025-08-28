@@ -387,14 +387,6 @@ export default function CompGestionTrabajadoresonent() {
                                              Asig. Familiar
                                           </Badge>
                                        )}
-                                       {employee.quinta_categoria && (
-                                          <Badge
-                                             variant="outline"
-                                             className="text-xs"
-                                          >
-                                             5ta Categoría
-                                          </Badge>
-                                       )}
                                     </div>
                                  </TableCell>
                                  <TableCell>

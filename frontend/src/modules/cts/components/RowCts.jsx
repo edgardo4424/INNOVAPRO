@@ -2,23 +2,19 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { formatearFecha } from "@/modules/gratificacion/utils/formatearFecha";
 import { Eye, FileDown } from "lucide-react";
 
-const RowCts = ({ e }) => {
+const RowCts = ({ e, num }) => {
    return (
       <TableRow className="text-xs">
-                           <TableCell className="text-right">{e.tipo_documento}</TableCell>
+         <TableCell className="text-right">{num}</TableCell>
 
-                  <TableCell className="text-right">{e.numero_documento}</TableCell>
+         <TableCell className="text-right">{e.tipo_documento}</TableCell>
+
+         <TableCell className="text-right">{e.numero_documento}</TableCell>
          <TableCell className="text-right">{e.nombre}</TableCell>
          <TableCell className="text-right">{e.regimen}</TableCell>
-                  <TableCell className="text-right">
-            {e.fecha_ingreso}
-         </TableCell>
-                  <TableCell className="text-right">
-            Mayo
-         </TableCell>
-         <TableCell className="text-right">
-            Noviembre
-         </TableCell>
+         <TableCell className="text-right">{e.fecha_ingreso}</TableCell>
+         <TableCell className="text-right">Mayo</TableCell>
+         <TableCell className="text-right">Noviembre</TableCell>
          <TableCell className="text-right">{e.sueldo_basico}</TableCell>
          <TableCell className="text-right">{e.sueldo_asig_fam}</TableCell>
          <TableCell className="text-right">{e.ultima_remuneracion}</TableCell>
@@ -33,8 +29,8 @@ const RowCts = ({ e }) => {
          <TableCell className="text-right">{e.cts_dias}</TableCell>
          <TableCell className="text-right">{e.faltas_dias}</TableCell>
          <TableCell className="text-right">{e.faltas_importe}</TableCell>
+         <TableCell className="text-right">{e.no_computable}</TableCell>
          <TableCell className="text-right">{e.cts_depositar}</TableCell>
-
       </TableRow>
    );
 };

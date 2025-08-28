@@ -37,7 +37,6 @@ const dataInicial = {
    asignacion_familiar_fecha: null,
    domiciliado: false,
    sistema_pension: "",
-   quinta_categoria: false,
    cargo_id: "",
    contratos_laborales: [
       {
@@ -140,7 +139,6 @@ export default function TrabajadorForm() {
                asignacion_familiar_fecha: t.asignacion_familiar ?? null, // guardamos la fecha real
                domiciliado: !!t.domiciliado,
                sistema_pension: t.sistema_pension ?? "",
-               quinta_categoria: !!t.quinta_categoria,
                cargo_id: (t.cargo_id ?? "").toString(),
                contratos_laborales: contratos.length
                   ? contratos
@@ -188,10 +186,6 @@ export default function TrabajadorForm() {
          asignacion_familiar: formData.asignacion_familiar_fecha,
          domiciliado: formData.domiciliado,
          sistema_pension: formData.sistema_pension,
-         quinta_categoria: calcularQuintaCategoria(
-            ultimoContrato.sueldo,
-            valorUit
-         ),
          cargo_id: formData.cargo_id,
          contratos_laborales: formData.contratos_laborales,
          sueldo_base: ultimoContrato ? ultimoContrato.sueldo : "",
