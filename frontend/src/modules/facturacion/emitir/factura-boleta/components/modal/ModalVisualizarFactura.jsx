@@ -183,7 +183,8 @@ export default function ModalVisualizarFactura() {
                                                     <th className="py-2 px-4 border-b text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Unidad</th>
                                                     <th className="py-2 px-4 border-b text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Descripción</th>
                                                     <th className="py-2 px-4 border-b text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">V. Unit.</th>
-                                                    <th className="py-2 px-4 border-b text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">P. Unit.</th>
+                                                    <th className="py-2 px-4 border-b text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Subtotal</th>
+                                                    <th className="py-2 px-4 border-b text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">IGV</th>
                                                     <th className="py-2 px-4 border-b text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Total</th>
                                                 </tr>
                                             </thead>
@@ -193,19 +194,23 @@ export default function ModalVisualizarFactura() {
                                                         <tr key={index} className="hover:bg-gray-50 border-b last:border-b-0">
                                                             <td className="py-2 px-4 text-sm">{item.cantidad}</td>
                                                             <td className="py-2 px-4 text-sm">{item.unidad}</td>
-                                                            <td className="py-2 px-4 text-sm">{item.descripcion}</td>
-                                                            <td className="py-2 px-4 text-right text-sm">{item.monto_Valor_Unitario || '0.00'}</td>
-                                                            <td className="py-2 px-4 text-right text-sm">{item.monto_Precio_Unitario || '0.00'}</td>
-                                                            <td className="py-2 px-4 text-right text-sm">{(item.monto_Valor_Venta + (item.igv || 0)) || '0.00'}</td>
+                                                            <td className="py-2 px-4 text-sm max-w-[240px]">{item.descripcion}</td>
+                                                            <td className="py-2 px-4 text-right text-sm">{Number(item.monto_Valor_Unitario || 0).toFixed(2)}</td>
+                                                            <td className="py-2 px-4 text-right text-sm">{Number(item.monto_Valor_Venta || 0).toFixed(2)}</td>
+                                                            <td className="py-2 px-4 text-right text-sm">{Number(item.igv || 0).toFixed(2)}</td>
+                                                            <td className="py-2 px-4 text-right text-sm">{(Number(item.monto_Valor_Venta || 0) + Number(item.igv || 0)).toFixed(2)}</td>
                                                         </tr>
                                                     ))
                                                 ) : (
                                                     <tr>
-                                                        <td colSpan="6" className="py-4 text-center text-gray-500">No hay productos en el detalle.</td>
+                                                        <td colSpan="7" className="py-4 text-center text-gray-500">
+                                                            No hay productos en el detalle.
+                                                        </td>
                                                     </tr>
                                                 )}
                                             </tbody>
                                         </table>
+
                                     </div>
                                 </div>
 
@@ -246,7 +251,7 @@ export default function ModalVisualizarFactura() {
 
                                 {/* Detraccion */}
                                 {
-                                    detraccionActivado && (
+                                    factura.tipo_Operacion == "1001" && (
                                         <div className="mt-4 pt-2 border-gray-200 border-2 p-4 rounded-md">
                                             <h3 className="font-bold text-md mb-2 text-gray-600">DETRACCION:</h3>
                                             <div className="grid grid-cols-2 gap-2">

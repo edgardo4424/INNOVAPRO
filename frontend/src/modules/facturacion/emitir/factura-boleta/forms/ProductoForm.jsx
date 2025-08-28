@@ -14,7 +14,7 @@ import ModalListaDeProductos from '../components/modal/ModalListaDeProductos';
 import { ProductoValidarEstados } from '../utils/valoresInicial';
 
 const ProductoForm = ({ closeModal }) => {
-    const { agregarProducto, productoActual, setProductoActual, edicionProducto, validarCampos, productoValida, eliminarProducto, setProductoValida } = useFacturaBoleta();
+    const { setFactura, agregarProducto, productoActual, setProductoActual, edicionProducto, validarCampos, productoValida, eliminarProducto, setProductoValida } = useFacturaBoleta();
 
 
     const [activeButton, setActiveButton] = useState(false);
@@ -90,6 +90,7 @@ const ProductoForm = ({ closeModal }) => {
             return;
         }
         agregarProducto();
+        setFactura((prev) => ({ ...prev, forma_pago: [] }))
         closeModal();
     };
 

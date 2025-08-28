@@ -101,7 +101,7 @@ const DatosDelComprobante = () => {
                             <SelectItem value="0108">Factura - Comprobante de Percepción - (0108)</SelectItem>
                             <SelectItem value="0110">Factura - Guía remitente - (0110)</SelectItem>
                             <SelectItem value="0111">Factura - Guía transportista - (0111)</SelectItem>
-                            {/* <SelectItem value="1001">Operaciones Gravadas - (1001)</SelectItem> */}
+                            <SelectItem value="1001">Operaciones Gravadas - (1001)</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>

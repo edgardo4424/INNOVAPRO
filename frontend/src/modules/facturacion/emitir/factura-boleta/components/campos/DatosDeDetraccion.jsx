@@ -16,7 +16,7 @@ const DatosDeDetraccion = () => {
     const { factura, setFactura, detraccion, setDetraccion, detraccionActivado, setDetraccionActivado } = useFacturaBoleta();
     const { tipo_Operacion, monto_Oper_Gravadas, tipo_Moneda, monto_Imp_Venta } = factura;
 
-    const [detraccionesValores, setDetraccionesValores] = useState([]);
+    const [detraccionesValores, setDetraccionesValores] = useState(Arraydetracciones);
     const [errors, setErrors] = useState({});
 
     const handleInputChange = (field, value) => {
@@ -34,17 +34,24 @@ const DatosDeDetraccion = () => {
         }
     };
 
+    // En handleSelectPorcentaje:
+
     const handleSelectPorcentaje = (value) => {
         setFactura((prev) => ({
             ...prev,
             forma_pago: [],
-        }))
-        console.log(value);
+        }));
+
+        const rawDetraccionMount = (monto_Imp_Venta * Number(value)) / 100;
+
+        // Redondea a 2 decimales y convierte de nuevo a número
+        const newDetraccionMount = Number(rawDetraccionMount.toFixed(2));
+
         setDetraccion((prev) => ({
             ...prev,
             detraccion_percent: Number(value),
             detraccion_cod_bien_detraccion: "",
-            detraccion_mount: ((monto_Imp_Venta * Number(value)) / 100).toFixed(2),
+            detraccion_mount: newDetraccionMount,
         }));
 
         setDetraccionesValores(
@@ -52,32 +59,32 @@ const DatosDeDetraccion = () => {
         );
     };
 
-    useEffect(() => {
-        setDetraccion((prev) => ({
-            ...prev,
-            detraccion_mount: ((monto_Imp_Venta * Number(detraccion.detraccion_percent)) / 100).toFixed(2),
-        }));
-    }, [monto_Imp_Venta])
+    // En useEffect:
 
-    // if (!detraccionActivado) return <></>;
+    useEffect(() => {
+        if (detraccion.detraccion_percent) {
+            const rawDetraccionMount = (monto_Imp_Venta * Number(detraccion.detraccion_percent)) / 100;
+
+            // Redondea a 2 decimales y convierte de nuevo a número
+            const newDetraccionMount = Number(rawDetraccionMount.toFixed(2));
+
+            setDetraccion((prev) => ({
+                ...prev,
+                detraccion_mount: newDetraccionMount,
+            }));
+        }
+    }, [monto_Imp_Venta, detraccion.detraccion_percent]);
+
+    if (factura.tipo_Operacion != "1001") return <></>;
 
     return (
         <div className='overflow-y-auto p-4 sm:p-6 lg:p-8'>
             <div>
-                <div className="flex items-center gap-x-8 pb-2 ">
-                    <h1 className="text-2xl font-bold pb-2">
-                        Detracción
-                    </h1>
-                    <Button
-                        // variant={detraccionActivado ? "success" : "default"}
-                        onClick={() => setDetraccionActivado(!detraccionActivado)}
-                        className={`h-8 w-24 text-sm font-semibold flex items-center justify-center ${detraccionActivado ? "bg-green-500 hover:bg-green-600" : "bg-red-500 hover:bg-red-600"}`}
-                    >
-                        {detraccionActivado ? "Activador" : "Desactivado"}
-                    </Button>
-                </div>
+                <h1 className="text-2xl font-bold pb-2">
+                    Detracción
+                </h1>
                 {
-                    detraccionActivado && (
+                    factura.tipo_Operacion == "1001" && (
                         <form
                             action=""
                             className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-5 pb-8 md:gap-x-6 md:gap-y-8"
@@ -99,10 +106,10 @@ const DatosDeDetraccion = () => {
                                             <SelectValue placeholder="Selecciona un porcentaje de detracción" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value={4.00}>4%</SelectItem>
-                                            <SelectItem value={10.00}>10%</SelectItem>
-                                            <SelectItem value={12.00}>12%</SelectItem>
-                                            <SelectItem value={15.00}>15%</SelectItem>
+                                            <SelectItem value={4}>4%</SelectItem>
+                                            <SelectItem value={10}>10%</SelectItem>
+                                            <SelectItem value={12}>12%</SelectItem>
+                                            <SelectItem value={15}>15%</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>

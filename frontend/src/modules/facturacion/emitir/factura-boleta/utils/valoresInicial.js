@@ -28,11 +28,11 @@ const ValorInicialFactura = {
     // ?Base de datos
     estado_Documento: "0",
     manual: false,
-    id_Base_Dato: "15265",
+    // id_Base_Dato: "15265",
 
     // ?Parametros para innova Pro
     observaciones: "", //? nuevo campo solo para bd
-    usuario_id: 1, //* cambiar a el usuario logeado
+    // usuario_id: 1, //* cambiar a el usuario logeado
 
     // ?Lista de Productos
     detalle: [],
@@ -68,7 +68,7 @@ const valorIncialDetracion = {
     detraccion_cod_bien_detraccion: "",
     detraccion_cod_medio_pago: "",
     detraccion_cta_banco: "0004-3342343243",
-    detraccion_percent: 0,
+    detraccion_percent: 4.0,
     detraccion_mount: 0,
 }
 

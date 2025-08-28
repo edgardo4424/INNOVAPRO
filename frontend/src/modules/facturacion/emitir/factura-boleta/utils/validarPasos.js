@@ -3,7 +3,7 @@ function isNullOrEmpty(value) {
     return value === undefined || value === null || (typeof value === 'string' && value.trim() === '');
 }
 
-export async function validarFacturaCompleta(Factura,detraccionActivado, Detraccion, retencionActivado, Retencion) {
+export async function validarFacturaCompleta(Factura, detraccionActivado, Detraccion, retencionActivado, Retencion) {
     if (!Factura) {
         return {
             errores: null,
@@ -52,6 +52,21 @@ export async function validarFacturaCompleta(Factura,detraccionActivado, Detracc
         }
     ];
 
+    const camposDetraccion = [
+        { key: "detraccion_cod_bien_detraccion", name: "Código de Bien Detracción" },
+        { key: "detraccion_cod_medio_pago", name: "Código de Medio de Pago de Detracción" },
+        { key: "detraccion_cta_banco", name: "N° Cuenta Banco de Detracción" },
+        { key: "detraccion_percent", name: "Porcentaje de Detracción" },
+        { key: "detraccion_mount", name: "Monto de Detracción" }
+    ]
+
+    const camposRetencion = [
+        { key: "descuento_cod_tipo", name: "Código de Tipo de Retención" },
+        { key: "descuento_monto_base", name: "Monto Base de Retención" },
+        { key: "descuento_factor", name: "Factor de Retención" },
+        { key: "descuento_monto", name: "Monto de Retención" }
+    ]
+
     // 1. Validar campos globales
     camposGlobales.forEach(campo => {
         if (isNullOrEmpty(Factura[campo.key])) {
@@ -93,30 +108,27 @@ export async function validarFacturaCompleta(Factura,detraccionActivado, Detracc
         }
     }
 
+    if (Factura.tipo_Operacion === "1001") {
+        camposDetraccion.forEach(campo => {
+            if (isNullOrEmpty(Detraccion[campo.key])) {
+                errores[campo.key] = `El campo de'${campo.name}' en Detracción es requerido.`;
+                validos = false;
+            }
+        });
+    }else if(retencionActivado){
+
+    }
+
     if (Factura.forma_pago && Factura.forma_pago.length > 0) {
         const montoTotalPagos = Factura.forma_pago.reduce(
             (total, pago) => total + (parseFloat(pago.monto) || 0),
             0
         );
-            console.log(Factura.monto_Imp_Venta)
-            console.log(Factura.monto_Imp_Venta)
-            console.log(Factura.tipo_Operacion)
-            console.log(Detraccion.detraccion_mount)
-        if (detraccionActivado) {
-            if (montoTotalPagos.toFixed(2) < (Factura.monto_Imp_Venta - Detraccion.detraccion_mount).toFixed(2)) {
-                errores.forma_pago_monto = "La suma de los pagos no cubre fffel monto total de la factura.";
-                validos = false;
-            }
-        }
-        else if (retencionActivado) {
 
-        }
-        else {
-            if (montoTotalPagos < Factura.monto_Imp_Venta) {
-                console.log(montoTotalPagos ,Factura.monto_Imp_Venta)
-                errores.forma_pago_monto = "La suma de los pagos no cubre el monto total de la factura.";
-                validos = false;
-            }
+        if (montoTotalPagos < Factura.monto_Imp_Venta) {
+            console.log(montoTotalPagos, Factura.monto_Imp_Venta)
+            errores.forma_pago_monto = "La suma de los pagos no cubre el monto total de la factura.";
+            validos = false;
         }
     }
 

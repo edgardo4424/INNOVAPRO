@@ -40,11 +40,12 @@ export function FacturaBoletaProvider({ children }) {
     const [pagoValida, setPagoValida] = useState(PagoValidarEstados);
 
     const [filiales, setFiliales] = useState([]);
+    const [usuarioLogeado, setUsuarioLogeado] = useState({});
 
 
     const validarFactura = async () => {
         try {
-            const { errores, validos, message } = await validarFacturaCompleta(factura,detraccionActivado, detraccion, retencionActivado, retencion);
+            const { errores, validos, message } = await validarFacturaCompleta(factura, detraccionActivado, detraccion, retencionActivado, retencion);
             if (!validos) {
                 // *Encuentra el primer error y lo muestra en un toast
                 const primerError = Object.values(errores)[0];
@@ -176,29 +177,28 @@ export function FacturaBoletaProvider({ children }) {
         if (!factura.monto_Imp_Venta || factura.monto_Imp_Venta <= 0) return;
 
         const nuevaLegenda = numeroALeyenda(factura.monto_Imp_Venta);
-        console.log("nueva legenda")
-        console.log(nuevaLegenda)
 
-        if (detraccionActivado) {
-            setFactura((prev) => ({
-                ...prev,
-                legend: [{
-                    legend_Code: "1000",
-                    legend_Value: nuevaLegenda,
-                }, {
-                    legend_Code: "2006",
-                    legend_Value: "Operación sujeta a detracción",
-                }]
-            }));
-        } else {
-            setFactura((prev) => ({
-                ...prev,
-                legend: [{
-                    legend_Code: "1000",
-                    legend_Value: nuevaLegenda,
-                }]
-            }));
-        }
+        // if (factura.tipo_Operacion === "1001") {
+        //     setFactura((prev) => ({
+        //         ...prev,
+        //         legend: [{
+        //             legend_Code: "1000",
+        //             legend_Value: nuevaLegenda,
+        //         },
+        //         {
+        //             legend_Code: "2006",
+        //             legend_Value: "BIENES Y/O SERVICIOS SUJETOS A DETRACCIÓN",
+        //         }]
+        //     }));
+        // } else {
+        setFactura((prev) => ({
+            ...prev,
+            legend: [{
+                legend_Code: "1000",
+                legend_Value: nuevaLegenda,
+            }]
+        }));
+        // }
     }, [factura.monto_Imp_Venta]);
 
 
@@ -211,18 +211,18 @@ export function FacturaBoletaProvider({ children }) {
             return total + (isNaN(monto) ? 0 : monto);
         }, 0);
 
-        if (detraccionActivado) {
-            const detraccionMonto = parseFloat(detraccion.detraccion_mount || 0); // ✅ Usamos el valor directamente del estado de detraccion
-            montoPendiente = (montoBase - detraccionMonto) - pagosRealizados;
-            console.log("if con 1001", montoPendiente);
-        } else if (retencionActivado) {
-            // !! IMPLEMENTAR LOGICA PARA RETENCIONES
-            // La lógica para retenciones iría aquí si se activa
-            console.log("else if para retencion", montoPendiente);
-        } else {
+        // if (factura.tipo_Operacion === "1001") {
+        //     const detraccionMonto = parseFloat(detraccion.detraccion_mount || 0); // ✅ Usamos el valor directamente del estado de detraccion
+        //     montoPendiente = (montoBase - detraccionMonto) - pagosRealizados;
+        //     console.log("if con 1001", montoPendiente);
+        // } else if (retencionActivado) {
+        //     // !! IMPLEMENTAR LOGICA PARA RETENCIONES
+        //     // La lógica para retenciones iría aquí si se activa
+        //     console.log("else if para retencion", montoPendiente);
+        // } else {
             montoPendiente = montoBase - pagosRealizados;
             console.log("else defecto", montoPendiente);
-        }
+        // }
 
         console.log("monto pendiente")
         console.log(montoPendiente)
@@ -346,13 +346,15 @@ export function FacturaBoletaProvider({ children }) {
     };
 
     const emitirFactura = async () => {
+        const { id: id_logeado } = await JSON.parse(localStorage.getItem("user"));
+        console.log("logeado", id_logeado);
         let result = { success: false, message: "Error desconocido al emitir la factura", data: null };
         try {
             let facturaAEmitir;
 
             if (retencionActivado) {
                 facturaAEmitir = Object.assign({}, factura, retencion);
-            } else if (detraccionActivado) {
+            } else if (factura.tipo_Operacion === "1001") {
                 facturaAEmitir = Object.assign({}, factura, detraccion);
             } else {
                 facturaAEmitir = factura;
@@ -361,6 +363,7 @@ export function FacturaBoletaProvider({ children }) {
 
 
             if (status === 200 && success) {
+
                 const sunat_respuest = {
                     hash: data.hash,
                     cdr_zip: data.sunatResponse.cdrZip, // Descomentar si es necesario
@@ -370,7 +373,7 @@ export function FacturaBoletaProvider({ children }) {
                     cdr_response_description: data.sunatResponse.cdrResponse.description
                 };
 
-                const facturaCopia = { ...facturaAEmitir, estado: "EMITIDA", sunat_respuesta: sunat_respuest };
+                const facturaCopia = { ...facturaAEmitir, usuario_id: id_logeado, estado: "EMITIDA", sunat_respuesta: sunat_respuest };
                 // ?Intentar registrar en base de datos
                 const dbResult = await registrarBaseDatos(facturaCopia);
 
@@ -379,8 +382,10 @@ export function FacturaBoletaProvider({ children }) {
                 } else {
                     result = { success: false, message: dbResult.mensaje || "Factura emitida a SUNAT, pero no se pudo registrar en la base de datos.", data: facturaCopia };
                 }
+            } else if (status === 200 && !success) {
+                result = { success: false, message: message, detailed_message: `${data.error.code} - ${data.error.message}` || "Error desconocido al enviar la factura.", data: facturaAEmitir };
             } else {
-                result = { success: false, message: message, detailed_message: data.error.message || "Error desconocido al enviar la factura.", data: null };
+                result = { success: false, message: message, detailed_message: `${data.error.code} - ${data.error.message}` || "Error desconocido al enviar la factura.", data: null };
             }
         } catch (error) {
             console.error("Error al enviar factura:", error);

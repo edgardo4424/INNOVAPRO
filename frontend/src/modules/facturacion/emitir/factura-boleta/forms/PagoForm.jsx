@@ -78,19 +78,32 @@ const PagoForm = ({ closeModal }) => {
             return;
         }
 
-        const newDate = new Date();
-        newDate.setDate(newDate.getDate() + days);
+        const now = new Date();
 
-        // Actualiza el estado con la nueva fecha en formato ISO
-        setPagoActual({
-            ...pagoActual,
-            fecha_Pago: newDate.toISOString().split('T')[0],
-        });
+        // Si quiero contar el día actual, sumo (days - 1)
+        const target = new Date(now);
+        target.setDate(now.getDate() + (days - 1));
 
-        // Oculta el input de la calculadora
+        // Obtener YYYY-MM-DD en hora Perú
+        const ymdPeru = new Intl.DateTimeFormat('en-CA', {
+            timeZone: 'America/Lima',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        }).format(target);
+
+        // Siempre a medianoche de Perú
+        const fechaPagoISO = `${ymdPeru}T00:00:00-05:00`;
+
+        setPagoActual(prev => ({
+            ...prev,
+            fecha_Pago: fechaPagoISO,
+        }));
+
         setShowCalculadora(false);
-        setDaysToAdd(""); // Limpiar el input
+        setDaysToAdd("");
     };
+
 
 
 
@@ -137,7 +150,7 @@ const PagoForm = ({ closeModal }) => {
         <div className=" overflow-y-auto  col-span-4 w-full">
             <form
                 action=""
-                className="w-full  grid grid-cols-4 gap-x-2 gap-y-3  py-8 "
+                className="w-full  grid grid-cols-4 gap-x-2 gap-y-3 py-8 "
             >
                 {/* Unidad */}
                 <div className="flex flex-col gap-1 col-span-4 md:col-span-2">

@@ -1,7 +1,27 @@
 import { ClipboardPlus, EyeIcon, Trash2Icon } from 'lucide-react';
-import React from 'react'
+import { useNavigate } from 'react-router-dom';
+import facturaService from '../../service/FacturaService';
 
 const TablaBorradores = ({ documentos, setIdDocumento, setModalOpen, setDocumentoEliminar, setModalEliminar }) => {
+
+  const navigate = useNavigate();
+
+  const plasmarBorrador = async (doc) => {
+    const { success, message, data } = await facturaService.obtenerBorradorConId(doc.id);
+
+    if (!success) {
+      toast.error("No se pudo plasmar el borrador");
+      return;
+    }
+
+
+    const body = JSON.parse(data.body);
+    const documento = [body, { borr_id_delete }];
+    console.log(documento);
+    // navigate("/facturacion/factura-boleta", { state: body });
+  };
+
+
   return (
     <table className="min-w-full bg-white rounded-xl shadow-md overflow-hidden">
       <thead className="bg-innova-blue text-white">
@@ -63,7 +83,11 @@ const TablaBorradores = ({ documentos, setIdDocumento, setModalOpen, setDocument
                   >
                     <EyeIcon className="h-5 w-5 cursor-pointer hover:text-blue-500" />
                   </button>{" "}
-                  <ClipboardPlus className="h-5 w-5 cursor-pointer hover:text-yellow-500" />
+                  <button
+                    onClick={() => plasmarBorrador(doc)}
+                  >
+                    <ClipboardPlus className="h-5 w-5 cursor-pointer hover:text-yellow-500" />
+                  </button>
                   <button
                     onClick={() => {
                       setDocumentoEliminar({
