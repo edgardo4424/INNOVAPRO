@@ -15,6 +15,10 @@ const {
 } = require("../../modules/trabajadores/infraestructure/models/trabajadorModel");
 db.trabajadores = Trabajador;
 
+const {Cts}=require("../../modules/cts/infraestructure/models/ctsModel");
+db.cts=Cts
+const {CierreCTS}=require("../../modules/cts/infraestructure/models/ctsCierreModel");
+db.cierres_cts=CierreCTS
 const {
    Cargo,
 } = require("../../modules/trabajadores/infraestructure/models/cargoModel");
@@ -221,6 +225,8 @@ if (db.asistencias.associate) db.asistencias.associate(db);
 if (db.gastos.associate) db.gastos.associate(db);
 if (db.jornadas.associate) db.jornadas.associate(db);
 if (db.tipos_trabajo.associate) db.tipos_trabajo.associate(db);
+if(db.cts)db.cts.associate(db)
+if(db.cierres_cts)db.cierres_cts.associate(db)
 
 // ? Conexion Facturacion
 if(db.factura.associate) db.factura.associate(db);

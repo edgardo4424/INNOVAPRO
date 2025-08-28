@@ -61,9 +61,6 @@ export const trabajadorSchema = (isEdit = false, isGerente = false) =>
          .string()
          .oneOf(["AFP", "ONP"], "Sistema de pensión no válido")
          .required("El sistema de pensión es requerido"),
-      quinta_categoria: yup
-         .boolean()
-         .required("La quinta categoría es requerida"),
       cargo_id: yup
          .number()
          .transform((value, originalValue) => {

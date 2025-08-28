@@ -20,7 +20,7 @@
         "crear:migracion": "sequelize-cli migration:create --env development --name",
         
         "crear:modelo": "sequelize-cli model:generate --env development",
-        "crear:seed": "sequelize-cli seed:generate --env development",
+        "crear:seed": "sequelize-cli seed:generate --env development --name",
 
         
         "seed": "sequelize-cli db:seed:all --env development",

@@ -11,14 +11,14 @@ const conteoBonosMeses = require("../utils/conteoBonosMeses");
 const conteoHextrasMeses = require("../utils/conteoHextrasMeses");
 const calcularHextrasEnCts = require("../utils/calcularHextrasEnCts");
 const calcularBonosEnCts = require("../utils/calcularBonosEnCts");
+const { where } = require("sequelize");
 
 const objeto_inicial_cts = {
-
    contrato_id: null,
    trabajador_id: null,
    nombre: "",
-   tipo_documento:"",
-   numero_documento:"",
+   tipo_documento: "",
+   numero_documento: "",
    regimen: "",
    fecha_ingreso: "",
    sueldo_basico: 0,
@@ -35,31 +35,16 @@ const objeto_inicial_cts = {
    cts_dias: 0,
    faltas_dias: 0,
    faltas_importe: 0,
+   no_computable: 0,
    cts_depositar: 0,
    ids_agrupacion: null,
 };
-// Cuenta solo lunes-viernes. Acepta mes 1-12. Usa UTC para evitar DST.
-function contarDiasLaborablesDelMes(anio, mes /* 1-12 */) {
-   const m0 = mes - 1;
-   if (m0 < 0 || m0 > 11) throw new Error("mes debe ser 1..12");
-
-   let contador = 0;
-   const fecha = new Date(Date.UTC(anio, m0, 1));
-   while (fecha.getUTCMonth() === m0) {
-      const dia = fecha.getUTCDay(); // 0=dom, 6=sáb
-      if (dia !== 0 && dia !== 6) contador++;
-      fecha.setUTCDate(fecha.getUTCDate() + 1);
-   }
-   return contador;
-}
 
 const dataMantenimientoRepository = new SequelizeDataRepository();
 const bonosRepository = new SequelizeBonoRepository();
 const asistenciasRepository = new SequelizeAsistenciaRepository();
 class SequelizeCtsRopository {
    async calcularCts(periodo, anio, filial_id) {
-      console.log("dias laborales: ", contarDiasLaborablesDelMes(2025, 9));
-
       const MONTO_ASIGNACION_FAMILIAR = Number(
          (
             await dataMantenimientoRepository.obtenerPorCodigo(
@@ -246,6 +231,13 @@ class SequelizeCtsRopository {
             )
          ).valor
       );
+      const MONTO_NO_COMPUTABLE = Number(
+         (
+            await dataMantenimientoRepository.obtenerPorCodigo(
+               "valor_no_computable"
+            )
+         ).valor
+      );
 
       let fechaInicioCTS, fechaFinCTS;
 
@@ -326,8 +318,8 @@ class SequelizeCtsRopository {
          let r = { ...objeto_inicial_cts };
          r.contrato_id = c.id;
          r.trabajador_id = c.trabajador_id;
-         r.tipo_documento=trabajador.tipo_documento;
-         r.numero_documento=trabajador.numero_documento;
+         r.tipo_documento = trabajador.tipo_documento;
+         r.numero_documento = trabajador.numero_documento;
          r.nombre = `${trabajador.nombres} ${trabajador.apellidos}`;
          r.regimen = c.regimen;
          r.fecha_ingreso = "Por calcular";
@@ -341,9 +333,12 @@ class SequelizeCtsRopository {
             const he_en_contrato = asistencias.filter((a) => {
                return a.fecha >= inicio_c && a.fecha <= fin_c;
             });
-            console.log('Asistencias con HE',he_en_contrato);
-            console.log('caclulo de horas extras en cts: ' ,calcularHextrasEnCts(he_en_contrato, 10, 6) || 0);
-            
+            console.log("Asistencias con HE", he_en_contrato);
+            console.log(
+               "caclulo de horas extras en cts: ",
+               calcularHextrasEnCts(he_en_contrato, 10, 6) || 0
+            );
+
             r.prom_h_extras = calcularHextrasEnCts(he_en_contrato, 10, 6) || 0;
          }
 
@@ -391,13 +386,89 @@ class SequelizeCtsRopository {
                fin_c
             );
          r.faltas_importe = (c.sueldo / 12 / 30) * r.faltas_dias;
-         r.faltas_importe=parseFloat(r.faltas_importe.toFixed(2))
-         r.cts_depositar = r.cts_meses + r.cts_dias - r.faltas_importe;
-         r.cts_depositar=parseFloat(r.cts_depositar.toFixed(2))
+         r.faltas_importe = parseFloat(r.faltas_importe.toFixed(2));
+         const dias_no_computados =
+            await asistenciasRepository.obtenerDiasNoComputablesPorRangoFecha(
+               trabajador.id,
+               inicio_c,
+               fin_c
+            );
+         if (dias_no_computados > 0) {
+            r.no_computable = dias_no_computados * MONTO_NO_COMPUTABLE;
+            r.no_computable = parseFloat(r.no_computable.toFixed(2));
+         }
+         r.cts_depositar =
+            r.cts_meses + r.cts_dias - r.faltas_importe - r.no_computable;
+         r.cts_depositar = parseFloat(r.cts_depositar.toFixed(2));
          r.ids_agrupacion = c.ids_agrupacion;
          arreglo_cts.push(r);
       }
       return arreglo_cts;
+   }
+   async verificarCierrePeriodoCts(periodo, anio, filial_id) {
+      let periodoObtenido;
+      switch (periodo) {
+         case "MAYO":
+            periodoObtenido = `${anio}-04`;
+            break;
+         case "NOVIEMBRE":
+            periodoObtenido = `${anio}-11`;
+            break;
+         default:
+            break;
+      }
+      const cierreCts = db.cierres_cts.findOne({
+         where: { periodo: periodoObtenido, filial_id },
+      });
+      return cierreCts;
+   }
+   async obtenerHistoricoCts(periodo, anio, filial_id) {
+      let periodoObtenido;
+      switch (periodo) {
+         case "MAYO":
+            periodoObtenido = `${anio}-04`;
+            break;
+         case "NOVIEMBRE":
+            periodoObtenido = `${anio}-11`;
+            break;
+         default:
+            break;
+      }
+      const registros_cts = db.cts.findAll({
+         where: {
+            periodo: periodoObtenido,
+            filial_id: filial_id,
+         },
+      });
+      return registros_cts;
+   }
+   async generarRegistroCierrePeriodoCts(datos, transaction = null) {
+      const options = {};
+      if (transaction) {
+         options.transaction = transaction;
+      }
+      const cierreCts = db.cierres_cts.create(datos, options);
+      return cierreCts;
+   }
+   async generarCierreBloqueoPeriodoCts(locked_at, id, transaction = null) {
+      const options = {
+         where: {
+            id: id,
+         },
+      };
+      if (transaction) {
+         options.transaction = transaction;
+      }
+      const cierreCts = db.cierres_cts.update({ locked_at }, options);
+      return cierreCts;
+   }
+   async crearRegistroCts(datos, transaction = null) {
+      const options = {};
+      if (transaction) {
+         options.transaction = transaction;
+      }
+      const cts = db.cts.create(datos, transaction);
+      return cts;
    }
 }
 
