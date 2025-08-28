@@ -3,15 +3,18 @@ const CalcularQuintaProyectada = require('../../application/useCases/calcularQui
 const GuardarCalculoQuinta = require('../../application/useCases/guardarCalculoQuinta');
 const RecalcularQuinta = require('../../application/useCases/recalcularQuinta');
 const ObtenerIngresosPrevios = require('../../application/useCases/obtenerIngresosPrevios');
+const ObtenerRetencionBaseMesPorDni = require('../../application/useCases/obtenerRetencionBaseMesPorDni');
 
 const repo = new SequelizeCalculoQuintaCategoriaRepository();
 const calcularUC = new CalcularQuintaProyectada();
 const guardarUC = new GuardarCalculoQuinta(repo);
 const recalcularUC = new RecalcularQuinta(repo);
 const obtenerIngresosUC = new ObtenerIngresosPrevios();
+const obtenerBaseMesUC = new ObtenerRetencionBaseMesPorDni({ repo });
 
 const enriquecerConContratoOFalla = require('../../shared/utils/enriquecerConContratoOFalla'); // Si no llega remuneración, la tomamos del contrato vigente (y validamos quinta_categoria)
 const { mapCalculoQuintaToResponse } = require('../../shared/mappers/mapCalculoQuintaToResponse'); // Para devolver ordenado al frontend
+const buildQuintaInput = require('./_buildQuintaInput');
 
 module.exports = {
   async previsualizar(req, res) {
@@ -22,26 +25,7 @@ module.exports = {
       // Si no aplica quinta categoría cortamos la ejecución con error
       if (error) return res.status(error.status).json({ ok: false, message: error.message });
     
-      let ingresosPrevios;
-      console.log("Ingresos previos acumulados del frontend:", typeof req.body.ingresosPreviosAcumulados)
-
-     ingresosPrevios = await obtenerIngresosUC.execute({
-      trabajadorId: req.body.trabajadorId,
-      anio: req.body.anio,
-      mes: req.body.mes,
-      remuneracionMensualActual: req.body.remuneracionMensualActual,
-      fuentePrevios: req.body.fuentePrevios,
-      certificadoQuinta: req.body.certificadoQuinta || null
-    })
-      
-      const retencionesPreviasDB = await obtenerIngresosUC._getRetencionesPrevias({
-        trabajadorId: req.body.trabajadorId,
-        anio: req.body.anio,
-        mes: req.body.mes,
-      });
-
-      const retencionesPrevias = Number(retencionesPreviasDB || 0) +
-        (req.body?.fuentePrevios === 'CERTIFICADO' ? Number(req.body?.certificadoQuinta?.retenciones_previas || 0) : 0);
+      const { ingresosPrevios, retencionesPrevias, esProyeccion, fuentePrevios } = await buildQuintaInput({ body: req.body, obtenerIngresosUC });
 
       // Si aplica para quinta, pasamos al caso de uso todo el req.body 
       // mas el contratoId obtenido en enriquecerConContratoOFalla
@@ -53,14 +37,6 @@ module.exports = {
         esProyeccion: ingresosPrevios.es_proyeccion,
         fuentePrevios: req.body.fuentePrevios
       });
-      
-      // Validamos si aplica quinta 
-      /* const aplicaQuinta = (dto.retencion_base_mes !== 0 || dto.retencion_adicional_mes !== 0);
-      if (!aplicaQuinta) {
-          const err = new Error("El trabajador no aplica retención de quinta categoría.");
-          err.status = 400;
-          throw err;
-      } */
 
       // Ordenamos antes de mandar al front
       const response = mapCalculoQuintaToResponse(dto);
@@ -85,28 +61,7 @@ module.exports = {
       // Si no aplica quinta categoría cortamos la ejecución con error
       if (error) return res.status(error.status).json({ ok: false, message: error.message });
 
-      let ingresosPrevios = await obtenerIngresosUC.execute({
-        trabajadorId: req.body.trabajadorId,
-        anio: req.body.anio,
-        mes: req.body.mes,
-        remuneracionMensualActual: req.body.remuneracionMensualActual,
-        fuentePrevios: req.body.fuentePrevios,
-        certificadoQuinta: req.body.certificadoQuinta || null
-      })
-      
-      const retencionesPreviasDB = await obtenerIngresosUC._getRetencionesPrevias({
-        trabajadorId: req.body.trabajadorId,
-        anio: req.body.anio,
-        mes: req.body.mes,
-      });
-
-      const retencionesPrevias = Number(retencionesPreviasDB || 0) +
-        (req.body?.fuentePrevios === 'CERTIFICADO' ? Number(req.body?.certificadoQuinta?.retenciones_previas || 0) : 0);
-
-      console.log(
-        "DATOS MANDADOS A CALCULAR: ", req.body, "Adicionalmente el contrato: ", req.body.__contratoId,
-        "Los ingresos previos acumulados: ", ingresosPrevios.total_ingresos, "Y las retenciones previas: ", retencionesPrevias
-      )
+      const { ingresosPrevios, retencionesPrevias, esProyeccion, fuentePrevios } = await buildQuintaInput({ body: req.body, obtenerIngresosUC });
 
       // Si aplica para quinta, pasamos al caso de uso todo el req.body 
       // mas el contratoId obtenido en enriquecerConContratoOFalla
@@ -155,65 +110,63 @@ module.exports = {
 
   async recalcular(req, res) {
     try {
+      console.log("REQUEST PARA RECALCULAR QUE VIENE DEL FRONT: ", req.body)
+      let prev = await repo.findById(req.params.id);
+      // Si no existe, respondemos el error
+      if (!prev) return res.status(404).json({ ok: false, message: 'No encontrado' });
+      
       // Si no llega nuevo sueldo, usamos contrato vigente del registro a recalcular
       if (!Number(req.body?.remuneracionMensualActual)) {
         // Buscamos el cálculo previo en la base de datos
-        const prev = await repo.findById(req.params.id);
-        // Si no existe, respondemos el error
-        if (!prev) return res.status(404).json({ ok: false, message: 'No encontrado' });
-        // Si existe, con la info buscamos el contrato vigente
-        // del trabajador al mes/año del registro
         const contrato = await repo.getContratoVigente({
           trabajadorId: prev.trabajador_id,
           dni: prev.dni,
           anio: prev.anio,
-          mes: prev.mes
+          mes: prev.mes,
         });
-        // Si no hay contrato vigente devolvemos el error
-        if (!contrato) return res.status(400).json({ ok: false, message: 'No existe contrato vigente para el registro a recálculo.' });
+        if (!contrato) return res.status(400).json({ ok: false, message: 'No existe contrato vigente para el registro a recálcular.'});
         // Si hay, verificamos si aplica para quinta categoría
-        const aplicaQuinta = (prev.retencion_base_mes !== 0 || prev.retencion_adicional_mes !== 0);
-        // Y si no aplica devolvemos el error
-        if (!aplicaQuinta) {
-          const err = new Error("El trabajador no aplica retención de quinta categoría.");
-          err.status = 400;
-          throw err;
+        if (prev.retencion_base_mes === 0 && prev.retencion_adicional_mes === 0) {
+          return res.status(400).json({ ok: false, message: "El trabajador no aplica retención de quinta categoría."})
         }
-        // Pero si aplica, insertamos el sueldo vigente en la remuneración mensual actual del body
-        req.body = { ...req.body, remuneracionMensualActual: Number(contrato.sueldo) };
+        req.body.remuneracionMensualActual = Number(contrato.sueldo);
       }
 
-      const prev = await repo.findById(req.params.id);
-      if (!prev) return res.status(404).json({ ok: false, message: "No encontrado"});
+        // Fuente/certificado que vienen del body o por defecto
+        const fuentePrevios = req.body.fuentePrevios || 'AUTO';
+        const certificadoQuinta = req.body.certificadoQuinta || null;
 
-      // Calculamos las retenciones previas reales a la fecha del registro
-      const retPreviasDB = await obtenerIngresosUC._getRetencionesPrevias({
-        trabajadorId: prev.trabajador_id,
-        anio: prev.anio,
-        mes: prev.mes,
-      });
+        // Retenciones previas reales a la fecha del registro
+        let retencionesPrevias = await obtenerIngresosUC._getRetencionesPrevias({
+          trabajadorId: prev.trabajador_id,
+          anio: prev.anio,
+          mes: prev.mes,
+        })
+        if (fuentePrevios === "CERTIFICADO") {
+          retencionesPrevias += Number(certificadoQuinta?.retenciones_previas || 0);
+        }
+        // Inyectamos en overrideInput para el recálculo
+        req.body.retencionesPrevias = Number(retencionesPrevias || 0);
+  
 
-      // Mezclamos en el body (si el front no manda otra cosa)
-      req.body = { ...req.body, retencionesPrevias: Number(retPreviasDB || 0)};
-
-      // Ejecutamos el recálculo pasándole el id del cálculo a recalcular
-      // los datos que vienen del req enriquecidos con el contrato vigente
-      // el user.id del usuario que está haciendo el recálculo
-      // Guardamos un nuevo registro en quinta_calculos marcado como es_recalculo=true
-      const saved = await recalcularUC.execute({
-        id: req.params.id,
-        overrideInput: req.body,
-        creadoPor: req.user?.id
-      });
+        // Ejecutamos el recálculo pasándole el id del cálculo a recalcular
+        // los datos que vienen del req enriquecidos con el contrato vigente
+        // el user.id del usuario que está haciendo el recálculo
+        // Guardamos un nuevo registro en quinta_calculos marcado como es_recalculo=true
+        const saved = await recalcularUC.execute({
+          id: req.params.id,
+          overrideInput: req.body,
+          creadoPor: req.user?.id
+        });
 
       return res.status(201).json({ ok: true, data: saved });
 
     } catch (error) {
       console.error("Error en el recálculo de quinta categoría:", error);
 
-      return res.status(500).json({
+      return res.status(error.status || 500).json({
         ok: false,
-        message: "Error interno al recalcular quinta categoría."
+        message: error.message || "Error interno al recalcular la retención de quinta categoría."
       });
     }
   },
@@ -259,6 +212,17 @@ module.exports = {
         ok: false,
         message: "Error interno listando los cálculos de quinta categoría."
       });
+    }
+  },
+
+  async getRetencionBaseMesPorDni(req, res) {
+    try {
+      const { dni, anio, mes } = req.query || {};
+      const out = await obtenerBaseMesUC.execute({ dni, anio: Number(anio), mes: Number(mes) });
+      return res.status(200).json({ ok: true, ...out });
+    } catch (err) {
+      const status = err.status || 500;
+      return res.status(status).json({ ok: false, message: err.message || "Error interno al consultar retención base del trabajador"})
     }
   },
 };

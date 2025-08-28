@@ -185,9 +185,14 @@ export function useQuintaCategoria() {
     try {
       const baseTotal = Number(row.retencion_base_mes) + Number(row.retencion_adicional_mes);
 
-      // Si quieres forzar un sueldo puntual en el recálculo, pásalo aquí:
-      // const payload = {remuneracionMensualActual: form.remuneracionMensualActual};
-      const payload = {}; // por defecto: el backend inyecta el sueldo vigente del contrato en ese mes
+      // Respetamos la fuente seleccionada por el usuario
+      const payload = {
+        fuentePrevios: form.fuentePrevios,
+        certificadoQuinta:
+          form.fuentePrevios === FUENTE_PREVIOS.CERTIFICADO ? form.certificadoQuinta ?? null : null,
+        // para forzar el sueldo en el recálculo descomentamos abajo
+        // remuneracionMensualActual: Number(form.remuneracionMensualActual) || undefined,
+      };
 
       /* setLoadingPreview(true); */
       const { data } = await quintaRecalc(row.id, payload);
@@ -214,7 +219,7 @@ export function useQuintaCategoria() {
       const msg = err?.response?.data?.message || "Error al recalcular.";
       toast.error(msg);
     }
-  }, []);
+  }, [form.fuentePrevios, form.certificadoQuinta /*, form.remuneracionMensualActual */]);
     
   const cargarHistorial = useCallback(async () => {
     if (!form.dni || !form.anio) return;

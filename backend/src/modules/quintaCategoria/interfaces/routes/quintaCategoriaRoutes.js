@@ -13,4 +13,6 @@ router.post('/:id/recalcular', QuintaCategoriaController.recalcular);
 router.get('/:id', QuintaCategoriaController.getById);
 router.get('/', QuintaCategoriaController.list);
 
+router.get('/base-mes', QuintaCategoriaController.getRetencionBaseMesPorDni);
+
 module.exports = router;

@@ -21,6 +21,17 @@ class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository 
       order: [['mes','ASC'],['id','ASC']]
     });
   }
+
+  // Método para ser usado por otros módulos
+  async findUltimoVigentePorDniMes({ dni, anio, mes }) {
+      return CalculoQuintaModel.findOne({
+      where: { dni, anio, mes }, 
+      order: [['createdAt', 'DESC']],     // último creado = vigente del mes
+      // attributes opcionales para performance:
+      // attributes: ['id','dni','anio','mes','retencion_base_mes','es_recalculo','createdAt'],
+    });
+  }
+
   // Paginado con filtros (dni/año). Retornamos filas, el contador, las paginas y el limite
   async list({ dni, trabajadorId, anio, page=1, limit=20 }) {
     const where = {};
