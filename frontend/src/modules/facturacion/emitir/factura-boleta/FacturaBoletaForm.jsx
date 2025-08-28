@@ -75,10 +75,12 @@ const FacturaBoletaForm = () => {
             <DatosDelCliente />
             {/* Montos y productos */}
             <MontoyProductos />
-            {/* Forma de pago */}
-            <FormaDePago />
+
             {/* Datos de detraccion */}
             <DatosDeDetraccion />
+
+            {/* Forma de pago */}
+            <FormaDePago />
 
             {/* Facturar  */}
             <div className="flex justify-between">

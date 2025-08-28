@@ -15,7 +15,7 @@ import facturaService from "@/modules/facturacion/service/FacturaService";
 import { toast } from "react-toastify";
 
 const DatosDelComprobante = () => {
-    const { factura, setFactura } = useFacturaBoleta();
+    const { factura, setFactura, filiales } = useFacturaBoleta();
     const [correlativoEstado, setCorrelativoEstado] = useState(false);
     const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
 
@@ -94,14 +94,14 @@ const DatosDelComprobante = () => {
                             <SelectItem value="0101">Venta Interna - (0101)</SelectItem>
                             <SelectItem value="0102">Exportación - (0102)</SelectItem>
                             <SelectItem value="0103">No Domiciliados - (0103)</SelectItem>
-                            {/* <SelectItem value="0104">Venta Interna – Anticipos - (0104)</SelectItem>
+                            <SelectItem value="0104">Venta Interna – Anticipos - (0104)</SelectItem>
                             <SelectItem value="0105">Venta Itinerante - (0105)</SelectItem>
                             <SelectItem value="0106">Factura Guía - (0106)</SelectItem>
                             <SelectItem value="0107">Venta Arroz Pilado - (0107)</SelectItem>
                             <SelectItem value="0108">Factura - Comprobante de Percepción - (0108)</SelectItem>
                             <SelectItem value="0110">Factura - Guía remitente - (0110)</SelectItem>
-                            <SelectItem value="0111">Factura - Guía transportista - (0111)</SelectItem> */}
-                            <SelectItem value="1001">Operaciones Gravadas - (1001)</SelectItem>
+                            <SelectItem value="0111">Factura - Guía transportista - (0111)</SelectItem>
+                            {/* <SelectItem value="1001">Operaciones Gravadas - (1001)</SelectItem> */}
                         </SelectContent>
                     </Select>
                 </div>
@@ -206,15 +206,15 @@ const DatosDelComprobante = () => {
                             handleSelectChange(e, "empresa_Ruc");
                         }}
                     >
-                        <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> 
-                            <SelectValue placeholder="Selecciona un codigo"/>
+                        <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm">
+                            <SelectValue placeholder="Selecciona un codigo" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="10749283781">RUC DE PRUEBA - 10749283781</SelectItem>
-                            <SelectItem value="20603021933">Innova Rental Maquinaria Sac | Grupo Innova - 20603021933</SelectItem>
-                            <SelectItem value="20562974998">Encofrados Innova S.a.C. | Grupo Innova - 20562974998</SelectItem>
-                            <SelectItem value="20602696643">Andamios Electricos Innova S.a.C. | Grupo Innova - 20602696643</SelectItem>
-                            <SelectItem value="20555389052">Indek Andina e.I.R.L | Grupo Innova - 20555389052</SelectItem>
+                            {filiales.map((filial) => (
+                                <SelectItem key={filial.id} value={filial.ruc}>
+                                    {filial.razon_social} - {filial.ruc}
+                                </SelectItem>
+                            ))}
                         </SelectContent>
                     </Select>
                 </div>

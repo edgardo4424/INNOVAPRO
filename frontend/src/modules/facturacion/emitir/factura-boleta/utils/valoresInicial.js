@@ -2,7 +2,7 @@
 
 const ValorInicialFactura = {
     // ?Datos del comprobante
-    tipo_Operacion: "",
+    tipo_Operacion: "0101",
     tipo_Doc: "01",
     serie: "F001",
     correlativo: "",
@@ -49,19 +49,27 @@ const ValorInicialFactura = {
     ],
 };
 
-const camposDetraccion = {
-    detraccion_cod_bien_detraccion: "",
-    detraccion_cod_medio_pago: "",
-    detraccion_cta_banco: "",
-    detraccion_percent: 0,
-    detraccion_mount: 0,
-}
+const valorIncialPago = {
+    tipo: "",
+    monto: 0,
+    cuota: 0,
+    fecha_Pago: "",
+};
 
-const camposDescuento = {
+
+const valorIncialRetencion = {
     descuento_cod_tipo: "",
     descuento_monto_base: 0,
     descuento_factor: 0,
     descuento_monto: 0,
+}
+
+const valorIncialDetracion = {
+    detraccion_cod_bien_detraccion: "",
+    detraccion_cod_medio_pago: "",
+    detraccion_cta_banco: "0004-3342343243",
+    detraccion_percent: 0,
+    detraccion_mount: 0,
 }
 
 const valorInicialProducto = {
@@ -80,20 +88,8 @@ const valorInicialProducto = {
     factor_Icbper: 0,
 };
 
-const valorIncialPago = {
-    tipo: "",
-    monto: 0,
-    cuota: 0,
-    fecha_Pago: "",
-};
 
-const valorIncialDetracion = {
-    detraccion_cod_bien_detraccion: "014",
-    detraccion_cod_medio_pago: "001",
-    detraccion_cta_banco: "0004-3342343243",
-    detraccion_percent: 4.00,
-    detraccion_mount: 37.76,
-}
+
 
 // ?? VALORES INICIALES ---- FIN
 
@@ -140,6 +136,7 @@ const PagoValidarEstados = {
 
 export {
     ValorInicialFactura,
+    valorIncialRetencion,
     valorIncialDetracion,
     FacturaValidarEstados,
     valorInicialProducto,

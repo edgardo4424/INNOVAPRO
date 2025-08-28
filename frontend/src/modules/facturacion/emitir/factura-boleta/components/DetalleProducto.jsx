@@ -35,39 +35,39 @@ const DetalleProducto = () => {
                     {/* Total */}
                     <div className="flex justify-between w-full max-w-sm py-1">
                         <span className="font-semibold">Total</span>
-                        <span>S/. {TotalProducto}</span>
+                        <span>S/. {TotalProducto.toFixed(2)}</span>
                     </div>
 
                     {/* IGV */}
                     <div className="flex justify-between w-full max-w-sm py-1">
                         <span className="font-semibold">IGV</span>
-                        <span>S/. {factura.monto_Igv}</span>
+                        <span>S/. {factura.monto_Igv.toFixed(2)}</span>
                     </div>
 
 
                     {/* Sub Total + IGV */}
                     <div className="flex justify-between w-full max-w-sm py-1">
                         <span className="font-semibold">Sub Total + IGV</span>
-                        <span>S/. {subTotalConIgv}</span>
+                        <span>S/. {subTotalConIgv.toFixed(2)}</span>
                     </div>
 
                     {/* Exonerados */}
                     <div className="flex justify-between w-full max-w-sm py-1">
                         <span className="font-semibold">Exonerados</span>
-                        <span>S/. {factura.monto_Oper_Exoneradas}</span>
+                        <span>S/. {factura.monto_Oper_Exoneradas.toFixed(2)}</span>
                     </div>
 
                     {/* Sub Total */}
                     <div className="flex justify-between w-full max-w-sm py-1">
                         <span className="font-semibold">Sub Total</span>
-                        <span>S/. {factura.sub_Total}</span>
+                        <span>S/. {factura.sub_Total.toFixed(2)}</span>
                     </div>
 
 
                     {/* Monto Importes Venta */}
                     <div className="flex justify-between w-full max-w-sm py-1">
                         <span className="font-semibold">Monto Importes Venta</span>
-                        <span>S/. {factura.monto_Imp_Venta}</span>
+                        <span>S/. {factura.monto_Imp_Venta.toFixed(2)}</span>
                     </div>
                 </div>
                 {/* )} */}

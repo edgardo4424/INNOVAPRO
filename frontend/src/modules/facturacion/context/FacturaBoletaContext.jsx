@@ -1,4 +1,4 @@
-import { PagoValidarEstados, ProductoValidarEstados, valorIncialDetracion, valorIncialPago, ValorInicialFactura, valorInicialProducto } from "@/modules/facturacion/emitir/factura-boleta/utils/valoresInicial";
+import { PagoValidarEstados, ProductoValidarEstados, valorIncialDetracion, valorIncialPago, valorIncialRetencion, ValorInicialFactura, valorInicialProducto } from "@/modules/facturacion/emitir/factura-boleta/utils/valoresInicial";
 import factilizaService from "@/modules/facturacion/service/FactilizaService";
 import facturaService from "@/modules/facturacion/service/FacturaService";
 import numeroALeyenda from "@/modules/facturacion/utils/numeroALeyenda";
@@ -6,17 +6,22 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { validarModal } from "../emitir/factura-boleta/utils/validarModal";
 import { validarFacturaCompleta } from "../emitir/factura-boleta/utils/validarPasos";
+import filialesService from "../service/FilialesService";
 
 
 const FacturaBoletaContext = createContext();
 
 export function FacturaBoletaProvider({ children }) {
+    // ** DATOS PARA FORMULARIO
+    const [factura, setFactura] = useState(ValorInicialFactura); // * FACTURA
 
-    const [factura, setFactura] = useState(ValorInicialFactura);
+    const [detraccionActivado, setDetraccionActivado] = useState(false);
+    const [detraccion, setDetraccion] = useState(valorIncialDetracion); // * DETRACCION
 
-    const [detraccion, setDetraccion] = useState(valorIncialDetracion);
+    const [retencionActivado, setRetencionActivado] = useState(false);
+    const [retencion, setRetencion] = useState(valorIncialRetencion);
 
-    const [facturaValida, setFacturaValida] = useState(null);
+    const [facturaValida, setFacturaValida] = useState(null); // ? VALIDAR FACTURA
 
     const [productoActual, setProductoActual] = useState(valorInicialProducto);
 
@@ -34,11 +39,12 @@ export function FacturaBoletaProvider({ children }) {
 
     const [pagoValida, setPagoValida] = useState(PagoValidarEstados);
 
+    const [filiales, setFiliales] = useState([]);
 
 
     const validarFactura = async () => {
         try {
-            const { errores, validos, message } = await validarFacturaCompleta(factura);
+            const { errores, validos, message } = await validarFacturaCompleta(factura,detraccionActivado, detraccion, retencionActivado, retencion);
             if (!validos) {
                 // *Encuentra el primer error y lo muestra en un toast
                 const primerError = Object.values(errores)[0];
@@ -94,6 +100,20 @@ export function FacturaBoletaProvider({ children }) {
             return false;
         }
     };
+
+    // ?? OBTENER TODAS LAS FILIALES
+
+    useEffect(() => {
+        const consultarFiliales = async () => {
+            const data = await filialesService.ObtenerPiezas();
+            if (data.length === 0) {
+                toast.error("No se encontraron filiales");
+                return;
+            }
+            setFiliales(data);
+        }
+        consultarFiliales();
+    }, []);
 
     // TODO LOS USEEFFECT DE LOS FORMULARIOS DE LOS MODALES ------- INICIO
 
@@ -159,32 +179,62 @@ export function FacturaBoletaProvider({ children }) {
         console.log("nueva legenda")
         console.log(nuevaLegenda)
 
-        setFactura((prev) => ({
-            ...prev,
-            legend: [{
-                legend_Code: "1000",
-                legend_Value: nuevaLegenda,
-            }]
-        }));
+        if (detraccionActivado) {
+            setFactura((prev) => ({
+                ...prev,
+                legend: [{
+                    legend_Code: "1000",
+                    legend_Value: nuevaLegenda,
+                }, {
+                    legend_Code: "2006",
+                    legend_Value: "Operación sujeta a detracción",
+                }]
+            }));
+        } else {
+            setFactura((prev) => ({
+                ...prev,
+                legend: [{
+                    legend_Code: "1000",
+                    legend_Value: nuevaLegenda,
+                }]
+            }));
+        }
     }, [factura.monto_Imp_Venta]);
 
 
     useEffect(() => {
-        let montoPendiente = factura.monto_Imp_Venta;
-        if (factura.forma_pago.length > 0) {
-            const pagosRealizados = factura.forma_pago.reduce((total, item) => {
-                const monto = parseFloat(item.monto.toFixed(2));
-                return total + (isNaN(monto) ? 0 : monto);
-            }, 0);
-            montoPendiente = factura.monto_Imp_Venta - pagosRealizados;
+        let montoBase = factura.monto_Imp_Venta || 0;
+        let montoPendiente = montoBase;
+
+        const pagosRealizados = factura.forma_pago.reduce((total, item) => {
+            const monto = parseFloat(item.monto || 0); // ✅ Aquí corregimos para evitar NaN
+            return total + (isNaN(monto) ? 0 : monto);
+        }, 0);
+
+        if (detraccionActivado) {
+            const detraccionMonto = parseFloat(detraccion.detraccion_mount || 0); // ✅ Usamos el valor directamente del estado de detraccion
+            montoPendiente = (montoBase - detraccionMonto) - pagosRealizados;
+            console.log("if con 1001", montoPendiente);
+        } else if (retencionActivado) {
+            // !! IMPLEMENTAR LOGICA PARA RETENCIONES
+            // La lógica para retenciones iría aquí si se activa
+            console.log("else if para retencion", montoPendiente);
+        } else {
+            montoPendiente = montoBase - pagosRealizados;
+            console.log("else defecto", montoPendiente);
         }
+
+        console.log("monto pendiente")
+        console.log(montoPendiente)
 
         setPagoActual((prev) => ({
             ...prev,
             cuota: factura.forma_pago.length,
             monto: parseFloat(montoPendiente.toFixed(2)),
         }));
-    }, [factura.monto_Imp_Venta, factura.forma_pago]);
+
+    }, [factura.monto_Imp_Venta, factura.forma_pago, detraccion.detraccion_mount, retencionActivado]);
+
 
 
     // TODO LOS USEEFFECT DE LOS FORMULARIOS DE LOS MODALES ------- FINAL
@@ -298,7 +348,16 @@ export function FacturaBoletaProvider({ children }) {
     const emitirFactura = async () => {
         let result = { success: false, message: "Error desconocido al emitir la factura", data: null };
         try {
-            const { status, success, message, data } = await factilizaService.enviarFactura(factura)
+            let facturaAEmitir;
+
+            if (retencionActivado) {
+                facturaAEmitir = Object.assign({}, factura, retencion);
+            } else if (detraccionActivado) {
+                facturaAEmitir = Object.assign({}, factura, detraccion);
+            } else {
+                facturaAEmitir = factura;
+            }
+            const { status, success, message, data } = await factilizaService.enviarFactura(facturaAEmitir)
 
 
             if (status === 200 && success) {
@@ -311,7 +370,7 @@ export function FacturaBoletaProvider({ children }) {
                     cdr_response_description: data.sunatResponse.cdrResponse.description
                 };
 
-                const facturaCopia = { ...factura, estado: "EMITIDA", sunat_respuesta: sunat_respuest };
+                const facturaCopia = { ...facturaAEmitir, estado: "EMITIDA", sunat_respuesta: sunat_respuest };
                 // ?Intentar registrar en base de datos
                 const dbResult = await registrarBaseDatos(facturaCopia);
 
@@ -340,7 +399,7 @@ export function FacturaBoletaProvider({ children }) {
 
     };
 
-    const registrarBaseDatos = async (documento = factura) => {
+    const registrarBaseDatos = async (documento) => {
         try {
             if (!documento) {
                 return { success: false, mensaje: "No se pudo registrar la factura" }
@@ -386,10 +445,13 @@ export function FacturaBoletaProvider({ children }) {
     return (
         <FacturaBoletaContext.Provider
             value={{
+                filiales,
                 factura,
                 setFactura,
                 detraccion,
                 setDetraccion,
+                detraccionActivado,
+                setDetraccionActivado,
                 validarFactura,
                 validarCampos,
                 facturaValida,

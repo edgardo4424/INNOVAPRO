@@ -3,7 +3,7 @@ function isNullOrEmpty(value) {
     return value === undefined || value === null || (typeof value === 'string' && value.trim() === '');
 }
 
-export async function validarFacturaCompleta(Factura) {
+export async function validarFacturaCompleta(Factura,detraccionActivado, Detraccion, retencionActivado, Retencion) {
     if (!Factura) {
         return {
             errores: null,
@@ -98,11 +98,25 @@ export async function validarFacturaCompleta(Factura) {
             (total, pago) => total + (parseFloat(pago.monto) || 0),
             0
         );
-        const montoTotalFactura = parseFloat(Factura.monto_Imp_Venta || 0);
+            console.log(Factura.monto_Imp_Venta)
+            console.log(Factura.monto_Imp_Venta)
+            console.log(Factura.tipo_Operacion)
+            console.log(Detraccion.detraccion_mount)
+        if (detraccionActivado) {
+            if (montoTotalPagos.toFixed(2) < (Factura.monto_Imp_Venta - Detraccion.detraccion_mount).toFixed(2)) {
+                errores.forma_pago_monto = "La suma de los pagos no cubre fffel monto total de la factura.";
+                validos = false;
+            }
+        }
+        else if (retencionActivado) {
 
-        if (montoTotalPagos < montoTotalFactura) {
-            errores.forma_pago_monto = "La suma de los pagos no cubre el monto total de la factura.";
-            validos = false;
+        }
+        else {
+            if (montoTotalPagos < Factura.monto_Imp_Venta) {
+                console.log(montoTotalPagos ,Factura.monto_Imp_Venta)
+                errores.forma_pago_monto = "La suma de los pagos no cubre el monto total de la factura.";
+                validos = false;
+            }
         }
     }
 

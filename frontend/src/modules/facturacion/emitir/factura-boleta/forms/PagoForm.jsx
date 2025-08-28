@@ -152,8 +152,8 @@ const PagoForm = ({ closeModal }) => {
                             <SelectValue placeholder="Selecciona un tipo" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="CONTADO">CONTADO </SelectItem>
-                            <SelectItem value="CREDITO">CREDITO</SelectItem>
+                            <SelectItem value="Contado">CONTADO </SelectItem>
+                            <SelectItem value="Credito">CREDITO</SelectItem>
                         </SelectContent>
                     </Select>
                     {

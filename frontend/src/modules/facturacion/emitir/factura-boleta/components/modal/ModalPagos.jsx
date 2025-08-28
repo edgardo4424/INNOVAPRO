@@ -14,14 +14,16 @@ import PagoForm from "../../forms/PagoForm";
 
 export default function ModalPagos() {
 
-    const { factura } = useFacturaBoleta();
+    const { factura, detraccion, detraccionActivado } = useFacturaBoleta();
 
     const montoTotalPagos = factura.forma_pago.reduce(
         (total, pago) => total + (parseFloat(pago.monto) || 0),
         0
     );
 
-    const montoTotalFactura = parseFloat(factura.monto_Imp_Venta || 0);
+    const montoTotalFactura = detraccionActivado
+        ? parseFloat(factura.monto_Imp_Venta || 0) - (detraccion.detraccion_mount || 0)
+        : parseFloat(factura.monto_Imp_Venta || 0) - (detraccion.detraccion_mount || 0);
     const pagosCompletos = montoTotalPagos.toFixed(2) >= montoTotalFactura;
 
 
