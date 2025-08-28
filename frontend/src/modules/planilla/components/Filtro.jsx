@@ -31,9 +31,10 @@ const Filtro = ({ filiales, filtro, setFiltro, Buscar }) => {
           {/* Select del mes */}
           <div className="md:col-span-2">
             <Select
-              name="periodo"
-              value={filtro.periodo}
-              onValueChange={(v) => setFiltro((p) => ({ ...p, periodo: v }))}
+              name="mes"
+              value={filtro.mes}
+              onValueChange={(v) => setFiltro((p) => ({ ...p, mes: v }))}
+              
             >
               <SelectTrigger className="w-full border-1 border-gray-400">
                 <SelectValue placeholder="Selecciona el mes" />

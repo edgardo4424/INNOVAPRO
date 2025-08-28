@@ -11,6 +11,7 @@ class Trabajador {
       tipo_documento,
       cargo_id,
       domiciliado,
+      tipo_afp
    }) {
       (this.id = id),
          (this.nombres = nombres),
@@ -22,6 +23,7 @@ class Trabajador {
          (this.sistema_pension = sistema_pension),
          (this.cargo_id = cargo_id);
       this.domiciliado = domiciliado;
+      this.tipo_afp = tipo_afp;
    }
 
    validarCamposObligatorios(editar = false) {
@@ -57,6 +59,9 @@ class Trabajador {
       if (this.cargo_id === null) {
          errores.push("El cargo no se a enviado");
       }
+     if(["HABITAT", "INTEGRA", "PRIMA", "PROFUTURO"].includes(this.tipo_afp) === false){
+        errores.push("El tipo de AFP es inválido");
+     }
       return errores;
    }
 
@@ -71,7 +76,8 @@ class Trabajador {
          asignacion_familiar:this.asignacion_familiar,
          sistema_pension: this.sistema_pension,
          cargo_id: this.cargo_id,
-         domiciliado:this.domiciliado
+         domiciliado:this.domiciliado,
+         tipo_afp: this.tipo_afp
       };
       if (editar) {
          datos.trabajador_id = this.id;

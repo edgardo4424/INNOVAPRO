@@ -50,6 +50,10 @@ const Trabajador = sequelize.define(
          allowNull: false,
          defaultValue: false,
       },
+      tipo_afp: {
+         type: DataTypes.ENUM("HABITAT", "INTEGRA", "PRIMA", "PROFUTURO"),
+         allowNull: true,
+      }
    },
    {
       tableName: "trabajadores",

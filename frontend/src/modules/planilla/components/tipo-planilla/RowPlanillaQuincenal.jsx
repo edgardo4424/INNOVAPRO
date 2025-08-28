@@ -19,9 +19,11 @@ const RowPlanillaQuincenal = ({ key, e, index }) => {
       <TableCell className="text-right">{e.sueldo_bruto}</TableCell>
 
       <TableCell className="text-right">{e.onp}</TableCell>
-      <TableCell className="text-right">{e.eps}</TableCell>
+   
       <TableCell className="text-right">{e.afp}</TableCell>
       <TableCell className="text-right">{e.seguro}</TableCell>
+      <TableCell className="text-right">{e.comision}</TableCell>
+
       <TableCell className="text-right">{e?.quinta_categoria}</TableCell>
 
       <TableCell className="text-right">{e.total_descuentos}</TableCell>

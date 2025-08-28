@@ -73,10 +73,10 @@ const TablePlanillaQuincenal = ({ planillaQuincenalTipoPlanilla, total }) => {
             {/* Sub-encabezados del grupo FALTAS */}
             <TableRow className={"bg-gray-800 text-xs "}>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">ONP</TableHead>
-              <TableHead rowSpan={2} className="text-center border-r text-white border-black">EPS Primera Quincena</TableHead>
+             {/*  <TableHead rowSpan={2} className="text-center border-r text-white border-black">EPS Primera Quincena</TableHead> */}
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">AFP Ap. Oblig</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Seguro</TableHead>
-              {/* <TableHead rowSpan={2} className="text-center border-r text-white border-black">Comisión</TableHead> */}
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Comisión</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">5ta Categ.</TableHead>
             </TableRow>
           </TableHeader>

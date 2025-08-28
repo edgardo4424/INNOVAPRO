@@ -43,6 +43,7 @@ const TrabajadorController = {
    },
    async editarTrabajadorConContrato(req, res) {
       try {
+         console.log('req.body', req.body);
          const usuarioEditado = await editarTrabajadorConContrato(req.body);
          res.status(usuarioEditado.codigo).json(usuarioEditado.respuesta);
       } catch (error) {

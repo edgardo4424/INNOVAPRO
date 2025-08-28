@@ -14,7 +14,7 @@ const PlanillaQuincenal = () => {
   const [loading, setLoading] = useState(false);
 
   // ?? Estados Solo para los que son planilla
-  const [planillaQuincenalTipoPlanilla, setPlanillaQuincenaltipoPlanilla] =
+  const [planillaQuincenalTipoPlanilla, setPlanillaQuincenalTipoPlanilla] =
     useState(viPlanillaQuincenal.planilla);
 
      // ?? Estados Solo para los que son por honorarios
@@ -22,6 +22,8 @@ const PlanillaQuincenal = () => {
   const [planillaQuincenalTipoRh, setPlanillaQuincenalTipoRh] = useState(
     viPlanillaQuincenal.honorarios
   );
+
+  const [datosCalculo, setDatosCalculo] = useState({})
 
   // ?? Filtro para la peticion
   const [filtro, setFiltro] = useState({
@@ -39,10 +41,13 @@ const PlanillaQuincenal = () => {
         fecha_anio_mes,
         filial_id: filtro.filial_id,
       }
+
+      console.log('dataPOST', dataPOST);
       const res = await planillaQuincenalService.obtenerPlanillaQuincenal(dataPOST);
       console.log('res', res);
-      setPlanillaQuincenaltipoPlanilla(res.planilla.trabajadores);
+      setPlanillaQuincenalTipoPlanilla(res.planilla.trabajadores);
       setPlanillaQuincenalTipoRh(res.honorarios.trabajadores);
+      setDatosCalculo(res.datosCalculo)
     } catch (error) {
     } finally {
       setLoading(false);
@@ -107,7 +112,11 @@ const PlanillaQuincenal = () => {
           </div>
         </div>
       ) : (
-          <>{renderTipoPlanilla()}
+          <>
+          {/* <pre className="whitespace-pre-wrap break-words bg-gray-100 p-4 rounded-lg text-xs">
+            {JSON.stringify(datosCalculo, null, 2)}
+          </pre> */}
+          {renderTipoPlanilla()}
             {renderTipoRh()}
           </>
       )}

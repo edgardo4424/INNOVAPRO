@@ -11,6 +11,7 @@ module.exports = async (
       return { codigo: 400, respuesta: { mensaje: errores } };
    }
    const nuevoTrabajadorData = trabajador.get(true);
+   console.log('nuevoTrabajadorData', nuevoTrabajadorData);
    const nuevoTrabajador = await trabajadorRepository.editar(
       nuevoTrabajadorData,
       transaction

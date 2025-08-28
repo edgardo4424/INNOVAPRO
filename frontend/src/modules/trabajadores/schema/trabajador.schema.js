@@ -61,6 +61,19 @@ export const trabajadorSchema = (isEdit = false, isGerente = false) =>
          .string()
          .oneOf(["AFP", "ONP"], "Sistema de pensión no válido")
          .required("El sistema de pensión es requerido"),
+      tipo_afp: yup
+  .string()
+  .trim()
+  .oneOf(["HABITAT", "INTEGRA", "PRIMA", "PROFUTURO"], "Tipo de AFP no válido")
+  .when("sistema_pension", (sistema_pension, schema) =>
+  {
+   
+   return sistema_pension.includes("AFP")
+      ? schema.required("El tipo de AFP es requerido")
+      : schema.nullable().notRequired()
+  }
+    
+  ),
       cargo_id: yup
          .number()
          .transform((value, originalValue) => {
