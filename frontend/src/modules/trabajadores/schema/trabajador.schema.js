@@ -74,9 +74,6 @@ export const trabajadorSchema = (isEdit = false, isGerente = false) =>
   }
     
   ),
-      quinta_categoria: yup
-         .boolean()
-         .required("La quinta categoría es requerida"),
       cargo_id: yup
          .number()
          .transform((value, originalValue) => {

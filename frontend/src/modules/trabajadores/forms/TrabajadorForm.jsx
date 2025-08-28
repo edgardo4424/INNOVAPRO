@@ -28,6 +28,7 @@ import { toast } from "sonner";
 import { default as SelectMultiple } from "react-select";
 
 const dataInicial = {
+
   filial_id: "",
   nombres: "",
   apellidos: "",
@@ -38,7 +39,6 @@ const dataInicial = {
   domiciliado: false,
   sistema_pension: "",
   tipo_afp: null,
-  quinta_categoria: false,
   cargo_id: "",
   contratos_laborales: [
     {
@@ -52,18 +52,8 @@ const dataInicial = {
   ],
 };
 
-const calcularQuintaCategoria = (sueldo, valor_uit) => {
-  const sueldo_anual = sueldo * 12;
-  const sieteUit = valor_uit * 7;
-  console.log(sueldo_anual, sieteUit);
-  console.log(sueldo_anual > sieteUit);
-  if (sueldo_anual > sieteUit) {
-    return true;
-  }
-  return false;
-};
-
 export default function TrabajadorForm() {
+
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const trabajador_id = searchParams.get("id");
@@ -107,7 +97,6 @@ export default function TrabajadorForm() {
       if (!isEditMode) return;
       setIsLoading(true);
       setFetchError("");
-
       try {
         const res = await trabajadoresService.obtenerTrabajadorPorId(
           trabajador_id
@@ -141,7 +130,6 @@ export default function TrabajadorForm() {
           domiciliado: !!t.domiciliado,
           sistema_pension: t.sistema_pension ?? "",
           tipo_afp: t.tipo_afp ?? null,
-          quinta_categoria: !!t.quinta_categoria,
           cargo_id: (t.cargo_id ?? "").toString(),
           contratos_laborales: contratos.length
             ? contratos
@@ -189,10 +177,6 @@ export default function TrabajadorForm() {
       domiciliado: formData.domiciliado,
       sistema_pension: formData.sistema_pension,
       tipo_afp: formData.tipo_afp,
-      quinta_categoria: calcularQuintaCategoria(
-        ultimoContrato.sueldo,
-        valorUit
-      ),
       cargo_id: formData.cargo_id,
       contratos_laborales: formData.contratos_laborales,
       sueldo_base: ultimoContrato ? ultimoContrato.sueldo : "",

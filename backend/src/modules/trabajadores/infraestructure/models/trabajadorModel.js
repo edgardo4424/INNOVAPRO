@@ -40,10 +40,6 @@ const Trabajador = sequelize.define(
          type: DataTypes.ENUM("AFP", "ONP"),
          allowNull: false,
       },
-      quinta_categoria: {
-         type: DataTypes.BOOLEAN,
-         allowNull: false,
-      },
       estado: {
          type: DataTypes.ENUM("activo", "inactivo"),
          allowNull: false,
@@ -89,6 +85,10 @@ Trabajador.associate = (models) => {
    Trabajador.belongsTo(models.cargos, {
       foreignKey: "cargo_id",
       as: "cargo",
+   });
+   Trabajador.hasMany(models.cts, {
+      foreignKey: "trabajador_id",
+      as: "cts",
    });
 };
 module.exports = { Trabajador };
