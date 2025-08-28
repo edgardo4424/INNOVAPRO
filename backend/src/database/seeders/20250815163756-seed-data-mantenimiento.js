@@ -26,18 +26,8 @@ module.exports = {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
-         {
-          id: 3,
-          codigo: "valor_eps",
-          nombre: "Descuento EPS",
-          descripcion:
-            "Porcentaje aplicado por EPS al trabajador",
-          valor: 2.25,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
         {
-          id: 4,
+          id: 3,
           codigo: "valor_afp",
           nombre: "Porcentaje AFP",
           descripcion: "Tasa aplicada para el descuento de AFP del trabajador.",
@@ -46,7 +36,7 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          id: 5,
+          id: 4,
           codigo: "valor_seguro",
           nombre: "Porcentaje de Seguro",
           descripcion: "Porcentaje aplicado para calcular el seguro de salud.",
@@ -55,43 +45,43 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          id: 6,
+          id: 5,
           codigo: "valor_comision_afp_habitat",
           nombre: "Porcentaje Comisión AFP HABITAT",
           descripcion: "Porcentaje de comisión aplicado por AFP HABITAT.",
-          valor: 1.37,
+          valor: 1.47,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
-          id: 7,
+          id: 6,
           codigo: "valor_comision_afp_integra",
           nombre: "Porcentaje Comisión AFP INTEGRA",
           descripcion: "Porcentaje de comisión aplicado por AFP INTEGRA.",
-          valor: 1.37,
+          valor: 1.55,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
          {
-          id: 8,
+          id: 7,
           codigo: "valor_comision_afp_prima",
           nombre: "Porcentaje Comisión AFP PRIMA",
           descripcion: "Porcentaje de comisión aplicado por AFP PRIMA.",
-          valor: 1.37,
+          valor: 1.60,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
            {
-          id: 9,
+          id: 8,
           codigo: "valor_comision_afp_profuturo",
           nombre: "Porcentaje Comisión AFP PROFUTURO",
           descripcion: "Porcentaje de comisión aplicado por AFP PROFUTURO.",
-          valor: 1.37,
+          valor: 1.69,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
-          id: 10,
+          id: 9,
           codigo: "valor_asignacion_familiar",
           nombre: "Asignación Familiar",
           descripcion:
@@ -101,7 +91,7 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          id: 11,
+          id: 10,
           codigo: "valor_hora_extra",
           nombre: "Monto por Hora Extra",
           descripcion: "Remuneración adicional por cada hora extra trabajada.",
@@ -110,7 +100,7 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          id: 12,
+          id: 11,
           codigo: "valor_desc_quinta_categoria",
           nombre: "Descuento Quinta Categoría",
           descripcion: "Porcentaje de impuesto a la renta de quinta categoría.",
@@ -119,7 +109,7 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          id: 13,
+          id: 12,
           codigo: "valor_no_computable",
           nombre: "Monto No Computable",
           descripcion:
@@ -129,7 +119,7 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          id: 14,
+          id: 13,
           codigo: "valor_falta",
           nombre: "Monto por Falta",
           descripcion:
@@ -139,7 +129,7 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          id: 15,
+          id: 14,
           codigo: "valor_bonificacion_essalud",
           nombre: "Valor Bonificación ESSALUD",
           descripcion:
@@ -149,7 +139,7 @@ module.exports = {
           updatedAt: new Date(),
         },
          {
-          id: 16,
+          id: 15,
           codigo: "valor_desc_quinta_categoria_no_domiciliado",
           nombre: "Valor Renta 5ta / No domiciliado",
           descripcion:
@@ -159,7 +149,7 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          id: 17,
+          id: 16,
           codigo: "deduccion_fija_uit",
           nombre: "Deducción Fija UIT",
           descripcion:

@@ -25,10 +25,6 @@ class SequelizePlanillaRepository {
       (await dataMantenimientoRepository.obtenerPorCodigo("valor_onp")).valor
     );
 
-    const PORCENTAJE_DESCUENTO_EPS = Number(
-      (await dataMantenimientoRepository.obtenerPorCodigo("valor_eps")).valor
-    );
-
     const PORCENTAJE_DESCUENTO_AFP = Number(
       (await dataMantenimientoRepository.obtenerPorCodigo("valor_afp")).valor
     );
@@ -41,20 +37,19 @@ class SequelizePlanillaRepository {
      ( await dataMantenimientoRepository.obtenerPorCodigo("valor_comision_afp_habitat")).valor
     );
      const PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA= Number(
-     ( await dataMantenimientoRepository.obtenerPorCodigo("valor_comision_integra")).valor
+     ( await dataMantenimientoRepository.obtenerPorCodigo("valor_comision_afp_integra")).valor
     );
 
     const PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA= Number(
-     ( await dataMantenimientoRepository.obtenerPorCodigo("valor_comision_prima")).valor
+     ( await dataMantenimientoRepository.obtenerPorCodigo("valor_comision_afp_prima")).valor
     );
 
     const PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO= Number(
-     ( await dataMantenimientoRepository.obtenerPorCodigo("valor_comision_profuturo")).valor
+     ( await dataMantenimientoRepository.obtenerPorCodigo("valor_comision_afp_profuturo")).valor
     );
 
     const dataMantenimiento = {
       PORCENTAJE_DESCUENTO_ONP,
-      PORCENTAJE_DESCUENTO_EPS,
       PORCENTAJE_DESCUENTO_AFP,
       PORCENTAJE_DESCUENTO_SEGURO,
       PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT,
@@ -63,12 +58,21 @@ class SequelizePlanillaRepository {
       PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO,
     };
 
+    console.log('dataMantenimiento',dataMantenimiento);
+
+    console.log('fecha_anio_mes', fecha_anio_mes);
+
     const fechaInicioMes = moment(`${fecha_anio_mes}-01`)
       .startOf("month")
       .format("YYYY-MM-DD");
     const fechaFinMes = moment(`${fecha_anio_mes}-01`)
       .endOf("month")
       .format("YYYY-MM-DD");
+
+    console.log({
+      fechaFinMes,
+      fechaInicioMes
+    });
 
     const contratosPlanilla = await db.contratos_laborales.findAll({
       where: {
@@ -86,6 +90,11 @@ class SequelizePlanillaRepository {
       ],
       raw: false,
       transaction,
+    });
+
+    console.log({
+        fechaFinMes,
+        fechaInicioMes
     });
 
     const contratosRxh = await db.contratos_laborales.findAll({
@@ -106,6 +115,13 @@ class SequelizePlanillaRepository {
       transaction,
     });
 
+    const todos = await db.contratos_laborales.findAll({
+  where: {
+    tipo_contrato: "HONORARIOS"
+  }
+});
+
+console.log('TODOS', todos);
     console.log('contratosRxh', contratosRxh);
 
     const listaPlanillaTipoPlanilla = [];
@@ -180,8 +196,11 @@ class SequelizePlanillaRepository {
         }
       }
 
-      const totalDescuentos = +(onp + afp + seguro).toFixed(2);
+      const totalDescuentos = +(onp + afp + seguro + comision).toFixed(2);
       const totalAPagar = +(sueldoBruto - totalDescuentos).toFixed(2);
+
+      const quinta_categoria = 0;
+      /* const quinta_categoria = (await quintaCategoriaRepository.obtenerQuintaCategoria(define, anio, mes))/2 || 0; */
 
       listaPlanillaTipoPlanilla.push({
         tipo_documento: trabajador.tipo_documento,
@@ -194,10 +213,10 @@ class SequelizePlanillaRepository {
         asignacion_familiar: asignacionFamiliar,
         sueldo_bruto: sueldoBruto,
         onp,
-        eps,
         afp,
         seguro,
         comision,
+        quinta_categoria,
         total_descuentos: totalDescuentos,
         total_a_pagar: totalAPagar,
       });
@@ -213,14 +232,18 @@ class SequelizePlanillaRepository {
         const sueldoQuincenal = +(sueldoBase / 2).toFixed(2);
         const totalAPagar = sueldoQuincenal;
         listaPlanillaTipoHonorarios.push({
-        dni: trabajador.numero_documento,
-        nombres: `${trabajador.nombres} ${trabajador.apellidos}`,
-        dias_laborados: 15,
+        tipo_documento: trabajador.tipo_documento,
+        numero_documento: trabajador.numero_documento,
+        nombres: trabajador.nombres,
+        apellidos: trabajador.apellidos,
+           dias_laborados: 15,
         sueldo_base: sueldoBase,
         sueldo_quincenal: sueldoQuincenal,
         total_a_pagar: totalAPagar,
       });
     }
+
+    
 
     return {
       planilla: {
@@ -228,7 +251,8 @@ class SequelizePlanillaRepository {
       },
       honorarios: {
         trabajadores: listaPlanillaTipoHonorarios,
-      }
+      },
+      datosCalculo: dataMantenimiento
     };
   }
 }

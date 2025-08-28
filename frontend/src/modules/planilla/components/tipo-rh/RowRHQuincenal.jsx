@@ -1,7 +1,6 @@
 import { TableCell, TableRow } from "@/components/ui/table";
-import { Eye, FileDown } from "lucide-react";
-import { formatearFecha } from "../../utils/formatearFecha";
-const RowPlanillaQuincenal = ({ key, e, index }) => {
+
+const RowRHQuincenal = ({ key, e, index }) => {
   return (
     <TableRow key={key} className={"text-xs"}>
      <TableCell className="text-right">{e.tipo_documento}</TableCell>
@@ -15,4 +14,4 @@ const RowPlanillaQuincenal = ({ key, e, index }) => {
   );
 };
 
-export default RowPlanillaQuincenal;
+export default RowRHQuincenal;
