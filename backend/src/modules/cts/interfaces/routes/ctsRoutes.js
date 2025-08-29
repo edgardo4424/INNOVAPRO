@@ -12,5 +12,6 @@ router.post("/calcular", ctsController.calcularCts)
 router.post("/cts-individual", ctsController.calcularCtsIndividual)
 router.post("/generar-cierre-cts", ctsController.cierreCts);
 router.post("/historico",ctsController.obtenerHistoricocts);
+router.post("/obtener-por-trabajador",ctsController.obtenerCtsPorTrabajador);
 
 module.exports = router;

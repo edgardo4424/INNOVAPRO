@@ -48,6 +48,8 @@ const dataInicial = {
       sueldo: "",
       regimen: "",
       tipo_contrato: "",
+      banco:"",
+      numero_cuenta:""
     },
   ],
 };
@@ -101,7 +103,6 @@ export default function TrabajadorForm() {
         const res = await trabajadoresService.obtenerTrabajadorPorId(
           trabajador_id
         );
-        console.log(res);
 
         if (ignore) return;
 
@@ -111,6 +112,8 @@ export default function TrabajadorForm() {
               id: c?.id ?? idx + 1,
               fecha_inicio: c?.fecha_inicio ?? "",
               fecha_fin: c?.fecha_fin ?? "",
+              banco:c?.banco??"",
+              numero_cuenta:c?.numero_cuenta??"",
               sueldo: c?.sueldo ?? "",
               regimen: c?.regimen ?? "",
               tipo_contrato: c?.tipo_contrato ?? "",
@@ -186,19 +189,18 @@ export default function TrabajadorForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!valorUit) return;
-    const isGerente = ["1", "14"].includes(formData.cargo_id);
+    
     try {
       setIsSubmitting(true);
 
       const dataToSubmit = buildPayload();
+    console.log('El payload es: ',dataToSubmit);
 
       if (isEditMode) {
         dataToSubmit.id = trabajador_id;
         await trabajadorSchema(isEditMode).validate(dataToSubmit, {
           abortEarly: false,
         });
-        console.log("ediar", dataToSubmit);
-
         const response = await trabajadoresService.editarTrabajador(
           dataToSubmit
         );

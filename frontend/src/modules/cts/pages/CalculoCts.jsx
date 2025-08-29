@@ -23,6 +23,8 @@ const CalculoCts = () => {
       try {
          setIsLoad(false);
          const response = await ctsService.obtenerTrabajadores();
+         console.log('Trabajadores: ',response);
+         
          const cts_obtenidas = [];
          for (const t of response.data) {
             const payload = {
@@ -31,12 +33,11 @@ const CalculoCts = () => {
                periodo: filtro.periodo,
                trabajador_id: t.id,
             };
-            const response_cts = await ctsService.obtenerCts(payload);
-
+            const response_cts = await ctsService.obtenerCts(payload);            
             response_cts.data.map((c) => cts_obtenidas.push(c));
          }
-         console.log("cts obetenidas: ", cts_obtenidas);
-
+         console.log(cts_obtenidas);
+         
          setCts(cts_obtenidas);
       } catch (error) {
          toast.error("Error al obtener el calculo de cts");
@@ -64,8 +65,6 @@ const CalculoCts = () => {
             data.remuneracion_computable = data.remuneracion_comp;
             data.meses_computables = data.meses_comp;
             data.dias_computables = data.dias_comp;
-            data.numero_cuenta = "POR DEFINIR";
-            data.banco = "POR DEFINIR";
             // Eliminación de las claves originales
             delete data.ids_agrupacion;
             delete data.contrato_id;

@@ -131,6 +131,23 @@ class SequelizeTrabajadorRepository {
 
       return sanitizacion;
    }
+   async obtenerTrabajadoresYcontratos() {
+      const trabajadores = await Trabajador.findAll({
+         where: {
+            estado: "activo",
+         },
+         include: [
+            {
+               model: db.contratos_laborales,
+               as: "contratos_laborales",
+               where: { estado: 1 },
+               required: false,
+            },
+         ],
+      });
+
+      return trabajadores;
+   }
 }
 
 module.exports = SequelizeTrabajadorRepository;
