@@ -1,8 +1,13 @@
 const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos // Llamamos los modelos sequalize de la base de datos
 
 const SequelizeDataMantenimientoRepository = require("../../../data_mantenimiento/infrastructure/repositories/sequelizeDataMantenimientoRepository");
-
 const dataMantenimientoRepository = new SequelizeDataMantenimientoRepository();
+
+const SequelizeQuintaCategoriaRepository = require("../../../quintaCategoria/infrastructure/repositories/SequelizeQuintaCategoriaRepository");
+const quintaCategoriaRepository = new SequelizeQuintaCategoriaRepository();
+
+const buildQuintaPublicApi = require('../../../quintaCategoria/application/services/QuintaPublicAPI');
+const quintaCategoriaService =  buildQuintaPublicApi({repo: SequelizeQuintaCategoriaRepository});
 
 const moment = require("moment");
 
@@ -19,7 +24,6 @@ class SequelizePlanillaRepository {
         )
       ).valor
     );
-    console.log("MONTO_ASIGNACION_FAMILIAR", MONTO_ASIGNACION_FAMILIAR);
 
     const PORCENTAJE_DESCUENTO_ONP = Number(
       (await dataMantenimientoRepository.obtenerPorCodigo("valor_onp")).valor
@@ -58,9 +62,6 @@ class SequelizePlanillaRepository {
       PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO,
     };
 
-    console.log('dataMantenimiento',dataMantenimiento);
-
-    console.log('fecha_anio_mes', fecha_anio_mes);
 
     const fechaInicioMes = moment(`${fecha_anio_mes}-01`)
       .startOf("month")
@@ -69,10 +70,6 @@ class SequelizePlanillaRepository {
       .endOf("month")
       .format("YYYY-MM-DD");
 
-    console.log({
-      fechaFinMes,
-      fechaInicioMes
-    });
 
     const contratosPlanilla = await db.contratos_laborales.findAll({
       where: {
@@ -92,10 +89,6 @@ class SequelizePlanillaRepository {
       transaction,
     });
 
-    console.log({
-        fechaFinMes,
-        fechaInicioMes
-    });
 
     const contratosRxh = await db.contratos_laborales.findAll({
       where: {
@@ -115,14 +108,10 @@ class SequelizePlanillaRepository {
       transaction,
     });
 
-    const todos = await db.contratos_laborales.findAll({
-  where: {
-    tipo_contrato: "HONORARIOS"
-  }
-});
+ 
 
-console.log('TODOS', todos);
-    console.log('contratosRxh', contratosRxh);
+    const anio = fecha_anio_mes.split("-")[0];
+    const mes = fecha_anio_mes.split("-")[1];
 
     const listaPlanillaTipoPlanilla = [];
     
@@ -143,7 +132,6 @@ console.log('TODOS', todos);
         ? MONTO_ASIGNACION_FAMILIAR
         : 0;
 
-        console.log('sueldoQuincenal', sueldoQuincenal);
       const sueldoBruto = +(sueldoQuincenal + asignacionFamiliar).toFixed(2);
 
       if (sistema_pension === "ONP") {
@@ -152,15 +140,12 @@ console.log('TODOS', todos);
           100
         ).toFixed(2);
       } else if (sistema_pension === "AFP") {
-        console.log({
-            sueldoBruto,
-            dataMantenimiento: dataMantenimiento.PORCENTAJE_DESCUENTO_AFP
-        });
+        
         afp = +(
           (sueldoBruto * dataMantenimiento.PORCENTAJE_DESCUENTO_AFP) /
           100
         ).toFixed(2);
-        console.log('afp', afp);
+      
         seguro = +(
           (sueldoBruto * dataMantenimiento.PORCENTAJE_DESCUENTO_SEGURO) /
           100
@@ -196,11 +181,20 @@ console.log('TODOS', todos);
         }
       }
 
-      const totalDescuentos = +(onp + afp + seguro + comision).toFixed(2);
+        /* const quinta_categoria = 0; */
+      const {found, retencion_base_mes, registro} = (await quintaCategoriaService.getRetencionBaseMesPorDni(
+        {
+            dni: trabajador.numero_documento, 
+            anio, 
+            mes
+        }
+      ));
+
+      const quinta_categoria = found ? +(((retencion_base_mes)/2).toFixed(2)) : 0;
+
+      const totalDescuentos = +(onp + afp + seguro + comision + quinta_categoria).toFixed(2);
       const totalAPagar = +(sueldoBruto - totalDescuentos).toFixed(2);
 
-      const quinta_categoria = 0;
-      /* const quinta_categoria = (await quintaCategoriaRepository.obtenerQuintaCategoria(define, anio, mes))/2 || 0; */
 
       listaPlanillaTipoPlanilla.push({
         tipo_documento: trabajador.tipo_documento,
@@ -227,7 +221,6 @@ console.log('TODOS', todos);
     for (const contrato of contratosRxh) {
         const trabajador = contrato.trabajador;
     
-        console.log('trabajador', trabajador)
         const sueldoBase = Number(contrato.sueldo);
         const sueldoQuincenal = +(sueldoBase / 2).toFixed(2);
         const totalAPagar = sueldoQuincenal;

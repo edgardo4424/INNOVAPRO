@@ -1,3 +1,6 @@
+const SequelizeQuintaCategoriaRepository = require("../../infrastructure/repositories/SequelizeQuintaCategoriaRepository");
+const quintaCategoriaRepository = new SequelizeQuintaCategoriaRepository();
+
 // Devuelve la retención BASE del mes para un DNI/año/mes.
 // Regla: “vigente del mes” = último registro creado (createdAt DESC) para ese año/mes.
 module.exports = class ObtenerRetencionBaseMesPorDni {
@@ -13,17 +16,21 @@ module.exports = class ObtenerRetencionBaseMesPorDni {
    * @returns {Promise<{found:boolean, retencion_base_mes:number|null, registro?:any}>}
    */
   async execute({ dni, anio, mes }) {
+    console.log('!dni || !Number.isInteger(Number(anio)) || !Number.isInteger(Number(mes))',!dni || !Number.isInteger(Number(anio)) || !Number.isInteger(Number(mes)));
     if (!dni || !Number.isInteger(Number(anio)) || !Number.isInteger(Number(mes))) {
       const err = new Error('Parámetros inválidos (dni, anio, mes)');
       err.status = 400;
       throw err;
     }
 
-    const reg = await this.repo.findUltimoVigentePorDniMes({ dni, anio: Number(anio), mes: Number(mes) });
+    const reg = await quintaCategoriaRepository.findUltimoVigentePorDniMes({ dni, anio: Number(anio), mes: Number(mes) });
+    console.log(reg);
     if (!reg) return { found: false, retencion_base_mes: null };
 
     // Normaliza nombre de campo por si vienes con dataValues
     const row = reg.dataValues ? reg.dataValues : reg;
+
+    console.log('retencion_base_mes', row.retencion_base_mes);
 
     return {
       found: true,

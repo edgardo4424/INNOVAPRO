@@ -143,8 +143,16 @@ const Gratificacion = sequelize.define(
         model: "cierres_gratificaciones",
         key: "id",
       },
-    }
+    },
+    fecha_ingreso: {
+      type: DataTypes.DATEONLY,
+      allowNull: false,
    },
+   fecha_fin: {
+      type: DataTypes.DATEONLY,
+      allowNull: false,
+   },
+  },
    {
       timestamps: true,
       tableName: "gratificaciones",
@@ -174,7 +182,7 @@ Gratificacion.associate = (models) => {
         as: 'filial'
       });
 
-      Gratificacion.belongsTo(models.cierrres_gratificaciones, {
+      Gratificacion.belongsTo(models.cierres_gratificaciones, {
         foreignKey: 'cierre_id',
         as: 'cierreGratificacion'
       });

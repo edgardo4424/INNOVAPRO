@@ -34,10 +34,22 @@ class SequelizeGratificacionRepository {
       transaction,
     });
 
+    if (!cierreGratificacion) {
+      return [];
+    }
+
     const gratificacionesCerradas = await Gratificacion.findAll({
       where: { cierre_id: cierreGratificacion.id },
+      include: [
+        {
+          model: db.trabajadores,
+          as: "trabajador",
+        }
+      ],
       transaction,
     });
+
+    console.log('gratificacionesCerradas', gratificacionesCerradas);
     return gratificacionesCerradas;
   }
 
