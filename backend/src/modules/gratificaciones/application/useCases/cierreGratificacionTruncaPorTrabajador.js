@@ -9,6 +9,8 @@ module.exports = async (
   anio,
   filial_id,
   trabajador_id,
+  fecha_ingreso,
+  fecha_fin,
   gratificacionRepository,
   transaction = null
 ) => {
@@ -20,20 +22,24 @@ module.exports = async (
 
     // Verificar si ya fue generado la gratificacion para ese trabajador hasta ese momento
 
-    const gratificacionDelTrabajador =
-      await gratificacionRepository.obtenerGratificacionPorTrabajador(
+    const gratificacion_del_trabajador =
+      await gratificacionRepository.obtenerGratificacionPorTrabajadorYRangoFecha(
         periodo,
         anio,
         filial_id,
         trabajador_id,
+        fecha_ingreso,
+        fecha_fin,
         transaction
       );
+
+      console.log('gratificacion_del_trabajador',gratificacion_del_trabajador);
 
       
       let cierreId = null;
 
 
-    if (gratificacionDelTrabajador && gratificacionDelTrabajador?.locked_at) {
+    if (gratificacion_del_trabajador) {
       return {
         codigo: 400,
         respuesta: {
@@ -87,8 +93,12 @@ module.exports = async (
             anio,
             filial_id,
             trabajador_id,
+            fecha_ingreso,
+            fecha_fin,
             transaction
           );
+
+          console.log('gratificacionesTrab',gratificacionesTrab);
 
           const gratificacionDelTrabajador = gratificacionesTrab.planilla.trabajadores; 
 
