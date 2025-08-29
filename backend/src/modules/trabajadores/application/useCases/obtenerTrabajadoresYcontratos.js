@@ -1,8 +1,5 @@
 module.exports=async(trabajadorRepository)=>{
-    
-
     const trabajadores= await trabajadorRepository.obtenerTrabajadoresYcontratos();
-
     return{
         codigo:201,
         respuesta:{

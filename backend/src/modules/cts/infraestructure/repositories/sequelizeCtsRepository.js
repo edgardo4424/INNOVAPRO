@@ -14,7 +14,7 @@ const calcularBonosEnCts = require("../utils/calcularBonosEnCts");
 const { where } = require("sequelize");
 const SequelizeGratificacionRepository = require("../../../gratificaciones/infrastructure/repositories/sequelizeGratificacionRepository");
 const { Cts } = require("../models/ctsModel");
-const filtrarContratosSinInterrupcion = require("../services/filtrarContratosSinInterrupcion");
+const filtrarContratosSinInterrupcion = require("../../../../services/filtrarContratosSinInterrupcion");
 
 const objeto_inicial_cts = {
    contrato_id: null,

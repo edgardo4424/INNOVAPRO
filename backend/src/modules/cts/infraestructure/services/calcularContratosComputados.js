@@ -1,4 +1,4 @@
-const filtrarContratosSinInterrupcion = require("./filtrarContratosSinInterrupcion");
+const filtrarContratosSinInterrupcion = require("../../../../services/filtrarContratosSinInterrupcion");
 
 const calcularContratosComputados = (
    fechaInicioRango,

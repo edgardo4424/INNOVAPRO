@@ -2,6 +2,7 @@ const { Trabajador } = require("../models/trabajadorModel");
 const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 const EmpresaProveedora = db.empresas_proveedoras;
 const { Op, fn, col, where } = require("sequelize");
+const filtrarContratosSinInterrupcion = require("../../../../services/filtrarContratosSinInterrupcion");
 class SequelizeTrabajadorRepository {
    async crear(trabajadorData, transaction = null) {
       const options = {};
@@ -145,8 +146,15 @@ class SequelizeTrabajadorRepository {
             },
          ],
       });
+      const transformData = trabajadores.map((t) => {
+         const tr = { ...t.get({ plain: true }) };
+         tr.contratos_laborales = filtrarContratosSinInterrupcion(
+            tr.contratos_laborales
+         );
+         return tr;
+      });
 
-      return trabajadores;
+      return transformData;
    }
 }
 
