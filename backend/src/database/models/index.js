@@ -213,6 +213,12 @@ db.ruc_facturacion = RucFacturacion
 const {Borrador} = require('../../modules/facturacion/infrastructure/models/borrador/borradorModel')
 db.borradores = Borrador;
 
+const { Gratificacion } = require("../../modules/gratificaciones/infrastructure/models/GratificacionModel");
+db.gratificaciones = Gratificacion;
+
+const { CierreGratificacion } = require("../../modules/gratificaciones/infrastructure/models/CierreGratificacionModel");
+db.cierres_gratificaciones = CierreGratificacion;
+
 
 // ✅ Solo se asocian los que tienen .associate()
 if (db.contactos.associate) db.contactos.associate(db);
@@ -249,6 +255,8 @@ if (db.jornadas.associate) db.jornadas.associate(db);
 if (db.tipos_trabajo.associate) db.tipos_trabajo.associate(db);
 if(db.cts)db.cts.associate(db)
 if(db.cierres_cts)db.cierres_cts.associate(db)
+if(db.gratificaciones) db.gratificaciones.associate(db)
+if(db.cierres_gratificaciones) db.cierres_gratificaciones.associate(db)
 
 // ? Conexion Facturacion
 if(db.factura.associate) db.factura.associate(db);

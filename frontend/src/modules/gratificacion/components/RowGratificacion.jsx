@@ -4,6 +4,7 @@ import { formatearFecha } from "../utils/formatearFecha";
 const RowGratificacion = ({ key, e, index }) => {
   return (
     <TableRow key={key} className={"text-xs"}>
+      <TableCell className="text-right">{e.tipo_documento}</TableCell>
       <TableCell className="text-right">{e.numero_documento}</TableCell>
       <TableCell className="text-right">
         {e.nombres} {e.apellidos}
@@ -30,7 +31,7 @@ const RowGratificacion = ({ key, e, index }) => {
       <TableCell className="text-right">{e.rent_quint_cat_no_domiciliado}</TableCell>
       <TableCell className="text-right">{e.mont_adelanto}</TableCell>
       <TableCell className="text-right">{e.total_a_pagar}</TableCell>
-      <TableCell className={"flex gap-x-4 items-center"}>
+{/*       <TableCell className={"flex gap-x-4 items-center"}>
         <button className="border border-gray-400 rounded-md p-1">
           <Eye className="size-5" />
         </button>
@@ -42,7 +43,7 @@ const RowGratificacion = ({ key, e, index }) => {
         <button className="border text-white border-red-500 bg-red-500 rounded-md p-1">
           <span>Emitir gratificacion</span>
         </button>
-      </TableCell>
+      </TableCell> */}
     </TableRow>
   );
 };
