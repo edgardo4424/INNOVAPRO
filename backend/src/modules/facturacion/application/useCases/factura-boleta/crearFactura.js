@@ -38,7 +38,8 @@ module.exports = async (body, facturaRepository) => {
         detalle = [],
         forma_pago = [],
         legend = [],
-        sunat_respuesta = {}
+        sunat_respuesta = {},
+        id_borrador
     } = body;
 
     //* 2. Construir el objeto 'factura' con los datos principales
@@ -79,11 +80,6 @@ module.exports = async (body, facturaRepository) => {
     };
 
 
-    console.log("************************CUERPO DE LA FACTURA", facturaData);
-    console.log("************************DETALLE DE LA FACTURA", detalle);
-    console.log("************************FORMA DE PAGO DE LA FACTURA", forma_pago);
-    console.log("************************LEGEND DE LA FACTURA", legend);
-    console.log("************************SUNAT RESPUESTA DE LA FACTURA", sunat_respuesta);
     //* 3. Validación de entrada: Ahora verificamos un campo clave de la factura principal
     if (!tipo_Doc || !serie || !correlativo) {
         return {
@@ -123,6 +119,10 @@ module.exports = async (body, facturaRepository) => {
             leyendas: legend,
             sunat_respuesta
         });
+
+        // if(id_borrador){
+        //     await .eliminarBorrador(id_borrador);
+        // }
 
         //* 5. Evaluar el resultado de la operación del repositorio
         if (!resultadoCreacion.success) {

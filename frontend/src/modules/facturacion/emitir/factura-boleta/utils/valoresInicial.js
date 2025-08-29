@@ -58,9 +58,9 @@ const valorIncialPago = {
 
 
 const valorIncialRetencion = {
-    descuento_cod_tipo: "",
-    descuento_monto_base: 0,
+    descuento_cod_tipo: "00",
     descuento_factor: 0,
+    descuento_monto_base: 0,
     descuento_monto: 0,
 }
 
@@ -87,7 +87,6 @@ const valorInicialProducto = {
     monto_Valor_Venta: 0,
     factor_Icbper: 0,
 };
-
 
 
 

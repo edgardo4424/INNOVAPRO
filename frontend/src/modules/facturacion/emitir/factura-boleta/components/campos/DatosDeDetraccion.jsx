@@ -14,7 +14,7 @@ import { Arraydetracciones } from "../../utils/codRetenciones";
 
 const DatosDeDetraccion = () => {
     const { factura, setFactura, detraccion, setDetraccion, detraccionActivado, setDetraccionActivado } = useFacturaBoleta();
-    const { tipo_Operacion, monto_Oper_Gravadas, tipo_Moneda, monto_Imp_Venta } = factura;
+    const { tipo_Operacion, monto_Oper_Gravadas, tipo_Moneda, monto_Imp_Venta, sub_Total } = factura;
 
     const [detraccionesValores, setDetraccionesValores] = useState(Arraydetracciones);
     const [errors, setErrors] = useState({});
@@ -42,16 +42,21 @@ const DatosDeDetraccion = () => {
             forma_pago: [],
         }));
 
-        const rawDetraccionMount = (monto_Imp_Venta * Number(value)) / 100;
+        const rawDetraccionMount = Number(((sub_Total * Number(value)) / 100).toFixed(2));
+        console.log(sub_Total);
+        console.log(rawDetraccionMount);
 
-        // Redondea a 2 decimales y convierte de nuevo a número
-        const newDetraccionMount = Number(rawDetraccionMount.toFixed(2));
 
         setDetraccion((prev) => ({
             ...prev,
             detraccion_percent: Number(value),
             detraccion_cod_bien_detraccion: "",
-            detraccion_mount: newDetraccionMount,
+            detraccion_mount: rawDetraccionMount,
+        }));
+
+        setFactura((prev) => ({
+            ...prev,
+            monto_Imp_Venta: sub_Total - rawDetraccionMount,
         }));
 
         setDetraccionesValores(
@@ -63,17 +68,16 @@ const DatosDeDetraccion = () => {
 
     useEffect(() => {
         if (detraccion.detraccion_percent) {
-            const rawDetraccionMount = (monto_Imp_Venta * Number(detraccion.detraccion_percent)) / 100;
-
-            // Redondea a 2 decimales y convierte de nuevo a número
-            const newDetraccionMount = Number(rawDetraccionMount.toFixed(2));
+            const rawDetraccionMount = Number(((sub_Total * Number(detraccion.detraccion_percent)) / 100).toFixed(2))
 
             setDetraccion((prev) => ({
                 ...prev,
-                detraccion_mount: newDetraccionMount,
+                detraccion_mount: rawDetraccionMount,
             }));
         }
-    }, [monto_Imp_Venta, detraccion.detraccion_percent]);
+    }, [sub_Total, detraccion.detraccion_percent]);
+
+    if (factura.tipo_Doc == "03") return null
 
     if (factura.tipo_Operacion != "1001") return <></>;
 

@@ -150,6 +150,18 @@ const Arraydetracciones = [
         act: true,
     },
     {
+        description: "Servicio de transporte de carga",
+        value: "027",
+        porcentaje: 4,
+        act: true,
+    },
+    // {
+    //     description: "Servicio de comunicaciones",
+    //     value: "028",
+    //     porcentaje: 10,
+    //     act: true,
+    // },
+    {
         description: "Algodón en rama sin desmontar",
         value: "029",
         porcentaje: 15,

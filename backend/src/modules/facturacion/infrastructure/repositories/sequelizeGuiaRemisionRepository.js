@@ -37,7 +37,7 @@ class SequelizeGuiaRemisionRepository {
             }
             createdGuia.guia = guia;
 
-            // // * 2. Crear los Detalles de la Guia
+            // * 2. Crear los Detalles de la Guia
             // const createdDetalles = [];
             // for (const detalleData of data.detalle) {
             //     const detalle = await GuiaDetalles.create(

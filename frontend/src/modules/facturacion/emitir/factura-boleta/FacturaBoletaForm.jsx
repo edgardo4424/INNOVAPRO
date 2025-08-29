@@ -10,6 +10,7 @@ import FormaDePago from "./components/campos/FormaDePago";
 import MontoyProductos from "./components/campos/MontoyProductos";
 import ModalVisualizarFactura from "./components/modal/ModalVisualizarFactura";
 import { ValorInicialFactura } from "./utils/valoresInicial";
+import DatosDeRetencion from "./components/campos/DatosDeRetencion";
 
 const FacturaBoletaForm = () => {
     const { factura, setFactura } = useFacturaBoleta();
@@ -71,10 +72,15 @@ const FacturaBoletaForm = () => {
             {/* Form */}
             {/* Datos del comprobante */}
             <DatosDelComprobante />
+
             {/* Datos del cliente */}
             <DatosDelCliente />
+
             {/* Montos y productos */}
             <MontoyProductos />
+
+            {/* Datos de retencion */}
+            <DatosDeRetencion />
 
             {/* Datos de detraccion */}
             <DatosDeDetraccion />

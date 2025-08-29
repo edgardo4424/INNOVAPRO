@@ -62,8 +62,8 @@ export async function validarFacturaCompleta(Factura, detraccionActivado, Detrac
 
     const camposRetencion = [
         { key: "descuento_cod_tipo", name: "Código de Tipo de Retención" },
-        { key: "descuento_monto_base", name: "Monto Base de Retención" },
         { key: "descuento_factor", name: "Factor de Retención" },
+        { key: "descuento_monto_base", name: "Monto Base de Retención" },
         { key: "descuento_monto", name: "Monto de Retención" }
     ]
 
@@ -116,7 +116,12 @@ export async function validarFacturaCompleta(Factura, detraccionActivado, Detrac
             }
         });
     }else if(retencionActivado){
-
+        camposRetencion.forEach(campo => {
+            if (isNullOrEmpty(Retencion[campo.key])) {
+                errores[campo.key] = `El campo de'${campo.name}' en Detracción es requerido.`;
+                validos = false;
+            }
+        });
     }
 
     if (Factura.forma_pago && Factura.forma_pago.length > 0) {

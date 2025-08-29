@@ -12,6 +12,10 @@ import filialesService from "../service/FilialesService";
 const FacturaBoletaContext = createContext();
 
 export function FacturaBoletaProvider({ children }) {
+
+    // ** ID SI LA FACTURA FUE RRELLENADA DESDE EL BORRADOR
+    const [idBorrador, setIdBorrador] = useState(null);
+
     // ** DATOS PARA FORMULARIO
     const [factura, setFactura] = useState(ValorInicialFactura); // * FACTURA
 
@@ -40,8 +44,6 @@ export function FacturaBoletaProvider({ children }) {
     const [pagoValida, setPagoValida] = useState(PagoValidarEstados);
 
     const [filiales, setFiliales] = useState([]);
-    const [usuarioLogeado, setUsuarioLogeado] = useState({});
-
 
     const validarFactura = async () => {
         try {
@@ -152,8 +154,13 @@ export function FacturaBoletaProvider({ children }) {
             });
 
             const subTotal = gravadas + igvTotal + exoneradas;
-            const totalVenta = subTotal;
 
+            // // ** TOTAL VENTA
+            // let  totalVenta = subTotal;
+
+            // if (factura.tipo_Operacion === "1001") {
+            //     totalVenta = subTotal - detraccion.detraccion_mount;
+            // }
             setTotalProducto(gravadas);
 
             setFactura((prev) => ({
@@ -164,7 +171,7 @@ export function FacturaBoletaProvider({ children }) {
                 total_Impuestos: parseFloat(igvTotal.toFixed(2)),
                 valor_Venta: parseFloat((gravadas + exoneradas).toFixed(2)),
                 sub_Total: parseFloat(subTotal.toFixed(2)),
-                monto_Imp_Venta: parseFloat(totalVenta.toFixed(2)),
+                monto_Imp_Venta: parseFloat(subTotal.toFixed(2)),
             }));
         };
 
@@ -220,8 +227,8 @@ export function FacturaBoletaProvider({ children }) {
         //     // La lógica para retenciones iría aquí si se activa
         //     console.log("else if para retencion", montoPendiente);
         // } else {
-            montoPendiente = montoBase - pagosRealizados;
-            console.log("else defecto", montoPendiente);
+        montoPendiente = montoBase - pagosRealizados;
+        console.log("else defecto", montoPendiente);
         // }
 
         console.log("monto pendiente")
@@ -352,9 +359,9 @@ export function FacturaBoletaProvider({ children }) {
         try {
             let facturaAEmitir;
 
-            if (retencionActivado) {
+            if (retencionActivado && factura.tipo_Doc !== "03") {
                 facturaAEmitir = Object.assign({}, factura, retencion);
-            } else if (factura.tipo_Operacion === "1001") {
+            } else if (factura.tipo_Operacion === "1001" && factura.tipo_Doc !== "03") {
                 facturaAEmitir = Object.assign({}, factura, detraccion);
             } else {
                 facturaAEmitir = factura;
@@ -373,7 +380,7 @@ export function FacturaBoletaProvider({ children }) {
                     cdr_response_description: data.sunatResponse.cdrResponse.description
                 };
 
-                const facturaCopia = { ...facturaAEmitir, usuario_id: id_logeado, estado: "EMITIDA", sunat_respuesta: sunat_respuest };
+                const facturaCopia = { ...facturaAEmitir, usuario_id: id_logeado, estado: "EMITIDA", sunat_respuesta: sunat_respuest, id_borrador: idBorrador ? idBorrador : null };
                 // ?Intentar registrar en base de datos
                 const dbResult = await registrarBaseDatos(facturaCopia);
 
@@ -451,12 +458,18 @@ export function FacturaBoletaProvider({ children }) {
         <FacturaBoletaContext.Provider
             value={{
                 filiales,
+                idBorrador,
+                setIdBorrador,
                 factura,
                 setFactura,
                 detraccion,
                 setDetraccion,
                 detraccionActivado,
                 setDetraccionActivado,
+                retencion,
+                setRetencion,
+                retencionActivado,
+                setRetencionActivado,
                 validarFactura,
                 validarCampos,
                 facturaValida,
