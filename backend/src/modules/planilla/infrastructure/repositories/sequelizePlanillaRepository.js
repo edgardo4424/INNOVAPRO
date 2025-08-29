@@ -10,6 +10,10 @@ const buildQuintaPublicApi = require('../../../quintaCategoria/application/servi
 const quintaCategoriaService =  buildQuintaPublicApi({repo: SequelizeQuintaCategoriaRepository});
 
 const moment = require("moment");
+const calcularDiasLaborados = require("../../../../services/calcularDiasLaborados");
+const calcularDiasLaboradosQuincena = require("../../../../services/calcularDiasLaborados");
+
+const { Op } = db.Sequelize;
 
 class SequelizePlanillaRepository {
   async calcularPlanillaQuincenal(
@@ -63,57 +67,62 @@ class SequelizePlanillaRepository {
     };
 
 
-    const fechaInicioMes = moment(`${fecha_anio_mes}-01`)
-      .startOf("month")
-      .format("YYYY-MM-DD");
-    const fechaFinMes = moment(`${fecha_anio_mes}-01`)
-      .endOf("month")
-      .format("YYYY-MM-DD");
+    const fechaInicioMes = moment(`${fecha_anio_mes}-01`).format("YYYY-MM-DD");
+    const fechaQuincena = moment(`${fecha_anio_mes}-15`).format("YYYY-MM-DD");
 
 
     const contratosPlanilla = await db.contratos_laborales.findAll({
-      where: {
-        filial_id: filial_id,
-        estado: true,
-        tipo_contrato: "PLANILLA",
-        fecha_inicio: { [db.Sequelize.Op.lte]: fechaFinMes },
-        fecha_fin: { [db.Sequelize.Op.gte]: fechaInicioMes },
-      },
-      include: [
-        {
-          model: db.trabajadores,
-          as: "trabajador",
-        },
-      ],
-      raw: false,
-      transaction,
-    });
+  where: {
+    filial_id: filial_id,
+    estado: true,
+    tipo_contrato: "PLANILLA",
+    fecha_inicio: { [Op.lte]: fechaQuincena },
+    [Op.or]: [
+      { fecha_terminacion_anticipada: null },
+      { fecha_terminacion_anticipada: { [Op.gte]: fechaInicioMes } }
+    ],
+    fecha_fin: { [Op.gte]: fechaInicioMes },
+  },
+  include: [
+    {
+      model: db.trabajadores,
+      as: "trabajador",
+    },
+  ],
+  raw: false,
+  transaction,
+});
 
 
     const contratosRxh = await db.contratos_laborales.findAll({
-      where: {
-        filial_id: filial_id,
-        estado: true,
-        tipo_contrato: "HONORARIOS",
-         fecha_inicio: { [db.Sequelize.Op.lte]: fechaFinMes },
-        fecha_fin: { [db.Sequelize.Op.gte]: fechaInicioMes },
-      },
-      include: [
-        {
-          model: db.trabajadores,
-          as: "trabajador",
-        },
-      ],
-      raw: false,
-      transaction,
-    });
-
+  where: {
+    filial_id: filial_id,
+    estado: true,
+    tipo_contrato: "HONORARIOS",
+    fecha_inicio: { [Op.lte]: fechaQuincena },
+    [Op.or]: [
+      { fecha_terminacion_anticipada: null },
+      { fecha_terminacion_anticipada: { [Op.gte]: fechaInicioMes } }
+    ],
+    fecha_fin: { [Op.gte]: fechaInicioMes },
+  },
+  include: [
+    {
+      model: db.trabajadores,
+      as: "trabajador",
+    },
+  ],
+  raw: false,
+  transaction,
+});
  
 
     const anio = fecha_anio_mes.split("-")[0];
     const mes = fecha_anio_mes.split("-")[1];
 
     const listaPlanillaTipoPlanilla = [];
+
+    console.log('contratosPlanilla',contratosPlanilla);
     
     for (const contrato of contratosPlanilla) {
       const trabajador = contrato.trabajador;
@@ -127,10 +136,16 @@ class SequelizePlanillaRepository {
       let comision = 0;
 
       const sueldoBase = Number(contrato.sueldo);
-      const sueldoQuincenal = +(sueldoBase / 2).toFixed(2);
+      
       const asignacionFamiliar = trabajador.asignacion_familiar
         ? MONTO_ASIGNACION_FAMILIAR
         : 0;
+
+        
+      const diasLaborados = calcularDiasLaboradosQuincena(contrato.fecha_inicio, contrato.fecha_fin, fecha_anio_mes);
+
+      
+      const sueldoQuincenal = +(((sueldoBase / 15) * diasLaborados)/2).toFixed(2);
 
       const sueldoBruto = +(sueldoQuincenal + asignacionFamiliar).toFixed(2);
 
@@ -195,13 +210,15 @@ class SequelizePlanillaRepository {
       const totalDescuentos = +(onp + afp + seguro + comision + quinta_categoria).toFixed(2);
       const totalAPagar = +(sueldoBruto - totalDescuentos).toFixed(2);
 
+      console.log('contrato.fecha_inicio', contrato.fecha_inicio);
+
 
       listaPlanillaTipoPlanilla.push({
         tipo_documento: trabajador.tipo_documento,
         numero_documento: trabajador.numero_documento,
         nombres: trabajador.nombres,
         apellidos: trabajador.apellidos,
-        dias_laborados: 15,
+        dias_laborados: diasLaborados,
         sueldo_base: sueldoBase,
         sueldo_quincenal: sueldoQuincenal,
         asignacion_familiar: asignacionFamiliar,
@@ -220,16 +237,23 @@ class SequelizePlanillaRepository {
 
     for (const contrato of contratosRxh) {
         const trabajador = contrato.trabajador;
+
+     
     
         const sueldoBase = Number(contrato.sueldo);
-        const sueldoQuincenal = +(sueldoBase / 2).toFixed(2);
+
+          const diasLaborados = calcularDiasLaboradosQuincena(contrato.fecha_inicio, contrato.fecha_fin, fecha_anio_mes);
+
+      // (SUELDO/2)/15*DÍAS LABORADOS
+        const sueldoQuincenal = +(((sueldoBase / 15) * diasLaborados)/2).toFixed(2);
+
         const totalAPagar = sueldoQuincenal;
         listaPlanillaTipoHonorarios.push({
         tipo_documento: trabajador.tipo_documento,
         numero_documento: trabajador.numero_documento,
         nombres: trabajador.nombres,
         apellidos: trabajador.apellidos,
-           dias_laborados: 15,
+        dias_laborados: diasLaborados,
         sueldo_base: sueldoBase,
         sueldo_quincenal: sueldoQuincenal,
         total_a_pagar: totalAPagar,

@@ -16,7 +16,7 @@ module.exports = class ObtenerRetencionBaseMesPorDni {
    * @returns {Promise<{found:boolean, retencion_base_mes:number|null, registro?:any}>}
    */
   async execute({ dni, anio, mes }) {
-    console.log('!dni || !Number.isInteger(Number(anio)) || !Number.isInteger(Number(mes))',!dni || !Number.isInteger(Number(anio)) || !Number.isInteger(Number(mes)));
+    
     if (!dni || !Number.isInteger(Number(anio)) || !Number.isInteger(Number(mes))) {
       const err = new Error('Parámetros inválidos (dni, anio, mes)');
       err.status = 400;
@@ -24,13 +24,11 @@ module.exports = class ObtenerRetencionBaseMesPorDni {
     }
 
     const reg = await quintaCategoriaRepository.findUltimoVigentePorDniMes({ dni, anio: Number(anio), mes: Number(mes) });
-    console.log(reg);
+  
     if (!reg) return { found: false, retencion_base_mes: null };
 
     // Normaliza nombre de campo por si vienes con dataValues
     const row = reg.dataValues ? reg.dataValues : reg;
-
-    console.log('retencion_base_mes', row.retencion_base_mes);
 
     return {
       found: true,
