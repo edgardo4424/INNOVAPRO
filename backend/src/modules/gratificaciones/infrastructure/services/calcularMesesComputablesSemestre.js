@@ -35,7 +35,18 @@ function mergeRangosConRegimen(contratos = []) {
       last.sistema_salud === r.sistema_salud &&
       last.tipo_contrato === r.tipo_contrato;
 
+      
+    // Si el nuevo rango inicia antes o en la fecha de fin del último rango
+    // y tienen los mismos atributos, los unimos
+
+    console.log('r', r);
     const continuaInmediatamente = lastFinEff.clone().add(1, 'day').isSame(r.ini, 'day');
+
+    console.log({
+      mismosAtributos,
+      valor: r.ini.isSameOrBefore(lastFinEff, 'day'),
+      continuaInmediatamente
+    });
 
     if (mismosAtributos && (r.ini.isSameOrBefore(lastFinEff, 'day') || continuaInmediatamente)) {
       const maxFin = moment.max(lastFinEff, curFinEff);
