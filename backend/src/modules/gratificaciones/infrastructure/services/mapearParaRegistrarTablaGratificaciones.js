@@ -24,6 +24,8 @@ function mapearParaRegistrarTablaGratificaciones(registros, periodo, anio, filia
     trabajador_id: r.trabajador_id,
     tipo_contrato: r.tipo_contrato,
     periodo: periodoGrati,
+    fecha_ingreso: r.fecha_ingreso,
+    fecha_fin: r.fecha_fin,
     fecha_calculo: moment().tz('America/Lima').format('YYYY-MM-DD'),
     regimen: r.regimen,
     factor_regimen: factorPorRegimen(r.regimen),

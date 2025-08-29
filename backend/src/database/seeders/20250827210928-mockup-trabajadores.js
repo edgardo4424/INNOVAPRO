@@ -107,6 +107,13 @@ module.exports = {
           sueldo_base: 1800 + (globalIdx % 10) * 1000,
           asignacion_familiar: globalIdx % 3 === 0 ? "2025-08-26" : null,
           sistema_pension: globalIdx % 2 === 0 ? "AFP" : "ONP",
+          // si es afp asignamos un tipo aleatorio, si es ONP es null
+          tipo_afp:
+            globalIdx % 2 === 0
+              ? ["HABITAT", "INTEGRA", "PRIMA", "PROFUTURO"][
+                globalIdx % 4
+              ]
+              : null,
           estado: "activo",
           cargo_id: (globalIdx % 8) + 1,
           domiciliado: globalIdx % 2,

@@ -58,6 +58,13 @@ Usuario.associate = (models) => {
   Usuario.hasMany(models.cierres_cts, {
     foreignKey: "usuario_cierre_id",
   });
+  Usuario.hasMany(models.gratificaciones, {
+    foreignKey: "usuario_cierre_id",
+  });
+  Usuario.hasMany(models.cierres_gratificaciones, {
+    foreignKey: "usuario_cierre_id",
+  });
+  
 };
 
 module.exports = { Usuario }; // Exporta el modelo para que pueda ser utilizado en otros módulos

@@ -1,87 +1,35 @@
-import { useEffect, useState } from "react";
-import { LoaderCircle } from "lucide-react";
-import Filtro from "../components/Filtro";
-import TableGratificacion from "../components/TableGratificacion";
-import gratificacionService from "../services/gratificacionService";
-import { viGratificacion } from "../utils/valorInicial";
-import { format } from "date-fns";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+
+import CalculoGratificacion from "./CalculoGratificacion";
+import HistoricoGratificacion from "./HistoricoGratificacion";
 
 const GestionGratificacion = () => {
+   return (
+      <div className="min-h-full px-6 flex-1 flex flex-col items-center">
+         <div className="w-full  max-w-7xl my-5 flex flex-col items-start space-y-2">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 ">
+               Gestión de Gratificaciones
+            </h2>
+            
+         </div>
 
-     const [filiales, setFiliales] = useState([])
+            <Tabs defaultValue="calcular" className="w-full">
+               <TabsList className="">
+                  <TabsTrigger value="calcular">Calcular Gratificación</TabsTrigger>
+                  <TabsTrigger value="historico">Histórico</TabsTrigger>
+               </TabsList>
 
-    // ?? loading
-    const [loading, setLoading] = useState(false);
+               <TabsContent value="calcular" className=" rounded-lg shadow-sm">
+                  <CalculoGratificacion />
+               </TabsContent>
 
-    // ?? Data
-    const [gratificacion, setGratificacion] = useState(viGratificacion);
+               <TabsContent value="historico" className=" rounded-lg shadow-sm">
+                  <HistoricoGratificacion />
+               </TabsContent>
+            </Tabs>
 
-    const periodo = format(new Date(), 'MM-dd') < '07-17' ? 'JULIO' : 'DICIEMBRE'
-    
-    // ?? Filtro para la peticion
-    const [filtro, setFiltro] = useState({
-        anio: (new Date().getFullYear())+"", periodo: periodo, filial_id: "1"
-    });
-
-    const buscarGratificacion = async () => {
-        try {
-            setLoading(true);
-            const res = await gratificacionService.obtenerGratificaciones(filtro);
-            setGratificacion(res)
-        } catch (error) {
-        }
-        finally {
-            setLoading(false);
-        }
-    };
-
-
-  useEffect(() => {
-    const obtenerFiliales = async () => {
-      try {
-        const res = await gratificacionService.obtenerFiliales();
-        console.log("res", res);
-        setFiliales(res);
-        setFiltro({ ...filtro, filial_id: res?.[0]?.id });
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    obtenerFiliales();
-  }, []);
-
-    return (
-        <div className="min-h-full flex-1  flex flex-col items-center">
-            <div className="w-full px-4 max-w-7xl py-6 flex justify-between">
-                <div className="flex flex-col w-full">
-                    <h2 className=" text-2xl md:text-3xl font-bold text-gray-800 !text-start">
-                        Gestión de Gratificaciones
-                    </h2>
-                    <Filtro filiales={filiales} filtro={filtro} setFiltro={setFiltro} Buscar={buscarGratificacion} />
-                </div>
-            </div>
-            {loading ? (
-                <div className="w-full px-20  max-w-8xl min-h-[50vh] flex items-center">
-                    <div className="w-full flex flex-col items-center justify-center">
-                        <LoaderCircle className="text-gray-800 size-30 animate-spin" />
-                        <h2 className="text-gray-800 text-2xl">Cargando...</h2>
-                    </div>
-                </div>
-            ) : (
-                gratificacion ? (
-                    <div className="w-full px-7 ">
-                        <TableGratificacion gratificacion={gratificacion} />
-                    </div>
-                ) : (
-                    <div className="w-full px-20  max-w-8xl min-h-[50vh] flex items-center">
-                        <div className="w-full flex flex-col items-center justify-center">
-                            <h2 className="text-gray-800 text-2xl">No hay trabajadores</h2>
-                        </div>
-                    </div>
-                )
-            )}
-        </div>
-    );
+      </div>
+   );
 };
 
 export default GestionGratificacion;

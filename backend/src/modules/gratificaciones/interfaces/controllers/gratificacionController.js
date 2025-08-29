@@ -18,7 +18,7 @@ const GratificacionController = {
         try {
             const gratificacionesCerradas = await obtenerGratificacionesCerradas(req.body, gratificacionRepository); // Llamamos al caso de uso para obtener todos los gratificacionesCerradas
            
-            res.status(200).json(gratificacionesCerradas.respuesta); // 🔥 Siempre devuelve un array, aunque esté vacío
+            res.status(gratificacionesCerradas.codigo).json(gratificacionesCerradas.respuesta); // 🔥 Siempre devuelve un array, aunque esté vacío
         } catch (error) {
             console.log('error',error);
             res.status(500).json({ error: error.message }); // Respondemos con un error
