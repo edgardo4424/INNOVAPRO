@@ -50,6 +50,14 @@ const ContratoLaboral = sequelize.define(
             key: "id",
          },
       },
+      numero_cuenta: {
+         type: DataTypes.STRING,
+         allowNull: true,
+      },
+      banco: {
+         type: DataTypes.STRING,
+         allowNull: true,
+      },
    },
    {
       tableName: "contratos_laborales",

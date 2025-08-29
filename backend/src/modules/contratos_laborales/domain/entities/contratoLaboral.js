@@ -8,6 +8,8 @@ class ContratoLaboral {
       regimen,
       tipo_contrato,
       filial_id,
+      numero_cuenta,
+      banco,
    }) {
       this.id = id;
       this.trabajador_id = trabajador_id;
@@ -17,6 +19,8 @@ class ContratoLaboral {
       this.regimen = regimen;
       this.tipo_contrato = tipo_contrato;
       this.filial_id = filial_id;
+      this.numero_cuenta = numero_cuenta;
+      this.banco = banco;
    }
 
    validar(editar = false) {
@@ -62,11 +66,18 @@ class ContratoLaboral {
       if (!regimenValido.includes(this.regimen)) {
          errores.push('El régimen debe ser "MYPE" o "GENERAL".');
       }
-      console.log("El tipo d eoctrato es: ", this.tipo_contrato);
 
       const contrato_valido = ["PLANILLA", "HONORARIOS"];
       if (!contrato_valido.includes(this.tipo_contrato)) {
          errores.push("El tipo de contrato no es válido");
+      }
+      if (!this.banco || this.banco.trim() === "") {
+         errores.push("El banco es obligatorio.");
+      }
+      if (!this.numero_cuenta || this.numero_cuenta.trim() === "") {
+         errores.push("El número de cuenta es obligatorio.");
+      } else if (this.numero_cuenta.length < 5) {
+         errores.push("El número de cuenta debe tener al menos 5 caracteres.");
       }
 
       return errores;
@@ -81,6 +92,8 @@ class ContratoLaboral {
             sueldo: this.sueldo,
             regimen: this.regimen,
             tipo_contrato: this.tipo_contrato,
+            banco: this.banco,
+            numero_cuenta: this.numero_cuenta,
          };
       } else {
          return {
@@ -91,6 +104,8 @@ class ContratoLaboral {
             sueldo: this.sueldo,
             regimen: this.regimen,
             tipo_contrato: this.tipo_contrato,
+            banco: this.banco,
+            numero_cuenta: this.numero_cuenta,
          };
       }
    }

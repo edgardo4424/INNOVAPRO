@@ -33,6 +33,9 @@ class SequelizeGratificacionRepository {
       where: { periodo: periodoBuscar, filial_id },
       transaction,
     });
+    if (!cierreGratificacion) {
+        return [];
+    }
 
     if (!cierreGratificacion) {
       return [];

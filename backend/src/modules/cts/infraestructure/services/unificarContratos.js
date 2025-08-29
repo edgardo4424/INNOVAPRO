@@ -42,6 +42,8 @@ const unificarContratos = (contratos,nombre) => {
     trabajador_id: c.trabajador_id,
     fecha_inicio: c.fecha_inicio,
     fecha_fin: c.fecha_fin,
+    banco:c.banco,
+    numero_cuenta:c.numero_cuenta,
     sueldo: c.sueldo,
     regimen: c.regimen,
     ids_agrupacion: c.ids_agrupacion.length > 1 ? c.ids_agrupacion : null,

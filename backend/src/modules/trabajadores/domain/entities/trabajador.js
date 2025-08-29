@@ -1,4 +1,3 @@
-
 class Trabajador {
    constructor({
       id,
@@ -11,7 +10,7 @@ class Trabajador {
       tipo_documento,
       cargo_id,
       domiciliado,
-      tipo_afp
+      tipo_afp,
    }) {
       (this.id = id),
          (this.nombres = nombres),
@@ -59,25 +58,30 @@ class Trabajador {
       if (this.cargo_id === null) {
          errores.push("El cargo no se a enviado");
       }
-     if(["HABITAT", "INTEGRA", "PRIMA", "PROFUTURO"].includes(this.tipo_afp) === false){
-        errores.push("El tipo de AFP es inválido");
-     }
+      if (this.sistema_pension === "AFP") {
+         if (
+            ["HABITAT", "INTEGRA", "PRIMA", "PROFUTURO"].includes(
+               this.tipo_afp
+            ) === false
+         ) {
+            errores.push("El tipo de AFP es inválido");
+         }
+      }
       return errores;
    }
 
    get(editar = false) {
-      
       const datos = {
          nombres: this.nombres,
          apellidos: this.apellidos,
          tipo_documento: this.tipo_documento,
          numero_documento: this.numero_documento,
          sueldo_base: this.sueldo_base,
-         asignacion_familiar:this.asignacion_familiar,
+         asignacion_familiar: this.asignacion_familiar,
          sistema_pension: this.sistema_pension,
          cargo_id: this.cargo_id,
-         domiciliado:this.domiciliado,
-         tipo_afp: this.tipo_afp
+         domiciliado: this.domiciliado,
+         tipo_afp: this.tipo_afp,
       };
       if (editar) {
          datos.trabajador_id = this.id;

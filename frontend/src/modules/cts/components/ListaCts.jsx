@@ -153,6 +153,18 @@ const ListaCts = ({ cts }) => {
                   >
                      CTS a Depositar
                   </TableHead>
+                  <TableHead
+                     rowSpan={2}
+                     className="text-center border-r text-white border-black"
+                  >
+                     Banco
+                  </TableHead>
+                  <TableHead
+                     rowSpan={2}
+                     className="text-center border-r text-white border-black"
+                  >
+                     N° cuenta
+                  </TableHead>
                </TableRow>
 
                {/* Subencabezados */}
