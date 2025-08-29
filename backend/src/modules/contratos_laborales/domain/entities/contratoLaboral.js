@@ -71,6 +71,7 @@ class ContratoLaboral {
       if (!contrato_valido.includes(this.tipo_contrato)) {
          errores.push("El tipo de contrato no es válido");
       }
+     
       if (!this.banco || this.banco.trim() === "") {
          errores.push("El banco es obligatorio.");
       }

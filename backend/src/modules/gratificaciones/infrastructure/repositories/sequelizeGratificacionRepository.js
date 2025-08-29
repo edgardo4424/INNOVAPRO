@@ -136,6 +136,8 @@ class SequelizeGratificacionRepository {
       transaction,
     });
 
+    console.log('contratos', contratos);
+
     return await calcularComponentesGratificaciones(
       contratos,
       periodo,

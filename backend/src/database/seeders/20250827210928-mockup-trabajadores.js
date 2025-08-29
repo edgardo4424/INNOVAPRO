@@ -87,7 +87,7 @@ module.exports = {
 
       for (const t of trabajadores) {
          const filialId = getFilialFromDoc(t.numero_documento);
-         const yearStart = 2022;
+         const yearStart = 2023;
 
          for (let j = 0; j < 3; j++) {
             const year = yearStart + j;
@@ -102,6 +102,8 @@ module.exports = {
                tipo_contrato: "PLANILLA",
                estado: 1,
                filial_id: filialId,
+               banco: "BBVA",
+               numero_cuenta: `123456789${t.id}`,
             });
          }
 
