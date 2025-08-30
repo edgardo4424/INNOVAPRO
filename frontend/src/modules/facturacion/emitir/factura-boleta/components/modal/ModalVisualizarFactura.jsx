@@ -26,7 +26,7 @@ export default function ModalVisualizarFactura() {
     };
 
     // Get the factura object from your context
-    const { factura, detraccion, filiales, detraccionActivado } = useFacturaBoleta();
+    const { factura, detraccion, filiales, retencion, retencionActivado } = useFacturaBoleta();
 
     // Filtro para obtener la filial que coincide con el ruc de la factura
     const filialActual = filiales.find((filial) => filial.ruc === factura.empresa_Ruc);
@@ -270,6 +270,32 @@ export default function ModalVisualizarFactura() {
                                                 <div className="flex justify-between pr-3">
                                                     <p className="px-2 rounded-md bg-white text-sm text-gray-800 font-semibold">Neto a Pagar</p>
                                                     <p className="px-2 rounded-md bg-white text-sm text-gray-800">{(factura.monto_Imp_Venta - detraccion.detraccion_mount).toFixed(2)}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                }
+
+                                {
+                                    factura.tipo_Operacion !== "1001" && retencionActivado && (
+                                        <div className="mt-4 pt-2 border-gray-200 border-2 p-4 rounded-md">
+                                            <h3 className="font-bold text-md mb-2 text-gray-600">RETENCION:</h3>
+                                            <div className="grid grid-cols-3 gap-x-10 ">
+                                                {/* <div className="flex justify-between pr-3">
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800 font-semibold">Tipo</p>
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800">{retencion.descuento_cod_tipo}</p>
+                                                </div> */}
+                                                <div className="flex justify-between pr-3">
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800 font-semibold">Porcentaje</p>
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800">{retencion.descuento_factor}%</p>
+                                                </div>
+                                                <div className="flex justify-between pr-3">
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800 font-semibold">Base</p>
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800">{factura.tipo_Moneda} {retencion.descuento_monto_base}</p>
+                                                </div>
+                                                <div className="flex justify-between pr-3">
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800 font-semibold">Retencion</p>
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800">{factura.tipo_Moneda} {retencion.descuento_monto}</p>
                                                 </div>
                                             </div>
                                         </div>

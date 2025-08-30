@@ -12,10 +12,10 @@ import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaCon
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Calendar22 } from "../components/Calendar22";
-import { PagoValidarEstados } from '../utils/valoresInicial';
+import { PagoValidarEstados, valorIncialPago } from '../utils/valoresInicial';
 import { Calculator } from 'lucide-react';
 const PagoForm = ({ closeModal }) => {
-    const { factura, agregarPago, pagoActual, pagoValida, setPagoActual, validarCampos, setPagoValida } = useFacturaBoleta();
+    const { factura, setFactura, agregarPago, pagoActual, pagoValida, setPagoActual, validarCampos, setPagoValida } = useFacturaBoleta();
 
     const { forma_pago: ListaDePago } = factura;
 
@@ -33,6 +33,8 @@ const PagoForm = ({ closeModal }) => {
 
     const montoTotalFactura = parseFloat(factura.monto_Imp_Venta || 0);
     const pagosCompletos = montoTotalPagos >= montoTotalFactura;
+
+    const [disabledCuotas, setDisabledCuotas] = useState(true);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -121,30 +123,41 @@ const PagoForm = ({ closeModal }) => {
         if (validar === false) {
             return;
         }
-        const nuevoTotal = montoTotalPagos + (parseFloat(pagoActual.monto) || 0);
-        console.log("nuevoTotal", nuevoTotal);
-        console.log("montoTotalFactura", montoTotalFactura);
-        if (nuevoTotal > montoTotalFactura) {
-            toast.error("El total de cuotas no puede exceder el monto de la factura.", {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-            });
-            return;
-        }
+
         agregarPago();
         closeModal();
     };
+
+    const handleElimnar = async () => {
+        setPagoActual(valorIncialPago);
+        setFactura((prev) => ({
+            ...prev,
+            forma_pago: [],
+        }))
+        closeModal();
+    }
 
 
     useEffect(() => {
         setActiveButton(false);
         setPagoValida(PagoValidarEstados)
     }, [])
+
+    useEffect(() => {
+        if (pagoActual.tipo === "Credito") {
+            setDisabledCuotas(false)
+            setPagoActual(prev => ({
+                ...prev,
+                cuota: pagoActual.cuota ? pagoActual.cuota : 1,
+            }))
+        } else {
+            setDisabledCuotas(true)
+            setPagoActual(prev => ({
+                ...prev,
+                cuota: 0
+            }))
+        }
+    }, [pagoActual.tipo]);
 
     return (
         <div className=" overflow-y-auto  col-span-4 w-full">
@@ -160,6 +173,7 @@ const PagoForm = ({ closeModal }) => {
                         onValueChange={(e) => {
                             handleSelectChange(e, "tipo");
                         }}
+                        value={pagoActual.tipo || ""}
                     >
                         <SelectTrigger className="w-full border-1 border-gray-400">
                             <SelectValue placeholder="Selecciona un tipo" />
@@ -180,7 +194,7 @@ const PagoForm = ({ closeModal }) => {
 
                 {/* Monto */}
                 <div className="flex flex-col gap-1 col-span-4 md:col-span-2">
-                    <Label>Monto de Pago con IGV</Label>
+                    <Label>Monto a pagar</Label>
                     <Input
                         type="number"
                         name="monto"
@@ -188,7 +202,8 @@ const PagoForm = ({ closeModal }) => {
                         className={"border-1 border-gray-400"}
                         onwheel={(e) => e.target.blur()}
                         value={pagoActual.monto}
-                        onChange={handleInputChange}
+                        // onChange={handleInputChange}
+                        disabled
                     />
                     {
                         pagoValida.monto && (
@@ -207,9 +222,17 @@ const PagoForm = ({ closeModal }) => {
                         name="cuota"
                         placeholder="cuota"
                         className={"border-1 border-gray-400"}
-                        value={ListaDePago.length}
-                        disabled
+                        value={pagoActual.cuota}
+                        onChange={handleInputChange}
+                        disabled={disabledCuotas}
                     />
+                    {
+                        pagoValida.cuota && (
+                            <span className="text-red-500 text-sm">
+                                Debes ingresar una cuota
+                            </span>
+                        )
+                    }
                 </div>
 
                 {/* Fecha Emision */}
@@ -255,13 +278,20 @@ const PagoForm = ({ closeModal }) => {
             </form>
             {/* 🔘 Botones de acción */}
             <div className="flex justify-end gap-3 border-t pt-4">
-                <Button variant="outline" onClick={closeModal} className={"hover:bg-red-50 hover:text-red-600 border-2 border-gray-400"}>
+
+                <Button
+                    variant="outline"
+                    onClick={handleElimnar}
+                    className={`text-white hover:text-white hover:bg-red-500 cursor-pointer border-2 bg-red-400 border-red-400 ${factura.forma_pago.length === 0 && "hidden"}`}>
+                    Eliminar
+                </Button>
+                <Button variant="outline" onClick={closeModal} className={"hover:bg-red-50 hover:text-red-600 border-2 border-gray-400 cursor-pointer"}>
                     Cancelar
                 </Button>
                 <Button
                     disabled={activeButton}
                     onClick={handleAgregar}
-                    form="form-producto" className={"bg-blue-600 hover:bg-blue-800"}>
+                    form="form-producto" className={"bg-blue-600 hover:bg-blue-800 cursor-pointer"}>
                     Guardar
                 </Button>
             </div>

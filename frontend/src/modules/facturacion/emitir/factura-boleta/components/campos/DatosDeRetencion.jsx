@@ -28,7 +28,7 @@ const DatosDeRetencion = () => {
   let importeNeto = 0;
 
   const handleSelectChange = (value) => {
-    let montoPorcentaje = factura.monto_Imp_Venta * (value / 100);
+    let montoPorcentaje = factura.monto_Imp_Venta * value;
     let montoBase = factura.monto_Imp_Venta;
 
     setRetencion({
@@ -47,9 +47,9 @@ const DatosDeRetencion = () => {
     }
   }, [factura.monto_Imp_Venta]);
 
-  if(factura.tipo_Doc == "03") return null
+  if (factura.tipo_Doc == "03") return null
 
-  if(factura.tipo_Operacion == "1001") return null
+  if (factura.tipo_Operacion == "1001") return null
 
   return (
     // Contenedor principal con espaciado y layout responsivo
@@ -108,8 +108,8 @@ const DatosDeRetencion = () => {
                 <SelectValue placeholder="Selecciona un porcentaje de detracción" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={3}>3%</SelectItem>
-                <SelectItem value={6}>6%</SelectItem>
+                <SelectItem value={0.03}>3%</SelectItem>
+                <SelectItem value={0.06}>6%</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -117,7 +117,7 @@ const DatosDeRetencion = () => {
           {/* Campo de monto base */}
           <div className='flex flex-col space-y-2'>
             <Label htmlFor="descuento_monto_base">
-              Monto retencion
+              Monto a base
             </Label>
             <Input
               type="number"
@@ -131,7 +131,7 @@ const DatosDeRetencion = () => {
           {/* Campo de monto */}
           <div className='flex flex-col space-y-2'>
             <Label htmlFor="descuento_monto">
-              Importe total
+              Importe a retener
             </Label>
             <Input
               type="number"
@@ -150,7 +150,7 @@ const DatosDeRetencion = () => {
             <Input
               type="number"
               id="descuento_monto"
-              value={retencion.descuento_monto}
+              value={(factura.monto_Imp_Venta - retencion.descuento_monto).toFixed(2)}
               disabled
             // onChange={(e) => setRetencion({ ...retencion, descuento_monto: Number(e.target.value) })}
             />

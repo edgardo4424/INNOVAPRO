@@ -71,7 +71,7 @@ function numeroALeyenda(nro) {
 
     const textoDecimal = parteDecimal.toString().padStart(2, '0');
 
-    return `SON: ${textoEntero} CON ${textoDecimal}/100 SOLES`.replace(/\s+/g, ' ').trim();
+    return `SON ${textoEntero} CON ${textoDecimal}/100 SOLES`.replace(/\s+/g, ' ').trim();
 }
 // Ejemplo de uso:
 // console.log(numeroALeyenda(118));     // SON CIENTO DIECIOCHO CON 00/100 SOLES

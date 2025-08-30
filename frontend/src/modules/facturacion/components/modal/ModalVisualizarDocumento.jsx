@@ -1,8 +1,9 @@
 import { X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import factilizaService from "../../service/FactilizaService";
-import DocumentoSkeleton from "../../bandeja/list-factura-boleta/components/DocumentoSkeleton";
 import { toast } from "react-toastify";
+import DocumentoSkeleton from "../../bandeja/list-factura-boleta/components/DocumentoSkeleton";
+import facturaService from "../../service/FacturaService";
+import { getDescripcion } from "../../emitir/factura-boleta/utils/codRetenciones";
 
 export default function ModalVisualizarDocumento({
     setModalOpen,
@@ -79,71 +80,21 @@ export default function ModalVisualizarDocumento({
         }
     };
 
-    // Cargar documento con el NUEVO shape {status, success, message, data}
+    // ** METODO VISUALIZAR DOCUMENTO CON ENDPOINT DE INNOVA
     useEffect(() => {
         if (!isOpen || !documentoAVisualizar) return;
 
         (async () => {
             try {
-                const resp = await factilizaService.consultarDocumentoJson(documentoAVisualizar);
-
-                const ok = resp?.success ?? resp?.estado ?? true;
-                if (!ok) {
-                    toast.error(resp?.message);
-                    closeModal();
+                const { succes, status, message, data } = await facturaService.obtenerFacturaDetallada(documentoAVisualizar);
+                console.log(data)
+                if (succes && status === 200) {
+                    console.log("data", data[0]);
+                    setFactura(data[0]);
                     return;
                 }
-                const raw = resp?.data ?? resp; // fallback
-
-                // Mapeo tolerante a nombres
-                const F = {
-                    id: raw.id,
-                    tipo_doc: raw.tipo_Doc ?? raw.tipo_doc ?? raw.tipoComprobante,
-                    serie: raw.serie,
-                    correlativo:
-                        raw.correlativo ?? raw.numero ?? raw.correlativo_Comprobante,
-                    tipo_moneda: raw.tipo_Moneda ?? raw.moneda ?? "PEN",
-                    fecha_emision: raw.fecha_Emision ?? raw.fechaEmision ?? raw.fecha_emision,
-                    empresa_ruc: raw.empresa_Ruc ?? raw.rucEmisor,
-                    empresa_nombre:
-                        raw.empresa_Razon_Social ?? raw.razonSocialEmisor ?? "INDEK ANDINA E.I.R.L",
-                    empresa_direccion:
-                        raw.empresa_Direccion ??
-                        raw.direccionEmisor ??
-                        "AV. ALFREDO BENAVIDES NRO. 1579 INT. 602 URB. SAN JORGE",
-
-                    cliente_tipo_doc: raw.cliente_Tipo_Doc ?? raw.tipoDocReceptor,
-                    cliente_num_doc: raw.cliente_Num_Doc ?? raw.numDocReceptor,
-                    cliente_razon_social:
-                        raw.cliente_Razon_Social ?? raw.razonSocialReceptor ?? "",
-                    cliente_direccion: raw.cliente_Direccion ?? raw.direccionReceptor ?? "",
-
-                    detalle:
-                        raw.detalle_facturas ??
-                        raw.detalle ??
-                        raw.items ??
-                        [],
-
-                    // Totales
-                    monto_oper_gravadas:
-                        raw.monto_Oper_Gravadas ?? raw.opGravadas ?? raw.totalGravada,
-                    monto_oper_exoneradas:
-                        raw.monto_Oper_Exoneradas ?? raw.opExoneradas ?? 0,
-                    total_impuestos:
-                        raw.total_Impuestos ?? raw.igv ?? raw.totalIgv ?? 0,
-                    sub_total: raw.sub_Total ?? raw.importeTotal ?? raw.total ?? 0,
-
-                    // Complementos
-                    forma_pago: raw.forma_pago_facturas ?? raw.formaPago ?? [],
-                    legend: raw.legend ?? raw.legend ?? [],
-                    observaciones: raw.observaciones ?? "",
-                    tipo_pago: raw.tipoPago ?? "CONTADO",
-                };
-
-                console.log("F", F.legend);
-
-                setFactura(F);
             } catch (e) {
+                console.log(e)
                 toast.error(e.response.data.message || "Error al obtener el documento");
                 closeModal();
             }
@@ -157,6 +108,7 @@ export default function ModalVisualizarDocumento({
     }, [factura]);
 
     if (!isOpen) return null;
+
 
     return (
         <div
@@ -180,7 +132,7 @@ export default function ModalVisualizarDocumento({
                 </button>
 
                 {/* Contenido */}
-                    <div className="p-6 md:p-8 ">
+                <div className="p-6 md:p-8 ">
                     {!factura ? (
                         <DocumentoSkeleton />
                     ) : (
@@ -208,7 +160,7 @@ export default function ModalVisualizarDocumento({
                                         </p>
                                         <p className="mt-4 text-sm text-gray-600">
                                             <span className="font-semibold">Fecha de emisión: </span>
-                                            {formatDateTime(factura.fecha_emision)}
+                                            {formatDateTime(factura.fecha_Emision)}
                                         </p>
                                     </div>
                                 </div>
@@ -225,19 +177,19 @@ export default function ModalVisualizarDocumento({
                                             <div className="grid grid-cols-[110px_1fr] gap-x-2">
                                                 <span className="text-gray-700 font-semibold">Razón social:</span>
                                                 <span className="font-medium">
-                                                    {factura.cliente_razon_social || "—"}
+                                                    {factura.cliente_Razon_Social || "—"}
                                                 </span>
                                                 <span className="text-gray-700 font-semibold">Dirección:</span>
                                                 <span className="font-medium">
-                                                    {factura.cliente_direccion || "—"}
+                                                    {factura.cliente_Direccion || "—"}
                                                 </span>
                                                 <span className="text-gray-700 font-semibold">Tipo doc.:</span>
                                                 <span className="font-medium">
-                                                    {tipoDocCliente(factura.cliente_tipo_doc)}
+                                                    {tipoDocCliente(factura.cliente_Tipo_Doc)}
                                                 </span>
                                                 <span className="text-gray-700 font-semibold">Número doc.:</span>
                                                 <span className="font-medium">
-                                                    {factura.cliente_num_doc || "—"}
+                                                    {factura.cliente_Num_Doc || "—"}
                                                 </span>
                                             </div>
                                         </div>
@@ -251,14 +203,14 @@ export default function ModalVisualizarDocumento({
                                             <div className="grid grid-cols-[110px_1fr] gap-x-2">
                                                 <span className="text-gray-700 font-semibold">Moneda:</span>
                                                 <span className="font-medium">
-                                                    {factura.tipo_moneda}
+                                                    {factura.tipo_Moneda}
                                                 </span>
                                                 <span className="text-gray-700 font-semibold">Total:</span>
                                                 <span className="font-medium">
-                                                    {currency(factura.sub_total, factura.tipo_moneda)}
+                                                    {currency(factura.sub_Total, factura.tipo_Moneda)}
                                                 </span>
                                                 <span className="text-gray-700 font-semibold">Tipo de pago:</span>
-                                                <span className="font-medium">{factura.tipo_pago}</span>
+                                                <span className="font-medium uppercase">{factura.forma_pago_facturas[0].tipo}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -276,45 +228,32 @@ export default function ModalVisualizarDocumento({
                                 </div>
 
                                 <div className="divide-y divide-gray-200">
-                                    {(factura.detalle?.length ? factura.detalle : []).map(
+                                    {(factura.detalle_facturas?.length ? factura.detalle_facturas : []).map(
                                         (it, idx) => {
-                                            const codigo =
-                                                it.codigo ?? it.codProducto ?? it.codigo_Item ?? "";
-                                            const descripcion =
-                                                it.descripcion ?? it.descripcion_Item ?? it.producto ?? "";
-                                            const precioUnit =
-                                                it.monto_Precio_Unitario ??
-                                                it.precioUnitario ??
-                                                it.precio_unitario ??
-                                                0;
-                                            const cantidad =
-                                                it.cantidad ?? it.qty ?? it.cant ?? 0;
-                                            const total =
-                                                it.monto_Total ?? it.total ?? precioUnit * cantidad;
-                                            const tipo_unidad = it.unidad ?? it.unidad_Item ?? "";
+                                            const { id, factura_id, unidad, cantidad, cod_Producto, descripcion, monto_Valor_Unitario, monto_Base_Igv, porcentaje_Igv, igv, tip_Afe_Igv, total_Impuestos, monto_Precio_Unitario, monto_Valor_Venta, factor_Icbper } = it;
 
                                             return (
                                                 <div
                                                     key={idx}
                                                     className="grid grid-cols-12 px-6 py-3 text-sm text-gray-800"
                                                 >
-                                                    <div className="col-span-2">{codigo || "—"}</div>
+                                                    <div className="col-span-2">{cod_Producto || "—"}</div>
                                                     <div className="col-span-5">{descripcion}</div>
                                                     <div className="col-span-2 text-right">
-                                                        {currency(precioUnit, factura.tipo_moneda)}
+                                                        {currency(monto_Valor_Unitario, factura.tipo_moneda)}
                                                     </div>
                                                     <div className="col-span-1 text-right">
-                                                        {Number(cantidad ?? 0).toFixed(2) + " " + tipo_unidad}
+                                                        {Number(cantidad ?? 0).toFixed(2) + " " + unidad}
                                                     </div>
                                                     <div className="col-span-2 text-right font-medium">
-                                                        {currency(total, factura.tipo_moneda)}
+                                                        {currency(monto_Precio_Unitario, factura.tipo_moneda)}
                                                     </div>
                                                 </div>
                                             );
                                         }
                                     )}
 
-                                    {!factura.detalle?.length && (
+                                    {!factura.detalle_facturas?.length && (
                                         <div className="px-6 py-6 text-center text-sm text-gray-500">
                                             No hay productos en el detalle.
                                         </div>
@@ -330,7 +269,7 @@ export default function ModalVisualizarDocumento({
                                     <div className="text-sm">
                                         <span className="font-semibold">Leyenda:</span>
                                         <p className="mt-2 text-gray-800">
-                                            {factura.legend?.[0]?.legend_Value ??
+                                            {factura.legend_facturas?.[0]?.legend_Value ??
                                                 "—"}
                                         </p>
                                     </div>
@@ -342,33 +281,91 @@ export default function ModalVisualizarDocumento({
                                         <div className="flex justify-between">
                                             <span className="text-gray-600">Op. gravadas:</span>
                                             <span className="font-medium">
-                                                {currency(factura.monto_oper_gravadas, factura.tipo_moneda)}
+                                                {currency(factura.monto_Oper_Gravadas, factura.tipo_Moneda)}
                                             </span>
                                         </div>
                                         <div className="flex justify-between">
                                             <span className="text-gray-600">IGV:</span>
                                             <span className="font-medium">
-                                                {currency(factura.total_impuestos, factura.tipo_moneda)}
+                                                {currency(factura.total_Impuestos, factura.tipo_Moneda)}
                                             </span>
                                         </div>
                                         <div className="pt-3 mt-2 border-t flex justify-between text-base font-bold">
                                             <span>Precio de venta:</span>
                                             <span>
-                                                {currency(factura.sub_total, factura.tipo_moneda)}
+                                                {currency(factura.sub_Total, factura.tipo_Moneda)}
                                             </span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Nota inferior */}
-                            <div className="text-xs text-gray-500 rounded-xl border border-gray-200 bg-white p-6">
-                                <p className="font-medium">Nota:</p>
-                                <p className="mt-1">
-                                    Gracias por elegir nuestros productos. Esperamos que disfrutes
-                                    de tu compra y que nos tengas en cuenta para futuras
-                                    adquisiciones. ¡Gracias por confiar en nosotros!
-                                </p>
+                            {/* Detraccion */}
+                            {
+                                factura.tipo_Operacion == "1001" && (
+                                    <div className="mt-4 pt-2 border border-gray-200 rounded-md p-4">
+                                        <h3 className="font-bold text-md mb-2 text-gray-600">DETRACCION:</h3>
+                                        <div className="grid grid-cols-2 gap-x-10 gap-y-2">
+                                            <div className="flex justify-between">
+                                                <p className="text-sm text-gray-800 font-semibold">Cta. Cte. Banco</p>
+                                                <p className="text-sm text-gray-800">{factura.detraccion_cta_banco}</p>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <p className="text-sm text-gray-800 font-semibold">Detraccion ({factura.detraccion_percent}%)</p>
+                                                <p className="text-sm text-gray-800">{factura.detraccion_mount}</p>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <p className="text-sm text-gray-800 font-semibold min-w-[130px]">Bien o Servicio</p>
+                                                <p className="text-sm text-gray-800">{getDescripcion(factura.detraccion_cod_bien_detraccion) || ""}</p>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <p className="text-sm text-gray-800 font-semibold">Neto a Pagar</p>
+                                                <p className="text-sm text-gray-800">{(factura.monto_Imp_Venta - factura.detraccion_mount).toFixed(2)}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            }
+
+                            {/* Tabla de pagos */}
+                            <div className="rounded-xl border border-gray-200 overflow-hidden bg-white">
+                                <div className="bg-gray-100 text-gray-600 text-xs font-semibold uppercase tracking-wide grid grid-cols-4 px-6 py-3">
+                                    <div className="col-span-1 text-center">Cuota</div>
+                                    <div className="col-span-1 text-center">Tipo</div>
+                                    <div className="col-span-1 text-center">Monto</div>
+                                    <div className="col-span-1 text-center">Fecha</div>
+                                </div>
+
+                                <div className="divide-y divide-gray-200">
+                                    {(factura.forma_pago_facturas?.length ? factura.forma_pago_facturas : []).map(
+                                        (it, idx) => {
+                                            const { id, factura_id, tipo, monto, cuota, fecha_Pago } = it;
+
+                                            const montoFinal = factura.tipo_Operacion == "1001"
+                                                ? monto - factura.detraccion_mount
+                                                : monto;
+
+                                            return (
+                                                <div
+                                                    key={idx}
+                                                    className="grid grid-cols-4 px-6 py-3 text-sm text-gray-800"
+                                                >
+                                                    <div className="col-span-1 text-center">{cuota}</div>
+                                                    <div className="col-span-1 text-center">{tipo}</div>
+                                                    <div className="col-span-1 text-center">{currency(montoFinal, factura.tipo_Moneda)}</div>
+                                                    <div className="col-span-1 text-center">{formatDateTime(fecha_Pago)}</div>
+                                                </div>
+                                            );
+                                        }
+                                    )}
+
+                                    {!factura.forma_pago_facturas?.length && (
+                                        <div className="px-6 py-6 text-center text-sm text-gray-500">
+                                            No hay pagos en el detalle.
+                                        </div>
+                                    )}
+                                </div>
+
                             </div>
                         </div>
                     )}

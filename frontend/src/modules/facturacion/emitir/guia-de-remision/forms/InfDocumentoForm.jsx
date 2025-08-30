@@ -17,9 +17,9 @@ import { toast } from "react-toastify";
 
 const InfDocumentoForm = () => {
 
-    const { guiaTransporte, setGuiaTransporte, tipoGuia, setTipoGuia } = useGuiaTransporte();
+    const { guiaTransporte, setGuiaTransporte, tipoGuia, setTipoGuia, filiales } = useGuiaTransporte();
 
-    const { tipo_Doc, serie, correlativo, observacion } = guiaTransporte;
+    const { tipo_Doc, serie, correlativo, observacion, empresa_Ruc } = guiaTransporte;
     const [correlativoEstado, setCorrelativoEstado] = useState(false);
     const [serieEstado, setSerieEstado] = useState(false);
     const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
@@ -30,7 +30,6 @@ const InfDocumentoForm = () => {
         setCorrelativoEstado(!correlativoEstado);
     }
     const activarSerie = (e) => {
-        console.log("clicl")
         e.preventDefault();
         setSerieEstado(!serieEstado);
     }
@@ -179,7 +178,7 @@ const InfDocumentoForm = () => {
                             </button>
                         </div>
                         <button className={`bg-blue-500 hover:bg-blue-600  cursor-pointer  text-white rounded-md px-2 `}
-                            disabled={correlativoEstado}
+                            // disabled={correlativoEstado}
                             onClick={(e) => buscarCorrelativo(e)}
                         >
                             {loadingCorrelativo ? <LoaderCircle className="w-4 h-4 animate-spin" /> : <Search />}
@@ -202,6 +201,34 @@ const InfDocumentoForm = () => {
                         name="fecha_Emision"
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none text-sm"
                     />
+                </div>
+                <div>
+                    <div>
+                        <Label
+                            htmlFor="empresa_Ruc"
+                            className="block text-sm text-gray-700 text-left mb-1 font-semibold"
+                        >
+                            RUC Empresa
+                        </Label>
+                        <Select
+                            value={empresa_Ruc}
+                            name="empresa_Ruc"
+                            onValueChange={(e) => {
+                                handleSelectChange(e, "empresa_Ruc");
+                            }}
+                        >
+                            <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm">
+                                <SelectValue placeholder="Selecciona un codigo" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {filiales.map((filial) => (
+                                    <SelectItem key={filial.id} value={filial.ruc}>
+                                        {filial.razon_social} - {filial.ruc}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
                 <div className="col-span-1 md:col-span-2 lg:col-span-3">
                     <Label

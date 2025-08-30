@@ -3,6 +3,7 @@ const { DetalleFactura } = require("../models/factura-boleta/facturaDetalleModel
 const { FormaPagoFactura } = require("../models/factura-boleta/formaPagoModel");
 const { LegendFactura } = require("../models/factura-boleta/legendFacturaModel");
 const { SunatRespuesta } = require("../models/sunatRespuestaModel");
+const { Filial } = require("../../../filiales/infrastructure/models/filialModel");
 const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 const { Op } = require("sequelize");
 
@@ -76,7 +77,7 @@ class SequelizeFacturaRepository {
             }
 
 
-            const {count, rows} = await Factura.findAndCountAll({
+            const { count, rows } = await Factura.findAndCountAll({
                 attributes: [
                     "id",
                     "tipo_operacion",
@@ -183,6 +184,29 @@ class SequelizeFacturaRepository {
         return facturaTransformada;
     }
 
+    async obtenerFacturaPorInformacion(correlativo, serie, empresa_ruc, tipo_doc) {
+        const facturas = await Factura.findAll({
+            where: { correlativo, serie, tipo_doc, empresa_ruc },
+            include: [
+                { model: DetalleFactura },
+                { model: FormaPagoFactura },
+                { model: LegendFactura },
+            ],
+        });
+
+        const empresa = await Filial.findOne({
+            where: { ruc: empresa_ruc },
+            attributes: ["ruc", "razon_social", "direccion"],
+        });
+
+        return facturas.map(f => ({
+            ...f.dataValues,
+            empresa_nombre: empresa?.razon_social,
+            empresa_direccion: empresa?.direccion,
+        }));
+
+    }
+
     async buscarExistencia(serie, correlativo, estado) {
         console.log("🚚 Atributos para buscar existencia:", serie, correlativo, estado);
         const where = {
@@ -204,16 +228,12 @@ class SequelizeFacturaRepository {
 
         try {
             //* 1. Crear la Factura principal
-            console.log(
-                "**************************DATA DE FACTURA ANTES DE LA TRANSACCION",
-                data.factura
-            );
             const factura = await Factura.create(data.factura, { transaction });
             if (!factura) {
                 throw new Error("No se pudo crear la factura principal.");
             }
             createdInvoice.factura = factura;
-            console.log("FACTURA CREADA", factura);
+            // console.log("FACTURA CREADA", factura);
 
             //* 2. Crear los Detalles de la Factura
             const createdDetalles = [];
@@ -270,21 +290,18 @@ class SequelizeFacturaRepository {
             createdInvoice.legendas = createdLeyendas;
 
             // *5. Crear Respuesta Sunat
-            if (factura.estado === 'EMITIDA') {
-
-                const sunat = await SunatRespuesta.create(
-                    {
-                        factura_id: factura.id,
-                        ...data.sunat_respuesta,
-                    },
-                    { transaction }
-                );
-                if (!sunat) {
-                    throw new Error("No se pudo crear la respuesta sunat.");
-                }
-                createdInvoice.sunat_respuesta = sunat;
-                // console.log("FACTURA RESPUESTA SUNAT DESDE SEQUELIZE", sunat);
+            const sunat = await SunatRespuesta.create(
+                {
+                    factura_id: factura.id,
+                    ...data.sunat_respuesta,
+                },
+                { transaction }
+            );
+            if (!sunat) {
+                throw new Error("No se pudo crear la respuesta sunat.");
             }
+            createdInvoice.sunat_respuesta = sunat;
+            // console.log("FACTURA RESPUESTA SUNAT DESDE SEQUELIZE", sunat);
             //* Si todas las operaciones fueron exitosas, confirma la transacción.
             await transaction.commit();
 

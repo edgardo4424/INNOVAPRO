@@ -59,10 +59,21 @@ const ChoferPrivadoForm = () => {
         try {
             const { data: data_inf, status: status_inf, success: suscces_inf } = await factilizaService.obtenerPersonaPorDni(chofer.nro_doc);
 
-            const { data: data_lic, status: status_lic, success: suscces_lic } = await factilizaService.obtenerLicenciaPorDni(chofer.nro_doc);
+            let data_lic = {};
+            let status_lic = 0;
+            let suscces_lic = false;
+            try {
+                const res = await factilizaService.obtenerLicenciaPorDni(chofer.nro_doc);
+                data_lic = res.data;
+                status_lic = res.status;
+                suscces_lic = res.success;
+            } catch (error) {
+                console.error("Error al buscar la licencia del chofer:", error);
+            }
 
-            if (status_inf == 200 && status_lic == 200) {
-                toast.success('Chofer Encontrado')
+            console.log("nollego");
+            if (status_inf == 200) {
+                toast.success('Persona Encontrada')
                 // ?? Asegúrate de que los nombres de las propiedades coincidan con la respuesta de tu API
                 const nombres = data_inf.nombres || '';
                 const apellidos = `${data_inf.apellido_paterno || ''} ${data_inf.apellido_materno || ''}`.trim();
@@ -92,10 +103,10 @@ const ChoferPrivadoForm = () => {
     };
 
     return (
-        <div className="mb-8">
-            <h2 className="text-2xl  font-semibold mb-6 text-blue-800 border-b pb-2">
+        <div className=" overflow-y-auto">
+            <h1 className="text-2xl text-left   font-semibold mb-6  pb-2">
                 Datos del Chofer
-            </h2>
+            </h1>
             {guiaDatosPrivado.chofer.map((chofer, index) => (
                 <div
                     key={index}
@@ -246,10 +257,10 @@ const ChoferPrivadoForm = () => {
                 <button
                     type="button"
                     onClick={addChofer}
-                    className="px-5 flex justify-center items-center gap-x-2 py-2 cursor-pointer bg-green-600 text-white font-medium rounded-md hover:bg-green-700 w-full md:w-auto"
+                    className="px-2 flex justify-center items-center gap-x-2 py-2 cursor-pointer bg-green-600 text-white font-medium rounded-md hover:bg-green-700 w-full md:w-auto"
                 >
-                    <UserRoundPlus className="size-6 md:size-7" />
-                    <span className="w-full text-center">
+                    <UserRoundPlus className="size-6 md:size-6" />
+                    <span className="w-full text-center text-sm">
                         Agregar Chofer</span>
                 </button>
             </div>

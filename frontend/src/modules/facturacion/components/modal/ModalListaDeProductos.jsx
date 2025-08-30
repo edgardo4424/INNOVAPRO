@@ -7,11 +7,11 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Box, ClipboardPlus, X } from "lucide-react";
+import { Box, X } from "lucide-react";
 import { useState } from "react";
 import ListaDeProductos from "../ListaDeProductos";
 
-export default function ModalListaDeProductos() {
+export default function ModalListaDeProductos({ itemActual, setItemActual, formulario, tipo }) {
 
 
     const [open, setOpen] = useState(false);
@@ -45,7 +45,13 @@ export default function ModalListaDeProductos() {
                     </AlertDialogDescription>
                 </AlertDialogHeader>
 
-                <ListaDeProductos closeModal={closeModal} />
+                <ListaDeProductos
+                    closeModal={closeModal}
+                    itemActual={itemActual}
+                    setItemActual={setItemActual}
+                    formulario={formulario}
+                    tipo={tipo}
+                />
 
             </AlertDialogContent>
         </AlertDialog>

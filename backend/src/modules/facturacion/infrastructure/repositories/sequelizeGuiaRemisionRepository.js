@@ -25,6 +25,22 @@ class SequelizeGuiaRemisionRepository {
         return guia;
     }
 
+    async relacionRemision(query) {
+        const { ruc } = query
+        const guias = await GuiaRemision.findAll({
+            where: { empresa_ruc: ruc },
+            attributes: [
+                "id",
+                "serie",
+                "correlativo",
+                "fecha_Emision",
+                "empresa_Ruc",
+            ],
+        })
+
+        return guias
+    }
+
     async crear(data) {
         const transaction = await db.sequelize.transaction();
         let createdGuia = {};
@@ -36,44 +52,44 @@ class SequelizeGuiaRemisionRepository {
                 throw new Error("No se pudo crear la Guia de Remision.");
             }
             createdGuia.guia = guia;
-
+            console.log("GUIA CREADA", guia);
             // * 2. Crear los Detalles de la Guia
-            // const createdDetalles = [];
-            // for (const detalleData of data.detalle) {
-            //     const detalle = await GuiaDetalles.create(
-            //         {
-            //             guia_id: guia.id,
-            //             ...detalleData,
-            //         },
-            //         { transaction }
-            //     );
-            //     if (!detalle) {
-            //         throw new Error(
-            //             `No se pudo crear un detalle para el producto ${detalleData.cod_producto || "desconocido"}`
-            //         );
-            //     }
-            //     createdDetalles.push(detalle);
-            // }
-            // createdGuia.detalles = createdDetalles;
+            const createdDetalles = [];
+            for (const detalleData of data.detalle) {
+                const detalle = await GuiaDetalles.create(
+                    {
+                        guia_id: guia.id,
+                        ...detalleData,
+                    },
+                    { transaction }
+                );
+                if (!detalle) {
+                    throw new Error(
+                        `No se pudo crear un detalle para el producto ${detalleData.cod_producto || "desconocido"}`
+                    );
+                }
+                createdDetalles.push(detalle);
+            }
+            createdGuia.detalles = createdDetalles;
 
-            // // * 3. Crear los Choferes de la Guia
-            // const createdChoferes = [];
-            // for (const choferData of data.chofer) {
-            //     const chofer = await GuiaChoferes.create(
-            //         {
-            //             guia_id: guia.id,
-            //             ...choferData,
-            //         },
-            //         { transaction }
-            //     );
-            //     if (!chofer) {
-            //         throw new Error(
-            //             `No se pudo crear un chofer para el producto ${choferData.cod_producto || "desconocido"}`
-            //         );
-            //     }
-            //     createdChoferes.push(chofer);
-            // }
-            // createdGuia.choferes = createdChoferes;
+            // * 3. Crear los Choferes de la Guia, solo si se proporcionaron choferes
+                const createdChoferes = [];
+                for (const choferData of data.chofer) {
+                    const chofer = await GuiaChoferes.create(
+                        {
+                            guia_id: guia.id,
+                            ...choferData,
+                        },
+                        { transaction }
+                    );
+                    if (!chofer) {
+                        throw new Error(
+                            `No se pudo crear un chofer para el producto ${choferData.cod_producto || "desconocido"}`
+                        );
+                    }
+                    createdChoferes.push(chofer);
+                }
+                createdGuia.choferes = createdChoferes;
 
             // * 4. Crear la SunatRespuesta
             const sunat = await SunatRespuesta.create(

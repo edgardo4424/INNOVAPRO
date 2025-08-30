@@ -1,9 +1,10 @@
 import { validarFormulario } from "@/modules/facturacion/emitir/guia-de-remision/utils/validarFormulario";
-import { guiaInical, ValoresInterno, ValoresPrivado, ValoresPublico } from "@/modules/facturacion/emitir/guia-de-remision/utils/valoresIncialGuia";
+import { detalleInicial, guiaInical, ValoresInterno, ValoresPrivado, ValoresPublico } from "@/modules/facturacion/emitir/guia-de-remision/utils/valoresIncialGuia";
 import factilizaService from "@/modules/facturacion/service/FactilizaService";
 import facturaService from "@/modules/facturacion/service/FacturaService";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import filialesService from "../service/FilialesService";
 
 const GuiaTransporteContext = createContext();
 
@@ -16,35 +17,96 @@ export function GuiaTransporteProvider({ children }) {
 
     const [guiaTransporteValida, setGuiaTransporteValida] = useState(null);
 
+    const [productoActual, setProductoActual] = useState(detalleInicial);
+
     const [tipoGuia, setTipoGuia] = useState("transporte-privado");
+
+    const [filiales, setFiliales] = useState([]);
+
+
+
+    // ?? OBTENER TODAS LAS FILIALES
+
+    useEffect(() => {
+        const consultarFiliales = async () => {
+            const data = await filialesService.ObtenerPiezas();
+            if (data.length === 0) {
+                toast.error("No se encontraron filiales");
+                return;
+            }
+            setFiliales(data);
+        }
+        consultarFiliales();
+    }, []);
+
+    useEffect(() => {
+        const UNIT_TO_KG = {
+            KGM: 1,              // kilogramo
+            TNE: 1000,           // tonelada
+            GRM: 0.001,          // gramo
+            LBR: 0.45359237,     // libra
+            ONZ: 0.028349523125, // onza
+        };
+
+        const toKg = (value, unit) => (Number(value) || 0) * (UNIT_TO_KG[unit] || 1);
+        const fromKg = (kg, unit) => kg / (UNIT_TO_KG[unit] || 1);
+        const round = (n, d = 3) => {
+            const m = Math.pow(10, d);
+            return Math.round((n + Number.EPSILON) * m) / m;
+        };
+
+        const actualizarPesoTotal = () => {
+            const detalle = Array.isArray(guiaTransporte?.detalle) ? guiaTransporte.detalle : [];
+            const unidadTotal = guiaTransporte?.guia_Envio_Und_Peso_Total || "KGM";
+
+            // 1) Sumar todo en KG
+            const totalKg = detalle.reduce((acc, item) => {
+                const cantidad = Number(item?.cantidad) || 0;
+                const unidadItem = item?.unidad || "KGM";
+                return acc + toKg(cantidad, unidadItem);
+            }, 0);
+
+            // 2) Convertir al unit seleccionado
+            const totalEnUnidad = fromKg(totalKg, unidadTotal);
+
+            // 3) Guardar
+            setGuiaTransporte(prev => ({
+                ...prev,
+                guia_Envio_Peso_Total: round(totalEnUnidad, 3),
+            }));
+        };
+
+        actualizarPesoTotal();
+    }, [guiaTransporte.detalle, guiaTransporte.guia_Envio_Und_Peso_Total]);
+
 
     const validarGuia = async () => {
         try {
-            let guiaATrestear = guiaTransporte;
+            let guiaATestear = guiaTransporte;
             switch (tipoGuia) {
                 case "transporte-privado":
-                    guiaATrestear = {
-                        ...guiaATrestear,
+                    guiaATestear = {
+                        ...guiaATestear,
                         ...guiaDatosPrivado
                     }
                     break;
                 case "transporte-publico":
-                    guiaATrestear = {
-                        ...guiaATrestear,
+                    guiaATestear = {
+                        ...guiaATestear,
                         ...guiaDatosPublico
                     }
                     break;
                 case "traslado-misma-empresa":
-                    guiaATrestear = {
-                        ...guiaATrestear,
+                    guiaATestear = {
+                        ...guiaATestear,
                         ...guiaDatosInternos
                     }
                     break;
                 default:
                     break;
             }
-            console.log(guiaATrestear)
-            const { errores, validos, message } = await validarFormulario(tipoGuia, guiaATrestear);
+            // ** Validadr los campos antes de emitir al servidor de factiliza
+            const { errores, validos, message } = await validarFormulario(tipoGuia, guiaATestear);
 
             if (!validos) {
                 // *Encuentra el primer error y lo muestra en un toast
@@ -97,24 +159,40 @@ export function GuiaTransporteProvider({ children }) {
                     break;
             }
             const { status: status_factiliza, success: succes_factiliza, message: message_factiliza, data: data_factiliza } = await factilizaService.enviarGuia(guiaAEmitir)
-            console.log("aeda", status_factiliza, succes_factiliza, message_factiliza, data_factiliza)
             if (succes_factiliza && status_factiliza === 200) {
-                let sunat = {
+                let sunat_respuest = {
                     hash: data_factiliza.hash ?? null,
                     mensaje: message_factiliza ?? null,
-                    cdr_zip: null,
-                    sunat_success: data_factiliza.sunatResponse.success,
+                    cdr_zip: data_factiliza.sunatResponse.cdrZip ?? null,
+                    sunat_success: data_factiliza.sunatResponse.success ?? null,
                     cdr_response_id: data_factiliza.sunatResponse.cdrResponse.id,
                     cdr_response_code: data_factiliza.sunatResponse.cdrResponse.code,
                     cdr_response_description: data_factiliza.sunatResponse.cdrResponse.description,
                 };
-                const { detalle, chofer, ...guia } = guiaAEmitir;
                 let guiaEstructurada = {
-                    ...guia,
+                    ...guiaTransporte,
                     estado: "EMITIDA",
-                    body: JSON.stringify(guiaAEmitir),
                 }
-                let guiaCopia = { guia: guiaEstructurada, sunat_respuesta: sunat, };
+                if (tipoGuia == "transporte-privado") {
+                    guiaEstructurada = {
+                        ...guiaEstructurada,
+                        ...guiaDatosPrivado
+                    }
+                } else if (tipoGuia == "traslado-misma-empresa") {
+                    guiaEstructurada = {
+                        ...guiaEstructurada,
+                        ...guiaDatosInternos,
+                        chofer: []
+                    }
+                } else {
+                    const { transportista, ...guiaDPublico } = guiaDatosPublico
+                    guiaEstructurada = {
+                        ...guiaEstructurada,
+                        ...guiaDPublico,
+                        chofer: [transportista]
+                    }
+                }
+                let guiaCopia = { ...guiaEstructurada, sunat_respuesta: sunat_respuest, };
 
                 const { status, success, message } = await RegistrarBaseDatos(guiaCopia);
 
@@ -200,6 +278,9 @@ export function GuiaTransporteProvider({ children }) {
     return (
         <GuiaTransporteContext.Provider
             value={{
+                filiales,
+                productoActual,
+                setProductoActual,
                 guiaTransporte,
                 setGuiaTransporte,
                 guiaTransporteValida,

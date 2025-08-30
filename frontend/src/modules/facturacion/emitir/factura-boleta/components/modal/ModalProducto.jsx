@@ -7,10 +7,11 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { ClipboardPlus, X } from "lucide-react";
-import { useEffect, useState } from "react";
-import ProductoForm from "../../forms/ProductoForm";
 import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
+import { ClipboardPlus, X } from "lucide-react";
+import { useEffect } from "react";
+import ProductoForm from "../../forms/ProductoForm";
+import { valorInicialProducto } from "../../utils/valoresInicial";
 
 export default function ModalProducto({open, setOpen}) {
 
@@ -22,24 +23,7 @@ export default function ModalProducto({open, setOpen}) {
             index: null
         })
         setOpen(false);
-        setProductoActual(
-            {
-                unidad: "",
-                cantidad: 0,
-                cod_Producto: "",
-                descripcion: "",
-                monto_Valor_Unitario: 0,
-                monto_Base_Igv: 0,
-                porcentaje_Igv: 18.0,
-                igv: 0,
-                tip_Afe_Igv: "",
-                total_Impuestos: 0,
-                monto_Precio_Unitario: 0,
-                monto_Valor_Venta: 0,
-                factor_Icbper: 0,
-                edicion: false
-            }
-        )
+        setProductoActual(valorInicialProducto)
     };
 
     useEffect(() => {

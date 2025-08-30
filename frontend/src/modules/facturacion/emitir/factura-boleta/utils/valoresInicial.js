@@ -53,7 +53,7 @@ const valorIncialPago = {
     tipo: "",
     monto: 0,
     cuota: 0,
-    fecha_Pago: "",
+    fecha_Pago: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
 };
 
 
@@ -73,15 +73,15 @@ const valorIncialDetracion = {
 }
 
 const valorInicialProducto = {
-    unidad: "",
-    cantidad: null,
+    unidad: "NIU",
+    cantidad: 1,
     cod_Producto: "",
     descripcion: "",
     monto_Valor_Unitario: null,
     monto_Base_Igv: 0,
     porcentaje_Igv: 18.0,
     igv: 0,
-    tip_Afe_Igv: "",
+    tip_Afe_Igv: "10",
     total_Impuestos: 0,
     monto_Precio_Unitario: 0,
     monto_Valor_Venta: 0,

@@ -1,4 +1,4 @@
-export async function  validarModal (tipo, item) {
+export async function validarModal(tipo, item) {
     if (tipo == "producto") {
         const camposRequeridos = [
             { key: "unidad" },
@@ -51,7 +51,7 @@ export async function  validarModal (tipo, item) {
         const camposRequeridos = [
             { key: "tipo" },
             { key: "monto" },
-            // { key: "cuota" },
+            { key: "cuota" },
             { key: "fecha_Pago" },
         ];
 
@@ -60,11 +60,25 @@ export async function  validarModal (tipo, item) {
         for (const campo of camposRequeridos) {
             const valor = item[campo.key];
             if (!valor || valor.toString().trim() === "" || valor === 0) {
-                errores[campo.key] = true;
+                if (campo.key != "cuota") {
+                    errores[campo.key] = true;
+                }
             } else {
-                errores[campo.key] = false
+                errores[campo.key] = false;
             }
         }
+
+        console.log(item);
+        if (item.tipo == "Contado") {
+            if (item.cuota != 0) {
+                errores.cuota = true;
+            }
+        } else if (item.tipo == "Credito") {
+            if (item.cuota < 1 || item.cuota == "" || item.cuota == '') {
+                errores.cuota = true;
+            }
+        }
+
         const hayErrores = Object.values(errores).some((val) => val === true);
 
         if (hayErrores) {

@@ -2,7 +2,7 @@ import { BrushCleaning } from 'lucide-react';
 import React from 'react'
 import { toast } from 'react-toastify';
 
-const FiltroTabla = ({ filtro, setFiltro, documentTypes, handleAplicarFiltros,handleLimpiarFiltros }) => {
+const FiltroTabla = ({ filtro, setFiltro, documentTypes, handleAplicarFiltros, handleLimpiarFiltros }) => {
     return (
         <div className="relative grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 mb-8 p-6 bg-white rounded-xl shadow-md items-end border-2">
             <div className="flex flex-col">
@@ -114,7 +114,7 @@ const FiltroTabla = ({ filtro, setFiltro, documentTypes, handleAplicarFiltros,ha
                 </button>
                 <button
                     className="cursor-pointer text-innova-blue text-sm font-bold rounded-lg shadow-md border-2 border-innova-blue hover:bg-innova-blue hover:text-white transition duration-300"
-                onClick={handleLimpiarFiltros}
+                    onClick={handleLimpiarFiltros}
                 >
                     <BrushCleaning className="inline-block " />
                     Limpiar

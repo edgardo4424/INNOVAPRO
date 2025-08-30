@@ -19,9 +19,11 @@ export function FacturaBoletaProvider({ children }) {
     // ** DATOS PARA FORMULARIO
     const [factura, setFactura] = useState(ValorInicialFactura); // * FACTURA
 
+    // todo: DETRACCION
     const [detraccionActivado, setDetraccionActivado] = useState(false);
     const [detraccion, setDetraccion] = useState(valorIncialDetracion); // * DETRACCION
 
+    // todo: RETENCION
     const [retencionActivado, setRetencionActivado] = useState(false);
     const [retencion, setRetencion] = useState(valorIncialRetencion);
 
@@ -143,24 +145,18 @@ export function FacturaBoletaProvider({ children }) {
             factura.detalle.forEach((producto) => {
                 const valorVenta = parseFloat(producto.monto_Valor_Venta || 0);
 
-                if (producto.tip_Afe_Igv === "10") {
+                if (["10", "11", "12", "13", "14", "15", "16", "17"].includes(producto.tip_Afe_Igv)) {
                     gravadas += valorVenta;
                     igvTotal += valorVenta * 0.18;
                 }
 
-                if (producto.tip_Afe_Igv === "20") {
+                if (["20", "21", "30", "31", "32", "33", "34", "35", "36", "40"].includes(producto.tipAfeIgv)) {
                     exoneradas += valorVenta;
                 }
             });
 
             const subTotal = gravadas + igvTotal + exoneradas;
 
-            // // ** TOTAL VENTA
-            // let  totalVenta = subTotal;
-
-            // if (factura.tipo_Operacion === "1001") {
-            //     totalVenta = subTotal - detraccion.detraccion_mount;
-            // }
             setTotalProducto(gravadas);
 
             setFactura((prev) => ({
@@ -185,19 +181,6 @@ export function FacturaBoletaProvider({ children }) {
 
         const nuevaLegenda = numeroALeyenda(factura.monto_Imp_Venta);
 
-        // if (factura.tipo_Operacion === "1001") {
-        //     setFactura((prev) => ({
-        //         ...prev,
-        //         legend: [{
-        //             legend_Code: "1000",
-        //             legend_Value: nuevaLegenda,
-        //         },
-        //         {
-        //             legend_Code: "2006",
-        //             legend_Value: "BIENES Y/O SERVICIOS SUJETOS A DETRACCIÓN",
-        //         }]
-        //     }));
-        // } else {
         setFactura((prev) => ({
             ...prev,
             legend: [{
@@ -205,7 +188,6 @@ export function FacturaBoletaProvider({ children }) {
                 legend_Value: nuevaLegenda,
             }]
         }));
-        // }
     }, [factura.monto_Imp_Venta]);
 
 
@@ -218,25 +200,14 @@ export function FacturaBoletaProvider({ children }) {
             return total + (isNaN(monto) ? 0 : monto);
         }, 0);
 
-        // if (factura.tipo_Operacion === "1001") {
-        //     const detraccionMonto = parseFloat(detraccion.detraccion_mount || 0); // ✅ Usamos el valor directamente del estado de detraccion
-        //     montoPendiente = (montoBase - detraccionMonto) - pagosRealizados;
-        //     console.log("if con 1001", montoPendiente);
-        // } else if (retencionActivado) {
-        //     // !! IMPLEMENTAR LOGICA PARA RETENCIONES
-        //     // La lógica para retenciones iría aquí si se activa
-        //     console.log("else if para retencion", montoPendiente);
-        // } else {
         montoPendiente = montoBase - pagosRealizados;
         console.log("else defecto", montoPendiente);
-        // }
 
         console.log("monto pendiente")
         console.log(montoPendiente)
 
         setPagoActual((prev) => ({
             ...prev,
-            cuota: factura.forma_pago.length,
             monto: parseFloat(montoPendiente.toFixed(2)),
         }));
 
@@ -298,10 +269,11 @@ export function FacturaBoletaProvider({ children }) {
     const agregarPago = () => {
         setFactura((prevFactura) => ({
             ...prevFactura,
-            forma_pago: [...prevFactura.forma_pago, {
-                ...pagoActual,
-                monto: parseFloat(pagoActual.monto),
-            }],
+            forma_pago: [
+                {
+                    ...pagoActual,
+                }
+            ],
         }));
         setPagoActual(valorIncialPago);
     };
@@ -450,6 +422,11 @@ export function FacturaBoletaProvider({ children }) {
         setEdicionProducto({ edicion: false, index: null });
         setPagoActual(valorIncialPago);
         setTotalProducto(0);
+        setDetraccionActivado(false);
+        setDetraccion(valorIncialDetracion);
+        setRetencion(valorIncialRetencion);
+        setRetencionActivado(false);
+        setIdBorrador(null);
     };
 
 
@@ -490,7 +467,8 @@ export function FacturaBoletaProvider({ children }) {
                 setPagoActual,
                 agregarPago,
                 emitirFactura,
-                registrarBaseDatos
+                registrarBaseDatos,
+                Limpiar
             }}
         >
             {children}

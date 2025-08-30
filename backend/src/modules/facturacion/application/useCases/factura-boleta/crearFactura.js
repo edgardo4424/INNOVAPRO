@@ -1,4 +1,4 @@
-module.exports = async (body, facturaRepository) => {
+module.exports = async (body, facturaRepository, borradorRepository) => {
 
     //* 1. Desestructuración de los datos del body:
     const {
@@ -120,9 +120,6 @@ module.exports = async (body, facturaRepository) => {
             sunat_respuesta
         });
 
-        // if(id_borrador){
-        //     await .eliminarBorrador(id_borrador);
-        // }
 
         //* 5. Evaluar el resultado de la operación del repositorio
         if (!resultadoCreacion.success) {
@@ -136,6 +133,11 @@ module.exports = async (body, facturaRepository) => {
                     status: 400
                 },
             };
+        }
+
+        // * Despues de haber creado la factura, borramos el borrador si este fue creado por ese medio
+        if (id_borrador) {
+            await borradorRepository.eliminar(id_borrador);
         }
 
         //* 6. Retornar éxito

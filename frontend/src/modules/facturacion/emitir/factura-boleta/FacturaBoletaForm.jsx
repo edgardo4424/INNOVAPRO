@@ -1,5 +1,4 @@
-import { useSearchParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useFacturaBoleta } from "../../context/FacturaBoletaContext";
 import facturaService from "../../service/FacturaService";
 import { formatearBorrador } from "../../utils/formatearBorrador";
@@ -11,15 +10,22 @@ import MontoyProductos from "./components/campos/MontoyProductos";
 import ModalVisualizarFactura from "./components/modal/ModalVisualizarFactura";
 import { ValorInicialFactura } from "./utils/valoresInicial";
 import DatosDeRetencion from "./components/campos/DatosDeRetencion";
+import { toast } from "sonner";
 
 const FacturaBoletaForm = () => {
-    const { factura, setFactura } = useFacturaBoleta();
+    const { factura, setFactura, idBorrador, Limpiar } = useFacturaBoleta();
+    const navigate = useNavigate();
 
     const [searchParams] = useSearchParams();
     const tipo = searchParams.get("tipo");
     const id = searchParams.get("id");
 
     const handleRegister = async () => {
+        if (idBorrador) {
+            toast.error("Estas tratando de registrar la factura como un borrardor, pero esta fue rellenada con un borrador previo")
+            return
+        }
+
         // *conseguir id usuario
         const user = localStorage.getItem("user");
         const userData = JSON.parse(user);
@@ -65,6 +71,10 @@ const FacturaBoletaForm = () => {
         }
     };
 
+    const handleCancelar = () => {
+        Limpiar();
+        // navigate("/facturacion/bandeja/factura-boleta?page=1&limit=10");
+    };
     return (
         <div
             className=" shadow-xl border bg-white border-gray-400  rounded-3xl  p-4  transition-all duration-300 mb-6"
@@ -96,7 +106,9 @@ const FacturaBoletaForm = () => {
                         className="py-3 px-4 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-600 cursor-pointer ">
                         Guardar
                     </button>
-                    <button className="py-3 px-4 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 cursor-pointer ">
+                    <button
+                        onClick={handleCancelar}
+                        className="py-3 px-4 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 cursor-pointer ">
                         Cancelar
                     </button>
                 </div>

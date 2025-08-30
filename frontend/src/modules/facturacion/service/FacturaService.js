@@ -6,11 +6,15 @@ const facturaService = {
         const res = await api.get(`/facturacion/facturas${query}`);
         return res.data;
     },
+    obtenerFacturaDetallada: async (body) => {
+        const res = await api.post(`/facturacion/factura/detallada`, body);
+        return res.data;
+    },
     registrarFactura: async (factura) => {
         const res = await api.post(`/facturacion/registrar`, factura);
         return res.data;
     },
-    obtenerDocumentoConId: async(documento_id) =>{
+    obtenerDocumentoConId: async (documento_id) => {
         const res = await api.get(`/facturacion/factura/${documento_id}`);
         return res.data;
     },
@@ -38,17 +42,21 @@ const facturaService = {
     },
 
     // * ENDPOINTS GUIA REMISION
-    
+
     registrarGuiaRemision: async (guia) => {
         const res = await api.post(`/facturacion/guia-remision/crear`, guia);
         return res.data;
     },
-    obtenerCorrelativoGuia: async () =>{
+    obtenerCorrelativoGuia: async () => {
         const res = await api.get('/facturacion/guia-remision/correlativo');
         return res.data
     },
     obtenerTodasLasGuiasRemision: async (query) => {
         const res = await api.get(`/facturacion/guia-remision${query}`);
+        return res.data;
+    },
+    obtenerGuiasARelacionar: async (query) => {
+        const res = await api.get(`/facturacion/guia-remision/relaciones${query}`);
         return res.data;
     },
     obtenerMtc: async (ruc) => {

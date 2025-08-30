@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 
 const DatosDelComprobante = () => {
     const { factura, setFactura, filiales } = useFacturaBoleta();
+    const [correlativos, setCorrelativos] = useState({});
     const [correlativoEstado, setCorrelativoEstado] = useState(false);
     const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
 
@@ -46,7 +47,7 @@ const DatosDelComprobante = () => {
             // Lógica para buscar el correlativo
             const { mensaje, estado, correlativos } = await facturaService.obtenerCorrelativo();
 
-            console.log(mensaje, estado, correlativos);
+            setCorrelativos(correlativos);
 
             let tipoDoc = factura.tipo_Doc === "01" ? "Factura" : "Boleta";
             if (estado) {
@@ -69,7 +70,7 @@ const DatosDelComprobante = () => {
     useEffect(() => {
         setFactura((prevValores) => ({
             ...prevValores,
-            correlativo: "",
+            correlativo: factura.tipo_Doc === "01" ? correlativos.factura : correlativos.boleta,
         }))
     }, [factura.tipo_Doc])
 
@@ -93,15 +94,15 @@ const DatosDelComprobante = () => {
                         <SelectContent>
                             <SelectItem value="0101">Venta Interna - (0101)</SelectItem>
                             <SelectItem value="1001">Operaciones Gravadas - (1001)</SelectItem>
-                            <SelectItem value="0102">Exportación - (0102)</SelectItem>
-                            <SelectItem value="0103">No Domiciliados - (0103)</SelectItem>
+                            {/* <SelectItem value="0102">Exportación - (0102)</SelectItem> */}
+                            {/* <SelectItem value="0103">No Domiciliados - (0103)</SelectItem> */}
                             <SelectItem value="0104">Venta Interna – Anticipos - (0104)</SelectItem>
                             <SelectItem value="0105">Venta Itinerante - (0105)</SelectItem>
-                            <SelectItem value="0106">Factura Guía - (0106)</SelectItem>
-                            <SelectItem value="0107">Venta Arroz Pilado - (0107)</SelectItem>
-                            <SelectItem value="0108">Factura - Comprobante de Percepción - (0108)</SelectItem>
-                            <SelectItem value="0110">Factura - Guía remitente - (0110)</SelectItem>
-                            <SelectItem value="0111">Factura - Guía transportista - (0111)</SelectItem>
+                            {/* <SelectItem value="0106">Factura Guía - (0106)</SelectItem> */}
+                            {/* <SelectItem value="0107">Venta Arroz Pilado - (0107)</SelectItem> */}
+                            {/* <SelectItem value="0108">Factura - Comprobante de Percepción - (0108)</SelectItem> */}
+                            {/* <SelectItem value="0110">Factura - Guía remitente - (0110)</SelectItem> */}
+                            {/* <SelectItem value="0111">Factura - Guía transportista - (0111)</SelectItem> */}
                         </SelectContent>
                     </Select>
                 </div>
@@ -139,7 +140,7 @@ const DatosDelComprobante = () => {
                             <button onClick={activarCorrelativo} className={`absolute right-2 top-1/2 transform -translate-y-1/2 ${correlativoEstado ? "text-blue-500" : "text-gray-400"} `}><SquarePen /></button>
                         </div>
                         <button className={`bg-blue-500 hover:bg-blue-600  cursor-pointer  text-white rounded-md px-2 `}
-                            disabled={correlativoEstado}
+                            // disabled={correlativoEstado}
                             onClick={(e) => buscarCorrelativo(e)}>
                             {loadingCorrelativo ? <LoaderCircle className="w-4 h-4 animate-spin" /> : <Search />}
                         </button>

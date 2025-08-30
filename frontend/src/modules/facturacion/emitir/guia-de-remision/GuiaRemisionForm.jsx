@@ -5,7 +5,7 @@ import GuiaPublico from "./components/guias/GuiaPublico";
 import ModalVisualizarGuiaPrivada from "./components/modal/ModalVisualizarGuiaPrivada";
 import DatosDeClienteForm from "./forms/DatosDeClienteForm";
 import DatosDeEmpresaForm from "./forms/DatosDeEmpresaForm";
-import DetalleProductoForm from "./forms/DetalleProductoForm";
+import DetalleForm from "./forms/DetalleForm";
 import InfDocumentoForm from "./forms/InfDocumentoForm";
 
 const GuiaRemisionForm = () => {
@@ -39,8 +39,6 @@ const GuiaRemisionForm = () => {
                     {/* Sección de Documento Principal */}
                     <InfDocumentoForm />
 
-                    {/* Sección de Datos de la Empresa */}
-                    <DatosDeEmpresaForm />
 
                     {/* Sección de Datos del Cliente */}
                     <DatosDeClienteForm />
@@ -51,7 +49,7 @@ const GuiaRemisionForm = () => {
                     }
 
                     {/* Sección de Detalle de Productos */}
-                    <DetalleProductoForm />
+                    <DetalleForm />
 
                     {/* Botón de Enviar */}
                     <div className="flex justify-between">
@@ -69,7 +67,7 @@ const GuiaRemisionForm = () => {
                                 Cancelar
                             </button>
                         </div>
-                        
+
                         <ModalVisualizarGuiaPrivada />
                     </div>
 

@@ -7,21 +7,14 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
-import { ClipboardPlus, X } from "lucide-react";
-import PagoForm from "../../forms/PagoForm";
+import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext";
+import { Package, X } from "lucide-react";
+import DetalleForm from "../../forms/DetalleForm";
+import DetalleProductoForm from "../../forms/DetalleProductoForm";
 
-export default function ModalPagos({ open, setOpen }) {
+export default function ModalProducto({ open, setOpen }) {
 
-    const { factura, } = useFacturaBoleta();
-
-    const montoTotalPagos = factura.forma_pago.reduce(
-        (total, pago) => total + (parseFloat(pago.monto) || 0),
-        0
-    );
-
-    const montoTotalFactura = parseFloat(factura.monto_Imp_Venta || 0)
-    const pagosCompletos = montoTotalPagos.toFixed(2) >= montoTotalFactura;
+    const { guiaTransporte, } = useGuiaTransporte();
 
     const closeModal = () => {
         setOpen(false);
@@ -33,22 +26,13 @@ export default function ModalPagos({ open, setOpen }) {
 
                 <AlertDialogTrigger asChild>
                     <Button className="bg-blue-500 hover:scale-105 hover:bg-blue-600 cursor-pointer"
-                        disabled={pagosCompletos}>
-                        <ClipboardPlus />
+                    // disabled={pagosCompletos}
+                    >
+                        <Package />
                         <span className="hidden md:block">Nuevo Pago</span>
                     </Button>
                 </AlertDialogTrigger>
 
-                <div className="w-full  flex py-2 justify-start gap-x-3 text-md flex-col md:flex-row px-3 font-semibold ">
-                    {
-                        pagosCompletos ? (
-                            <h2 className="text-green-400">✅ LLegaste a el Monto Total de la Factura</h2>
-                        ) : (
-                            <h2 className="text-yellow-300">⚠️ No Llegas a el Monto Total de la Factura</h2>
-                        )
-                    }
-                    <h2>{montoTotalFactura.toFixed(2)} / {montoTotalPagos.toFixed(2)}</h2>
-                </div>
             </div>
             <AlertDialogContent className="md:min-w-3xl flex flex-col gap-4 ">
                 {/* ❌ Botón cerrar arriba */}
@@ -61,14 +45,14 @@ export default function ModalPagos({ open, setOpen }) {
 
                 {/* 🧾 Encabezado */}
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Datos del Pago</AlertDialogTitle>
+                    <AlertDialogTitle>Datos del Producto</AlertDialogTitle>
                     <AlertDialogDescription className="text-center">
-                        Ingresa los datos correctamente para crear un Pago.
+                        Ingresa los datos agregar un nuevo producto a tu detallado
                     </AlertDialogDescription>
                 </AlertDialogHeader>
 
                 {/* 📦 Formulario */}
-                <PagoForm closeModal={closeModal} />
+                <DetalleProductoForm closeModal={closeModal} />
 
 
             </AlertDialogContent>

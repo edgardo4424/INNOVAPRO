@@ -54,10 +54,10 @@ const DatosDeDetraccion = () => {
             detraccion_mount: rawDetraccionMount,
         }));
 
-        setFactura((prev) => ({
-            ...prev,
-            monto_Imp_Venta: sub_Total - rawDetraccionMount,
-        }));
+        // setFactura((prev) => ({
+        //     ...prev,
+        //     monto_Imp_Venta: sub_Total - rawDetraccionMount,
+        // }));
 
         setDetraccionesValores(
             Arraydetracciones.filter((item) => item.porcentaje === Number(value))

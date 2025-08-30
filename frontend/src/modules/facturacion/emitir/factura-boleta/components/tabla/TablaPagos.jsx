@@ -8,11 +8,15 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
-import { Button } from "@/components/ui/button";
 
-const TablaPagos = () => {
-    const { factura , setFactura} = useFacturaBoleta();
+const TablaPagos = ({ open, setOpen }) => {
+    const { factura, setFactura, setPagoActual } = useFacturaBoleta();
     const { forma_pago: ListaDePago } = factura;
+
+    const seleccionarPago = async (pago) => {
+        setPagoActual(pago);
+        setOpen(true);
+    }
 
     return (
         <div className="w-full overflow-x-auto mt-6">
@@ -42,12 +46,13 @@ const TablaPagos = () => {
                 ) : (
                     <TableBody className={"bg-gray-200"}>
                         {ListaDePago.map((item, index) => (
-                            <TableRow key={index}>
+                            <TableRow key={index}
+                                onClick={() => seleccionarPago(item)}
+                            >
                                 <TableCell>{item.cuota}</TableCell>
                                 <TableCell>{item.tipo}</TableCell>
                                 <TableCell>{item.monto}</TableCell>
                                 <TableCell>{item.fecha_Pago}</TableCell>
-
                             </TableRow>
                         ))}
 

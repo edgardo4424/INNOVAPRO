@@ -10,13 +10,12 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { useEffect, useState } from "react";
-import useProducto from "../hooks/useProducto";
 import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
+import useProducto from "../hooks/useProducto";
 
-const ListaDeProductos = ({ closeModal }) => {
+const ListaDeProductos = ({ closeModal, itemActual, setItemActual, formulario, tipo }) => {
 
     const { ObtenerProductos } = useProducto();
-    const { productoActual, setProductoActual, factura } = useFacturaBoleta();
 
     const [piezasDisponibles, setPiezasDisponibles] = useState([]);
     const [filtro, setFiltro] = useState("");
@@ -39,44 +38,54 @@ const ListaDeProductos = ({ closeModal }) => {
 
     const handleClick = (pieza) => {
 
-        const valorUnitario = factura.tipo_Moneda == "USD" ? parseFloat(pieza.precio_venta_dolares) : parseFloat(pieza.precio_venta_soles) || 0;
+        if (tipo == "factura") {
 
-        const tipAfeIgv = "10"; // Se asume que es gravado
+            const valorUnitario = formulario.tipo_Moneda == "USD" ? parseFloat(pieza.precio_venta_dolares) : parseFloat(pieza.precio_venta_soles) || 0;
 
-        // Valores IGV solo si tipo de afectación es "10"
-        let monto_Base_Igv = 0;
-        let porcentaje_Igv = 0;
-        let igv = 0;
-        let total_Impuestos = 0;
-        let monto_Precio_Unitario = valorUnitario;
-        let monto_Valor_Venta = valorUnitario;
+            const tipAfeIgv = "10"; // Se asume que es gravado
 
-        if (tipAfeIgv === "10") {
-            monto_Base_Igv = valorUnitario;
-            porcentaje_Igv = 18;
-            igv = +(monto_Base_Igv * 0.18).toFixed(2);
-            total_Impuestos = igv;
-            monto_Precio_Unitario = +(valorUnitario + igv).toFixed(2);
-            monto_Valor_Venta = valorUnitario;
+            // Valores IGV solo si tipo de afectación es "10"
+            let monto_Base_Igv = 0;
+            let porcentaje_Igv = 0;
+            let igv = 0;
+            let total_Impuestos = 0;
+            let monto_Precio_Unitario = valorUnitario;
+            let monto_Valor_Venta = valorUnitario;
+
+            if (tipAfeIgv === "10") {
+                monto_Base_Igv = valorUnitario;
+                porcentaje_Igv = 18;
+                igv = +(monto_Base_Igv * 0.18).toFixed(2);
+                total_Impuestos = igv;
+                monto_Precio_Unitario = +(valorUnitario + igv).toFixed(2);
+                monto_Valor_Venta = valorUnitario;
+            }
+
+            setItemActual({
+                ...itemActual,
+                cod_Producto: pieza.item,
+                descripcion: pieza.descripcion.toUpperCase(),
+                unidad: "NIU",
+                cantidad: 1,
+                monto_Valor_Unitario: valorUnitario,
+                monto_Base_Igv,
+                porcentaje_Igv,
+                igv,
+                total_Impuestos,
+                monto_Precio_Unitario,
+                monto_Valor_Venta,
+                tip_Afe_Igv: tipAfeIgv,
+                factor_Icbper: 0,
+            });
+        } else if (tipo == "guia") {
+            setItemActual({
+                ...itemActual,
+                cod_Producto: pieza.item,
+                descripcion: pieza.descripcion.toUpperCase(),
+                unidad: "KGM",
+                cantidad: pieza.peso_kg,
+            });
         }
-
-        setProductoActual({
-            ...productoActual,
-            cod_Producto: pieza.item,
-            descripcion: pieza.descripcion,
-            unidad: "NIU",
-            cantidad: 1,
-            monto_Valor_Unitario: valorUnitario,
-            monto_Base_Igv,
-            porcentaje_Igv,
-            igv,
-            total_Impuestos,
-            monto_Precio_Unitario,
-            monto_Valor_Venta,
-            tip_Afe_Igv: tipAfeIgv,
-            factor_Icbper: 0,
-        });
-
         closeModal();
     };
 

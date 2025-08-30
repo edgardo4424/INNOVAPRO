@@ -10,11 +10,11 @@ import {
 } from "@/components/ui/select";
 import { useFacturaBoleta } from '@/modules/facturacion/context/FacturaBoletaContext';
 import { useEffect, useState } from 'react';
-import ModalListaDeProductos from '../components/modal/ModalListaDeProductos';
-import { ProductoValidarEstados } from '../utils/valoresInicial';
+import ModalListaDeProductos from '../../../components/modal/ModalListaDeProductos';
+import { ProductoValidarEstados, valorInicialProducto } from '../utils/valoresInicial';
 
 const ProductoForm = ({ closeModal }) => {
-    const { setFactura, agregarProducto, productoActual, setProductoActual, edicionProducto, validarCampos, productoValida, eliminarProducto, setProductoValida } = useFacturaBoleta();
+    const { setFactura, agregarProducto, productoActual, setProductoActual, edicionProducto, validarCampos, productoValida, eliminarProducto, setProductoValida, factura } = useFacturaBoleta();
 
 
     const [activeButton, setActiveButton] = useState(false);
@@ -87,6 +87,7 @@ const ProductoForm = ({ closeModal }) => {
         setActiveButton(true);
         const validar = await validarCampos("producto");
         if (validar === false) {
+            setActiveButton(false);
             return;
         }
         agregarProducto();
@@ -107,7 +108,12 @@ const ProductoForm = ({ closeModal }) => {
     return (
         <div className='max-h-[60vh] min-h-[40dvh] overflow-y-auto col-span-4 w-full'>
             <div className='w-full flex justify-end'>
-                <ModalListaDeProductos />
+                <ModalListaDeProductos
+                    itemActual={productoActual}
+                    setItemActual={setProductoActual}
+                    formulario={factura}
+                    tipo="factura"
+                />
             </div>
 
             <form
@@ -379,11 +385,16 @@ const ProductoForm = ({ closeModal }) => {
             <div className="flex justify-end gap-3 border-t pt-4 mt-4 flex-wrap"> {/* Added flex-wrap for smaller screens */}
                 {
                     edicionProducto?.edicion == true &&
-                    <Button variant="outline" onClick={handleEliminar} className={"cursor-pointer hover:bg-red-600 bg-red-400 hover:text-white text-white border-2 w-full md:w-auto"}> {/* Full width on small, auto on medium+ */}
+                    <Button
+                        variant="outline"
+                        onClick={handleEliminar}
+                        className={"cursor-pointer hover:bg-red-600 bg-red-400 hover:text-white text-white border-2 w-full md:w-auto"}> {/* Full width on small, auto on medium+ */}
                         Eliminar
                     </Button>
                 }
-                <Button variant="outline" onClick={closeModal} className={"cursor-pointer hover:bg-red-50 hover:text-red-600 border-2 w-full md:w-auto"}> {/* Full width on small, auto on medium+ */}
+                <Button variant="outline"
+                    onClick={closeModal}
+                    className={"cursor-pointer hover:bg-red-50 hover:text-red-600 border-2 w-full md:w-auto"}> {/* Full width on small, auto on medium+ */}
                     Cancelar
                 </Button>
                 <Button
