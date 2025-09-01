@@ -12,7 +12,10 @@ const RowRHMensual = ({ key, e, index }) => {
       <TableCell className="text-right">{e.bruto}</TableCell>
       <TableCell className="text-right">{e.sueldo_del_mes}</TableCell>
       <TableCell className="text-right">{e.vacaciones}</TableCell>
+      <TableCell className="text-right"></TableCell>
+      <TableCell className="text-right"></TableCell>
       <TableCell className="text-right">{e.falta}</TableCell>
+      <TableCell className="text-right"></TableCell>
       <TableCell className="text-right">{e.sueldo_neto}</TableCell>
       <TableCell className="text-right">{e.sueldo_quincen}</TableCell>
       <TableCell className="text-right">{e.sueldo_por_pagar}</TableCell>

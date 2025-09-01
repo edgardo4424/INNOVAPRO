@@ -8,9 +8,8 @@ const SequelizeDataMantenimientoRepository = require("../../../data_mantenimient
 const dataMantenimientoRepository = new SequelizeDataMantenimientoRepository();
 
 class SequelizeVacacionesRepository {
-   async crear(vacacionesData, importe_dias_vendidos) {
+   async crear(vacacionesData, importe_dias_vendidos) {      
       vacacionesData.importe_dias_vendidos = importe_dias_vendidos;
-      console.log("paso la asignación", vacacionesData.importe_dias_vendidos);
       const vacaciones = await Vacaciones.create(vacacionesData);
       return true;
    }

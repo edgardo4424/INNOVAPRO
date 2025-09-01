@@ -309,7 +309,7 @@ const GestionBonos = () => {
                                        {t.numero_documento ?? "-"}
                                     </td>
                                     <td className="px-4 py-3">
-                                       {formatoFechaBeneficios(b.fecha)}
+                                       {b.fecha}
                                     </td>
                                     <td className="px-4 py-3">
                                        {formatoDinero(b.monto)}
