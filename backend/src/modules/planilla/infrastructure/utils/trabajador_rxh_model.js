@@ -1,0 +1,16 @@
+export const trabajador_rxh_model = {
+   tipo_documento:"",
+  numero_documento: "",
+  nombres_apellidos: "",
+  area: "",
+  fecha_ingreso: "",
+  dias_labor: 0,
+  bruto: 0,
+  sueldo_del_mes: 0,
+  vacaciones:0,
+  horas_extras:0,
+  falta:0,
+  sueldo_neto:0,
+  sueldo_quincenal:0,
+  saldo_por_pagar:0,
+}

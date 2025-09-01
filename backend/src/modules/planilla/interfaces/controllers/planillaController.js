@@ -2,9 +2,10 @@ const sequelizePlanillaRepository = require("../../infrastructure/repositories/s
 // Importamos el caso de uso para obtener todos los planilla
 const calcularPlanillaQuincenal = require("../../application/useCases/calcularPlanillaQuincenal");
 const calcularPlanillaMensualPorTrabajador = require("../../application/useCases/calcularPlanillaMensualPorTrabajador");
+const SequelizeTrabajadorRepository = require("../../../trabajadores/infraestructure/repositories/sequelizeTrabajadorRepository");
 
 const planillaRepository = new sequelizePlanillaRepository();
-
+const trabajadorRepository=new SequelizeTrabajadorRepository()
 const PlanillaController = {
    async calcularPlanillaQuincenal(req, res) {
       try {
@@ -29,8 +30,8 @@ const PlanillaController = {
          const planilla = await calcularPlanillaMensualPorTrabajador(
             anio_mes_dia,
             filial_id,
-            trabajador_id,
-            planillaRepository
+            planillaRepository,
+            trabajadorRepository
          );
          res.status(planilla.codigo).json(planilla.respuesta);
       } catch (error) {
