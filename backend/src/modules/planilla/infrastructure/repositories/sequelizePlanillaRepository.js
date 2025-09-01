@@ -457,8 +457,9 @@ class SequelizePlanillaRepository {
          datos_planilla_inicial.faltas_segunda_quincena * -1 +
          datos_planilla_inicial.bono_por_montaje_primera_quincena +
          datos_planilla_inicial.bono_por_montaje_segunda_quincena;
+      
       if (trabajador.sistema_pension === "ONP") {
-         datos_planilla_inicial.onp = PORCENTAJE_DESCUENTO_ONP;
+         datos_planilla_inicial.onp = datos_planilla_inicial.sueldo_bruto*(PORCENTAJE_DESCUENTO_ONP/100);
       }
       if (trabajador.sistema_pension === "AFP") {
          datos_planilla_inicial.afp_ap_oblig =
@@ -468,9 +469,12 @@ class SequelizePlanillaRepository {
       datos_planilla_inicial.seguro =
          datos_planilla_inicial.sueldo_bruto *
          (PORCENTAJE_DESCUENTO_SEGURO / 100);
+      
+      datos_planilla_inicial.total_descuentos=datos_planilla_inicial.afp_ap_oblig+datos_planilla_inicial.onp+datos_planilla_inicial.seguro;
 
 
       // falta desde vacaciones hasta cts:,
+      datos_planilla_inicial.sueldo_neto=datos_planilla_inicial.sueldo_bruto-datos_planilla_inicial.total_descuentos;
 
       return datos_planilla_inicial;
    }

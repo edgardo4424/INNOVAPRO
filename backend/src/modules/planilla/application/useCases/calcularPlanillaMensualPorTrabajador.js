@@ -57,13 +57,7 @@ module.exports = async (
          console.log("respuesta del sequelize Honorarios: ", res);
       }
    }
-
-   // const planillaMensual =
-   //    await planillaRepository.calcularPlanillaMensualPorTrabajador(
-   //       anio_mes_dia,
-   //       filial_id,
-   //       trabajador_id
-   //    );
+;
 
    return {
       codigo: 202,

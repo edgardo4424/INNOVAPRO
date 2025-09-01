@@ -12,7 +12,9 @@ const RowPlanillaMensual = ({ key, e, index }) => {
       </TableCell>
       <TableCell className="text-right">{e.area}</TableCell>
       <TableCell className="text-right">{e.afp}</TableCell>
+      <TableCell className="text-right">{e.fecha_ingreso}</TableCell>
       <TableCell className="text-right">{e.dias_labor}</TableCell>
+
 
       <TableCell className="text-right">{e.sueldo_basico}</TableCell>
       <TableCell className="text-right">{e.sueldo_del_mes}</TableCell>
