@@ -1,5 +1,6 @@
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Eye, FileDown } from "lucide-react";
+import { formatearFecha } from "../../utils/formatearFecha";
 
 const RowPlanillaQuincenal = ({ key, e, index }) => {
   console.log('e', e);
@@ -11,6 +12,8 @@ const RowPlanillaQuincenal = ({ key, e, index }) => {
       <TableCell className="text-right">
         {e.nombres} {e.apellidos}
       </TableCell>
+      <TableCell className="text-right">{formatearFecha(e.fecha_ingreso)}</TableCell>
+
       <TableCell className="text-right">{e.dias_laborados}</TableCell>
       <TableCell className="text-right">{e.sueldo_base}</TableCell>
       <TableCell className="text-right">{e.sueldo_quincenal}</TableCell>

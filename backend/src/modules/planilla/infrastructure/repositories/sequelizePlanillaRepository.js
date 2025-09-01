@@ -194,7 +194,8 @@ class SequelizePlanillaRepository {
                100
             ).toFixed(2);
 
-            switch (tipo_afp) {
+            if(trabajador.comision_afp){
+ switch (tipo_afp) {
                case "HABITAT":
                   comision = +(
                      (sueldoBruto * PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT) /
@@ -223,6 +224,8 @@ class SequelizePlanillaRepository {
                default:
                   break;
             }
+            }
+
          }
 
          /* const quinta_categoria = 0; */
@@ -253,6 +256,7 @@ class SequelizePlanillaRepository {
             numero_documento: trabajador.numero_documento,
             nombres: trabajador.nombres,
             apellidos: trabajador.apellidos,
+            fecha_ingreso: contrato.fecha_inicio,
             dias_laborados: diasLaborados,
             sueldo_base: sueldoBase,
             sueldo_quincenal: sueldoQuincenal,
@@ -293,6 +297,7 @@ class SequelizePlanillaRepository {
             numero_documento: trabajador.numero_documento,
             nombres: trabajador.nombres,
             apellidos: trabajador.apellidos,
+            fecha_ingreso: contrato.fecha_inicio,
             dias_laborados: diasLaborados,
             sueldo_base: sueldoBase,
             sueldo_quincenal: sueldoQuincenal,
