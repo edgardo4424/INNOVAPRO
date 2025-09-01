@@ -9,5 +9,6 @@ router.use(verificarToken); // Verificamos el token y el rol de Gerente para tod
 // 📌 Rutas protegidas solo para Gerencia
 
 router.post("/planilla-quincenal-calcular", planillaController.calcularPlanillaQuincenal);
+router.post("/planilla-mensual-calcular", planillaController.calcularPlanillaMensualPorTrabajador);
 
 module.exports = router;

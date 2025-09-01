@@ -33,6 +33,9 @@ const contratoSchema = yup.object({
          "El tipo de contrato debe ser Planilla o RxH"
       )
       .required("El tipo de contrato es obligatorio"),
+   banco: yup.string().required("El nombre es requerido"),
+   numero_cuenta: yup.string().required("El nombre es requerido"),
+
 });
 
 export const trabajadorSchema = (isEdit = false, isGerente = false) =>

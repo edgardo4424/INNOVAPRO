@@ -25,6 +25,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import RoleGuard from "./rol.guard";
 
 import PlanillaQuincenal from "@/modules/planilla/pages/PlanillaQuincenal";
+import PlanillaMensual from "@/modules/planilla/pages/PlanillaMensual";
 
 // Lazy load components
 const Login = lazy(() => import("@/modules/auth/pages/Login"));
@@ -337,6 +338,10 @@ export default function AppRoutes() {
                            <Route
                               path="planilla-quincenal"
                               element={<PlanillaQuincenal />}
+                           />
+                           <Route
+                              path="planilla-mensual"
+                              element={<PlanillaMensual />}
                            />
                         </Route>
                         <Route element={<RoleGuard roles={["Gerencia"]} />}>
