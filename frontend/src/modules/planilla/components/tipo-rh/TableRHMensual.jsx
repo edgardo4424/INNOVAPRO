@@ -12,16 +12,14 @@ import {
 } from "@/components/ui/table";
 
 import { Search } from "lucide-react";
-import RowPlanillaQuincenal from "./RowPlanillaQuincenal";
-import RowTotalPlanillaQuincenal from "./RowTotalPlanillaQuincenal";
+import RowRHMensual from "./RowRHMensual";
 
 /* import RowGratificacion from "@/modules/gratificacion/components/RowGratificacion";
 import RowTotalGratificacion from "@/modules/gratificacion/components/RowTotalGratificacion"; */
 
-const TablePlanillaQuincenal = ({ planillaQuincenalTipoPlanilla, total }) => {
+const TablePlanillaMensual = ({ planillaMensualTipoRh, total }) => {
 
-
-  console.log('planillaQuincenalTipoPlanilla', planillaQuincenalTipoPlanilla);
+console.log('planillaMensualTipoRh', planillaMensualTipoRh);
   const [filtro, setFiltro] = useState("");
  
   // Filtrar por nombres y apellidos (case-insensitive)
@@ -34,7 +32,7 @@ const TablePlanillaQuincenal = ({ planillaQuincenalTipoPlanilla, total }) => {
 
   return (
     <div className="w-full overflow-x-auto p-5 mb-10 flex flex-col bg-gray-100 border-2 rounded-xl shadow-xl">
-      <h1 className="text-2xl font-bold pb-6">Planilla</h1>
+      <h1 className="text-2xl font-bold pb-6">Recibo por honorarios</h1>
       <div className="relative">
         <Input
           type="search"
@@ -52,44 +50,58 @@ const TablePlanillaQuincenal = ({ planillaQuincenalTipoPlanilla, total }) => {
           <TableHeader>
             <TableRow className={"bg-gray-800 text-xs "}>
               {/* Estas celdas abarcan 2 filas porque no tienen sub-encabezados */}
-               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Tipo Doc</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Tipo Doc</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">N° Doc</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Nombres y Apellidos</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Área</TableHead>
+
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Fecha Ingreso</TableHead>
+
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Dias Laborados</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Base</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Mensual</TableHead>
-              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Asig. Fam.</TableHead>
-              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Bruto</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Vacaciones</TableHead>
 
-              {/* Grupo DESCUENTOS AL TRABAJADOR ocupa 6 columnas */}
-              <TableHead colSpan={5} className="text-center border-r h-5 text-white border-black">DESCUENTOS AL TRABAJADOR</TableHead>
 
-              
-              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Total Descuentos</TableHead>
-         
-              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Total a Pagar</TableHead>
+              <TableHead colSpan={2} className="text-center border-r h-5 text-white border-black">Prom. H. Extras.</TableHead>
+
+               <TableHead colSpan={2} className="text-center border-r h-5 text-white border-black">Importe Faltas</TableHead>
+
+               <TableHead rowSpan={2} className="text-center border-r h-5 text-white border-black">Sueldo Neto</TableHead>
+
+
+               <TableHead rowSpan={2} className="text-center border-r h-5 text-white border-black">Sueldo Quincenal</TableHead>
+
+
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Saldo por Pagar</TableHead>
+
+
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Banco</TableHead>
+
             </TableRow>
 
-            {/* Sub-encabezados del grupo FALTAS */}
-            <TableRow className={"bg-gray-800 text-xs "}>
-              <TableHead rowSpan={2} className="text-center border-r text-white border-black">ONP</TableHead>
-             {/*  <TableHead rowSpan={2} className="text-center border-r text-white border-black">EPS Primera Quincena</TableHead> */}
-              <TableHead rowSpan={2} className="text-center border-r text-white border-black">AFP Ap. Oblig</TableHead>
-              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Seguro</TableHead>
-              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Comisión</TableHead>
-              <TableHead rowSpan={2} className="text-center border-r text-white border-black">5ta Categ.</TableHead>
+              <TableRow className={"bg-gray-800 text-xs "}>
+
+              
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">1era Quincena</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">2da Quincena</TableHead>
+
+              
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">1era Quincena</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">2da Quincena</TableHead>
+
             </TableRow>
           </TableHeader>
 
           <TableBody>
             {/* Render Trabajadores Planilla */}
-            {planillaQuincenalTipoPlanilla.length > 0 && (
+            {planillaMensualTipoRh.length > 0 && (
               <>
                 
-                 {filtrarTrabajadores(planillaQuincenalTipoPlanilla).map((e, index) => (
-                  <RowPlanillaQuincenal key={index} e={e} index={index} />
+                 {filtrarTrabajadores(planillaMensualTipoRh).map((e, index) => (
+                  <RowRHMensual key={index} e={e} index={index} />
                 ))}
-                {/* <RowTotalPlanillaQuincenal total={total} /> */}
+                {/* <RowTotalRHMensual total={total} /> */}
               </>
             )}
 
@@ -101,4 +113,4 @@ const TablePlanillaQuincenal = ({ planillaQuincenalTipoPlanilla, total }) => {
   );
 };
 
-export default TablePlanillaQuincenal;
+export default TablePlanillaMensual;
