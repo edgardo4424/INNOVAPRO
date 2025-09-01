@@ -53,6 +53,11 @@ const Trabajador = sequelize.define(
       tipo_afp: {
          type: DataTypes.ENUM("HABITAT", "INTEGRA", "PRIMA", "PROFUTURO"),
          allowNull: true,
+      },
+      comision_afp: {
+         type: DataTypes.BOOLEAN,
+         allowNull: false,
+         defaultValue: false,
       }
    },
    {

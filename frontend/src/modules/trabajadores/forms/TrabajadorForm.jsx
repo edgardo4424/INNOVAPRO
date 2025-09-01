@@ -40,6 +40,7 @@ const dataInicial = {
   sistema_pension: "",
   tipo_afp: null,
   cargo_id: "",
+  comision_afp: false,
   contratos_laborales: [
     {
       id: Math.floor(Date.now() / 1000),
@@ -133,6 +134,7 @@ export default function TrabajadorForm() {
           domiciliado: !!t.domiciliado,
           sistema_pension: t.sistema_pension ?? "",
           tipo_afp: t.tipo_afp ?? null,
+          comision_afp: !!t.comision_afp,
           cargo_id: (t.cargo_id ?? "").toString(),
           contratos_laborales: contratos.length
             ? contratos
@@ -180,6 +182,7 @@ export default function TrabajadorForm() {
       domiciliado: formData.domiciliado,
       sistema_pension: formData.sistema_pension,
       tipo_afp: formData.tipo_afp,
+      comision_afp: formData.comision_afp,
       cargo_id: formData.cargo_id,
       contratos_laborales: formData.contratos_laborales,
       sueldo_base: ultimoContrato ? ultimoContrato.sueldo : "",
@@ -467,6 +470,7 @@ export default function TrabajadorForm() {
                   </div>
 
                   {formData.sistema_pension === "AFP" && (
+                    <>
                     <div className="space-y-2 ">
                       <Label htmlFor="tipo_afp">Tipo de AFP *</Label>
                       <Select
@@ -491,6 +495,20 @@ export default function TrabajadorForm() {
                         </p>
                       )}
                     </div>
+
+                     <div className="flex items-center space-x-2 pl-4  ">
+                       <Checkbox
+                      id="comision_afp"
+                      checked={formData.comision_afp}
+                      className="data-[state=checked]:bg-[#1b274a] border-[#1b274a]/50 data-[state=checked]:border-[#1b274a]/80"
+                      onCheckedChange={(checked) =>
+                        handleInputChange("comision_afp", !!checked)
+                      }
+                    />
+                    <Label htmlFor="comision_afp">¿Aplica comisión AFP?</Label>
+                    </div>
+                    </>
+                    
                   )}
                 </div>
               </div>
