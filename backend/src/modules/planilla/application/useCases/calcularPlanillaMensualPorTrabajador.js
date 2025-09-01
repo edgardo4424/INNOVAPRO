@@ -43,6 +43,7 @@ module.exports = async (
                anio_mes_dia,
                t.id
             );
+         payload.planilla.trabajadores.push(res)
          console.log("respuesta del sequelize planilla", res);
       }
       if (t.contrato_actual.tipo_contrato == "HONORARIOS") {
@@ -51,6 +52,8 @@ module.exports = async (
                anio_mes_dia,
                t.id
             );
+                     payload.honorarios.trabajadores.push(res)
+
          console.log("respuesta del sequelize Honorarios: ", res);
       }
    }
@@ -66,7 +69,7 @@ module.exports = async (
       codigo: 202,
       respuesta: {
          mensaje: "Se obtuvo correctamente la planilla mensual.",
-         trabajadores,
+         payload,
       },
    };
 };

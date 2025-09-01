@@ -34,19 +34,20 @@ const PlanillaMensual = () => {
 
   const buscarPlanillaMensual = async () => {
     try {
+      const dia_fin_mes=new Date(filtro.anio, filtro.mes, 0).getDate()
       setLoading(true);
-      const fecha_anio_mes = `${filtro.anio}-${filtro.mes}`;
+      const anio_mes_dia = `${filtro.anio}-${filtro.mes}-${dia_fin_mes}`;
       
       const dataPOST = {
-        fecha_anio_mes,
+        anio_mes_dia,
         filial_id: filtro.filial_id,
       }
 
       console.log('dataPOST', dataPOST);
       const res = await planillaMensualService.obtenerPlanillaMensual(dataPOST);
       console.log('res', res);
-      setPlanillaMensualTipoPlanilla(res.planilla.trabajadores);
-      setPlanillaMensualTipoRh(res.honorarios.trabajadores);
+      setPlanillaMensualTipoPlanilla(res.payload.planilla.trabajadores);
+      setPlanillaMensualTipoRh(res.payload.honorarios.trabajadores);
       setDatosCalculo(res.datosCalculo)
     } catch (error) {
     } finally {

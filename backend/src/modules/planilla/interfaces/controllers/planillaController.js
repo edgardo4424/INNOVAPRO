@@ -26,7 +26,9 @@ const PlanillaController = {
    },
    async calcularPlanillaMensualPorTrabajador(req, res) {
       try {
-         const { anio_mes_dia, filial_id, trabajador_id } = req.body;
+         const { anio_mes_dia, filial_id} = req.body;
+         console.log('Body es ',req.body);
+         
          const planilla = await calcularPlanillaMensualPorTrabajador(
             anio_mes_dia,
             filial_id,
