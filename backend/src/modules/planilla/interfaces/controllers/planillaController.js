@@ -1,24 +1,42 @@
-const sequelizePlanillaRepository = require('../../infrastructure/repositories/sequelizePlanillaRepository'); // Importamos el repositorio de planilla
- // Importamos el caso de uso para obtener todos los planilla
-const calcularPlanillaQuincenal = require('../../application/useCases/calcularPlanillaQuincenal');
+const sequelizePlanillaRepository = require("../../infrastructure/repositories/sequelizePlanillaRepository"); // Importamos el repositorio de planilla
+// Importamos el caso de uso para obtener todos los planilla
+const calcularPlanillaQuincenal = require("../../application/useCases/calcularPlanillaQuincenal");
+const calcularPlanillaMensualPorTrabajador = require("../../application/useCases/calcularPlanillaMensualPorTrabajador");
 
 const planillaRepository = new sequelizePlanillaRepository();
 
 const PlanillaController = {
-   
-    async calcularPlanillaQuincenal(req, res) {
-        try {
-            const { fecha_anio_mes, filial_id } = req.body;
+   async calcularPlanillaQuincenal(req, res) {
+      try {
+         const { fecha_anio_mes, filial_id } = req.body;
+        console.log(req.body);
+        
+         const planilla = await calcularPlanillaQuincenal(
+            fecha_anio_mes,
+            filial_id,
+            planillaRepository
+         );
 
-            const planilla = await calcularPlanillaQuincenal(fecha_anio_mes, filial_id, planillaRepository); 
-           
-            res.status(planilla.codigo).json(planilla.respuesta); 
-        } catch (error) {
-            console.log('error',error);
-            res.status(500).json({ error: error.message }); 
-        }
-    },
-
+         res.status(planilla.codigo).json(planilla.respuesta);
+      } catch (error) {
+         console.log("error", error);
+         res.status(500).json({ error: error.message });
+      }
+   },
+   async calcularPlanillaMensualPorTrabajador(req, res) {
+      try {
+         const { anio_mes_dia, filial_id, trabajador_id } = req.body;
+         const planilla = await calcularPlanillaMensualPorTrabajador(
+            anio_mes_dia,
+            filial_id,
+            trabajador_id,
+            planillaRepository
+         );
+         res.status(planilla.codigo).json(planilla.respuesta);
+      } catch (error) {
+         res.status(503).json({ error: error.message });
+      }
+   },
 };
 
-module.exports = PlanillaController; 
+module.exports = PlanillaController;
