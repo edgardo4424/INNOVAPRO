@@ -15,6 +15,7 @@ const { where } = require("sequelize");
 const SequelizeGratificacionRepository = require("../../../gratificaciones/infrastructure/repositories/sequelizeGratificacionRepository");
 const { Cts } = require("../models/ctsModel");
 const filtrarContratosSinInterrupcion = require("../../../../services/filtrarContratosSinInterrupcion");
+const filtrarGratificacionesSinInterrupcion = require("../../../../services/filtrarGratificacionesSinInterrupcion");
 
 const objeto_inicial_cts = {
    contrato_id: null,
@@ -43,8 +44,8 @@ const objeto_inicial_cts = {
    no_computable: 0,
    cts_depositar: 0,
    no_domiciliado: 0,
-   numero_cuenta:"",
-   banco:"",
+   numero_cuenta: "",
+   banco: "",
    ids_agrupacion: null,
 };
 
@@ -110,8 +111,21 @@ class SequelizeCtsRopository {
             filial_id,
             trabajador.id
          );
-      if (responseGratificacion?.total_pagar) {
-         MONTO_GRATIFICACION = responseGratificacion?.total_pagar;
+      if (responseGratificacion.length > 0) {
+         console.log("Entro al if");
+
+         const gratificacionesLimpias = responseGratificacion.map((g) =>
+            g.get({ plain: true })
+         );
+         const gratificaciones = filtrarGratificacionesSinInterrupcion(
+            gratificacionesLimpias
+         );
+         if (trabajador_id == 7) {
+            console.log("Numero de gratificaciones: ", gratificaciones.length);
+         }
+         for (const grati of gratificaciones) {
+            MONTO_GRATIFICACION += Number(grati.total_pagar);
+         }
       }
 
       const responseContratos = await db.contratos_laborales.findAll({
@@ -124,12 +138,6 @@ class SequelizeCtsRopository {
       const contratos_limpios = responseContratos.map((c) =>
          c.get({ plain: true })
       );
-      if (trabajador.id === 27) {
-         console.log('contratos sucios: ',responseContratos);
-         console.log(filial_id);
-         
-         console.log("Contratos enviados", contratos_limpios);
-      }
       // console.log('Contratos limpios',contratos_limpios);
 
       const hoy = new Date().toISOString().slice(0, 10); // "2025-08-26"
@@ -139,9 +147,7 @@ class SequelizeCtsRopository {
       });
       const contratoInicial =
          filtrarContratosSinInterrupcion(contratos_limpios);
-      if (trabajador.id === 27) {
-         console.log("Contratos enuados", contratos_limpios);
-      }
+
       // if (contratoInicial.length < 1) {
       //    throw new Error(
       //       `No existe un contrato incial para el trabajador: ${trabajador.nombres} ${trabajador.apellidos}`
@@ -190,14 +196,13 @@ class SequelizeCtsRopository {
          let inicio_c =
             c.fecha_inicio > fechaInicioCTS ? c.fecha_inicio : fechaInicioCTS;
          let fin_c = c.fecha_fin < fechaFinCTS ? c.fecha_fin : fechaFinCTS;
-         if(trabajador_id==87){
-            console.log('Contrato: ',c);
-            
+         if (trabajador_id == 87) {
+            console.log("Contrato: ", c);
          }
          let r = { ...objeto_inicial_cts };
          r.contrato_id = c.id;
-         r.banco=c.banco||"no registrado";
-         r.numero_cuenta=c.numero_cuenta||"no registrado";
+         r.banco = c.banco || "no registrado";
+         r.numero_cuenta = c.numero_cuenta || "no registrado";
          r.trabajador_id = c.trabajador_id;
          r.tipo_documento = trabajador.tipo_documento;
          r.numero_documento = trabajador.numero_documento;
@@ -289,7 +294,7 @@ class SequelizeCtsRopository {
          r.cts_depositar = parseFloat(r.cts_depositar.toFixed(2));
          r.ids_agrupacion = c.ids_agrupacion;
          arreglo_cts.push(r);
-      }      
+      }
       return arreglo_cts;
    }
    async verificarCierrePeriodoCts(periodo, anio, filial_id) {
@@ -326,10 +331,10 @@ class SequelizeCtsRopository {
             periodo: periodoObtenido,
             filial_id: filial_id,
          },
-         include:{
-            model:db.trabajadores,
-            as:"trabajadores"
-         }
+         include: {
+            model: db.trabajadores,
+            as: "trabajadores",
+         },
       });
       return registros_cts;
    }

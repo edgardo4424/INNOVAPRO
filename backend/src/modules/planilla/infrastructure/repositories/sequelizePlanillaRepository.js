@@ -21,6 +21,7 @@ const {
 } = require("../utils/trabajador_planilla_model");
 const filtrarContratosSinInterrupcion = require("../../../../services/filtrarContratosSinInterrupcion");
 const SequelizeAsistenciaRepository = require("../../../asistencias/infraestructure/repositories/sequelizeAsistenciaRepository");
+const { trabajador_rxh_model } = require("../utils/trabajador_rxh_model");
 const trabajadorRepository = new SequelizeTrabajadorRepository();
 const asistenciasRepository = new SequelizeAsistenciaRepository();
 
@@ -312,9 +313,20 @@ class SequelizePlanillaRepository {
    }
    async calcularPlanillaMensualPorTrabajador(
       anio_mes_dia,
-      filial_id,
       trabajador_id
    ) {
+      const PORCENTAJE_DESCUENTO_ONP = Number(
+         (await dataMantenimientoRepository.obtenerPorCodigo("valor_onp")).valor
+      );
+
+      const PORCENTAJE_DESCUENTO_AFP = Number(
+         (await dataMantenimientoRepository.obtenerPorCodigo("valor_afp")).valor
+      );
+
+      const PORCENTAJE_DESCUENTO_SEGURO = Number(
+         (await dataMantenimientoRepository.obtenerPorCodigo("valor_seguro"))
+            .valor
+      );
       const fecha_cierre_periodo = anio_mes_dia;
       let fecha_inicio_periodo = `${anio_mes_dia.slice(0, -2)}01`;
       const dias_mes = anio_mes_dia.slice(-2);
@@ -359,7 +371,6 @@ class SequelizePlanillaRepository {
          trabajador.contratos_laborales
       );
       let resto_dias_no_contratados = 0;
-      console.log("paso");
 
       if (contratoInicial[0].fecha_inicio > fecha_inicio_periodo) {
          resto_dias_no_contratados =
@@ -368,7 +379,6 @@ class SequelizePlanillaRepository {
             (1000 * 60 * 60 * 24);
          fecha_inicio_periodo = contratoInicial[0].fecha_inicio;
       }
-      console.log("dias no contratados: ", resto_dias_no_contratados);
 
       const faltas =
          await asistenciasRepository.obtenerCantidadFaltasPorRangoFecha(
@@ -382,9 +392,20 @@ class SequelizePlanillaRepository {
             fecha_inicio_periodo,
             fecha_cierre_periodo
          );
-      console.log("JUstificadas: ", faltas_justificadas);
+      const licencia_con_goce =
+         await asistenciasRepository.obtenerCantidadLicenciaConGoce(
+            trabajador.id,
+            fecha_inicio_periodo,
+            fecha_cierre_periodo
+         );
+      const licencia_sin_goce =
+         await asistenciasRepository.obtenerCantidadLicenciaSinGoce(
+            trabajador.id,
+            fecha_inicio_periodo,
+            fecha_cierre_periodo
+         );
 
-      console.log("faltas obtenidas: ", faltas);
+
       const MONTO_ASIGNACION_FAMILIAR = Number(
          (
             await dataMantenimientoRepository.obtenerPorCodigo(
@@ -409,10 +430,123 @@ class SequelizePlanillaRepository {
       }
       datos_planilla_inicial.descanso_medico =
          (contrato_actual.sueldo / 30) * faltas_justificadas;
+      datos_planilla_inicial.licencia_con_goce_de_haber =
+         (contrato_actual.sueldo / 30) * licencia_con_goce;
+      datos_planilla_inicial.licencia_sin_goce_de_haber =
+         (contrato_actual.sueldo / 30) * licencia_sin_goce;
 
-      console.log(datos_planilla_inicial);
+      datos_planilla_inicial.sueldo_bruto =
+         datos_planilla_inicial.sueldo_del_mes +
+         datos_planilla_inicial.asig_fam +
+         datos_planilla_inicial.descanso_medico +
+         datos_planilla_inicial.licencia_con_goce_de_haber +
+         datos_planilla_inicial.licencia_sin_goce_de_haber * -1 +
+         datos_planilla_inicial.vacaciones +
+         datos_planilla_inicial.gratificacion +
+         datos_planilla_inicial.cts +
+         datos_planilla_inicial.h_extras_primera_quincena +
+         datos_planilla_inicial.h_extras_segunda_quincena +
+         datos_planilla_inicial.salida_obra_1era_quincena +
+         datos_planilla_inicial.salida_obra_2da_quincena +
+         datos_planilla_inicial.faltas_primera_quincena * -1 +
+         datos_planilla_inicial.faltas_segunda_quincena * -1 +
+         datos_planilla_inicial.bono_por_montaje_primera_quincena +
+         datos_planilla_inicial.bono_por_montaje_segunda_quincena;
+      if (trabajador.sistema_pension === "ONP") {
+         datos_planilla_inicial.onp = PORCENTAJE_DESCUENTO_ONP;
+      }
+      if (trabajador.sistema_pension === "AFP") {
+         datos_planilla_inicial.afp_ap_oblig =
+            datos_planilla_inicial.sueldo_bruto *
+            (PORCENTAJE_DESCUENTO_AFP / 100);
+      }
+      datos_planilla_inicial.seguro =
+         datos_planilla_inicial.sueldo_bruto *
+         (PORCENTAJE_DESCUENTO_SEGURO / 100);
 
-      return "revisa la consola";
+
+      // falta desde vacaciones hasta cts:,
+
+      return datos_planilla_inicial;
+   }
+   async calcularPlanillaMensualPorTrabajadorRXH(
+      anio_mes_dia,
+      trabajador_id
+   ) {
+      const dataInicialRxH = trabajador_rxh_model;
+      const fecha_cierre_periodo = anio_mes_dia;
+      let fecha_inicio_periodo = `${anio_mes_dia.slice(0, -2)}01`;
+      const dias_mes = anio_mes_dia.slice(-2);
+      const response_trabajador = await db.trabajadores.findByPk(
+         trabajador_id,
+         {
+            include: [
+               {
+                  model: db.contratos_laborales,
+                  as: "contratos_laborales",
+               },
+               {
+                  model: db.cargos,
+                  as: "cargo",
+                  include: [
+                     {
+                        model: db.areas,
+                        as: "area",
+                     },
+                  ],
+               },
+            ],
+         }
+      );
+      const trabajador = response_trabajador.get({ plain: true });
+      if (!trabajador) {
+         throw new Error("El trabajador no existe.");
+      }
+      const contrato_actual = trabajador.contratos_laborales.find((c) => {
+         return (
+            c.fecha_inicio <= fecha_cierre_periodo &&
+            c.fecha_fin >= fecha_cierre_periodo
+         );
+      });
+      if (!contrato_actual) {
+         throw new Error("El trabajador no cuenta con un contrato laboral.");
+      }
+
+      const contratoInicial = filtrarContratosSinInterrupcion(
+         trabajador.contratos_laborales
+      );
+      let resto_dias_no_contratados = 0;
+      if (contratoInicial[0].fecha_inicio > fecha_inicio_periodo) {
+         resto_dias_no_contratados =
+            (new Date(contratoInicial[0].fecha_inicio) -
+               new Date(fecha_inicio_periodo)) /
+            (1000 * 60 * 60 * 24);
+         fecha_inicio_periodo = contratoInicial[0].fecha_inicio;
+      }
+      const faltas =
+         await asistenciasRepository.obtenerCantidadFaltasPorRangoFecha(
+            trabajador.id,
+            fecha_inicio_periodo,
+            fecha_cierre_periodo
+         );
+      dataInicialRxH.tipo_documento = trabajador.tipo_documento;
+      dataInicialRxH.numero_documento = trabajador.numero_documento;
+      dataInicialRxH.nombres_apellidos = `${trabajador.nombres} ${trabajador.apellidos}`;
+      dataInicialRxH.area = trabajador.cargo.area.nombre;
+      dataInicialRxH.fecha_ingreso = contratoInicial[0].fecha_inicio;
+      dataInicialRxH.dias_labor = dias_mes - resto_dias_no_contratados - faltas;
+      dataInicialRxH.bruto = contrato_actual.sueldo;
+      dataInicialRxH.sueldo_del_mes =
+         (contrato_actual.sueldo / 30) * dataInicialRxH.dias_labor;
+      dataInicialRxH.vacaciones = 0;
+      dataInicialRxH.horas_extras = 0;
+      dataInicialRxH.falta = (contrato_actual.sueldo / 30) * faltas;
+      dataInicialRxH.sueldo_neto =
+         Number(dataInicialRxH.sueldo_del_mes) +
+         Number(dataInicialRxH.vacaciones) +
+         Number(dataInicialRxH.horas_extras) +
+         dataInicialRxH.falta * -1;
+      return dataInicialRxH
    }
 }
 
