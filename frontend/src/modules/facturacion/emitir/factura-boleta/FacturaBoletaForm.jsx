@@ -11,6 +11,7 @@ import ModalVisualizarFactura from "./components/modal/ModalVisualizarFactura";
 import { ValorInicialFactura } from "./utils/valoresInicial";
 import DatosDeRetencion from "./components/campos/DatosDeRetencion";
 import { toast } from "sonner";
+import RelacionDocs from "./components/campos/RelacionDocs";
 
 const FacturaBoletaForm = () => {
     const { factura, setFactura, idBorrador, Limpiar } = useFacturaBoleta();
@@ -82,6 +83,9 @@ const FacturaBoletaForm = () => {
             {/* Form */}
             {/* Datos del comprobante */}
             <DatosDelComprobante />
+
+            {/* Documentos Relacionados */}
+            <RelacionDocs />
 
             {/* Datos del cliente */}
             <DatosDelCliente />

@@ -21,7 +21,8 @@ router.get("/facturas", facturaController.obtenerFacturas);
 router.get("/factura/:id", facturaController.obtenerFacturaPorId);
 router.post("/factura/detallada", facturaController.obtenerFacturaDetallada);
 router.post("/registrar", facturaController.crearFactura);
-router.get("/correlativo", facturaController.obtenerCorrelativo);
+router.post("/correlativo", facturaController.obtenerCorrelativo);
+router.post("/cdr-zip", facturaController.obtenerCdrZip);
 router.get("/mtc", facturaController.obtenerMTCconRuc);
 
 // * GUIA DE REMISION

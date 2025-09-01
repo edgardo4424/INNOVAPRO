@@ -26,8 +26,10 @@ const Bandeja = () => {
                                 <Receipt />
                             </div>
                             <div>
-                                <span className="py-1 px-2 text-sm border-2 border-gray-400 shadow-sm rounded-md">Activo</span>
-                                <h2 className="mt-2 text-xl text-green-600 font-bold" style={{ color: "#34C759" }} >124</h2>
+                                <p className="py-7"></p>
+                                {/* <span className="py-1 px-2 text-sm border-2
+                                 shadow-sm rounded-md">Activo</span> */}
+                                {/* <h2 className="mt-2 text-xl text-green-600 font-bold" style={{ color: "#34C759" }} >124</h2> */}
                             </div>
                         </div>
                         <div className="flex flex-col justify-between h-full">
@@ -44,12 +46,13 @@ const Bandeja = () => {
                         className="bg-white flex flex-col justify-between rounded-lg shadow-md p-4 cursor-pointer hover:shadow-xl hover:scale-102 transition-all duration-300 border border-gray-200"
                     >
                         <div className="flex justify-between items-start py-1">
-                        <div className="bg-amber-500 p-3 rounded-md text-white">
-                        <CreditCard />
+                            <div className="bg-amber-500 p-3 rounded-md text-white">
+                                <CreditCard />
                             </div>
                             <div>
-                                <span className="py-1 px-2 text-sm border-2 border-gray-400 shadow-sm rounded-md">Activo</span>
-                                <h2 className="mt-2 text-xl text-green-600 font-bold" style={{ color: "#34C759" }} >124</h2>
+                                <p className="py-7"></p>
+                                {/* <span className="py-1 px-2 text-sm border-2 border-gray-400 shadow-sm rounded-md">Activo</span> */}
+                                {/* <h2 className="mt-2 text-xl text-green-600 font-bold" style={{ color: "#34C759" }} >124</h2> */}
                             </div>
                         </div>
                         <div className="flex flex-col justify-between h-full">
@@ -66,12 +69,13 @@ const Bandeja = () => {
                         className="bg-white flex flex-col justify-between rounded-lg shadow-md p-4 cursor-pointer hover:shadow-xl hover:scale-102 transition-all duration-300 border border-gray-200"
                     >
                         <div className="flex justify-between items-start py-1">
-                        <div className="bg-blue-500 p-3 rounded-md text-white">
-                        <Truck />
+                            <div className="bg-blue-500 p-3 rounded-md text-white">
+                                <Truck />
                             </div>
                             <div>
-                                <span className="py-1 px-2 text-sm border-2 border-gray-400 shadow-sm rounded-md">Activo</span>
-                                <h2 className="mt-2 text-xl text-green-600 font-bold" style={{ color: "#34C759" }} >124</h2>
+                                <p className="py-7"></p>
+                                {/* <span className="py-1 px-2 text-sm border-2 border-gray-400 shadow-sm rounded-md">Activo</span> */}
+                                {/* <h2 className="mt-2 text-xl text-green-600 font-bold" style={{ color: "#34C759" }} >124</h2> */}
                             </div>
                         </div>
                         <div className="flex flex-col justify-between h-full">

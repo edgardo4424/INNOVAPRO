@@ -18,8 +18,12 @@ const facturaService = {
         const res = await api.get(`/facturacion/factura/${documento_id}`);
         return res.data;
     },
-    obtenerCorrelativo: async () => {
-        const res = await api.get(`/facturacion/correlativo`);
+    obtenerCorrelativo: async (body) => {
+        const res = await api.post(`/facturacion/correlativo`, body);
+        return res.data;
+    },
+    obtenerCdrZip: async (body) => {
+        const res = await api.post(`/facturacion/cdr-zip`, body);
         return res.data;
     },
 
@@ -62,7 +66,11 @@ const facturaService = {
     obtenerMtc: async (ruc) => {
         const res = await api.get(`/facturacion/mtc?ruc=${ruc}`);
         return res.data
-    }
+    },
+    obtenerDocumentosARelacionar: async (ruc) => {
+        const res = await api.get(`/facturacion/guia-remision/relaciones?ruc=${ruc}`);
+        return res.data;
+    },
 }
 
 

@@ -12,6 +12,8 @@ const crearFactura = require('../../application/useCases/factura-boleta/crearFac
 
 const obtenerCorrelativo = require('../../application/useCases/factura-boleta/obtenerCorrelativo')
 
+const obtenerCdrZip = require('../../application/useCases/factura-boleta/obtenerCdrZip')
+
 const obtenerMTC = require('../../application/useCases/factura-boleta/obtenerMTC')
 
 const facturaRepository = new SequelizeFacturaRepository()
@@ -69,12 +71,21 @@ const facturaController = {
         }
     },
 
-    async obtenerCorrelativo(_, res) {
+    async obtenerCorrelativo(req, res) {
         // * Controlador para obtener el correlativo de la factura
         // * se encarga de llamar al caso de uso
         // * "obtenerCorrelativo" y devolver su respuesta
         try {
-            const { codigo, respuesta } = await obtenerCorrelativo(facturaRepository)
+            const { codigo, respuesta } = await obtenerCorrelativo(req.body, facturaRepository)
+            res.status(codigo).json(respuesta)
+        } catch (error) {
+            res.status(500).json({ error: error.message, estado: false })
+        }
+    },
+
+    async obtenerCdrZip(req, res) {
+        try {
+            const { codigo, respuesta } = await obtenerCdrZip(req.body, facturaRepository)
             res.status(codigo).json(respuesta)
         } catch (error) {
             res.status(500).json({ error: error.message, estado: false })

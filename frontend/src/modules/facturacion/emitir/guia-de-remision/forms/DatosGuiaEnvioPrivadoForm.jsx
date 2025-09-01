@@ -181,8 +181,10 @@ const DatosGuiaEnvioPrivadoForm = () => {
         }));
     };
 
+
     return (
         <div>
+
             <h2 className="text-2xl font-semibold mb-2 flex pb-2">
                 Datos de la Guía de Envío
             </h2>

@@ -13,6 +13,17 @@ export default function ModalVisualizarDocumento({
     const [factura, setFactura] = useState(null);
     const [isOpen, setIsOpen] = useState(true);
 
+    let documentoRelacionados;
+    let detallesExtra;
+    if (factura?.relDocs) {
+        documentoRelacionados = JSON.parse(factura.relDocs);
+
+    }
+    if (factura?.extraDetails) {
+        detallesExtra = JSON.parse(factura.extraDetails);
+    }
+
+
     // Helpers
     const closeModal = () => {
         setIsOpen(false);
@@ -168,8 +179,8 @@ export default function ModalVisualizarDocumento({
 
                             {/* Cliente + Pago (dos columnas) */}
                             <div className="rounded-xl border border-gray-200 bg-white">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-                                    <div>
+                                <div className={`grid grid-cols-1 ${factura.relDocs !== null ? "md:grid-cols-7" : "md:grid-cols-6"} gap-6 p-6`}>
+                                    <div className="col-span-3">
                                         <h3 className="text-sm font-bold text-gray-600 mb-3">
                                             CLIENTE
                                         </h3>
@@ -195,7 +206,7 @@ export default function ModalVisualizarDocumento({
                                         </div>
                                     </div>
 
-                                    <div>
+                                    <div className="col-span-2">
                                         <h3 className="text-sm font-bold text-gray-600 mb-3">
                                             DETALLES DEL PAGO
                                         </h3>
@@ -214,6 +225,24 @@ export default function ModalVisualizarDocumento({
                                             </div>
                                         </div>
                                     </div>
+
+                                    {factura.relDocs !== null &&
+                                        <div className="col-span-2">
+                                            <h3 className="text-sm font-bold text-gray-600 mb-3">
+                                                DOCUMENTOS RELACIONADOS
+                                            </h3>
+                                            <div className="text-sm text-gray-800 space-y-1">
+                                                <div className="grid grid-cols-[110px_1fr] gap-x-2">
+                                                    {documentoRelacionados.map((doc, index) => (
+                                                        <>
+                                                            <span className="text-gray-700 font-semibold">Nro. doc:</span>
+                                                            <span className="font-medium">{doc.nroDoc ?? "—"}</span>
+                                                        </>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
                                 </div>
                             </div>
 
@@ -299,6 +328,34 @@ export default function ModalVisualizarDocumento({
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Observaciones */}
+                            {
+                                factura.observaciones && (
+                                    <div className="mt-4 pt-2 border border-gray-200 rounded-md p-4">
+                                        <h3 className="font-bold text-md mb-2 text-gray-600">Obesvaciones:</h3>
+                                        <p className="text-sm text-gray-800">{factura.observaciones}</p>
+                                    </div>
+                                )
+                            }
+
+                            {/* Detalles Extra */}
+                            {
+                                detallesExtra && (
+                                    <div className="mt-4 pt-2 border border-gray-200 rounded-md p-4">
+                                        <h3 className="font-bold text-md mb-2 text-gray-600">Detalles Extra:</h3>
+                                        <div className="grid grid-cols-2 gap-x-10 gap-y-2">
+                                            {detallesExtra.map((item, index) => (
+                                                <div key={index} className="flex justify-between">
+                                                    <p className="text-sm text-gray-800 font-semibold">{item.detalle}</p>
+                                                    <p className="text-sm text-gray-800">{item.valor}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )
+
+                            }
 
                             {/* Detraccion */}
                             {

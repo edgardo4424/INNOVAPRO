@@ -19,6 +19,8 @@ export function FacturaBoletaProvider({ children }) {
     // ** DATOS PARA FORMULARIO
     const [factura, setFactura] = useState(ValorInicialFactura); // * FACTURA
 
+    const [detallesExtra, setDetallesExtra] = useState([]);
+
     // todo: DETRACCION
     const [detraccionActivado, setDetraccionActivado] = useState(false);
     const [detraccion, setDetraccion] = useState(valorIncialDetracion); // * DETRACCION
@@ -326,12 +328,11 @@ export function FacturaBoletaProvider({ children }) {
 
     const emitirFactura = async () => {
         const { id: id_logeado } = await JSON.parse(localStorage.getItem("user"));
-        console.log("logeado", id_logeado);
         let result = { success: false, message: "Error desconocido al emitir la factura", data: null };
         try {
             let facturaAEmitir;
 
-            if (retencionActivado && factura.tipo_Doc !== "03") {
+            if (retencionActivado && factura.tipo_Doc !== "03" && factura.monto_Imp_Venta < 699) {
                 facturaAEmitir = Object.assign({}, factura, retencion);
             } else if (factura.tipo_Operacion === "1001" && factura.tipo_Doc !== "03") {
                 facturaAEmitir = Object.assign({}, factura, detraccion);
@@ -352,7 +353,21 @@ export function FacturaBoletaProvider({ children }) {
                     cdr_response_description: data.sunatResponse.cdrResponse.description
                 };
 
-                const facturaCopia = { ...facturaAEmitir, usuario_id: id_logeado, estado: "EMITIDA", sunat_respuesta: sunat_respuest, id_borrador: idBorrador ? idBorrador : null };
+                // ?? Transformamos los documentos relacionados a texto
+                facturaAEmitir.relDocs = factura.relDocs.length > 0 ? JSON.stringify(facturaAEmitir.relDocs) : null;
+
+                // ?? Si se agregaron detalles esta
+                if (detallesExtra.length > 0) {
+                    facturaAEmitir.extraDetails = JSON.stringify(detallesExtra);
+                }
+
+                const facturaCopia = {
+                    ...facturaAEmitir,
+                    usuario_id: id_logeado,
+                    estado: "EMITIDA",
+                    sunat_respuesta: sunat_respuest,
+                    id_borrador: idBorrador ? idBorrador : null
+                };
                 // ?Intentar registrar en base de datos
                 const dbResult = await registrarBaseDatos(facturaCopia);
 
@@ -427,6 +442,7 @@ export function FacturaBoletaProvider({ children }) {
         setRetencion(valorIncialRetencion);
         setRetencionActivado(false);
         setIdBorrador(null);
+        setDetallesExtra([])
     };
 
 
@@ -436,6 +452,8 @@ export function FacturaBoletaProvider({ children }) {
             value={{
                 filiales,
                 idBorrador,
+                detallesExtra,
+                setDetallesExtra,
                 setIdBorrador,
                 factura,
                 setFactura,

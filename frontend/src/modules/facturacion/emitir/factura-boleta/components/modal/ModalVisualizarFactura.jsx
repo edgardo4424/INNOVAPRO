@@ -26,7 +26,7 @@ export default function ModalVisualizarFactura() {
     };
 
     // Get the factura object from your context
-    const { factura, detraccion, filiales, retencion, retencionActivado } = useFacturaBoleta();
+    const { factura, detraccion, filiales, retencion, retencionActivado, detallesExtra } = useFacturaBoleta();
 
     // Filtro para obtener la filial que coincide con el ruc de la factura
     const filialActual = filiales.find((filial) => filial.ruc === factura.empresa_Ruc);
@@ -136,8 +136,8 @@ export default function ModalVisualizarFactura() {
 
                                 {/* Cliente + Pago (dos columnas) */}
                                 <div className="rounded-xl border border-gray-200 bg-white">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-                                        <div>
+                                    <div className={`grid grid-cols-1 ${factura.relDocs.length > 0 ? "md:grid-cols-7" : "md:grid-cols-6"} gap-6 p-6`}>
+                                        <div className="col-span-3">
                                             <h3 className="text-sm font-bold text-gray-600 mb-3">
                                                 CLIENTE
                                             </h3>
@@ -155,7 +155,7 @@ export default function ModalVisualizarFactura() {
                                             </div>
                                         </div>
 
-                                        <div>
+                                        <div className="col-span-2">
                                             <h3 className="text-sm font-bold text-gray-600 mb-3">
                                                 DETALLES DEL PAGO
                                             </h3>
@@ -170,6 +170,23 @@ export default function ModalVisualizarFactura() {
                                                 </div>
                                             </div>
                                         </div>
+                                        {factura.relDocs.length > 0 &&
+                                            <div className="col-span-2">
+                                                <h3 className="text-sm font-bold text-gray-600 mb-3">
+                                                    DOCUMENTOS RELACIONADOS
+                                                </h3>
+                                                <div className="text-sm text-gray-800 space-y-1">
+                                                    <div className="grid grid-cols-[110px_1fr] gap-x-2">
+                                                        {factura.relDocs.map((doc, index) => (
+                                                            <>
+                                                                <span className="text-gray-700 font-semibold">Nro. doc:</span>
+                                                                <span className="font-medium">{doc.nroDoc ?? "—"}</span>
+                                                            </>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
                                     </div>
                                 </div>
 
@@ -225,7 +242,27 @@ export default function ModalVisualizarFactura() {
                                                 {factura.observaciones || 'No hay observaciones registradas.'}
                                             </div>
                                         </div>
+                                        {
+                                            detallesExtra.length > 0 && (
+                                                <div className="grid  w-full ">
+                                                    {detallesExtra.map((detalle, index) => (
+                                                        <div
+                                                            key={index}
+                                                            className="flex justify-between p-3 text-sm "
+                                                        >
+                                                            <p className="font-semibold  pr-4">
+                                                                {detalle.detalle} :
+                                                            </p>
+                                                            <p className="pl-4 text-right text-gray-600 dark:text-gray-400">
+                                                                {detalle.valor}
+                                                            </p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )
+                                        }
                                     </div>
+
 
                                     <div className="text-right p-4 border border-gray-200 rounded-md bg-white">
                                         <p className="flex justify-between text-sm mb-1">

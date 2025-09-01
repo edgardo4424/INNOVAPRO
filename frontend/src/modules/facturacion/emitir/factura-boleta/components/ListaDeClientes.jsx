@@ -67,7 +67,7 @@ const ListaDeCientes = ({ closeModal }) => {
                     type="text"
                     value={filtro}
                     onChange={(e) => setFiltro(e.target.value)}
-                    placeholder="Ej: AM.0100 o Husillo"
+                    placeholder="Ej: Nro. Doc , Razon Social o Nombre"
                     className="border-1 border-gray-400"
                 />
             </div>

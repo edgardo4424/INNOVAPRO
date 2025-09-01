@@ -2,86 +2,22 @@ module.exports = async (body, facturaRepository, borradorRepository) => {
 
     //* 1. Desestructuración de los datos del body:
     const {
-        tipo_Operacion,
-        tipo_Doc,
-        serie,
-        correlativo,
-        tipo_Moneda,
-        fecha_Emision,
-        empresa_Ruc,
-        cliente_Tipo_Doc,
-        cliente_Num_Doc,
-        cliente_Razon_Social,
-        cliente_Direccion,
-        monto_Oper_Gravadas,
-        monto_Oper_Exoneradas,
-        monto_Igv,
-        total_Impuestos,
-        valor_Venta,
-        sub_Total,
-        monto_Imp_Venta,
-        estado_Documento,
-        estado,
-        manual,
-        id_Base_Dato,
-        observaciones,
-        usuario_id,
-        detraccion_cod_bien_detraccion,
-        detraccion_cod_medio_pago,
-        detraccion_cta_banco,
-        detraccion_percent,
-        detraccion_mount,
-        descuento_cod_tipo,
-        descuento_monto_base,
-        descuento_factor,
-        descuento_monto,
         detalle = [],
         forma_pago = [],
         legend = [],
         sunat_respuesta = {},
-        id_borrador
+        id_borrador,
+        ...factura
     } = body;
 
     //* 2. Construir el objeto 'factura' con los datos principales
     const facturaData = {
-        tipo_Operacion,
-        tipo_Doc,
-        serie,
-        correlativo,
-        tipo_Moneda,
-        fecha_Emision,
-        empresa_Ruc,
-        cliente_Tipo_Doc,
-        cliente_Num_Doc,
-        cliente_Razon_Social,
-        cliente_Direccion,
-        monto_Oper_Gravadas,
-        monto_Oper_Exoneradas,
-        monto_Igv,
-        total_Impuestos,
-        valor_Venta,
-        sub_Total,
-        monto_Imp_Venta,
-        estado_Documento,
-        estado,
-        manual,
-        id_Base_Dato,
-        observaciones,
-        usuario_id,
-        detraccion_cod_bien_detraccion,
-        detraccion_cod_medio_pago,
-        detraccion_cta_banco,
-        detraccion_percent,
-        detraccion_mount,
-        descuento_cod_tipo,
-        descuento_monto_base,
-        descuento_factor,
-        descuento_monto,
+        ...factura,
     };
 
 
     //* 3. Validación de entrada: Ahora verificamos un campo clave de la factura principal
-    if (!tipo_Doc || !serie || !correlativo) {
+    if (!facturaData.tipo_Doc || !facturaData.serie || !facturaData.correlativo) {
         return {
             codigo: 400,
             respuesta: {
@@ -93,8 +29,8 @@ module.exports = async (body, facturaRepository, borradorRepository) => {
     }
 
     // todo: Validacion si ya se registro una factura con ese correlativo o serie
-    if(estado){
-        const facturaExistente = await facturaRepository.buscarExistencia(serie, correlativo, estado);
+    if (facturaData.estado) {
+        const facturaExistente = await facturaRepository.buscarExistencia(facturaData.serie, facturaData.correlativo, facturaData.estado);
         console.log("🚚 facturaExistente:", facturaExistente);
         if (facturaExistente) {
             return {

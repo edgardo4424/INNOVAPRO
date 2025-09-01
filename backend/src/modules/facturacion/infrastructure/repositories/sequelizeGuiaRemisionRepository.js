@@ -31,11 +31,13 @@ class SequelizeGuiaRemisionRepository {
             where: { empresa_ruc: ruc },
             attributes: [
                 "id",
+                "tipo_Doc",
                 "serie",
                 "correlativo",
                 "fecha_Emision",
                 "empresa_Ruc",
             ],
+            oder: [["correlativo", "ASC"]],
         })
 
         return guias
@@ -73,23 +75,23 @@ class SequelizeGuiaRemisionRepository {
             createdGuia.detalles = createdDetalles;
 
             // * 3. Crear los Choferes de la Guia, solo si se proporcionaron choferes
-                const createdChoferes = [];
-                for (const choferData of data.chofer) {
-                    const chofer = await GuiaChoferes.create(
-                        {
-                            guia_id: guia.id,
-                            ...choferData,
-                        },
-                        { transaction }
+            const createdChoferes = [];
+            for (const choferData of data.chofer) {
+                const chofer = await GuiaChoferes.create(
+                    {
+                        guia_id: guia.id,
+                        ...choferData,
+                    },
+                    { transaction }
+                );
+                if (!chofer) {
+                    throw new Error(
+                        `No se pudo crear un chofer para el producto ${choferData.cod_producto || "desconocido"}`
                     );
-                    if (!chofer) {
-                        throw new Error(
-                            `No se pudo crear un chofer para el producto ${choferData.cod_producto || "desconocido"}`
-                        );
-                    }
-                    createdChoferes.push(chofer);
                 }
-                createdGuia.choferes = createdChoferes;
+                createdChoferes.push(chofer);
+            }
+            createdGuia.choferes = createdChoferes;
 
             // * 4. Crear la SunatRespuesta
             const sunat = await SunatRespuesta.create(

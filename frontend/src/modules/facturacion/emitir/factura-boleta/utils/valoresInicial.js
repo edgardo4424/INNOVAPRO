@@ -28,7 +28,9 @@ const ValorInicialFactura = {
     // ?Base de datos
     estado_Documento: "0",
     manual: false,
-    // id_Base_Dato: "15265",
+
+    // ?Documentos relacionados
+    relDocs: [],
 
     // ?Parametros para innova Pro
     observaciones: "", //? nuevo campo solo para bd

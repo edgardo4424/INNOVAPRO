@@ -99,6 +99,7 @@ class SequelizeFacturaRepository {
                 where,
                 offset,
                 limit: limitNumber,
+                order: [["correlativo", "DESC"]],
             });
 
             return {
@@ -327,26 +328,44 @@ class SequelizeFacturaRepository {
         }
     }
 
-    async correlativo() {
-        const correlativoFactura = await Factura.max('correlativo', {
-            where: {
-                tipo_Doc: '01',
-                estado: 'EMITIDA'
-            }
-        });
-        const correlativoBoleta = await Factura.max('correlativo', {
-            where: {
-                tipo_Doc: '03',
-                estado: 'EMITIDA'
-            }
-        });
-
-        return {
-            factura: correlativoFactura + 1,
-            boleta: correlativoBoleta + 1
+    async correlativo(body) {
+        const correlativos = [];
+        for (const { ruc } of body) {
+            const correlativoFactura = await Factura.max('correlativo', {
+                where: {
+                    tipo_Doc: '01',
+                    estado: 'EMITIDA',
+                    empresa_ruc: ruc
+                }
+            });
+            const correlativoBoleta = await Factura.max('correlativo', {
+                where: {
+                    tipo_Doc: '03',
+                    estado: 'EMITIDA',
+                    empresa_ruc: ruc
+                }
+            });
+            correlativos.push({
+                ruc,
+                correlativo: {
+                    factura: correlativoFactura ? correlativoFactura + 1 : 1,
+                    boleta: correlativoBoleta ? correlativoBoleta + 1 : 1
+                }
+            });
         }
+        return correlativos;
     }
 
+    async cdrzip(id_factura) {
+        const cdr_zip = await SunatRespuesta.findOne({
+            attributes: ['cdr_zip'],
+            where: {
+                factura_id: id_factura
+            },
+        });
+
+        return cdr_zip;
+    }
 }
 
 module.exports = SequelizeFacturaRepository;

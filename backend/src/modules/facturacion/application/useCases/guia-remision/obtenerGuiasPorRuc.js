@@ -9,7 +9,7 @@ module.exports = async (query, guiaRepository) => {
                     message: "no se encontraron guias",
                     status: false,
                     count: 0,
-                    data: null,
+                    data: [],
                 },
             };
         }

@@ -41,6 +41,14 @@ const Factura = sequelize.define(
                 key: "ruc",
             }
         },
+        relDocs: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        },
+        extraDetails: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        },
         cliente_Tipo_Doc: {
             type: DataTypes.STRING,
             allowNull: true,
@@ -139,7 +147,7 @@ const Factura = sequelize.define(
             type: DataTypes.DECIMAL(12, 2),
             allowNull: true,
         },
-        //! -- Campos para descuento
+        //! -- Campos para retenciones (Descuentos)
         descuento_cod_tipo: {
             type: DataTypes.STRING,
             allowNull: true,

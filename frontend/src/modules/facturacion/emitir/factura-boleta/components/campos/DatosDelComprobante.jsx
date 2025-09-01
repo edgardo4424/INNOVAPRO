@@ -13,12 +13,16 @@ import { useEffect, useState } from "react";
 import { LoaderCircle, Search, SquarePen } from "lucide-react";
 import facturaService from "@/modules/facturacion/service/FacturaService";
 import { toast } from "react-toastify";
+import RelacionDocs from "./RelacionDocs";
 
 const DatosDelComprobante = () => {
     const { factura, setFactura, filiales } = useFacturaBoleta();
-    const [correlativos, setCorrelativos] = useState({});
+    const [correlativos, setCorrelativos] = useState([]);
     const [correlativoEstado, setCorrelativoEstado] = useState(false);
     const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
+
+
+    const rucsFiliales = filiales.map((filial) => ({ ruc: filial.ruc }));
 
 
     const activarCorrelativo = (e) => {
@@ -41,26 +45,29 @@ const DatosDelComprobante = () => {
     };
 
     const buscarCorrelativo = async (e) => {
-        e.preventDefault();
+        // e.preventDefault();
         try {
             setLoadingCorrelativo(true);
             // Lógica para buscar el correlativo
-            const { mensaje, estado, correlativos } = await facturaService.obtenerCorrelativo();
+            const { message, status, data } = await facturaService.obtenerCorrelativo(rucsFiliales);
 
-            setCorrelativos(correlativos);
+            setCorrelativos(data);
 
             let tipoDoc = factura.tipo_Doc === "01" ? "Factura" : "Boleta";
-            if (estado) {
+
+            let { correlativo, ruc } = data.filter((item) => item.ruc === factura.empresa_Ruc)[0];
+
+            if (status) {
                 setFactura((prevValores) => ({
                     ...prevValores,
-                    correlativo: tipoDoc === "Factura" ? `${correlativos.factura}` : `${correlativos.boleta}`,
+                    correlativo: tipoDoc === "Factura" ? `${correlativo.factura}` : `${correlativo.boleta}`,
                 }))
                 setCorrelativoEstado(false);
                 setLoadingCorrelativo(false);
-
             }
+
         } catch (error) {
-            toast.error('Error al obtener el correlativo: ' + error.message);
+            // toast.error('Error al obtener el correlativo: ' + error.message);
             setLoadingCorrelativo(false);
         } finally {
             setLoadingCorrelativo(false);
@@ -68,16 +75,41 @@ const DatosDelComprobante = () => {
     };
 
     useEffect(() => {
+        if (filiales.length !== 0) {
+            buscarCorrelativo();
+        }
+    }, [filiales]);
+
+    useEffect(() => {
+        if (filiales.length !== 0) {
+            const correlativoData = correlativos.find((item) => item.ruc === factura.empresa_Ruc);
+            const { correlativo, ruc } = correlativoData || {};
+            console.log(correlativoData);
+            console.log(correlativo);
+            setFactura((prevValores) => ({
+                ...prevValores,
+                correlativo: factura.tipo_Doc === "01" ? `${correlativo.factura}` : `${correlativo.boleta}`,
+            }))
+        }
+    }, [factura.tipo_Doc, factura.empresa_Ruc]);
+
+    useEffect(() => {
         setFactura((prevValores) => ({
             ...prevValores,
-            correlativo: factura.tipo_Doc === "01" ? correlativos.factura : correlativos.boleta,
+            relDocs: [],
         }))
-    }, [factura.tipo_Doc])
+    }, [factura.empresa_Ruc]);
+
+
 
     return (
         <div className="overflow-y-auto p-4 sm:p-6 lg:px-8 lg:py-4">
             <h1 className="text-2xl font-bold py-3 text-gray-800">Datos del Comprobante</h1>
-            <form action="" className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-5 md:gap-x-6 md:gap-y-8"> {/* Grid más flexible */}
+            <form
+                onSubmit={e => e.preventDefault()}
+                action=""
+                className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-5 md:gap-x-6 md:gap-y-8"> {/* Grid más flexible */}
+
                 {/* Tipo de Operacion */}
                 <div className="flex flex-col gap-1 col-span-full sm:col-span-1"> {/* Col-span-full para que ocupe todo el ancho en móviles */}
                     <Label htmlFor="tipo_operacion">Tipo de Venta</Label>

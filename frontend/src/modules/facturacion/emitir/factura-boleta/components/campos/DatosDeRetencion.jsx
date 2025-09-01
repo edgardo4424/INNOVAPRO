@@ -47,13 +47,15 @@ const DatosDeRetencion = () => {
     }
   }, [factura.monto_Imp_Venta]);
 
+  if(factura.monto_Imp_Venta < 699) return null
+
   if (factura.tipo_Doc == "03") return null
 
   if (factura.tipo_Operacion == "1001") return null
 
   return (
     // Contenedor principal con espaciado y layout responsivo
-    <div className='overflow-y-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-y-6'>
+    <div className='overflow-y-auto pt-4 px-4 lg:px-8 flex flex-col gap-y-6'>
       <div className='flex items-center gap-x-4'>
         <h1 className="text-2xl font-bold">
           Retención
