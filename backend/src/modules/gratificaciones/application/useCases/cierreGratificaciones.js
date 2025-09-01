@@ -95,8 +95,14 @@ module.exports = async (
 
       console.log('trabajadoresConGratificacionCerrada', trabajadoresConGratificacionCerrada);
 
-    const trabajadoresConGratificacionCerradaIds = trabajadoresConGratificacionCerrada.map(
-      (gratificacion) => gratificacion.trabajador_id
+    const trabajadoresConGratificacionCerradas = trabajadoresConGratificacionCerrada.map(
+      (gratificacion) => {
+        return {
+          trabajador_id: gratificacion.trabajador_id,
+          fecha_ingreso: gratificacion.fecha_ingreso,
+          fecha_fin: gratificacion.fecha_fin,
+        }
+      }
     );
 
     // Mapear y registrar gratificaciones
@@ -109,8 +115,16 @@ module.exports = async (
       cierre_id
     );
 
+    console.log('dataGratificaciones',dataGratificaciones);
+
     const dataGratificacionesSinCerrar = dataGratificaciones.filter((gratificacion) => {
-      return !trabajadoresConGratificacionCerradaIds.includes(gratificacion.trabajador_id);
+      return !trabajadoresConGratificacionCerradas.some((gratificacionCerrada) => {
+        return (
+          gratificacionCerrada.trabajador_id === gratificacion.trabajador_id &&
+          gratificacionCerrada.fecha_ingreso === gratificacion.fecha_ingreso &&
+          gratificacionCerrada.fecha_fin === gratificacion.fecha_fin
+        );
+      });
     });
 
     console.log('dataGratificacionesSinCerrar', dataGratificacionesSinCerrar);

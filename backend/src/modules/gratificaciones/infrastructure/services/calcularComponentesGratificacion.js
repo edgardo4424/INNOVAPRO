@@ -21,12 +21,20 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
       const tid = c.trabajador_id;
       if (!porTrabajador.has(tid))
         porTrabajador.set(tid, { trabajador: c.trabajador, contratos: [] });
+     
       porTrabajador.get(tid).contratos.push(c.get({ plain: true }));
     }
+
+    console.log("porTrabajador", porTrabajador);
 
     const filas = await Promise.all(
       Array.from(porTrabajador.values()).map(
         async ({ trabajador, contratos }) => {
+
+          // Obtener los contratos limpios
+          
+
+          //console.log('contratos del trabajador', contratos);
           // 1) Meses por régimen
           const { porRegimen, totalMeses, detalleMensual } =
             calcularMesesComputablesSemestre(contratos, periodo, anio);

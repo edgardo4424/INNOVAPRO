@@ -136,7 +136,7 @@ class SequelizeGratificacionRepository {
       transaction,
     });
 
-    console.log('contratos', contratos);
+    console.log('contratos', contratos[contratos.length - 1]);
 
     return await calcularComponentesGratificaciones(
       contratos,
@@ -220,7 +220,7 @@ class SequelizeGratificacionRepository {
       default:
         break;
     }
-    const gratificacionPorTrabajador = await Gratificacion.findOne({
+    const gratificacionPorTrabajador = await Gratificacion.findAll({
       where: { trabajador_id, periodo: periodoBuscar, filial_id },
       transaction,
     });
@@ -241,7 +241,7 @@ class SequelizeGratificacionRepository {
     return cierreGratificacion;
   }
 
-  async calcularGratificacionTruncaPorTrabajador(periodo, anio, filial_id, trabajador_id, transaction = null) {
+  async calcularGratificacionTruncaPorTrabajador(periodo, anio, filial_id, trabajador_id, fecha_ingreso,fecha_fin, transaction = null) {
     
     console.log({
       periodo, anio, filial_id, trabajador_id
@@ -316,6 +316,7 @@ class SequelizeGratificacionRepository {
         trabajador_id: trabajador_id,
         estado: true,
         tipo_contrato: "PLANILLA",
+        
       },
       include: [
         {
@@ -327,16 +328,106 @@ class SequelizeGratificacionRepository {
       transaction,
     });
 
+    console.log('contratos', contratos);
+
+    console.log(
+      {
+        periodo,
+        anio,
+        filial_id,
+        trabajador_id,
+        fecha_ingreso,
+        fecha_fin
+      }
+    );
+
+    /* const contratosPlanos = contratos.map((contrato) => contrato.get({ plain: true }));
+
+    console.log('contratosPlanos', contratosPlanos); */
+
+    const filtrarContratos = contratos.filter((contrato) => {
+      return (contrato?.fecha_inicio == fecha_ingreso && ( contrato?.fecha_terminacion_anticipada ? contrato?.fecha_terminacion_anticipada == fecha_fin : contrato?.fecha_fin == fecha_fin));
+    });
+
+    console.log('filtrarContratos', filtrarContratos);
+
     return await calcularComponentesGratificaciones(
-      contratos,
+      filtrarContratos,
       periodo,
       anio,
       dataMantenimiento,
     )
   }
 
+  async obtenerGratificacionPorTrabajadorYRangoFecha(
+    periodo,
+    anio,
+    filial_id,
+    trabajador_id,
+    fecha_ingreso,
+    fecha_fin,
+    transaction = null
+  ) {
+    let periodoBuscar;
+    switch (periodo) {
+      case "JULIO":
+        periodoBuscar = `${anio}-07`;
+        break;
+      case "DICIEMBRE":
+        periodoBuscar = `${anio}-12`;
+        break;
+
+      default:
+        break;
+    }
+    const gratificacionPorTrabajador = await Gratificacion.findOne({
+      where: { trabajador_id, periodo: periodoBuscar, filial_id, fecha_ingreso, fecha_fin },
+      transaction,
+    });
+
+    return gratificacionPorTrabajador;
+  }
   
-  
+  async obtenerTotalGratificacionPorTrabajador(
+    periodo,
+    anio,
+    filial_id,
+    trabajador_id,
+    transaction = null
+  ) {
+    let periodoBuscar;
+    switch (periodo) {
+      case "JULIO":
+        periodoBuscar = `${anio}-07`;
+        break;
+      case "DICIEMBRE":
+        periodoBuscar = `${anio}-12`;
+        break;
+
+      default:
+        break;
+    }
+
+    console.log({
+      trabajador_id,
+      periodo: periodoBuscar,
+      filial_id
+    });
+    const gratificacionPorTrabajador = await Gratificacion.findAll({
+      where: { trabajador_id, periodo: periodoBuscar, filial_id },
+      transaction,
+    });
+
+    console.log('gratificacionPorTrabajador', gratificacionPorTrabajador);
+
+    const total = gratificacionPorTrabajador.reduce((total, gratificacion) => {
+      return total + Number(gratificacion.total_pagar);
+    }, 0);
+
+    return {
+      total_pagar: total
+    };
+  }
 }
 
 module.exports = SequelizeGratificacionRepository; // Exporta la clase para que pueda ser utilizada en otros módulos

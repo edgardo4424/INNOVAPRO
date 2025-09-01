@@ -71,19 +71,7 @@ module.exports = {
     });
 
     
-    // ✅ Añadir índice único después
-await queryInterface.addConstraint('gratificaciones', {
-  fields: ['trabajador_id', 'periodo', 'regimen', 'filial_id', 'cierre_id'],
-  type: 'unique',
-  name: 'uniq_trabajador_periodo'
-});
-
- // Agregar unique constraint
-await queryInterface.addConstraint('cierres_gratificaciones', {
-  fields: ['filial_id', 'periodo'],
-  type: 'unique',
-  name: 'uniq_filial_periodo',
-});
+   
   },
 
   async down(queryInterface) {

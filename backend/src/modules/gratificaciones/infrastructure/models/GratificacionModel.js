@@ -159,8 +159,8 @@ const Gratificacion = sequelize.define(
        indexes: [
       {
         unique: true,
-        fields: ['trabajador_id', 'periodo', 'regimen', 'filial_id', 'cierre_id'],
-        name: 'uniq_trabajador_periodo'
+        fields: ['trabajador_id', 'periodo', 'regimen', 'filial_id', 'cierre_id, fecha_ingreso, fecha_fin'],
+        name: 'uniq_trabajador_periodo_extendido'
       }
     ]
    }

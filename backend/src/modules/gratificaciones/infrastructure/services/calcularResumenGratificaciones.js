@@ -1,6 +1,5 @@
 function calcularResumenGratificaciones(listaTrabajadores) {
 
-  console.log('listaTrabajadores', listaTrabajadores);
   const sumar = (campo) =>
     listaTrabajadores.reduce((acc, t) => acc + parseFloat(t[campo] || 0), 0);
 
