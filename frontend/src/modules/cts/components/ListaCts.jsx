@@ -101,7 +101,7 @@ const ListaCts = ({ cts }) => {
                      rowSpan={2}
                      className="text-center border-r text-white border-black"
                   >
-                     Gratif. Percib. Dic. 2024
+                   Ultima Gratif. Percib
                   </TableHead>
                   <TableHead
                      rowSpan={2}
