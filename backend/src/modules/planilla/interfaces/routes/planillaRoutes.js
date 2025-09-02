@@ -11,4 +11,6 @@ router.use(verificarToken); // Verificamos el token y el rol de Gerente para tod
 router.post("/planilla-quincenal-calcular", planillaController.calcularPlanillaQuincenal);
 router.post("/planilla-mensual-calcular", planillaController.calcularPlanillaMensualPorTrabajador);
 
+router.post("/planilla-quincenal-cierre", planillaController.cierrePlanillaQuincenal);
+
 module.exports = router; 

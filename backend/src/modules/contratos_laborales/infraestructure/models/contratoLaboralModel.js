@@ -73,6 +73,12 @@ ContratoLaboral.associate = (models) => {
       foreignKey: "filial_id",
       as: "empresa_proveedora",
    });
+
+   ContratoLaboral.hasOne(models.planilla_quincenal, {
+      foreignKey: "contrato_id",
+      as: "planilla_quincenal",
+   })
+
 };
 
 module.exports = { ContratoLaboral };
