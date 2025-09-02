@@ -36,7 +36,7 @@ const TablaDocumentos = ({ documentos, setIdDocumento, setModalOpen, setModalDes
                             {/* <td className="py-3 px-6 text-xs text-gray-700 font-medium">{`${factura.tipo_moneda} ${factura.valor_venta}`}</td> */}
                             {/* <td className="py-3 px-6 text-xs text-gray-700 font-medium">{`${factura.tipo_moneda} ${factura.sub_total}`}</td> */}
                             <td className="py-3 px-6 text-xs text-gray-700 font-medium">{`${factura.tipo_moneda} ${factura.monto_imp_venta}`}</td>
-                            <td className={`py-3 px-6 text-sm font-semibold ${factura.estado === "RECHAZADA" ? "text-red-500" : "text-green-500"} `}>
+                            <td className={`py-3 px-6 text-sm font-semibold ${factura.estado === "RECHAZADA" ? "text-red-500" : factura.estado === "ANULADA" ? "text-red-500" : factura.estado === "OBSERVADA" ? "text-yellow-500" : "text-green-500"} `}>
                                 {factura.estado}
                             </td>
                             <td className="py-3 px-6">

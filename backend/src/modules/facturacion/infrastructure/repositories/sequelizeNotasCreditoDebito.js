@@ -7,9 +7,14 @@ const { LegendNotaCreditoDebito } = require("../models/notas-credito-debito/lege
 const { DetalleNotaCreditoDebito } = require("../models/notas-credito-debito/detalleNotaCreditoDebitoModel");
 const { SunatRespuesta } = require("../models/sunatRespuestaModel");
 const { Factura } = require("../models/factura-boleta/facturaModel");
+const { Op, fn, col } = require('sequelize');
 
 
 class SequelizeNotasCreditoDebitoRepository {
+
+    async toNumber(value) {
+        return value != null ? parseFloat(value) : 0;
+    }
     async crear(data) {
         console.log("desde el repositorio", data);
         // Inicia una transacción usando la instancia correcta de sequelize.
@@ -104,6 +109,254 @@ class SequelizeNotasCreditoDebitoRepository {
                 data: null,
             };
         }
+    }
+
+    async obtenerNotas(data) {
+        try {
+            const {
+                page = 1,
+                limit,
+                tipo_doc,
+                empresa_ruc,
+                cliente_num_doc,
+                cliente_razon_social,
+                usuario_id,
+                fec_des,
+                fec_ast,
+            } = data;
+            const sane = (v) => {
+                if (v === null || v === undefined) return undefined;
+                if (typeof v === "string") {
+                    const t = v.trim();
+                    if (!t || t.toLowerCase() === "null" || t.toLowerCase() === "undefined") return undefined;
+                    return t;
+                }
+                return v;
+            };
+
+            // Usa NUEVAS variables (no reasignes las const del destructuring)
+            const nTipoDoc = sane(tipo_doc);
+            const nEmpresaRuc = sane(empresa_ruc);
+            const nClienteNumDoc = sane(cliente_num_doc);
+            const nClienteRazonSocial = sane(cliente_razon_social);
+            const nUsuarioId = sane(usuario_id);
+            const nFecDes = sane(fec_des);
+            const nFecAst = sane(fec_ast);
+
+            const pageNumber = Number.parseInt(page, 10) || 1;
+            const limitNumber = limit ? Number.parseInt(limit, 10) : undefined;
+            const offset = limitNumber ? (pageNumber - 1) * limitNumber : undefined;
+
+            const where = {};
+
+            if (nTipoDoc) {
+                where.tipo_doc = nTipoDoc;
+            }
+            if (nEmpresaRuc) {
+                where.empresa_ruc = { [Op.like]: `%${nEmpresaRuc}%` };
+            }
+            if (nClienteNumDoc) {
+                where.cliente_num_doc = { [Op.like]: `%${nClienteNumDoc}%` };
+            }
+            if (nClienteRazonSocial) {
+                where.cliente_razon_social = { [Op.like]: `%${nClienteRazonSocial}%` };
+            }
+            if (nUsuarioId) {
+                where.usuario_id = nUsuarioId;
+            }
+
+            // Rango de fechas (asegúrate que el atributo del modelo sea exactamente 'fecha_Emision')
+            if (nFecDes && nFecAst) {
+                where.fecha_Emision = { [Op.between]: [nFecDes, nFecAst] };
+            } else if (nFecDes) {
+                where.fecha_Emision = { [Op.gte]: nFecDes };
+            } else if (nFecAst) {
+                where.fecha_Emision = { [Op.lte]: nFecAst };
+            }
+
+            const { count, rows } = await NotasCreditoDebito.findAndCountAll({
+                attributes: [
+                    "id",
+                    "tipo_Operacion",
+                    "tipo_Doc",
+                    "serie",
+                    "correlativo",
+                    "tipo_Moneda",
+                    "fecha_Emision",
+                    "empresa_Ruc",
+                    "cliente_Num_Doc",
+                    "cliente_Razon_Social",
+                    "monto_Igv",
+                    "total_Impuestos",
+                    "afectado_Tipo_Doc",
+                    "afectado_Num_Doc",
+                    "motivo_Cod",
+                ],
+                where,
+                offset,
+                limit: limitNumber,
+                order: [["correlativo", "DESC"]],
+            });
+
+            return {
+                success: true,
+                message: "Notas listadas correctamente.",
+                data: rows,
+                metadata: {
+                    totalRecords: count,
+                    currentPage: pageNumber,
+                    totalPages: limitNumber ? Math.ceil(count / limitNumber) : 1,
+                },
+            };
+        } catch (error) {
+            return {
+                success: false,
+                message: "Error al listar las notas.",
+                data: null,
+                error: error.message,
+            };
+        }
+    }
+    async obtenerNotaDetallada(data) {
+        console.log("desde el repositorio", data);
+        const { correlativo, serie, empresa_ruc, tipo_doc } = data;
+
+        const nota = await NotasCreditoDebito.findOne({
+            where: {
+                correlativo,
+                serie,
+                empresa_ruc,
+                tipo_doc,
+            },
+            include: [
+                { model: DetalleNotaCreditoDebito },
+                { model: LegendNotaCreditoDebito },
+                // { model: SunatRespuesta },
+            ],
+        });
+        console.log(nota)
+        if (!nota) return null;
+
+        // Extraer y mapear los datos anidados a objetos planos
+        const plainNota = nota.get({ plain: true });
+
+        // Función para convertir a float si es string numérico
+        const toFloat = (value) => {
+            return typeof value === "string" && !isNaN(value)
+                ? parseFloat(value)
+                : value;
+        };
+
+        // Campos numéricos a convertir (de la cabecera)
+        const camposNumericosNota = [
+            "monto_Igv",
+            "total_Impuestos",
+            "valor_Venta",
+            "monto_Oper_Gravadas",
+            "monto_Oper_Exoneradas",
+            "sub_Total",
+            "monto_Tmp_Venta",
+        ];
+
+        // Transformar cabecera
+        const notaTransformada = {
+            ...plainNota,
+            ...Object.fromEntries(
+                camposNumericosNota.map((campo) => [
+                    campo,
+                    toFloat(plainNota[campo]),
+                ])
+            ),
+            detalles: plainNota.detalles?.map((item) => ({
+                ...item,
+                monto_Valor_Unitario: toFloat(item.monto_Valor_Unitario),
+                monto_Base_Igv: toFloat(item.monto_Base_Igv),
+                porcentaje_Igv: toFloat(item.porcentaje_Igv),
+                igv: toFloat(item.igv),
+                total_Impuestos: toFloat(item.total_Impuestos),
+                monto_Precio_Unitario: toFloat(item.monto_Precio_Unitario),
+                monto_Valor_Venta: toFloat(item.monto_Valor_Venta),
+                factor_Icbper: toFloat(item.factor_Icbper),
+            })),
+            formas_pagos: plainNota.formas_pagos?.map((item) => ({
+                ...item,
+                monto: toFloat(item.monto),
+            })),
+            leyendas: plainNota.leyendas?.map((item) => ({ ...item })),
+        };
+
+        return notaTransformada;
+
+    }
+
+    async documentoPorFilial(data) {
+        const { empresa_ruc } = data;
+        const documento = await NotasCreditoDebito.findAll({
+            where: {
+                empresa_ruc,
+            },
+        });
+
+        return documento;
+    }
+
+    
+    async correlativo(body) {
+        const resultados = [];
+        const rucsAndSeries = [];
+        
+        // Combinar las series de boleta y factura para cada RUC
+        for (const data of body) {
+            if (data.credito) {
+                for (const serie of data.credito) {
+                    rucsAndSeries.push({ ruc: data.ruc, serie: serie.value, tipo: 'credito' });
+                }
+            }
+            if (data.debito) {
+                for (const serie of data.debito) {
+                    rucsAndSeries.push({ ruc: data.ruc, serie: serie.value, tipo: 'debito' });
+                }
+            }
+        }
+        
+        // Usar una sola consulta para optimizar el rendimiento
+        const correlativosPorSerie = await NotasCreditoDebito.findAll({
+            attributes: [
+                'empresa_ruc',
+                'serie',
+                [fn('MAX', col('correlativo')), 'ultimo_correlativo']
+            ],
+            where: {
+                [Op.or]: rucsAndSeries.map(item => ({
+                    empresa_ruc: item.ruc,
+                    serie: item.serie,
+                }))
+            },
+            group: ['empresa_ruc', 'serie'],
+            raw: true // Para obtener resultados como objetos JSON simples
+        });
+        
+        const correlativosMap = new Map();
+        for (const result of correlativosPorSerie) {
+            const key = `${result.empresa_ruc}-${result.serie}`;
+            correlativosMap.set(key, Number(result.ultimo_correlativo));
+        }
+        
+        // Construir el array de resultados finales
+        for (const item of rucsAndSeries) {
+            const key = `${item.ruc}-${item.serie}`;
+            const ultimoCorrelativo = correlativosMap.get(key) || 0;
+            const siguienteCorrelativo = String(ultimoCorrelativo + 1).padStart(4, '0'); // Asegura un formato de 4 dígitos
+            
+            resultados.push({
+                ruc: item.ruc,
+                serie: item.serie,
+                tipo: item.tipo,
+                siguienteCorrelativo: siguienteCorrelativo
+            });
+        }
+        
+        return resultados;
     }
 }
 

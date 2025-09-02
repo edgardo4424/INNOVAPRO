@@ -22,14 +22,14 @@ const NotasCreditoDebito = sequelize.define(
             allowNull: true,
         },
         correlativo: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING,
             allowNull: true,
         },
         tipo_Moneda: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        tipo_Documento: {
+        estado_Documento: {
             type: DataTypes.STRING,
             allowNull: true,
         },
@@ -37,7 +37,7 @@ const NotasCreditoDebito = sequelize.define(
             type: DataTypes.DATE,
             allowNull: true,
         },
-        observacion: {
+        Observacion: {
             type: DataTypes.TEXT,
             allowNull: true,
         },
@@ -89,7 +89,7 @@ const NotasCreditoDebito = sequelize.define(
             type: DataTypes.DECIMAL(12, 2),
             allowNull: true,
         },
-        monto_Tmp_Venta: {
+        monto_Imp_Venta: {
             type: DataTypes.DECIMAL(12, 2),
             allowNull: true,
         },

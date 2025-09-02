@@ -3,9 +3,9 @@ const router = express.Router();
 const facturaController = require("../controllers/facturaController");
 const borradorController = require("../controllers/borradorController");
 const guiaRemisionController = require("../controllers/guiaRemisionController");
+const notaController = require("../controllers/notaController");
 
 const { verificarToken } = require("../../../../shared/middlewares/authMiddleware");
-const notaCreditoDebitoController = require("../controllers/notaCreditoDebitoController");
 
 
 // router.use(verificarToken); // Verificamos el token y el rol de Gerente para todas las rutas
@@ -28,12 +28,15 @@ router.post("/cdr-zip", facturaController.obtenerCdrZip);
 router.get("/mtc", facturaController.obtenerMTCconRuc);
 
 // * GUIA DE REMISION
-router.post("/guia-remision/crear", guiaRemisionController.crearGuiaRemision);
 router.get("/guia-remision", guiaRemisionController.obtenerGuiasRemision);
+router.post("/guia-remision/crear", guiaRemisionController.crearGuiaRemision);
 router.post("/guia-remision/correlativo", guiaRemisionController.obtenerCorrelativo);
 router.post("/guia-remision/relaciones", guiaRemisionController.obtenerRelacionesGuias);
 
 // * NOTA DE CREDITO
-router.post("/nota-debito-credito/crear", notaCreditoDebitoController.crearNotaCreditoDebito);
+router.get("/nota-debito-credito", notaController.obtenerNotas);
+router.post("/nota-debito-credito/crear", notaController.crearNota);
+router.post("/nota-debito-credito/detallada", notaController.obtenerNotaDetallada);
+router.post("/nota-debito-credito/correlativo", notaController.obtenerCorrelativo);
 
 module.exports = router;

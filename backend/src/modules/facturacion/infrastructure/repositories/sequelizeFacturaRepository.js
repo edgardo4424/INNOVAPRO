@@ -49,7 +49,11 @@ class SequelizeFacturaRepository {
             const limitNumber = limit ? Number.parseInt(limit, 10) : undefined;
             const offset = limitNumber ? (pageNumber - 1) * limitNumber : undefined;
 
-            const where = {};
+            const where = {
+                estado: {
+                    [Op.not]: "ANULADA",
+                },
+            };
 
             if (nTipoDoc) {
                 where.tipo_doc = nTipoDoc;
@@ -355,74 +359,74 @@ class SequelizeFacturaRepository {
     }
 
     async correlativo(body) {
-    const resultados = [];
-    const rucsAndSeries = [];
+        const resultados = [];
+        const rucsAndSeries = [];
 
-    // Combinar las series de boleta y factura para cada RUC
-    for (const data of body) {
-        if (data.serieBoleta) {
-            for (const serie of data.serieBoleta) {
-                rucsAndSeries.push({ ruc: data.ruc, serie: serie.value });
+        // Combinar las series de boleta y factura para cada RUC
+        for (const data of body) {
+            if (data.serieBoleta) {
+                for (const serie of data.serieBoleta) {
+                    rucsAndSeries.push({ ruc: data.ruc, serie: serie.value });
+                }
+            }
+            if (data.serieFactura) {
+                for (const serie of data.serieFactura) {
+                    rucsAndSeries.push({ ruc: data.ruc, serie: serie.value });
+                }
             }
         }
-        if (data.serieFactura) {
-            for (const serie of data.serieFactura) {
-                rucsAndSeries.push({ ruc: data.ruc, serie: serie.value });
-            }
-        }
-    }
 
-    // Usar una sola consulta para optimizar el rendimiento
-    const correlativosPorSerie = await Factura.findAll({
-        attributes: [
-            'empresa_ruc',
-            'serie',
-            [fn('MAX', col('correlativo')), 'ultimo_correlativo']
-        ],
-        where: {
-            [Op.or]: rucsAndSeries.map(item => ({
-                empresa_ruc: item.ruc,
-                serie: item.serie
-            }))
-        },
-        group: ['empresa_ruc', 'serie'],
-        raw: true // Para obtener resultados como objetos JSON simples
-    });
-
-    const correlativosMap = new Map();
-    for (const result of correlativosPorSerie) {
-        const key = `${result.empresa_ruc}-${result.serie}`;
-        correlativosMap.set(key, Number(result.ultimo_correlativo));
-    }
-
-    // Construir el array de resultados finales
-    for (const item of rucsAndSeries) {
-        const key = `${item.ruc}-${item.serie}`;
-        const ultimoCorrelativo = correlativosMap.get(key) || 0;
-        const siguienteCorrelativo = String(ultimoCorrelativo + 1).padStart(4, '0'); // Asegura un formato de 4 dígitos
-
-        resultados.push({
-            ruc: item.ruc,
-            serie: item.serie,
-            siguienteCorrelativo: siguienteCorrelativo
+        // Usar una sola consulta para optimizar el rendimiento
+        const correlativosPorSerie = await Factura.findAll({
+            attributes: [
+                'empresa_ruc',
+                'serie',
+                [fn('MAX', col('correlativo')), 'ultimo_correlativo']
+            ],
+            where: {
+                [Op.or]: rucsAndSeries.map(item => ({
+                    empresa_ruc: item.ruc,
+                    serie: item.serie
+                }))
+            },
+            group: ['empresa_ruc', 'serie'],
+            raw: true // Para obtener resultados como objetos JSON simples
         });
+
+        const correlativosMap = new Map();
+        for (const result of correlativosPorSerie) {
+            const key = `${result.empresa_ruc}-${result.serie}`;
+            correlativosMap.set(key, Number(result.ultimo_correlativo));
+        }
+
+        // Construir el array de resultados finales
+        for (const item of rucsAndSeries) {
+            const key = `${item.ruc}-${item.serie}`;
+            const ultimoCorrelativo = correlativosMap.get(key) || 0;
+            const siguienteCorrelativo = String(ultimoCorrelativo + 1).padStart(4, '0'); // Asegura un formato de 4 dígitos
+
+            resultados.push({
+                ruc: item.ruc,
+                serie: item.serie,
+                siguienteCorrelativo: siguienteCorrelativo
+            });
+        }
+
+        return resultados;
     }
 
-    return resultados;
-}
-    
 
 
     async cdrzip(id_factura) {
-    const cdr_zip = await SunatRespuesta.findOne({
-        attributes: ['cdr_zip'],
-        where: {
-            factura_id: id_factura
-        },
-    });
+        const cdr_zip = await SunatRespuesta.findOne({
+            attributes: ['cdr_zip'],
+            where: {
+                factura_id: id_factura
+            },
+        });
 
-    return cdr_zip;
-}
+        return cdr_zip;
+    }
 }
 
 module.exports = SequelizeFacturaRepository;
