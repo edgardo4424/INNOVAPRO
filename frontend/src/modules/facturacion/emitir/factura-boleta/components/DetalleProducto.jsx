@@ -33,7 +33,7 @@ const DetalleProducto = () => {
                 </div>
                 <div className='py-4 w-full'>
                     <div className='flex items-center gap-x-4 pb-4'>
-                        <h2 className='text-lg font-semibold'>Detalles Extra</h2>
+                        <h2 className='text-xl font-semibold'>Detalles Extra:</h2>
                         <ModalDetalleExtra open={open} setOpen={setOpen} />
                     </div>
                     {
