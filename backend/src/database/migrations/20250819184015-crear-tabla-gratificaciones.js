@@ -20,7 +20,7 @@ module.exports = {
         onUpdate: 'CASCADE'
       },
       tipo_contrato: {
-        type: Sequelize.ENUM('PLANILLA', 'HONORARIO'),
+        type: Sequelize.ENUM('PLANILLA', 'HONORARIOS'),
         allowNull: false,
         defaultValue: 'PLANILLA'
       },

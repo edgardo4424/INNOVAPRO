@@ -8,12 +8,13 @@ import {
 } from "@/components/ui/select";
 
 import { Check, Funnel } from "lucide-react";
+import { listaMeses } from "../utils/valorInicial";
 
 const Filtro = ({ filiales, filtro, setFiltro, Buscar }) => {
 
   
   return (
-    <div className=" pt-8 flex gap-x-5  bg-red-">
+    <div className=" flex gap-x-5">
       <div className="flex flex-col items-center justify-between w-full gap-x-5 border-2 border-gray-300 p-4 rounded-2xl">
         <div className="flex items-between justify-start gap-x-2 w-full py-2">
           <div className="flex">
@@ -40,18 +41,14 @@ const Filtro = ({ filiales, filtro, setFiltro, Buscar }) => {
                 <SelectValue placeholder="Selecciona el mes" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="01">Enero</SelectItem>
-                <SelectItem value="02">Febrero</SelectItem>
-                <SelectItem value="03">Marzo</SelectItem>
-                <SelectItem value="04">Abril</SelectItem>
-                <SelectItem value="05">Mayo</SelectItem>
-                <SelectItem value="06">Junio</SelectItem>
-                <SelectItem value="07">Julio</SelectItem>
-                <SelectItem value="08">Agosto</SelectItem>
-                <SelectItem value="09">Setiembre</SelectItem>
-                <SelectItem value="10">Octubre</SelectItem>
-                <SelectItem value="11">Noviembre</SelectItem>
-                <SelectItem value="12">Diciembre</SelectItem>
+                {
+                  listaMeses.map((mes) => (
+                    <SelectItem key={mes.value} value={mes.value}>
+                      {mes.label}
+                    </SelectItem>
+                  ))
+                }
+         
               </SelectContent>
             </Select>
           </div>

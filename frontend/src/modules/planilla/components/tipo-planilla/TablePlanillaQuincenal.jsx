@@ -69,6 +69,8 @@ const TablePlanillaQuincenal = ({ planillaQuincenalTipoPlanilla, total }) => {
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Total Descuentos</TableHead>
          
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Total a Pagar</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Banco</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">N° Cuenta</TableHead>
             </TableRow>
 
             {/* Sub-encabezados del grupo FALTAS */}

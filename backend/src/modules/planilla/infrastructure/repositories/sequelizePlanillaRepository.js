@@ -150,7 +150,6 @@ class SequelizePlanillaRepository {
 
     const listaPlanillaTipoPlanilla = [];
 
-    console.log("contratosPlanilla", contratosPlanilla);
 
     for (const contrato of contratosPlanilla) {
       const trabajador = contrato.trabajador;
@@ -275,6 +274,9 @@ class SequelizePlanillaRepository {
         quinta_categoria,
         total_descuentos: totalDescuentos,
         total_a_pagar: totalAPagar,
+
+        banco: contrato.banco,
+        numero_cuenta: contrato.numero_cuenta
       });
     }
 
@@ -299,16 +301,23 @@ class SequelizePlanillaRepository {
 
       const totalAPagar = sueldoQuincenal;
       listaPlanillaTipoHonorarios.push({
+         trabajador_id: trabajador.id,
         tipo_documento: trabajador.tipo_documento,
         numero_documento: trabajador.numero_documento,
         nombres: trabajador.nombres,
         apellidos: trabajador.apellidos,
         contrato_id: contrato.id,
+        tipo_contrato: contrato.tipo_contrato,
+        regimen: contrato.regimen,
         fecha_ingreso: contrato.fecha_inicio,
+        fecha_fin: contrato.fecha_fin,
         dias_laborados: diasLaborados,
         sueldo_base: sueldoBase,
         sueldo_quincenal: sueldoQuincenal,
         total_a_pagar: totalAPagar,
+
+        banco: contrato.banco,
+        numero_cuenta: contrato.numero_cuenta
       });
     }
 
@@ -606,7 +615,7 @@ class SequelizePlanillaRepository {
     }
 
     const planillaQuincenalCerradas = await PlanillaQuincenal.findAll({
-      where: { cierre_id: cierrePlanillaQuincenal.id },
+      where: { cierre_planilla_quincenal_id: cierrePlanillaQuincenal.id },
       include: [
         {
           model: db.trabajadores,
@@ -615,8 +624,6 @@ class SequelizePlanillaRepository {
       ],
       transaction,
     });
-
-    console.log("planillaQuincenalCerradas", planillaQuincenalCerradas);
     return planillaQuincenalCerradas;
   }
 
@@ -629,6 +636,44 @@ class SequelizePlanillaRepository {
       const planillaQuincenal = await PlanillaQuincenal.bulkCreate(data, options);
       return planillaQuincenal;
     }
+
+    async obtenerPlanillaQuincenalPorTrabajador(
+        fecha_anio_mes,
+        filial_id,
+        trabajador_id,
+        transaction = null
+      ) {
+        
+        const planillaQuincenalPorTrabajador = await PlanillaQuincenal.findAll({
+          where: { trabajador_id, periodo: fecha_anio_mes, filial_id },
+          transaction,
+        });
+    
+        return planillaQuincenalPorTrabajador;
+      }
+
+       async obtenerTotalPlanillaQuincenalPorTrabajador(
+          fecha_anio_mes,
+          filial_id,
+          trabajador_id,
+          transaction = null
+        ) {
+         
+          const planillaQuincenalPorTrabajador = await PlanillaQuincenal.findAll({
+            where: { trabajador_id, periodo: fecha_anio_mes, filial_id },
+            transaction,
+          });
+      
+          console.log('planillaQuincenalPorTrabajador', planillaQuincenalPorTrabajador);
+      
+          const total = planillaQuincenalPorTrabajador.reduce((total, gratificacion) => {
+            return total + Number(gratificacion.total_pagar);
+          }, 0);
+      
+          return {
+            total_pagar: total
+          };
+        }
 }
 
 module.exports = SequelizePlanillaRepository; // Exporta la clase para que pueda ser utilizada en otros módulos

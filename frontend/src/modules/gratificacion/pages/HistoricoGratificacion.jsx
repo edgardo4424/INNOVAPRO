@@ -5,7 +5,6 @@ import TableGratificacion from "../components/TableGratificacion";
 import gratificacionService from "../services/gratificacionService";
 import { viGratificacion } from "../utils/valorInicial";
 import { format } from "date-fns";
-import { ModalCerrarGratificacion } from "../components/ModalCerrarGratificacion";
 
 const HistoricoGratificacion = () => {
   const [filiales, setFiliales] = useState([]);
@@ -74,9 +73,6 @@ const HistoricoGratificacion = () => {
         <div className="w-full px-7 ">
           <TableGratificacion gratificacion={gratificacion} />
           
-          <div className="flex justify-end pb-6">
-            <ModalCerrarGratificacion filtro={filtro} gratificacion={gratificacion}/>
-          </div>
         </div>
       ) : (
         <div className="w-full px-20  max-w-8xl min-h-[50vh] flex items-center">

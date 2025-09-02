@@ -12,5 +12,9 @@ router.post("/planilla-quincenal-calcular", planillaController.calcularPlanillaQ
 router.post("/planilla-mensual-calcular", planillaController.calcularPlanillaMensualPorTrabajador);
 
 router.post("/planilla-quincenal-cierre", planillaController.cierrePlanillaQuincenal);
+router.post("/quincenal", planillaController.obtenerPlanillaQuincenalCerradas);
+router.post("/quincenal-por-trabajador", planillaController.obtenerPlanillaQuincenalPorTrabajador)
+router.post("/quincenal-total-por-trabajador", planillaController.obtenerTotalPlanillaQuincenalPorTrabajador)
+
 
 module.exports = router; 

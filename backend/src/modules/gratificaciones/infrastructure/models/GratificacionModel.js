@@ -18,7 +18,7 @@ const Gratificacion = sequelize.define(
       },
     },
     tipo_contrato: {
-      type: DataTypes.ENUM('PLANILLA', 'HONORARIO'),
+      type: DataTypes.ENUM('PLANILLA', 'HONORARIOS'),
       allowNull: false,
       defaultValue: 'PLANILLA'
     },

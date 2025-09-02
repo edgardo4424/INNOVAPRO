@@ -19,7 +19,6 @@ module.exports = async (
         filial_id
       );
 
-    console.log("planillaQuincenalCerrada", planillaQuincenalCerrada);
 
     if (planillaQuincenalCerrada && planillaQuincenalCerrada?.locked_at) {
       return {
@@ -35,10 +34,11 @@ module.exports = async (
         filial_id
       );
 
-      console.log('planillaQuincenal', planillaQuincenal);
+      const trabajadoresTipoPlanilla = planillaQuincenal.planilla.trabajadores;
+      const trabajadoresTipoHonorarios = planillaQuincenal.honorarios.trabajadores;
 
       // Verificar si hay planillaQuincenal para registrar
-    if (planillaQuincenal.planilla.trabajadores.length === 0) {
+    if ((trabajadoresTipoPlanilla.length === 0)&& (trabajadoresTipoHonorarios.length === 0)) {
       return {
         codigo: 400,
         respuesta: { mensaje: "No hay planilla quincenal para calcular" },
@@ -95,16 +95,18 @@ module.exports = async (
       }
     );
 
+    const trabajadoresPlanillaTipoPlanillaYHonorarios = [...trabajadoresTipoPlanilla, ...trabajadoresTipoHonorarios]
+
     // Mapear y registrar planilla quincenal
     const dataPlanillaQuincenal = mapearParaRegistrarTablaPlanillaQuincenal(
-      planillaQuincenal.planilla.trabajadores,
+      trabajadoresPlanillaTipoPlanillaYHonorarios,
       fecha_anio_mes,
       filial_id,
       usuario_cierre_id,
       cierre_planilla_quincenal_id
     );
 
-    console.log('dataPlanillaQuincenal',dataPlanillaQuincenal);
+    console.log('dataPlanillaQuincenal', dataPlanillaQuincenal);
 
     const dataPlanillaQuincenalSinCerrar = dataPlanillaQuincenal.filter((planillaQuincenal) => {
       return !trabajadoresConPlanillaQuincenalCerradas.some((planillaQuincenalCerrada) => {

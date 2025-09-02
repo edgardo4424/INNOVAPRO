@@ -9,7 +9,8 @@ const RowRHQuincenal = ({ key, e, index }) => {
       <TableCell className="text-right">{e.dias_laborados}</TableCell>
       <TableCell className="text-right">{e.sueldo_base}</TableCell>
       <TableCell className="text-right">{e.sueldo_quincenal}</TableCell>
-      <TableCell className="text-right">{e.banco}</TableCell>
+        <TableCell className="text-right">{e.banco}</TableCell>
+      <TableCell className="text-right">{e.numero_cuenta}</TableCell>
     </TableRow>
   );
 };

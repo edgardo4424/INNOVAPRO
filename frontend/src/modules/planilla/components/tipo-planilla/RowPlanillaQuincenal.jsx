@@ -31,6 +31,9 @@ const RowPlanillaQuincenal = ({ key, e, index }) => {
 
       <TableCell className="text-right">{e.total_descuentos}</TableCell>
       <TableCell className="text-right">{e.total_a_pagar}</TableCell>
+      <TableCell className="text-right">{e.banco}</TableCell>
+      <TableCell className="text-right">{e.numero_cuenta}</TableCell>
+
 
 
 {/*       <TableCell className={"flex gap-x-4 items-center"}>

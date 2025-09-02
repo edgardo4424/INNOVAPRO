@@ -24,7 +24,7 @@ import {
 import ProtectedRoute from "./ProtectedRoute";
 import RoleGuard from "./rol.guard";
 
-import PlanillaQuincenal from "@/modules/planilla/pages/PlanillaQuincenal";
+import PlanillaQuincenal from "@/modules/planilla/pages/CalculoPlanillaQuincenal";
 import PlanillaMensual from "@/modules/planilla/pages/PlanillaMensual";
 
 // Lazy load components
@@ -107,6 +107,9 @@ const GestionGratificacion = lazy(() =>
    import("../modules/gratificacion/pages/GestionGratificacion")
 );
 
+const GestionPlanillaQuincenal = lazy(() =>
+   import("../modules/planilla/pages/GestionPlanillaQuincenal")
+);
 
 //* Facturacion
 const CalculoQuintaCategoria = lazy(() =>
@@ -115,6 +118,7 @@ const CalculoQuintaCategoria = lazy(() =>
 const GestionDataMantenimiento = lazy(() =>
    import("../modules/dataMantenimiento/pages/GestionDataMantenimiento")
 );
+
 
 
 export default function AppRoutes() {
@@ -337,7 +341,7 @@ export default function AppRoutes() {
                         <Route element={<RoleGuard roles={["Gerencia"]} />}>
                            <Route
                               path="planilla-quincenal"
-                              element={<PlanillaQuincenal />}
+                              element={<GestionPlanillaQuincenal />}
                            />
                            <Route
                               path="planilla-mensual"

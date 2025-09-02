@@ -6,8 +6,10 @@ import TableRHQuincenal from "../components/tipo-rh/TableRHQuincenal";
 
 import planillaQuincenalService from "../services/planillaQuincenalService";
 import { viPlanillaQuincenal } from "../utils/valorInicial";
+import { pl } from "date-fns/locale";
+import { ModalCerrarPlanillaQuincenal } from "../components/ModalCerrarPlanillaQuincenal";
 
-const PlanillaQuincenal = () => {
+const CalculoPlanillaQuincenal = () => {
   const [filiales, setFiliales] = useState([]);
 
   // ?? loading
@@ -23,13 +25,11 @@ const PlanillaQuincenal = () => {
     viPlanillaQuincenal.honorarios
   );
 
-  const [datosCalculo, setDatosCalculo] = useState({})
-
   // ?? Filtro para la peticion
   const [filtro, setFiltro] = useState({
     anio: new Date().getFullYear() + "",
-    mes: "01",
-    filial_id: "1",
+    mes: new Date().toLocaleString("es-PE", { month: "2-digit" }),
+    filial_id: "",
   });
 
   const buscarPlanillaQuincenal = async () => {
@@ -47,7 +47,6 @@ const PlanillaQuincenal = () => {
       console.log('res', res);
       setPlanillaQuincenalTipoPlanilla(res.planilla.trabajadores);
       setPlanillaQuincenalTipoRh(res.honorarios.trabajadores);
-      setDatosCalculo(res.datosCalculo)
     } catch (error) {
     } finally {
       setLoading(false);
@@ -70,11 +69,12 @@ const PlanillaQuincenal = () => {
 
   const renderTipoPlanilla = () => {
 
+    console.log('planillaQuincenalTipoPlanilla', planillaQuincenalTipoPlanilla);
     if (planillaQuincenalTipoPlanilla) {
       return (
-        <div className="w-full px-7">
+     
           <TablePlanillaQuincenal planillaQuincenalTipoPlanilla={planillaQuincenalTipoPlanilla} />
-        </div>
+      
       );
     }
   }
@@ -82,9 +82,9 @@ const PlanillaQuincenal = () => {
   const renderTipoRh = () => {
     if (planillaQuincenalTipoRh) {
       return (
-        <div className="w-full px-7">
+        
           <TableRHQuincenal planillaQuincenalTipoRh={planillaQuincenalTipoRh} />
-        </div>
+     
       );
     }
   }
@@ -93,9 +93,7 @@ const PlanillaQuincenal = () => {
     <div className="min-h-full flex-1  flex flex-col items-center">
       <div className="w-full px-4 max-w-7xl py-6 flex justify-between">
         <div className="flex flex-col w-full">
-          <h2 className=" text-2xl md:text-3xl font-bold text-gray-800 !text-start">
-            Planilla Quincenal
-          </h2>
+          
           <Filtro
             filiales={filiales}
             filtro={filtro}
@@ -112,13 +110,20 @@ const PlanillaQuincenal = () => {
           </div>
         </div>
       ) : (
-          <>
+          <div className="w-full px-7 ">
           {/* <pre className="whitespace-pre-wrap break-words bg-gray-100 p-4 rounded-lg text-xs">
             {JSON.stringify(datosCalculo, null, 2)}
           </pre> */}
           {renderTipoPlanilla()}
             {renderTipoRh()}
-          </>
+            {
+              (planillaQuincenalTipoPlanilla.length > 0 || planillaQuincenalTipoRh.length > 0) && (
+                <div className="flex justify-end pb-6">
+                            <ModalCerrarPlanillaQuincenal filtro={filtro} planillaQuincenalTipoPlanilla={planillaQuincenalTipoPlanilla} planillaQuincenalTipoRh={planillaQuincenalTipoRh}/>
+                          </div>
+              )
+            }
+          </div>
       )}
 
       
@@ -126,4 +131,4 @@ const PlanillaQuincenal = () => {
   );
 };
 
-export default PlanillaQuincenal;
+export default CalculoPlanillaQuincenal;
