@@ -12,9 +12,11 @@ import { ValorInicialFactura } from "./utils/valoresInicial";
 import DatosDeRetencion from "./components/campos/DatosDeRetencion";
 import { toast } from "sonner";
 import RelacionDocs from "./components/campos/RelacionDocs";
+import { useEffect } from "react";
+import factilizaService from "../../service/FactilizaService";
 
 const FacturaBoletaForm = () => {
-    const { factura, setFactura, idBorrador, Limpiar } = useFacturaBoleta();
+    const { factura, setFactura, idBorrador, Limpiar, setPrecioDolarActual } = useFacturaBoleta();
     const navigate = useNavigate();
 
     const [searchParams] = useSearchParams();
@@ -76,6 +78,19 @@ const FacturaBoletaForm = () => {
         Limpiar();
         // navigate("/facturacion/bandeja/factura-boleta?page=1&limit=10");
     };
+
+    useEffect(() => {
+        const cambioDelDia = async () => {
+            const hoy = new Date();
+            const hoyISO = new Date().toISOString().slice(0, 10);
+            const { status, success, data } = await factilizaService.obtenerTipoCambio(hoyISO);
+            if (success && status === 200) {
+                setPrecioDolarActual(data.compra);
+            }
+        }
+        cambioDelDia();
+    }, []);
+    
     return (
         <div
             className=" shadow-xl border bg-white border-gray-400  rounded-3xl  p-4  transition-all duration-300 mb-6"

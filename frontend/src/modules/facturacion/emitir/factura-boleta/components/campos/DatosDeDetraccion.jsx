@@ -37,10 +37,10 @@ const DatosDeDetraccion = () => {
     // En handleSelectPorcentaje:
 
     const handleSelectPorcentaje = (value) => {
-        setFactura((prev) => ({
-            ...prev,
-            forma_pago: [],
-        }));
+        // setFactura((prev) => ({
+        //     ...prev,
+        //     forma_pago: [],
+        // }));
 
         const rawDetraccionMount = Number(((sub_Total * Number(value)) / 100).toFixed(2));
         console.log(sub_Total);

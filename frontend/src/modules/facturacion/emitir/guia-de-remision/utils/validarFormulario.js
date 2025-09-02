@@ -2,7 +2,7 @@ const camposRequeridosGlobal = [
     { key: "tipo_Doc", name: "Tipo de Documento" },
     { key: "serie", name: "Serie" },
     { key: "correlativo", name: "Correlativo" },
-    { key: "observacion", name: "Observaciones" },
+    { key: "observacion", name: "Observacion" },
     { key: "fecha_Emision", name: "Fecha de Emision" },
     { key: "empresa_Ruc", name: "RUC Empresa" },
     { key: "cliente_Tipo_Doc", name: "Tipo de Documento del Cliente" },

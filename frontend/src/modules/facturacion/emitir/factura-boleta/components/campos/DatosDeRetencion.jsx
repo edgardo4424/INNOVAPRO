@@ -22,32 +22,47 @@ const DatosDeRetencion = () => {
     retencionActivado,
     setRetencionActivado,
     retencion,
-    setRetencion
+    setRetencion,
+    precioDolarActual
   } = useFacturaBoleta();
 
   let importeNeto = 0;
 
   const handleSelectChange = (value) => {
-    let montoPorcentaje = factura.monto_Imp_Venta * value;
-    let montoBase = factura.monto_Imp_Venta;
+    if (factura.tipo_Moneda == "PEN") {
+      let montoPorcentaje = factura.monto_Imp_Venta * value;
+      let montoBase = factura.monto_Imp_Venta;
 
-    setRetencion({
-      ...retencion,
-      descuento_factor: value,
-      descuento_monto_base: Number(montoBase.toFixed(2)),
-      descuento_monto: Number(montoPorcentaje.toFixed(2)),
-    });
+      setRetencion({
+        ...retencion,
+        descuento_factor: value,
+        descuento_monto_base: Number(montoBase.toFixed(2)),
+        descuento_monto: Number(montoPorcentaje.toFixed(2)),
+      });
 
-    importeNeto = (montoBase - montoPorcentaje).toFixed(2);
+      importeNeto = (montoBase - montoPorcentaje).toFixed(2);
+    } else {
+      let montoPorcentaje = (factura.monto_Imp_Venta * precioDolarActual) * value;
+      let montoBase = factura.monto_Imp_Venta * precioDolarActual;
+
+      setRetencion({
+        ...retencion,
+        descuento_factor: value,
+        descuento_monto_base: Number(montoBase).toFixed(2),
+        descuento_monto: Number(montoPorcentaje).toFixed(2),
+      });
+
+      importeNeto = Number(montoBase - montoPorcentaje)
+    }
   };
 
   useEffect(() => {
     if (retencionActivado) {
       handleSelectChange(retencion.descuento_factor);
     }
-  }, [factura.monto_Imp_Venta]);
+  }, [factura.monto_Imp_Venta,factura.tipo_Moneda]);
 
-  if(factura.monto_Imp_Venta < 699) return null
+  if (factura.monto_Imp_Venta < 699) return null
 
   if (factura.tipo_Doc == "03") return null
 
@@ -152,7 +167,7 @@ const DatosDeRetencion = () => {
             <Input
               type="number"
               id="descuento_monto"
-              value={(factura.monto_Imp_Venta - retencion.descuento_monto).toFixed(2)}
+              value={(retencion.descuento_monto_base - retencion.descuento_monto).toFixed(2)}
               disabled
             // onChange={(e) => setRetencion({ ...retencion, descuento_monto: Number(e.target.value) })}
             />

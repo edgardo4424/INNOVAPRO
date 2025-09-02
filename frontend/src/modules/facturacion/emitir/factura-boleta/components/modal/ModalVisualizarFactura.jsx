@@ -165,8 +165,8 @@ export default function ModalVisualizarFactura() {
                                                     <span className="font-medium">{factura.tipo_Moneda ?? "—"}</span>
                                                     <span className="text-gray-700 font-semibold">Total:</span>
                                                     <span className="font-medium">{factura.monto_Imp_Venta ?? "—"}</span>
-                                                    {/* <span className="text-gray-700 font-semibold">Tipo de pago:</span> */}
-                                                    {/* <span className="font-medium">{factura.tipo_pago ?? "—"}</span> */}
+                                                    <span className="text-gray-700 font-semibold">Tipo de pago:</span>
+                                                    <span className="font-medium uppercase">{factura.forma_pago.length > 0 ? factura.forma_pago[0].tipo : "—"}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -237,9 +237,9 @@ export default function ModalVisualizarFactura() {
                                     <div className="rounded-xl border border-gray-200 bg-white p-2">
                                         {/* // Observations Section */}
                                         <div className="">
-                                            <h3 className="font-bold text-md mb-2 text-gray-600">OBSERVACIONES:</h3>
+                                            <h3 className="font-bold text-md mb-2 text-gray-600">OBSERVACION:</h3>
                                             <div className="p-2 rounded-md bg-white text-sm text-gray-800">
-                                                {factura.observaciones || 'No hay observaciones registradas.'}
+                                                {factura.observacion || 'No hay observacion registradas.'}
                                             </div>
                                         </div>
                                         {
@@ -328,11 +328,11 @@ export default function ModalVisualizarFactura() {
                                                 </div>
                                                 <div className="flex justify-between pr-3">
                                                     <p className="px-2 rounded-md bg-white text-sm text-gray-800 font-semibold">Base</p>
-                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800">{factura.tipo_Moneda} {retencion.descuento_monto_base}</p>
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800">PEN {retencion.descuento_monto_base}</p>
                                                 </div>
                                                 <div className="flex justify-between pr-3">
                                                     <p className="px-2 rounded-md bg-white text-sm text-gray-800 font-semibold">Retencion</p>
-                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800">{factura.tipo_Moneda} {retencion.descuento_monto}</p>
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800">PEN {retencion.descuento_monto}</p>
                                                 </div>
                                             </div>
                                         </div>

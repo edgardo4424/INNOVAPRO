@@ -41,12 +41,12 @@ export default function ModalVisualizarDocumento({
         try {
             return new Intl.NumberFormat("es-PE", {
                 style: "currency",
-                currency: code || "PEN",
+                // currency: code || "PEN",
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
             }).format(n);
         } catch {
-            return `${code} ${n.toFixed(2)}`;
+            return `${n.toFixed(2)}`;
         }
     };
 
@@ -329,12 +329,12 @@ export default function ModalVisualizarDocumento({
                                 </div>
                             </div>
 
-                            {/* Observaciones */}
+                            {/* Observacion */}
                             {
-                                factura.observaciones && (
+                                factura.observacion && (
                                     <div className="mt-4 pt-2 border border-gray-200 rounded-md p-4">
                                         <h3 className="font-bold text-md mb-2 text-gray-600">Obesvaciones:</h3>
-                                        <p className="text-sm text-gray-800">{factura.observaciones}</p>
+                                        <p className="text-sm text-gray-800">{factura.observacion}</p>
                                     </div>
                                 )
                             }
@@ -355,6 +355,34 @@ export default function ModalVisualizarDocumento({
                                     </div>
                                 )
 
+                            }
+
+
+                            {/* Retencion */}
+                            {
+                                factura.descuento_monto_base && factura.descuento_factor && factura.descuento_monto && (
+                                    <div className="mt-4 pt-2 border border-gray-200 rounded-md p-4">
+                                        <h3 className="font-bold text-md mb-2 text-gray-600 flex items-center gap-x-4">RETENCION:
+                                        </h3>
+                                        <div className="grid grid-cols-3 gap-x-10 gap-y-2">
+                                            <div className="flex justify-between">
+                                                <p className="text-sm text-gray-800 font-semibold">Base del descuento</p>
+                                                <p className="text-sm text-gray-800">{factura.descuento_monto_base}</p>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <p className="text-sm text-gray-800 font-semibold">Factor del descuento</p>
+                                                <p className="text-sm text-gray-800">{factura.descuento_factor}</p>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <p className="text-sm text-gray-800 font-semibold">Monto del descuento</p>
+                                                <p className="text-sm text-gray-800">{factura.descuento_monto}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-center">
+                                            {factura.tipo_Moneda == "USD" && <p className="text-sm text-gray-400 py-2">*la retencion siempre se aplica en soles, a pesar que la factura esta en dolares*</p>}
+                                        </div>
+                                    </div>
+                                )
                             }
 
                             {/* Detraccion */}
@@ -398,9 +426,6 @@ export default function ModalVisualizarDocumento({
                                         (it, idx) => {
                                             const { id, factura_id, tipo, monto, cuota, fecha_Pago } = it;
 
-                                            const montoFinal = factura.tipo_Operacion == "1001"
-                                                ? monto - factura.detraccion_mount
-                                                : monto;
 
                                             return (
                                                 <div
@@ -409,7 +434,7 @@ export default function ModalVisualizarDocumento({
                                                 >
                                                     <div className="col-span-1 text-center">{cuota}</div>
                                                     <div className="col-span-1 text-center">{tipo}</div>
-                                                    <div className="col-span-1 text-center">{currency(montoFinal, factura.tipo_Moneda)}</div>
+                                                    <div className="col-span-1 text-center">{currency(monto, factura.tipo_Moneda)}</div>
                                                     <div className="col-span-1 text-center">{formatDateTime(fecha_Pago)}</div>
                                                 </div>
                                             );

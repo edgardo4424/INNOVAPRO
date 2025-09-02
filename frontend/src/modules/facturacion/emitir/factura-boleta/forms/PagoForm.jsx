@@ -15,7 +15,7 @@ import { Calendar22 } from "../components/Calendar22";
 import { PagoValidarEstados, valorIncialPago } from '../utils/valoresInicial';
 import { Calculator } from 'lucide-react';
 const PagoForm = ({ closeModal }) => {
-    const { factura, setFactura, agregarPago, pagoActual, pagoValida, setPagoActual, validarCampos, setPagoValida } = useFacturaBoleta();
+    const { factura, setFactura, pagoActual, pagoValida, setPagoActual, validarCampos, setPagoValida } = useFacturaBoleta();
 
     const { forma_pago: ListaDePago } = factura;
 
@@ -24,7 +24,10 @@ const PagoForm = ({ closeModal }) => {
         0
     );
 
+    let montoRestante = (factura.monto_Imp_Venta - montoTotalPagos).toFixed(2);
+
     const [activeButton, setActiveButton] = useState(false);
+    const [montoActivo, setMontoActivo] = useState(false);
 
     // ?? Datos para calculadora
     const [showCalculadora, setShowCalculadora] = useState(false);
@@ -33,8 +36,6 @@ const PagoForm = ({ closeModal }) => {
 
     const montoTotalFactura = parseFloat(factura.monto_Imp_Venta || 0);
     const pagosCompletos = montoTotalPagos >= montoTotalFactura;
-
-    const [disabledCuotas, setDisabledCuotas] = useState(true);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -107,8 +108,6 @@ const PagoForm = ({ closeModal }) => {
     };
 
 
-
-
     const handleSelectChange = (value, name) => {
         setPagoActual((prevValores) => ({
             ...prevValores,
@@ -118,24 +117,35 @@ const PagoForm = ({ closeModal }) => {
 
 
 
+
     const handleAgregar = async () => {
         const validar = await validarCampos("pago");
         if (validar === false) {
             return;
         }
-
-        agregarPago();
+        if (pagoActual.monto > montoRestante) {
+            toast.error("El monto de la cuota no puede ser mayor al monto restante", { position: "top-right" });
+            return
+        }
+        setFactura((prevFactura) => ({
+            ...prevFactura,
+            forma_pago: [
+                ...prevFactura.forma_pago,
+                {
+                    ...pagoActual,
+                }
+            ],
+        }));
+        if (pagoActual.tipo === "CREDITO") {
+            setPagoActual({
+                ...valorIncialPago,
+                tipo: "CREDITO",
+            });
+        } else {
+            setPagoActual(valorIncialPago);
+        }
         closeModal();
     };
-
-    const handleElimnar = async () => {
-        setPagoActual(valorIncialPago);
-        setFactura((prev) => ({
-            ...prev,
-            forma_pago: [],
-        }))
-        closeModal();
-    }
 
 
     useEffect(() => {
@@ -143,18 +153,20 @@ const PagoForm = ({ closeModal }) => {
         setPagoValida(PagoValidarEstados)
     }, [])
 
+
     useEffect(() => {
-        if (pagoActual.tipo === "Credito") {
-            setDisabledCuotas(false)
+        if (pagoActual.tipo === "CREDITO") {
+            setMontoActivo(false);
             setPagoActual(prev => ({
                 ...prev,
-                cuota: pagoActual.cuota ? pagoActual.cuota : 1,
+                cuota: factura.forma_pago.length + 1,
             }))
         } else {
-            setDisabledCuotas(true)
+            setMontoActivo(true);
             setPagoActual(prev => ({
                 ...prev,
-                cuota: 0
+                cuota: 0,
+                monto: factura.monto_Imp_Venta
             }))
         }
     }, [pagoActual.tipo]);
@@ -179,8 +191,10 @@ const PagoForm = ({ closeModal }) => {
                             <SelectValue placeholder="Selecciona un tipo" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="Contado">CONTADO </SelectItem>
-                            <SelectItem value="Credito">CREDITO</SelectItem>
+                            {!factura.forma_pago.some(item => item.tipo === "CREDITO") && (
+                                <SelectItem value="CONTADO">CONTADO</SelectItem>
+                            )}
+                            <SelectItem value="CREDITO">CREDITO</SelectItem>
                         </SelectContent>
                     </Select>
                     {
@@ -202,9 +216,10 @@ const PagoForm = ({ closeModal }) => {
                         className={"border-1 border-gray-400"}
                         onwheel={(e) => e.target.blur()}
                         value={pagoActual.monto}
-                        // onChange={handleInputChange}
-                        disabled
+                        onChange={handleInputChange}
+                        disabled={montoActivo}
                     />
+                    <p className="text-sm pl-4 text-gray-600">Monto Restante: {factura.tipo_Moneda} {montoRestante}</p>
                     {
                         pagoValida.monto && (
                             <span className="text-red-500 text-sm">
@@ -224,7 +239,7 @@ const PagoForm = ({ closeModal }) => {
                         className={"border-1 border-gray-400"}
                         value={pagoActual.cuota}
                         onChange={handleInputChange}
-                        disabled={disabledCuotas}
+                        disabled
                     />
                     {
                         pagoValida.cuota && (
@@ -278,14 +293,9 @@ const PagoForm = ({ closeModal }) => {
             </form>
             {/* 🔘 Botones de acción */}
             <div className="flex justify-end gap-3 border-t pt-4">
-
-                <Button
-                    variant="outline"
-                    onClick={handleElimnar}
-                    className={`text-white hover:text-white hover:bg-red-500 cursor-pointer border-2 bg-red-400 border-red-400 ${factura.forma_pago.length === 0 && "hidden"}`}>
-                    Eliminar
-                </Button>
-                <Button variant="outline" onClick={closeModal} className={"hover:bg-red-50 hover:text-red-600 border-2 border-gray-400 cursor-pointer"}>
+                <Button variant="outline"
+                    onClick={closeModal}
+                    className={"hover:bg-red-50 hover:text-red-600 border-2 border-gray-400 cursor-pointer"}>
                     Cancelar
                 </Button>
                 <Button

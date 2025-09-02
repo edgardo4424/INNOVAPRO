@@ -11,7 +11,7 @@ const ValorInicialFactura = {
     empresa_Ruc: "10749283781",//?? nuevo ruc de prueba
 
     // ?Datos del cliente
-    cliente_Tipo_Doc: "",
+    cliente_Tipo_Doc: "6",
     cliente_Num_Doc: "",
     cliente_Razon_Social: "",
     cliente_Direccion: "",
@@ -33,9 +33,9 @@ const ValorInicialFactura = {
     relDocs: [],
 
     // ?Parametros para innova Pro
-    observaciones: "", //? nuevo campo solo para bd
+    observacion: "", //? nuevo campo solo para bd
     // usuario_id: 1, //* cambiar a el usuario logeado
-
+    
     // ?Lista de Productos
     detalle: [],
 

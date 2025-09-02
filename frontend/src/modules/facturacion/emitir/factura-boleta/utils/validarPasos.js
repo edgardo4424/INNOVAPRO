@@ -3,7 +3,7 @@ function isNullOrEmpty(value) {
     return value === undefined || value === null || (typeof value === 'string' && value.trim() === '');
 }
 
-export async function validarFacturaCompleta(Factura, detraccionActivado, Detraccion, retencionActivado, Retencion) {
+export async function validarFacturaCompleta(Factura, Detraccion, retencionActivado, Retencion) {
     if (!Factura) {
         return {
             errores: null,
@@ -109,6 +109,7 @@ export async function validarFacturaCompleta(Factura, detraccionActivado, Detrac
     }
 
     if (Factura.tipo_Operacion === "1001") {
+        console.log(Detraccion)
         camposDetraccion.forEach(campo => {
             if (isNullOrEmpty(Detraccion[campo.key])) {
                 errores[campo.key] = `El campo de'${campo.name}' en Detracción es requerido.`;
@@ -131,8 +132,20 @@ export async function validarFacturaCompleta(Factura, detraccionActivado, Detrac
         );
 
         if (montoTotalPagos < Factura.monto_Imp_Venta) {
-            console.log(montoTotalPagos, Factura.monto_Imp_Venta)
             errores.forma_pago_monto = "La suma de los pagos no cubre el monto total de la factura.";
+            validos = false;
+        }
+
+        const fechaEmision = new Date(Factura.fecha_Emision);
+        const pagosACredito = Factura.forma_pago.filter(pago => pago.tipo === "CREDITO");
+
+        const pagosConFechaAnterior = pagosACredito.filter(pago => {
+            const fechaPago = new Date(pago.fecha_Pago);
+            return fechaPago <= fechaEmision;
+        });
+
+        if (pagosConFechaAnterior.length > 0) {
+            errores.forma_pago_fecha = "Los pagos a crédito no pueden ser iguales o anteriores a la fecha de emisión.";
             validos = false;
         }
     }

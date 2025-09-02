@@ -13,17 +13,14 @@ const TablaPagos = ({ open, setOpen }) => {
     const { factura, setFactura, setPagoActual } = useFacturaBoleta();
     const { forma_pago: ListaDePago } = factura;
 
-    const seleccionarPago = async (pago) => {
-        setPagoActual(pago);
+    const seleccionarPago = async (pago, index) => {
+        setPagoActual({ ...pago, index: index });
         setOpen(true);
     }
 
     return (
         <div className="w-full overflow-x-auto mt-6">
             <Table className={"border-2 border-gray-200"}>
-                <TableCaption className="text-gray-600 italic mt-2">
-                    Lista de Pagos agregados
-                </TableCaption>
 
                 <TableHeader className="bg-gray-100 border-b-2 border-gray-400">
                     <TableRow>
@@ -47,7 +44,7 @@ const TablaPagos = ({ open, setOpen }) => {
                     <TableBody className={"bg-gray-200"}>
                         {ListaDePago.map((item, index) => (
                             <TableRow key={index}
-                                onClick={() => seleccionarPago(item)}
+                                // onClick={() => seleccionarPago(item, index)}
                             >
                                 <TableCell>{item.cuota}</TableCell>
                                 <TableCell>{item.tipo}</TableCell>

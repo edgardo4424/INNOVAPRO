@@ -1,4 +1,4 @@
-export async function validarModal(tipo, item) {
+export async function validarModal(tipo, item, factura) {
     if (tipo == "producto") {
         const camposRequeridos = [
             { key: "unidad" },
@@ -56,6 +56,7 @@ export async function validarModal(tipo, item) {
         ];
 
         const errores = {};
+        let message;
 
         for (const campo of camposRequeridos) {
             const valor = item[campo.key];
@@ -69,13 +70,18 @@ export async function validarModal(tipo, item) {
         }
 
         console.log(item);
-        if (item.tipo == "Contado") {
+        if (item.tipo == "CONTADO") {
             if (item.cuota != 0) {
                 errores.cuota = true;
             }
-        } else if (item.tipo == "Credito") {
+        } else if (item.tipo == "CREDITO") {
             if (item.cuota < 1 || item.cuota == "" || item.cuota == '') {
                 errores.cuota = true;
+            }
+
+            if (new Date(item.fecha_Pago) <= new Date(factura.fecha_Emision)) {
+                errores.fecha_Pago = true;
+                message = "La fecha de pago debe ser posterior a la fecha de emisión de la factura";
             }
         }
 
@@ -85,7 +91,7 @@ export async function validarModal(tipo, item) {
             return {
                 errores,
                 validos: false,
-                message: "⚠️ Verifica los datos del Pago"
+                message: message ? message : "⚠️ Verifica los datos del Pago"
             };
         }
 

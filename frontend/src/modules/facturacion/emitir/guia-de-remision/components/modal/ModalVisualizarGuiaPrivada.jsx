@@ -323,11 +323,11 @@ export default function ModalVisualizarGuiaPrivada() {
                                     </div>
                                 </div>
 
-                                {/* Sección de Observaciones */}
+                                {/* Sección de Observacion */}
                                 <div className="">
-                                    <h3 className="font-bold text-md mb-2 text-gray-600 border-b pb-1">OBSERVACIONES:</h3>
+                                    <h3 className="font-bold text-md mb-2 text-gray-600 border-b pb-1">OBSERVACION:</h3>
                                     <div className="p-4 border border-gray-200 rounded-md bg-white text-sm text-gray-800">
-                                        {guiaTransporte.observacion || 'No hay observaciones registradas.'}
+                                        {guiaTransporte.observacion || 'No hay observacion registradas.'}
                                     </div>
                                 </div>
 

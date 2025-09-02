@@ -44,6 +44,7 @@ const factilizaService = {
         return res.data;
     },
 
+    
     // ?? ============ CONSULTAS DOCUMENTOS ============
     consultarDocumentoJson: async (documento) => {
         const res = await apiFactilizaConsultasDocumentos.post(
@@ -84,6 +85,8 @@ const factilizaService = {
     },
 
 
+    // ?? TIPO DE CAMBIO
+    obtenerTipoCambio: (fecha) => getRequest(apiFactilizaConsultas, `/tipocambio/info/dia?fecha=${fecha}`),
 
     // !!! CONSULTAS
     obtenerPersonaPorDni: (dni) => getRequest(apiFactilizaConsultas, `/dni/info/${dni}`),

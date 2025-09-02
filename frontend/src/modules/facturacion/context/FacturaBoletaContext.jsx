@@ -24,6 +24,7 @@ export function FacturaBoletaProvider({ children }) {
     // todo: DETRACCION
     const [detraccionActivado, setDetraccionActivado] = useState(false);
     const [detraccion, setDetraccion] = useState(valorIncialDetracion); // * DETRACCION
+    const [precioDolarActual, setPrecioDolarActual] = useState(0);
 
     // todo: RETENCION
     const [retencionActivado, setRetencionActivado] = useState(false);
@@ -51,7 +52,7 @@ export function FacturaBoletaProvider({ children }) {
 
     const validarFactura = async () => {
         try {
-            const { errores, validos, message } = await validarFacturaCompleta(factura, detraccionActivado, detraccion, retencionActivado, retencion);
+            const { errores, validos, message } = await validarFacturaCompleta(factura, detraccion, retencionActivado, retencion);
             if (!validos) {
                 // *Encuentra el primer error y lo muestra en un toast
                 const primerError = Object.values(errores)[0];
@@ -88,7 +89,7 @@ export function FacturaBoletaProvider({ children }) {
                     }));
                 }
             } else if (tipo === "pago") {
-                ({ errores, validos, message } = await validarModal(tipo, pagoActual));
+                ({ errores, validos, message } = await validarModal(tipo, pagoActual, factura));
                 if (errores) {
                     setPagoValida((prev) => ({
                         ...prev,
@@ -181,7 +182,7 @@ export function FacturaBoletaProvider({ children }) {
     useEffect(() => {
         if (!factura.monto_Imp_Venta || factura.monto_Imp_Venta <= 0) return;
 
-        const nuevaLegenda = numeroALeyenda(factura.monto_Imp_Venta);
+        const nuevaLegenda = numeroALeyenda(factura.monto_Imp_Venta, factura.tipo_Moneda);
 
         setFactura((prev) => ({
             ...prev,
@@ -268,17 +269,7 @@ export function FacturaBoletaProvider({ children }) {
         }));
     };
 
-    const agregarPago = () => {
-        setFactura((prevFactura) => ({
-            ...prevFactura,
-            forma_pago: [
-                {
-                    ...pagoActual,
-                }
-            ],
-        }));
-        setPagoActual(valorIncialPago);
-    };
+
 
     const agregarProducto = () => {
         const { edicion, index } = edicionProducto;
@@ -332,10 +323,16 @@ export function FacturaBoletaProvider({ children }) {
         try {
             let facturaAEmitir;
 
-            if (retencionActivado && factura.tipo_Doc !== "03" && factura.monto_Imp_Venta < 699) {
-                facturaAEmitir = Object.assign({}, factura, retencion);
+            if (retencionActivado && factura.tipo_Doc !== "03" && factura.monto_Imp_Venta > 699) {
+                facturaAEmitir = {
+                    ...factura,
+                    ...retencion,
+                };
             } else if (factura.tipo_Operacion === "1001" && factura.tipo_Doc !== "03") {
-                facturaAEmitir = Object.assign({}, factura, detraccion);
+                facturaAEmitir = {
+                    ...factura,
+                    ...detraccion
+                };
             } else {
                 facturaAEmitir = factura;
             }
@@ -465,6 +462,8 @@ export function FacturaBoletaProvider({ children }) {
                 setRetencion,
                 retencionActivado,
                 setRetencionActivado,
+                precioDolarActual,
+                setPrecioDolarActual,
                 validarFactura,
                 validarCampos,
                 facturaValida,
@@ -483,7 +482,6 @@ export function FacturaBoletaProvider({ children }) {
                 pagoActual,
                 pagoValida,
                 setPagoActual,
-                agregarPago,
                 emitirFactura,
                 registrarBaseDatos,
                 Limpiar

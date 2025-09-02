@@ -102,8 +102,7 @@ export default function ModalVisualizarBorrador({
                     monto_imp_venta: rawBorrador.monto_Imp_Venta,
                     estado_documento: rawBorrador.estado_Documento,
                     manual: rawBorrador.manual,
-                    id_base_dato: rawBorrador.id_Base_Dato,
-                    observaciones: rawBorrador.observaciones,
+                    observacion: rawBorrador.observacion,
                     usuario_id: rawBorrador.usuario_id,
                     detraccion_cod_bien_detraccion: rawBorrador.detraccion_cod_bien_detraccion,
                     detraccion_cod_medio_pago: rawBorrador.detraccion_cod_medio_pago,
@@ -223,11 +222,11 @@ export default function ModalVisualizarBorrador({
                             </div>
                         </div>
 
-                        {/* Observaciones */}
+                        {/* Observacion */}
                         <div className="mb-6">
-                            <h3 className="font-bold text-md mb-2 text-gray-600 border-b pb-1">OBSERVACIONES:</h3>
+                            <h3 className="font-bold text-md mb-2 text-gray-600 border-b pb-1">OBSERVACION:</h3>
                             <div className="p-4 border border-gray-200 rounded-md bg-white text-sm text-gray-800">
-                                {factura.observaciones || "No hay observaciones registradas."}
+                                {factura.observacion || "No hay observacion registradas."}
                             </div>
                         </div>
 
