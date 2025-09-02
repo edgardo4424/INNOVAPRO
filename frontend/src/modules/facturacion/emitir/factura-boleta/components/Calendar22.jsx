@@ -14,7 +14,6 @@ export function Calendar22({ tipo, Dato, setDato, value }) {
   const [date, setDate] = useState(
     value ? new Date(value) : Dato && Dato[tipo] ? new Date(Dato[tipo]) : undefined
   );
-
   // ✅ Actualiza la fecha local si cambia el valor en Dato
   useEffect(() => {
     if (Dato && Dato[tipo]) {

@@ -29,9 +29,12 @@ const guiaRemisionController = {
         }
     },
 
-    async obtenerCorrelativo(_, res) {
+    async obtenerCorrelativo(req, res) {
+        // * Controlador para obtener el correlativo de la guia
+        // * se encarga de llamar al caso de uso
+        // * "obtenerCorrelativo" y devolver su respuesta
         try {
-            const { codigo, respuesta } = await obtenerCorrelativo(guiaRemisionRepository);
+            const { codigo, respuesta } = await obtenerCorrelativo(req.body, guiaRemisionRepository);
             res.status(codigo).json(respuesta);
         } catch (error) {
             res.status(500).json({ error: error.message, estado: false });
@@ -40,8 +43,8 @@ const guiaRemisionController = {
 
     async obtenerRelacionesGuias(req, res) {
         try {
-            console.log(req.query)
-            const { codigo, respuesta } = await obtenerGuiasPorRuc(req.query, guiaRemisionRepository);
+            console.log(req.body)
+            const { codigo, respuesta } = await obtenerGuiasPorRuc(req.body, guiaRemisionRepository);
             res.status(codigo).json(respuesta);
         } catch (error) {
             res.status(500).json({ error: error.message, estado: false });

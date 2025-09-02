@@ -11,7 +11,7 @@ import { UserRoundSearch, X } from "lucide-react";
 import { useState } from "react";
 import ListaDeCientes from "../ListaDeClientes";
 
-export default function ModalListaDeClientes() {
+export default function ModalListaDeClientes({ setContext }) {
 
 
     const [open, setOpen] = useState(false);
@@ -45,7 +45,7 @@ export default function ModalListaDeClientes() {
                     </AlertDialogDescription>
                 </AlertDialogHeader>
 
-                <ListaDeCientes closeModal={closeModal} />
+                <ListaDeCientes closeModal={closeModal} setContext={setContext} />
 
             </AlertDialogContent>
         </AlertDialog>

@@ -11,6 +11,7 @@ const FacturaBoleta = () => {
 
 
     useEffect(() => {
+        console.log("documento", documento);
         const PlasmarBorrador = async () => {
             if (documento.length > 0) {
                 setFactura(documento[0]);

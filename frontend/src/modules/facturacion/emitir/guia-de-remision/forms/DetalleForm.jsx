@@ -33,7 +33,7 @@ const DetalleForm = () => {
         }));
     };
     return (
-        <div className=" overflow-y-auto  pb-10">
+        <div className="overflow-y-auto p-4 sm:p-6 lg:px-8 lg:py-4">
             <h1 className='text-2xl font-bold py-3'>Detalle de Producto</h1>
             <ModalProducto open={open} setOpen={setOpen} />
             <TablaDetalles open={open} setOpen={setOpen} />

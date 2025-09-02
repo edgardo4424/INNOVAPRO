@@ -22,6 +22,7 @@ const ListaDocumentos = () => {
     const [idDocumento, setIdDocumento] = useState("");
     const [documentoADescargar, setDocumentoADescargar] = useState({});
     const [documentoAVisualizar, setDocumentoAVisualizar] = useState({});
+    const [documentoOpciones, setDocumentoOpciones] = useState({});
 
     const [filtro, setFiltro] = useState({
         page: 1,
@@ -184,7 +185,10 @@ const ListaDocumentos = () => {
                             setModalDescargar={setModalDescargar}
                             setIdDocumento={setIdDocumento}
                             setDocumentoADescargar={setDocumentoADescargar}
-                            setDocumentoAVisualizar={setDocumentoAVisualizar} />
+                            setDocumentoAVisualizar={setDocumentoAVisualizar}
+                            documentoOpciones={documentoOpciones}
+                            setDocumentoOpciones={setDocumentoOpciones}
+                        />
 
                         {/* Modal */}
                         {modalVisualizar && documentoAVisualizar && (

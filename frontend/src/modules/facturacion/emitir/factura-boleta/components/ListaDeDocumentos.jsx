@@ -29,7 +29,7 @@ const ListaDeDocumentos = ({ closeModal }) => {
     useEffect(() => {
         const cargarDocumentos = async () => {
             try {
-                const { message, status, data, count } = await facturaService.obtenerDocumentosARelacionar(empresa_Ruc);
+                const { message, status, data, count } = await facturaService.obtenerDocumentosARelacionar({ ruc: empresa_Ruc });
                 setDocumentosRelacionados(data);
             } catch (error) {
                 console.error('Error al cargar piezas', error);
@@ -101,7 +101,7 @@ const ListaDeDocumentos = ({ closeModal }) => {
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                documentosFiltrados.map((item, index) => (
+                                [...documentosFiltrados].sort((a, b) => b.id - a.id).map((item, index) => (
                                     <TableRow key={index}
                                         onClick={() => handleClick(item)}
                                         className={"cursor-pointer hover:bg-gray-300"}

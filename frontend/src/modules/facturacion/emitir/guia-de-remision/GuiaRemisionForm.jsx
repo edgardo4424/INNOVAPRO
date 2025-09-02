@@ -34,8 +34,8 @@ const GuiaRemisionForm = () => {
 
                 <form
                     onSubmit={(e) => { e.preventDefault(); }}
-                    className=" shadow-xl border border-gray-400 bg-white  rounded-3xl  p-10  transition-all duration-300 mb-6"
-                >
+                    className=" shadow-xl border bg-white border-gray-400  rounded-3xl  p-4  transition-all duration-300 mb-6"
+                    >
                     {/* Sección de Documento Principal */}
                     <InfDocumentoForm />
 

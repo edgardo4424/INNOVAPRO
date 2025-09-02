@@ -12,6 +12,8 @@ const crearFactura = require('../../application/useCases/factura-boleta/crearFac
 
 const obtenerCorrelativo = require('../../application/useCases/factura-boleta/obtenerCorrelativo')
 
+const obtenerFacturasPorRuc = require('../../application/useCases/factura-boleta/obtenerFacturasPorRuc')
+
 const obtenerCdrZip = require('../../application/useCases/factura-boleta/obtenerCdrZip')
 
 const obtenerMTC = require('../../application/useCases/factura-boleta/obtenerMTC')
@@ -101,7 +103,15 @@ const facturaController = {
         } catch (error) {
             res.status(500).json({ error: error.message, estado: false });
         }
-    }
+    },
+    async obtenerRelacionesFacturas(req, res) {
+        try {
+            const { codigo, respuesta } = await obtenerFacturasPorRuc(req.body, facturaRepository);
+            res.status(codigo).json(respuesta);
+        } catch (error) {
+            res.status(500).json({ error: error.message, estado: false });
+        }
+    },
 }
 
 module.exports = facturaController;

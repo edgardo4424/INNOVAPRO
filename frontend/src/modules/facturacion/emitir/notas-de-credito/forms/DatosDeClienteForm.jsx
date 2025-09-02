@@ -7,20 +7,32 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import ModalListaDeClientes from "@/modules/facturacion/components/modal/ModalListaDeClientes";
+import { useNota } from "@/modules/facturacion/context/NotaContext";
 import { Search } from "lucide-react";
 
 const DatosDeClienteForm = () => {
 
-    let Forma = {}
-    const { cliente_Tipo_Doc, cliente_Num_Doc, cliente_Razon_Social, cliente_Direccion } = Forma;
+    const { notaCreditoDebito, setNotaCreditoDebito, filiales } = useNota();
+    const { cliente_Tipo_Doc, cliente_Num_Doc, cliente_Razon_Social, cliente_Direccion } = notaCreditoDebito;
 
-    
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setNotaCreditoDebito((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleSelectChange = (value) => {
+        setNotaCreditoDebito((prev) => ({ ...prev, cliente_Tipo_Doc: value }));
+    };
 
     return (
         <div className=" p-4 sm:px-6 lg:px-8 ">
-            <h2 className="text-2xl font-semibold mb-2 flex">
-                Datos del Cliente
-            </h2>
+            <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-bold py-3  text-gray-800">
+                    Datos del Cliente
+                </h1>
+                <ModalListaDeClientes setContext={setNotaCreditoDebito} />
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-6 mb-8">
                 <div>
                     <Label
@@ -31,10 +43,10 @@ const DatosDeClienteForm = () => {
                     </Label>
                     <Select
                         name="cliente_Tipo_Doc"
-                        // value={cliente_Tipo_Doc}
-                        // onValueChange={(e) => {
-                        //     handleSelectChange(e, "cliente_Tipo_Doc");
-                        // }}
+                        value={cliente_Tipo_Doc}
+                        onValueChange={(e) => {
+                            handleSelectChange(e, "cliente_Tipo_Doc");
+                        }}
                     >
                         <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm">
                             <SelectValue placeholder="Selecciona un tipo de Documento" />
@@ -58,8 +70,8 @@ const DatosDeClienteForm = () => {
                             type="number"
                             id="cliente_Num_Doc"
                             name="cliente_Num_Doc"
-                            // value={cliente_Num_Doc}
-                            // onChange={handleChange}
+                            value={cliente_Num_Doc}
+                            onChange={handleInputChange}
                             className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                         />
                         <button
@@ -81,8 +93,8 @@ const DatosDeClienteForm = () => {
                         type="text"
                         id="cliente_Razon_Social"
                         name="cliente_Razon_Social"
-                        // value={cliente_Razon_Social}
-                        // onChange={handleChange}
+                        value={cliente_Razon_Social}
+                        onChange={handleInputChange}
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                     />
                 </div>
@@ -97,8 +109,8 @@ const DatosDeClienteForm = () => {
                         type="text"
                         id="cliente_Direccion"
                         name="cliente_Direccion"
-                        // value={cliente_Direccion}
-                        // onChange={handleChange}
+                        value={cliente_Direccion}
+                        onChange={handleInputChange}
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                     />
                 </div>

@@ -25,19 +25,16 @@ class SequelizeGuiaRemisionRepository {
         return guia;
     }
 
-    async relacionRemision(query) {
-        const { ruc } = query
+    async relacionRemision(body) {
+        const { ruc } = body
         const guias = await GuiaRemision.findAll({
             where: { empresa_ruc: ruc },
-            attributes: [
-                "id",
-                "tipo_Doc",
-                "serie",
-                "correlativo",
-                "fecha_Emision",
-                "empresa_Ruc",
+            include: [
+                { model: GuiaDetalles },
+                { model: GuiaChoferes },
+                // { model: SunatRespuesta },
             ],
-            oder: [["correlativo", "ASC"]],
+            oder: [["id", "DESC"]],
         })
 
         return guias
@@ -229,16 +226,21 @@ class SequelizeGuiaRemisionRepository {
         }
     }
 
-    async correlativo() {
-        const [lastGuiaRemision] = await GuiaRemision.findAll({
-            order: [['id', 'DESC']],
-            limit: 1,
-            attributes: ['correlativo']
-        });
-        const correlativoGuia = lastGuiaRemision ? parseInt(lastGuiaRemision.correlativo) + 1 : 1;
-        return {
-            correlativo_guia: correlativoGuia.toString()
+    async correlativo(body) {
+        const correlativos = [];
+        for (const { ruc } of body) {
+            const correlativoGuia = await GuiaRemision.max('correlativo', {
+                where: {
+                    empresa_Ruc: ruc
+                }
+            });
+            correlativos.push({
+                ruc,
+                correlativo: correlativoGuia ? String(Number(correlativoGuia) + 1) : "1",
+            });
         }
+        console.log(correlativos)
+        return correlativos;
     }
 }
 

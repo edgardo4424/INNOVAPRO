@@ -1,12 +1,12 @@
-module.exports = async (body, guiaRepository) => {
+module.exports = async (body, facturaRepository) => {
     try {
-        const guias = await guiaRepository.relacionRemision(body);
+        const facturas = await facturaRepository.documentosPorRuc(body);
 
-        if (!guias || guias.length === 0) {
+        if (!facturas || facturas.length === 0) {
             return {
                 codigo: 400,
                 respuesta: {
-                    message: "no se encontraron guias",
+                    message: "no se encontraron facturas",
                     status: false,
                     count: 0,
                     data: [],
@@ -17,17 +17,17 @@ module.exports = async (body, guiaRepository) => {
         return {
             codigo: 200,
             respuesta: {
-                message: "se encontraron guias",
+                message: "se encontraron facturas",
                 status: true,
-                count: guias.length,
-                data: guias,
+                count: facturas.length,
+                data: facturas,
             },
         };
     } catch (e) {
         return {
             codigo: 500,
             respuesta: {
-                message: "Error al obtener las guias relacionadas.",
+                message: "Error al obtener las facturas relacionadas.",
                 status: false,
                 count: 0,
                 data: null,

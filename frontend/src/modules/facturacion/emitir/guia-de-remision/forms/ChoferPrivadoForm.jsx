@@ -103,7 +103,7 @@ const ChoferPrivadoForm = () => {
     };
 
     return (
-        <div className=" overflow-y-auto">
+        <div className="overflow-y-auto p-4 sm:p-6 lg:px-8 lg:py-4">
             <h1 className="text-2xl text-left   font-semibold mb-6  pb-2">
                 Datos del Chofer
             </h1>

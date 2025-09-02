@@ -9,13 +9,11 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
 import ClienteService from "@/modules/facturacion/service/ClienteService";
 import { useEffect, useState } from "react";
 
-const ListaDeCientes = ({ closeModal }) => {
+const ListaDeCientes = ({ closeModal,setContext }) => {
 
-    const {  setFactura } = useFacturaBoleta();
 
     const [clientesDisponibles, setClientesDisponibles] = useState([]);
     const [filtro, setFiltro] = useState("");
@@ -47,7 +45,7 @@ const ListaDeCientes = ({ closeModal }) => {
 
         const { ruc, dni, razon_social, domicilio_fiscal } = cliente
 
-        setFactura((prev) => ({
+        setContext((prev) => ({
             ...prev,
             cliente_Tipo_Doc: ruc ? "6" : "1",
             cliente_Num_Doc: ruc ? ruc : dni,

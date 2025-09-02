@@ -12,10 +12,10 @@ import factilizaService from "@/modules/facturacion/service/FactilizaService";
 import { Search } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import ModalListaDeClientes from "../modal/ModalListaDeClientes";
+import ModalListaDeClientes from "../../../../components/modal/ModalListaDeClientes";
 
 const DatosDelCliente = () => {
-    const { factura, setFactura, } = useFacturaBoleta();
+    const { factura, setFactura } = useFacturaBoleta();
     const [open, setOpen] = useState(false);
 
     const {
@@ -95,7 +95,7 @@ const DatosDelCliente = () => {
                 <h1 className="text-2xl font-bold py-3  text-gray-800">
                     Datos del Cliente
                 </h1>
-                <ModalListaDeClientes />
+                <ModalListaDeClientes setContext={setFactura} />
             </div>
             <form
                 className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-5 md:gap-x-6 md:gap-y-8"

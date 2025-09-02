@@ -7,10 +7,8 @@ const DetallesForm = () => {
 
     return (
         <div className='overflow-y-auto py-4 sm:px-6 lg:px-8'>
-            <h1 className="text-2xl font-bold py-4">Productos</h1>
-
-            <ModalProducto open={open} setOpen={setOpen} />
-
+            <h1 className="text-2xl font-bold py-2">Productos</h1>
+            {/* <ModalProducto open={open} setOpen={setOpen} /> */}
             <TablaProductos setOpen={setOpen} />
         </div>
     )

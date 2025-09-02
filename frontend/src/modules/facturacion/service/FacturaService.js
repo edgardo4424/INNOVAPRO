@@ -26,6 +26,11 @@ const facturaService = {
         const res = await api.post(`/facturacion/cdr-zip`, body);
         return res.data;
     },
+    obtenerDocumentosParaNotas: async (body) => {
+        const res = await api.post(`/facturacion/documentos`, body);
+        return res.data;
+    },
+
 
     // * ENDPOINTS BORRADORES
     registrarBorrador: async (borrador) => {
@@ -51,8 +56,8 @@ const facturaService = {
         const res = await api.post(`/facturacion/guia-remision/crear`, guia);
         return res.data;
     },
-    obtenerCorrelativoGuia: async () => {
-        const res = await api.get('/facturacion/guia-remision/correlativo');
+    obtenerCorrelativoGuia: async (body) => {
+        const res = await api.post('/facturacion/guia-remision/correlativo', body);
         return res.data
     },
     obtenerTodasLasGuiasRemision: async (query) => {
@@ -67,8 +72,15 @@ const facturaService = {
         const res = await api.get(`/facturacion/mtc?ruc=${ruc}`);
         return res.data
     },
-    obtenerDocumentosARelacionar: async (ruc) => {
-        const res = await api.get(`/facturacion/guia-remision/relaciones?ruc=${ruc}`);
+    obtenerDocumentosARelacionar: async (body) => {
+        const res = await api.post(`/facturacion/guia-remision/relaciones`, body);
+        return res.data;
+    },
+
+
+    // * ENDPOINTS NOTA DE CREDITO O DEBITO
+    registrarNota: async (nota) => {
+        const res = await api.post(`/facturacion/nota-debito-credito/crear`, nota);
         return res.data;
     },
 }

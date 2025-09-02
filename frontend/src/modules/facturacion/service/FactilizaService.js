@@ -29,6 +29,13 @@ const factilizaService = {
         return res.data;
     },
 
+    // !!! NOTA DE CREDITO o DEBITO
+    enviarNota: async (nota) => {
+        const res = await apiFactilizaFacturacion.post("/note/send", nota);
+        return res.data;
+    },
+
+
     // !!! Guia de Remision
 
     // ?? CONSULTA DE DOCUMENTOS FACTILIZA

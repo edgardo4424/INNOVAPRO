@@ -122,6 +122,32 @@ class SequelizeFacturaRepository {
         }
     }
 
+    async documentosPorRuc(body) {
+        const { ruc, tipo_Doc } = body
+
+        const facturas = await Factura.findAll({
+            where: { empresa_ruc: ruc, tipo_Doc: tipo_Doc, estado: 'EMITIDA' },
+            include: [
+                {
+                    model: DetalleFactura,
+                    attributes: {
+                        exclude: ["factura_id", "id"],
+                    },
+
+                },
+                { model: FormaPagoFactura },
+                {
+                    model: LegendFactura,
+                    attributes: ["legend_Code", "legend_Value"]
+                },
+                // { model: SunatRespuesta },
+            ],
+            oder: [["correlativo", "ASC"]],
+        })
+
+        return facturas
+    }
+
     async obtenerFactura(id) {
         const factura = await Factura.findByPk(id, {
             include: [
@@ -331,30 +357,37 @@ class SequelizeFacturaRepository {
     async correlativo(body) {
         const correlativos = [];
         for (const { ruc } of body) {
+            // Obtenemos el máximo correlativo para Facturas
             const correlativoFactura = await Factura.max('correlativo', {
                 where: {
                     tipo_Doc: '01',
-                    estado: 'EMITIDA',
+                    // estado: 'EMITIDA',
                     empresa_ruc: ruc
                 }
             });
+
+            // Obtenemos el máximo correlativo para Boletas
             const correlativoBoleta = await Factura.max('correlativo', {
                 where: {
                     tipo_Doc: '03',
-                    estado: 'EMITIDA',
+                    // estado: 'EMITIDA',
                     empresa_ruc: ruc
                 }
             });
+
             correlativos.push({
                 ruc,
                 correlativo: {
-                    factura: correlativoFactura ? correlativoFactura + 1 : 1,
-                    boleta: correlativoBoleta ? correlativoBoleta + 1 : 1
+                    // Si existe un correlativo anterior para la factura, le sumamos 1, sino, lo inicializamos en "1".
+                    factura: correlativoFactura ? String(Number(correlativoFactura) + 1) : "1",
+                    // Hacemos lo mismo para la boleta, ¡pero usando su propio correlativo!
+                    boleta: correlativoBoleta ? String(Number(correlativoBoleta) + 1) : "1"
                 }
             });
         }
         return correlativos;
     }
+
 
     async cdrzip(id_factura) {
         const cdr_zip = await SunatRespuesta.findOne({

@@ -1,7 +1,7 @@
-import { Download, EyeIcon } from 'lucide-react';
+import { Download, EllipsisVertical, EyeIcon } from 'lucide-react';
 import React from 'react'
 
-const TablaDocumentos = ({ documentos, setIdDocumento, setModalOpen, setModalDescargar, setDocumentoADescargar, setDocumentoAVisualizar }) => {
+const TablaDocumentos = ({ documentos, setIdDocumento, setModalOpen, setModalDescargar, setDocumentoADescargar, setDocumentoAVisualizar, setDocumentoOpciones }) => {
     return (
         <div className='w-full border-1 border-gray-200 rounded-xl'>
             <table className="min-w-full bg-white rounded-xl shadow-md overflow-hidden ">
@@ -46,7 +46,11 @@ const TablaDocumentos = ({ documentos, setIdDocumento, setModalOpen, setModalDes
                                     </button>
                                     <button onClick={() => { setIdDocumento(factura.id); setModalDescargar(true); setDocumentoADescargar({ serie: factura.serie, correlativo: factura.correlativo, numRuc: factura.empresa_ruc, tipoDoc: factura.tipo_doc, numDocumentoComprobante: factura.cliente_num_doc }); }}>
                                         <Download className="h-5 w-5 cursor-pointer hover:text-green-500" />
-                                    </button>                            </div>
+                                    </button>
+                                    <button onClick={()=>{setIdDocumento(factura.id); setDocumentoOpciones(true) }}>
+                                        <EllipsisVertical className="h-5 w-5 cursor-pointer hover:text-yellow-500" />
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     ))}

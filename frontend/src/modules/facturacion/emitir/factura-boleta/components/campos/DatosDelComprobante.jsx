@@ -45,7 +45,9 @@ const DatosDelComprobante = () => {
     };
 
     const buscarCorrelativo = async (e) => {
-        // e.preventDefault();
+        if (e) {
+            e.preventDefault();
+        }
         try {
             setLoadingCorrelativo(true);
             // Lógica para buscar el correlativo
@@ -79,6 +81,13 @@ const DatosDelComprobante = () => {
             buscarCorrelativo();
         }
     }, [filiales]);
+
+    useEffect(() => {
+        setFactura((prevValores) => ({
+            ...prevValores,
+            serie: factura.tipo_Doc === "01" ? "F001" : "B001",
+        }))
+    }, [factura.tipo_Doc]);
 
     useEffect(() => {
         if (filiales.length !== 0) {
@@ -169,7 +178,9 @@ const DatosDelComprobante = () => {
                                 onChange={handleInputChange}
                                 disabled={!correlativoEstado}
                             />
-                            <button onClick={activarCorrelativo} className={`absolute right-2 top-1/2 transform -translate-y-1/2 ${correlativoEstado ? "text-blue-500" : "text-gray-400"} `}><SquarePen /></button>
+                            <button onClick={activarCorrelativo} className={`absolute right-2 top-1/2 transform -translate-y-1/2 ${correlativoEstado ? "text-blue-500" : "text-gray-400"} `}>
+                                <SquarePen />
+                            </button>
                         </div>
                         <button className={`bg-blue-500 hover:bg-blue-600  cursor-pointer  text-white rounded-md px-2 `}
                             // disabled={correlativoEstado}

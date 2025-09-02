@@ -24,6 +24,7 @@ import {
 import ProtectedRoute from "./ProtectedRoute";
 import RoleGuard from "./rol.guard";
 
+import { NotaProvider } from "@/modules/facturacion/context/NotaContext";
 import PlanillaQuincenal from "@/modules/planilla/pages/PlanillaQuincenal";
 
 // Lazy load components
@@ -270,7 +271,9 @@ export default function AppRoutes() {
                         <Route
                            path="facturacion/nota-credito"
                            element={
-                              <NotaCredito />
+                              <NotaProvider>
+                                 <NotaCredito />
+                              </NotaProvider>
                            }
                         />
 
@@ -318,7 +321,7 @@ export default function AppRoutes() {
                               </WizardProvider>
                            }
                         />
-                        
+
                         <Route
                            path="retenciones/calculoQuintaCategoria"
                            element={<CalculoQuintaCategoria />}
@@ -349,7 +352,7 @@ export default function AppRoutes() {
 
                            <Route path="bonos" element={<GestionBonos />} />
                            <Route path="adelanto-sueldo" element={<GestionAdelantoSueldo />} />
-                           <Route path="gestion-cts" element={<GestionCts/>}/>
+                           <Route path="gestion-cts" element={<GestionCts />} />
 
                            <Route
                               path="gratificacion"

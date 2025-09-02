@@ -11,6 +11,7 @@ import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteC
 import { Search } from "lucide-react";
 import { toast } from "react-toastify";
 import factilizaService from "../../../service/FactilizaService";
+import ModalListaDeClientes from "@/modules/facturacion/components/modal/ModalListaDeClientes";
 
 const DatosDeClienteForm = () => {
 
@@ -90,11 +91,13 @@ const DatosDeClienteForm = () => {
     };
 
     return (
-        <div>
-            {" "}
-            <h2 className="text-2xl font-semibold mb-2 flex">
-                Datos del Cliente
-            </h2>
+        <div className="overflow-y-auto p-4 sm:p-6 lg:px-8 lg:py-4">
+            <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-bold py-3  text-gray-800">
+                    Datos del Cliente
+                </h1>
+                <ModalListaDeClientes setContext={setGuiaTransporte} />
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-6 mb-8">
                 <div>
                     <Label

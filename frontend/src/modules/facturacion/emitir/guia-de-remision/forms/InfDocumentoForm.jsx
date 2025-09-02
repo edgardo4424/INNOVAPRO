@@ -10,7 +10,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext";
 import { LoaderCircle, Search, SquarePen } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Calendar22 } from "../../factura-boleta/components/Calendar22";
 import facturaService from "../../../service/FacturaService";
 import { toast } from "react-toastify";
@@ -20,9 +20,12 @@ const InfDocumentoForm = () => {
     const { guiaTransporte, setGuiaTransporte, tipoGuia, setTipoGuia, filiales } = useGuiaTransporte();
 
     const { tipo_Doc, serie, correlativo, observacion, empresa_Ruc } = guiaTransporte;
+    const [correlativos, setCorrelativos] = useState([]);
     const [correlativoEstado, setCorrelativoEstado] = useState(false);
     const [serieEstado, setSerieEstado] = useState(false);
     const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
+
+    const rucsFiliales = filiales.map((filial) => ({ ruc: filial.ruc }));
 
 
     const activarCorrelativo = (e) => {
@@ -51,22 +54,26 @@ const InfDocumentoForm = () => {
 
 
     const buscarCorrelativo = async (e) => {
-        e.preventDefault();
+        if (e) {
+            e.preventDefault();
+        }
         try {
             setLoadingCorrelativo(true);
             // Lógica para buscar el correlativo
-            const { mensaje, estado, correlativos } = await facturaService.obtenerCorrelativoGuia();
+            const { message, status, data } = await facturaService.obtenerCorrelativoGuia(rucsFiliales);
 
+            setCorrelativos(data);
 
-            if (estado) {
-                setGuiaTransporte({
-                    ...guiaTransporte,
-                    correlativo: correlativos
-                })
+            let { correlativo, ruc } = data.filter((item) => item.ruc === guiaTransporte.empresa_Ruc)[0];
+
+            if (status) {
+                setGuiaTransporte((prevValores) => ({
+                    ...prevValores,
+                    correlativo: `${correlativo}`,
+                }))
+                setCorrelativoEstado(false);
+                setLoadingCorrelativo(false);
             }
-
-            setCorrelativoEstado(false);
-            setLoadingCorrelativo(false);
 
         } catch (error) {
             toast.error('Error al obtener el correlativo: ' + error.message);
@@ -76,12 +83,33 @@ const InfDocumentoForm = () => {
         }
     };
 
+    useEffect(() => {
+        if (filiales.length !== 0) {
+            buscarCorrelativo();
+        }
+    }, [filiales]);
+
+    useEffect(() => {
+        if (filiales.length !== 0) {
+            const correlativoData = correlativos.find((item) => item.ruc === guiaTransporte.empresa_Ruc);
+            const { correlativo, ruc } = correlativoData || {};
+
+            setGuiaTransporte((prevValores) => ({
+                ...prevValores,
+                correlativo: `${correlativo}`
+            }))
+        }
+    }, [guiaTransporte.tipo_Doc, guiaTransporte.empresa_Ruc]);
+
     return (
-        <div>
+        <div className="overflow-y-auto p-4 sm:p-6 lg:px-8 lg:py-4">
             <h2 className="text-2xl font-semibold mb-2 flex">
                 Información del Documento
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-6 mb-8">
+            <form
+                onSubmit={e => e.preventDefault()}
+                action=""
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-6 mb-8">
                 {/* Added gap-y for vertical spacing on small screens */}
                 <div>
                     <Label
@@ -247,7 +275,7 @@ const InfDocumentoForm = () => {
                     ></Textarea>
                 </div>
 
-            </div>
+            </form>
         </div>
     );
 };
