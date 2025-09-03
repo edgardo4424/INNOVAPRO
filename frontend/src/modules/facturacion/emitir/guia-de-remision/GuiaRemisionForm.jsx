@@ -53,22 +53,7 @@ const GuiaRemisionForm = () => {
                     <DetalleForm />
 
                     {/* Botón de Enviar */}
-                    <div className="flex justify-between">
-                        <div className="flex gap-x-3">
-                            <button
-                                type="submit"
-                                className="px-6 py-3 bg-blue-700 text-white font-medium rounded-md hover:bg-blue-800 focus:outline-none focus:ring-2 cursor-pointer"
-                            >
-                                Guardar
-                            </button>
-                            <button
-                                type="submit"
-                                className="px-6 py-3 bg-red-700 text-white font-medium rounded-md hover:bg-red-800 focus:outline-none focus:ring-2 cursor-pointer"
-                            >
-                                Cancelar
-                            </button>
-                        </div>
-
+                    <div className="flex justify-end">
                         <ModalVisualizarGuiaPrivada />
                     </div>
 

@@ -4,7 +4,8 @@ module.exports = async (body, notaRepository) => {
     const {
         detalle = [],
         legend = [],
-        id_factura,
+        factura_id,
+        guia_id,
         sunat_respuesta,
         ...factura
     } = body;
@@ -54,7 +55,8 @@ module.exports = async (body, notaRepository) => {
             detalle: detalle,
             leyendas: legend,
             sunat_respuesta,
-            id_factura: id_factura
+            factura_id,
+            guia_id,
         });
 
 
@@ -76,9 +78,8 @@ module.exports = async (body, notaRepository) => {
         return {
             codigo: 201,
             respuesta: {
-                mensaje: "La nota y sus componentes creados correctamente.",
-                estado: true,
-                notaCreada: true,
+                message: "La nota y sus componentes creados correctamente.",
+                data: true,
                 success: true,
                 status: 201
             },
@@ -90,8 +91,8 @@ module.exports = async (body, notaRepository) => {
         return {
             codigo: 500,
             respuesta: {
-                mensaje: "Ocurrió un error interno al crear la nota.",
-                datos: null,
+                message: "Ocurrió un error interno al crear la nota.",
+                data: null,
                 success: false,
                 status: 400
             },

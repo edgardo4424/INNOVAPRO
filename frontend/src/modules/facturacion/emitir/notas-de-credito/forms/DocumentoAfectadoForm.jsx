@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useNota } from "@/modules/facturacion/context/NotaContext";
 import { useEffect, useState } from "react";
 import ModalDocumentos from "../components/modal/ModalDocumentos";
+import { ValorInicialDetalleNota } from "../utils/valoresInicialNota";
 
 const codigosMotivoCredito = [
     { value: "01", label: "01 - Anulación de la operación" },
@@ -20,8 +21,8 @@ const codigosMotivoCredito = [
     { value: "05", label: "05 - Descuento por ítem" },
     { value: "06", label: "06 - Devolución total" },
     { value: "07", label: "07 - Devolución por ítem" },
-    { value: "08", label: "08 - Bonificación" },
-    { value: "09", label: "09 - Disminución en el valor" },
+    // { value: "08", label: "08 - Bonificación" },
+    // { value: "09", label: "09 - Disminución en el valor" },
     { value: "10", label: "10 - Otros Conceptos" },
 ];
 
@@ -31,7 +32,7 @@ const codigosMotivosDebito = [
     { value: "03", label: "03 - Penalidades/ otros conceptos" },
 ]
 const DocumentoAfectadoForm = () => {
-    const { notaCreditoDebito, setNotaCreditoDebito, filiales } = useNota();
+    const { notaCreditoDebito, setNotaCreditoDebito, filiales, documentoAAfectar } = useNota();
 
     const [open, setOpen] = useState(false);
 
@@ -59,6 +60,22 @@ const DocumentoAfectadoForm = () => {
         }))
     }, [notaCreditoDebito.tipo_Doc]);
 
+    useEffect(() => {
+        if (notaCreditoDebito.motivo_Cod === "01" || notaCreditoDebito.motivo_Cod === "02") {
+            setNotaCreditoDebito((prev) => ({
+                ...prev,
+                ...documentoAAfectar,
+                motivo_Des: "ANULACION DE LA OPERACION",
+            }))
+        } else if (notaCreditoDebito.motivo_Cod === "03") {
+            setNotaCreditoDebito((prev) => ({
+                ...prev,
+                ...ValorInicialDetalleNota,
+                motivo_Des: "CORRECCIÓN POR ERROR EN LA DESCRIPCIÓN",
+            }))
+        }
+    }, [notaCreditoDebito.motivo_Cod]);
+
     return (
         <div className=" p-4 sm:px-6 lg:px-8 ">
             <div className="flex justify-between items-center">
@@ -78,9 +95,10 @@ const DocumentoAfectadoForm = () => {
                     <Select
                         name="afectado_Tipo_Doc"
                         value={notaCreditoDebito.afectado_Tipo_Doc}
-                        onValueChange={(e) => {
-                            handleSelectChange(e, "afectado_Tipo_Doc");
-                        }}
+                        // onValueChange={(e) => {
+                        //     handleSelectChange(e, "afectado_Tipo_Doc");
+                        // }}
+                        disabled
                     >
                         <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm">
                             <SelectValue placeholder="Selecciona un tipo de Documento" />
@@ -106,7 +124,8 @@ const DocumentoAfectadoForm = () => {
                         id="afectado_Num_Doc"
                         name="afectado_Num_Doc"
                         value={notaCreditoDebito.afectado_Num_Doc}
-                        onChange={handleInputChange}
+                        // onChange={handleInputChange}
+                        disabled
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                     />
                 </div>

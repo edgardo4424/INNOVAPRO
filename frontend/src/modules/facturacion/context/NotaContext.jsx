@@ -1,17 +1,22 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { notaInical } from "../emitir/notas-de-credito/utils/valoresInicialNota";
-import filialesService from "../service/FilialesService";
+import { notaInical, ValorInicialDetalleNota, valorInicialProducto } from "../emitir/notas-de-credito/utils/valoresInicialNota";
 import factilizaService from "../service/FactilizaService";
 import facturaService from "../service/FacturaService";
+import filialesService from "../service/FilialesService";
+import numeroALeyenda from "../utils/numeroALeyenda";
 
 const NotaContext = createContext();
 
 export function NotaProvider({ children }) {
+
     const [notaCreditoDebito, setNotaCreditoDebito] = useState(notaInical);// ?Datos de guia que abarcan los 3 casos
 
-    const [id_factura, setIdFactura] = useState(null);
+    const [documentoAAfectar, setDocumentoAAfectar] = useState(ValorInicialDetalleNota);
 
+    const [itemActual, setItemActual] = useState(valorInicialProducto);
+
+    const [id_items, setid_items] = useState([]);
 
     const [filiales, setFiliales] = useState([]);
 
@@ -32,6 +37,58 @@ export function NotaProvider({ children }) {
     }, []);
 
 
+    useEffect(() => {
+        const actualizarFacturaMontos = () => {
+            let gravadas = 0;
+            let exoneradas = 0;
+            let igvTotal = 0;
+
+            notaCreditoDebito.detalle.forEach((producto) => {
+                const valorVenta = parseFloat(producto.monto_Valor_Venta || 0);
+
+                if (["10", "11", "12", "13", "14", "15", "16", "17"].includes(producto.tip_Afe_Igv)) {
+                    gravadas += valorVenta;
+                    igvTotal += valorVenta * 0.18;
+                }
+
+                if (["20", "21", "30", "31", "32", "33", "34", "35", "36", "40"].includes(producto.tipAfeIgv)) {
+                    exoneradas += valorVenta;
+                }
+            });
+
+            const subTotal = gravadas + igvTotal + exoneradas;
+
+            setNotaCreditoDebito((prev) => ({
+                ...prev,
+                monto_Oper_Gravadas: parseFloat(gravadas.toFixed(2)),
+                monto_Oper_Exoneradas: parseFloat(exoneradas.toFixed(2)),
+                monto_Igv: parseFloat(igvTotal.toFixed(2)),
+                total_Impuestos: parseFloat(igvTotal.toFixed(2)),
+                valor_Venta: parseFloat((gravadas + exoneradas).toFixed(2)),
+                sub_Total: parseFloat(subTotal.toFixed(2)),
+                monto_Imp_Venta: parseFloat(subTotal.toFixed(2)),
+            }));
+        };
+
+        if (notaCreditoDebito.detalle?.length > 0) {
+            actualizarFacturaMontos();
+        }
+    }, [notaCreditoDebito.detalle]);
+
+
+    useEffect(() => {
+        if (!notaCreditoDebito.monto_Imp_Venta || notaCreditoDebito.monto_Imp_Venta <= 0) return;
+
+        const nuevaLegenda = numeroALeyenda(notaCreditoDebito.monto_Imp_Venta, notaCreditoDebito.tipo_Moneda);
+
+        setNotaCreditoDebito((prev) => ({
+            ...prev,
+            legend: [{
+                legend_Code: "1000",
+                legend_Value: nuevaLegenda,
+            }]
+        }));
+    }, [notaCreditoDebito.monto_Imp_Venta]);
 
 
     const validarNota = async () => {
@@ -68,14 +125,13 @@ export function NotaProvider({ children }) {
                 const notaEmitida = {
                     ...notaCreditoDebito,
                     sunat_respuesta: sunat_respuest,
-                    id_factura: id_factura,
                 };
 
                 // c. ¡Ahora sí! Intentar registrar la nota en la base de datos.
-                const dbResult = await registrarBaseDatos(notaEmitida);
+                const { status: dbStatus, success: dbSuccess, message: dbMessage } = await registrarBaseDatos(notaEmitida);
 
                 // d. Evaluar el resultado del registro en la base de datos.
-                if (dbResult.success) {
+                if (dbStatus) {
                     // ÉXITO TOTAL: Se emitió y se registró correctamente.
                     result = {
                         success: true,
@@ -87,7 +143,7 @@ export function NotaProvider({ children }) {
                     result = {
                         success: false,
                         message: "La nota fue emitida a SUNAT, pero no se pudo registrar en la base de datos.",
-                        detailed_message: dbResult.mensaje,
+                        detailed_message: dbMessage,
                         data: notaEmitida,
                     };
                 }
@@ -137,38 +193,27 @@ export function NotaProvider({ children }) {
         }
 
         try {
-            const { status, success, data, mensaje } = await toast.promise(
-                facturaService.registrarNota(documento),
-                {
-                    pending: "Registrando nota en la base de datos...",
-                    success: "Nota registrada con éxito en la base de datos de INNOVA.",
-                    error: {
-                        render({ data }) {
-                            // Accede directamente al mensaje del error, si existe
-                            return data?.response?.data?.mensaje || "No se pudo registrar la nota.";
-                        }
-                    },
-                }
-            );
+            const { success, message, status } = await facturaService.registrarNota(documento);
 
             if (status === 201 && success) {
                 Limpiar();
             }
 
-            return { status, success, data, mensaje: mensaje || "Registro completado." };
-
+            return { status, success, message };
         } catch (error) {
             // En caso de que toast.promise no capture el error, lo manejamos aquí
             if (error.response) {
                 return {
                     success: false,
-                    mensaje: error.response.data?.mensaje || "Error al registrar la nota.",
+                    message: error.response.data?.mensaje || "Error al registrar la nota.",
+                    data: error.response.data,
                     status: error.response.status,
                 };
             } else {
                 return {
                     success: false,
-                    mensaje: "Ocurrió un error inesperado al registrar la nota.",
+                    message: "Ocurrió un error inesperado al registrar la nota.",
+                    data: null,
                     status: 500,
                 };
             }
@@ -186,8 +231,13 @@ export function NotaProvider({ children }) {
                 filiales,
                 notaCreditoDebito,
                 setNotaCreditoDebito,
+                documentoAAfectar,
+                setDocumentoAAfectar,
                 EmitirNota,
-                setIdFactura
+                id_items,
+                setid_items,
+                itemActual,
+                setItemActual
             }}
         >
             {children}

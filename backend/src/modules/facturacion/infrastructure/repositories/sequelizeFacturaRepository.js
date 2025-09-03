@@ -135,7 +135,7 @@ class SequelizeFacturaRepository {
                 {
                     model: DetalleFactura,
                     attributes: {
-                        exclude: ["factura_id", "id"],
+                        exclude: ["factura_id"],
                     },
 
                 },

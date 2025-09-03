@@ -102,7 +102,7 @@ const Arraydetracciones = [
     //     act: true,
     // },
     {
-        description: "Arrendamiento de bienes muebles",
+        description: "Arrendamiento de bienes",
         value: "019",
         porcentaje: 10,
         act: true,
@@ -122,7 +122,7 @@ const Arraydetracciones = [
     {
         description: "Otros servicios empresariales",
         value: "022",
-        porcentaje: 10,
+        porcentaje: 12,
         act: true,
     },
     {
@@ -185,6 +185,12 @@ const Arraydetracciones = [
         porcentaje: 10,
         act: true,
     },
+    {
+        description: "	Demás servicios gravados con el igv servicios no especificados en los anteriores 6 puntos",
+        value: "037",
+        porcentaje: 11,
+        act: true,
+    }
 ];
 
 function getDescripcion(codigo) {

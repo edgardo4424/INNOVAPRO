@@ -101,8 +101,11 @@ const Factura = sequelize.define(
             type: DataTypes.ENUM(
                 "EMITIDA",
                 "RECHAZADA",
+                "ANULADA-NOTA",
+                "MODIFICADA-NOTA",
                 "ANULADA",
-                "OBSERVADA"
+                "OBSERVADA",
+                "PENDIENTE",
             ),
             allowNull: true,
         },
@@ -187,6 +190,9 @@ Factura.associate = (models) => {
     Factura.hasMany(models.sunat_respuesta, {
         foreignKey: "factura_id",
     })
+    Factura.hasMany(models.notas_credito_debito, {
+        foreignKey: "factura_id",
+    });
 }
 
 module.exports = { Factura };

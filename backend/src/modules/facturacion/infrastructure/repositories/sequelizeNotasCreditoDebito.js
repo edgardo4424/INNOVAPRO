@@ -7,8 +7,8 @@ const { LegendNotaCreditoDebito } = require("../models/notas-credito-debito/lege
 const { DetalleNotaCreditoDebito } = require("../models/notas-credito-debito/detalleNotaCreditoDebitoModel");
 const { SunatRespuesta } = require("../models/sunatRespuestaModel");
 const { Factura } = require("../models/factura-boleta/facturaModel");
+const { GuiaRemision } = require("../models/guia-remision/guiaRemisionModel");
 const { Op, fn, col } = require('sequelize');
-
 
 class SequelizeNotasCreditoDebitoRepository {
 
@@ -79,13 +79,29 @@ class SequelizeNotasCreditoDebitoRepository {
             createdNota.sunat_respuesta = sunat;
 
             //* 5. Anular la factura asociada (MOVIDO DENTRO DE LA TRANSACCIÓN)
-            const { id_factura } = data;
-            const factura = await Factura.findByPk(id_factura);
-            if (!factura) {
-                throw new Error("No se encontró la factura para anular.");
+            const { factura_id, guia_id, } = data;
+            let modelToUpdate = null;
+            if (factura_id) {
+                modelToUpdate = Factura;
+            } else if (guia_id) {
+                modelToUpdate = GuiaRemision;
+            }
+            if (!modelToUpdate) {
+                throw new Error("No se encontró ni la factura ni la guía para anular.");
+            }
+            const toUpdate = await modelToUpdate.findByPk(factura_id || guia_id);
+            if (!toUpdate) {
+                throw new Error("No se encontró la factura o guía para anular.");
             }
             // Se cambia el valor "ANULADO" a "A" para evitar el error de truncamiento de datos
-            await factura.update({ estado: "ANULADA" }, { transaction });
+
+            let valueEstado ;
+            if (data.motivo_Cod === "01" || data.motivo_Cod === "02") {
+                valueEstado = "ANULADA-NOTA";
+            }else{
+                valueEstado = "MODIFICADA-NOTA";
+            }
+            await toUpdate.update({ estado: valueEstado }, { transaction });
 
             //* Si todas las operaciones fueron exitosas, confirma la transacción.
             await transaction.commit();

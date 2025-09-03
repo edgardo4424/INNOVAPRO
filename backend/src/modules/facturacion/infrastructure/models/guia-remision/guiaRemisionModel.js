@@ -130,7 +130,15 @@ const GuiaRemision = sequelize.define(
             allowNull: true,
         },
         estado: {
-            type: DataTypes.STRING,
+            type: DataTypes.ENUM(
+                "EMITIDA",
+                "RECHAZADA",
+                "ANULADA-NOTA",
+                "MODIFICADA-NOTA",
+                "ANULADA",
+                "OBSERVADA",
+                "PENDIENTE",
+            ),
             allowNull: true,
         },
     },
@@ -150,6 +158,9 @@ GuiaRemision.associate = (models) => {
     GuiaRemision.hasMany(models.sunat_respuesta, {
         foreignKey: "guia_id",
     })
+    GuiaRemision.hasMany(models.notas_credito_debito, {
+        foreignKey: "guia_id",
+    });
 }
 
 module.exports = { GuiaRemision };

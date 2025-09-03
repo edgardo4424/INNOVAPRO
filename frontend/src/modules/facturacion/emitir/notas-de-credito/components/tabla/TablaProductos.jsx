@@ -1,26 +1,32 @@
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
-    TableRow,
+    TableRow
 } from "@/components/ui/table";
 import { useNota } from "@/modules/facturacion/context/NotaContext";
 import MontosDetallado from "../MontosDetallado";
 
 const TablaProductos = ({ setOpen }) => {
 
-    const { notaCreditoDebito, setNotaCreditoDebito, filiales } = useNota();
+    const { notaCreditoDebito, setItemActual, documentoAAfectar } = useNota();
 
+
+    const selectItem = (item) => {
+        if (notaCreditoDebito.motivo_Cod == "03") {
+            const itemDetalle = documentoAAfectar.detalle.find(detalleItem => detalleItem.id === item.id);
+            setItemActual(itemDetalle);
+        } else {
+            setItemActual(item);
+        }
+        setOpen(true);
+    }
 
     return (
         <div className="w-full overflow-x-auto mt-6">
             <Table className={"border-2 border-gray-200"}>
-                <TableCaption className="text-gray-600 italic mt-2">
-                    Lista de productos agregados
-                </TableCaption>
 
                 <TableHeader className="bg-gray-100 border-b-2 border-gray-400">
                     <TableRow>
@@ -49,7 +55,7 @@ const TablaProductos = ({ setOpen }) => {
                                 colSpan={13}
                                 className="text-center py-6 text-gray-500 italic"
                             >
-                                ⚠️ No hay productos agregados aún. Agrega uno para comenzar.
+                                ⚠️ No hay items agregados aún. Agrega uno para comenzar.
                             </td>
                         </tr>
                     </tbody>
@@ -59,7 +65,7 @@ const TablaProductos = ({ setOpen }) => {
                             <TableRow
                                 key={index}
                                 className={"cursor-pointer hover:bg-gray-100"}
-                                onClick={() => seleccionarProducto(producto, index)}
+                                onClick={() => selectItem(producto)}
                             >
                                 <TableCell>{index + 1}</TableCell>
                                 <TableCell>{producto.cod_Producto || ""}</TableCell>

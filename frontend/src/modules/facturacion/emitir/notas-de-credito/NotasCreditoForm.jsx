@@ -15,11 +15,11 @@ const NotasCreditoForm = () => {
                 {/* Sección de Documento Principal */}
                 <InfDocumentoForm />
 
-                {/* Sección de Datos del Cliente */}
-                <DatosDeClienteForm />
-
                 {/* Seccion de Documento Afectado */}
                 <DocumentoAfectadoForm />
+
+                {/*  //? LOS DATOS DEL CLIENTE SE COLOCAN DE MANERA AUTOMATICA AL SELECCIONAR EL DOCUMENTO A AFECTAR*/}
+                {/* <DatosDeClienteForm /> */}
 
                 {/* Sección de Detalle de Productos */}
                 <DetallesForm />

@@ -113,6 +113,22 @@ const NotasCreditoDebito = sequelize.define(
             type: DataTypes.INTEGER,
             allowNull: true,
         },
+        factura_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+                model: "factura",
+                key: "id",
+            },
+        },
+        guia_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+                model: "guias_de_remision",
+                key: "id",
+            },
+        },
     },
     {
         timestamps: false,
@@ -129,6 +145,12 @@ NotasCreditoDebito.associate = (models) => {
     })
     NotasCreditoDebito.hasMany(models.sunat_respuesta, {
         foreignKey: "nota_id",
+    })
+    NotasCreditoDebito.belongsTo(models.factura, {
+        foreignKey: "factura_id",
+    })
+    NotasCreditoDebito.belongsTo(models.guias_de_remision, {
+        foreignKey: "guia_id",
     })
 }
 
