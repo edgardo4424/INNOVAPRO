@@ -23,8 +23,22 @@ const filtrarContratosSinInterrupcion = require("../../../../services/filtrarCon
 const SequelizeAsistenciaRepository = require("../../../asistencias/infraestructure/repositories/sequelizeAsistenciaRepository");
 const { trabajador_rxh_model } = require("../utils/trabajador_rxh_model");
 
+const SequelizeGratificacionRepository = require("../../../gratificaciones/infrastructure/repositories/sequelizeGratificacionRepository");
+const filtrarGratificacionesSinInterrupcion = require("../../../../services/filtrarGratificacionesSinInterrupcion");
+const calcularGratificacionPlanilla = require("../services/cacularGratificacionPlanilla");
+const calcularCTSPlanilla = require("../services/calcularCtsPlanilla");
+const diasLaborales = require("../utils/dias_laborales");
+const SequelizeVacacionesRepository = require("../../../vacaciones/infraestructure/repositories/sequelizeVacacionesRepository");
+const InterseccionVacacionesPlanilla = require("../utils/intersecionVacionesPlanilla");
+const SequelizeAdelantoSueldoRepository = require("../../../adelanto_sueldo/infraestructure/repositories/sequlizeAdelantoSueldoRepository");
+const SequelizeBonoRepository = require("../../../bonos/infraestructure/repositories/sequelizeBonoRepository");
+
 const trabajadorRepository = new SequelizeTrabajadorRepository();
 const asistenciasRepository = new SequelizeAsistenciaRepository();
+const gratificacionRepository = new SequelizeGratificacionRepository();
+const vacacionesRepository = new SequelizeVacacionesRepository();
+const adelantoSueldoRepository = new SequelizeAdelantoSueldoRepository();
+const bonosRepository = new SequelizeBonoRepository();
 
 const {
   CierrePlanillaQuincenal,
@@ -652,6 +666,7 @@ class SequelizePlanillaRepository {
         return planillaQuincenalPorTrabajador;
       }
 
+
        async obtenerTotalPlanillaQuincenalPorTrabajador(
           fecha_anio_mes,
           filial_id,
@@ -674,6 +689,7 @@ class SequelizePlanillaRepository {
             total_pagar: total
           };
         }
+
 }
 
 module.exports = SequelizePlanillaRepository; // Exporta la clase para que pueda ser utilizada en otros módulos

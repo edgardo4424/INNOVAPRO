@@ -313,6 +313,27 @@ class SequelizeAsistenciaRepository {
          throw new Error(error.message);
       }
    }
+   async obtenerCantidadTardanzasPorRangoFecha(
+      trabajador_id,
+      fechaInicio,
+      fechaFin
+   ) {
+      try {
+         const cantidadTardanzas = await Asistencia.count({
+            where: {
+               trabajador_id,
+               estado_asistencia: "tardanza",
+               fecha: {
+                  [Op.between]: [fechaInicio, fechaFin], // <-- inclusivo en ambos extremos
+               },
+            },
+         });
+
+         return cantidadTardanzas;
+      } catch (error) {
+         throw new Error(error.message);
+      }
+   }
 }
 
 module.exports = SequelizeAsistenciaRepository;

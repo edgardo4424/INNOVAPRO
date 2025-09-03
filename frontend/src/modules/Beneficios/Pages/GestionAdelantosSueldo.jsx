@@ -11,14 +11,6 @@ import {
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-   Dialog,
-   DialogContent,
-   DialogHeader,
-   DialogTitle,
-   DialogFooter,
-   DialogDescription,
-} from "@/components/ui/dialog";
-import {
    AlertDialog,
    AlertDialogAction,
    AlertDialogCancel,
@@ -71,6 +63,9 @@ const GestionAdelantoSueldo = () => {
       observacion: "",
       estado: true,
       tipo: "",
+      forma_descuento: "",
+      cuotas: 0,
+      primera_cuota: "",
    });
 
    const fetchAdelantoSueldos = async () => {
@@ -133,6 +128,10 @@ const GestionAdelantoSueldo = () => {
          observacion: adelanto.observacion ?? "",
          estado: Boolean(adelanto.estado),
          tipo: adelanto.tipo ?? "",
+         forma_descuento: adelanto.forma_descuento ?? " ",
+         primera_cuota: adelanto.primera_cuota ?? " ",
+         cuotas: adelanto.cuotas ?? "",
+         cuotas_pagadas: adelanto.cuotas_pagadas ?? "",
       });
       setDialogOpen(true);
    };
@@ -147,6 +146,10 @@ const GestionAdelantoSueldo = () => {
          observacion: adelanto.observacion ?? "",
          estado: Boolean(adelanto.estado),
          tipo: adelanto.tipo ?? "",
+         forma_descuento: adelanto.forma_descuento ?? " ",
+         primera_cuota: adelanto.primera_cuota ?? " ",
+         cuotas: adelanto.cuotas ?? "",
+         cuotas_pagadas: adelanto.cuotas_pagadas ?? "",
       });
       setDialogOpen(true);
    };
@@ -161,6 +164,9 @@ const GestionAdelantoSueldo = () => {
             monto: Number(form.monto || 0),
             observacion: form.observacion,
             tipo: form.tipo,
+            forma_descuento: form.forma_descuento,
+            primera_cuota: form.primera_cuota,
+            cuotas: form.cuotas,
          };
          if (viewMode === "crear") {
             await beneficiosService.crearAdelantoSaldo(payload);
@@ -173,11 +179,18 @@ const GestionAdelantoSueldo = () => {
          setDialogOpen(false);
          await fetchAdelantoSueldos();
       } catch (e) {
-         toast.error(
-            e?.response?.data?.message ??
-               e?.message ??
-               "No se pudo guardar el adelanto de sueldo"
-         );
+         if (
+            e?.response?.data?.mensaje &&
+            e?.response?.data?.mensaje.length > 0
+         ) {
+            const err = e?.response?.data?.mensaje;
+            for (const er of err) {
+               toast.error(er);
+            }
+            return;
+         }
+
+         toast.error("Error desconcido");
       }
    };
 
@@ -393,20 +406,20 @@ const GestionAdelantoSueldo = () => {
             </div>
 
             {/* Dialogo Crear / Editar / Ver */}
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-               <DialogContent className="sm:max-w-lg">
-                  <DialogHeader>
-                     <DialogTitle>
+            <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+               <AlertDialogContent className="sm:max-w-lg">
+                  <AlertDialogHeader>
+                     <AlertDialogTitle>
                         {viewMode === "crear" && "Nuevo Adelanto de sueldo"}
                         {viewMode === "editar" && "Editar adelanto de sueldo"}
                         {viewMode === "ver" && "Detalle del adelanto de sueldo"}
-                     </DialogTitle>
-                     <DialogDescription>
+                     </AlertDialogTitle>
+                     <AlertDialogDescription>
                         {viewMode === "ver"
                            ? "Consulta la información del adelanto de sueldo."
                            : "Completa los campos y guarda los cambios."}
-                     </DialogDescription>
-                  </DialogHeader>
+                     </AlertDialogDescription>
+                  </AlertDialogHeader>
 
                   <div className="space-y-2">
                      {/* Trabajador */}
@@ -436,63 +449,140 @@ const GestionAdelantoSueldo = () => {
                         </Select>
                      </div>
 
-                     {/* Tipo de adelanto de sueldo */}
-                     <div className="grid gap-1">
-                        <Label>Tipo de adelanto</Label>
-                        <Select
-                           value={form.tipo}
-                           onValueChange={(val) =>
-                              setForm((prevForm) => ({
-                                 ...prevForm,
-                                 tipo: val,
-                              }))
-                           }
-                        >
-                           <SelectTrigger className={"w-full"}>
-                              <SelectValue placeholder="Selecciona el tipo de adelanto" />
-                           </SelectTrigger>
-                           <SelectContent>
-                              <SelectItem value={"simple"}>Simple</SelectItem>
-                              <SelectItem value={"gratificacion"}>
-                                 Gratificación
-                              </SelectItem>
-                              <SelectItem value={"cts"}>CTS</SelectItem>
-                           </SelectContent>
-                        </Select>
-                     </div>
+                     <section className="grid grid-cols-2 space-x-3">
+                        <div className="flex-1 flex flex-col gap-1">
+                           <Label>Tipo de adelanto</Label>
+                           <Select
+                              value={form.tipo}
+                              onValueChange={(val) =>
+                                 setForm((prevForm) => ({
+                                    ...prevForm,
+                                    tipo: val,
+                                 }))
+                              }
+                           >
+                              <SelectTrigger className={"w-full"}>
+                                 <SelectValue placeholder="Selecciona el tipo de adelanto" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                 <SelectItem value={"simple"}>
+                                    Simple
+                                 </SelectItem>
+                                 <SelectItem value={"gratificacion"}>
+                                    Gratificación
+                                 </SelectItem>
+                                 <SelectItem value={"cts"}>CTS</SelectItem>
+                              </SelectContent>
+                           </Select>
+                        </div>
 
-                     {/* Fecha */}
-                     <div className="grid gap-1">
-                        <Label>Fecha</Label>
-                        <Input
-                           type="date"
-                           value={form.fecha}
-                           onChange={(e) =>
-                              setForm((f) => ({ ...f, fecha: e.target.value }))
-                           }
-                           disabled={viewMode === "ver"}
-                        />
-                     </div>
+                        {/* Fecha */}
+                        <div className="grid gap-1">
+                           <Label>Fecha</Label>
+                           <Input
+                              type="date"
+                              value={form.fecha}
+                              onChange={(e) =>
+                                 setForm((f) => ({
+                                    ...f,
+                                    fecha: e.target.value,
+                                 }))
+                              }
+                              disabled={viewMode === "ver"}
+                           />
+                        </div>
+                     </section>
+                     <section className="grid grid-cols-2 space-x-3">
+                        <div className="grid gap-1">
+                           <Label>Monto (PEN)</Label>
+                           <Input
+                              type="number"
+                              step="0.01"
+                              placeholder="0.00"
+                              value={form.monto}
+                              onChange={(e) =>
+                                 setForm((f) => ({
+                                    ...f,
+                                    monto: e.target.value,
+                                 }))
+                              }
+                              disabled={viewMode === "ver"}
+                           />
+                           {form.monto && (
+                              <p className="text-xs text-gray-500">
+                                 Prevista: {formatoDinero(form.monto)}
+                              </p>
+                           )}
+                        </div>
+                        <div className="flex-1 flex flex-col gap-1 ">
+                           <Label>Forma Descuento</Label>
+                           <Select
+                              value={form.forma_descuento}
+                              onValueChange={(val) =>
+                                 setForm((prevForm) => ({
+                                    ...prevForm,
+                                    forma_descuento: val,
+                                 }))
+                              }
+                           >
+                              <SelectTrigger className={"w-full"}>
+                                 <SelectValue placeholder="Selecciona el tipo" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                 <SelectItem value={"mensual"}>
+                                    Mensual
+                                 </SelectItem>
+                                 <SelectItem value={"quincenal"}>
+                                    Quincenal
+                                 </SelectItem>
+                              </SelectContent>
+                           </Select>
+                        </div>
+                     </section>
+                     <section className="grid grid-cols-2 space-x-3">
+                        <div className="grid gap-1">
+                           <Label>Fecha</Label>
+                           <Input
+                              type="date"
+                              value={form.primera_cuota}
+                              onChange={(e) =>
+                                 setForm((f) => ({
+                                    ...f,
+                                    primera_cuota: e.target.value,
+                                 }))
+                              }
+                              disabled={viewMode === "ver"}
+                           />
+                        </div>
+                        <div className="grid gap-1">
+                           <Label>Numero de cuotas</Label>
+                           <Input
+                              type="number"
+                              step="1"
+                              placeholder="0"
+                              value={form.cuotas}
+                              onChange={(e) =>
+                                 setForm((f) => ({
+                                    ...f,
+                                    cuotas: e.target.value,
+                                 }))
+                              }
+                              disabled={viewMode === "ver"}
+                           />
+                        </div>
+                     </section>
+                     {form.cuotas_pagadas !== null && (
+                        <section className="grid grid-cols-2 space-x-3">
+                           <div className="grid gap-1">
+                              <Label>
+                                 Cuotas Pagadas: {"  "} {form.cuotas_pagadas}
+                              </Label>
+                           </div>
+                        </section>
+                     )}
+                     {/* Tipo de adelanto de sueldo */}
 
                      {/* Monto */}
-                     <div className="grid gap-1">
-                        <Label>Monto (PEN)</Label>
-                        <Input
-                           type="number"
-                           step="0.01"
-                           placeholder="0.00"
-                           value={form.monto}
-                           onChange={(e) =>
-                              setForm((f) => ({ ...f, monto: e.target.value }))
-                           }
-                           disabled={viewMode === "ver"}
-                        />
-                        {form.monto && (
-                           <p className="text-xs text-gray-500">
-                              Prevista: {formatoDinero(form.monto)}
-                           </p>
-                        )}
-                     </div>
 
                      {/* Observación */}
                      <div className="grid gap-1">
@@ -511,7 +601,7 @@ const GestionAdelantoSueldo = () => {
                      </div>
                   </div>
 
-                  <DialogFooter className="mt-2">
+                  <AlertDialogFooter className="mt-2">
                      <Button
                         variant="outline"
                         onClick={() => setDialogOpen(false)}
@@ -523,9 +613,9 @@ const GestionAdelantoSueldo = () => {
                            {viewMode === "crear" ? "Crear" : "Guardar cambios"}
                         </Button>
                      )}
-                  </DialogFooter>
-               </DialogContent>
-            </Dialog>
+                  </AlertDialogFooter>
+               </AlertDialogContent>
+            </AlertDialog>
          </div>
       </div>
    );

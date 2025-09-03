@@ -12,6 +12,7 @@ const planillaRepository = new sequelizePlanillaRepository();
 const trabajadorRepository = new SequelizeTrabajadorRepository();
 
 const PlanillaController = {
+
   async calcularPlanillaQuincenal(req, res) {
     try {
       const { fecha_anio_mes, filial_id } = req.body;
@@ -121,6 +122,7 @@ const PlanillaController = {
       res.status(500).json({ error: error.message }); // Respondemos con un error
     }
   },
+
 };
 
 module.exports = PlanillaController;

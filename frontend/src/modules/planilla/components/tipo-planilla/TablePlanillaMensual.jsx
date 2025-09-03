@@ -76,7 +76,7 @@ const TablePlanillaMensual = ({ planillaMensualTipoPlanilla, total }) => {
                
               <TableHead colSpan={2} className="text-center border-r h-5 text-white border-black">Prom. H. Extras.</TableHead>
 
-              <TableHead colSpan={2} className="text-center border-r h-5 text-white border-black">Salida a Obra</TableHead>
+              {/* <TableHead colSpan={2} className="text-center border-r h-5 text-white border-black">Salida a Obra</TableHead> */}
 
               <TableHead colSpan={2} className="text-center border-r h-5 text-white border-black">Importe Faltas</TableHead>
 
@@ -113,8 +113,8 @@ const TablePlanillaMensual = ({ planillaMensualTipoPlanilla, total }) => {
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">2da Quincena</TableHead>
 
               
-              <TableHead rowSpan={2} className="text-center border-r text-white border-black">1era Quincena</TableHead>
-              <TableHead rowSpan={2} className="text-center border-r text-white border-black">2da Quincena</TableHead>
+              {/* <TableHead rowSpan={2} className="text-center border-r text-white border-black">1era Quincena</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">2da Quincena</TableHead> */}
 
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">1era Quincena</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">2da Quincena</TableHead>

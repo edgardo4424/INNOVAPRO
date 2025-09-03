@@ -10,14 +10,7 @@ import {
    DropdownMenuSeparator,
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-   Dialog,
-   DialogContent,
-   DialogHeader,
-   DialogTitle,
-   DialogFooter,
-   DialogDescription,
-} from "@/components/ui/dialog";
+
 import {
    AlertDialog,
    AlertDialogAction,
@@ -414,20 +407,20 @@ const GestionBonos = () => {
             </div>
 
             {/* Dialogo Crear / Editar / Ver */}
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-               <DialogContent className="sm:max-w-lg">
-                  <DialogHeader>
-                     <DialogTitle>
+            <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+               <AlertDialogContent className="sm:max-w-lg">
+                  <AlertDialogHeader>
+                     <AlertDialogTitle>
                         {viewMode === "crear" && "Nuevo bono"}
                         {viewMode === "editar" && "Editar bono"}
                         {viewMode === "ver" && "Detalle de bono"}
-                     </DialogTitle>
-                     <DialogDescription>
+                     </AlertDialogTitle>
+                     <AlertDialogDescription>
                         {viewMode === "ver"
                            ? "Consulta la información del bono."
                            : "Completa los campos y guarda los cambios."}
-                     </DialogDescription>
-                  </DialogHeader>
+                     </AlertDialogDescription>
+                  </AlertDialogHeader>
 
                   <div className="space-y-2">
                      {/* Trabajador */}
@@ -536,7 +529,7 @@ const GestionBonos = () => {
                      </div>
                   </div>
 
-                  <DialogFooter className="mt-2">
+                  <AlertDialogFooter className="mt-2">
                      <Button
                         variant="outline"
                         onClick={() => setDialogOpen(false)}
@@ -551,9 +544,9 @@ const GestionBonos = () => {
                            {viewMode === "crear" ? "Crear" : "Guardar cambios"}
                         </Button>
                      )}
-                  </DialogFooter>
-               </DialogContent>
-            </Dialog>
+                  </AlertDialogFooter>
+               </AlertDialogContent>
+            </AlertDialog>
          </div>
       </div>
    );

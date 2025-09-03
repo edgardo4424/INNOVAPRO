@@ -41,10 +41,11 @@ module.exports = async (
          const res =
             await planillaRepository.calcularPlanillaMensualPorTrabajador(
                anio_mes_dia,
-               t.id
+               t.id,
+               filial_id
             );
          payload.planilla.trabajadores.push(res)
-         console.log("respuesta del sequelize planilla", res);
+         // console.log("respuesta del sequelize planilla", res);
       }
       if (t.contrato_actual.tipo_contrato == "HONORARIOS") {
          const res =
@@ -54,7 +55,7 @@ module.exports = async (
             );
                      payload.honorarios.trabajadores.push(res)
 
-         console.log("respuesta del sequelize Honorarios: ", res);
+         // console.log("respuesta del sequelize Honorarios: ", res);
       }
    }
 ;
