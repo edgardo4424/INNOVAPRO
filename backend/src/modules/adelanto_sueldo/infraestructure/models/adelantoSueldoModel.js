@@ -50,10 +50,12 @@ const AdelantoSueldo = sequelize.define(
       cuotas: {
          type: DataTypes.INTEGER,
          allowNull: false,
+         defaultValue:1
       },
       cuotas_pagadas: {
          type: DataTypes.INTEGER,
          allowNull: false,
+         defaultValue:0
       },
    },
    {

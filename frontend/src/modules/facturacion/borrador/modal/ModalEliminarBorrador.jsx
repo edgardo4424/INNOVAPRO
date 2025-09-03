@@ -1,15 +1,8 @@
 import React from "react";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog"; // Adjust path based on your project structure
 import { Button } from "@/components/ui/button"; // Adjust path based on your project structure
 import facturaService from "../../service/FacturaService";
 import { toast } from "react-toastify";
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 const ModalEliminarBorrador = ({
     documentoEliminar,
@@ -42,27 +35,27 @@ const ModalEliminarBorrador = ({
     };
 
     return (
-        <Dialog open={setModalEliminar} onOpenChange={setModalEliminar}>
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle>
+        <AlertDialog open={setModalEliminar} onOpenChange={setModalEliminar}>
+            <AlertDialogContent className="sm:max-w-[425px]">
+                <AlertDialogHeader>
+                    <AlertDialogTitle>
                         ¿Deseas eliminar este borrador {documentoEliminar.correlativo}?
-                    </DialogTitle>
-                    <DialogDescription>
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
                         Esta acción no se puede deshacer. Por favor, confirma si estás
                         seguro.
-                    </DialogDescription>
-                </DialogHeader>
-                <DialogFooter className="flex justify-between mt-6">
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter className="flex justify-between mt-6">
                     <Button variant="outline" onClick={handleCancel}>
                         Cancelar
                     </Button>
                     <Button variant="destructive" className={"hover:scale-105 transition duration-100 cursor-pointer"} onClick={(e) => handleDelete(e)}>
                         Sí, eliminar
                     </Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
     );
 };
 

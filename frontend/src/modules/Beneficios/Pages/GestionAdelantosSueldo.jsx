@@ -11,14 +11,6 @@ import {
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-   Dialog,
-   DialogContent,
-   DialogHeader,
-   DialogTitle,
-   DialogFooter,
-   DialogDescription,
-} from "@/components/ui/dialog";
-import {
    AlertDialog,
    AlertDialogAction,
    AlertDialogCancel,
@@ -136,6 +128,10 @@ const GestionAdelantoSueldo = () => {
          observacion: adelanto.observacion ?? "",
          estado: Boolean(adelanto.estado),
          tipo: adelanto.tipo ?? "",
+         forma_descuento: adelanto.forma_descuento ?? " ",
+         primera_cuota: adelanto.primera_cuota ?? " ",
+         cuotas: adelanto.cuotas ?? "",
+         cuotas_pagadas: adelanto.cuotas_pagadas ?? "",
       });
       setDialogOpen(true);
    };
@@ -150,6 +146,10 @@ const GestionAdelantoSueldo = () => {
          observacion: adelanto.observacion ?? "",
          estado: Boolean(adelanto.estado),
          tipo: adelanto.tipo ?? "",
+         forma_descuento: adelanto.forma_descuento ?? " ",
+         primera_cuota: adelanto.primera_cuota ?? " ",
+         cuotas: adelanto.cuotas ?? "",
+         cuotas_pagadas: adelanto.cuotas_pagadas ?? "",
       });
       setDialogOpen(true);
    };
@@ -165,7 +165,8 @@ const GestionAdelantoSueldo = () => {
             observacion: form.observacion,
             tipo: form.tipo,
             forma_descuento: form.forma_descuento,
-            primera_cuota:form.primera_cuota
+            primera_cuota: form.primera_cuota,
+            cuotas: form.cuotas,
          };
          if (viewMode === "crear") {
             await beneficiosService.crearAdelantoSaldo(payload);
@@ -553,8 +554,32 @@ const GestionAdelantoSueldo = () => {
                               disabled={viewMode === "ver"}
                            />
                         </div>
+                        <div className="grid gap-1">
+                           <Label>Numero de cuotas</Label>
+                           <Input
+                              type="number"
+                              step="1"
+                              placeholder="0"
+                              value={form.cuotas}
+                              onChange={(e) =>
+                                 setForm((f) => ({
+                                    ...f,
+                                    cuotas: e.target.value,
+                                 }))
+                              }
+                              disabled={viewMode === "ver"}
+                           />
+                        </div>
                      </section>
-
+                     {form.cuotas_pagadas !== null && (
+                        <section className="grid grid-cols-2 space-x-3">
+                           <div className="grid gap-1">
+                              <Label>
+                                 Cuotas Pagadas: {"  "} {form.cuotas_pagadas}
+                              </Label>
+                           </div>
+                        </section>
+                     )}
                      {/* Tipo de adelanto de sueldo */}
 
                      {/* Monto */}

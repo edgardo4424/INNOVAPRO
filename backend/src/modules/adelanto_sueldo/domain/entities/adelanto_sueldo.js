@@ -1,4 +1,5 @@
 const destruturarFecha = require("../../infraestructure/repositories/utils/destructurarFecha");
+const obtenerUltimoDiaLaboral = require("../../infraestructure/repositories/utils/ultimo_dia_laboral");
 
 class AdelantoSueldo {
    constructor({
@@ -63,25 +64,26 @@ class AdelantoSueldo {
          const hoy = new Date().toISOString().split("T")[0];
          const { anio, mes, dia } = destruturarFecha(fecha_recibida);
          const { anio: anio_h, mes: mes_h, dia: dia_h } = destruturarFecha(hoy);
-         if(fecha_recibida<hoy){
+         if (fecha_recibida < hoy) {
             errores.push("La fecha de la primera cuota es menor a hoy.");
-      
          }
-         const dias_mes_fecha_recibida = new Date(anio, mes, 0).getDate();
-         if(!dias_mes_fecha_recibida) errores.push('Fallo el conteo de los dias del mes ')
-         const dias_aceptados=[15,dias_mes_fecha_recibida];
-
-         console.log('Dias de la fecha recibida',dias_mes_fecha_recibida);
+         const ultimo_dia_laboral = obtenerUltimoDiaLaboral(anio,mes);
+         console.log('ultimo dia laboral',ultimo_dia_laboral);
          
+         if (!ultimo_dia_laboral)
+            errores.push("Fallo la obtencion del ultimo dia laboral");
+         const dias_aceptados = [15, Number(ultimo_dia_laboral)];
 
-                  errores.push("Aun no crear");
-
+         if (!dias_aceptados.includes(Number(dia))) {
+            errores.push(`La primera cuota debe ser en quincena o fin de mes (${ultimo_dia_laboral}).`);
+         }
       }
-      if (this.cuotas < 1) {
+      
+      if (!this.cuotas||this.cuotas < 1) {
          errores.push("Numero de cuotas no validas");
       }
       console.log(errores);
-      
+
       return errores;
    }
    construirDatosAdelantoSueldo(editar = false) {
@@ -90,6 +92,9 @@ class AdelantoSueldo {
          monto: this.monto,
          observacion: this.observacion,
          tipo: this.tipo,
+         forma_descuento:this.forma_descuento,
+         cuotas:this.cuotas,
+         primera_cuota:this.primera_cuota
       };
       if (editar) {
          data.adelanto_sueldo_id = this.id;

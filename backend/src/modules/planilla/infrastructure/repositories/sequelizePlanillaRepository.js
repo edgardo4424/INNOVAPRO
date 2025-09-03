@@ -29,10 +29,12 @@ const calcularCTSPlanilla = require("../services/calcularCtsPlanilla");
 const diasLaborales = require("../utils/dias_laborales");
 const SequelizeVacacionesRepository = require("../../../vacaciones/infraestructure/repositories/sequelizeVacacionesRepository");
 const InterseccionVacacionesPlanilla = require("../utils/intersecionVacionesPlanilla");
+const SequelizeAdelantoSueldoRepository = require("../../../adelanto_sueldo/infraestructure/repositories/sequlizeAdelantoSueldoRepository");
 const trabajadorRepository = new SequelizeTrabajadorRepository();
 const asistenciasRepository = new SequelizeAsistenciaRepository();
 const gratificacionRepository = new SequelizeGratificacionRepository();
 const vacacionesRepository = new SequelizeVacacionesRepository();
+const adelantoSueldoRepository=new SequelizeAdelantoSueldoRepository()
 
 class SequelizePlanillaRepository {
    async calcularPlanillaQuincenal(
@@ -527,15 +529,19 @@ class SequelizePlanillaRepository {
       console.log(trabajador.nombres, trabajador.apellidos);
       console.log("Id: ", trabajador.id);
 
-      // console.log("cantidad de HE P : ", CANTIDAD_HE_PRIMERA_Q);
-      // console.log("cantidad de HE S: ", CANTIDAD_HE_SEGUNDA_Q);
-      // console.log("dias de labor", DIAS_LABORALES);
       const DIAS_VACACIONES = InterseccionVacacionesPlanilla(
          vacaciones,
          fecha_inicio_periodo,
          fecha_cierre_periodo
       );
-      console.log("Dias en la interseccion: ", DIAS_VACACIONES);
+      let MONTO_ADELANTO_SUELDO=0
+      const responseAdelantos=await adelantoSueldoRepository.obtenerAdelantosPorTrabajadorId(trabajador_id);
+      const adelantos=responseAdelantos.map((r)=>r.get({plain:true}))
+      for (const a_s of adelantos) {
+         MONTO_ADELANTO_SUELDO+=a_s.monto/a_s.cuotas
+      }
+      console.log('Adelantos: ',MONTO_ADELANTO_SUELDO);
+      
 
       datos_planilla_inicial.tipo_documento = trabajador.tipo_documento;
       datos_planilla_inicial.numero_documento = trabajador.numero_documento;
@@ -644,10 +650,11 @@ class SequelizePlanillaRepository {
       ).toFixed(2);
 
       console.log("quincena: ", datos_planilla_inicial.sueldo_quincenal);
-
+      datos_planilla_inicial.adelanto_prestamo=MONTO_ADELANTO_SUELDO.toFixed(2);
       datos_planilla_inicial.saldo_por_pagar = (
-         datos_planilla_inicial.sueldo_neto -
-         datos_planilla_inicial.sueldo_quincenal
+         (datos_planilla_inicial.sueldo_neto -
+         datos_planilla_inicial.sueldo_quincenal)
+         -datos_planilla_inicial.adelanto_prestamo
       ).toFixed(2);
       console.log('*******');
       console.log('.............');

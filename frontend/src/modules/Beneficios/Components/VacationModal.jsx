@@ -1,10 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-   Dialog,
-   DialogContent,
-   DialogHeader,
-   DialogTitle,
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,6 +21,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import beneficiosService from "../services/beneficiosService";
 import { toast } from "react-toastify";
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 export function VacationModal({ empleados, fetchEmployees }) {
    const [modalAbierto, setModalAbierto] = useState(false);
@@ -134,14 +129,14 @@ export function VacationModal({ empleados, fetchEmployees }) {
             <Plus className="w-4 h-4 mr-2" /> Nueva Solicitud
          </Button>
 
-         <Dialog open={modalAbierto} onOpenChange={setModalAbierto}>
-            <DialogContent className="sm:max-w-[500px]">
-               <DialogHeader>
-                  <DialogTitle>Nueva Solicitud de Vacaciones</DialogTitle>
+         <AlertDialog open={modalAbierto} onOpenChange={setModalAbierto}>
+            <AlertDialogContent className="sm:max-w-[500px]">
+               <AlertDialogHeader>
+                  <AlertDialogTitle>Nueva Solicitud de Vacaciones</AlertDialogTitle>
                   <p className="text-sm text-muted-foreground">
                      Completa los datos para crear una nueva solicitud.
                   </p>
-               </DialogHeader>
+               </AlertDialogHeader>
 
                <form onSubmit={manejarEnvio} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -260,8 +255,8 @@ export function VacationModal({ empleados, fetchEmployees }) {
                      </Button>
                   </div>
                </form>
-            </DialogContent>
-         </Dialog>
+            </AlertDialogContent>
+         </AlertDialog>
       </>
    );
 }

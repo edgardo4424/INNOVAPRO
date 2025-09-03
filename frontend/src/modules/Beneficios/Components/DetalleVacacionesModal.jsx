@@ -1,16 +1,10 @@
-import {
-   Dialog,
-   DialogContent,
-   DialogDescription,
-   DialogHeader,
-   DialogTitle,
-   DialogTrigger,
-} from "@/components/ui/dialog";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Calendar, Clock, AlertTriangle, CheckCircle, Eye } from "lucide-react";
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 export default function DetalleVacacionesModal({ datosEmpleado }) {
    const contratos = datosEmpleado.contratos_laborales || [];
@@ -139,24 +133,24 @@ export default function DetalleVacacionesModal({ datosEmpleado }) {
    const diasRestantes = diasGenerados - diasTotales;
 
    return (
-      <Dialog>
-         <DialogTrigger asChild>
+      <AlertDialog>
+         <AlertDialogTrigger asChild>
             <Button variant="outline" size="icon" className="text-xs">
                <Eye />
             </Button>
-         </DialogTrigger>
-         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-               <DialogTitle className="flex items-center gap-2">
+         </AlertDialogTrigger>
+         <AlertDialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+            <AlertDialogHeader>
+               <AlertDialogTitle className="flex items-center gap-2">
                   <Calendar className="h-5 w-5" />
                   {datosEmpleado.nombres} {datosEmpleado.apellidos}
-               </DialogTitle>
-               <DialogDescription>
+               </AlertDialogTitle>
+               <AlertDialogDescription>
                   {datosEmpleado.cargo.nombre} (
                   {datosEmpleado.cargo.area.nombre}) -{" "}
                   {/* {datosEmpleado.empresa_proveedora.razon_social} */}
-               </DialogDescription>
-            </DialogHeader>
+               </AlertDialogDescription>
+            </AlertDialogHeader>
 
             <div className="space-y-4">
                <Card>
@@ -313,7 +307,7 @@ export default function DetalleVacacionesModal({ datosEmpleado }) {
                   </CardContent>
                </Card>
             </div>
-         </DialogContent>
-      </Dialog>
+         </AlertDialogContent>
+      </AlertDialog>
    );
 }
