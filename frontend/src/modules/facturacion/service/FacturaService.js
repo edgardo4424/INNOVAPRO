@@ -83,6 +83,10 @@ const facturaService = {
         const res = await api.post(`/facturacion/nota-debito-credito/crear`, nota);
         return res.data;
     },
+    obtenerCorrelativoNota : async (body) => {
+        const res = await api.post('/facturacion/nota-debito-credito/correlativo', body);
+        return res.data
+    },
 }
 
 

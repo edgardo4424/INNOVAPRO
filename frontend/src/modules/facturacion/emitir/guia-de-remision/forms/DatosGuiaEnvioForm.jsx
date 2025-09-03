@@ -12,8 +12,17 @@ import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteC
 import { Ubigeos } from "../utils/ubigeo";
 import { useEffect, useMemo, useState } from "react";
 
-const DatosGuiaEnvioPrivadoForm = () => {
-    const { guiaDatosPrivado, setGuiaDatosPrivado, guiaTransporte, setGuiaTransporte } = useGuiaTransporte();
+const DatosGuiaEnvioForm = () => {
+    const {
+        guiaDatosPrivado,
+        setGuiaDatosPrivado,
+        guiaDatosPublico,
+        setGuiaDatosPublico,
+        guiaDatosInternos,
+        setGuiaDatosInternos,
+        guiaTransporte,
+        setGuiaTransporte,
+        tipoGuia } = useGuiaTransporte();
 
     // ?? Estados locales para los inputs de ubigeo y su visibilidad de sugerencias
     const [partidaUbigeoInput, setPartidaUbigeoInput] = useState('');
@@ -22,14 +31,8 @@ const DatosGuiaEnvioPrivadoForm = () => {
     const [llegadaUbigeoInput, setLlegadaUbigeoInput] = useState('');
     const [showLlegadaSuggestions, setShowLlegadaSuggestions] = useState(false);
 
-    const {
-        guia_Envio_Cod_Traslado,
-        guia_Envio_Mod_Traslado,
-    } = guiaDatosPrivado;
 
     const {
-        guia_Envio_Peso_Total,
-        guia_Envio_Und_Peso_Total,
         guia_Envio_Fec_Traslado,
 
         guia_Envio_Partida_Ubigeo,
@@ -91,7 +94,7 @@ const DatosGuiaEnvioPrivadoForm = () => {
     }, [partidaUbigeoInput]);
 
     const handleSelectPartidaUbigeo = (ubigeo) => {
-        setPartidaUbigeoInput(`${ubigeo.DISTRITO}, ${ubigeo.PROVINCIA}, ${ubigeo.DEPARTAMENTO}`);
+        setPartidaUbigeoInput(`${ubigeo.IDDIST},${ubigeo.DISTRITO}, ${ubigeo.PROVINCIA}, ${ubigeo.DEPARTAMENTO}`);
         setGuiaTransporte((prevGuiaTransporte) => ({
             ...prevGuiaTransporte,
             guia_Envio_Partida_Ubigeo: ubigeo.IDDIST, // Setea solo el IDDIST
@@ -181,6 +184,34 @@ const DatosGuiaEnvioPrivadoForm = () => {
         }));
     };
 
+    const opcionesCodigos = [
+        { value: "01", descripcion: "VENTA", descripcionmi: "Venta" },
+        { value: "02", descripcion: "VENTA SUJETA A CONFIRMACION DEL COMPRADOR", descripcionmi: "Venta sujeta a confirmación del comprador" },
+        { value: "04", descripcion: "TRASLADO ENTRE ESTABLECIMIENTOS DE LA MISMA EMPRESA", descripcionmi: "Traslado entre establecimientos de la misma empresa" },
+        { value: "08", descripcion: "IMPORTACION", descripcionmi: "Importación" },
+        { value: "09", descripcion: "EXPORTACION", descripcionmi: "Exportación" },
+        { value: "13", descripcion: "OTROS", descripcionmi: "Otros" },
+        { value: "14", descripcion: "VENTA CON ENTREGA A TERCEROS", descripcionmi: "Venta con entrega a terceros" },
+        { value: "18", descripcion: "TRASLADO EMISOR ITINERANTE DE COMPROBANTES DE PAGO", descripcionmi: "Traslado emisor itinerante de comprobantes de pago" },
+        { value: "19", descripcion: "TRASLADO A ZONA PRIMARIA", descripcionmi: "Traslado a zona primaria" },
+        { value: "20", descripcion: "TRASLADO POR EMISOR ITINERANTE (COMPROBANTE DE PAGO)", descripcionmi: "Traslado por emisor itinerante (comprobante de pago)" },
+    ];
+
+
+    const hadleSelectPub = (value, name) => {
+        setGuiaDatosPublico((prevValores) => ({
+            ...prevValores,
+            [name]: value,
+            guia_Envio_Des_Traslado: opcionesCodigos.find((opcion) => opcion.value === value)?.descripcion,
+        }));
+    };
+
+    const hadleSelectInt = (value, name) => {
+        setGuiaDatosInternos((prevValores) => ({
+            ...prevValores,
+            guia_Envio_Cod_Traslado: opcionesCodigos.find((opcion) => opcion.value === value)?.descripcion,
+        }));
+    };
 
     return (
         <div className="overflow-y-auto p-4 sm:p-6 lg:px-8 lg:py-4">
@@ -196,52 +227,165 @@ const DatosGuiaEnvioPrivadoForm = () => {
                     >
                         Código de Traslado
                     </Label>
-                    <Select
-                        name="guia_Envio_Cod_Traslado"
-                        value={guia_Envio_Cod_Traslado}
-                        onValueChange={(e) => {
-                            handleSelectChangePrv(e, "guia_Envio_Cod_Traslado");
-                        }}
-                    >
-                        <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> {/* Estilo de borde mejorado */}
-                            <SelectValue placeholder="Selecciona un codigo" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="01">01 - Venta</SelectItem>
-                            <SelectItem value="02">02 - Venta sujeta a confirmación del comprador</SelectItem>
-                            <SelectItem value="04">04 - Traslado entre establecimientos de la misma empresa</SelectItem>
-                            <SelectItem value="08">08 - Importación</SelectItem>
-                            <SelectItem value="09">09 - Exportación</SelectItem>
-                            <SelectItem value="13">13 - Otros</SelectItem>
-                            <SelectItem value="14">14 - Venta con entrega a terceros</SelectItem>
-                            <SelectItem value="18">18 - Traslado emisor itinerante CP</SelectItem>
-                            <SelectItem value="19">19 - Traslado a zona primaria</SelectItem>
-                            <SelectItem value="20">20 - Traslado por emisor itinerante (comprobante de pago)</SelectItem>
-                        </SelectContent>
+                    {tipoGuia == "transporte-privado" &&
+                        <Select
+                            name="guia_Envio_Cod_Traslado"
+                            value={guiaDatosPrivado.guia_Envio_Cod_Traslado}
+                            onValueChange={(e) => {
+                                handleSelectChangePrv(e, "guia_Envio_Cod_Traslado");
+                            }}
+                        >
+                            <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> {/* Estilo de borde mejorado */}
+                                <SelectValue placeholder="Selecciona un codigo" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {opcionesCodigos.map((opcion) => (
+                                    <SelectItem
+                                        key={opcion.value}
+                                        value={opcion.value}
+                                        descripcion={opcion.descripcion}
+                                    >
+                                        {opcion.value} - {opcion.descripcionmi}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
 
-                    </Select>
+                        </Select>
+                    }
+                    {tipoGuia == "transporte-publico" &&
+                        <Select
+                            name="guia_Envio_Cod_Traslado"
+                            value={guiaDatosPublico.guia_Envio_Cod_Traslado}
+                            onValueChange={(e) => {
+                                hadleSelectPub(e, "guia_Envio_Cod_Traslado");
+                            }}
+                        >
+                            <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> {/* Estilo de borde mejorado */}
+                                <SelectValue placeholder="Selecciona un codigo" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {opcionesCodigos.map((opcion) => (
+                                    <SelectItem
+                                        key={opcion.value}
+                                        value={opcion.value}
+                                        descripcion={opcion.descripcion}
+                                    >
+                                        {opcion.value} - {opcion.descripcionmi}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+
+                        </Select>
+                    }
+                    {
+                        tipoGuia == "traslado-misma-empresa" &&
+                        <Select
+                            name="guia_Envio_Cod_Traslado"
+                            value={guiaDatosInternos.guia_Envio_Cod_Traslado}
+                            onValueChange={(e) => {
+                                hadleSelectInt(e, "guia_Envio_Cod_Traslado");
+                            }}
+                        >
+                            <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> {/* Estilo de borde mejorado */}
+                                <SelectValue placeholder="Selecciona un codigo" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="04">04 - Traslado entre establecimientos de la misma empresa</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    }
                 </div>
                 <div>
-                    <Label
-                        htmlFor="guia_Envio_Mod_Traslado"
-                        className="block text-sm font-semibold text-gray-700 text-left mb-1"
-                    >
-                        Modalidad de Traslado
-                    </Label>
-                    <Select
-                        name="guia_Envio_Mod_Traslado"
-                        value={guia_Envio_Mod_Traslado}
-                        disabled
-                    >
-                        <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> {/* Estilo de borde mejorado */}
-                            <SelectValue placeholder="Selecciona un codigo" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="01">01 - Transporte público</SelectItem>
-                            <SelectItem value="02">02 - Transporte privado</SelectItem>
-                        </SelectContent>
-                    </Select>
+                    {tipoGuia == "transporte-privado" &&
+                        <>
+                            <Label
+                                htmlFor="guia_Envio_Mod_Traslado"
+                                className="block text-sm font-semibold text-gray-700 text-left mb-1"
+                            >
+                                Modalidad de Traslado
+                            </Label>
+                            <Select
+                                name="guia_Envio_Mod_Traslado"
+                                value={guiaDatosPrivado.guia_Envio_Mod_Traslado}
+                                disabled
+                            >
+                                <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> {/* Estilo de borde mejorado */}
+                                    <SelectValue placeholder="Selecciona un codigo" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="01">01 - Transporte público</SelectItem>
+                                    <SelectItem value="02">02 - Transporte privado</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </>
+                    }
+                    {tipoGuia == "transporte-publico" &&
+                        <>
+                            <Label
+                                htmlFor="guia_Envio_Cod_Traslado"
+                                className="block text-sm font-semibold text-gray-700 text-left mb-1"
+                            >
+                                Descripción de Traslado
+                            </Label>
+                            <Input
+                                type="text"
+                                id="guia_Envio_Des_Traslado"
+                                name="guia_Envio_Des_Traslado"
+                                value={guiaDatosPublico.guia_Envio_Des_Traslado}
+                                // onChange={handleChange}
+                                disabled
+                                className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
+                            />
+                        </>
+                    }
+                    {tipoGuia == "traslado-misma-empresa" &&
+                        <>
+                            <Label
+                                htmlFor="guia_Envio_Mod_Traslado"
+                                className="block text-sm font-semibold text-gray-700 text-left mb-1"
+                            >
+                                Modalidad de Traslado
+                            </Label>
+                            <Select
+                                name="guia_Envio_Mod_Traslado"
+                                value={guiaDatosInternos.guia_Envio_Mod_Traslado}
+                                disabled
+                            >
+                                <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> {/* Estilo de borde mejorado */}
+                                    <SelectValue placeholder="Selecciona un codigo" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="01">01 - Transporte público</SelectItem>
+                                    <SelectItem value="02">02 - Transporte privado</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </>}
                 </div>
+
+                {tipoGuia == "transporte-publico" &&
+                    <div>
+                        <Label
+                            htmlFor="guia_Envio_Mod_Traslado"
+                            className="block text-sm font-semibold text-gray-700 text-left mb-1"
+                        >
+                            Modalidad de Traslado
+                        </Label>
+                        <Select
+                            name="guia_Envio_Mod_Traslado"
+                            value={guiaDatosPublico.guia_Envio_Mod_Traslado}
+                            disabled
+                        >
+                            <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> {/* Estilo de borde mejorado */}
+                                <SelectValue placeholder="Selecciona un codigo" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="01">01 - Transporte público</SelectItem>
+                                <SelectItem value="02">02 - Transporte privado</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                }
+
 
                 <div>
                     <Label
@@ -259,6 +403,25 @@ const DatosGuiaEnvioPrivadoForm = () => {
                         name="guia_Envio_Fec_Traslado"
                         value={guia_Envio_Fec_Traslado}
                         // onChange={handleChange}
+                        className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    />
+                </div>
+
+                <div className="col-span-1 md:col-span-2 lg:col-span-2">
+                    {" "}
+                    {/* Made address span full width on small screens too */}
+                    <Label
+                        htmlFor="guia_Envio_Partida_Direccion"
+                        className="block text-sm font-semibold text-gray-700 text-left mb-1"
+                    >
+                        Dirección de Partida
+                    </Label>
+                    <Input
+                        type="text"
+                        id="guia_Envio_Partida_Direccion"
+                        name="guia_Envio_Partida_Direccion"
+                        value={guia_Envio_Partida_Direccion}
+                        onChange={handleChange}
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                     />
                 </div>
@@ -295,20 +458,22 @@ const DatosGuiaEnvioPrivadoForm = () => {
                         </ul>
                     )}
                 </div>
-                <div className="col-span-1 md:col-span-2 lg:col-span-1">
+
+
+                <div className="col-span-1 md:col-span-2 lg:col-span-2">
                     {" "}
                     {/* Made address span full width on small screens too */}
                     <Label
-                        htmlFor="guia_Envio_Partida_Direccion"
+                        htmlFor="guia_Envio_Llegada_Direccion"
                         className="block text-sm font-semibold text-gray-700 text-left mb-1"
                     >
-                        Dirección de Partida
+                        Dirección de Llegada
                     </Label>
                     <Input
                         type="text"
-                        id="guia_Envio_Partida_Direccion"
-                        name="guia_Envio_Partida_Direccion"
-                        value={guia_Envio_Partida_Direccion}
+                        id="guia_Envio_Llegada_Direccion"
+                        name="guia_Envio_Llegada_Direccion"
+                        value={guia_Envio_Llegada_Direccion}
                         onChange={handleChange}
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                     />
@@ -346,24 +511,7 @@ const DatosGuiaEnvioPrivadoForm = () => {
                         </ul>
                     )}
                 </div>
-                <div className="col-span-1 md:col-span-2 lg:col-span-1">
-                    {" "}
-                    {/* Made address span full width on small screens too */}
-                    <Label
-                        htmlFor="guia_Envio_Llegada_Direccion"
-                        className="block text-sm font-semibold text-gray-700 text-left mb-1"
-                    >
-                        Dirección de Llegada
-                    </Label>
-                    <Input
-                        type="text"
-                        id="guia_Envio_Llegada_Direccion"
-                        name="guia_Envio_Llegada_Direccion"
-                        value={guia_Envio_Llegada_Direccion}
-                        onChange={handleChange}
-                        className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
-                    />
-                </div>
+
                 <div className="col-span-1 md:col-span-2 lg:col-span-1">
                     {" "}
                     {/* Made address span full width on small screens too */}
@@ -387,4 +535,4 @@ const DatosGuiaEnvioPrivadoForm = () => {
     );
 };
 
-export default DatosGuiaEnvioPrivadoForm;
+export default DatosGuiaEnvioForm;

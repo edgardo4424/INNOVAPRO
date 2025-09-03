@@ -3,7 +3,7 @@ const { GuiaDetalles } = require("../models/guia-remision/guiaDetallesModel");
 const { GuiaChoferes } = require("../models/guia-remision/guiaChoferesModel");
 const { SunatRespuesta } = require("../models/sunatRespuestaModel");
 const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
-const { Op } = require("sequelize");
+const { Op, fn, col } = require('sequelize');
 
 
 class SequelizeGuiaRemisionRepository {
@@ -227,20 +227,53 @@ class SequelizeGuiaRemisionRepository {
     }
 
     async correlativo(body) {
-        const correlativos = [];
-        for (const { ruc } of body) {
-            const correlativoGuia = await GuiaRemision.max('correlativo', {
-                where: {
-                    empresa_Ruc: ruc
+        const resultados = [];
+        const rucsAndSeries = [];
+
+        for (const data of body) {
+            if (data.serie) {
+                for (const serie of data.serie) {
+                    rucsAndSeries.push({ ruc: data.ruc, serie: serie.value });
                 }
-            });
-            correlativos.push({
-                ruc,
-                correlativo: correlativoGuia ? String(Number(correlativoGuia) + 1) : "1",
+            }
+        }
+
+        const correlativosPorSerie = await GuiaRemision.findAll({
+            attributes: [
+                'empresa_Ruc',
+                'serie',
+                // Aplica CAST para convertir el string 'correlativo' a un número antes de obtener el máximo
+                [db.sequelize.literal('MAX(CAST(correlativo AS UNSIGNED))'), 'ultimo_correlativo']
+            ],
+            where: {
+                [Op.or]: rucsAndSeries.map(item => ({
+                    empresa_Ruc: item.ruc,
+                    serie: item.serie
+                }))
+            },
+            group: ['empresa_Ruc', 'serie'],
+            raw: true
+        });
+
+        const correlativosMap = new Map();
+        for (const result of correlativosPorSerie) {
+            const key = `${result.empresa_Ruc}-${result.serie}`;
+            correlativosMap.set(key, Number(result.ultimo_correlativo));
+        }
+
+        for (const item of rucsAndSeries) {
+            const key = `${item.ruc}-${item.serie}`;
+            const ultimoCorrelativo = correlativosMap.get(key) || 0;
+            const siguienteCorrelativo = String(ultimoCorrelativo + 1).padStart(5, '0');
+
+            resultados.push({
+                ruc: item.ruc,
+                serie: item.serie,
+                siguienteCorrelativo: siguienteCorrelativo
             });
         }
-        console.log(correlativos)
-        return correlativos;
+
+        return resultados;
     }
 }
 

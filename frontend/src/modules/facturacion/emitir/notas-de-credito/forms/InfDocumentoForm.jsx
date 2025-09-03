@@ -8,13 +8,61 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useNota } from "@/modules/facturacion/context/NotaContext";
 import { LoaderCircle, Search, SquarePen } from "lucide-react";
 import { Calendar22 } from "../../factura-boleta/components/Calendar22";
-import { useNota } from "@/modules/facturacion/context/NotaContext";
+import facturaService from "@/modules/facturacion/service/FacturaService";
+import { useEffect, useState } from "react";
+
+const serieCredito = [
+  { value: "BC01", doc: "03" },
+  { value: "BC02", doc: "03" },
+  { value: "FC01", doc: "01" },
+  { value: "FC02", doc: "01" },
+  { value: "TC01", doc: "09" },
+  { value: "TC02", doc: "09" },
+];
+
+const serieDebito = [
+  { value: "BD01", doc: "03" },
+  { value: "BD02", doc: "03" },
+  { value: "FD01", doc: "01" },
+  { value: "FD02", doc: "01" },
+  { value: "TD03", doc: "09" },
+  { value: "TD03", doc: "09" },
+];
 
 const InfDocumentoForm = () => {
 
   const { notaCreditoDebito, setNotaCreditoDebito, filiales } = useNota();
+  const [correlativos, setCorrelativos] = useState([]);
+  const [correlativoEstado, setCorrelativoEstado] = useState(false);
+  const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
+
+  const activarCorrelativo = (e) => {
+    e.preventDefault();
+    setCorrelativoEstado(!correlativoEstado);
+  };
+
+  const buscarCorrelativo = async () => {
+    if (loadingCorrelativo) return;
+
+    try {
+      setLoadingCorrelativo(true);
+      const rucsAndSeries = filiales.map((filial) => ({
+        ruc: filial.ruc,
+        credito: serieCredito,
+        debito: serieDebito,
+      }));
+
+      const { data } = await facturaService.obtenerCorrelativoNota(rucsAndSeries);
+      setCorrelativos(data);
+    } catch (error) {
+      console.error("Error al obtener correlativos:", error);
+    } finally {
+      setLoadingCorrelativo(false);
+    }
+  };
 
 
   const handleInputChange = (e) => {
@@ -31,6 +79,38 @@ const InfDocumentoForm = () => {
       [name]: value,
     }));
   };
+
+  // Al cargar el componente o cambiar la lista de filiales, buscar los correlativos
+  useEffect(() => {
+    if (filiales.length > 0) {
+      buscarCorrelativo();
+    }
+  }, [filiales]);
+
+  useEffect(() => {
+    // Establecer la serie por defecto al cambiar el tipo de documento
+    const nuevaSerie = notaCreditoDebito.tipo_Doc === "07" ? "BC01" : "BD01";
+    setNotaCreditoDebito((prev) => ({
+      ...prev,
+      serie: nuevaSerie,
+      correlativo: "" // Limpiar el correlativo para que se recalcule
+    }));
+  }, [notaCreditoDebito.tipo_Doc]);
+
+  useEffect(() => {
+    // Buscar y establecer el correlativo basándose en la serie y el RUC actual
+    if (correlativos.length > 0 && notaCreditoDebito.empresa_Ruc && notaCreditoDebito.serie) {
+      const correlativoEncontrado = correlativos.find(
+        (item) => item.ruc === notaCreditoDebito.empresa_Ruc && item.serie === notaCreditoDebito.serie
+      );
+      const siguienteCorrelativo = correlativoEncontrado ? correlativoEncontrado.siguienteCorrelativo : "0001";
+
+      setNotaCreditoDebito((prev) => ({
+        ...prev,
+        correlativo: siguienteCorrelativo,
+      }));
+    }
+  }, [notaCreditoDebito.empresa_Ruc, notaCreditoDebito.serie, correlativos]);
 
   return (
     <div className="overflow-y-auto p-4 sm:p-6 lg:px-8 lg:py-4">
@@ -95,28 +175,41 @@ const InfDocumentoForm = () => {
 
         {/* Serie */}
         <div>
-          <Label
-            htmlFor="serie"
-            className="block text-sm text-left mb-1"
+          <Label htmlFor="serie">Serie</Label>
+          <Select
+            value={notaCreditoDebito.serie}
+            name="serie"
+            onValueChange={(value) => handleSelectChange(value, "serie")}
           >
-            Serie
-          </Label>
-          <div className="relative w-full">
-            <Input
-              type="text"
-              id="serie"
-              name="serie"
-              className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none text-sm"
-              value={notaCreditoDebito.serie}
-              onChange={handleInputChange}
-            // disabled={!serieEstado}
-            />
-            <button
-              // onClick={activarSerie}
-              className={`absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-500 `}>
-              <SquarePen />
-            </button>
-          </div>
+            <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm">
+              <SelectValue placeholder="Selecciona una serie" />
+            </SelectTrigger>
+            <SelectContent>
+              {notaCreditoDebito.afectado_Tipo_Doc !== "" ?
+                notaCreditoDebito.tipo_Doc === "07" ?
+                  serieCredito.filter(item => item.doc === notaCreditoDebito.afectado_Tipo_Doc).map((item) => (
+                    <SelectItem key={item.value} value={item.value}>
+                      {item.value}
+                    </SelectItem>
+                  )) :
+                  serieDebito.filter(item => item.doc === notaCreditoDebito.afectado_Tipo_Doc).map((item) => (
+                    <SelectItem key={item.value} value={item.value}>
+                      {item.value}
+                    </SelectItem>
+                  )) :
+                notaCreditoDebito.tipo_Doc === "07" ?
+                  serieCredito.map((item) => (
+                    <SelectItem key={item.value} value={item.value}>
+                      {item.value}
+                    </SelectItem>
+                  )) :
+                  serieDebito.map((item) => (
+                    <SelectItem key={item.value} value={item.value}>
+                      {item.value}
+                    </SelectItem>
+                  ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Correlativo */}
@@ -135,24 +228,17 @@ const InfDocumentoForm = () => {
                 name="correlativo"
                 value={notaCreditoDebito.correlativo}
                 onChange={handleInputChange}
-                // disabled={!correlativoEstado}
+                disabled={!correlativoEstado}
                 className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none text-sm"
               />
-              <button
-                // onClick={activarCorrelativo}
-                className={`absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-500 `}>
+              <button onClick={activarCorrelativo} className={`absolute right-2 top-1/2 transform -translate-y-1/2 ${correlativoEstado ? "text-blue-500" : "text-gray-400"}`}>
                 <SquarePen />
               </button>
             </div>
             <button className={`bg-blue-500 hover:bg-blue-600  cursor-pointer  text-white rounded-md px-2 `}
-            // disabled={correlativoEstado}
-            // onClick={(e) => buscarCorrelativo(e)}
+              onClick={buscarCorrelativo}
             >
-              {/* {loadingCorrelativo ? */}
-              {/* <LoaderCircle className="w-4 h-4 animate-spin" /> */}
-              {/* : */}
-              <Search />
-              {/* } */}
+              {loadingCorrelativo ? <LoaderCircle className="size-5 animate-spin" /> : <Search className="size-5" />}
             </button>
           </div>
         </div>
@@ -228,9 +314,9 @@ const InfDocumentoForm = () => {
             Observación
           </Label>
           <Textarea
-            id="observacion"
-            name="observacion"
-            value={notaCreditoDebito.observacion}
+            id="Observacion"
+            name="Observacion"
+            value={notaCreditoDebito.Observacion}
             onChange={handleInputChange}
             rows="2"
             className="h-22 px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 text-sm"

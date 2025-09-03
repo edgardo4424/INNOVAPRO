@@ -132,17 +132,22 @@ export function NotaProvider({ children }) {
     // La función 'registrarBaseDatos' se mantiene como una función separada
     // que es llamada desde 'EmitirNota'
     const registrarBaseDatos = async (documento) => {
-        try {
-            if (!documento) {
-                return { success: false, mensaje: "No se pudo registrar la nota: documento vacío." };
-            }
+        if (!documento) {
+            return { success: false, mensaje: "No se pudo registrar la nota: documento vacío.", status: 400 };
+        }
 
-            const { status, success, data } = await toast.promise(
+        try {
+            const { status, success, data, mensaje } = await toast.promise(
                 facturaService.registrarNota(documento),
                 {
                     pending: "Registrando nota en la base de datos...",
                     success: "Nota registrada con éxito en la base de datos de INNOVA.",
-                    error: "No se pudo registrar la nota.",
+                    error: {
+                        render({ data }) {
+                            // Accede directamente al mensaje del error, si existe
+                            return data?.response?.data?.mensaje || "No se pudo registrar la nota.";
+                        }
+                    },
                 }
             );
 
@@ -150,24 +155,17 @@ export function NotaProvider({ children }) {
                 Limpiar();
             }
 
-            return { status, success, data, mensaje: "Registro completado." };
+            return { status, success, data, mensaje: mensaje || "Registro completado." };
 
         } catch (error) {
+            // En caso de que toast.promise no capture el error, lo manejamos aquí
             if (error.response) {
-                const { status, data } = error.response;
-                if (data?.mensaje) {
-                    toast.error(data.mensaje);
-                } else {
-                    toast.error("Error al registrar la nota en la base de datos.");
-                }
                 return {
                     success: false,
-                    mensaje: data?.mensaje || "Error al registrar la nota.",
-                    status: status,
+                    mensaje: error.response.data?.mensaje || "Error al registrar la nota.",
+                    status: error.response.status,
                 };
             } else {
-                toast.error("Error de red o desconocido.");
-                console.error("Error al registrar la nota:", error);
                 return {
                     success: false,
                     mensaje: "Ocurrió un error inesperado al registrar la nota.",
@@ -175,6 +173,11 @@ export function NotaProvider({ children }) {
                 };
             }
         }
+    };
+
+    const Limpiar = () => {
+        setNotaCreditoDebito(notaInical);
+        setIdFactura(null);
     };
 
     return (

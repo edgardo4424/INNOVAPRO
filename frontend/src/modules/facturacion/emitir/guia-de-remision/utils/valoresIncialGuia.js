@@ -10,9 +10,9 @@ const guiaInical = {
     empresa_Ruc: "10749283781",
 
     cliente_Tipo_Doc: "6",
-    cliente_Num_Doc: "20603021933",
-    cliente_Razon_Social: "INNOVA RENTAL MAQUINARIA SAC",
-    cliente_Direccion: "AV. ALFREDO BENAVIDES NRO. 1579 INT. 602 URB. SAN JORGE, LIMA - LIMA - MIRAFLORES",
+    cliente_Num_Doc: "",
+    cliente_Razon_Social: "",
+    cliente_Direccion: "",
 
     guia_Envio_Peso_Total: 0,
     guia_Envio_Und_Peso_Total: "KGM",

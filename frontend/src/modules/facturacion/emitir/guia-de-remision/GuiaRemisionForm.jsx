@@ -1,12 +1,12 @@
 import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext";
-import GuiaMismaEmpresa from "./components/guias/GuiaMismaEmpresa";
-import GuiaPrivado from "./components/guias/GuiaPrivado";
-import GuiaPublico from "./components/guias/GuiaPublico";
 import ModalVisualizarGuiaPrivada from "./components/modal/ModalVisualizarGuiaPrivada";
+import ChoferPrivadoForm from "./forms/ChoferPrivadoForm";
 import DatosDeClienteForm from "./forms/DatosDeClienteForm";
-import DatosDeEmpresaForm from "./forms/DatosDeEmpresaForm";
+import DatosGuiaEnvioForm from "./forms/DatosGuiaEnvioForm";
 import DetalleForm from "./forms/DetalleForm";
 import InfDocumentoForm from "./forms/InfDocumentoForm";
+import TransportistaPublicoForm from "./forms/TransportistaPublicoForm";
+
 
 const GuiaRemisionForm = () => {
 
@@ -15,11 +15,9 @@ const GuiaRemisionForm = () => {
 
     const render = () => {
         if (tipoGuia == "transporte-privado") {
-            return <GuiaPrivado />;
+            return <ChoferPrivadoForm />;
         } else if (tipoGuia == "transporte-publico") {
-            return <GuiaPublico />;
-        } else if (tipoGuia == "traslado-misma-empresa") {
-            return <GuiaMismaEmpresa />;
+            return <TransportistaPublicoForm />;
         }
     };
 
@@ -35,13 +33,16 @@ const GuiaRemisionForm = () => {
                 <form
                     onSubmit={(e) => { e.preventDefault(); }}
                     className=" shadow-xl border bg-white border-gray-400  rounded-3xl  p-4  transition-all duration-300 mb-6"
-                    >
+                >
                     {/* Sección de Documento Principal */}
                     <InfDocumentoForm />
 
 
                     {/* Sección de Datos del Cliente */}
                     <DatosDeClienteForm />
+
+                    {/* Seccion de Datos Guia de Envío */}
+                    <DatosGuiaEnvioForm />
 
                     {/* //?Renderizado dinámico segun el tipo de guia que seleccione */}
                     {

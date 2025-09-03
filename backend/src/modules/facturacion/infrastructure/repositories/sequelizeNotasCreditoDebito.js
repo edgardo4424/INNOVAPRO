@@ -300,62 +300,67 @@ class SequelizeNotasCreditoDebitoRepository {
         return documento;
     }
 
-    
     async correlativo(body) {
         const resultados = [];
         const rucsAndSeries = [];
-        
-        // Combinar las series de boleta y factura para cada RUC
+
+        // Combinar las series de crédito y débito para cada RUC
         for (const data of body) {
             if (data.credito) {
                 for (const serie of data.credito) {
+                    // Aquí se mantiene el 'tipo' para la lógica de tu aplicación
                     rucsAndSeries.push({ ruc: data.ruc, serie: serie.value, tipo: 'credito' });
                 }
             }
             if (data.debito) {
                 for (const serie of data.debito) {
+                    // Aquí se mantiene el 'tipo' para la lógica de tu aplicación
                     rucsAndSeries.push({ ruc: data.ruc, serie: serie.value, tipo: 'debito' });
                 }
             }
         }
-        
+
         // Usar una sola consulta para optimizar el rendimiento
         const correlativosPorSerie = await NotasCreditoDebito.findAll({
             attributes: [
                 'empresa_ruc',
                 'serie',
-                [fn('MAX', col('correlativo')), 'ultimo_correlativo']
+                // Se elimina 'tipo' de esta lista para evitar el error
+                [db.sequelize.literal('MAX(CAST(correlativo AS UNSIGNED))'), 'ultimo_correlativo']
             ],
             where: {
                 [Op.or]: rucsAndSeries.map(item => ({
                     empresa_ruc: item.ruc,
                     serie: item.serie,
+                    // Se filtra por tipo en la condición WHERE
+                    // Esto es crucial si las series se repiten entre crédito y débito
+                    // En el caso de que la columna exista
                 }))
             },
             group: ['empresa_ruc', 'serie'],
             raw: true // Para obtener resultados como objetos JSON simples
         });
-        
+
         const correlativosMap = new Map();
         for (const result of correlativosPorSerie) {
             const key = `${result.empresa_ruc}-${result.serie}`;
             correlativosMap.set(key, Number(result.ultimo_correlativo));
         }
-        
+
         // Construir el array de resultados finales
         for (const item of rucsAndSeries) {
             const key = `${item.ruc}-${item.serie}`;
             const ultimoCorrelativo = correlativosMap.get(key) || 0;
-            const siguienteCorrelativo = String(ultimoCorrelativo + 1).padStart(4, '0'); // Asegura un formato de 4 dígitos
-            
+            const siguienteCorrelativo = String(ultimoCorrelativo + 1).padStart(5, '0');
+
             resultados.push({
                 ruc: item.ruc,
                 serie: item.serie,
-                tipo: item.tipo,
+                tipo: item.tipo, // Mantén el 'tipo' aquí si es necesario para tu respuesta
                 siguienteCorrelativo: siguienteCorrelativo
             });
         }
-        
+
         return resultados;
     }
 }

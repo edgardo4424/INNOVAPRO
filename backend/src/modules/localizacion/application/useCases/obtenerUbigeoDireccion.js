@@ -1,5 +1,5 @@
 const geocodingClient = require('../../service/apigoogle');
-
+const normalizeDepartmentName = require('../../utils/ubigeoDepartamentoHelper')
 // Helpers locales (normalización Perú)
 const strip = (s = '') => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 const norm = (s = '') => strip(String(s).toUpperCase().trim());
@@ -22,6 +22,8 @@ module.exports = async (direccion, ubigeoRepo) => {
             const provinciaRaw = address_components.find(c => c.types.includes('administrative_area_level_2'))?.long_name;
             let departamentoRaw = address_components.find(c => c.types.includes('administrative_area_level_1'))?.long_name;
 
+            console.log(distritoRaw, provinciaRaw, departamentoRaw)
+
             if (!distritoRaw || !provinciaRaw || !departamentoRaw) {
                 return { codigo: 404, respuesta: { mensaje: 'no se encontró distrito/provincia/departamento', ubigeo: null } };
             }
@@ -30,8 +32,9 @@ module.exports = async (direccion, ubigeoRepo) => {
             departamentoRaw = departamentoRaw.replace(/^PROVINCIA DE\s+/i, '');
             const distrito = norm(distritoRaw);
             const provincia = norm(provinciaRaw);
-            const departamento = norm(departamentoRaw);
+            const departamento = normalizeDepartmentName(departamentoRaw);
 
+            console.log(distrito, provincia, departamento)
             // Consulta al repositorio (asegúrate de que tu repo busca por nombres normalizados)
             // Ej: SELECT codigo FROM ubigeos WHERE dep_norm=? AND prov_norm=? AND dist_norm=?  (o normaliza en la query)
             const ubigeo = await ubigeoRepo.obtenerUbigeo(distrito, provincia, departamento);

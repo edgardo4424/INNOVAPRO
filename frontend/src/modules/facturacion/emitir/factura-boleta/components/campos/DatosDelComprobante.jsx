@@ -185,7 +185,7 @@ const DatosDelComprobante = () => {
                         <button className={`bg-blue-500 hover:bg-blue-600 cursor-pointer text-white rounded-md px-2`}
                             onClick={buscarCorrelativo}
                         >
-                            {loadingCorrelativo ? <LoaderCircle className="w-4 h-4 animate-spin" /> : <Search />}
+                            {loadingCorrelativo ? <LoaderCircle className="size-5 animate-spin" /> : <Search className="size-5"/>}
                         </button>
                     </div>
                 </div>

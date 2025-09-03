@@ -196,8 +196,6 @@ export function GuiaTransporteProvider({ children }) {
 
                 const { status, success, message } = await RegistrarBaseDatos(guiaCopia);
 
-                console.log("lo que debue registrar", status, success, message);
-
                 if (success && status == 201) {
                     return {
                         success: true,

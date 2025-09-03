@@ -155,11 +155,11 @@ const DetalleProductoForm = ({ closeModal }) => {
 
                 {/* Cantidad */}
                 <div className="flex flex-col gap-1 md:col-span-1">
-                    <Label>Cantidad</Label>
+                    <Label>Peso</Label>
                     <Input
                         type="number"
                         name="cantidad"
-                        placeholder="cantidad"
+                        placeholder="Peso"
                         className={"border-1 border-gray-400"}
                         onwheel={(e) => e.target.blur()}
                         value={cantidad || ""}

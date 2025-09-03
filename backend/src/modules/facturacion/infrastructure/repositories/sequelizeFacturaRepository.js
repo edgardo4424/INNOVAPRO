@@ -381,7 +381,7 @@ class SequelizeFacturaRepository {
             attributes: [
                 'empresa_ruc',
                 'serie',
-                [fn('MAX', col('correlativo')), 'ultimo_correlativo']
+                [db.sequelize.literal('MAX(CAST(correlativo AS UNSIGNED))'), 'ultimo_correlativo']
             ],
             where: {
                 [Op.or]: rucsAndSeries.map(item => ({
@@ -390,7 +390,7 @@ class SequelizeFacturaRepository {
                 }))
             },
             group: ['empresa_ruc', 'serie'],
-            raw: true // Para obtener resultados como objetos JSON simples
+            raw: true
         });
 
         const correlativosMap = new Map();
@@ -403,7 +403,7 @@ class SequelizeFacturaRepository {
         for (const item of rucsAndSeries) {
             const key = `${item.ruc}-${item.serie}`;
             const ultimoCorrelativo = correlativosMap.get(key) || 0;
-            const siguienteCorrelativo = String(ultimoCorrelativo + 1).padStart(4, '0'); // Asegura un formato de 4 dígitos
+            const siguienteCorrelativo = String(ultimoCorrelativo + 1).padStart(5, '0');
 
             resultados.push({
                 ruc: item.ruc,
@@ -414,8 +414,6 @@ class SequelizeFacturaRepository {
 
         return resultados;
     }
-
-
 
     async cdrzip(id_factura) {
         const cdr_zip = await SunatRespuesta.findOne({
