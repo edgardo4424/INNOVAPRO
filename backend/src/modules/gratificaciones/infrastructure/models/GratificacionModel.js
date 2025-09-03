@@ -18,7 +18,7 @@ const Gratificacion = sequelize.define(
       },
     },
     tipo_contrato: {
-      type: DataTypes.ENUM('PLANILLA', 'HONORARIO'),
+      type: DataTypes.ENUM('PLANILLA', 'HONORARIOS'),
       allowNull: false,
       defaultValue: 'PLANILLA'
     },
@@ -152,6 +152,15 @@ const Gratificacion = sequelize.define(
       type: DataTypes.DATEONLY,
       allowNull: false,
    },
+     banco: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    numero_cuenta: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+
   },
    {
       timestamps: true,

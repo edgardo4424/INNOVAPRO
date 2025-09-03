@@ -37,10 +37,6 @@ class SequelizeGratificacionRepository {
         return [];
     }
 
-    if (!cierreGratificacion) {
-      return [];
-    }
-
     const gratificacionesCerradas = await Gratificacion.findAll({
       where: { cierre_id: cierreGratificacion.id },
       include: [

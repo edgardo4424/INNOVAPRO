@@ -99,5 +99,9 @@ Trabajador.associate = (models) => {
       foreignKey: "trabajador_id",
       as: "gratificaciones",
    });
+   Trabajador.hasMany(models.planilla_quincenal, {
+      foreignKey: "trabajador_id",
+      as: "planilla_quincenal",
+   });
 };
 module.exports = { Trabajador };

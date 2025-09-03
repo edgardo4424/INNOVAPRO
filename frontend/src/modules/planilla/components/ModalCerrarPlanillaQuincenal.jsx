@@ -10,10 +10,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { ShieldAlert, Lock } from "lucide-react"; // 👈 asegúrate de tener lucide-react instalado
 import { useState } from "react";
-import gratificacionService from "../services/gratificacionService";
+import planillaQuincenalService from "../services/planillaQuincenalService";
 import { toast } from "react-toastify";
+import { listaMeses } from "../utils/valorInicial";
 
-export function ModalCerrarGratificacion({ filtro, gratificacion }) {
+export function ModalCerrarPlanillaQuincenal({ filtro, planillaQuincenalTipoPlanilla, planillaQuincenalTipoRh }) {
   const [isOpen, setIsOpen] = useState(false);
   const handleClose = () => {
     setIsOpen(false);
@@ -21,10 +22,14 @@ export function ModalCerrarGratificacion({ filtro, gratificacion }) {
 
   const handleSave = async () => {
     try {
-      // filtro: {anio: "2024", periodo: "DICIEMBRE", filial_id: "1"}
-      await gratificacionService.cerrarGratificaciones(filtro);
      
-      toast.success("Gratificación cerrada con éxito");
+      const dataPOST = {
+        fecha_anio_mes: `${filtro.anio}-${filtro.mes}`,
+        filial_id: filtro.filial_id
+      }
+      await planillaQuincenalService.cerrarPlanillaQuincenal(dataPOST);
+     
+      toast.success("Planilla Quincenal cerrada con éxito");
       setIsOpen(false);
     } catch (error) {
       console.log(error);
@@ -38,13 +43,15 @@ export function ModalCerrarGratificacion({ filtro, gratificacion }) {
     }
   };
 
+  const labelMes = listaMeses.find((mes) => mes.value == filtro.mes).label;
+
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogTrigger asChild>
         <Button
           variant="default"
           className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 shadow-md rounded-lg"
-          disabled={(gratificacion?.planilla?.trabajadores?.length == 0)}
+          disabled={(planillaQuincenalTipoPlanilla?.length == 0) && (planillaQuincenalTipoRh?.length == 0)}
         >
           Guardar
         </Button>
@@ -58,7 +65,7 @@ export function ModalCerrarGratificacion({ filtro, gratificacion }) {
         </AlertDialogHeader>
         <AlertDialogDescription className="mt-3 text-gray-700 leading-relaxed text-base">
           ⚠️ Una vez confirmes, los registros de {" "}
-          <span className="font-semibold">Gratificaciones de {filtro.periodo} {filtro.anio} </span>
+          <span className="font-semibold">Planilla Quincenal del Mes de {labelMes} del año {filtro.anio} </span>
           quedarán{" "}
           <span className="font-semibold text-red-600">
             guardados y bloqueados
