@@ -39,8 +39,8 @@ const RowPlanillaMensual = ({ key, e, index }) => {
         <TableCell className="text-right">{e.tardanza_primera_quincena}</TableCell>
        <TableCell className="text-right">{e.tardanza_segunda_quincena}</TableCell>
 
-       <TableCell className="text-right">{e.bono_por_montaje_primera_quincena}</TableCell>
-       <TableCell className="text-right">{e.bono_por_montaje_segunda_quincena}</TableCell>
+       <TableCell className="text-right">{e.bono_primera_quincena}</TableCell>
+       <TableCell className="text-right">{e.bono_segunda_quincena}</TableCell>
 
        
        <TableCell className="text-right">{e.sueldo_bruto}</TableCell>
