@@ -58,7 +58,7 @@ const TablePlanillaQuincenal = ({ planillaQuincenalTipoPlanilla, total }) => {
                 <TableHead rowSpan={2} className="text-center border-r text-white border-black">Fecha Ingreso</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Dias Laborados</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Base</TableHead>
-              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Mensual</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Quincenal</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Asig. Fam.</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Bruto</TableHead>
 
@@ -69,6 +69,8 @@ const TablePlanillaQuincenal = ({ planillaQuincenalTipoPlanilla, total }) => {
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Total Descuentos</TableHead>
          
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Total a Pagar</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Banco</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">N° Cuenta</TableHead>
             </TableRow>
 
             {/* Sub-encabezados del grupo FALTAS */}

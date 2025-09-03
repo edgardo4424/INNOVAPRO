@@ -13,7 +13,7 @@ const Filtro = ({ filiales, filtro, setFiltro, Buscar }) => {
  
 
   return (
-    <div className="flex gap-x-5  bg-red-">
+    <div className="flex gap-x-5">
       <div className="flex flex-col items-center justify-between w-full gap-x-5 border-2 border-gray-300 p-4 rounded-2xl">
         <div className="flex items-between justify-start gap-x-2 w-full py-2">
           <div className="flex">

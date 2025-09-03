@@ -74,6 +74,9 @@ const TableGratificacion = ({ gratificacion }) => {
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Renta 5ta / No dom.</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Adelanto</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Total a Pagar</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Banco</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">N° Cuenta</TableHead>
+
               {/* <TableHead rowSpan={2} className="text-center border-r text-white border-black">Acciones</TableHead> */}
             </TableRow>
 

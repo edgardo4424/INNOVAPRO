@@ -22,13 +22,14 @@ const CalculoGratificacion = () => {
   const [filtro, setFiltro] = useState({
     anio: new Date().getFullYear() + "",
     periodo: periodo,
-    filial_id: "1",
+    filial_id: "",
   });
 
   const buscarGratificacion = async () => {
     try {
       setLoading(true);
       const res = await gratificacionService.obtenerGratificaciones(filtro);
+      console.log('ressss', res);
       setGratificacion(res);
     } catch (error) {
     } finally {
