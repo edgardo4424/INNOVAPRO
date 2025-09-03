@@ -366,10 +366,10 @@ export default function AppRoutes() {
                               element={<GestionGratificacion />}
                            />
 
-                          {/*  <Route
+                           <Route
                               path="trabajadores-dados-de-baja"
                               element={<GestionTrabajadoresDadosDeBaja />}
-                           /> */}
+                           />
 
                         </Route>
                      </>

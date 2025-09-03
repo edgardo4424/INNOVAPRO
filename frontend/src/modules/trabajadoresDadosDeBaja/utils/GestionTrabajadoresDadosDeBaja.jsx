@@ -289,7 +289,7 @@ const GestionTrabajadoresDadosDeBaja = () => {
                                  className="px-4 py-6 text-center text-gray-500"
                                  colSpan={7}
                               >
-                                 No se encontraron bonos
+                                 No se encontraron trabajadores dados de baja
                               </td>
                            </tr>
                         )}
