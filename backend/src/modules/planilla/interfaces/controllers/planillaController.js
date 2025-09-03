@@ -37,6 +37,8 @@ const PlanillaController = {
          );
          res.status(planilla.codigo).json(planilla.respuesta);
       } catch (error) {
+         console.log('El error es',error);
+         
          res.status(503).json({ error: error.message });
       }
    },

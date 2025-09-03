@@ -30,8 +30,8 @@ const RowPlanillaMensual = ({ key, e, index }) => {
        <TableCell className="text-right">{e.h_extras_primera_quincena}</TableCell>
        <TableCell className="text-right">{e.h_extras_segunda_quincena}</TableCell>
 
-       <TableCell className="text-right">{e.salida_obra_1era_quincena}</TableCell>
-       <TableCell className="text-right">{e.salida_obra_2da_quincena}</TableCell>
+       {/* <TableCell className="text-right">{e.salida_obra_1era_quincena}</TableCell>
+       <TableCell className="text-right">{e.salida_obra_2da_quincena}</TableCell> */}
 
         <TableCell className="text-right">{e.faltas_primera_quincena}</TableCell>
        <TableCell className="text-right">{e.faltas_segunda_quincena}</TableCell>
@@ -54,7 +54,7 @@ const RowPlanillaMensual = ({ key, e, index }) => {
 
        <TableCell className="text-right">{e.total_descuentos}</TableCell>
        <TableCell className="text-right">{e.sueldo_neto}</TableCell>
-       <TableCell className="text-right">{e.quincenal}</TableCell>
+       <TableCell className="text-right">{e.sueldo_quincenal}</TableCell>
        <TableCell className="text-right">{e.adelanto_prestamo}</TableCell>
        
        <TableCell className="text-right">{e.saldo_por_pagar}</TableCell>

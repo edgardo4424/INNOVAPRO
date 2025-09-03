@@ -17,8 +17,6 @@ export const trabajador_planilla_model = {
   cts: 0,
   h_extras_primera_quincena: 0,
   h_extras_segunda_quincena: 0,
-  salida_obra_1era_quincena: 0,
-  salida_obra_2da_quincena: 0,
   faltas_primera_quincena: 0,
   faltas_segunda_quincena: 0,
   tardanza_primera_quincena: 0,
