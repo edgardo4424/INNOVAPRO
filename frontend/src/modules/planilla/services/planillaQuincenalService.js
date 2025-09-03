@@ -10,7 +10,7 @@ const planillaQuincenalService = {
         return res.data;
     },
     obtenerPlanillaQuincenalCerradas: async (dataPOST) => {
-        const res = await api.post("/planilla/planilla-quincenal-cerradas",dataPOST);
+        const res = await api.post("/planilla/quincenal",dataPOST);
         return res.data;
     },
     cerrarPlanillaQuincenal: async (dataPOST) => {

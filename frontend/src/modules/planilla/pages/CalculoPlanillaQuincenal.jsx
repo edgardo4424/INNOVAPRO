@@ -6,7 +6,7 @@ import TableRHQuincenal from "../components/tipo-rh/TableRHQuincenal";
 
 import planillaQuincenalService from "../services/planillaQuincenalService";
 import { viPlanillaQuincenal } from "../utils/valorInicial";
-import { pl } from "date-fns/locale";
+
 import { ModalCerrarPlanillaQuincenal } from "../components/ModalCerrarPlanillaQuincenal";
 
 const CalculoPlanillaQuincenal = () => {

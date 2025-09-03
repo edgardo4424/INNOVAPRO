@@ -2,6 +2,7 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { Eye, FileDown } from "lucide-react";
 import { formatearFecha } from "../utils/formatearFecha";
 const RowGratificacion = ({ key, e, index }) => {
+  console.log('e', e);
   return (
     <TableRow key={key} className={"text-xs"}>
       <TableCell className="text-right">{e.tipo_documento}</TableCell>
@@ -31,6 +32,9 @@ const RowGratificacion = ({ key, e, index }) => {
       <TableCell className="text-right">{e.rent_quint_cat_no_domiciliado}</TableCell>
       <TableCell className="text-right">{e.mont_adelanto}</TableCell>
       <TableCell className="text-right">{e.total_a_pagar}</TableCell>
+      <TableCell className="text-right">{e.banco}</TableCell>
+      <TableCell className="text-right">{e.numero_cuenta}</TableCell>
+
 {/*       <TableCell className={"flex gap-x-4 items-center"}>
         <button className="border border-gray-400 rounded-md p-1">
           <Eye className="size-5" />

@@ -17,7 +17,7 @@ import RowRHQuincenal from "./RowRHQuincenal";
 /* import RowGratificacion from "@/modules/gratificacion/components/RowGratificacion";
 import RowTotalGratificacion from "@/modules/gratificacion/components/RowTotalGratificacion"; */
 
-const TablePlanillaQuincenal = ({ planillaQuincenalTipoRh, total }) => {
+const TableRHQuincenal = ({ planillaQuincenalTipoRh, total }) => {
 
 console.log('planillaQuincenalTipoRh', planillaQuincenalTipoRh);
   const [filtro, setFiltro] = useState("");
@@ -55,7 +55,7 @@ console.log('planillaQuincenalTipoRh', planillaQuincenalTipoRh);
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Nombres y Apellidos</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Dias Laborados</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Base</TableHead>
-              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Quincenal</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Total a Pagar</TableHead>
                <TableHead rowSpan={2} className="text-center border-r text-white border-black">Banco</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">N° Cuenta</TableHead>
 
@@ -82,4 +82,4 @@ console.log('planillaQuincenalTipoRh', planillaQuincenalTipoRh);
   );
 };
 
-export default TablePlanillaQuincenal;
+export default TableRHQuincenal;

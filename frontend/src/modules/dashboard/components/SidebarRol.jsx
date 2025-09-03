@@ -95,6 +95,8 @@ const modulesByRole = {
          items: [
             { name: "Crear Trabajador", path: "/crear-trabajador" },
             { name: "Tabla de Trabajadores", path: "/tabla-trabajadores" },
+           /*  { name: "Dar de Baja", path: "/trabajadores-dados-de-baja" }, */
+
          ],
       },
       {

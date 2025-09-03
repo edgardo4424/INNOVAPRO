@@ -1,8 +1,9 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 import CalculoPlanillaQuincenal from "./CalculoPlanillaQuincenal";
-/* import HistoricoGratificacion from "./HistoricoGratificacion";
- */
+import HistoricoPlanillaQuincenal from "./HistoricoPlanillaQuincenal";
+
+
 const GestionPlanillaQuincenal = () => {
    return (
       <div className="min-h-full px-6 flex-1 flex flex-col items-center">
@@ -24,7 +25,7 @@ const GestionPlanillaQuincenal = () => {
                </TabsContent>
 
                <TabsContent value="historico" className=" rounded-lg shadow-sm">
-                  {/* <HistoricoGratificacion /> */}
+                  <HistoricoPlanillaQuincenal />
                </TabsContent>
             </Tabs>
 

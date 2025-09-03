@@ -9,7 +9,6 @@ module.exports = async (dataBody, planillaQuincenalRepository) => {
 const planillaQuincenalCerradasTipoPlanilla = planillaQuincenalCerradas.filter((g) => g.tipo_contrato == "PLANILLA");
 const planillaQuincenalCerradasTipoHonorarios = planillaQuincenalCerradas.filter((g) => g.tipo_contrato == "HONORARIOS");
 
-console.log('planillaQuincenalCerradasTipoHonorarios', planillaQuincenalCerradasTipoHonorarios);
   const planillaQuincenalPlanillaMapeadas = planillaQuincenalCerradasTipoPlanilla.map((g) => ({
     trabajador_id: g.trabajador.id,
     tipo_documento: g.trabajador.tipo_documento,
@@ -27,9 +26,9 @@ console.log('planillaQuincenalCerradasTipoHonorarios', planillaQuincenalCerradas
     asignacion_familiar: g.asignacion_familiar,
     sueldo_bruto: g.sueldo_bruto,
     onp: g.onp,
-    afp: g.afp,
+    afp: g.afp_oblig,
     seguro: g.seguro,
-    comision: g.comision,
+    comision: g.comision_afp,
     quinta_categoria: g.quinta_categoria,
     total_descuentos: g.total_descuentos,
     total_a_pagar: g.total_pagar,

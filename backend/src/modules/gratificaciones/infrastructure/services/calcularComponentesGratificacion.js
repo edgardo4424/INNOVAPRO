@@ -25,8 +25,6 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
       porTrabajador.get(tid).contratos.push(c.get({ plain: true }));
     }
 
-    console.log("porTrabajador", porTrabajador);
-
     const filas = await Promise.all(
       Array.from(porTrabajador.values()).map(
         async ({ trabajador, contratos }) => {
@@ -163,6 +161,12 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
                   ? ultimaFechaFinContrato
                   : p.fecha_terminacion_anticipada || p.fecha_fin;
 
+              // Obtener los datos del contrato en base a la fecha de fin
+              const contrato = contratos.find((c) => c.fecha_fin == fechaFin);
+ 
+              const banco = contrato.banco || ""
+              const numeroCuenta= contrato.numero_cuenta || ""
+
               return {
                 tipo_contrato: p.tipo_contrato,
                 regimen: p.regimen,
@@ -185,9 +189,13 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
                 renta_5ta: renta5ta,
                 adelantos: totalAdelantosSueldo,
                 total,
+
+                banco: banco,
+                numero_cuenta: numeroCuenta,
               };
             })
           );
+
 
           // 3) Consolidado (sumas de partes)
           const sum = (k) => partes.reduce((a, x) => a + Number(x[k] || 0), 0);
@@ -200,6 +208,9 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
             ).toFixed(2),
             total: +sum("total").toFixed(2),
           };
+
+          console.log('partes', partes);
+
 
           return {
             tipo_documento: trabajador.tipo_documento,

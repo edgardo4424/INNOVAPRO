@@ -29,6 +29,7 @@ const CalculoGratificacion = () => {
     try {
       setLoading(true);
       const res = await gratificacionService.obtenerGratificaciones(filtro);
+      console.log('ressss', res);
       setGratificacion(res);
     } catch (error) {
     } finally {

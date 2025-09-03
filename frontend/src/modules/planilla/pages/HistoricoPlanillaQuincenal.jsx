@@ -4,6 +4,10 @@ import Filtro from "../components/Filtro";
 
 import planillaQuincenalService from "../services/planillaQuincenalService";
 
+import { viPlanillaQuincenal } from "../utils/valorInicial";
+import TablePlanillaQuincenal from "../components/tipo-planilla/TablePlanillaQuincenal";
+import TableRHQuincenal from "../components/tipo-rh/TableRHQuincenal";
+
 const HistoricoPlanillaQuincenal = () => {
   const [filiales, setFiliales] = useState([]);
 
@@ -37,10 +41,13 @@ const HistoricoPlanillaQuincenal = () => {
         filial_id: filtro.filial_id,
       }
 
+      console.log('dataPOST', dataPOST);
       const res = await planillaQuincenalService.obtenerPlanillaQuincenalCerradas(dataPOST);
+      console.log('res', res);
       setPlanillaQuincenalTipoPlanilla(res.planilla.trabajadores);
       setPlanillaQuincenalTipoRh(res.honorarios.trabajadores);
     } catch (error) {
+      console.log('error', error);
     } finally {
       setLoading(false);
     }
@@ -110,13 +117,7 @@ const HistoricoPlanillaQuincenal = () => {
                 </pre> */}
                 {renderTipoPlanilla()}
                   {renderTipoRh()}
-                  {
-                    (planillaQuincenalTipoPlanilla.length > 0 || planillaQuincenalTipoRh.length > 0) && (
-                      <div className="flex justify-end pb-6">
-                                  <ModalCerrarPlanillaQuincenal filtro={filtro} planillaQuincenalTipoPlanilla={planillaQuincenalTipoPlanilla} planillaQuincenalTipoRh={planillaQuincenalTipoRh}/>
-                                </div>
-                    )
-                  }
+                
                 </div>
             )}
       

@@ -8,6 +8,8 @@ const factorPorRegimen = (r) => (r === 'GENERAL' ? 1 : r === 'MYPE' ? 0.5 : 0);
 
 function mergeRangosConRegimen(contratos = []) {
 
+  console.log('contratos', contratos);
+
   const arr = contratos
     .map(c => ({
       fecha_inicio: c.fecha_inicio,
@@ -31,17 +33,15 @@ function mergeRangosConRegimen(contratos = []) {
     const lastFinEff = last.fin || INF;
 
     const mismosAtributos =
-      last.regimen === r.regimen &&
-      last.sistema_salud === r.sistema_salud &&
-      last.tipo_contrato === r.tipo_contrato;
+      last.regimen == r.regimen &&
+      last.sistema_salud == r.sistema_salud &&
+      last.tipo_contrato == r.tipo_contrato;
 
       
     // Si el nuevo rango inicia antes o en la fecha de fin del último rango
     // y tienen los mismos atributos, los unimos
 
     const continuaInmediatamente = lastFinEff.clone().add(1, 'day').isSame(r.ini, 'day');
-
-    console.log('continuaInmediatamente', continuaInmediatamente);
 
     if (mismosAtributos && (r.ini.isSameOrBefore(lastFinEff, 'day') || continuaInmediatamente)) {
       const maxFin = moment.max(lastFinEff, curFinEff);
@@ -66,7 +66,6 @@ function calcularMesesComputablesSemestre(contratos, periodo, anio) {
 
   const rangos = mergeRangosConRegimen(contratos);
 
-  console.log('rangos', rangos);
   const detalleMensual = [];
   const contadores = new Map();
   let totalMeses = 0;
@@ -95,8 +94,6 @@ function calcularMesesComputablesSemestre(contratos, periodo, anio) {
     if (mesCompletoPorRegimen.length > 0) {
       const elegido = mesCompletoPorRegimen[mesCompletoPorRegimen.length - 1];
 
-      console.log('elegido', elegido);
-     
       const key = `${elegido.regimen}|${elegido.sistema_salud}|${elegido.tipo_contrato}|${elegido.fecha_inicio}|${elegido.fecha_fin}`;
 
       regimenAsignado = key;

@@ -152,6 +152,15 @@ const Gratificacion = sequelize.define(
       type: DataTypes.DATEONLY,
       allowNull: false,
    },
+     banco: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    numero_cuenta: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+
   },
    {
       timestamps: true,
