@@ -2,7 +2,6 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { Eye, FileDown } from "lucide-react";
 
 const RowPlanillaMensual = ({ key, e, index }) => {
-  console.log('e', e);
   return (
     <TableRow key={key} className={"text-xs"}>
       <TableCell className="text-right">{e.tipo_documento}</TableCell>

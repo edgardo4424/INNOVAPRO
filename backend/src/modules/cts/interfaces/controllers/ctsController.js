@@ -1,5 +1,6 @@
 const calcularcts = require("../../application/calcularcts");
 const calcularCtsIndividual = require("../../application/calcularCtsIndividual");
+const calcularCtsTrunca = require("../../application/calcularCtsTrunca");
 const cierreCts = require("../../application/cierreCts");
 const obtenerCtsPorTrabajador = require("../../application/obtenerCtsPorTrabajador");
 const obtenerHistoricocts = require("../../application/obtenerHistoricocts");
@@ -22,6 +23,22 @@ const ctsController = {
       try {
          const { periodo, anio, filial_id, trabajador_id } = req.body;
          const cts = await calcularCtsIndividual(
+            periodo,
+            anio,
+            filial_id,
+            ctsRepository,
+            trabajador_id
+         );
+         res.status(200).json(cts.respuesta);
+      } catch (error) {
+         console.log("error", error);
+         res.status(500).json({ error: error.message });
+      }
+   },
+   async calcularCtsTrunca(req, res) {
+      try {
+         const { periodo, anio, filial_id, trabajador_id } = req.body;
+         const cts = await calcularCtsTrunca(
             periodo,
             anio,
             filial_id,

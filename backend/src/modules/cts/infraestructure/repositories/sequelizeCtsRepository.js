@@ -293,6 +293,256 @@ class SequelizeCtsRopository {
          r.cts_depositar = r.cts_depositar - r.no_domiciliado;
          r.cts_depositar = parseFloat(r.cts_depositar.toFixed(2));
          r.ids_agrupacion = c.ids_agrupacion;
+         console.log(r);
+         arreglo_cts.push(r);
+      }
+      return arreglo_cts;
+   }
+   async calcularCtsIndividualTrunca(periodo, anio, filial_id, trabajador_id) {
+      const responseTrabajador = await db.trabajadores.findOne({
+         where: {
+            id: trabajador_id,
+            estado: 1,
+         },
+      });
+      if (!responseTrabajador) {
+         throw new Error("Eñ trabajador no existe");
+      }
+      const trabajador = responseTrabajador.get({ plain: true });
+      //Hasta aquí se valido que el trabajador exista 
+      const MONTO_ASIGNACION_FAMILIAR = Number(
+         (
+            await dataMantenimientoRepository.obtenerPorCodigo(
+               "valor_asignacion_familiar"
+            )
+         ).valor
+      );
+      const MONTO_NO_COMPUTABLE = Number(
+         (
+            await dataMantenimientoRepository.obtenerPorCodigo(
+               "valor_no_computable"
+            )
+         ).valor
+      );
+
+   //Inicializamos las variables para el rango de cts y variables para obtener la gatificacion
+      let fechaInicioCTS, fechaFinCTS, periodoGratificacion, anioGratificacion;
+
+   //Se obtiene el periodo de la gratificacion y rango de la cts  
+      switch (periodo) {
+         case "MAYO":
+            fechaInicioCTS = `${anio - 1}-11-01`;
+            fechaFinCTS = `${anio}-04-30`;
+            periodoGratificacion = "DICIEMBRE";
+            anioGratificacion = anio - 1;
+            break;
+         case "NOVIEMBRE":
+            fechaInicioCTS = `${anio}-05-01`;
+            fechaFinCTS = `${anio}-10-31`;
+            periodoGratificacion = "JULIO";
+            anioGratificacion = anio;
+            break;
+      }
+      let MONTO_GRATIFICACION = 0;
+
+      const responseGratificacion =
+         await gratificacionRepository.obtenerGratificacionPorTrabajador(
+            periodoGratificacion,
+            anioGratificacion,
+            filial_id,
+            trabajador.id
+         );
+      if (responseGratificacion.length > 0) {
+         const gratificacionesLimpias = responseGratificacion.map((g) =>
+            g.get({ plain: true })
+         );
+         const gratificaciones = filtrarGratificacionesSinInterrupcion(
+            gratificacionesLimpias
+         );
+         if (trabajador_id == 7) {
+            console.log("Numero de gratificaciones: ", gratificaciones.length);
+         }
+         for (const grati of gratificaciones) {
+            MONTO_GRATIFICACION += Number(grati.total_pagar);
+         }
+      }
+
+      const responseContratos = await db.contratos_laborales.findAll({
+         where: {
+            filial_id: filial_id,
+            trabajador_id: trabajador_id,
+            tipo_contrato:"PLANILLA"
+         },
+      });
+      const contratos_limpios = responseContratos.map((c) =>
+         c.get({ plain: true })
+      );
+
+      const hoy = new Date().toISOString().slice(0, 10); // "2025-08-26"
+      
+      //Obtenemos el contrato actual
+      const sininterrupcions=filtrarContratosSinInterrupcion(contratos_limpios) 
+      const contratoActual =sininterrupcions[sininterrupcions.length-1]; 
+      //Obtenemos el contrato Inicial 
+      const contratoInicial =
+         filtrarContratosSinInterrupcion(contratos_limpios);
+
+      // if (contratoInicial.length < 1) {
+      //    throw new Error(
+      //       `No existe un contrato incial para el trabajador: ${trabajador.nombres} ${trabajador.apellidos}`
+      //    );
+      // }
+
+      //Calcula los contratos que entran en rango y que no tiene mas de 1 dia de separacion
+      const contratos_en_rango = calcularContratosComputados(
+         fechaInicioCTS,
+         fechaFinCTS,
+         contratos_limpios
+      );
+      // console.log('Contratos en rango: ',contratos_en_rango);
+      
+      //Unificamos los contratos que tienen el mismo regimen y son consecutivos
+      const contratos_unidos = unificarContratos(contratos_en_rango);
+
+      
+      //Conteo de cuantos sias y meses da cada contrato
+      //Aqui se debe de validar si el contrao es trunco
+
+      const contratos_dias_meses = calcularDiasMesesPorContrato(
+         fechaInicioCTS,
+         fechaFinCTS,
+         contratos_unidos,
+         true
+      );
+      console.log('Contratos dias meses',contratos_dias_meses);
+
+      const arreglo_cts = [];
+      // Calcuar bonos y verificar si contara para los contratos comptados en el rango:
+      const reponseBonos =
+         await bonosRepository.obtenerBonosDelTrabajadorEnRango(
+            trabajador.id,
+            fechaInicioCTS,
+            fechaFinCTS
+         );
+      const bonos = reponseBonos.map((b) => b.get({ plain: true }));
+      const computarBonos = conteoBonosMeses(bonos);
+
+      const responseAsistencias =
+         await asistenciasRepository.obtenerAsistenciasPorRangoFecha(
+            trabajador.id,
+            fechaInicioCTS,
+            fechaFinCTS
+         );
+      const asistencias = responseAsistencias.map((a) =>
+         a.get({ plain: true })
+      );
+      const computarHextras = conteoHextrasMeses(asistencias);
+
+      for (const c of contratos_dias_meses) {
+         //Definimos rangos de calculo que lo usaran bonos, he, faltas
+         let inicio_c =
+            c.fecha_inicio > fechaInicioCTS ? c.fecha_inicio : fechaInicioCTS;
+            
+         let fin_contrato_valido=c.fecha_terminacion_anticipada?c.fecha_terminacion_anticipada:c.fecha_fin;
+
+         let fin_c = fin_contrato_valido< fechaFinCTS ? fin_contrato_valido : fechaFinCTS;
+
+         let r = { ...objeto_inicial_cts };
+         r.contrato_id = c.id;
+         r.banco = c.banco || "no registrado";
+         r.numero_cuenta = c.numero_cuenta || "no registrado";
+         
+         r.trabajador_id = c.trabajador_id;
+         r.tipo_documento = trabajador.tipo_documento;
+         r.numero_documento = trabajador.numero_documento;
+         r.nombre = `${trabajador.nombres} ${trabajador.apellidos}`;
+         r.regimen = c.regimen;
+         r.fecha_ingreso = contratoInicial[0].fecha_inicio;
+         r.inicio_periodo = fechaInicioCTS;
+         r.fin_periodo = fechaFinCTS;         
+         r.sueldo_basico = Number(contratoActual.sueldo);
+
+         if (trabajador.asignacion_familiar) {
+            r.sueldo_asig_fam = MONTO_ASIGNACION_FAMILIAR;
+         }
+         r.ultima_remuneracion = r.sueldo_basico + r.sueldo_asig_fam;
+
+         if (computarHextras) {
+            const he_en_contrato = asistencias.filter((a) => {
+               return a.fecha >= inicio_c && a.fecha <= fin_c;
+            });
+            console.log("Asistencias con HE", he_en_contrato);
+            console.log(
+               "caclulo de horas extras en cts: ",
+               calcularHextrasEnCts(he_en_contrato, 10, 6) || 0
+            );
+
+            r.prom_h_extras = calcularHextrasEnCts(he_en_contrato, 10, 6) || 0;
+         }
+
+         if (computarBonos) {
+            const bonos_en_contrato = bonos.filter((b) => {
+               return b.fecha >= inicio_c && b.fecha <= fin_c;
+            });
+            r.prom_bono = calcularBonosEnCts(bonos_en_contrato, 6) || 0;
+         }
+
+         r.remuneracion_comp =
+            r.ultima_remuneracion + r.prom_h_extras + r.prom_bono;
+
+         r.ultima_gratificacion = MONTO_GRATIFICACION;
+         r.sexto_gratificacion = r.ultima_gratificacion / 6;
+
+         r.sexto_gratificacion = parseFloat(r.sexto_gratificacion.toFixed(2));
+
+         r.meses_comp = c.meses;
+         r.dias_comp = c.dias;
+         if (r.regimen == "GENERAL") {
+            r.cts_meses =
+               ((r.remuneracion_comp + r.sexto_gratificacion) / 12) *
+               r.meses_comp;
+            r.cts_dias =
+               ((r.remuneracion_comp + r.sexto_gratificacion) / 12 / 30) *
+               r.dias_comp;
+         } else {
+            r.cts_meses =
+               ((r.remuneracion_comp + r.sexto_gratificacion) / 2 / 12) *
+               r.meses_comp;
+            r.cts_dias =
+               ((r.remuneracion_comp + r.sexto_gratificacion) / 2 / 12 / 30) *
+               r.dias_comp;
+         }
+         r.cts_meses = parseFloat(r.cts_meses.toFixed(2));
+         r.cts_dias = parseFloat(r.cts_dias.toFixed(2));
+
+         r.faltas_dias =
+            await asistenciasRepository.obtenerCantidadFaltasPorRangoFecha(
+               trabajador.id,
+               inicio_c,
+               fin_c
+            );
+         r.faltas_importe = (c.sueldo / 12 / 30) * r.faltas_dias;
+         r.faltas_importe = parseFloat(r.faltas_importe.toFixed(2));
+         const dias_no_computados =
+            await asistenciasRepository.obtenerDiasNoComputablesPorRangoFecha(
+               trabajador.id,
+               inicio_c,
+               fin_c
+            );
+         if (dias_no_computados > 0) {
+            r.no_computable = dias_no_computados * MONTO_NO_COMPUTABLE;
+            r.no_computable = parseFloat(r.no_computable.toFixed(2));
+         }
+         r.cts_depositar =
+            r.cts_meses + r.cts_dias - r.faltas_importe - r.no_computable;
+         if (trabajador.domiciliado) {
+            r.no_domiciliado = r.cts_depositar * 0.3;
+         }
+         // console.log('Cts a depositar: ',r.cts_depositar);
+         // console.log('No domiciliado: ',r.no_domiciliado);
+         r.cts_depositar = r.cts_depositar - r.no_domiciliado;
+         r.cts_depositar = parseFloat(r.cts_depositar.toFixed(2));
+         r.ids_agrupacion = c.ids_agrupacion;
          arreglo_cts.push(r);
       }
       return arreglo_cts;

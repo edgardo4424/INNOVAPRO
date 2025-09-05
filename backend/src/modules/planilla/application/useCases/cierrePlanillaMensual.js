@@ -1,0 +1,69 @@
+module.exports = async (
+   usuario_cierre_id,
+   planillaRepository,
+   array_trabajadores,
+   filial_id,
+   fecha = "",
+   transaction = null
+) => {
+   const fecha_anio_mes = fecha.slice(0, -3);
+   const planillaMensualCerrada =
+      await planillaRepository.obtenerCierrePlanillaMensual(
+         fecha_anio_mes,
+         filial_id
+      );
+   if (planillaMensualCerrada && planillaMensualCerrada?.locked_at) {
+      return {
+         codigo: 400,
+         respuesta: { mensaje: "La planilla Mensual ya fue cerrada" },
+      };
+   }
+   let cierre_planilla_mensual;
+   if (planillaMensualCerrada) {
+      console.log("Entra al creado");
+
+      cierre_planilla_mensual = planillaMensualCerrada;
+   } else {
+      const payload = {
+         filial_id,
+         periodo: fecha_anio_mes,
+         usuario_cierre_id,
+      };
+      cierre_planilla_mensual =
+         await planillaRepository.generarRegistroCierrePeriodoPlanillaMensual(
+            payload
+         );
+   }
+
+   const hoy = new Date();
+   const transform_data = array_trabajadores.map((t) => {
+      let data = { ...t };
+      data.locked_at = hoy;
+      data.usuario_cierre_id = usuario_cierre_id;
+      data.filial_id = filial_id;
+      data.cierre_planilla_mensual_id = cierre_planilla_mensual.id;
+      data.periodo = fecha_anio_mes;
+      data.fecha_calculo = new Date().toISOString().split("T")[0];
+      return data;
+   });
+   let planillas_creadas = [];
+   for (const t of transform_data) {
+      const response = await planillaRepository.crearRegistroPlanilla(t);
+      planillas_creadas.push(response);
+   }
+   const locked = new Date();
+
+   const bloqueoPlanilla =
+      planillaRepository.generarCierreBloqueoPeriodoPlanillaMensual(
+         locked,
+         cierre_planilla_mensual.id
+      );
+      
+   return {
+      codigo: 202,
+      respuesta: {
+         mensaje: "Se genero correctamnete la planilla mensual",
+         planilla: planillas_creadas,
+      },
+   };
+};
