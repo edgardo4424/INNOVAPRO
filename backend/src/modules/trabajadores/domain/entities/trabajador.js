@@ -12,6 +12,7 @@ class Trabajador {
       domiciliado,
       tipo_afp,
       comision_afp,
+      fecha_baja
    }) {
       (this.id = id),
          (this.nombres = nombres),
@@ -25,6 +26,7 @@ class Trabajador {
       this.domiciliado = domiciliado;
       this.tipo_afp = tipo_afp;
       this.comision_afp = comision_afp;
+      this.fecha_baja = fecha_baja;
    }
 
    validarCamposObligatorios(editar = false) {
@@ -85,6 +87,7 @@ class Trabajador {
          domiciliado: this.domiciliado,
          tipo_afp: this.tipo_afp,
          comision_afp: this.comision_afp,
+         fecha_baja: this.fecha_baja
       };
       if (editar) {
          datos.trabajador_id = this.id;

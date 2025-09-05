@@ -52,6 +52,11 @@ CierrePlanillaQuincenal.associate = (models) => {
   CierrePlanillaQuincenal.hasMany(models.planilla_quincenal, {
     foreignKey: "cierre_planilla_quincenal_id",
   });
+
+  CierrePlanillaQuincenal.belongsTo(models.empresas_proveedoras, {
+    foreignKey: "filial_id",
+    as: "filial",
+  });
 };
 
 module.exports = { CierrePlanillaQuincenal }; // Exporta el modelo para que pueda ser utilizado en otros módulos

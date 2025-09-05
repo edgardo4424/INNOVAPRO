@@ -31,7 +31,8 @@ function mapearParaReporteGratificaciones(trabajadoresRaw) {
         mont_adelanto: +((parte.adelantos || 0).toFixed(2)),
         total_a_pagar: +(parte.total.toFixed(2)),
         banco: parte.banco,
-        numero_cuenta: parte.numero_cuenta
+        numero_cuenta: parte.numero_cuenta,
+        contratos: parte.lista_contratos_ids 
       };
       return fila;
     });

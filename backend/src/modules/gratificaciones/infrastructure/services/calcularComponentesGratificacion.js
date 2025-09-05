@@ -161,11 +161,43 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
                   ? ultimaFechaFinContrato
                   : p.fecha_terminacion_anticipada || p.fecha_fin;
 
-              // Obtener los datos del contrato en base a la fecha de fin
-              const contrato = contratos.find((c) => c.fecha_fin == fechaFin);
- 
-              const banco = contrato.banco || ""
-              const numeroCuenta= contrato.numero_cuenta || ""
+                 
+
+              // Obtener los contratos que esta dentro del rango p.fecha_inicio y fechaFin
+
+              console.log({
+                fecha_inicio: p.fecha_inicio,
+                fechaFin
+              });
+
+              let fechaInicioPeriodo = null;
+              let fechaFinPeriodo = null;
+
+              switch (periodo) {
+                case "JULIO":
+                  fechaInicioPeriodo = `${anio}-01-01`;
+                  fechaFinPeriodo = `${anio}-06-30`;
+                  break;
+                case "DICIEMBRE":
+                  fechaInicioPeriodo = `${anio}-07-01`;
+                  fechaFinPeriodo = `${anio}-12-31`;
+                  break;
+                default:
+                  break;
+              }
+
+              const contratosQueCumplen = contratos.filter((c) => {
+                const inicio = new Date(c.fecha_inicio);
+                const fin = new Date(c.fecha_terminacion_anticipada || c.fecha_fin);
+                return inicio <= new Date(fechaFinPeriodo) && fin >= new Date(fechaInicioPeriodo);
+              })
+
+              const lista_id_contratos = contratosQueCumplen.map((c) => c.id);
+
+              console.log('lista_id_contratos',lista_id_contratos);
+
+              const banco = contratosQueCumplen[contratosQueCumplen.length - 1].banco || ""
+              const numeroCuenta= contratosQueCumplen[contratosQueCumplen.length - 1].numero_cuenta || ""
 
               return {
                 tipo_contrato: p.tipo_contrato,
@@ -192,6 +224,7 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
 
                 banco: banco,
                 numero_cuenta: numeroCuenta,
+                lista_contratos_ids: lista_id_contratos
               };
             })
           );
@@ -208,9 +241,6 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
             ).toFixed(2),
             total: +sum("total").toFixed(2),
           };
-
-          console.log('partes', partes);
-
 
           return {
             tipo_documento: trabajador.tipo_documento,

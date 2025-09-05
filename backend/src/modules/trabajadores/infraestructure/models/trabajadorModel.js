@@ -58,7 +58,11 @@ const Trabajador = sequelize.define(
          type: DataTypes.BOOLEAN,
          allowNull: false,
          defaultValue: false,
-      }
+      },
+      fecha_baja: {
+         type: DataTypes.DATEONLY,
+         allowNull: true,
+      },
    },
    {
       tableName: "trabajadores",

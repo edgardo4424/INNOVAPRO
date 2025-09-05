@@ -13,6 +13,7 @@ router.get("/", TrabajadorController.obtenerTrabajadores);
 router.post("/", TrabajadorController.crearTrabajadorConContrato);
 router.put("/", TrabajadorController.editarTrabajadorConContrato);
 router.get("/trabajadores-contratos", TrabajadorController.obtenerTrabajadoresYcontratos);
+router.post("/contratos-vigentes", TrabajadorController.obtenerTrabajadoresConContratosVigentes);
 router.get("/:id", TrabajadorController.obtenerTrabajadorPorId);
 
 module.exports = router;

@@ -6,6 +6,7 @@ const crearTrabajadorConContrato = require("../../../../application/services/cre
 const obtenerTrabajadorpoId = require("../../application/useCases/obtenerTrabajadorpoId");
 const editarTrabajadorConContrato = require("../../../../application/services/editarTrabajadorConContrato");
 const obtenerTrabajadoresYcontratos = require("../../application/useCases/obtenerTrabajadoresYcontratos");
+const obtenerTrabajadoresConContratosVigentes = require("../../application/useCases/obtenerTrabajadoresConContratosVigentes");
 
 const trabajadorRepository = new SequelizeTrabajadorRepository();
 
@@ -75,6 +76,20 @@ const TrabajadorController = {
    async obtenerTrabajadoresYcontratos(req, res) {            
       try {
          const response = await obtenerTrabajadoresYcontratos(
+            trabajadorRepository
+         );
+         res.status(response.codigo).json(response.respuesta);
+      } catch (error) {
+         res.status(502).json({ error: error.message });
+      }
+   },
+
+   async obtenerTrabajadoresConContratosVigentes(req, res) {            
+      try {
+
+         const { filial_id } = req.body;
+         const response = await obtenerTrabajadoresConContratosVigentes(
+            filial_id,
             trabajadorRepository
          );
          res.status(response.codigo).json(response.respuesta);

@@ -5,6 +5,8 @@ module.exports = async function name(
    contratoLaboralRepository,
    transaction = null
 ) {
+
+   console.log('GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
    
    const contrato_laboral = new ContratoLaboral(contratoLaboralData);
 
@@ -24,6 +26,8 @@ module.exports = async function name(
          contrato_laboral.get(true),
          transaction
       );
+
+      console.log('contratoLaboralActualizado', contratoLaboralActualizado);
 
    return {
       codigo: 200,
