@@ -8,7 +8,7 @@ const quintaCategoriaRepository = new SequelizeQuintaCategoriaRepository();
 
 const buildQuintaPublicApi = require("../../../quintaCategoria/application/services/QuintaPublicAPI");
 const quintaCategoriaService = buildQuintaPublicApi({
-  repo: SequelizeQuintaCategoriaRepository,
+   repo: SequelizeQuintaCategoriaRepository,
 });
 const moment = require("moment");
 const calcularDiasLaborados = require("../../../../services/calcularDiasLaborados");
@@ -17,7 +17,7 @@ const calcularDiasLaboradosQuincena = require("../../../../services/calcularDias
 const { Op } = db.Sequelize;
 const SequelizeTrabajadorRepository = require("../../../trabajadores/infraestructure/repositories/sequelizeTrabajadorRepository");
 const {
-  trabajador_planilla_model,
+   trabajador_planilla_model,
 } = require("../utils/trabajador_planilla_model");
 const filtrarContratosSinInterrupcion = require("../../../../services/filtrarContratosSinInterrupcion");
 const SequelizeAsistenciaRepository = require("../../../asistencias/infraestructure/repositories/sequelizeAsistenciaRepository");
@@ -41,315 +41,325 @@ const adelantoSueldoRepository = new SequelizeAdelantoSueldoRepository();
 const bonosRepository = new SequelizeBonoRepository();
 
 const {
-  CierrePlanillaQuincenal,
+   CierrePlanillaQuincenal,
 } = require("../models/CierrePlanillaQuincenalModel");
 const { PlanillaQuincenal } = require("../models/PlanillaQuincenalModel");
+const {
+   CierresPlanillaMensual,
+} = require("../models/CierrePlanillaMensualModel");
+const calcular_periodo_grati_cts = require("../utils/calcular_periodo_grati_cts");
 
 class SequelizePlanillaRepository {
-  async calcularPlanillaQuincenal(
-    fecha_anio_mes,
-    filial_id,
-    transaction = null
-  ) {
-    const MONTO_ASIGNACION_FAMILIAR = Number(
-      (
-        await dataMantenimientoRepository.obtenerPorCodigo(
-          "valor_asignacion_familiar"
-        )
-      ).valor
-    );
-
-    const PORCENTAJE_DESCUENTO_ONP = Number(
-      (await dataMantenimientoRepository.obtenerPorCodigo("valor_onp")).valor
-    );
-
-    const PORCENTAJE_DESCUENTO_AFP = Number(
-      (await dataMantenimientoRepository.obtenerPorCodigo("valor_afp")).valor
-    );
-
-    const PORCENTAJE_DESCUENTO_SEGURO = Number(
-      (await dataMantenimientoRepository.obtenerPorCodigo("valor_seguro")).valor
-    );
-
-    const PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT = Number(
-      (
-        await dataMantenimientoRepository.obtenerPorCodigo(
-          "valor_comision_afp_habitat"
-        )
-      ).valor
-    );
-    const PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA = Number(
-      (
-        await dataMantenimientoRepository.obtenerPorCodigo(
-          "valor_comision_afp_integra"
-        )
-      ).valor
-    );
-
-    const PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA = Number(
-      (
-        await dataMantenimientoRepository.obtenerPorCodigo(
-          "valor_comision_afp_prima"
-        )
-      ).valor
-    );
-
-    const PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO = Number(
-      (
-        await dataMantenimientoRepository.obtenerPorCodigo(
-          "valor_comision_afp_profuturo"
-        )
-      ).valor
-    );
-
-    const dataMantenimiento = {
-      PORCENTAJE_DESCUENTO_ONP,
-      PORCENTAJE_DESCUENTO_AFP,
-      PORCENTAJE_DESCUENTO_SEGURO,
-      PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT,
-      PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA,
-      PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA,
-      PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO,
-    };
-
-    const fechaInicioMes = moment(`${fecha_anio_mes}-01`).format("YYYY-MM-DD");
-    const fechaQuincena = moment(`${fecha_anio_mes}-15`).format("YYYY-MM-DD");
-
-    const contratosPlanilla = await db.contratos_laborales.findAll({
-      where: {
-        filial_id: filial_id,
-        estado: true,
-        tipo_contrato: "PLANILLA",
-        fecha_inicio: { [Op.lte]: fechaQuincena },
-        [Op.or]: [
-          { fecha_terminacion_anticipada: null },
-          { fecha_terminacion_anticipada: { [Op.gte]: fechaInicioMes } },
-        ],
-        fecha_fin: { [Op.gte]: fechaInicioMes },
-      },
-      include: [
-        {
-          model: db.trabajadores,
-          as: "trabajador",
-        },
-      ],
-      raw: false,
-      transaction,
-    });
-
-    const contratosRxh = await db.contratos_laborales.findAll({
-      where: {
-        filial_id: filial_id,
-        estado: true,
-        tipo_contrato: "HONORARIOS",
-        fecha_inicio: { [Op.lte]: fechaQuincena },
-        [Op.or]: [
-          { fecha_terminacion_anticipada: null },
-          { fecha_terminacion_anticipada: { [Op.gte]: fechaInicioMes } },
-        ],
-        fecha_fin: { [Op.gte]: fechaInicioMes },
-      },
-      include: [
-        {
-          model: db.trabajadores,
-          as: "trabajador",
-        },
-      ],
-      raw: false,
-      transaction,
-    });
-
-    const anio = fecha_anio_mes.split("-")[0];
-    const mes = fecha_anio_mes.split("-")[1];
-
-    const listaPlanillaTipoPlanilla = [];
-
-
-    for (const contrato of contratosPlanilla) {
-      const trabajador = contrato.trabajador;
-
-      const sistema_pension = trabajador.sistema_pension; // 'ONP' o 'AFP'
-      const tipo_afp = trabajador.tipo_afp; // 'HABITAT', 'INTEGRA', 'PRIMA', 'PROFUTURO' o null si es ONP
-
-      let onp = 0;
-      let afp = 0;
-      let seguro = 0;
-      let comision = 0;
-
-      const sueldoBase = Number(contrato.sueldo);
-
-      const asignacionFamiliar = trabajador.asignacion_familiar
-        ? MONTO_ASIGNACION_FAMILIAR
-        : 0;
-
-      const diasLaborados = calcularDiasLaboradosQuincena(
-        contrato.fecha_inicio,
-        contrato.fecha_fin,
-        fecha_anio_mes
+   // prettier-ignore
+   async calcularPlanillaQuincenal(
+      fecha_anio_mes,
+      filial_id,
+      transaction = null
+   ) {
+      const MONTO_ASIGNACION_FAMILIAR = Number(
+         (
+            await dataMantenimientoRepository.obtenerPorCodigo(
+               "valor_asignacion_familiar"
+            )
+         ).valor
       );
 
-      const sueldoQuincenal = +(
-        ((sueldoBase / 15) * diasLaborados) /
-        2
-      ).toFixed(2);
+      const PORCENTAJE_DESCUENTO_ONP = Number(
+         (await dataMantenimientoRepository.obtenerPorCodigo("valor_onp")).valor
+      );
 
-      const sueldoBruto = +(sueldoQuincenal + asignacionFamiliar).toFixed(2);
+      const PORCENTAJE_DESCUENTO_AFP = Number(
+         (await dataMantenimientoRepository.obtenerPorCodigo("valor_afp")).valor
+      );
 
-      if (sistema_pension === "ONP") {
-        onp = +(
-          (sueldoBruto * dataMantenimiento.PORCENTAJE_DESCUENTO_ONP) /
-          100
-        ).toFixed(2);
-      } else if (sistema_pension === "AFP") {
-        afp = +(
-          (sueldoBruto * dataMantenimiento.PORCENTAJE_DESCUENTO_AFP) /
-          100
-        ).toFixed(2);
+      const PORCENTAJE_DESCUENTO_SEGURO = Number(
+         (await dataMantenimientoRepository.obtenerPorCodigo("valor_seguro")).valor
+      );
 
-        seguro = +(
-          (sueldoBruto * dataMantenimiento.PORCENTAJE_DESCUENTO_SEGURO) /
-          100
-        ).toFixed(2);
+      const PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT = Number(
+         (
+            await dataMantenimientoRepository.obtenerPorCodigo(
+               "valor_comision_afp_habitat"
+            )
+         ).valor
+      );
+      const PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA = Number(
+         (
+            await dataMantenimientoRepository.obtenerPorCodigo(
+               "valor_comision_afp_integra"
+            )
+         ).valor
+      );
 
-        if (trabajador.comision_afp) {
-          switch (tipo_afp) {
-            case "HABITAT":
-              comision = +(
-                (sueldoBruto * PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT) /
-                100
-              ).toFixed(2);
-              break;
-            case "INTEGRA":
-              comision = +(
-                (sueldoBruto * PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA) /
-                100
-              ).toFixed(2);
-              break;
-            case "PRIMA":
-              comision = +(
-                (sueldoBruto * PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA) /
-                100
-              ).toFixed(2);
-              break;
-            case "PROFUTURO":
-              comision = +(
-                (sueldoBruto * PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO) /
-                100
-              ).toFixed(2);
-              break;
-            default:
-              break;
-          }
-        }
+      const PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA = Number(
+         (
+            await dataMantenimientoRepository.obtenerPorCodigo(
+               "valor_comision_afp_prima"
+            )
+         ).valor
+      );
+
+      const PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO = Number(
+         (
+            await dataMantenimientoRepository.obtenerPorCodigo(
+               "valor_comision_afp_profuturo"
+            )
+         ).valor
+      );
+
+      const dataMantenimiento = {
+         PORCENTAJE_DESCUENTO_ONP,
+         PORCENTAJE_DESCUENTO_AFP,
+         PORCENTAJE_DESCUENTO_SEGURO,
+         PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT,
+         PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA,
+         PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA,
+         PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO,
+      };
+
+      const fechaInicioMes = moment(`${fecha_anio_mes}-01`).format("YYYY-MM-DD");
+      const fechaQuincena = moment(`${fecha_anio_mes}-15`).format("YYYY-MM-DD");
+
+      const contratosPlanilla = await db.contratos_laborales.findAll({
+         where: {
+            filial_id: filial_id,
+            estado: true,
+            tipo_contrato: "PLANILLA",
+            fecha_inicio: { [Op.lte]: fechaQuincena },
+            [Op.or]: [
+               { fecha_terminacion_anticipada: null },
+               { fecha_terminacion_anticipada: { [Op.gte]: fechaInicioMes } },
+            ],
+            fecha_fin: { [Op.gte]: fechaInicioMes },
+         },
+         include: [
+            {
+               model: db.trabajadores,
+               as: "trabajador",
+            },
+         ],
+         raw: false,
+         transaction,
+      });
+
+      const contratosRxh = await db.contratos_laborales.findAll({
+         where: {
+            filial_id: filial_id,
+            estado: true,
+            tipo_contrato: "HONORARIOS",
+            fecha_inicio: { [Op.lte]: fechaQuincena },
+            [Op.or]: [
+               { fecha_terminacion_anticipada: null },
+               { fecha_terminacion_anticipada: { [Op.gte]: fechaInicioMes } },
+            ],
+            fecha_fin: { [Op.gte]: fechaInicioMes },
+         },
+         include: [
+            {
+               model: db.trabajadores,
+               as: "trabajador",
+            },
+         ],
+         raw: false,
+         transaction,
+      });
+
+      const anio = fecha_anio_mes.split("-")[0];
+      const mes = fecha_anio_mes.split("-")[1];
+
+      const listaPlanillaTipoPlanilla = [];
+
+
+      for (const contrato of contratosPlanilla) {
+         const trabajador = contrato.trabajador;
+
+         const sistema_pension = trabajador.sistema_pension; // 'ONP' o 'AFP'
+         const tipo_afp = trabajador.tipo_afp; // 'HABITAT', 'INTEGRA', 'PRIMA', 'PROFUTURO' o null si es ONP
+
+         let onp = 0;
+         let afp = 0;
+         let seguro = 0;
+         let comision = 0;
+
+         const sueldoBase = Number(contrato.sueldo);
+
+         const asignacionFamiliar = trabajador.asignacion_familiar
+            ? MONTO_ASIGNACION_FAMILIAR
+            : 0;
+
+         const diasLaborados = calcularDiasLaboradosQuincena(
+            contrato.fecha_inicio,
+            contrato.fecha_fin,
+            fecha_anio_mes
+         );
+
+         const sueldoQuincenal = +(
+            ((sueldoBase / 15) * diasLaborados) /
+            2
+         ).toFixed(2);
+
+         const sueldoBruto = +(sueldoQuincenal + asignacionFamiliar).toFixed(2);
+
+         if (sistema_pension === "ONP") {
+            onp = +(
+               (sueldoBruto * dataMantenimiento.PORCENTAJE_DESCUENTO_ONP) /
+               100
+            ).toFixed(2);
+         } else if (sistema_pension === "AFP") {
+            afp = +(
+               (sueldoBruto * dataMantenimiento.PORCENTAJE_DESCUENTO_AFP) /
+               100
+            ).toFixed(2);
+
+            seguro = +(
+               (sueldoBruto * dataMantenimiento.PORCENTAJE_DESCUENTO_SEGURO) /
+               100
+            ).toFixed(2);
+
+            if (trabajador.comision_afp) {
+               switch (tipo_afp) {
+                  case "HABITAT":
+                     comision = +(
+                        (sueldoBruto * PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT) /
+                        100
+                     ).toFixed(2);
+                     break;
+                  case "INTEGRA":
+                     comision = +(
+                        (sueldoBruto * PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA) /
+                        100
+                     ).toFixed(2);
+                     break;
+                  case "PRIMA":
+                     comision = +(
+                        (sueldoBruto * PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA) /
+                        100
+                     ).toFixed(2);
+                     break;
+                  case "PROFUTURO":
+                     comision = +(
+                        (sueldoBruto * PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO) /
+                        100
+                     ).toFixed(2);
+                     break;
+                  default:
+                     break;
+               }
+            }
+         }
+
+         /* const quinta_categoria = 0; */
+         const { found, retencion_base_mes, registro } =
+            await quintaCategoriaService.getRetencionBaseMesPorDni({
+               dni: trabajador.numero_documento,
+               anio,
+               mes,
+            });
+
+         const quinta_categoria = found ? +(retencion_base_mes / 2).toFixed(2) : 0;
+
+         const totalDescuentos = +(
+            onp +
+            afp +
+            seguro +
+            comision +
+            quinta_categoria
+         ).toFixed(2);
+         const totalAPagar = +(sueldoBruto - totalDescuentos).toFixed(2);
+
+         console.log("contrato.fecha_inicio", contrato.fecha_inicio);
+
+         listaPlanillaTipoPlanilla.push({
+            trabajador_id: trabajador.id,
+
+            tipo_documento: trabajador.tipo_documento,
+            numero_documento: trabajador.numero_documento,
+            nombres: trabajador.nombres,
+            apellidos: trabajador.apellidos,
+            contrato_id: contrato.id,
+            tipo_contrato: contrato.tipo_contrato,
+            regimen: contrato.regimen,
+            fecha_ingreso: contrato.fecha_inicio,
+            fecha_fin: contrato.fecha_fin,
+            dias_laborados: diasLaborados,
+            sueldo_base: sueldoBase,
+            sueldo_quincenal: sueldoQuincenal,
+            asignacion_familiar: asignacionFamiliar,
+            sueldo_bruto: sueldoBruto,
+            onp,
+            afp,
+            seguro,
+            comision,
+            quinta_categoria,
+            total_descuentos: totalDescuentos,
+            total_a_pagar: totalAPagar,
+
+            banco: contrato.banco,
+            numero_cuenta: contrato.numero_cuenta
+         });
       }
 
-      /* const quinta_categoria = 0; */
-      const { found, retencion_base_mes, registro } =
-        await quintaCategoriaService.getRetencionBaseMesPorDni({
-          dni: trabajador.numero_documento,
-          anio,
-          mes,
-        });
+      const listaPlanillaTipoHonorarios = [];
 
-      const quinta_categoria = found ? +(retencion_base_mes / 2).toFixed(2) : 0;
+      for (const contrato of contratosRxh) {
+         const trabajador = contrato.trabajador;
 
-      const totalDescuentos = +(
-        onp +
-        afp +
-        seguro +
-        comision +
-        quinta_categoria
-      ).toFixed(2);
-      const totalAPagar = +(sueldoBruto - totalDescuentos).toFixed(2);
+         const sueldoBase = Number(contrato.sueldo);
 
-      console.log("contrato.fecha_inicio", contrato.fecha_inicio);
+         const diasLaborados = calcularDiasLaboradosQuincena(
+            contrato.fecha_inicio,
+            contrato.fecha_fin,
+            fecha_anio_mes
+         );
 
-      listaPlanillaTipoPlanilla.push({
-         trabajador_id: trabajador.id,
-         
-        tipo_documento: trabajador.tipo_documento,
-        numero_documento: trabajador.numero_documento,
-        nombres: trabajador.nombres,
-        apellidos: trabajador.apellidos,
-        contrato_id: contrato.id,
-        tipo_contrato: contrato.tipo_contrato,
-         regimen: contrato.regimen,
-        fecha_ingreso: contrato.fecha_inicio,
-        fecha_fin: contrato.fecha_fin,
-        dias_laborados: diasLaborados,
-        sueldo_base: sueldoBase,
-        sueldo_quincenal: sueldoQuincenal,
-        asignacion_familiar: asignacionFamiliar,
-        sueldo_bruto: sueldoBruto,
-        onp,
-        afp,
-        seguro,
-        comision,
-        quinta_categoria,
-        total_descuentos: totalDescuentos,
-        total_a_pagar: totalAPagar,
+         // (SUELDO/2)/15*DÍAS LABORADOS
+         const sueldoQuincenal = +(
+            ((sueldoBase / 15) * diasLaborados) /
+            2
+         ).toFixed(2);
 
-        banco: contrato.banco,
-        numero_cuenta: contrato.numero_cuenta
-      });
-    }
+         const totalAPagar = sueldoQuincenal;
+         listaPlanillaTipoHonorarios.push({
+            trabajador_id: trabajador.id,
+            tipo_documento: trabajador.tipo_documento,
+            numero_documento: trabajador.numero_documento,
+            nombres: trabajador.nombres,
+            apellidos: trabajador.apellidos,
+            contrato_id: contrato.id,
+            tipo_contrato: contrato.tipo_contrato,
+            regimen: contrato.regimen,
+            fecha_ingreso: contrato.fecha_inicio,
+            fecha_fin: contrato.fecha_fin,
+            dias_laborados: diasLaborados,
+            sueldo_base: sueldoBase,
+            sueldo_quincenal: sueldoQuincenal,
+            total_a_pagar: totalAPagar,
 
-    const listaPlanillaTipoHonorarios = [];
+            banco: contrato.banco,
+            numero_cuenta: contrato.numero_cuenta
+         });
+      }
 
-    for (const contrato of contratosRxh) {
-      const trabajador = contrato.trabajador;
-
-      const sueldoBase = Number(contrato.sueldo);
-
-      const diasLaborados = calcularDiasLaboradosQuincena(
-        contrato.fecha_inicio,
-        contrato.fecha_fin,
-        fecha_anio_mes
-      );
-
-      // (SUELDO/2)/15*DÍAS LABORADOS
-      const sueldoQuincenal = +(
-        ((sueldoBase / 15) * diasLaborados) /
-        2
-      ).toFixed(2);
-
-      const totalAPagar = sueldoQuincenal;
-      listaPlanillaTipoHonorarios.push({
-         trabajador_id: trabajador.id,
-        tipo_documento: trabajador.tipo_documento,
-        numero_documento: trabajador.numero_documento,
-        nombres: trabajador.nombres,
-        apellidos: trabajador.apellidos,
-        contrato_id: contrato.id,
-        tipo_contrato: contrato.tipo_contrato,
-        regimen: contrato.regimen,
-        fecha_ingreso: contrato.fecha_inicio,
-        fecha_fin: contrato.fecha_fin,
-        dias_laborados: diasLaborados,
-        sueldo_base: sueldoBase,
-        sueldo_quincenal: sueldoQuincenal,
-        total_a_pagar: totalAPagar,
-
-        banco: contrato.banco,
-        numero_cuenta: contrato.numero_cuenta
-      });
-    }
-
-    return {
-      planilla: {
-        trabajadores: listaPlanillaTipoPlanilla,
-      },
-      honorarios: {
-        trabajadores: listaPlanillaTipoHonorarios,
-      },
-      datosCalculo: dataMantenimiento,
-    };
-  }
-  async calcularPlanillaMensualPorTrabajador(
+      return {
+         planilla: {
+            trabajadores: listaPlanillaTipoPlanilla,
+         },
+         honorarios: {
+            trabajadores: listaPlanillaTipoHonorarios,
+         },
+         datosCalculo: dataMantenimiento,
+      };
+   }
+   async calcularPlanillaMensualPorTrabajador(
       anio_mes_dia,
       trabajador_id,
       filial_id
    ) {
+
+      const incio_de_mes=`${anio_mes_dia.slice(0, -2)}01`;
+      const fin_de_mes=anio_mes_dia;
+      const datos_planilla_inicial = { ...trabajador_planilla_model };
+
       const PORCENTAJE_DESCUENTO_ONP = Number(
          (await dataMantenimientoRepository.obtenerPorCodigo("valor_onp")).valor
       );
@@ -365,35 +375,9 @@ class SequelizePlanillaRepository {
       const fecha_cierre_periodo = anio_mes_dia;
       let fecha_inicio_periodo = `${anio_mes_dia.slice(0, -2)}01`;
 
-      let periodograti = null;
-      if (
-         anio_mes_dia >= `${anio_mes_dia.slice(0, -6)}-07-01` &&
-         anio_mes_dia <= `${anio_mes_dia.slice(0, -6)}-07-31`
-      ) {
-         periodograti = "JULIO";
-      }
-      if (
-         anio_mes_dia >= `${anio_mes_dia.slice(0, -6)}-12-01` &&
-         anio_mes_dia <= `${anio_mes_dia.slice(0, -6)}-12-31`
-      ) {
-         periodograti = "DICIEMBRE";
-      }
-      let periodocts = null;
-      if (
-         anio_mes_dia >= `${anio_mes_dia.slice(0, -6)}-05-01` &&
-         anio_mes_dia <= `${anio_mes_dia.slice(0, -6)}-05-31`
-      ) {
-         periodocts = "MAYO";
-      }
-      if (
-         anio_mes_dia >= `${anio_mes_dia.slice(0, -6)}-11-01` &&
-         anio_mes_dia <= `${anio_mes_dia.slice(0, -6)}-11-31`
-      ) {
-         periodocts = "NOVIEMBRE";
-      }
+      const {periodocts,periodograti}=calcular_periodo_grati_cts(anio_mes_dia);
 
       const dias_mes = anio_mes_dia.slice(-2);
-      const datos_planilla_inicial = { ...trabajador_planilla_model };
       const response_trabajador = await db.trabajadores.findByPk(
          trabajador_id,
          {
@@ -416,11 +400,18 @@ class SequelizePlanillaRepository {
          }
       );
       const trabajador = response_trabajador.get({ plain: true });
+
       if (!trabajador) {
          throw new Error("El trabajador no existe.");
       }
+      const contratosEnRango = trabajador.contratos_laborales.filter((c) => {
+         return (
+            c.fecha_fin >= fecha_inicio_periodo && c.fecha_inicio <= fecha_cierre_periodo &&
+            c.filial_id == filial_id
+         );
+      });
 
-      const contrato_actual = trabajador.contratos_laborales.find((c) => {
+      const contrato_actual = contratosEnRango.find((c) => {
          return (
             c.fecha_inicio <= fecha_cierre_periodo &&
             c.fecha_fin >= fecha_cierre_periodo
@@ -431,17 +422,31 @@ class SequelizePlanillaRepository {
       }
 
       const contratoInicial = filtrarContratosSinInterrupcion(
-         trabajador.contratos_laborales
+         contratosEnRango
       );
-      let resto_dias_no_contratados = 0;
+   let inicio_contrato = new Date(contratoInicial[0].fecha_inicio);
+   let fin_contrato = new Date(contratoInicial[0].fecha_fin);
 
-      if (contratoInicial[0].fecha_inicio > fecha_inicio_periodo) {
-         resto_dias_no_contratados =
-            (new Date(contratoInicial[0].fecha_inicio) -
-               new Date(fecha_inicio_periodo)) /
-            (1000 * 60 * 60 * 24);
-         fecha_inicio_periodo = contratoInicial[0].fecha_inicio;
-      }
+   let inicio_rango = new Date(fecha_inicio_periodo);
+   let fin_rango = new Date(fecha_cierre_periodo);
+
+   // Determinar el rango real cubierto por el contrato dentro del rango general
+   let inicio_real = inicio_contrato > inicio_rango ? inicio_contrato : inicio_rango;
+   let fin_real = fin_contrato < fin_rango ? fin_contrato : fin_rango;
+
+   // Calcular días contratados (solo si hay solapamiento)
+   let dias_contratados = fin_real >= inicio_real
+      ? Math.floor((fin_real - inicio_real) / (1000 * 60 * 60 * 24)) + 1
+      : 0;
+
+   // Calcular total de días en el rango general
+   let total_dias_rango = Math.floor((fin_rango - inicio_rango) / (1000 * 60 * 60 * 24)) + 1;
+
+   // Días no contratados (no laborados)
+        let resto_dias_no_contratados = total_dias_rango - dias_contratados;
+   if (trabajador.id === 7) {
+      console.log('Días no contratados: ', resto_dias_no_contratados);
+   }
 
       const faltas =
          await asistenciasRepository.obtenerCantidadFaltasPorRangoFecha(
@@ -578,17 +583,15 @@ class SequelizePlanillaRepository {
 
       //Renta de quinta
 
-      
       const { found, retencion_base_mes, registro } =
          await quintaCategoriaService.getRetencionBaseMesPorDni({
             dni: trabajador.numero_documento,
-            anio:anio_mes_dia.slice(0, -6),
-            mes:anio_mes_dia.slice(5, -3),
+            anio: anio_mes_dia.slice(0, -6),
+            mes: anio_mes_dia.slice(5, -3),
          });
 
       const quinta_categoria = found ? +(retencion_base_mes / 2).toFixed(2) : 0;
-      
-      
+
       const DIAS_LABORALES = diasLaborales(
          fecha_inicio_periodo,
          fecha_cierre_periodo
@@ -617,8 +620,10 @@ class SequelizePlanillaRepository {
       datos_planilla_inicial.numero_documento = trabajador.numero_documento;
       datos_planilla_inicial.nombres_apellidos = `${trabajador.nombres} ${trabajador.apellidos}`;
       datos_planilla_inicial.area = trabajador.cargo.area.nombre;
-      datos_planilla_inicial.afp = trabajador.tipo_afp??"ONP";
+      datos_planilla_inicial.afp = trabajador.tipo_afp ?? "ONP";
       datos_planilla_inicial.fecha_ingreso = contratoInicial[0].fecha_inicio;
+      datos_planilla_inicial.trabajador_id=trabajador.id;
+      datos_planilla_inicial.contrato_id=contrato_actual.id
       // dias de labor se resta a los dias del mes, los dias no contradados faltas, vacaciones, (preguntar otros estados?)
       datos_planilla_inicial.dias_labor =
          dias_mes - resto_dias_no_contratados - faltas - DIAS_VACACIONES;
@@ -676,8 +681,8 @@ class SequelizePlanillaRepository {
          SUMA_BONO_PRIMERA_Q.toFixed(2);
       datos_planilla_inicial.bono_segunda_quincena =
          SUMA_BONO_SEGUNDA_Q.toFixed(2);
-      
-         datos_planilla_inicial.quinta_categoria=quinta_categoria;
+
+      datos_planilla_inicial.quinta_categoria = quinta_categoria;
       datos_planilla_inicial.sueldo_bruto = Number(
          (
             Number(datos_planilla_inicial.sueldo_del_mes) +
@@ -728,7 +733,6 @@ class SequelizePlanillaRepository {
          Number(datos_planilla_inicial.total_descuentos)
       ).toFixed(2);
 
-
       datos_planilla_inicial.sueldo_quincenal = (
          contrato_actual.sueldo / 2 -
          datos_planilla_inicial.total_descuentos
@@ -742,6 +746,9 @@ class SequelizePlanillaRepository {
          datos_planilla_inicial.sueldo_quincenal -
          datos_planilla_inicial.adelanto_prestamo
       ).toFixed(2);
+      datos_planilla_inicial.filial_id = contrato_actual.filial_id;
+      datos_planilla_inicial.banco = contrato_actual.banco;
+      datos_planilla_inicial.numero_cuenta = contrato_actual.numero_cuenta;
       console.log("*******");
       console.log(".............");
 
@@ -798,6 +805,7 @@ class SequelizePlanillaRepository {
             (1000 * 60 * 60 * 24);
          fecha_inicio_periodo = contratoInicial[0].fecha_inicio;
       }
+
       const faltas =
          await asistenciasRepository.obtenerCantidadFaltasPorRangoFecha(
             trabajador.id,
@@ -824,120 +832,180 @@ class SequelizePlanillaRepository {
       return dataInicialRxH;
    }
 
-  async obtenerCierrePlanillaQuincenal(
-    fecha_anio_mes,
-    filial_id,
-    transaction = null
-  ) {
-    const cierrePlanillaQuincenal = await CierrePlanillaQuincenal.findOne({
-      where: { periodo: fecha_anio_mes, filial_id },
-      transaction,
-    });
-    return cierrePlanillaQuincenal;
-  }
-
-  async insertarCierrePlanillaQuincenal(data, transaction = null) {
-      const options = {};
-      if (transaction) {
-        options.transaction = transaction;
-      }
-  
-      const cierrePlanillaQuincenal = await CierrePlanillaQuincenal.create(data, options);
+   async obtenerCierrePlanillaQuincenal(
+      fecha_anio_mes,
+      filial_id,
+      transaction = null
+   ) {
+      const cierrePlanillaQuincenal = await CierrePlanillaQuincenal.findOne({
+         where: { periodo: fecha_anio_mes, filial_id },
+         transaction,
+      });
       return cierrePlanillaQuincenal;
-    }
+   }
 
-  async actualizarCierrePlanillaQuincenal(
-    cierre_planilla_quincenal_id,
-    data,
-    transaction = null
-  ) {
-    const options = {};
-    if (transaction) {
-      options.transaction = transaction;
-    }
-    const cierrePlanillaQuincenal = await CierrePlanillaQuincenal.update(
-      data,
-      { where: { id: cierre_planilla_quincenal_id } },
-      options
-    );
-    return cierrePlanillaQuincenal;
-  }
-
-  async obtenerPlanillaQuincenalCerradas(
-    fecha_anio_mes,
-    filial_id,
-    transaction = null
-  ) {
-    const cierrePlanillaQuincenal = await CierrePlanillaQuincenal.findOne({
-      where: { periodo: fecha_anio_mes, filial_id },
-      transaction,
-    });
-    if (!cierrePlanillaQuincenal) {
-      return [];
-    }
-
-    const planillaQuincenalCerradas = await PlanillaQuincenal.findAll({
-      where: { cierre_planilla_quincenal_id: cierrePlanillaQuincenal.id },
-      include: [
-        {
-          model: db.trabajadores,
-          as: "trabajador",
-        },
-      ],
-      transaction,
-    });
-    return planillaQuincenalCerradas;
-  }
-
-    async insertarVariasPlanillaQuincenal(data, transaction = null) {
+   async insertarCierrePlanillaQuincenal(data, transaction = null) {
       const options = {};
       if (transaction) {
-        options.transaction = transaction;
+         options.transaction = transaction;
       }
-  
-      const planillaQuincenal = await PlanillaQuincenal.bulkCreate(data, options);
+
+      const cierrePlanillaQuincenal = await CierrePlanillaQuincenal.create(
+         data,
+         options
+      );
+      return cierrePlanillaQuincenal;
+   }
+
+   async actualizarCierrePlanillaQuincenal(
+      cierre_planilla_quincenal_id,
+      data,
+      transaction = null
+   ) {
+      const options = {};
+      if (transaction) {
+         options.transaction = transaction;
+      }
+      const cierrePlanillaQuincenal = await CierrePlanillaQuincenal.update(
+         data,
+         { where: { id: cierre_planilla_quincenal_id } },
+         options
+      );
+      return cierrePlanillaQuincenal;
+   }
+
+   async obtenerPlanillaQuincenalCerradas(
+      fecha_anio_mes,
+      filial_id,
+      transaction = null
+   ) {
+      const cierrePlanillaQuincenal = await CierrePlanillaQuincenal.findOne({
+         where: { periodo: fecha_anio_mes, filial_id },
+         transaction,
+      });
+      if (!cierrePlanillaQuincenal) {
+         return [];
+      }
+
+      const planillaQuincenalCerradas = await PlanillaQuincenal.findAll({
+         where: { cierre_planilla_quincenal_id: cierrePlanillaQuincenal.id },
+         include: [
+            {
+               model: db.trabajadores,
+               as: "trabajador",
+            },
+         ],
+         transaction,
+      });
+      return planillaQuincenalCerradas;
+   }
+
+   async insertarVariasPlanillaQuincenal(data, transaction = null) {
+      const options = {};
+      if (transaction) {
+         options.transaction = transaction;
+      }
+
+      const planillaQuincenal = await PlanillaQuincenal.bulkCreate(
+         data,
+         options
+      );
       return planillaQuincenal;
-    }
+   }
 
-    async obtenerPlanillaQuincenalPorTrabajador(
-        fecha_anio_mes,
-        filial_id,
-        trabajador_id,
-        transaction = null
-      ) {
-        
-        const planillaQuincenalPorTrabajador = await PlanillaQuincenal.findAll({
-          where: { trabajador_id, periodo: fecha_anio_mes, filial_id },
-          transaction,
-        });
-    
-        return planillaQuincenalPorTrabajador;
-      }
+   async obtenerPlanillaQuincenalPorTrabajador(
+      fecha_anio_mes,
+      filial_id,
+      trabajador_id,
+      transaction = null
+   ) {
+      const planillaQuincenalPorTrabajador = await PlanillaQuincenal.findAll({
+         where: { trabajador_id, periodo: fecha_anio_mes, filial_id },
+         transaction,
+      });
 
+      return planillaQuincenalPorTrabajador;
+   }
 
-       async obtenerTotalPlanillaQuincenalPorTrabajador(
-          fecha_anio_mes,
-          filial_id,
-          trabajador_id,
-          transaction = null
-        ) {
-         
-          const planillaQuincenalPorTrabajador = await PlanillaQuincenal.findAll({
-            where: { trabajador_id, periodo: fecha_anio_mes, filial_id },
-            transaction,
-          });
-      
-          console.log('planillaQuincenalPorTrabajador', planillaQuincenalPorTrabajador);
-      
-          const total = planillaQuincenalPorTrabajador.reduce((total, gratificacion) => {
+   async obtenerTotalPlanillaQuincenalPorTrabajador(
+      fecha_anio_mes,
+      filial_id,
+      trabajador_id,
+      transaction = null
+   ) {
+      const planillaQuincenalPorTrabajador = await PlanillaQuincenal.findAll({
+         where: { trabajador_id, periodo: fecha_anio_mes, filial_id },
+         transaction,
+      });
+
+      console.log(
+         "planillaQuincenalPorTrabajador",
+         planillaQuincenalPorTrabajador
+      );
+
+      const total = planillaQuincenalPorTrabajador.reduce(
+         (total, gratificacion) => {
             return total + Number(gratificacion.total_pagar);
-          }, 0);
-      
-          return {
-            total_pagar: total
-          };
-        }
+         },
+         0
+      );
 
+      return {
+         total_pagar: total,
+      };
+   }
+
+   async obtenerCierrePlanillaMensual(
+      fecha_anio_mes,
+      filial_id,
+   ) {
+      console.log('dento funcion',fecha_anio_mes,filial_id);
+      
+      const cierrePlanillaQuincenal = await CierresPlanillaMensual.findOne({
+         where: { periodo: fecha_anio_mes, filial_id }
+      });
+      return cierrePlanillaQuincenal;
+   }
+   async generarRegistroCierrePeriodoPlanillaMensual(
+      payload,
+      transaction = null
+   ) {
+      const options = {};
+      if (transaction) {
+         options.transaction = transaction;
+      }
+      const cierrePlanilla = db.cierres_planilla_mensual.create(payload, options);
+      return cierrePlanilla;
+   }
+
+   async generarCierreBloqueoPeriodoPlanillaMensual(
+      locked_at,
+      id,
+      transaction = null
+   ) {
+      const options = {
+         where: {
+            id: id,
+         },
+      };
+      if (transaction) {
+         options.transaction = transaction;
+      }
+      const cierrePlanilla = db.cierres_planilla_mensual.update(
+         { locked_at },
+         options
+      );
+      return cierrePlanilla;
+   }
+
+      async crearRegistroPlanilla(datos, transaction = null) {
+         const options = {};
+         if (transaction) {
+            options.transaction = transaction;
+         }
+         const planilla = db.planilla_mensual.create(datos, transaction);
+         return planilla;
+      }
 }
 
 module.exports = SequelizePlanillaRepository; // Exporta la clase para que pueda ser utilizada en otros módulos

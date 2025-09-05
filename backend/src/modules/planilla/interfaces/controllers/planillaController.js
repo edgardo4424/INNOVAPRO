@@ -7,122 +7,143 @@ const cierrePlanillaQuincenal = require("../../application/useCases/cierrePlanil
 const obtenerPlanillaQuincenalCerradas = require("../../application/useCases/obtenerPlanillaQuincenalCerradas");
 const obtenerPlanillaQuincenalPorTrabajador = require("../../application/useCases/obtenerPlanillaQuincenalPorTrabajador");
 const obtenerTotalPlanillaQuincenalPorTrabajador = require("../../application/useCases/obtenerTotalPlanillaQuincenalPorTrabajador");
+const cierrePlanillaMensual = require("../../application/useCases/cierrePlanillaMensual");
 
 const planillaRepository = new sequelizePlanillaRepository();
 const trabajadorRepository = new SequelizeTrabajadorRepository();
 
 const PlanillaController = {
+   async calcularPlanillaQuincenal(req, res) {
+      try {
+         const { fecha_anio_mes, filial_id } = req.body;
+         console.log(req.body);
 
-  async calcularPlanillaQuincenal(req, res) {
-    try {
-      const { fecha_anio_mes, filial_id } = req.body;
-      console.log(req.body);
+         const planilla = await calcularPlanillaQuincenal(
+            fecha_anio_mes,
+            filial_id,
+            planillaRepository
+         );
 
-      const planilla = await calcularPlanillaQuincenal(
-        fecha_anio_mes,
-        filial_id,
-        planillaRepository
-      );
+         res.status(planilla.codigo).json(planilla.respuesta);
+      } catch (error) {
+         console.log("error", error);
+         res.status(500).json({ error: error.message });
+      }
+   },
+   async calcularPlanillaMensualPorTrabajador(req, res) {
+      try {
+         const { anio_mes_dia, filial_id } = req.body;
+         console.log("Body es ", req.body);
 
-      res.status(planilla.codigo).json(planilla.respuesta);
-    } catch (error) {
-      console.log("error", error);
-      res.status(500).json({ error: error.message });
-    }
-  },
-  async calcularPlanillaMensualPorTrabajador(req, res) {
-    try {
-      const { anio_mes_dia, filial_id } = req.body;
-      console.log("Body es ", req.body);
+         const planilla = await calcularPlanillaMensualPorTrabajador(
+            anio_mes_dia,
+            filial_id,
+            planillaRepository,
+            trabajadorRepository
+         );
+         res.status(planilla.codigo).json(planilla.respuesta);
+      } catch (error) {
+         console.log(error);
+         
+         res.status(503).json({ error: error.message });
+      }
+   },
 
-      const planilla = await calcularPlanillaMensualPorTrabajador(
-        anio_mes_dia,
-        filial_id,
-        planillaRepository,
-        trabajadorRepository
-      );
-      res.status(planilla.codigo).json(planilla.respuesta);
-    } catch (error) {
-      res.status(503).json({ error: error.message });
-    }
-  },
+   async cierrePlanillaQuincenal(req, res) {
+      try {
+         const { fecha_anio_mes, filial_id } = req.body;
+         console.log(req.body);
+         const usuario_cierre_id = req.usuario.id;
+         const planilla = await cierrePlanillaQuincenal(
+            usuario_cierre_id,
+            fecha_anio_mes,
+            filial_id,
+            planillaRepository
+         );
+         res.status(planilla.codigo).json(planilla.respuesta);
+      } catch (error) {
+         res.status(503).json({ error: error.message });
+      }
+   },
 
-  async cierrePlanillaQuincenal(req, res) {
-    try {
-      const { fecha_anio_mes, filial_id } = req.body;
-      console.log(req.body);
-      const usuario_cierre_id = req.usuario.id;
-      const planilla = await cierrePlanillaQuincenal(
-        usuario_cierre_id,
-        fecha_anio_mes,
-        filial_id,
-        planillaRepository
-      );
-      res.status(planilla.codigo).json(planilla.respuesta);
-    } catch (error) {
-      res.status(503).json({ error: error.message });
-    }
-  },
+   async cierrePlanillaMensual(req, res) {
+      try {
+         const { fecha, filial_id, array_trabajadores } = req.body;
+         const usuario_cierre_id = req.usuario.id;
+         
+         const cierrePM = await cierrePlanillaMensual(
+            usuario_cierre_id,
+            planillaRepository,
+            array_trabajadores,
+            filial_id,
+            fecha
+         );
+        res.status(cierrePM.codigo).json(cierrePM.respuesta)
+      } catch (error) {
+         console.log(error);
+         res.status(500).json({ error: error.message });
+      }
+   },
 
-  async obtenerPlanillaQuincenalCerradas(req, res) {
-    try {
-      const planillaQuincenalCerradas = await obtenerPlanillaQuincenalCerradas(
-        req.body,
-        planillaRepository
-      ); // Llamamos al caso de uso para obtener todos los planillaQuincenalCerradas
+   async obtenerPlanillaQuincenalCerradas(req, res) {
+      try {
+         const planillaQuincenalCerradas =
+            await obtenerPlanillaQuincenalCerradas(
+               req.body,
+               planillaRepository
+            ); // Llamamos al caso de uso para obtener todos los planillaQuincenalCerradas
 
-      res
-        .status(planillaQuincenalCerradas.codigo)
-        .json(planillaQuincenalCerradas.respuesta); // 🔥 Siempre devuelve un array, aunque esté vacío
-    } catch (error) {
-      console.log("error", error);
-      res.status(500).json({ error: error.message }); // Respondemos con un error
-    }
-  },
+         res.status(planillaQuincenalCerradas.codigo).json(
+            planillaQuincenalCerradas.respuesta
+         ); // 🔥 Siempre devuelve un array, aunque esté vacío
+      } catch (error) {
+         console.log("error", error);
+         res.status(500).json({ error: error.message }); // Respondemos con un error
+      }
+   },
 
-  async obtenerPlanillaQuincenalPorTrabajador(req, res) {
-    try {
-      const { fecha_anio_mes, filial_id, trabajador_id } = req.body;
+   async obtenerPlanillaQuincenalPorTrabajador(req, res) {
+      try {
+         const { fecha_anio_mes, filial_id, trabajador_id } = req.body;
 
-      const planillaQuincenalPorTrabajador =
-        await obtenerPlanillaQuincenalPorTrabajador(
-          fecha_anio_mes,
-          filial_id,
-          trabajador_id,
-          planillaRepository
-        ); // Llamamos al caso de uso para obtener todos las planillas
+         const planillaQuincenalPorTrabajador =
+            await obtenerPlanillaQuincenalPorTrabajador(
+               fecha_anio_mes,
+               filial_id,
+               trabajador_id,
+               planillaRepository
+            ); // Llamamos al caso de uso para obtener todos las planillas
 
-      res
-        .status(planillaQuincenalPorTrabajador.codigo)
-        .json(planillaQuincenalPorTrabajador.respuesta); // 🔥 Siempre devuelve un array, aunque esté vacío
-    } catch (error) {
-      console.log("error", error);
-      res.status(500).json({ error: error.message }); // Respondemos con un error
-    }
-  },
+         res.status(planillaQuincenalPorTrabajador.codigo).json(
+            planillaQuincenalPorTrabajador.respuesta
+         ); // 🔥 Siempre devuelve un array, aunque esté vacío
+      } catch (error) {
+         console.log("error", error);
+         res.status(500).json({ error: error.message }); // Respondemos con un error
+      }
+   },
 
-  async obtenerTotalPlanillaQuincenalPorTrabajador(req, res) {
-    try {
-      console.log("entre");
-      const { fecha_anio_mes, filial_id, trabajador_id } = req.body;
+   async obtenerTotalPlanillaQuincenalPorTrabajador(req, res) {
+      try {
+         console.log("entre");
+         const { fecha_anio_mes, filial_id, trabajador_id } = req.body;
 
-      const planillaQuincenalPorTrabajadorTotal =
-        await obtenerTotalPlanillaQuincenalPorTrabajador(
-          fecha_anio_mes,
-          filial_id,
-          trabajador_id,
-          planillaRepository
-        ); // Llamamos al caso de uso para obtener todos los planilla
+         const planillaQuincenalPorTrabajadorTotal =
+            await obtenerTotalPlanillaQuincenalPorTrabajador(
+               fecha_anio_mes,
+               filial_id,
+               trabajador_id,
+               planillaRepository
+            ); // Llamamos al caso de uso para obtener todos los planilla
 
-      res
-        .status(planillaQuincenalPorTrabajadorTotal.codigo)
-        .json(planillaQuincenalPorTrabajadorTotal.respuesta); // 🔥 Siempre devuelve un array, aunque esté vacío
-    } catch (error) {
-      console.log("error", error);
-      res.status(500).json({ error: error.message }); // Respondemos con un error
-    }
-  },
-
+         res.status(planillaQuincenalPorTrabajadorTotal.codigo).json(
+            planillaQuincenalPorTrabajadorTotal.respuesta
+         ); // 🔥 Siempre devuelve un array, aunque esté vacío
+      } catch (error) {
+         console.log("error", error);
+         res.status(500).json({ error: error.message }); // Respondemos con un error
+      }
+   },
 };
 
 module.exports = PlanillaController;
