@@ -6,16 +6,39 @@ import {
     AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { useNota } from "@/modules/facturacion/context/NotaContext";
 import { ClipboardPlus, X } from "lucide-react";
 import ItemCambioDescipcion from "../../forms/ItemCambioDescipcion";
+import DescuentoGlobalForm from "../../forms/DescuentoGlobalForm";
+import DescuentoItemForm from "../../forms/DescuentoItemForm";
 
 const ModalProducto = ({ open, setOpen, closeModal }) => {
+
+    const { notaCreditoDebito } = useNota();
+
+    const { motivo_Cod } = notaCreditoDebito
+
     return (
         <AlertDialog open={open} onOpenChange={setOpen} >
             <AlertDialogTrigger asChild>
                 <Button className="bg-blue-500 hover:scale-105 hover:bg-blue-600 cursor-pointer">
                     <ClipboardPlus />
-                    <span className="hidden md:block">Selecciona un item</span>
+                    {
+                        motivo_Cod == "03" &&
+                        <span className="hidden md:block">Selecciona un item</span>
+                    }
+
+                    {/* //? Caso de descuento gobal  */}
+                    {
+                        motivo_Cod == "04" &&
+                        <span className="hidden md:block">Aplicar descuento Global</span>
+                    }
+
+                    {/* //? Caso de descuento por item  */}
+                    {
+                        motivo_Cod == "05" &&
+                        <span className="hidden md:block">Aplicar descuento por Item</span>
+                    }
                 </Button>
             </AlertDialogTrigger>
 
@@ -30,16 +53,27 @@ const ModalProducto = ({ open, setOpen, closeModal }) => {
 
                 {/* 🧾 Encabezado */}
                 <AlertDialogHeader >
-                    <AlertDialogTitle>Datos del Item</AlertDialogTitle>
-                    {/* <AlertDialogDescription className="text-center"> */}
-                    {/* Ingresa los datos correctamente para crear un producto. */}
-                    {/* </AlertDialogDescription> */}
+                    <AlertDialogTitle>Datos a Rellenar</AlertDialogTitle>
                 </AlertDialogHeader>
 
 
-                {/* 📦 Cambio de descripcion*/}
-                <ItemCambioDescipcion  closeModal={closeModal}/>
+                {/* //?📦 Cambio de descripcion*/}
+                {
+                    motivo_Cod == "03" &&
+                    <ItemCambioDescipcion closeModal={closeModal} />
+                }
 
+                {/* //? Caso de descuento gobal  */}
+                {
+                    motivo_Cod == "04" &&
+                    <DescuentoGlobalForm closeModal={closeModal} />
+                }
+
+                {/* //? Caso de descuento gobal  */}
+                {
+                    motivo_Cod == "05" &&
+                    <DescuentoItemForm closeModal={closeModal} />
+                }
 
             </AlertDialogContent>
         </AlertDialog>

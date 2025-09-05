@@ -76,4 +76,60 @@ const valorInicialProducto = {
     cod_Prod_Sunat: ""
 };
 
-export { notaInical, valorInicialProducto, ValorInicialDetalleNota }
+const valorIncialDescuentoGlobal = {
+    unidad: "NIU",
+    cantidad: 1,
+    cod_Producto: "",
+    descripcion: "DESCUENTO",
+    monto_Valor_Unitario: 0,
+    monto_Base_Igv: 0,
+    monto_Precio_Unitario: 0,
+    monto_Valor_Venta: 0,
+    porcentaje_Igv: 0,
+    igv: 0.,
+    tip_Afe_Igv: "10",
+    factor_Icbper: 0,
+    total_Impuestos: 0,
+    codigo: "",
+    cod_Prod_Sunat: "",
+}
+
+const valorIncialDescuentoItem = {
+    id: 0,
+    unidad: "",
+    cantidad: 1,
+    cod_Producto: "",
+    descripcion: "",
+    monto_Valor_Unitario: 0,
+    monto_Base_Igv: 0,
+    monto_Precio_Unitario: 0,
+    monto_Valor_Venta: 0,
+    porcentaje_Igv: 0,
+    igv: 0.,
+    tip_Afe_Igv: "",
+    factor_Icbper: 0,
+    total_Impuestos: 0,
+    codigo: "",
+    cod_Prod_Sunat: "",
+    Descuentos: [
+        {
+            CodTipo: "00",
+            MontoBase: 0,
+            Factor: 0,
+            Monto: 0
+        }
+    ]
+}
+
+const valorIncialDescuentos = [
+    {
+        CodTipo: "00",
+        MontoBase: 0,
+        Factor: 0,
+        Monto: 0
+    }
+]
+
+
+
+export { notaInical, valorInicialProducto, ValorInicialDetalleNota, valorIncialDescuentoGlobal, valorIncialDescuentoItem , valorIncialDescuentos}

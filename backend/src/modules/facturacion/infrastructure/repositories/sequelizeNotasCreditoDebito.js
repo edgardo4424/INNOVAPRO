@@ -79,7 +79,7 @@ class SequelizeNotasCreditoDebitoRepository {
             createdNota.sunat_respuesta = sunat;
 
             //* 5. Anular la factura asociada (MOVIDO DENTRO DE LA TRANSACCIÓN)
-            const { factura_id, guia_id, } = data;
+            const { factura_id, guia_id, } = data.nota;
             let modelToUpdate = null;
             if (factura_id) {
                 modelToUpdate = Factura;
@@ -95,10 +95,10 @@ class SequelizeNotasCreditoDebitoRepository {
             }
             // Se cambia el valor "ANULADO" a "A" para evitar el error de truncamiento de datos
 
-            let valueEstado ;
+            let valueEstado;
             if (data.motivo_Cod === "01" || data.motivo_Cod === "02") {
                 valueEstado = "ANULADA-NOTA";
-            }else{
+            } else {
                 valueEstado = "MODIFICADA-NOTA";
             }
             await toUpdate.update({ estado: valueEstado }, { transaction });

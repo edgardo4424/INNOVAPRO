@@ -41,7 +41,7 @@ const ItemCambioDescipcion = ({ closeModal }) => {
     }
 
     // New validation check
-    const isSaveDisabled = textoCorregido.trim() === '';
+    const isSaveDisabled = textoCorregido.trim() === '' || itemActual.id === 0;
 
     const handleSave = () => {
         const itemYaExisteEnDetalle = detalle.some((detalleItem) => detalleItem.id == itemActual.id);

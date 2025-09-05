@@ -1,5 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useNota } from '@/modules/facturacion/context/NotaContext';
+import { valorIncialDescuentos } from '../utils/valoresInicialNota';
 
 const ListaDeItem = ({ closeModal }) => {
     const { notaCreditoDebito, setNotaCreditoDebito, itemActual, setItemActual, documentoAAfectar } = useNota();
@@ -9,7 +10,15 @@ const ListaDeItem = ({ closeModal }) => {
     let itemsFiltrados = detalle.filter(item => !notaCreditoDebito.detalle.some(detalleItem => detalleItem.id === item.id));
 
     const seleccionarItem = (item) => {
-        setItemActual(item);
+        if (notaCreditoDebito.motivo_Cod === "04") {
+            setItemActual(item);
+        } else {
+            setItemActual({
+                ...item,
+                Descuentos: valorIncialDescuentos
+            });
+
+        }
         closeModal();
     }
 

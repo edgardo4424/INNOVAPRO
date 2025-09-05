@@ -37,7 +37,7 @@ export default function ModalListarItem({ itemActual, setItemActual, formulario,
                     <X />
                 </button>
 
-                <ListaDeItem itemActual={itemActual} setItemActual={setItemActual} formulario={formulario} tipo={tipo} closeModal={closeModal} />
+                <ListaDeItem closeModal={closeModal} />
 
             </AlertDialogContent>
         </AlertDialog>

@@ -69,7 +69,7 @@ export function NotaProvider({ children }) {
                 monto_Imp_Venta: parseFloat(subTotal.toFixed(2)),
             }));
         };
-
+        console.log(notaCreditoDebito.detalle);
         if (notaCreditoDebito.detalle?.length > 0) {
             actualizarFacturaMontos();
         }
@@ -125,6 +125,8 @@ export function NotaProvider({ children }) {
                 const notaEmitida = {
                     ...notaCreditoDebito,
                     sunat_respuesta: sunat_respuest,
+                    factura_id: documentoAAfectar.factura_id,
+                    guia_id: documentoAAfectar.guia_id,
                 };
 
                 // c. ¡Ahora sí! Intentar registrar la nota en la base de datos.
@@ -185,8 +187,6 @@ export function NotaProvider({ children }) {
         }
     };
 
-    // La función 'registrarBaseDatos' se mantiene como una función separada
-    // que es llamada desde 'EmitirNota'
     const registrarBaseDatos = async (documento) => {
         if (!documento) {
             return { success: false, mensaje: "No se pudo registrar la nota: documento vacío.", status: 400 };

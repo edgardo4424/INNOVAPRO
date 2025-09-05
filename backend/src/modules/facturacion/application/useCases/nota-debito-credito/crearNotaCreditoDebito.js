@@ -4,8 +4,6 @@ module.exports = async (body, notaRepository) => {
     const {
         detalle = [],
         legend = [],
-        factura_id,
-        guia_id,
         sunat_respuesta,
         ...factura
     } = body;
@@ -55,8 +53,6 @@ module.exports = async (body, notaRepository) => {
             detalle: detalle,
             leyendas: legend,
             sunat_respuesta,
-            factura_id,
-            guia_id,
         });
 
 

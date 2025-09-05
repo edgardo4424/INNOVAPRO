@@ -25,16 +25,7 @@ const NotasCreditoForm = () => {
                 <DetallesForm />
 
                 <div className="flex justify-end">
-                    {/* <div className="flex gap-x-8">
-                        <button
-                            // onClick={handleRegister}
-                            className="py-3 px-4 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-600 cursor-pointer ">
-                            Guardar
-                        </button>
-                        <button className="py-3 px-4 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 cursor-pointer ">
-                            Cancelar
-                        </button>
-                    </div> */}
+                    
                     <ModalEmitirNota />
                 </div>
             </div>

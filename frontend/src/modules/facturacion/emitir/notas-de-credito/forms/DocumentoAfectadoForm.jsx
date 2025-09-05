@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useNota } from "@/modules/facturacion/context/NotaContext";
 import { useEffect, useState } from "react";
 import ModalDocumentos from "../components/modal/ModalDocumentos";
-import { ValorInicialDetalleNota } from "../utils/valoresInicialNota";
+import { valorIncialDescuentoItem, ValorInicialDetalleNota, valorInicialProducto } from "../utils/valoresInicialNota";
 
 const codigosMotivoCredito = [
     { value: "01", label: "01 - Anulación de la operación" },
@@ -32,8 +32,9 @@ const codigosMotivosDebito = [
     { value: "03", label: "03 - Penalidades/ otros conceptos" },
 ]
 const DocumentoAfectadoForm = () => {
-    const { notaCreditoDebito, setNotaCreditoDebito, filiales, documentoAAfectar } = useNota();
+    const { notaCreditoDebito, setNotaCreditoDebito, documentoAAfectar, setItemActual } = useNota();
 
+    const [codMotivoStatus, setCodMotivoStatus] = useState(true);
     const [open, setOpen] = useState(false);
 
     const handleSelectChange = (value, name) => {
@@ -56,7 +57,7 @@ const DocumentoAfectadoForm = () => {
         setNotaCreditoDebito((prev) => ({
             ...prev,
             motivo_Cod: "",
-            // motivo_Des: "",
+            motivo_Des: "",
         }))
     }, [notaCreditoDebito.tipo_Doc]);
 
@@ -65,16 +66,42 @@ const DocumentoAfectadoForm = () => {
             setNotaCreditoDebito((prev) => ({
                 ...prev,
                 ...documentoAAfectar,
-                motivo_Des: "ANULACION DE LA OPERACION",
+                motivo_Des: notaCreditoDebito.motivo_Cod === "01" ? "ANULACION DE LA OPERACION" : "ANULACION POR ERROR EN EL RUC",
             }))
         } else if (notaCreditoDebito.motivo_Cod === "03") {
             setNotaCreditoDebito((prev) => ({
                 ...prev,
                 ...ValorInicialDetalleNota,
                 motivo_Des: "CORRECCIÓN POR ERROR EN LA DESCRIPCIÓN",
+                legend: []
             }))
+            setItemActual(valorInicialProducto);
+        } else if (notaCreditoDebito.motivo_Cod === "04") {
+            setNotaCreditoDebito((prev) => ({
+                ...prev,
+                ...ValorInicialDetalleNota,
+                motivo_Des: "DESCUENTO GLOBAL",
+                legend: []
+            }))
+            setItemActual(valorInicialProducto);
+        } else if (notaCreditoDebito.motivo_Cod === "05") {
+            setNotaCreditoDebito((prev) => ({
+                ...prev,
+                ...ValorInicialDetalleNota,
+                motivo_Des: "DESCUENTO POR ITEM",
+                legend: []
+            }))
+            setItemActual(valorIncialDescuentoItem);
         }
     }, [notaCreditoDebito.motivo_Cod]);
+
+    useEffect(() => {
+        if (notaCreditoDebito.afectado_Num_Doc === "") {
+            setCodMotivoStatus(true);
+        } else {
+            setCodMotivoStatus(false);
+        }
+    }, [notaCreditoDebito.afectado_Num_Doc]);
 
     return (
         <div className=" p-4 sm:px-6 lg:px-8 ">
@@ -142,6 +169,7 @@ const DocumentoAfectadoForm = () => {
                         onValueChange={(e) => {
                             handleSelectChange(e, "motivo_Cod");
                         }}
+                        disabled={codMotivoStatus}
                     >
                         <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm">
                             <SelectValue placeholder="Selecciona un tipo de Documento" />
