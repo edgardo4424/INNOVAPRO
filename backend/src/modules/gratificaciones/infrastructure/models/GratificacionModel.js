@@ -160,7 +160,10 @@ const Gratificacion = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-
+     contratos: {
+         type: DataTypes.JSON,
+         allowNull: false,
+      },
   },
    {
       timestamps: true,

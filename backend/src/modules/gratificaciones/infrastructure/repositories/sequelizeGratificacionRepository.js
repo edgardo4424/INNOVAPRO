@@ -237,11 +237,9 @@ class SequelizeGratificacionRepository {
     return cierreGratificacion;
   }
 
-  async calcularGratificacionTruncaPorTrabajador(periodo, anio, filial_id, trabajador_id, fecha_ingreso,fecha_fin, transaction = null) {
+  async calcularGratificacionTruncaPorTrabajador(periodo, anio, filial_id, trabajador_id, transaction = null) {
     
-    console.log({
-      periodo, anio, filial_id, trabajador_id
-    });
+    console.log('ENTRE PE CHAMO');
 
     const MONTO_ASIGNACION_FAMILIAR = Number(
       (
@@ -324,31 +322,9 @@ class SequelizeGratificacionRepository {
       transaction,
     });
 
-    console.log('contratos', contratos);
-
-    console.log(
-      {
-        periodo,
-        anio,
-        filial_id,
-        trabajador_id,
-        fecha_ingreso,
-        fecha_fin
-      }
-    );
-
-    /* const contratosPlanos = contratos.map((contrato) => contrato.get({ plain: true }));
-
-    console.log('contratosPlanos', contratosPlanos); */
-
-    const filtrarContratos = contratos.filter((contrato) => {
-      return (contrato?.fecha_inicio == fecha_ingreso && ( contrato?.fecha_terminacion_anticipada ? contrato?.fecha_terminacion_anticipada == fecha_fin : contrato?.fecha_fin == fecha_fin));
-    });
-
-    console.log('filtrarContratos', filtrarContratos);
 
     return await calcularComponentesGratificaciones(
-      filtrarContratos,
+      contratos,
       periodo,
       anio,
       dataMantenimiento,

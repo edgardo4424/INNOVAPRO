@@ -24,9 +24,8 @@ import {
 import ProtectedRoute from "./ProtectedRoute";
 import RoleGuard from "./rol.guard";
 
-import PlanillaQuincenal from "@/modules/planilla/pages/CalculoPlanillaQuincenal";
+
 import PlanillaMensual from "@/modules/planilla/pages/PlanillaMensual";
-import GestionTrabajadoresDadosDeBaja from "@/modules/trabajadoresDadosDeBaja/utils/GestionTrabajadoresDadosDeBaja";
 
 // Lazy load components
 const Login = lazy(() => import("@/modules/auth/pages/Login"));
@@ -120,6 +119,7 @@ const GestionDataMantenimiento = lazy(() =>
    import("../modules/dataMantenimiento/pages/GestionDataMantenimiento")
 );
 
+const GestionTrabajadoresDadosDeBaja = lazy(() => import("../modules/trabajadoresDadosDeBaja/pages/GestionTrabajadoresDadosDeBaja"));
 
 
 export default function AppRoutes() {

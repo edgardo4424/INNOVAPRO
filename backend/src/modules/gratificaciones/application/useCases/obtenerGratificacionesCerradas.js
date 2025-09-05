@@ -32,6 +32,9 @@ module.exports = async (dataBody, gratificacionRepository) => {
     rent_quint_cat_no_domiciliado: g.renta_5ta,
     mont_adelanto: g.adelantos,
     total_a_pagar: g.total_pagar,
+    banco: g.banco,
+    numero_cuenta: g.numero_cuenta,
+    contratos: g.contratos,
   }));
 
   const res = {

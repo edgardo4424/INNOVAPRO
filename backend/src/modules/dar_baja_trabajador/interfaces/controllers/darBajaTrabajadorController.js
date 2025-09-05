@@ -6,10 +6,14 @@ const DarBajaTrabajadorController = {
     async darBajaTrabajador(req, res) {
 
         try {
-            console.log('entre');
-            const { trabajador_id } = req.body; // id del trabajador
+            const usuario_cierre_id = req.usuario.id;
 
-            const response = await darBajaTrabajador(trabajador_id); 
+            const dataBody = {
+                usuario_cierre_id,
+                ...req.body,
+            }
+
+            const response = await darBajaTrabajador(dataBody); 
            
             res.status(response.codigo).json(response.respuesta); 
         } catch (error) {

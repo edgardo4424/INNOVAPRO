@@ -2,34 +2,32 @@ const db = require("../../../../database/models");
 const {
   mapearParaRegistrarTablaGratificaciones,
 } = require("../../infrastructure/services/mapearParaRegistrarTablaGratificaciones");
+const moment = require('moment');
 
 module.exports = async (
   usuario_cierre_id,
-  periodo,
-  anio,
   filial_id,
   trabajador_id,
-  fecha_ingreso,
-  fecha_fin,
+  fecha_baja,
   gratificacionRepository,
   transaction = null
 ) => {
 
-    // Validar periodo
-    if (!["JULIO", "DICIEMBRE"].includes(periodo)) {
-      return { codigo: 400, respuesta: { mensaje: "Periodo inválido" } };
-    }
+    let anio = moment(fecha_baja).format('YYYY');
+    let mes = moment(fecha_baja).format('MM');
 
+    // Si fecha terminacion anticipada esta dentro de la grati de julio, poner periodo = "JULIO"
+
+    let periodo = mes <= 6 ? 'JULIO' : 'DICIEMBRE';
+    
     // Verificar si ya fue generado la gratificacion para ese trabajador hasta ese momento
-
+    
     const gratificacion_del_trabajador =
-      await gratificacionRepository.obtenerGratificacionPorTrabajadorYRangoFecha(
+      await gratificacionRepository.obtenerGratificacionPorTrabajador(
         periodo,
         anio,
         filial_id,
         trabajador_id,
-        fecha_ingreso,
-        fecha_fin,
         transaction
       );
 
@@ -39,7 +37,7 @@ module.exports = async (
       let cierreId = null;
 
 
-    if (gratificacion_del_trabajador) {
+    if (gratificacion_del_trabajador.length > 0) {
       return {
         codigo: 400,
         respuesta: {
@@ -87,14 +85,19 @@ module.exports = async (
       } else {
         // Registrar la grati del trabajador
         // Calcular gratificaciones
+
+        console.log({
+          periodo,
+          anio,
+          filial_id,
+          trabajador_id
+        });
         const gratificacionesTrab =
           await gratificacionRepository.calcularGratificacionTruncaPorTrabajador(
             periodo,
             anio,
             filial_id,
             trabajador_id,
-            fecha_ingreso,
-            fecha_fin,
             transaction
           );
 
