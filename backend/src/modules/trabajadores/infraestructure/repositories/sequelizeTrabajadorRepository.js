@@ -5,6 +5,7 @@ const { Op, fn, col, where } = require("sequelize");
 const filtrarContratosSinInterrupcion = require("../../../../services/filtrarContratosSinInterrupcion");
 const moment = require("moment");
 class SequelizeTrabajadorRepository {
+   
    async crear(trabajadorData, transaction = null) {
       const options = {};
       if (transaction) {
