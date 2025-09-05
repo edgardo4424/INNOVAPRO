@@ -2,9 +2,10 @@
 
 import { useRoutes } from 'react-router-dom';
 import ListaDocumentos from '../bandeja/list-factura-boleta/ListaDocumentos';
+import ListaGuiaRemision from '../bandeja/list-guia-remision/ListaGuiaRemision';
+import ListaNotas from '../bandeja/list-nota/ListaNotas';
 import BandejaLayout from '../layout/BandejaLayout';
 import Bandeja from '../pages/Bandeja';
-import ListaGuiaRemision from '../bandeja/list-guia-remision/ListaGuiaRemision';
 
 export const bandejaRoutesConfig = [
     {
@@ -15,7 +16,7 @@ export const bandejaRoutesConfig = [
             // Estas son las rutas anidadas
             { index: true, element: <Bandeja /> },
             { path: 'factura-boleta', element: <ListaDocumentos /> },
-            // { path: 'nota-credito-debito', element: <ListaNotasCreditoDebito /> },
+            { path: 'nota-credito-debito', element: <ListaNotas /> },
             { path: 'guia-remision', element: <ListaGuiaRemision /> },
         ]
     }

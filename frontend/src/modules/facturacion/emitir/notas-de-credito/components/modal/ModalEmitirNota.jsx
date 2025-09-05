@@ -4,23 +4,24 @@ import { useState } from "react";
 import EnviarNota from "../EnviarNota";
 
 const codigosMotivoCredito = [
-    { value: "01", label: "01 - Anulación de la operación" },
-    { value: "02", label: "02 - Anulación por error en el RUC" },
-    { value: "03", label: "03 - Corrección por error en la descripción" },
-    { value: "04", label: "04 - Descuento global" },
-    { value: "05", label: "05 - Descuento por ítem" },
-    { value: "06", label: "06 - Devolución total" },
-    { value: "07", label: "07 - Devolución por ítem" },
-    { value: "08", label: "08 - Bonificación" },
-    { value: "09", label: "09 - Disminución en el valor" },
-    { value: "10", "label": "10 - Otros Conceptos" },
+    { value: "01", label: "01 - Anulación de la operación", descripcion: "ANULACION DE OPERACION" },
+    { value: "02", label: "02 - Anulación por error en el RUC", descripcion: "ANULACION POR ERROR EN EL RUC" },
+    { value: "03", label: "03 - Corrección por error en la descripción", descripcion: "CORRECCION POR ERROR EN LA DESCRIPCION" },
+    { value: "04", label: "04 - Descuento global", descripcion: "DESCUENTO GLOBAL" },
+    { value: "05", label: "05 - Descuento por ítem", descripcion: "DESCUENTO POR ITEM" },
+    { value: "06", label: "06 - Devolución total", descripcion: "DEVOLUCION TOTAL" },
+    { value: "07", label: "07 - Devolución por ítem", descripcion: "DEVOLUCION POR ITEM" },
+    // { value: "08", label: "08 - Bonificación" },
+    // { value: "09", label: "09 - Disminución en el valor" },
+    { value: "10", label: "10 - Otros Conceptos", descripcion: "OTROS CONCEPTOS" },
 ];
 
 const codigosMotivosDebito = [
-    { value: "01", label: "01 - Intereses por mora" },
-    { value: "02", label: "02 - Aumento en el valor" },
-    { value: "03", label: "03 - Penalidades/ otros conceptos" },
-];
+    { value: "01", label: "01 - Intereses por mora", descripcion: "INTERESES POR MORAS" },
+    { value: "02", label: "02 - Aumento en el valor", descripcion: "AUMENTO EN EL VALOR" },
+    { value: "03", label: "03 - Penalidades/ otros conceptos", descripcion: "PENALIDADES/ OTROS CONCEPTOS" },
+]
+
 
 const tipoDocumentoCliente = {
     "1": "DNI",
@@ -57,10 +58,14 @@ export default function ModalEmitirNota() {
         if (e.target === e.currentTarget) closeModal();
     };
 
-    const getMotivoLabel = (codigo) => {
-        const motivos = notaCreditoDebito.tipo_Doc === "03" ? codigosMotivosDebito : codigosMotivoCredito;
-        const motivo = motivos.find((motivo) => motivo.value === codigo);
-        return motivo ? motivo.label : "Desconocido";
+    const getMotivoLabel = (motivo_Cod, tipo_Doc) => {
+        if (tipo_Doc === "07") {
+            const motivoCredito = codigosMotivoCredito.find((motivoCredito) => motivoCredito.value === motivo_Cod);
+            return motivoCredito ? motivoCredito.descripcion : "Desconocido";
+        } else {
+            const motivoDebito = codigosMotivosDebito.find((motivoDebito) => motivoDebito.value === motivo_Cod);
+            return motivoDebito ? motivoDebito.descripcion : "Desconocido";
+        }
     };
 
     const getTipoDocClienteLabel = (codigo) => {
@@ -182,11 +187,15 @@ export default function ModalEmitirNota() {
                                     <div className="space-y-4">
                                         <div>
                                             <p className="font-semibold text-gray-600">Motivo:</p>
-                                            <p className="text-gray-800">{getMotivoLabel(notaCreditoDebito.motivo_Cod)}</p>
+                                            <p className="text-gray-800">{getMotivoLabel(notaCreditoDebito.motivo_Cod, notaCreditoDebito.tipo_Doc)}</p>
                                         </div>
-                                        <div>
-                                            <p className="font-semibold text-gray-600">Observaciones:</p>
+                                        {/* <div>
+                                            <p className="font-semibold text-gray-600">Descripción Motivo:</p>
                                             <p className="text-gray-800 italic">{notaCreditoDebito.motivo_Des || "Sin observaciones adicionales."}</p>
+                                        </div> */}
+                                        <div>
+                                            <p className="font-semibold text-gray-600">Observación:</p>
+                                            <p className="text-gray-800 italic">{notaCreditoDebito.Observacion || "Sin observaciones adicionales."}</p>
                                         </div>
                                         <div className="flex justify-between items-center pt-2 border-t border-gray-200">
                                             <p className="font-semibold text-gray-600">Total:</p>

@@ -29,24 +29,36 @@ class SequelizeNotasCreditoDebitoRepository {
             }
             createdNota.nota = nota;
 
+            console.log("NOTA CREADA", nota);
+
             //* 2. Crear los Detalles de la Nota
             const createdDetalles = [];
             for (const detalleData of data.detalle) {
-                const detalle = await DetalleNotaCreditoDebito.create(
-                    {
-                        nota_id: nota.id,
-                        ...detalleData,
-                    },
-                    { transaction }
-                );
-                if (!detalle) {
+                try {
+                    const detalle = await DetalleNotaCreditoDebito.create(
+                        {
+                            nota_id: nota.id,
+                            ...detalleData,
+                            id: undefined,
+                        },
+                        { transaction }
+                    );
+                    if (!detalle) {
+                        throw new Error(
+                            `No se pudo crear un detalle para el producto ${detalleData.cod_producto || "desconocido"}.`
+                        );
+                    }
+                    createdDetalles.push(detalle);
+                } catch (error) {
+                    console.error(error);
                     throw new Error(
                         `No se pudo crear un detalle para el producto ${detalleData.cod_producto || "desconocido"}.`
                     );
                 }
-                createdDetalles.push(detalle);
             }
             createdNota.detalles = createdDetalles;
+
+            console.log("DETALLES CREADOS", createdDetalles);
 
             //* 3. Crear las Leyendas de la Nota
             const createdLeyendas = [];
@@ -65,6 +77,8 @@ class SequelizeNotasCreditoDebitoRepository {
             }
             createdNota.leyendas = createdLeyendas;
 
+            console.log("LEYENDAS CREADAS", createdLeyendas);
+
             // *4. Crear la Respuesta de SUNAT
             const sunat = await SunatRespuesta.create(
                 {
@@ -77,6 +91,8 @@ class SequelizeNotasCreditoDebitoRepository {
                 throw new Error("No se pudo crear la respuesta de SUNAT.");
             }
             createdNota.sunat_respuesta = sunat;
+
+            console.log("RESPUESTA CREADA", sunat);
 
             //* 5. Anular la factura asociada (MOVIDO DENTRO DE LA TRANSACCIÓN)
             const { factura_id, guia_id, } = data.nota;
@@ -96,12 +112,14 @@ class SequelizeNotasCreditoDebitoRepository {
             // Se cambia el valor "ANULADO" a "A" para evitar el error de truncamiento de datos
 
             let valueEstado;
-            if (data.motivo_Cod === "01" || data.motivo_Cod === "02") {
+            if ((data.motivo_Cod === "01" || data.motivo_Cod === "02") && data.tipo_Doc === "07") {
                 valueEstado = "ANULADA-NOTA";
             } else {
                 valueEstado = "MODIFICADA-NOTA";
             }
             await toUpdate.update({ estado: valueEstado }, { transaction });
+
+            console.log("FACTURA O GUIA ANULADA", toUpdate);
 
             //* Si todas las operaciones fueron exitosas, confirma la transacción.
             await transaction.commit();
@@ -211,7 +229,7 @@ class SequelizeNotasCreditoDebitoRepository {
                 where,
                 offset,
                 limit: limitNumber,
-                order: [["correlativo", "DESC"]],
+                order: [["id", "DESC"]],
             });
 
             return {

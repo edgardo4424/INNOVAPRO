@@ -13,11 +13,6 @@ const MontosDetallado = () => {
                 {/* {listaProductos.length > 0 && TotalProducto > 0 && ( */}
                 <div className="flex flex-col items-end gap-y-2 p-4 bg-gray-100 rounded-2xl"> {/* Contenedor principal para los totales */}
 
-                    {/* Monto Oper Gravadas */}
-                    <div className="flex justify-between w-full max-w-sm py-1">
-                        <span className="font-semibold">Monto Oper Gravadas</span>
-                        <span>S/. {notaCreditoDebito.monto_Oper_Gravadas || 0}</span>
-                    </div>
 
                     {/* IGV */}
                     <div className="flex justify-between w-full max-w-sm py-1">
@@ -31,13 +26,7 @@ const MontosDetallado = () => {
                         <span className="font-semibold">Sub Total + IGV</span>
                         <span>S/. {subTotalConIgv || 0}</span>
                     </div>
-
-                    {/* Exonerados */}
-                    <div className="flex justify-between w-full max-w-sm py-1">
-                        <span className="font-semibold">Exonerados</span>
-                        <span>S/. {notaCreditoDebito.monto_Oper_Exoneradas || 0}</span>
-                    </div>
-
+                    
                     {/* Sub Total */}
                     <div className="flex justify-between w-full max-w-sm py-1">
                         <span className="font-semibold">Sub Total</span>

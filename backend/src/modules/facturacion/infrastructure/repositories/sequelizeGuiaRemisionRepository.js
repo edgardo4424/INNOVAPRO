@@ -204,6 +204,7 @@ class SequelizeGuiaRemisionRepository {
                 where,
                 offset,
                 limit: limitNumber,
+                order: [["id", "DESC"]],
             })
 
             return {

@@ -131,5 +131,4 @@ const valorIncialDescuentos = [
 ]
 
 
-
-export { notaInical, valorInicialProducto, ValorInicialDetalleNota, valorIncialDescuentoGlobal, valorIncialDescuentoItem , valorIncialDescuentos}
+export { notaInical, valorInicialProducto, ValorInicialDetalleNota, valorIncialDescuentoGlobal, valorIncialDescuentoItem, valorIncialDescuentos }

@@ -10,14 +10,13 @@ const ListaDeItem = ({ closeModal }) => {
     let itemsFiltrados = detalle.filter(item => !notaCreditoDebito.detalle.some(detalleItem => detalleItem.id === item.id));
 
     const seleccionarItem = (item) => {
-        if (notaCreditoDebito.motivo_Cod === "04") {
+        if (((notaCreditoDebito.motivo_Cod === "04" || notaCreditoDebito.motivo_Cod === "07") && notaCreditoDebito.tipo_Doc === "07")) {
             setItemActual(item);
-        } else {
+        } else if (notaCreditoDebito.motivo_Cod === "05") {
             setItemActual({
                 ...item,
                 Descuentos: valorIncialDescuentos
             });
-
         }
         closeModal();
     }

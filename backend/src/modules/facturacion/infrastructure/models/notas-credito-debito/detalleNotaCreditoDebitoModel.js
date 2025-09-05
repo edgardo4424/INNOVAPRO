@@ -22,6 +22,10 @@ const DetalleNotaCreditoDebito = sequelize.define(
             allowNull: true
 
         },
+        cod_Producto: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
         descripcion: {
             type: DataTypes.TEXT,
             allowNull: true

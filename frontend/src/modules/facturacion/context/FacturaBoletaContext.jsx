@@ -151,9 +151,7 @@ export function FacturaBoletaProvider({ children }) {
                 if (["10", "11", "12", "13", "14", "15", "16", "17"].includes(producto.tip_Afe_Igv)) {
                     gravadas += valorVenta;
                     igvTotal += valorVenta * 0.18;
-                }
-
-                if (["20", "21", "30", "31", "32", "33", "34", "35", "36", "40"].includes(producto.tipAfeIgv)) {
+                } else if (["20", "21", "30", "31", "32", "33", "34", "35", "36", "40"].includes(producto.tipAfeIgv)) {
                     exoneradas += valorVenta;
                 }
             });
@@ -233,9 +231,9 @@ export function FacturaBoletaProvider({ children }) {
             }
         }
 
-        const cantidad = name === "cantidad" ? validatedValue : parseFloat(productoActual.cantidad || 0);
-        const valorUnitario = name === "monto_Valor_Unitario" ? validatedValue : parseFloat(productoActual.monto_Valor_Unitario || 0);
-        const tipAfeIgv = productoActual.tip_Afe_Igv || "10";
+        const cantidad = name === "cantidad" ? validatedValue : parseFloat(productoActual.cantidad);
+        const valorUnitario = name === "monto_Valor_Unitario" ? validatedValue : parseFloat(productoActual.monto_Valor_Unitario);
+        // const tipAfeIgv = productoActual.tip_Afe_Igv || "10";
 
         let monto_Base_Igv = cantidad * valorUnitario;
         let igv = 0;
@@ -243,11 +241,11 @@ export function FacturaBoletaProvider({ children }) {
         let monto_Precio_Unitario = valorUnitario;
         let monto_Valor_Venta = cantidad * valorUnitario;
 
-        if (["10", "11", "12", "13", "14", "15", "16", "17"].includes(tipAfeIgv)) {
+        if (["10", "11", "12", "13", "14", "15", "16", "17"].includes(productoActual.tip_Afe_Igv)) {
             igv = +(monto_Base_Igv * 0.18).toFixed(2);
             total_Impuestos = igv;
             monto_Precio_Unitario = +(valorUnitario * 1.18).toFixed(2);
-        } else if (["20", "21", "30", "31", "32", "33", "34", "35", "36", "40"].includes(tipAfeIgv)) {
+        } else if (["20", "21", "30", "31", "32", "33", "34", "35", "36", "40"].includes(productoActual.tip_Afe_Igv)) {
             igv = 0;
             total_Impuestos = 0;
             monto_Precio_Unitario = valorUnitario;

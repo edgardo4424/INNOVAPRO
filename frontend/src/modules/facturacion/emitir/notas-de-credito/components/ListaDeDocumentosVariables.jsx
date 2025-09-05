@@ -149,7 +149,7 @@ const ListaDeDocumentosVariables = ({ closeModal }) => {
                         <SelectContent>
                             <SelectItem value="01">Factura</SelectItem>
                             <SelectItem value="03">Boleta</SelectItem>
-                            <SelectItem value="09">Guia de Remision</SelectItem>
+                            {/* <SelectItem value="09">Guia de Remision</SelectItem> */}
                             {/* <SelectItem value="04">Nota de Credito</SelectItem> */}
                             {/* <SelectItem value="06">Nota de Debito</SelectItem> */}
                         </SelectContent>

@@ -8,15 +8,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { useNota } from "@/modules/facturacion/context/NotaContext";
 import { ClipboardPlus, X } from "lucide-react";
-import ItemCambioDescipcion from "../../forms/ItemCambioDescipcion";
 import DescuentoGlobalForm from "../../forms/DescuentoGlobalForm";
 import DescuentoItemForm from "../../forms/DescuentoItemForm";
+import ItemCambioDescipcion from "../../forms/ItemCambioDescipcion";
+import ItemDevolucionForm from "../../forms/ItemDevolucionForm";
+import PenalidadInteresForm from "../../forms/PenalidadInteresForm";
 
 const ModalProducto = ({ open, setOpen, closeModal }) => {
 
     const { notaCreditoDebito } = useNota();
 
-        const { motivo_Cod, tipo_Doc } = notaCreditoDebito
+    const { motivo_Cod, tipo_Doc } = notaCreditoDebito
 
     return (
         <AlertDialog open={open} onOpenChange={setOpen} >
@@ -40,17 +42,18 @@ const ModalProducto = ({ open, setOpen, closeModal }) => {
                         <span className="hidden md:block">Aplicar descuento por Item</span>
                     }
 
-                    {/* //? Caso de Debito  */}
+                    {/* //? Caso de descuento por item  */}
                     {
-                        motivo_Cod == "01" && tipo_Doc == "08" &&
-                        <span className="hidden md:block">Aplicar Interes por mora</span>
+                        motivo_Cod == "07" && tipo_Doc == "07" &&
+                        <span className="hidden md:block">Iten a Devolver</span>
                     }
 
                     {/* //? Caso de Debito  */}
                     {
-                        motivo_Cod == "03" && tipo_Doc == "08" &&
-                        <span className="hidden md:block">Aplicar Penalidades</span>
+                        (motivo_Cod == "01" || motivo_Cod == "03") && tipo_Doc == "08" &&
+                        <span className="hidden md:block">Aplicar {motivo_Cod == "01" ? "Interes" : "Penalidades"}</span>
                     }
+
                 </Button>
             </AlertDialogTrigger>
 
@@ -71,22 +74,35 @@ const ModalProducto = ({ open, setOpen, closeModal }) => {
 
                 {/* //?📦 Cambio de descripcion*/}
                 {
-                    motivo_Cod == "03" &&
+                    motivo_Cod == "03" && tipo_Doc == "07" &&
                     <ItemCambioDescipcion closeModal={closeModal} />
                 }
 
                 {/* //? Caso de descuento gobal  */}
                 {
-                    motivo_Cod == "04" &&
+                    motivo_Cod == "04" && tipo_Doc == "07" &&
                     <DescuentoGlobalForm closeModal={closeModal} />
                 }
 
                 {/* //? Caso de descuento gobal  */}
                 {
-                    motivo_Cod == "05" &&
+                    motivo_Cod == "05" && tipo_Doc == "07" &&
                     <DescuentoItemForm closeModal={closeModal} />
                 }
 
+
+                {/* //? Caso de descuento gobal  */}
+                {
+                    motivo_Cod == "07" && tipo_Doc == "07" &&
+                    <ItemDevolucionForm closeModal={closeModal} />
+                }
+
+
+                {/* //? Caso de Interes Por Mora o Penalidades  */}
+                {
+                    (motivo_Cod == "01" || motivo_Cod == "03") && tipo_Doc == "08" &&
+                    <PenalidadInteresForm closeModal={closeModal} />
+                }
             </AlertDialogContent>
         </AlertDialog>
     )

@@ -50,9 +50,6 @@ class SequelizeFacturaRepository {
             const offset = limitNumber ? (pageNumber - 1) * limitNumber : undefined;
 
             const where = {
-                estado: {
-                    [Op.not]: "ANULADA",
-                },
             };
 
             if (nTipoDoc) {
@@ -103,7 +100,7 @@ class SequelizeFacturaRepository {
                 where,
                 offset,
                 limit: limitNumber,
-                order: [["correlativo", "DESC"]],
+                order: [["id", "DESC"]],
             });
 
             return {

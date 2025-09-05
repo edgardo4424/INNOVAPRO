@@ -1,5 +1,4 @@
 import { Download, EllipsisVertical, EyeIcon } from 'lucide-react';
-import React from 'react'
 
 const TablaDocumentos = ({ documentos, setIdDocumento, setModalOpen, setModalDescargar, setDocumentoADescargar, setDocumentoAVisualizar, setDocumentoOpciones }) => {
     return (

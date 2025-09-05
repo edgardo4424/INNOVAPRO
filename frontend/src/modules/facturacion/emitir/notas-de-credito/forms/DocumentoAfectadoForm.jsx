@@ -79,7 +79,7 @@ const DocumentoAfectadoForm = () => {
                 ...documentoAAfectar,
                 motivo_Des: obtenerDescipcionMotivo(notaCreditoDebito.motivo_Cod, notaCreditoDebito.tipo_Doc),
             }))
-        } else if (notaCreditoDebito.motivo_Cod === "03"  && notaCreditoDebito.tipo_Doc === "07") {
+        } else if (notaCreditoDebito.motivo_Cod === "03" && notaCreditoDebito.tipo_Doc === "07") {
             setNotaCreditoDebito((prev) => ({
                 ...prev,
                 ...ValorInicialDetalleNota,
@@ -103,9 +103,17 @@ const DocumentoAfectadoForm = () => {
                 legend: []
             }))
             setItemActual(valorIncialDescuentoItem);
+        } else if(notaCreditoDebito.motivo_Cod === "07" && notaCreditoDebito.tipo_Doc === "07"){
+            setNotaCreditoDebito((prev) => ({
+                ...prev,
+                ...ValorInicialDetalleNota,
+                motivo_Des: obtenerDescipcionMotivo(notaCreditoDebito.motivo_Cod, notaCreditoDebito.tipo_Doc),
+                    legend: []
+            }))
+            setItemActual(valorInicialProducto);
         }
         // ?? CASOS DE NOTA DE DEBITO
-        else if ((notaCreditoDebito.motivo_Cod === "01" || notaCreditoDebito.motivo_Cod === "02" || notaCreditoDebito.motivo_Cod === "03" )&& notaCreditoDebito.tipo_Doc === "08") {
+        else if ((notaCreditoDebito.motivo_Cod === "01" || notaCreditoDebito.motivo_Cod === "02" || notaCreditoDebito.motivo_Cod === "03") && notaCreditoDebito.tipo_Doc === "08") {
             setNotaCreditoDebito((prev) => ({
                 ...prev,
                 ...ValorInicialDetalleNota,

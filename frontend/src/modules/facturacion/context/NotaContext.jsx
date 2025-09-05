@@ -44,19 +44,20 @@ export function NotaProvider({ children }) {
             let igvTotal = 0;
 
             notaCreditoDebito.detalle.forEach((producto) => {
-                const valorVenta = parseFloat(producto.monto_Valor_Venta || 0);
+                const valorVenta = parseFloat(producto.monto_Valor_Venta);
 
                 if (["10", "11", "12", "13", "14", "15", "16", "17"].includes(producto.tip_Afe_Igv)) {
                     gravadas += valorVenta;
                     igvTotal += valorVenta * 0.18;
-                }
-
-                if (["20", "21", "30", "31", "32", "33", "34", "35", "36", "40"].includes(producto.tipAfeIgv)) {
+                } else if (["20", "21", "30", "31", "32", "33", "34", "35", "36", "40", ""].includes(producto.tip_Afe_Igv)) {
                     exoneradas += valorVenta;
                 }
             });
 
-            const subTotal = gravadas + igvTotal + exoneradas;
+            // Corrected calculations
+            const valorVentaTotal = gravadas + exoneradas; // Base amount before taxes
+            const subTotal = valorVentaTotal; // Subtotal should be the total base amount
+            const montoImpVenta = subTotal + igvTotal; // Final amount including taxes
 
             setNotaCreditoDebito((prev) => ({
                 ...prev,
@@ -64,11 +65,12 @@ export function NotaProvider({ children }) {
                 monto_Oper_Exoneradas: parseFloat(exoneradas.toFixed(2)),
                 monto_Igv: parseFloat(igvTotal.toFixed(2)),
                 total_Impuestos: parseFloat(igvTotal.toFixed(2)),
-                valor_Venta: parseFloat((gravadas + exoneradas).toFixed(2)),
+                valor_Venta: parseFloat(valorVentaTotal.toFixed(2)),
                 sub_Total: parseFloat(subTotal.toFixed(2)),
-                monto_Imp_Venta: parseFloat(subTotal.toFixed(2)),
+                monto_Imp_Venta: parseFloat(montoImpVenta.toFixed(2)),
             }));
         };
+
         console.log(notaCreditoDebito.detalle);
         if (notaCreditoDebito.detalle?.length > 0) {
             actualizarFacturaMontos();
