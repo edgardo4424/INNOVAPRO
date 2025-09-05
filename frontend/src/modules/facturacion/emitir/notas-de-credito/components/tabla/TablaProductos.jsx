@@ -40,9 +40,9 @@ const TablaProductos = ({ setOpen }) => {
 
     // Calcula una vez qué campos se muestran según el motivo
     const visiblesSet = useMemo(() => {
-        const cod = String(notaCreditoDebito?.motivo_Cod ?? "");
-        if (cod === "03") return new Set(campos_03);
-        if (cod === "04") return new Set(campos_04);
+        if (notaCreditoDebito?.motivo_Cod === "03" && notaCreditoDebito?.tipo_Doc === "07") return new Set(campos_03);
+        if (notaCreditoDebito?.motivo_Cod === "04" && notaCreditoDebito?.tipo_Doc === "07") return new Set(campos_04);
+        if ( notaCreditoDebito?.tipo_Doc === "08") return new Set(campos_04);
         return new Set(campos_01_02); // default para "01" y "02"
     }, [notaCreditoDebito?.motivo_Cod]);
 

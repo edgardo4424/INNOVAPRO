@@ -20,7 +20,7 @@ const DetallesForm = () => {
                 <h1 className="text-2xl font-bold py-2">Detalles</h1>
                 {/* //? Caso de Cambio de Descripcion */}
                 {
-                    motivo_Cod == "03" || motivo_Cod == "04" || motivo_Cod == "05" ?
+                    (motivo_Cod == "03" || motivo_Cod == "04" || motivo_Cod == "05") && notaCreditoDebito.tipo_Doc === "07" || notaCreditoDebito.tipo_Doc === "08" ?
                         <ModalProducto open={open} setOpen={setOpen} closeModal={closeModal} />
                         :
                         <></>

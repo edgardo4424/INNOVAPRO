@@ -73,7 +73,7 @@ const DescuentoItemForm = ({ closeModal }) => {
             id: itemActual.id,
             cantidad,
             unidad: itemActual.unidad ?? prev.unidad,
-            descripcion: itemActual.descripcion ?? prev.descripcion,
+            descripcion: `${itemActual.descripcion}*****DESCUENTO*****` ?? prev.descripcion,
             monto_Valor_Unitario: valorUnitarioConDesc,
             porcentaje_Igv: porcentajeIgv,
             tip_Afe_Igv: itemActual.tip_Afe_Igv,

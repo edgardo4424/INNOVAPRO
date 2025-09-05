@@ -3,7 +3,7 @@ import { useNota } from '@/modules/facturacion/context/NotaContext';
 import { valorIncialDescuentos } from '../utils/valoresInicialNota';
 
 const ListaDeItem = ({ closeModal }) => {
-    const { notaCreditoDebito, setNotaCreditoDebito, itemActual, setItemActual, documentoAAfectar } = useNota();
+    const { notaCreditoDebito, setItemActual, documentoAAfectar } = useNota();
 
     const { detalle } = documentoAAfectar;
 

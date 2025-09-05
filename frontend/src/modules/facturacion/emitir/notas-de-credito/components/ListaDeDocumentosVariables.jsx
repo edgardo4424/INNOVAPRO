@@ -137,16 +137,6 @@ const ListaDeDocumentosVariables = ({ closeModal }) => {
         <div >
             <div className="grid grid-cols-2 gap-4">
                 <div>
-                    <Label>Buscar por serie y correlativo</Label>
-                    <Input
-                        type="text"
-                        value={filtro}
-                        onChange={(e) => setFiltro(e.target.value)}
-                        placeholder="Ej: serie - correlativo"
-                        className="border-1 border-gray-400 uppercase"
-                    />
-                </div>
-                <div>
                     <Label>Selecciona El tipo</Label>
                     <Select
                         name="tipo_operacion"
@@ -164,6 +154,16 @@ const ListaDeDocumentosVariables = ({ closeModal }) => {
                             {/* <SelectItem value="06">Nota de Debito</SelectItem> */}
                         </SelectContent>
                     </Select>
+                </div>
+                <div>
+                    <Label>Buscar por serie y correlativo</Label>
+                    <Input
+                        type="text"
+                        value={filtro}
+                        onChange={(e) => setFiltro(e.target.value)}
+                        placeholder="Ej: serie - correlativo"
+                        className="border-1 border-gray-400 uppercase"
+                    />
                 </div>
             </div>
 

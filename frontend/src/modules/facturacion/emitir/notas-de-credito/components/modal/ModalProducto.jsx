@@ -16,7 +16,7 @@ const ModalProducto = ({ open, setOpen, closeModal }) => {
 
     const { notaCreditoDebito } = useNota();
 
-    const { motivo_Cod } = notaCreditoDebito
+        const { motivo_Cod, tipo_Doc } = notaCreditoDebito
 
     return (
         <AlertDialog open={open} onOpenChange={setOpen} >
@@ -24,20 +24,32 @@ const ModalProducto = ({ open, setOpen, closeModal }) => {
                 <Button className="bg-blue-500 hover:scale-105 hover:bg-blue-600 cursor-pointer">
                     <ClipboardPlus />
                     {
-                        motivo_Cod == "03" &&
+                        motivo_Cod == "03" && tipo_Doc == "07" &&
                         <span className="hidden md:block">Selecciona un item</span>
                     }
 
                     {/* //? Caso de descuento gobal  */}
                     {
-                        motivo_Cod == "04" &&
+                        motivo_Cod == "04" && tipo_Doc == "07" &&
                         <span className="hidden md:block">Aplicar descuento Global</span>
                     }
 
                     {/* //? Caso de descuento por item  */}
                     {
-                        motivo_Cod == "05" &&
+                        motivo_Cod == "05" && tipo_Doc == "07" &&
                         <span className="hidden md:block">Aplicar descuento por Item</span>
+                    }
+
+                    {/* //? Caso de Debito  */}
+                    {
+                        motivo_Cod == "01" && tipo_Doc == "08" &&
+                        <span className="hidden md:block">Aplicar Interes por mora</span>
+                    }
+
+                    {/* //? Caso de Debito  */}
+                    {
+                        motivo_Cod == "03" && tipo_Doc == "08" &&
+                        <span className="hidden md:block">Aplicar Penalidades</span>
                     }
                 </Button>
             </AlertDialogTrigger>
