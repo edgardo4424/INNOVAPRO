@@ -60,8 +60,10 @@ module.exports = async (
 
       // 4. Devolver uno de cada uno si existen
       if (contratoSeleccionadoPlanilla) {
+         console.log('entro a obtenr planulla mesual por tarvbajador');
+         
          const res =
-            await planillaRepository.calcularPlanillaMensualPorTrabajador(
+            await planillaRepository.obtenerPlanillaMensualPorTrabajador(
                anio_mes_dia,
                t.id,
                filial_id

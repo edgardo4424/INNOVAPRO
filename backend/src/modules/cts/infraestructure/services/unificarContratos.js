@@ -14,11 +14,10 @@ const unificarContratos = (contratos) => {
     let fechaFinGrupo = new Date(grupo.fecha_fin);
     let fechaInicioContrato = new Date(contrato.fecha_inicio);
 
-    // ✅ mismo regimen y consecutivos o solapados
     if (
-      grupo.regimen === contrato.regimen &&
       fechaInicioContrato.getTime() <= fechaFinGrupo.getTime() + 24 * 60 * 60 * 1000
     ) {
+      grupo.id=contrato.id
       grupo.fecha_fin = new Date(
         Math.max(new Date(grupo.fecha_fin), new Date(contrato.fecha_fin))
       ).toISOString().split("T")[0];
@@ -29,7 +28,7 @@ const unificarContratos = (contratos) => {
 
       grupo.sueldo = Math.max(grupo.sueldo, contrato.sueldo);
       grupo.ids_agrupacion.push(contrato.id);
-      
+      grupo.regimen=contrato.regimen
       if (contrato.fecha_terminacion_anticipada) {
           grupo.fecha_terminacion_anticipada = contrato.fecha_terminacion_anticipada;
       }  

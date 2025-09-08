@@ -43,6 +43,7 @@ export const trabajador_planilla_model = {
    filial_id:"",
    banco:"",
    numero_cuenta:"",
+   sueldos_brutos_obtenidos:[],
    info_detalle: {
       descanso_med: [],
       lic_goce: [],
