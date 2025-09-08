@@ -10,11 +10,13 @@ import {
 } from "@/components/ui/select";
 import { useFacturaBoleta } from '@/modules/facturacion/context/FacturaBoletaContext';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import ModalListaDeProductos from '../../../components/modal/ModalListaDeProductos';
-import { ProductoValidarEstados, valorInicialProducto } from '../utils/valoresInicial';
+import { validarModal } from '../utils/validarModal';
+import { ProductoValidarEstados } from '../utils/valoresInicial';
 
 const ProductoForm = ({ closeModal }) => {
-    const { setFactura, agregarProducto, productoActual, setProductoActual, edicionProducto, validarCampos, productoValida, eliminarProducto, setProductoValida, factura } = useFacturaBoleta();
+    const { setFactura, agregarProducto, productoActual, setProductoActual, edicionProducto, productoValida, eliminarProducto, setProductoValida, factura } = useFacturaBoleta();
 
 
     const [activeButton, setActiveButton] = useState(false);
@@ -85,11 +87,18 @@ const ProductoForm = ({ closeModal }) => {
 
     const handleAgregar = async () => {
         setActiveButton(true);
-        const validar = await validarCampos("producto");
-        if (validar === false) {
+
+        let validar = await validarModal("producto", productoActual);
+
+        if (!validar.validos) {
+            if (validar.message) {
+                toast.error(validar.message, { position: "top-right" });
+            }
+            setProductoValida(validar.errores);
             setActiveButton(false);
             return;
         }
+        setActiveButton(false);
         agregarProducto();
         setFactura((prev) => ({ ...prev, forma_pago: [] }))
         closeModal();

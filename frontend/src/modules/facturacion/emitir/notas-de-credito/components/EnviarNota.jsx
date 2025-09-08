@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 
 const EnviarNota = ({ open, setOpen, ClosePreviu }) => {
     // Usamos el contexto específico para las notas
-    const { EmitirNota, validarNota } = useNota();
+    const { EmitirNota, validarNota, notaCreditoDebito } = useNota();
 
     // * Estados unificados para el modal
     const [status, setStatus] = useState("idle"); // 'idle' | 'loading' | 'success' | 'error'
@@ -31,6 +31,9 @@ const EnviarNota = ({ open, setOpen, ClosePreviu }) => {
     // * Validar al abrir el modal
     useEffect(() => {
         const validateAndOpen = async () => {
+            if (notaCreditoDebito.afectado_Num_Doc == "") {
+                return
+            }
             if (open) {
                 const isValid = await validarNota();
                 if (isValid) {
@@ -42,11 +45,10 @@ const EnviarNota = ({ open, setOpen, ClosePreviu }) => {
                 }
             }
         };
-        // validateAndOpen();
+        // Llama a la función de validación al abrir el modal
+        validateAndOpen();
 
-        setValidado(true);
-
-    }, [open, setOpen]);
+    }, [open, setOpen, validarNota]); // Agrega 'validarNota' a las dependencias del useEffect
 
     const handleEmitirNotaClick = async () => {
         setStatus("loading");

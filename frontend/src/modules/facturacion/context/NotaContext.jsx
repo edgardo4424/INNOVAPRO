@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { validarNotaCompleta } from "../emitir/notas-de-credito/utils/validarNota";
 import { notaInical, ValorInicialDetalleNota, valorInicialProducto } from "../emitir/notas-de-credito/utils/valoresInicialNota";
 import factilizaService from "../service/FactilizaService";
 import facturaService from "../service/FacturaService";
@@ -10,9 +11,31 @@ const NotaContext = createContext();
 
 export function NotaProvider({ children }) {
 
-    const [notaCreditoDebito, setNotaCreditoDebito] = useState(notaInical);// ?Datos de guia que abarcan los 3 casos
+    // ** CORRELATIVOS
+    const [correlativos, setCorrelativos] = useState([]);
+    const [correlativoEstado, setCorrelativoEstado] = useState(false);
+    const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
 
+    const serieCredito = [
+        { value: "FC01", doc: "01" },
+        { value: "FC02", doc: "01" },
+        { value: "BC01", doc: "03" },
+        { value: "BC02", doc: "03" },
+    ];
+
+    const serieDebito = [
+        { value: "FD01", doc: "01" },
+        { value: "FD02", doc: "01" },
+        { value: "BD01", doc: "03" },
+        { value: "BD02", doc: "03" },
+    ];
+
+    // ?? DATOS DE LA NOTA
+    const [notaCreditoDebito, setNotaCreditoDebito] = useState(notaInical);// ?Datos de guia que abarcan los 3 casos
+    // ?? DATOS DEL DOCUMNETO A AFECTAR
     const [documentoAAfectar, setDocumentoAAfectar] = useState(ValorInicialDetalleNota);
+
+    const [erroresNota, setErroresNota] = useState(null);
 
     const [itemActual, setItemActual] = useState(valorInicialProducto);
 
@@ -36,6 +59,33 @@ export function NotaProvider({ children }) {
         consultarFiliales();
     }, []);
 
+    // ?? OBTENER CORRELATIVOS
+    const buscarCorrelativo = async () => {
+        if (loadingCorrelativo) return;
+
+        try {
+            setLoadingCorrelativo(true);
+            const rucsAndSeries = filiales.map((filial) => ({
+                ruc: filial.ruc,
+                credito: serieCredito,
+                debito: serieDebito,
+            }));
+
+            const { data } = await facturaService.obtenerCorrelativoNota(rucsAndSeries);
+            setCorrelativos(data);
+        } catch (error) {
+            console.error("Error al obtener correlativos:", error);
+        } finally {
+            setLoadingCorrelativo(false);
+        }
+    };
+
+    // Al cargar el componente o cambiar la lista de filiales, buscar los correlativos
+    useEffect(() => {
+        if (filiales.length > 0) {
+            buscarCorrelativo();
+        }
+    }, [filiales]);
 
     useEffect(() => {
         const actualizarFacturaMontos = () => {
@@ -94,7 +144,31 @@ export function NotaProvider({ children }) {
 
 
     const validarNota = async () => {
+        try {
+            const { errores, validos, message } = await validarNotaCompleta(notaCreditoDebito, documentoAAfectar);
 
+            if (!validos) {
+                // *Encuentra el primer error y lo muestra en un toast
+                const primerError = Object.values(errores)[0];
+                if (primerError) {
+                    toast.error(primerError);
+                } else {
+                    toast.error("El formulario de la nota contiene errores. Revise los campos.");
+                }
+
+                // *Opcional: Si quieres guardar todos los errores en el estado
+                setErroresNota(errores);
+
+                return false;
+            } else {
+                toast.success(message);
+                setErroresNota(null); // ?Limpia los errores del estado si todo es válido
+                return true;
+            }
+        } catch (error) {
+            toast.error(error.message || "Error al validar la nota");
+            return false;
+        }
     };
 
     const EmitirNota = async () => {
@@ -225,11 +299,17 @@ export function NotaProvider({ children }) {
     const Limpiar = () => {
         setNotaCreditoDebito(notaInical);
         setIdFactura(null);
+        buscarCorrelativo();
     };
 
     return (
         <NotaContext.Provider
             value={{
+                correlativos, setCorrelativos,
+                correlativoEstado, setCorrelativoEstado,
+                loadingCorrelativo, setLoadingCorrelativo,
+                buscarCorrelativo,
+                serieCredito, serieDebito,
                 filiales,
                 notaCreditoDebito,
                 setNotaCreditoDebito,
@@ -239,7 +319,8 @@ export function NotaProvider({ children }) {
                 id_items,
                 setid_items,
                 itemActual,
-                setItemActual
+                setItemActual,
+                validarNota
             }}
         >
             {children}

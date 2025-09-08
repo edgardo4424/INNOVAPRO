@@ -58,14 +58,14 @@ export async function validarFacturaCompleta(Factura, Detraccion, retencionActiv
         { key: "detraccion_cta_banco", name: "N° Cuenta Banco de Detracción" },
         { key: "detraccion_percent", name: "Porcentaje de Detracción" },
         { key: "detraccion_mount", name: "Monto de Detracción" }
-    ]
+    ];
 
     const camposRetencion = [
         { key: "descuento_cod_tipo", name: "Código de Tipo de Retención" },
         { key: "descuento_factor", name: "Factor de Retención" },
         { key: "descuento_monto_base", name: "Monto Base de Retención" },
         { key: "descuento_monto", name: "Monto de Retención" }
-    ]
+    ];
 
     // 1. Validar campos globales
     camposGlobales.forEach(campo => {
@@ -109,14 +109,14 @@ export async function validarFacturaCompleta(Factura, Detraccion, retencionActiv
     }
 
     if (Factura.tipo_Operacion === "1001") {
-        console.log(Detraccion)
+        console.log(Detraccion);
         camposDetraccion.forEach(campo => {
             if (isNullOrEmpty(Detraccion[campo.key])) {
                 errores[campo.key] = `El campo de'${campo.name}' en Detracción es requerido.`;
                 validos = false;
             }
         });
-    }else if(retencionActivado){
+    } else if (retencionActivado) {
         camposRetencion.forEach(campo => {
             if (isNullOrEmpty(Retencion[campo.key])) {
                 errores[campo.key] = `El campo de'${campo.name}' en Detracción es requerido.`;
@@ -126,12 +126,16 @@ export async function validarFacturaCompleta(Factura, Detraccion, retencionActiv
     }
 
     if (Factura.forma_pago && Factura.forma_pago.length > 0) {
-        const montoTotalPagos = Factura.forma_pago.reduce(
-            (total, pago) => total + (parseFloat(pago.monto) || 0),
+        // SOLUCIÓN: Usar centavos para evitar errores de punto flotante
+        const montoTotalFacturaCentavos = Math.round(Factura.monto_Imp_Venta * 100);
+
+        const montoTotalPagosCentavos = Factura.forma_pago.reduce(
+            (total, pago) => total + Math.round((parseFloat(pago.monto) || 0) * 100),
             0
         );
 
-        if (montoTotalPagos < Factura.monto_Imp_Venta) {
+        // La validación ahora compara los valores enteros, que son exactos.
+        if (montoTotalPagosCentavos !== montoTotalFacturaCentavos) {
             errores.forma_pago_monto = "La suma de los pagos no cubre el monto total de la factura.";
             validos = false;
         }
@@ -157,4 +161,3 @@ export async function validarFacturaCompleta(Factura, Detraccion, retencionActiv
         message: validos ? "🎉 ¡Factura lista para emitir!" : "⚠️ El formulario contiene errores. Por favor, revísalos."
     };
 }
-

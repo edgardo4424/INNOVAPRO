@@ -14,54 +14,17 @@ import { Calendar22 } from "../../factura-boleta/components/Calendar22";
 import facturaService from "@/modules/facturacion/service/FacturaService";
 import { useEffect, useState } from "react";
 
-const serieCredito = [
-  { value: "BC01", doc: "03" },
-  { value: "BC02", doc: "03" },
-  { value: "FC01", doc: "01" },
-  { value: "FC02", doc: "01" },
-  { value: "TC01", doc: "09" },
-  { value: "TC02", doc: "09" },
-];
-
-const serieDebito = [
-  { value: "BD01", doc: "03" },
-  { value: "BD02", doc: "03" },
-  { value: "FD01", doc: "01" },
-  { value: "FD02", doc: "01" },
-  { value: "TD03", doc: "09" },
-  { value: "TD03", doc: "09" },
-];
-
 const InfDocumentoForm = () => {
 
-  const { notaCreditoDebito, setNotaCreditoDebito, filiales } = useNota();
-  const [correlativos, setCorrelativos] = useState([]);
-  const [correlativoEstado, setCorrelativoEstado] = useState(false);
-  const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
+  const { notaCreditoDebito, setNotaCreditoDebito, filiales,
+    correlativos, buscarCorrelativo,
+    serieCredito,serieDebito,
+    correlativoEstado, setCorrelativoEstado,
+    loadingCorrelativo, } = useNota();
 
   const activarCorrelativo = (e) => {
     e.preventDefault();
     setCorrelativoEstado(!correlativoEstado);
-  };
-
-  const buscarCorrelativo = async () => {
-    if (loadingCorrelativo) return;
-
-    try {
-      setLoadingCorrelativo(true);
-      const rucsAndSeries = filiales.map((filial) => ({
-        ruc: filial.ruc,
-        credito: serieCredito,
-        debito: serieDebito,
-      }));
-
-      const { data } = await facturaService.obtenerCorrelativoNota(rucsAndSeries);
-      setCorrelativos(data);
-    } catch (error) {
-      console.error("Error al obtener correlativos:", error);
-    } finally {
-      setLoadingCorrelativo(false);
-    }
   };
 
 
@@ -80,12 +43,7 @@ const InfDocumentoForm = () => {
     }));
   };
 
-  // Al cargar el componente o cambiar la lista de filiales, buscar los correlativos
-  useEffect(() => {
-    if (filiales.length > 0) {
-      buscarCorrelativo();
-    }
-  }, [filiales]);
+
 
   useEffect(() => {
     // Establecer la serie por defecto al cambiar el tipo de documento

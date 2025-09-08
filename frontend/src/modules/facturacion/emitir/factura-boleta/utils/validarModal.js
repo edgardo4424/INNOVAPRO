@@ -1,4 +1,4 @@
-export async function validarModal(tipo, item, factura) {
+export async function validarModal(tipo, item, factura, cuotasGeneradas = null) {
     if (tipo == "producto") {
         const camposRequeridos = [
             { key: "unidad" },
@@ -36,7 +36,6 @@ export async function validarModal(tipo, item, factura) {
             };
         }
 
-
         return {
             errores: camposRequeridos.reduce((acc, curr) => {
                 acc[curr.key] = false;
@@ -58,30 +57,115 @@ export async function validarModal(tipo, item, factura) {
         const errores = {};
         let message;
 
-        for (const campo of camposRequeridos) {
-            const valor = item[campo.key];
-            if (!valor || valor.toString().trim() === "" || valor === 0) {
-                if (campo.key != "cuota") {
-                    errores[campo.key] = true;
-                }
-            } else {
-                errores[campo.key] = false;
-            }
+        // Validar tipo de pago
+        if (!item.tipo || item.tipo.toString().trim() === "") {
+            errores.tipo = true;
+        } else {
+            errores.tipo = false;
         }
 
-        console.log(item);
         if (item.tipo == "CONTADO") {
-            if (item.cuota != 0) {
-                errores.cuota = true;
-            }
-        } else if (item.tipo == "CREDITO") {
-            if (item.cuota < 1 || item.cuota == "" || item.cuota == '') {
-                errores.cuota = true;
+            // Validación para pago CONTADO (lógica original)
+            if (!item.monto || item.monto <= 0) {
+                errores.monto = true;
+            } else {
+                errores.monto = false;
             }
 
-            if (new Date(item.fecha_Pago) <= new Date(factura.fecha_Emision)) {
+            if (item.cuota != 0) {
+                errores.cuota = true;
+            } else {
+                errores.cuota = false;
+            }
+
+            if (!item.fecha_Pago || item.fecha_Pago.toString().trim() === "") {
                 errores.fecha_Pago = true;
-                message = "La fecha de pago debe ser posterior a la fecha de emisión de la factura";
+            } else {
+                errores.fecha_Pago = false;
+            }
+
+        } else if (item.tipo == "CREDITO") {
+            // Validación para pago CREDITO con múltiples cuotas
+
+            // Si se proporcionan cuotas generadas, validar cada una
+            if (cuotasGeneradas && cuotasGeneradas.length > 0) {
+                let errorEnCuotas = false;
+                let mensajeError = "";
+
+                for (let i = 0; i < cuotasGeneradas.length; i++) {
+                    const cuota = cuotasGeneradas[i];
+
+                    // Validar monto de cada cuota
+                    if (!cuota.monto || cuota.monto <= 0) {
+                        errorEnCuotas = true;
+                        mensajeError = `La cuota ${cuota.cuota} tiene un monto inválido`;
+                        break;
+                    }
+
+                    // Validar fecha de cada cuota
+                    if (!cuota.fecha_Pago || cuota.fecha_Pago.toString().trim() === "") {
+                        errorEnCuotas = true;
+                        mensajeError = `La cuota ${cuota.cuota} no tiene fecha de pago`;
+                        break;
+                    }
+
+                    // Validar que la fecha de pago sea posterior a la fecha de emisión
+                    if (new Date(cuota.fecha_Pago) <= new Date(factura.fecha_Emision)) {
+                        errorEnCuotas = true;
+                        mensajeError = `La fecha de pago de la cuota ${cuota.cuota} debe ser posterior a la fecha de emisión de la factura`;
+                        break;
+                    }
+
+                    // Validar número de cuota
+                    if (!cuota.cuota || cuota.cuota < 1) {
+                        errorEnCuotas = true;
+                        mensajeError = `La cuota ${i + 1} tiene un número de cuota inválido`;
+                        break;
+                    }
+                }
+
+                if (errorEnCuotas) {
+                    return {
+                        errores: {
+                            tipo: false,
+                            monto: true,
+                            cuota: true,
+                            fecha_Pago: true
+                        },
+                        validos: false,
+                        message: mensajeError
+                    };
+                }
+
+                // Si todas las cuotas son válidas
+                errores.monto = false;
+                errores.cuota = false;
+                errores.fecha_Pago = false;
+
+            } else {
+                // Validación tradicional para crédito sin cuotas generadas
+                if (!item.monto || item.monto <= 0) {
+                    errores.monto = true;
+                } else {
+                    errores.monto = false;
+                }
+
+                if (item.cuota < 1 || item.cuota == "" || item.cuota == '') {
+                    errores.cuota = true;
+                } else {
+                    errores.cuota = false;
+                }
+
+                if (!item.fecha_Pago || item.fecha_Pago.toString().trim() === "") {
+                    errores.fecha_Pago = true;
+                } else {
+                    errores.fecha_Pago = false;
+                }
+
+                if (item.fecha_Pago && new Date(item.fecha_Pago) <= new Date(factura.fecha_Emision)) {
+                    errores.fecha_Pago = true;
+                    message = "La fecha de pago debe ser posterior a la fecha de emisión de la factura";
+                }
             }
         }
 
@@ -95,7 +179,6 @@ export async function validarModal(tipo, item, factura) {
             };
         }
 
-
         return {
             errores: camposRequeridos.reduce((acc, curr) => {
                 acc[curr.key] = false;
@@ -105,5 +188,4 @@ export async function validarModal(tipo, item, factura) {
             message: ""
         };
     }
-
 }

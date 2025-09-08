@@ -4,7 +4,6 @@ import facturaService from "@/modules/facturacion/service/FacturaService";
 import numeroALeyenda from "@/modules/facturacion/utils/numeroALeyenda";
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { validarModal } from "../emitir/factura-boleta/utils/validarModal";
 import { validarFacturaCompleta } from "../emitir/factura-boleta/utils/validarPasos";
 import filialesService from "../service/FilialesService";
 
@@ -94,38 +93,6 @@ export function FacturaBoletaProvider({ children }) {
             }
         } catch (error) {
             toast.error(error.message || "Error al validar factura");
-            return false;
-        }
-    };
-
-    const validarCampos = async (tipo) => {
-        try {
-            let errores, validos, message;
-            if (tipo === "producto") {
-                ({ errores, validos, message } = await validarModal(tipo, productoActual));
-                if (errores) {
-                    setProductoValida((prev) => ({
-                        ...prev,
-                        ...errores,
-                    }));
-                }
-            } else if (tipo === "pago") {
-                ({ errores, validos, message } = await validarModal(tipo, pagoActual, factura));
-                if (errores) {
-                    setPagoValida((prev) => ({
-                        ...prev,
-                        ...errores,
-                    }));
-                }
-            }
-
-            if (!validos && message) {
-                toast.error(message);
-                return false;
-            }
-            return true;
-        } catch (error) {
-            toast.error(error.message || "Error al validar campos");
             return false;
         }
     };
@@ -526,7 +493,6 @@ export function FacturaBoletaProvider({ children }) {
                 precioDolarActual,
                 setPrecioDolarActual,
                 validarFactura,
-                validarCampos,
                 facturaValida,
                 productoValida,
                 productoActual,
