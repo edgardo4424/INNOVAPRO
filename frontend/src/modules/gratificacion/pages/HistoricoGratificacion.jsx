@@ -6,7 +6,7 @@ import gratificacionService from "../services/gratificacionService";
 import { viGratificacion } from "../utils/valorInicial";
 import { format } from "date-fns";
 
-const HistoricoGratificacion = ({setEsCalculo}) => {
+const HistoricoGratificacion = ({setEsCalculo, setDataMantenimiento}) => {
 
   setEsCalculo(false)
   const [filiales, setFiliales] = useState([]);
@@ -31,7 +31,9 @@ const HistoricoGratificacion = ({setEsCalculo}) => {
       setEsCalculo(false)
       setLoading(true);
       const res = await gratificacionService.obtenerGratificacionesCerradas(filtro);
+      console.log('res', res);
       setGratificacion(res);
+      setDataMantenimiento(res.data_mantenimiento_detalle)
     } catch (error) {
     } finally {
       setLoading(false);

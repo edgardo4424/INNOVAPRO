@@ -108,6 +108,7 @@ class SequelizePlanillaRepository {
     );
 
     const dataMantenimiento = {
+      MONTO_ASIGNACION_FAMILIAR,
       PORCENTAJE_DESCUENTO_ONP,
       PORCENTAJE_DESCUENTO_AFP,
       PORCENTAJE_DESCUENTO_SEGURO,
@@ -184,7 +185,7 @@ class SequelizePlanillaRepository {
       const sueldoBase = Number(contrato.sueldo);
 
       const asignacionFamiliar = trabajador.asignacion_familiar
-        ? +((MONTO_ASIGNACION_FAMILIAR/2).toFixed(2))
+        ? +((MONTO_ASIGNACION_FAMILIAR).toFixed(2))
         : 0;
 
       const diasLaborados = calcularDiasLaboradosQuincena(
@@ -293,7 +294,8 @@ class SequelizePlanillaRepository {
         total_a_pagar: totalAPagar,
 
         banco: contrato.banco,
-        numero_cuenta: contrato.numero_cuenta
+        numero_cuenta: contrato.numero_cuenta,
+        tipo_afp: sistema_pension == "AFP" ? tipo_afp : "ONP",
       });
     }
 
@@ -338,6 +340,18 @@ class SequelizePlanillaRepository {
       });
     }
 
+    const data_mat = {
+        valor_asignacion_familiar: dataMantenimiento.MONTO_ASIGNACION_FAMILIAR,
+        valor_onp: dataMantenimiento.PORCENTAJE_DESCUENTO_ONP,
+        valor_afp: dataMantenimiento.PORCENTAJE_DESCUENTO_AFP,
+        valor_seguro: dataMantenimiento.PORCENTAJE_DESCUENTO_SEGURO,
+        valor_comision_afp_habitat: dataMantenimiento.PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT,
+        valor_comision_afp_integra: dataMantenimiento.PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA,
+        valor_comision_afp_prima: dataMantenimiento.PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA,
+        valor_comision_afp_profuturo: dataMantenimiento.PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO,
+       
+      }
+
     return {
       planilla: {
         trabajadores: listaPlanillaTipoPlanilla,
@@ -345,7 +359,7 @@ class SequelizePlanillaRepository {
       honorarios: {
         trabajadores: listaPlanillaTipoHonorarios,
       },
-      datosCalculo: dataMantenimiento,
+      data_mantenimiento_detalle: data_mat,
     };
   }
   

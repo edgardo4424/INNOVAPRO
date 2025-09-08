@@ -9,7 +9,10 @@ import { viPlanillaQuincenal } from "../utils/valorInicial";
 
 import { ModalCerrarPlanillaQuincenal } from "../components/ModalCerrarPlanillaQuincenal";
 
-const CalculoPlanillaQuincenal = () => {
+const CalculoPlanillaQuincenal = ({setDataMantenimiento, setEsCalculo}) => {
+
+  setEsCalculo(true);
+
   const [filiales, setFiliales] = useState([]);
 
   // ?? loading
@@ -35,6 +38,7 @@ const CalculoPlanillaQuincenal = () => {
   const buscarPlanillaQuincenal = async () => {
     try {
       setLoading(true);
+      setEsCalculo(true)
       const fecha_anio_mes = `${filtro.anio}-${filtro.mes}`;
       
       const dataPOST = {
@@ -45,6 +49,7 @@ const CalculoPlanillaQuincenal = () => {
       console.log('dataPOST', dataPOST);
       const res = await planillaQuincenalService.obtenerPlanillaQuincenal(dataPOST);
       console.log('res', res);
+      setDataMantenimiento(res.data_mantenimiento_detalle)
       setPlanillaQuincenalTipoPlanilla(res.planilla.trabajadores);
       setPlanillaQuincenalTipoRh(res.honorarios.trabajadores);
     } catch (error) {

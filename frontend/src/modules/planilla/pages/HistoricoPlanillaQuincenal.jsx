@@ -8,7 +8,10 @@ import { viPlanillaQuincenal } from "../utils/valorInicial";
 import TablePlanillaQuincenal from "../components/tipo-planilla/TablePlanillaQuincenal";
 import TableRHQuincenal from "../components/tipo-rh/TableRHQuincenal";
 
-const HistoricoPlanillaQuincenal = () => {
+const HistoricoPlanillaQuincenal = ({setEsCalculo, setDataMantenimiento}) => {
+  
+  setEsCalculo(false)
+
   const [filiales, setFiliales] = useState([]);
 
   // ?? loading
@@ -33,6 +36,7 @@ const HistoricoPlanillaQuincenal = () => {
 
   const buscarPlanillaQuincenalCerrada = async () => {
     try {
+       setEsCalculo(false)
       setLoading(true);
       const fecha_anio_mes = `${filtro.anio}-${filtro.mes}`;
       
@@ -40,14 +44,13 @@ const HistoricoPlanillaQuincenal = () => {
         fecha_anio_mes,
         filial_id: filtro.filial_id,
       }
-
-      console.log('dataPOST', dataPOST);
       const res = await planillaQuincenalService.obtenerPlanillaQuincenalCerradas(dataPOST);
-      console.log('res', res);
+   
+      setDataMantenimiento(res.data_mantenimiento_detalle)
       setPlanillaQuincenalTipoPlanilla(res.planilla.trabajadores);
       setPlanillaQuincenalTipoRh(res.honorarios.trabajadores);
     } catch (error) {
-      console.log('error', error);
+    /*   console.log('error', error); */
     } finally {
       setLoading(false);
     }
@@ -55,7 +58,6 @@ const HistoricoPlanillaQuincenal = () => {
 
   const renderTipoPlanilla = () => {
 
-    console.log('planillaQuincenalTipoPlanilla', planillaQuincenalTipoPlanilla);
     if (planillaQuincenalTipoPlanilla) {
       return (
      
@@ -80,11 +82,11 @@ const HistoricoPlanillaQuincenal = () => {
     const obtenerFiliales = async () => {
       try {
         const res = await planillaQuincenalService.obtenerFiliales();
-        console.log("res", res);
+        
         setFiliales(res);
         setFiltro({ ...filtro, filial_id: res?.[0]?.id });
       } catch (error) {
-        console.log(error);
+        //console.log(error);
       }
     };
     obtenerFiliales();

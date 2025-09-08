@@ -9,6 +9,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MonitorCog } from "lucide-react";
 import dataMantenimientoService from "@/modules/dataMantenimiento/services/dataMantenimientoService";
 
+import {
+   DropdownMenu,
+   DropdownMenuContent,
+   DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+import { Button } from "@/components/ui/button";
+
 const GestionGratificacion = () => {
 
    const [dataMantenimiento, setDataMantenimiento] = useState(null)
@@ -23,12 +31,12 @@ const GestionGratificacion = () => {
              const res = await dataMantenimientoService.getDataMantenimiento()
 
          const data_mant = {
-            MONTO_FALTA_POR_DIA: res.data.find(item => item.codigo == 'valor_falta')?.valor,
-            MONTO_NO_COMPUTABLE: res.data.find(item => item.codigo == 'valor_no_computable')?.valor,
-            MONTO_POR_HORA_EXTRA: res.data.find(item => item.codigo == 'valor_hora_extra')?.valor,
-            MONTO_ASIGNACION_FAMILIAR: res.data.find(item => item.codigo == 'valor_asignacion_familiar')?.valor,
-            PORCENTAJE_BONIFICACION_ESSALUD: res.data.find(item => item.codigo == 'valor_bonificacion_essalud')?.valor,
-            PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO: res.data.find(item => item.codigo == 'valor_desc_quinta_categoria_no_domiciliado')?.valor
+            valor_falta: res.data.find(item => item.codigo == 'valor_falta')?.valor,
+            valor_no_computable: res.data.find(item => item.codigo == 'valor_no_computable')?.valor,
+            valor_hora_extra: res.data.find(item => item.codigo == 'valor_hora_extra')?.valor,
+            valor_asignacion_familiar: res.data.find(item => item.codigo == 'valor_asignacion_familiar')?.valor,
+            valor_bonificacion_essalud: res.data.find(item => item.codigo == 'valor_bonificacion_essalud')?.valor,
+            valor_desc_quinta_categoria_no_domiciliado: res.data.find(item => item.codigo == 'valor_desc_quinta_categoria_no_domiciliado')?.valor
 
          }
          setDataMantenimiento(data_mant)
@@ -43,34 +51,44 @@ const GestionGratificacion = () => {
 
   return (
     <div className="min-h-full px-6 flex-1 flex flex-col items-center">
-      <div className="w-full my-5 flex flex-col items-center md:flex-row md:justify-between gap-4">
+      <div className="w-full my-5 md:mt-5 flex flex-col items-center md:flex-row md:justify-between gap-4">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-800 self-start">
           Gestión de Gratificaciones
         </h2>
-        
-          <Card className="w-[300px]">
+
+      <DropdownMenu>
+         <DropdownMenuTrigger className="flex items-center gap-1" asChild>
+            <Button
+               variant={"outline"}
+               size={"icon"}
+               className="uppercase rounded-full"
+            >
+               <MonitorCog className="h-4 w-4 text-muted-foreground" />
+            </Button>
+         </DropdownMenuTrigger>
+         <DropdownMenuContent align="end"  className="w-[300px] p-0 bg-gray-50">
+            <Card className="border-0 shadow-none py-3 bg-transparent">
             <CardHeader className="flex flex-wrap items-center justify-between space-y-0">
-              <CardTitle className="text-sm font-medium uppercase text-center">
+              <CardTitle className="text-sm font-bold uppercase text-center text-innova-blue">
                 Data mantenimiento
               </CardTitle>
               <MonitorCog className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-               {
-                  dataMantenimiento!=null && (
-                     <>
-                      <div className="text-xs flex justify-between"><span className="font-bold">Monto por falta (día):</span> {"S/. " + (dataMantenimiento?.MONTO_FALTA_POR_DIA)}</div>
-              <div className="text-xs flex justify-between"><span className="font-bold">Monto no computable (día):</span> {"S/. " + (dataMantenimiento?.MONTO_NO_COMPUTABLE)}</div>
-              <div className="text-xs flex justify-between"><span className="font-bold">Monto por hora extra:</span> {"S/. " + (dataMantenimiento?.MONTO_POR_HORA_EXTRA)}</div>
-              <div className="text-xs flex justify-between"><span className="font-bold">Monto por asignación familiar:</span> {"S/. " + (dataMantenimiento?.MONTO_ASIGNACION_FAMILIAR)}</div>
-              <div className="text-xs flex justify-between"><span className="font-bold">Bonificación ESSALUD (%):</span> {(dataMantenimiento?.PORCENTAJE_BONIFICACION_ESSALUD ?? 0) + " %"}</div>
-              <div className="text-xs flex justify-between"><span className="font-bold">Retención no domiciliado (%):</span> {(dataMantenimiento?.PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO ?? 0) + " %"}</div>
-                 </> )
-               }
-             
+              <div className="aspect-auto">
+              <div className="text-xs flex justify-between"><span className="font-bold">Monto por falta (día):</span> {"S/. " + (dataMantenimiento?.valor_falta ? (+dataMantenimiento.valor_falta).toFixed(2) : "")}</div>
+              <div className="text-xs flex justify-between"><span className="font-bold">Monto no computable (día):</span> {"S/. " + (dataMantenimiento?.valor_no_computable ? (+dataMantenimiento.valor_no_computable).toFixed(2) : "")}</div>
+              <div className="text-xs flex justify-between"><span className="font-bold">Monto por hora extra:</span> {"S/. " + (dataMantenimiento?.valor_hora_extra ? (+dataMantenimiento.valor_hora_extra).toFixed(2) : "")}</div>
+              <div className="text-xs flex justify-between"><span className="font-bold">Monto por asignación familiar:</span> {"S/. " + (dataMantenimiento?.valor_asignacion_familiar ? (+dataMantenimiento.valor_asignacion_familiar).toFixed(2) : "")}</div>
+              <div className="text-xs flex justify-between"><span className="font-bold">Bonificación ESSALUD (%):</span> {dataMantenimiento?.valor_bonificacion_essalud ? (+dataMantenimiento.valor_bonificacion_essalud).toFixed(2) + " %" : " %"}</div>
+              <div className="text-xs flex justify-between"><span className="font-bold">Retención no domiciliado (%):</span> {dataMantenimiento?.valor_desc_quinta_categoria_no_domiciliado ? (+dataMantenimiento.valor_desc_quinta_categoria_no_domiciliado).toFixed(2) + " %" : " %"}</div>
+                 </div> 
             </CardContent>
           </Card>
        
+         </DropdownMenuContent>
+      </DropdownMenu>
+        
       </div>
 
       <Tabs defaultValue="calcular" className="w-full">
