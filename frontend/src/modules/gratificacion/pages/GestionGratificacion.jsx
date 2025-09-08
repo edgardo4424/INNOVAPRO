@@ -48,6 +48,21 @@ const GestionGratificacion = () => {
       getDataMantenimiento()
    }, [esCalculo])
    
+    useEffect(() => {
+    
+    const obtenerFiliales = async () => {
+      try {
+        const res = await gratificacionService.obtenerFiliales();
+        console.log("res", res);
+        setFiliales(res);
+        setFiltro({ ...filtro, filial_id: res?.[0]?.id });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    obtenerFiliales();
+  }, []);
+
 
   return (
     <div className="min-h-full px-6 flex-1 flex flex-col items-center">

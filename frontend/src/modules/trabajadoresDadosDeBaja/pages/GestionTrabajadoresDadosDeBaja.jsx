@@ -48,6 +48,7 @@ import {
 import { toast } from "sonner";
 import trabajadoresDadosDeBajaService from "../services/trabajadoresDadosDeBaja";
 import { formatearFecha } from "@/modules/gratificacion/utils/formatearFecha";
+import TrabajadorCombobox from "@/modules/retenciones/components/TrabajadorCombobox";
 
 const GestionTrabajadoresDadosDeBaja = () => {
   const [loading, setLoading] = useState(true);
@@ -76,7 +77,7 @@ const GestionTrabajadoresDadosDeBaja = () => {
   const fetchFiliales = async () => {
     try {
       const res = await trabajadoresDadosDeBajaService.getFiliales();
-      
+
       const filialesMapeados = res?.data?.map((f) => ({
         value: f.id,
         label: f.razon_social,
@@ -104,11 +105,10 @@ const GestionTrabajadoresDadosDeBaja = () => {
 
   const fetchTrabajadoresDadosDeBaja = async () => {
     try {
-     
       setLoading(true);
       const res =
         await trabajadoresDadosDeBajaService.getTrabajadoresDadosDeBaja();
-    
+
       setTrabajadoresDadosDeBaja(res.data);
     } catch (e) {
       console.error(e?.message ?? "No se pudo cargar la lista de trabajadores");
@@ -152,11 +152,21 @@ const GestionTrabajadoresDadosDeBaja = () => {
       }
       setDialogOpen(false);
     } catch (e) {
-
       toast.error(
         e?.response?.data?.mensaje ?? "No se pudo dar de baja al trabajador"
       );
     }
+  };
+
+  const onTrabSelect = (val) => {
+    const trabajadorElegido = trabajadores.find((t) => t.id === val);
+
+    setTrabajadorElegido(trabajadorElegido);
+    setForm((prevForm) => ({
+      ...prevForm,
+      trabajador_id: val,
+      contrato_id: trabajadorElegido?.ultimo_contrato?.id,
+    }));
   };
 
   return (
@@ -258,11 +268,12 @@ const GestionTrabajadoresDadosDeBaja = () => {
                         <td className="px-4 py-3">
                           {formatearFecha(t.fecha_ingreso_real)}
                         </td>
-                        <td className="px-4 py-3">{formatearFecha(t.fecha_baja)}</td>
+                        <td className="px-4 py-3">
+                          {formatearFecha(t.fecha_baja)}
+                        </td>
                         <td className="px-4 py-3 ">{t.motivo}</td>
                         <td className="px-4 py-3 ">{t.estado_liquidacion}</td>
                         <td className="px-4 py-3 "></td>
-                       
                       </tr>
                     );
                   })}
@@ -316,7 +327,7 @@ const GestionTrabajadoresDadosDeBaja = () => {
               {/* Trabajador */}
               <div className="grid gap-1">
                 <Label>Trabajador</Label>
-                <Select
+                {/*   <Select
                   value={form.trabajador_id}
                   onValueChange={(val) => {
                     const trabajadorElegido = trabajadores.find(
@@ -342,7 +353,14 @@ const GestionTrabajadoresDadosDeBaja = () => {
                       </SelectItem>
                     ))}
                   </SelectContent>
-                </Select>
+                </Select> */}
+
+                <TrabajadorCombobox
+                  trabajadores={trabajadores}
+                  value={form.trabajador_id || ""}
+                  onSelect={onTrabSelect}
+                  //dense
+                />
               </div>
 
               {/* Contrato */}

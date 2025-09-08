@@ -36,7 +36,7 @@ const dataInicial = {
   numero_documento: "",
   asignacion_familiar: false,
   asignacion_familiar_fecha: null,
-  domiciliado: false,
+  domiciliado: true,
   sistema_pension: "",
   tipo_afp: null,
   cargo_id: "",

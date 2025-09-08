@@ -37,7 +37,7 @@ export default function TrabajadorCombobox({ trabajadores, value, onSelect, disa
             <span className="truncate pr-5">{selectedLabel}</span>
         </div>
       </PopoverTrigger>
-      <PopoverContent className={["p-0", dense ? "w-[360px]" : "w-[420px]"].join(" ")}>
+      <PopoverContent className={["p-0", dense ? "w-[360px]" : "w-[420px]"].join(" ")} onWheel={(e) => e.stopPropagation()}>
         <Command>
           <CommandInput placeholder="Escribe para buscar trabajador..." className={dense ? "h-8 text-xs" : ""} />
           <CommandList>

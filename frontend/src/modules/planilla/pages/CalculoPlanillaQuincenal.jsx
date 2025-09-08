@@ -49,9 +49,53 @@ const CalculoPlanillaQuincenal = ({setDataMantenimiento, setEsCalculo}) => {
       console.log('dataPOST', dataPOST);
       const res = await planillaQuincenalService.obtenerPlanillaQuincenal(dataPOST);
       console.log('res', res);
+
+     /*  const formatearPlanillaQuincenalTipoPlanilla = res.planilla.trabajadores.reduce((acc, item) => {
+        const exist = acc.find((i) => i.trabajador_id == item.trabajador_id);
+        if (exist) {
+
+          exist.dias_laborados += item.dias_laborados;
+          exist.sueldo_quincenal += item.sueldo_quincenal;
+          exist.sueldo_bruto += item.sueldo_bruto;
+        
+          exist.onp += item.onp;
+          exist.afp += item.afp;
+          exist.seguro += item.seguro;
+          exist.comision += item.comision;
+          exist.quinta_categoria += item.quinta_categoria;
+          exist.total_descuentos += item.total_descuentos;
+          exist.total_a_pagar += item.total_a_pagar;
+
+      
+         
+        } else {
+          acc.push(item);
+        }
+        return acc;
+      }, []);
+
+      const formatearPlanillaQuincenalTipoHonorarios = res.honorarios.trabajadores.reduce((acc, item) => {
+
+        const exist = acc.find((i) => i.trabajador_id == item.trabajador_id);
+        if (exist) {
+
+          exist.dias_laborados += item.dias_laborados;
+          exist.sueldo_quincenal += item.sueldo_quincenal;
+          exist.sueldo_base += item.sueldo_base;
+          exist.total_a_pagar += item.total_a_pagar;
+           // ✅ Guardar siempre el último número de cuenta
+      exist.numero_cuenta = item.numero_cuenta;
+         
+        } else {
+         // Clonamos para evitar mutaciones inesperadas
+      acc.push({ ...item });
+        }
+        return acc;
+      }, []); */
+
       setDataMantenimiento(res.data_mantenimiento_detalle)
-      setPlanillaQuincenalTipoPlanilla(res.planilla.trabajadores);
-      setPlanillaQuincenalTipoRh(res.honorarios.trabajadores);
+      setPlanillaQuincenalTipoPlanilla(res.planilla.trabajadores); // res.planilla.trabajadores
+      setPlanillaQuincenalTipoRh(res.honorarios.trabajadores); // res.honorarios.trabajadores
     } catch (error) {
     } finally {
       setLoading(false);
