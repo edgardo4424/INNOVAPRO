@@ -69,17 +69,19 @@ class SequelizeAdelantoSueldoRepository {
 
    async obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
       trabajador_id,
+      tipo, // tipo: 'simple' , 'gratificacion' o 'cts'
       fechaInicio,
       fechaFin
    ) {
       const total = await AdelantoSueldo.sum("monto", {
          where: {
             trabajador_id,
+            tipo: tipo,
             estado: true, // ajusta si tu campo es 1/0 o 'ACTIVO'
             fecha: { [Op.between]: [fechaInicio, fechaFin] }, // inclusivo
-            // deleted_at: null, // si usas soft delete y paranoid:false
+            cuotas_pagadas: { [Op.lt]: Sequelize.col("cuotas") }, // cuotas_pagadas < cuotas
          },
-         // logging: console.log, // útil para depurar el SQL
+         
       });
 
       return Number(total || 0);

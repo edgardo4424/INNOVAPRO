@@ -147,6 +147,7 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
               const totalAdelantosSueldo =
                 await adelantoSueldoRepository.obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
                   trabajador.id,
+                  "gratificacion",
                   fechaInicioCalculo,
                   fechaFinCalculo
                 );

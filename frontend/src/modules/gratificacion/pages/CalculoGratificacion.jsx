@@ -34,6 +34,7 @@ const CalculoGratificacion = ({setDataMantenimiento, setEsCalculo}) => {
       setEsCalculo(true)
 
       const res = await gratificacionService.obtenerGratificaciones(filtro);
+      
       setDataMantenimiento(res.data_mantenimiento_detalle)
       console.log('ressss', res);
       setGratificacion(res);

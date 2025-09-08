@@ -136,6 +136,13 @@ const PlanillaQuincenal = sequelize.define(
         key: "id",
       },
     },
+    
+    data_mantenimiento_detalle: {
+      type: DataTypes.JSON,
+    },
+    info_detalle: {
+      type: DataTypes.JSON,
+    },
   },
   {
     timestamps: true,

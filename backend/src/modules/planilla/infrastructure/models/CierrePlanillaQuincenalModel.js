@@ -34,6 +34,10 @@ const CierrePlanillaQuincenal = sequelize.define(
         key: "id",
       },
     },
+
+    data_mantenimiento_detalle: {
+      type: DataTypes.JSON,
+    },
   },
   {
     timestamps: true,

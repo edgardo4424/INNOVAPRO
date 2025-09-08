@@ -132,7 +132,7 @@ const RowGratificacion = ({ key, e, index }) => {
                       <table className="mt-2 w-full">
                         <thead>
                           <tr className="border-b border-gray-200">
-                            <th className="text-left px-2 py-1">Fecha</th>
+                            <th className="text-center px-2 py-1">Fecha</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -153,7 +153,41 @@ const RowGratificacion = ({ key, e, index }) => {
           )}
         </TableCell>
         <TableCell className="text-right">{typeof e.falta_importe === "number" ? (e.falta_importe).toFixed(2) : e.falta_importe}</TableCell>
-        <TableCell className="text-right">{typeof e.no_computable === "number" ? (e.no_computable).toFixed(2) : e.no_computable}</TableCell>
+        <TableCell className="text-right">
+          {e.no_computable > 0 ? (
+            <Tooltip side="bottom" align="center" className="mr-2">
+              <TooltipTrigger asChild>
+                <div>{typeof e.no_computable === "number" ? (e.no_computable).toFixed(2) : e.no_computable}</div>
+              </TooltipTrigger>
+              <TooltipContent>
+
+                <div className="text-center mb-2">No computables</div>
+                <div className="font-bold"> {e.nombres} {e.apellidos}</div>
+                
+                    <div>
+                      <table className="mt-2 w-full">
+                        <thead>
+                          <tr className="border-b border-gray-200">
+                            <th className="text-center px-2 py-1">Fecha</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {e?.info_detalle?.info_no_computables?.map(i => (
+                            <tr key={i.mes} className="">
+                              <td className="px-2 py-1 text-center">{formatearFecha(i.fecha)}</td>
+                            </tr>
+                          ))}
+                       
+                        </tbody>
+                      </table>
+                    </div>
+                
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            typeof e.no_computable === "number" ? (e.no_computable).toFixed(2) : e.no_computable
+          )}
+        </TableCell>
         <TableCell className="text-right">{typeof e.grat_despues_descuento === "number" ? (e.grat_despues_descuento).toFixed(2) : e.grat_despues_descuento}</TableCell>
         <TableCell className="text-right">{typeof e.bonificac_essalud === "number" ? (e.bonificac_essalud).toFixed(2) : e.bonificac_essalud}</TableCell>
         <TableCell className="text-right">

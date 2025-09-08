@@ -184,7 +184,7 @@ class SequelizePlanillaRepository {
       const sueldoBase = Number(contrato.sueldo);
 
       const asignacionFamiliar = trabajador.asignacion_familiar
-        ? +((MONTO_ASIGNACION_FAMILIAR/2).toFixed(2))
+        ? +((MONTO_ASIGNACION_FAMILIAR).toFixed(2))
         : 0;
 
       const diasLaborados = calcularDiasLaboradosQuincena(
@@ -293,7 +293,8 @@ class SequelizePlanillaRepository {
         total_a_pagar: totalAPagar,
 
         banco: contrato.banco,
-        numero_cuenta: contrato.numero_cuenta
+        numero_cuenta: contrato.numero_cuenta,
+        tipo_afp: sistema_pension == "AFP" ? tipo_afp : "ONP",
       });
     }
 

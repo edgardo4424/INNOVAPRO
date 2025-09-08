@@ -31,13 +31,20 @@ function mapearInfoDetalleGratificacion({asistencias, bonos}) {
         fecha: a.fecha,
     }))
 
-    // Obtener info no computables
+    // Obtener info no computables (licencia_sin_goce)
     
+    const asistencias_no_computables = asistencias.filter(a => a.estado_asistencia == "licencia_sin_goce").sort((a, b) => a.fecha.localeCompare(b.fecha))
+
+    const info_no_computables = asistencias_no_computables.map(a => ({
+        trabajador_id: a.trabajador_id,
+        fecha: a.fecha,
+    }))
 
    return {
     info_horas_extras,
     info_bonos,
-    info_faltas
+    info_faltas,
+    info_no_computables
    }
 
 }
