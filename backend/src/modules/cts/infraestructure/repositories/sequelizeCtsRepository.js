@@ -16,6 +16,7 @@ const SequelizeGratificacionRepository = require("../../../gratificaciones/infra
 const { Cts } = require("../models/ctsModel");
 const filtrarContratosSinInterrupcion = require("../../../../services/filtrarContratosSinInterrupcion");
 const filtrarGratificacionesSinInterrupcion = require("../../../../services/filtrarGratificacionesSinInterrupcion");
+const calcularTotalDiasEnRangoFecha = require("../utils/calcularTotalDiasEnRangoFecha");
 
 const objeto_inicial_cts = {
    contrato_id: null,
@@ -191,14 +192,24 @@ class SequelizeCtsRopository {
       );
       const computarHextras = conteoHextrasMeses(asistencias);
 
+
+      let sumatoria_dias_contratos=0;
       for (const c of contratos_dias_meses) {
          //Definimos rangos de calculo que lo usaran bonos, he, faltas
          let inicio_c =
             c.fecha_inicio > fechaInicioCTS ? c.fecha_inicio : fechaInicioCTS;
          let fin_c = c.fecha_fin < fechaFinCTS ? c.fecha_fin : fechaFinCTS;
-         if (trabajador_id == 87) {
-            console.log("Contrato: ", c);
-         }
+         const valor=calcularTotalDiasEnRangoFecha(inicio_c,fin_c);
+         sumatoria_dias_contratos+=valor;
+      }
+      const VALOR_GRATI_POR_DIA=MONTO_GRATIFICACION/sumatoria_dias_contratos;
+
+      for (const c of contratos_dias_meses) {
+         //Definimos rangos de calculo que lo usaran bonos, he, faltas
+         let inicio_c =
+            c.fecha_inicio > fechaInicioCTS ? c.fecha_inicio : fechaInicioCTS;
+         let fin_c = c.fecha_fin < fechaFinCTS ? c.fecha_fin : fechaFinCTS;
+         const contrato_en_dias=calcularTotalDiasEnRangoFecha(inicio_c,fin_c);
          let r = { ...objeto_inicial_cts };
          r.contrato_id = c.id;
          r.banco = c.banco || "no registrado";
@@ -240,7 +251,7 @@ class SequelizeCtsRopository {
          r.remuneracion_comp =
             r.ultima_remuneracion + r.prom_h_extras + r.prom_bono;
 
-         r.ultima_gratificacion = MONTO_GRATIFICACION;
+         r.ultima_gratificacion =  Number((VALOR_GRATI_POR_DIA* contrato_en_dias).toFixed(2));
          r.sexto_gratificacion = r.ultima_gratificacion / 6;
 
          r.sexto_gratificacion = parseFloat(r.sexto_gratificacion.toFixed(2));
@@ -437,6 +448,19 @@ class SequelizeCtsRopository {
          a.get({ plain: true })
       );
       const computarHextras = conteoHextrasMeses(asistencias);
+      
+      let sumatoria_dias_contratos=0;
+      for (const c of contratos_dias_meses) {
+         //Definimos rangos de calculo que lo usaran bonos, he, faltas
+         let inicio_c =
+            c.fecha_inicio > fechaInicioCTS ? c.fecha_inicio : fechaInicioCTS;
+         let fin_contrato_valido=c.fecha_terminacion_anticipada?c.fecha_terminacion_anticipada:c.fecha_fin;
+         let fin_c = fin_contrato_valido< fechaFinCTS ? fin_contrato_valido : fechaFinCTS;
+         const valor=calcularTotalDiasEnRangoFecha(inicio_c,fin_c);
+         sumatoria_dias_contratos+=valor;
+      }
+      const VALOR_GRATI_POR_DIA=MONTO_GRATIFICACION/sumatoria_dias_contratos;
+
 
       for (const c of contratos_dias_meses) {
          //Definimos rangos de calculo que lo usaran bonos, he, faltas
@@ -446,6 +470,7 @@ class SequelizeCtsRopository {
          let fin_contrato_valido=c.fecha_terminacion_anticipada?c.fecha_terminacion_anticipada:c.fecha_fin;
 
          let fin_c = fin_contrato_valido< fechaFinCTS ? fin_contrato_valido : fechaFinCTS;
+         const contrato_en_dias=calcularTotalDiasEnRangoFecha(inicio_c,fin_c);
 
          let r = { ...objeto_inicial_cts };
          r.contrato_id = c.id;
@@ -490,7 +515,7 @@ class SequelizeCtsRopository {
          r.remuneracion_comp =
             r.ultima_remuneracion + r.prom_h_extras + r.prom_bono;
 
-         r.ultima_gratificacion = MONTO_GRATIFICACION;
+         r.ultima_gratificacion =  Number((VALOR_GRATI_POR_DIA* contrato_en_dias).toFixed(2));
          r.sexto_gratificacion = r.ultima_gratificacion / 6;
 
          r.sexto_gratificacion = parseFloat(r.sexto_gratificacion.toFixed(2));
@@ -543,6 +568,7 @@ class SequelizeCtsRopository {
          r.cts_depositar = r.cts_depositar - r.no_domiciliado;
          r.cts_depositar = parseFloat(r.cts_depositar.toFixed(2));
          r.ids_agrupacion = c.ids_agrupacion;
+         console.log(r);
          arreglo_cts.push(r);
       }
       return arreglo_cts;
