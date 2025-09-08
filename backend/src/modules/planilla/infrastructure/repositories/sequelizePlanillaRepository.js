@@ -1230,7 +1230,7 @@ class SequelizePlanillaRepository {
          );
          console.log("PASO SUELOD BRUTO");
 
-         planilla.quinta_categoria = 1000;
+         planilla.quinta_categoria = 0;
          planilla.adelanto_prestamo = MONTO_ADELANTO_SUELDO.toFixed(2);
          planilla.sueldo_quincenal = planilla.sueldo_basico / 2;
          planilla.filial_id = c.filial_id;

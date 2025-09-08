@@ -19,33 +19,49 @@ const unir_planillas_mensuales = (
       grupo_planilla.area = p.area;
       grupo_planilla.afp = p.afp;
       grupo_planilla.fecha_ingreso = "";
-      grupo_planilla.dias_labor += p.dias_labor;
-      grupo_planilla.sueldo_basico = p.sueldo_basico;
-      grupo_planilla.sueldo_del_mes += p.sueldo_del_mes;
-      grupo_planilla.asig_fam = p.asig_fam;
-      grupo_planilla.descanso_medico += p.descanso_medico;
-      grupo_planilla.licencia_con_goce_de_haber += p.licencia_con_goce_de_haber;
-      grupo_planilla.licencia_sin_goce_de_haber +=
-         p.licencia_sin_goce_de_haber;
-      grupo_planilla.vacaciones += p.vacaciones;
-      grupo_planilla.gratificacion = p.gratificacion;
-      grupo_planilla.cts = p.cts;
-      grupo_planilla.h_extras_primera_quincena += p.h_extras_primera_quincena;
-      grupo_planilla.h_extras_segunda_quincena += p.h_extras_segunda_quincena;
-      grupo_planilla.faltas_primera_quincena += p.faltas_primera_quincena;
-      grupo_planilla.faltas_segunda_quincena += p.faltas_segunda_quincena;
-      grupo_planilla.tardanza_primera_quincena += p.tardanza_primera_quincena;
-      grupo_planilla.tardanza_segunda_quincena += p.tardanza_segunda_quincena;
-      grupo_planilla.bono_primera_quincena += p.bono_primera_quincena;
-      grupo_planilla.bono_segunda_quincena += p.bono_segunda_quincena;
-      grupo_planilla.sueldos_brutos_obtenidos =
-         grupo_planilla.sueldos_brutos_obtenidos.push(p.sueldo_bruto);
-      grupo_planilla.quinta_categoria = p.quinta_categoria;
-      grupo_planilla.sueldo_quincenal = p.sueldo_quincenal;
-      grupo_planilla.adelanto_prestamo += p.adelanto_prestamo;
-         grupo_planilla.filial_id = p.filial_id;
-   grupo_planilla.banco = p.banco;
-   grupo_planilla.numero_cuenta = p.numero_cuenta;
+
+      grupo_planilla.dias_labor += Number(p.dias_labor);
+      grupo_planilla.sueldo_basico = Number(p.sueldo_basico);
+      grupo_planilla.sueldo_del_mes += Number(p.sueldo_del_mes);
+      grupo_planilla.asig_fam = Number(p.asig_fam);
+      grupo_planilla.descanso_medico += Number(p.descanso_medico);
+      grupo_planilla.licencia_con_goce_de_haber += Number(
+         p.licencia_con_goce_de_haber
+      );
+      grupo_planilla.licencia_sin_goce_de_haber += Number(
+         p.licencia_sin_goce_de_haber
+      );
+      grupo_planilla.vacaciones += Number(p.vacaciones);
+      grupo_planilla.gratificacion = Number(p.gratificacion);
+      grupo_planilla.cts = Number(p.cts);
+      grupo_planilla.h_extras_primera_quincena += Number(
+         p.h_extras_primera_quincena
+      );
+      grupo_planilla.h_extras_segunda_quincena += Number(
+         p.h_extras_segunda_quincena
+      );
+      grupo_planilla.faltas_primera_quincena += Number(
+         p.faltas_primera_quincena
+      );
+      grupo_planilla.faltas_segunda_quincena += Number(
+         p.faltas_segunda_quincena
+      );
+      grupo_planilla.tardanza_primera_quincena += Number(
+         p.tardanza_primera_quincena
+      );
+      grupo_planilla.tardanza_segunda_quincena += Number(
+         p.tardanza_segunda_quincena
+      );
+      grupo_planilla.bono_primera_quincena += Number(p.bono_primera_quincena);
+      grupo_planilla.bono_segunda_quincena += Number(p.bono_segunda_quincena);
+    //   grupo_planilla.sueldos_brutos_obtenidos.push(Number(p.sueldo_bruto));
+      grupo_planilla.quinta_categoria = Number(p.quinta_categoria);
+      grupo_planilla.sueldo_quincenal = Number(p.sueldo_quincenal);
+      grupo_planilla.adelanto_prestamo += Number(p.adelanto_prestamo);
+
+      grupo_planilla.filial_id = p.filial_id;
+      grupo_planilla.banco = p.banco;
+      grupo_planilla.numero_cuenta = p.numero_cuenta;
    }
 
    grupo_planilla.sueldo_bruto = Number(
@@ -93,7 +109,8 @@ const unir_planillas_mensuales = (
    ).toFixed(2);
 
    grupo_planilla.sueldo_neto = (
-      Number(grupo_planilla.sueldo_bruto) - Number(grupo_planilla.total_descuentos)
+      Number(grupo_planilla.sueldo_bruto) -
+      Number(grupo_planilla.total_descuentos)
    ).toFixed(2);
 
    grupo_planilla.saldo_por_pagar = (
@@ -105,4 +122,4 @@ const unir_planillas_mensuales = (
    return grupo_planilla;
 };
 
-module.exports=unir_planillas_mensuales;
+module.exports = unir_planillas_mensuales;
