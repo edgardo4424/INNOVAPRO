@@ -44,11 +44,10 @@ const PlanillaMensual = () => {
             filial_id: filtro.filial_id,
          };
 
-         console.log("dataPOST", dataPOST);
          const res = await planillaMensualService.obtenerPlanillaMensual(
             dataPOST
          );
-         console.log("res", res);
+       
          setPlanillaMensualTipoPlanilla(res.payload.planilla.trabajadores);
          setPlanillaMensualTipoRh(res.payload.honorarios.trabajadores);
          setDatosCalculo(res.datosCalculo);
@@ -62,11 +61,11 @@ const PlanillaMensual = () => {
       const obtenerFiliales = async () => {
          try {
             const res = await planillaMensualService.obtenerFiliales();
-            console.log("res", res);
+           
             setFiliales(res);
             setFiltro({ ...filtro, filial_id: res?.[0]?.id });
          } catch (error) {
-            console.log(error);
+            //console.log(error);
          }
       };
       obtenerFiliales();

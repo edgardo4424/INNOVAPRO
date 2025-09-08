@@ -59,13 +59,22 @@ const planillaQuincenalCerradasTipoHonorarios = planillaQuincenalCerradas.filter
     numero_cuenta: g.numero_cuenta
   }))
 
+   const planillaQuincenalCerrada =
+      await planillaQuincenalRepository.obtenerCierrePlanillaQuincenal(
+        fecha_anio_mes,
+        filial_id
+      );
+
+      console.log('planillaQuincenalCerrada', planillaQuincenalCerrada);
+
   const res = {
     planilla: {
       trabajadores: planillaQuincenalPlanillaMapeadas,
     },
     honorarios: {
         trabajadores: planillaQuincenalHonorariosMapeadas
-    }
+    },
+    data_mantenimiento_detalle: planillaQuincenalCerrada?.data_mantenimiento_detalle
   };
   return { codigo: 200, respuesta: res };
 }; // Exporta la función para que pueda ser utilizada en otros módulos

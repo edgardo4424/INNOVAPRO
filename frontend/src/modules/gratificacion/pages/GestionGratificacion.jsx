@@ -12,11 +12,9 @@ import dataMantenimientoService from "@/modules/dataMantenimiento/services/dataM
 import {
    DropdownMenu,
    DropdownMenuContent,
-   DropdownMenuGroup,
-   DropdownMenuItem,
-   DropdownMenuSeparator,
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 import { Button } from "@/components/ui/button";
 
 const GestionGratificacion = () => {

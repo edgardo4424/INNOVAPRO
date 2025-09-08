@@ -76,7 +76,7 @@ const GestionTrabajadoresDadosDeBaja = () => {
   const fetchFiliales = async () => {
     try {
       const res = await trabajadoresDadosDeBajaService.getFiliales();
-      console.log("res", res);
+      
       const filialesMapeados = res?.data?.map((f) => ({
         value: f.id,
         label: f.razon_social,
@@ -94,7 +94,6 @@ const GestionTrabajadoresDadosDeBaja = () => {
         await trabajadoresDadosDeBajaService.getTrabajadoresConContratosVigentes(
           { filial_id }
         );
-      console.log("res", res);
 
       setTrabajadores(res.data.trabajadores);
     } catch (e) {
@@ -109,7 +108,7 @@ const GestionTrabajadoresDadosDeBaja = () => {
       setLoading(true);
       const res =
         await trabajadoresDadosDeBajaService.getTrabajadoresDadosDeBaja();
-      console.log("res", res);
+    
       setTrabajadoresDadosDeBaja(res.data);
     } catch (e) {
       console.error(e?.message ?? "No se pudo cargar la lista de trabajadores");
@@ -153,7 +152,7 @@ const GestionTrabajadoresDadosDeBaja = () => {
       }
       setDialogOpen(false);
     } catch (e) {
-      console.log("eerrr", e);
+
       toast.error(
         e?.response?.data?.mensaje ?? "No se pudo dar de baja al trabajador"
       );

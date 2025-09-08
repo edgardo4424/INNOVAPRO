@@ -36,6 +36,9 @@ module.exports = {
           onUpdate: "CASCADE",
           onDelete: "RESTRICT",
         },
+        data_mantenimiento_detalle: {
+              type: Sequelize.JSON,
+            },
         createdAt: {
           type: Sequelize.DATE,
           allowNull: false,
@@ -188,6 +191,14 @@ module.exports = {
           references: { model: "cierres_planilla_quincenal", key: "id" },
           onUpdate: "CASCADE",
           onDelete: "RESTRICT",
+        },
+
+        data_mantenimiento_detalle: {
+              type: Sequelize.JSON,
+            },
+
+        info_detalle: {
+              type: Sequelize.JSON,
         },
 
         createdAt: {
