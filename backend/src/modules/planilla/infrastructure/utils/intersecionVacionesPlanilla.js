@@ -9,9 +9,7 @@ const InterseccionVacacionesPlanilla = (vacaciones, inicio, fin) => {
       while (i <= f) {
          contador++;
          i = new Date(i.getTime() + unDiaMs);
-      }
-      console.log('comtador vuelta: ',contador);
-      
+      }      
    }
    return contador;
 };
