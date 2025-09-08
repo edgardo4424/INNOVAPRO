@@ -63,6 +63,11 @@ db.tipos_trabajo = TipoTrabajo;
 const { Obra } = require("../../modules/obras/infrastructure/models/obraModel");
 db.obras = Obra;
 
+const {PlanillaMensual}=require("../../modules/planilla/infrastructure/models/PlanillaMensualModel")
+db.planilla_mensual=PlanillaMensual;
+
+const {CierresPlanillaMensual}=require("../../modules/planilla/infrastructure/models/CierrePlanillaMensualModel");
+db.cierres_planilla_mensual=CierresPlanillaMensual
 const {
    Filial,
 } = require("../../modules/filiales/infrastructure/models/filialModel");
@@ -286,6 +291,8 @@ if(db.borradores.associate) db.borradores.associate(db)
 
 if (db.cargos) db.cargos.associate(db);
 if (db.areas) db.areas.associate(db);
+if (db.planilla_mensual) db.planilla_mensual.associate(db);
+if (db.cierres_planilla_mensual) db.cierres_planilla_mensual.associate(db);
 
 
 // Sequelize

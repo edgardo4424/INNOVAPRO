@@ -98,7 +98,7 @@ function mergeIntervals(intervals) {
 
 // ===== Lógica principal =====
 // agruparPorRegimen (opcional): si true, devuelve un item por régimen (unión de intervalos).
-function calcularDiasMesesPorContrato(rangoInicioStr, rangoFinStr, contratos) {
+function calcularDiasMesesPorContrato(rangoInicioStr, rangoFinStr, contratos,trunco=false) {
    const rangoInicio = parseClampUTC(rangoInicioStr);
    const rangoFin = parseClampUTC(rangoFinStr);
    if (rangoFin < rangoInicio)
@@ -107,8 +107,10 @@ function calcularDiasMesesPorContrato(rangoInicioStr, rangoFinStr, contratos) {
    // Solo cálculo individual por contrato
    return contratos.map((c, idx) => {
       const cIni = parseClampUTC(c.fecha_inicio);
-      const cFin = parseClampUTC(c.fecha_fin);
-
+      // Si se manda un true en trunco se va a validar la fecha anticipada
+      const cFin =trunco?
+            c.fecha_terminacion_anticipada?parseClampUTC(c.fecha_terminacion_anticipada):parseClampUTC(c.fecha_fin)
+            :parseClampUTC(c.fecha_fin);
       // Solapamiento contrato-rango
       const ini = cIni > rangoInicio ? cIni : rangoInicio;
       const fin = cFin < rangoFin ? cFin : rangoFin;
@@ -128,6 +130,7 @@ function calcularDiasMesesPorContrato(rangoInicioStr, rangoFinStr, contratos) {
             meses: 0,
             dias: 0,
             solapa: false,
+            fecha_terminacion_anticipada:c.fecha_terminacion_anticipada
          };
       }
 
@@ -147,6 +150,7 @@ function calcularDiasMesesPorContrato(rangoInicioStr, rangoFinStr, contratos) {
          meses,
          dias,
          solapa: true,
+         fecha_terminacion_anticipada:c.fecha_terminacion_anticipada
       };
    });
 }

@@ -69,6 +69,13 @@ class SequelizeTrabajadorRepository {
                   area_id: areaId, // <--- filtro aquí por area_id
                },
             },
+            {
+               model: db.contratos_laborales,
+               as: "contratos_laborales",
+               include:[
+                  {model:db.empresas_proveedoras,as:"empresa_proveedora"}
+               ]
+            },
          ],
       });
 
@@ -77,6 +84,19 @@ class SequelizeTrabajadorRepository {
          const data = t.toJSON();
          data.asistencia = data.asistencias?.[0] || null;
          delete data.asistencias;
+         const hoy = new Date().toISOString().split("T")[0];
+
+         const contrato_actual = data.contratos_laborales.find((c) => {
+            return (
+               c.fecha_inicio <=hoy  &&
+               c.fecha_fin >= hoy
+            );
+         });
+         if (!contrato_actual) {
+            throw new Error("El trabajador no cuenta con un contrato laboral.");
+         }
+         data.filial=contrato_actual.empresa_proveedora.razon_social;
+         delete data.contratos_laborales;
          return data;
       });
       return resultado;
