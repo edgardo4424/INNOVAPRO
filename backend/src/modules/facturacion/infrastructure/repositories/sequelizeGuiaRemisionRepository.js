@@ -1,6 +1,7 @@
 const { GuiaRemision } = require("../models/guia-remision/guiaRemisionModel");
 const { GuiaDetalles } = require("../models/guia-remision/guiaDetallesModel");
 const { GuiaChoferes } = require("../models/guia-remision/guiaChoferesModel");
+const { Filial } = require("../../../filiales/infrastructure/models/filialModel");
 const { SunatRespuesta } = require("../models/sunatRespuestaModel");
 const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 const { Op, fn, col } = require('sequelize');
@@ -275,6 +276,32 @@ class SequelizeGuiaRemisionRepository {
         }
 
         return resultados;
+    }
+
+    async obtenerGuiaPorInformacion(correlativo, serie, empresa_ruc, tipo_doc) {
+        const guias = await GuiaRemision.findAll({
+            where: {
+                correlativo: correlativo,
+                serie: serie,
+                empresa_ruc: empresa_ruc,
+                tipo_doc: tipo_doc
+            },
+            include: [
+                { model: GuiaDetalles },
+                { model: GuiaChoferes },
+            ],
+        });
+
+        const empresa = await Filial.findOne({
+            where: { ruc: empresa_ruc },
+            attributes: ["ruc", "razon_social", "direccion"],
+        });
+
+        return guias.map(f => ({
+            ...f.dataValues,
+            empresa_nombre: empresa?.razon_social,
+            empresa_direccion: empresa?.direccion,
+        }));
     }
 }
 

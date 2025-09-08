@@ -141,6 +141,11 @@ const GuiaRemision = sequelize.define(
             ),
             allowNull: true,
         },
+        //! -- Campo de anulacion
+        anulacion_Motivo: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        }
     },
     {
         timestamps: false,

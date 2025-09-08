@@ -14,7 +14,6 @@ class SequelizeFacturaRepository {
 
     async obtenerFacturas(query) {
         try {
-
             const {
                 page = 1,
                 limit,
@@ -26,6 +25,7 @@ class SequelizeFacturaRepository {
                 fec_des,
                 fec_ast,
             } = query;
+
             const sane = (v) => {
                 if (v === null || v === undefined) return undefined;
                 if (typeof v === "string") {
@@ -49,11 +49,19 @@ class SequelizeFacturaRepository {
             const limitNumber = limit ? Number.parseInt(limit, 10) : undefined;
             const offset = limitNumber ? (pageNumber - 1) * limitNumber : undefined;
 
-            const where = {
-            };
+            const where = {};
 
             if (nTipoDoc) {
-                where.tipo_doc = nTipoDoc;
+                if (nTipoDoc == "99") {
+                    where.estado = {
+                        [Op.or]: [
+                            "ANULADA-NOTA",
+                            "ANULADA",
+                        ],
+                    };
+                } else {
+                    where.tipo_doc = nTipoDoc;
+                }
             }
             if (nEmpresaRuc) {
                 where.empresa_ruc = { [Op.like]: `%${nEmpresaRuc}%` };
@@ -76,7 +84,6 @@ class SequelizeFacturaRepository {
             } else if (nFecAst) {
                 where.fecha_Emision = { [Op.lte]: nFecAst };
             }
-
 
             const { count, rows } = await Factura.findAndCountAll({
                 attributes: [
@@ -103,10 +110,32 @@ class SequelizeFacturaRepository {
                 order: [["id", "DESC"]],
             });
 
+            // Buscar información de la empresa solo si tenemos un RUC específico
+            let empresa = null;
+            if (nEmpresaRuc) {
+                // Si hay un filtro de empresa, usar ese RUC exacto
+                empresa = await Filial.findOne({
+                    where: { ruc: nEmpresaRuc },
+                    attributes: ["ruc", "razon_social", "direccion"],
+                });
+            } else if (rows.length > 0 && rows[0].empresa_ruc) {
+                // Si no hay filtro de empresa pero hay resultados, usar el RUC del primer registro
+                empresa = await Filial.findOne({
+                    where: { ruc: rows[0].empresa_ruc },
+                    attributes: ["ruc", "razon_social", "direccion"],
+                });
+            }
+
+            const documentos = rows.map(f => ({
+                ...f.dataValues,
+                empresa_nombre: empresa?.razon_social || null,
+                empresa_direccion: empresa?.direccion || null,
+            }));
+
             return {
                 success: true,
                 message: "Documentos listados correctamente.",
-                data: rows,
+                data: documentos,
                 metadata: {
                     totalRecords: count,
                     currentPage: pageNumber,
@@ -421,6 +450,83 @@ class SequelizeFacturaRepository {
         });
 
         return cdr_zip;
+    }
+
+    async anular(body) {
+        const { empresa_ruc, correlativo, serie, tipo_Doc, anulacion_Motivo, sunat_respuesta } = body;
+
+        //? Iniciar transacción
+        const transaction = await db.sequelize.transaction();
+
+        try {
+            //? Buscar la factura
+            const factura = await Factura.findOne({
+                where: {
+                    empresa_ruc: empresa_ruc,
+                    correlativo: correlativo,
+                    serie: serie,
+                    tipo_Doc: tipo_Doc
+                },
+                transaction
+            });
+
+            if (!factura) {
+                throw new Error(`No se encontró la factura con serie ${serie} y correlativo ${correlativo}`);
+            }
+
+            //? Verificar si ya está anulada
+            if (factura.estado === 'ANULADA') {
+                throw new Error('La factura ya se encuentra anulada');
+            }
+
+            //? Actualizar el estado de la factura a ANULADA
+            await factura.update(
+                {
+                    estado: 'ANULADA',
+                    anulacion_motivo: anulacion_Motivo || null
+                },
+                { transaction }
+            );
+
+            //? Crear la respuesta de SUNAT para la anulación
+            let sunatRespuestaCreated = null;
+            if (sunat_respuesta) {
+                sunatRespuestaCreated = await SunatRespuesta.create(
+                    {
+                        factura_id: factura.id,
+                        ...sunat_respuesta,
+                    },
+                    { transaction }
+                );
+
+                if (!sunatRespuestaCreated) {
+                    throw new Error("No se pudo crear la respuesta de SUNAT para la anulación.");
+                }
+            }
+
+            //? Si todo salió bien, confirmar la transacción
+            await transaction.commit();
+
+            return {
+                success: true,
+                message: "Factura anulada correctamente.",
+                data: {
+                    factura: factura,
+                    sunat_respuesta: sunatRespuestaCreated
+                }
+            };
+
+        } catch (error) {
+            //? Si ocurre algún error, revertir la transacción
+            await transaction.rollback();
+            console.error("Error en anular factura:", error.message, error.stack);
+
+            return {
+                success: false,
+                message: error.message || "Ocurrió un error inesperado al anular la factura.",
+                data: null
+            };
+        }
     }
 }
 

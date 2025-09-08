@@ -97,12 +97,12 @@ export default function ModalEmitirNota() {
                 return "Factura";
             case "03":
                 return "Boleta";
-            case "09":
-                return "Guía de Remisión";
-            case "07":
-                return "Nota de Débito";
-            case "03":
-                return "Nota de Crédito";
+            // case "09":
+            //     return "Guía de Remisión";
+            // case "07":
+            //     return "Nota de Débito";
+            // case "03":
+            //     return "Nota de Crédito";
             default:
                 return "Desconocido";
         }

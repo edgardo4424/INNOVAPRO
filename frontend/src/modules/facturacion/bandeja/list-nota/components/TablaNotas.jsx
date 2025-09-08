@@ -62,14 +62,24 @@ const TablaNotas = ({ documentos, setIdDocumento, setModalOpen, setModalDescarga
                             <td className="py-3 px-6 text-xs text-gray-700 font-medium">{obtenerDescripcionMotivo(nota.motivo_Cod, nota.tipo_Doc)}</td>
                             <td className="py-3 px-6">
                                 <div className="flex justify-start gap-x-2">
-                                    <button onClick={() => { setIdDocumento(nota.id); setModalOpen(true); setDocumentoAVisualizar({ correlativo: String(nota.correlativo), serie: nota.serie, empresa_ruc: nota.empresa_ruc, tipo_doc: nota.tipo_doc }) }}>
-                                        <EyeIcon className="h-5 w-5 cursor-pointer hover:text-blue-500" />
+                                    <button onClick={() => { setIdDocumento(nota.id); setModalOpen(true); setDocumentoAVisualizar({ correlativo: String(nota.correlativo), serie: nota.serie, empresa_ruc: nota.empresa_Ruc, tipo_doc: nota.tipo_Doc }) }}>
+                                        <EyeIcon className="h-5 w-5 cursor-pointer text-blue-600 hover:text-blue-800" />
                                     </button>
-                                    <button onClick={() => { setIdDocumento(nota.id); setModalDescargar(true); setDocumentoADescargar({ serie: nota.serie, correlativo: nota.correlativo, numRuc: nota.empresa_ruc, tipoDoc: nota.tipo_doc, numDocumentoComprobante: nota.cliente_num_doc }); }}>
-                                        <Download className="h-5 w-5 cursor-pointer hover:text-green-500" />
+                                    <button onClick={() => {
+                                        setIdDocumento(nota.id);
+                                        setModalDescargar(true);
+                                        setDocumentoADescargar({
+                                            serie: nota.serie,
+                                            correlativo: nota.correlativo,
+                                            numRuc: nota.empresa_Ruc,
+                                            tipoDoc: nota.tipo_Doc,
+                                            numDocumentoComprobante: nota.cliente_num_doc
+                                        });
+                                    }}>
+                                        <Download className="h-5 w-5 cursor-pointer text-green-600 hover:text-green-800" />
                                     </button>
                                     <button onClick={() => { setIdDocumento(nota.id); setDocumentoOpciones(true) }}>
-                                        <EllipsisVertical className="h-5 w-5 cursor-pointer hover:text-yellow-500" />
+                                        <EllipsisVertical className="h-5 w-5 cursor-pointer text-yellow-600 hover:text-yellow-800" />
                                     </button>
                                 </div>
                             </td>

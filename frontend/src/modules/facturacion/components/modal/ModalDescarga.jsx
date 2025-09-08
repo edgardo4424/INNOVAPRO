@@ -146,13 +146,15 @@ const extractDownloadPayload = (respRaw) => {
     throw new Error(`Respuesta no reconocida${status ? ` (status ${status})` : ''}`);
 };
 
-const ModalDescargaDocumento = ({
+const ModalDescarga = ({
     id_documento,
     setIdDocumento,
     setModalOpen,
     documentoADescargar,
     setDocumentoADescargar
 }) => {
+
+    console.log(documentoADescargar)
     const [isOpen, setIsOpen] = useState(true);
     const [loading, setLoading] = useState(false);
     const [msg, setMsg] = useState('');
@@ -307,4 +309,4 @@ const ModalDescargaDocumento = ({
     );
 };
 
-export default ModalDescargaDocumento;
+export default ModalDescarga;

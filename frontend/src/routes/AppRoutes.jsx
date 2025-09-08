@@ -7,8 +7,6 @@ import GestionAdelantoSueldo from "@/modules/Beneficios/Pages/GestionAdelantosSu
 import GestionBonos from "@/modules/Beneficios/Pages/GestionBonos";
 import GestionVacaciones from "@/modules/Beneficios/Pages/GestionVacaciones";
 import { WizardProvider } from "@/modules/cotizaciones/context/WizardCotizacionContext";
-import { FacturaBoletaProvider } from "@/modules/facturacion/context/FacturaBoletaContext";
-import { GuiaTransporteProvider } from "@/modules/facturacion/context/GuiaTransporteContext";
 import PlanillaEnConstruccion from "@/modules/planilla/pages/planilla";
 import EditarTrabajador from "@/modules/trabajadores/pages/EditarTrabajador";
 import GestionTrabajadores from "@/modules/trabajadores/pages/GestionTrabajadores";
@@ -24,7 +22,6 @@ import {
 import ProtectedRoute from "./ProtectedRoute";
 import RoleGuard from "./rol.guard";
 
-import { NotaProvider } from "@/modules/facturacion/context/NotaContext";
 import PlanillaQuincenal from "@/modules/planilla/pages/PlanillaQuincenal";
 
 // Lazy load components
@@ -74,18 +71,6 @@ const GestionCts = lazy(() =>
 );
 
 //* Facturacion
-
-const FacturaBoleta = lazy(() =>
-   import("../modules/facturacion/pages/FacturaBoleta")
-);
-
-const GuiaRemision = lazy(() =>
-   import("../modules/facturacion/pages/GuiaRemision")
-);
-
-const NotaCredito = lazy(() =>
-   import("../modules/facturacion/pages/NotaCredito")
-);
 
 const EmitirRoutes = lazy(() =>
    import("../modules/facturacion/routes/EmitirRoutes")
@@ -250,32 +235,6 @@ export default function AppRoutes() {
 
                      {/*    //************************INICIO-FACTURACION************************* */}
                      <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
-                        <Route
-                           path="facturacion/factura-boleta"
-                           element={
-                              <FacturaBoletaProvider>
-                                 <FacturaBoleta />
-                              </FacturaBoletaProvider>
-                           }
-                        />
-
-                        <Route
-                           path="facturacion/guia-remision/:tipoGuia"
-                           element={
-                              <GuiaTransporteProvider>
-                                 <GuiaRemision />
-                              </GuiaTransporteProvider>
-                           }
-                        />
-
-                        <Route
-                           path="facturacion/nota-credito"
-                           element={
-                              <NotaProvider>
-                                 <NotaCredito />
-                              </NotaProvider>
-                           }
-                        />
 
                         <Route
                            path="facturacion/emitir/*"

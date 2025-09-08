@@ -25,7 +25,6 @@ const NotasCreditoForm = () => {
                 <DetallesForm />
 
                 <div className="flex justify-end">
-
                     <ModalEmitirNota />
                 </div>
             </div>

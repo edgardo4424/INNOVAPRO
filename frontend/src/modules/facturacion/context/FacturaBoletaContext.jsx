@@ -13,6 +13,27 @@ const FacturaBoletaContext = createContext();
 
 export function FacturaBoletaProvider({ children }) {
 
+
+    // ** CORRELATIVOS
+    const [correlativos, setCorrelativos] = useState([]);
+    const [correlativoEstado, setCorrelativoEstado] = useState(false);
+    const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
+
+    const serieFactura = [
+        { value: "F001" },
+        { value: "F002" },
+        { value: "F003" },
+        { value: "F004" },
+        { value: "F005" },
+    ];
+    const serieBoleta = [
+        { value: "B001" },
+        { value: "B002" },
+        { value: "B003" },
+        { value: "B004" },
+        { value: "B005" },
+    ];
+
     // ** ID SI LA FACTURA FUE RRELLENADA DESDE EL BORRADOR
     const [idBorrador, setIdBorrador] = useState(null);
 
@@ -122,6 +143,45 @@ export function FacturaBoletaProvider({ children }) {
         }
         consultarFiliales();
     }, []);
+
+    // ?? OBTENER CORRELATIVO
+    const buscarCorrelativo = async () => {
+        if (loadingCorrelativo) return;
+
+        try {
+            setLoadingCorrelativo(true);
+            const rucsAndSeries = filiales.map((filial) => ({
+                ruc: filial.ruc,
+                serieBoleta: serieBoleta,
+                serieFactura: serieFactura,
+            }));
+
+            const { data } = await facturaService.obtenerCorrelativo(rucsAndSeries);
+            setCorrelativos(data);
+        } catch (error) {
+            console.error("Error al obtener correlativos:", error);
+        } finally {
+            setLoadingCorrelativo(false);
+        }
+    };
+
+    // Al cargar el componente o cambiar la lista de filiales, buscar los correlativos
+    useEffect(() => {
+        if (filiales.length > 0) {
+            buscarCorrelativo();
+        }
+    }, [filiales]);
+
+    // Al cambiar el tipo de documento o la serie, actualizar el correlativo
+    useEffect(() => {
+        // Establecer la serie por defecto al cambiar el tipo de documento
+        const nuevaSerie = factura.tipo_Doc === "01" ? "F001" : "B001";
+        setFactura((prev) => ({
+            ...prev,
+            serie: nuevaSerie,
+            correlativo: "" // Limpiar el correlativo para que se recalcule
+        }));
+    }, [factura.tipo_Doc]);
 
     // TODO LOS USEEFFECT DE LOS FORMULARIOS DE LOS MODALES ------- INICIO
 
@@ -438,6 +498,7 @@ export function FacturaBoletaProvider({ children }) {
         setRetencionActivado(false);
         setIdBorrador(null);
         setDetallesExtra([])
+        buscarCorrelativo()
     };
 
 
@@ -445,6 +506,8 @@ export function FacturaBoletaProvider({ children }) {
     return (
         <FacturaBoletaContext.Provider
             value={{
+                correlativos, setCorrelativos, correlativoEstado, setCorrelativoEstado, loadingCorrelativo, setLoadingCorrelativo,
+                serieFactura,serieBoleta,
                 filiales,
                 idBorrador,
                 detallesExtra,

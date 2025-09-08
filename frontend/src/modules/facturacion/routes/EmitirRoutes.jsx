@@ -1,10 +1,14 @@
 // src/modules/facturacion/routes/BandejaRoutes.js
 
 import { useRoutes } from 'react-router-dom';
-import FacturaBoletaForm from '../emitir/factura-boleta/FacturaBoletaForm';
-import GuiaRemisionForm from '../emitir/guia-de-remision/GuiaRemisionForm';
+import { FacturaBoletaProvider } from '../context/FacturaBoletaContext';
+import { GuiaTransporteProvider } from '../context/GuiaTransporteContext';
+import { NotaProvider } from '../context/NotaContext';
 import EmitirLayout from '../layout/EmitirLayout';
 import Emitir from '../pages/Emitir';
+import FacturaBoleta from '../pages/FacturaBoleta';
+import GuiaRemision from '../pages/GuiaRemision';
+import NotaCredito from '../pages/NotaCredito';
 
 export const bandejaRoutesConfig = [
     {
@@ -14,10 +18,30 @@ export const bandejaRoutesConfig = [
         children: [
             // Estas son las rutas anidadas
             { index: true, element: <Emitir /> },
-            { path: 'factura-boleta', element: <FacturaBoletaForm /> },
-            { path: 'guia/:tipoGuia', element: <GuiaRemisionForm /> },
-            // { path: 'factura-boleta', element: <ListaDocumentos /> },
-            // { path: 'nota-credito-debito', element: <NotasCreditoDebito /> },
+            {
+                path: 'factura-boleta',
+                element: (
+                    <FacturaBoletaProvider>
+                        <FacturaBoleta />
+                    </FacturaBoletaProvider>
+                ),
+            },
+            {
+                path: 'guia',
+                element: (
+                    <GuiaTransporteProvider>
+                        <GuiaRemision />
+                    </GuiaTransporteProvider>
+                ),
+            },
+            {
+                path: 'nota',
+                element: (
+                    <NotaProvider>
+                        <NotaCredito />
+                    </NotaProvider>
+                ),
+            },
         ]
     }
 ];

@@ -1,13 +1,14 @@
-import { ChevronLeft, ChevronRight, LoaderCircle } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import FiltroTabla from "../../components/FiltroTabla";
-import ModalVisualizarDocumento from "../../components/modal/ModalVisualizarDocumento";
+import ModalVisualizarGuia from "../../components/modal/ModalVisualizarGuia";
+import Paginacion from "../../components/Paginacion";
 import facturaService from "../../service/FacturaService";
-import TablaGuias from "./components/TablaGuias";
-import PaginacionBorradores from "../../borrador/components/PaginacionBorradores";
 import ModalDescargaGuia from "./components/ModalDescargaGuia";
+import TablaGuias from "./components/TablaGuias";
+import ModalDescarga from "../../components/modal/ModalDescarga";
 
 const ListaGuiaRemision = () => {
     const navigate = useNavigate();
@@ -17,10 +18,13 @@ const ListaGuiaRemision = () => {
 
     // ?? modales
     const [modalOpen, setModalOpen] = useState(false);
+    const [modalVisualizar, setModalVisualizar] = useState(false);
     const [modalDescargar, setModalDescargar] = useState(false);
     // ?? identificador
     const [idDocumento, setIdDocumento] = useState("");
     const [guiaADescargar, setGuiaADescargar] = useState({});
+    const [documentoAVisualizar, setDocumentoAVisualizar] = useState({});
+    const [documentoOpciones, setDocumentoOpciones] = useState({});
 
     const [filtro, setFiltro] = useState({
         page: 1,
@@ -29,6 +33,7 @@ const ListaGuiaRemision = () => {
         tip_doc: "",
         fec_des: "",
         fec_ast: "",
+        empresa_ruc: "",
     });
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
@@ -42,7 +47,7 @@ const ListaGuiaRemision = () => {
     const cliente_num_doc = searchParams.get("cliente_num_doc");
     const fec_des = searchParams.get("fec_des");
     const fec_ast = searchParams.get("fec_ast");
-
+    const empresa_ruc = searchParams.get("empresa_ruc");
 
     const obtenerDocumentos = async () => {
         setLoading(true);
@@ -51,6 +56,9 @@ const ListaGuiaRemision = () => {
 
             if (tipo_doc) {
                 query += `tipo_doc=${tipo_doc}`;
+            }
+            if (empresa_ruc) {
+                query += `empresa_ruc=${empresa_ruc}`;
             }
             if (page) {
                 query += `&page=${page}`;
@@ -101,6 +109,7 @@ const ListaGuiaRemision = () => {
         if (filtro.cliente_num_doc != "")
             query.push(`cliente_num_doc=${filtro.cliente_num_doc}`);
         if (filtro.fec_des) query.push(`fec_des=${filtro.fec_des}`);
+        if (filtro.empresa_ruc) query.push(`empresa_ruc=${filtro.empresa_ruc}`);
         if (filtro.fec_ast) query.push(`fec_ast=${filtro.fec_ast}`);
         if (filtro.limit != "") query.push(`limit=${filtro.limit}`);
 
@@ -115,6 +124,7 @@ const ListaGuiaRemision = () => {
             tip_doc: "",
             fec_des: "",
             fec_ast: "",
+            empresa_ruc: "",
         });
         navigate(`?limit=10&page=1`);
     };
@@ -177,31 +187,35 @@ const ListaGuiaRemision = () => {
                     <div className="overflow-x-auto  ">
                         <TablaGuias
                             documentos={guias}
-                            setModalOpen={setModalOpen}
+                            setModalOpen={setModalVisualizar}
                             setModalDescargar={setModalDescargar}
                             setIdDocumento={setIdDocumento}
-                            setGuiaADescargar={setGuiaADescargar} />
+                            setGuiaADescargar={setGuiaADescargar}
+                            setDocumentoAVisualizar={setDocumentoAVisualizar}
+                            documentoOpciones={documentoOpciones}
+                            setDocumentoOpciones={setDocumentoOpciones}
+                        />
 
                         {/* Modal */}
-                        {modalOpen && idDocumento && (
-                            <ModalVisualizarDocumento
-                                id_documento={idDocumento}
-                                setModalOpen={setModalOpen}
-                                setIdDocumento={setIdDocumento}
+                        {modalVisualizar && documentoAVisualizar && (
+                            <ModalVisualizarGuia
+                                setModalOpen={setModalVisualizar}
+                                documentoAVisualizar={documentoAVisualizar}
+                                setDocumentoAVisualizar={setDocumentoAVisualizar}
                             />
                         )}
                         {modalDescargar && idDocumento && (
-                            <ModalDescargaGuia
+                            <ModalDescarga
                                 id_documento={idDocumento}
                                 setIdDocumento={setIdDocumento}
                                 setModalOpen={setModalDescargar}
-                                guiaADescargar={guiaADescargar}
-                                setGuiaADescargar={setGuiaADescargar}
+                                documentoADescargar={guiaADescargar}
+                                setDocumentoADescargar={setGuiaADescargar}
                             />
                         )}
                     </div>
                 )}
-                <PaginacionBorradores
+                <Paginacion
                     currentPage={currentPage}
                     totalPages={totalPages}
                     totalRecords={totalRecords}

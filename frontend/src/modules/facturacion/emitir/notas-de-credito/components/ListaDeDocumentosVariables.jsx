@@ -77,8 +77,6 @@ const ListaDeDocumentosVariables = ({ closeModal }) => {
             // ?Datos del comprobante
             tipo_Operacion: doc.tipo_Operacion,
             tipo_Moneda: doc.tipo_Moneda,
-            afectado_Tipo_Doc: doc.tipo_Doc,
-            afectado_Num_Doc: `${doc.serie}-${doc.correlativo}`,
             // ?Datos del cliente
             cliente_Tipo_Doc: doc.cliente_Tipo_Doc,
             cliente_Num_Doc: doc.cliente_Num_Doc,

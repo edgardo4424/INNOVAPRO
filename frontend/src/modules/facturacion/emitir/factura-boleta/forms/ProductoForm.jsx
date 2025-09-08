@@ -275,17 +275,17 @@ const ProductoForm = ({ closeModal }) => {
                         <SelectContent>
                             {/* Gravado */}
                             <SelectItem value="10">10 - Gravado - Operación Onerosa</SelectItem>
-                            <SelectItem value="11">11 - Retiro por premio</SelectItem>
-                            <SelectItem value="12">12 - Retiro por donación</SelectItem>
-                            <SelectItem value="13">13 - Retiro</SelectItem>
-                            <SelectItem value="14">14 - Retiro por publicidad</SelectItem>
-                            <SelectItem value="15">15 - Bonificaciones</SelectItem>
-                            <SelectItem value="16">16 - Entrega a trabajadores</SelectItem>
-                            <SelectItem value="17">17 - IVAP</SelectItem>
+                            {/* <SelectItem value="11">11 - Retiro por premio</SelectItem> */}
+                            {/* <SelectItem value="12">12 - Retiro por donación</SelectItem> */}
+                            {/* <SelectItem value="13">13 - Retiro</SelectItem> */}
+                            {/* <SelectItem value="14">14 - Retiro por publicidad</SelectItem> */}
+                            {/* <SelectItem value="15">15 - Bonificaciones</SelectItem> */}
+                            {/* <SelectItem value="16">16 - Entrega a trabajadores</SelectItem> */}
+                            {/* <SelectItem value="17">17 - IVAP</SelectItem> */}
 
                             {/* Exonerado */}
                             <SelectItem value="20">20 - Exonerado - Operación Onerosa</SelectItem>
-                            <SelectItem value="21">21 - Transferencia Gratuita</SelectItem>
+                            {/* <SelectItem value="21">21 - Transferencia Gratuita</SelectItem> */}
 
                             {/* Inafecto */}
                             <SelectItem value="30">30 - Inafecto - Operación Onerosa</SelectItem>

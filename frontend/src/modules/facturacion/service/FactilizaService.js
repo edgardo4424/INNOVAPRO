@@ -84,6 +84,14 @@ const factilizaService = {
         };
     },
 
+    // !! ANULACION FACTURA - BOLETA
+    anularDocumento: async (doc) => {
+        const res = await apiFactilizaFacturacion.post(
+            `/voided/cancel`,
+            doc
+        );
+        return res.data;
+    },
 
     // ?? TIPO DE CAMBIO
     obtenerTipoCambio: (fecha) => getRequest(apiFactilizaConsultas, `/tipocambio/info/dia?fecha=${fecha}`),

@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import ModalVisualizarBorrador from "../components/modal/ModalVisualizarBorrador";
 import facturaService from "../service/FacturaService";
 import FiltroTabla from "../components/FiltroTabla";
-import PaginacionBorradores from "./components/PaginacionBorradores";
+import Paginacion from "../components/Paginacion";
 import TablaBorradores from "./components/TablaBorradores";
 import ModalEliminarBorrador from "./modal/ModalEliminarBorrador";
 
@@ -210,7 +210,7 @@ const ListaBorradores = () => {
             )}
           </div>
         )}
-        <PaginacionBorradores
+        <Paginacion
           currentPage={currentPage}
           totalPages={totalPages}
           totalRecords={totalRecords}

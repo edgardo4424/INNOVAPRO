@@ -23,6 +23,7 @@ router.get("/factura/:id", facturaController.obtenerFacturaPorId);
 router.post("/factura/detallada", facturaController.obtenerFacturaDetallada);
 router.post("/documentos", facturaController.obtenerRelacionesFacturas);
 router.post("/registrar", facturaController.crearFactura);
+router.post("/factura/anular", facturaController.anularFactura);
 router.post("/correlativo", facturaController.obtenerCorrelativo);
 router.post("/cdr-zip", facturaController.obtenerCdrZip);
 router.get("/mtc", facturaController.obtenerMTCconRuc);
@@ -30,6 +31,7 @@ router.get("/mtc", facturaController.obtenerMTCconRuc);
 // * GUIA DE REMISION
 router.get("/guia-remision", guiaRemisionController.obtenerGuiasRemision);
 router.post("/guia-remision/crear", guiaRemisionController.crearGuiaRemision);
+router.post("/guia-remision/detallada", guiaRemisionController.obtenerGuiaDetallada);
 router.post("/guia-remision/correlativo", guiaRemisionController.obtenerCorrelativo);
 router.post("/guia-remision/relaciones", guiaRemisionController.obtenerRelacionesGuias);
 

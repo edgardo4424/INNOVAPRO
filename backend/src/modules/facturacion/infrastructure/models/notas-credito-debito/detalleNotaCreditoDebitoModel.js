@@ -84,7 +84,7 @@ const DetalleNotaCreditoDebito = sequelize.define(
             type: DataTypes.STRING(255),
             allowNull: true
         },
-        descuento: {
+        Descuentos: {
             type: DataTypes.TEXT,
             allowNull: true
         }

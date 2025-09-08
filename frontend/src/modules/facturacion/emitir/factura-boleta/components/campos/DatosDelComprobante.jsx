@@ -8,32 +8,23 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
-import facturaService from "@/modules/facturacion/service/FacturaService";
 import { LoaderCircle, Search, SquarePen } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Calendar22 } from "../Calendar22";
 
-const serieFactura = [
-    { value: "F001" },
-    { value: "F002" },
-    { value: "F003" },
-    { value: "F004" },
-    { value: "F005" },
-];
-
-const serieBoleta = [
-    { value: "B001" },
-    { value: "B002" },
-    { value: "B003" },
-    { value: "B004" },
-    { value: "B005" },
-];
-
 const DatosDelComprobante = () => {
-    const { factura, setFactura, filiales } = useFacturaBoleta();
-    const [correlativos, setCorrelativos] = useState([]);
-    const [correlativoEstado, setCorrelativoEstado] = useState(false);
-    const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
+    const { factura,
+        setFactura,
+        filiales,
+        correlativos,
+        correlativoEstado,
+        setCorrelativoEstado,
+        loadingCorrelativo,
+        buscarCorrelativo,
+        serieFactura,
+        serieBoleta,
+    } = useFacturaBoleta();
+
 
     const activarCorrelativo = (e) => {
         e.preventDefault();
@@ -54,33 +45,6 @@ const DatosDelComprobante = () => {
             [name]: value,
         }));
     };
-
-    const buscarCorrelativo = async () => {
-        if (loadingCorrelativo) return;
-
-        try {
-            setLoadingCorrelativo(true);
-            const rucsAndSeries = filiales.map((filial) => ({
-                ruc: filial.ruc,
-                serieBoleta: serieBoleta,
-                serieFactura: serieFactura,
-            }));
-
-            const { data } = await facturaService.obtenerCorrelativo(rucsAndSeries);
-            setCorrelativos(data);
-        } catch (error) {
-            console.error("Error al obtener correlativos:", error);
-        } finally {
-            setLoadingCorrelativo(false);
-        }
-    };
-
-    // Al cargar el componente o cambiar la lista de filiales, buscar los correlativos
-    useEffect(() => {
-        if (filiales.length > 0) {
-            buscarCorrelativo();
-        }
-    }, [filiales]);
 
     // Al cambiar el tipo de documento o la serie, actualizar el correlativo
     useEffect(() => {
@@ -185,7 +149,7 @@ const DatosDelComprobante = () => {
                         <button className={`bg-blue-500 hover:bg-blue-600 cursor-pointer text-white rounded-md px-2`}
                             onClick={buscarCorrelativo}
                         >
-                            {loadingCorrelativo ? <LoaderCircle className="size-5 animate-spin" /> : <Search className="size-5"/>}
+                            {loadingCorrelativo ? <LoaderCircle className="size-5 animate-spin" /> : <Search className="size-5" />}
                         </button>
                     </div>
                 </div>

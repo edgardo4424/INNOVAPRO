@@ -30,7 +30,10 @@ const facturaService = {
         const res = await api.post(`/facturacion/documentos`, body);
         return res.data;
     },
-
+    anularFactura: async (body) => {
+        const res = await api.post(`/facturacion/factura/anular`, body);
+        return res.data;
+    },
 
     // * ENDPOINTS BORRADORES
     registrarBorrador: async (borrador) => {
@@ -64,6 +67,10 @@ const facturaService = {
         const res = await api.get(`/facturacion/guia-remision${query}`);
         return res.data;
     },
+    obtenerGuiaDetallada: async (body) => {
+        const res = await api.post(`/facturacion/guia-remision/detallada`, body);
+        return res.data;
+    },
     obtenerGuiasARelacionar: async (query) => {
         const res = await api.get(`/facturacion/guia-remision/relaciones${query}`);
         return res.data;
@@ -83,12 +90,16 @@ const facturaService = {
         const res = await api.post(`/facturacion/nota-debito-credito/crear`, nota);
         return res.data;
     },
-    obtenerCorrelativoNota : async (body) => {
+    obtenerCorrelativoNota: async (body) => {
         const res = await api.post('/facturacion/nota-debito-credito/correlativo', body);
         return res.data
     },
     obtenerTodasLasNotas: async (query) => {
         const res = await api.get(`/facturacion/nota-debito-credito${query}`);
+        return res.data;
+    },
+    obtenerNotaDetallada: async (body) => {
+        const res = await api.post(`/facturacion/nota-debito-credito/detallada`, body);
         return res.data;
     },
 }

@@ -167,6 +167,11 @@ const Factura = sequelize.define(
             type: DataTypes.DECIMAL(12, 2),
             allowNull: true,
         },
+        //! -- Campo de anulacion
+        anulacion_Motivo: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        }
     },
     {
         timestamps: false,

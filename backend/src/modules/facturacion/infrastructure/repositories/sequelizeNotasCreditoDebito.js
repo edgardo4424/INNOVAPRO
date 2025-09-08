@@ -112,8 +112,12 @@ class SequelizeNotasCreditoDebitoRepository {
             // Se cambia el valor "ANULADO" a "A" para evitar el error de truncamiento de datos
 
             let valueEstado;
-            if ((data.motivo_Cod === "01" || data.motivo_Cod === "02") && data.tipo_Doc === "07") {
-                valueEstado = "ANULADA-NOTA";
+            if (data.nota.tipo_Doc === "07") {
+                if (data.nota.motivo_Cod === "01" || data.nota.motivo_Cod === "02") {
+                    valueEstado = "ANULADA-NOTA";
+                } else {
+                    valueEstado = "MODIFICADA-NOTA";
+                }
             } else {
                 valueEstado = "MODIFICADA-NOTA";
             }
@@ -263,64 +267,15 @@ class SequelizeNotasCreditoDebitoRepository {
                 tipo_doc,
             },
             include: [
-                { model: DetalleNotaCreditoDebito },
-                { model: LegendNotaCreditoDebito },
-                // { model: SunatRespuesta },
+                {
+                    model: DetalleNotaCreditoDebito,
+                },
             ],
         });
-        console.log(nota)
+
         if (!nota) return null;
 
-        // Extraer y mapear los datos anidados a objetos planos
-        const plainNota = nota.get({ plain: true });
-
-        // Función para convertir a float si es string numérico
-        const toFloat = (value) => {
-            return typeof value === "string" && !isNaN(value)
-                ? parseFloat(value)
-                : value;
-        };
-
-        // Campos numéricos a convertir (de la cabecera)
-        const camposNumericosNota = [
-            "monto_Igv",
-            "total_Impuestos",
-            "valor_Venta",
-            "monto_Oper_Gravadas",
-            "monto_Oper_Exoneradas",
-            "sub_Total",
-            "monto_Tmp_Venta",
-        ];
-
-        // Transformar cabecera
-        const notaTransformada = {
-            ...plainNota,
-            ...Object.fromEntries(
-                camposNumericosNota.map((campo) => [
-                    campo,
-                    toFloat(plainNota[campo]),
-                ])
-            ),
-            detalles: plainNota.detalles?.map((item) => ({
-                ...item,
-                monto_Valor_Unitario: toFloat(item.monto_Valor_Unitario),
-                monto_Base_Igv: toFloat(item.monto_Base_Igv),
-                porcentaje_Igv: toFloat(item.porcentaje_Igv),
-                igv: toFloat(item.igv),
-                total_Impuestos: toFloat(item.total_Impuestos),
-                monto_Precio_Unitario: toFloat(item.monto_Precio_Unitario),
-                monto_Valor_Venta: toFloat(item.monto_Valor_Venta),
-                factor_Icbper: toFloat(item.factor_Icbper),
-            })),
-            formas_pagos: plainNota.formas_pagos?.map((item) => ({
-                ...item,
-                monto: toFloat(item.monto),
-            })),
-            leyendas: plainNota.leyendas?.map((item) => ({ ...item })),
-        };
-
-        return notaTransformada;
-
+        return nota;
     }
 
     async documentoPorFilial(data) {
