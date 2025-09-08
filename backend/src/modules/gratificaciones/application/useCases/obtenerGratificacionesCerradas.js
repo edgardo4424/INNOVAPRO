@@ -35,6 +35,8 @@ module.exports = async (dataBody, gratificacionRepository) => {
     banco: g.banco,
     numero_cuenta: g.numero_cuenta,
     contratos: g.contratos,
+    data_mantenimiento_detalle: g.data_mantenimiento_detalle,
+    info_detalle: g.info_detalle,
   }));
 
   const res = {

@@ -1,9 +1,10 @@
 import api from "@/shared/services/api";
 
 const trabajadoresDadosDeBajaService = {
-    getFiliales: () => api.get("/filiales"),
+   getFiliales: () => api.get("/filiales"),
    getTrabajadoresConContratosVigentes: (dataPOST) => api.post("/trabajadores/contratos-vigentes", dataPOST),
-   darDeBajaTrabajador: (dataPOST) => api.post("/dar_baja_trabajador", dataPOST),
+   darDeBajaTrabajador: (dataPOST) => api.post("/dar_baja_trabajadores", dataPOST),
+   getTrabajadoresDadosDeBaja: () => api.get("/dar_baja_trabajadores"),
 };
 
 export default trabajadoresDadosDeBajaService;

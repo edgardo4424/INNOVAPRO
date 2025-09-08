@@ -71,7 +71,7 @@ BajasTrabajadores.associate = (models) => {
 
       BajasTrabajadores.belongsTo(models.usuarios, {
         foreignKey: 'usuario_registro_id',
-        as: 'usuarioRegistro'
+        as: 'registrado_por'
       });
 };
 

@@ -1,10 +1,12 @@
 
 function mapearParaReporteGratificaciones(trabajadoresRaw) {
 
+  console.log('trabajadoresRaw: ', trabajadoresRaw);
+
   return trabajadoresRaw.flatMap(t => {
 
     return t.partes_por_regimen.map(parte => {
-
+      console.log('parteee', parte);
       const fila = {
         trabajador_id: t.trabajador_id,
         tipo_documento: t.tipo_documento,
@@ -32,7 +34,9 @@ function mapearParaReporteGratificaciones(trabajadoresRaw) {
         total_a_pagar: +(parte.total.toFixed(2)),
         banco: parte.banco,
         numero_cuenta: parte.numero_cuenta,
-        contratos: parte.lista_contratos_ids 
+        contratos: parte.lista_contratos_ids,
+        data_mantenimiento_detalle: parte.data_mantenimiento_detalle,
+        info_detalle: parte.info_detalle
       };
       return fila;
     });

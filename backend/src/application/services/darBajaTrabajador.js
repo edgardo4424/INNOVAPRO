@@ -6,7 +6,7 @@ const SequelizeGratificacionRepository = require("../../modules/gratificaciones/
 
 const gratificacionRepository = new SequelizeGratificacionRepository();
 
-const SequelizeDarBajaTrabajadorRepository = require("../../modules/dar_baja_trabajador/infrastructure/repositories/sequelizeDarBajaTrabajadorRepository");
+const SequelizeDarBajaTrabajadorRepository = require("../../modules/dar_baja_trabajadores/infrastructure/repositories/sequelizeDarBajaTrabajadorRepository");
 
 const darBajaTrabajadorRepository = new SequelizeDarBajaTrabajadorRepository();
 
@@ -14,7 +14,9 @@ const darBajaTrabajadorRepository = new SequelizeDarBajaTrabajadorRepository();
 const SequelizeContratoLaboralRepository = require("../../modules/contratos_laborales/infraestructure/repositories/sequelizeContratoLaboralRepository");
 const db = require("../../database/models");
 const sequelize = require("../../database/sequelize");
-const InsertarRegistroBajaTrabajador = require("../../modules/dar_baja_trabajador/application/useCases/InsertarRegistroBajaTrabajador");
+const InsertarRegistroBajaTrabajador = require("../../modules/dar_baja_trabajadores/application/useCases/InsertarRegistroBajaTrabajador");
+
+const moment = require("moment");
 
 module.exports = async function darBajaTrabajador(dataBody) {
   const transaction = await sequelize.transaction();
@@ -39,7 +41,25 @@ module.exports = async function darBajaTrabajador(dataBody) {
     );
 
     console.log("contratoLaboralEncontrado", contratoLaboralEncontrado);
-    contratoLaboralEncontrado.fecha_terminacion_anticipada = fecha_baja;
+    // Comparar si la fecha de baja es menor a la fecha de fin contrato, tomar la fecha de baja como fecha_terminacion_anticipada
+    // sino tomar la fecha fin contrato como fecha_terminacion_anticipada
+
+     // Comparar 2 fechas con Date
+    const fechaBaja = moment(fecha_baja, "YYYY-MM-DD");
+    const fechaFinContrato = moment(contratoLaboralEncontrado.fecha_fin, "YYYY-MM-DD");
+
+    let fechaTerminacionAnticipada = null;
+
+if (fechaBaja.isSame(fechaFinContrato, "day")) {
+  fechaTerminacionAnticipada=fechaBaja
+} else if (fechaBaja.isBefore(fechaFinContrato, "day")) {
+  fechaTerminacionAnticipada=fechaBaja
+} else {
+  fechaTerminacionAnticipada=fechaFinContrato
+}
+
+
+    contratoLaboralEncontrado.fecha_terminacion_anticipada = fechaTerminacionAnticipada;
 
     await contratoLaboralEncontrado.save({ transaction });
 
@@ -53,25 +73,20 @@ module.exports = async function darBajaTrabajador(dataBody) {
     trabajadorActualizado.fecha_baja = fecha_baja;
     await trabajadorActualizado.save({ transaction });
 
+   
+    
+
     // Cerrar gratificacion trunca
     const gratificacionTrunca = await cierreGratificacionTruncaPorTrabajador(
       usuario_cierre_id,
       filial_id,
       trabajador_id,
-      fecha_baja,
+      fechaTerminacionAnticipada,
       gratificacionRepository,
       transaction
     );
 
     console.log("gratificacionTrunca", gratificacionTrunca);
-
-    if (gratificacionTrunca.codigo == 400) {
-      await transaction.rollback();
-      return {
-        codigo: gratificacionTrunca.codigo,
-        respuesta: gratificacionTrunca.respuesta,
-      };
-    }
 
     const darBajaTrabajador = {
       trabajador_id: trabajador_id,

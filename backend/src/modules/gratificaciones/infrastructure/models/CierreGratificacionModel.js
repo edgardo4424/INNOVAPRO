@@ -26,6 +26,9 @@ const CierreGratificacion = sequelize.define(
       type: DataTypes.DATE,
       comment: 'Fecha de cierre oficial del periodo'
     },
+    data_mantenimiento_detalle: {
+      type: DataTypes.JSON,
+    },
     usuario_cierre_id: {
       type: DataTypes.INTEGER,
       allowNull: false,

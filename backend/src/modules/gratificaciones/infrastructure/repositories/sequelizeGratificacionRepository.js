@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos // Llamamos los modelos sequalize de la base de datos
 
 
@@ -48,7 +49,6 @@ class SequelizeGratificacionRepository {
       transaction,
     });
 
-    console.log('gratificacionesCerradas', gratificacionesCerradas);
     return gratificacionesCerradas;
   }
 
@@ -60,18 +60,16 @@ class SequelizeGratificacionRepository {
         )
       ).valor
     );
-    console.log("MONTO_ASIGNACION_FAMILIAR", MONTO_ASIGNACION_FAMILIAR);
 
     const MONTO_FALTA_POR_DIA = Number(
       (await dataMantenimientoRepository.obtenerPorCodigo("valor_falta")).valor
     );
-    console.log("MONTO_FALTA_POR_DIA", MONTO_FALTA_POR_DIA);
 
     const MONTO_POR_HORA_EXTRA = Number(
       (await dataMantenimientoRepository.obtenerPorCodigo("valor_hora_extra"))
         .valor
     );
-    console.log("MONTO_POR_HORA_EXTRA", MONTO_POR_HORA_EXTRA);
+
 
     const MONTO_NO_COMPUTABLE = Number(
       (
@@ -80,7 +78,6 @@ class SequelizeGratificacionRepository {
         )
       ).valor
     );
-    console.log("MONTO_NO_COMPUTABLE", MONTO_NO_COMPUTABLE);
 
     const PORCENTAJE_BONIFICACION_ESSALUD = Number(
       (
@@ -89,10 +86,7 @@ class SequelizeGratificacionRepository {
         )
       ).valor
     );
-    console.log(
-      "PORCENTAJE_BONIFICACION_ESSALUD",
-      PORCENTAJE_BONIFICACION_ESSALUD
-    );
+
 
     const PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO = Number(
       (
@@ -100,11 +94,6 @@ class SequelizeGratificacionRepository {
           "valor_desc_quinta_categoria_no_domiciliado"
         )
       ).valor
-    );
-
-    console.log(
-      "PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO",
-      PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO
     );
 
     const dataMantenimiento = {
@@ -121,25 +110,33 @@ class SequelizeGratificacionRepository {
         filial_id: filial_id,
         estado: true,
         tipo_contrato: "PLANILLA",
+        fecha_terminacion_anticipada: { [Op.is]: null },
       },
       include: [
         {
           model: db.trabajadores,
           as: "trabajador",
+          required: true,
+          where: {
+            estado: 'activo',
+            fecha_baja: { [Op.is]: null }  // 👈 importante
+          } 
         },
       ],
       raw: false,
       transaction,
     });
 
-    console.log('contratos', contratos[contratos.length - 1]);
-
-    return await calcularComponentesGratificaciones(
+    const gratificacionesCalculo = await calcularComponentesGratificaciones(
       contratos,
       periodo,
       anio,
       dataMantenimiento
     )
+
+    gratificacionesCalculo.data_mantenimiento_detalle = dataMantenimiento;
+
+    return gratificacionesCalculo;
   }
 
   async insertarCierreGratificacion(data, transaction = null) {
@@ -238,8 +235,7 @@ class SequelizeGratificacionRepository {
   }
 
   async calcularGratificacionTruncaPorTrabajador(periodo, anio, filial_id, trabajador_id, transaction = null) {
-    
-    console.log('ENTRE PE CHAMO');
+   
 
     const MONTO_ASIGNACION_FAMILIAR = Number(
       (
@@ -248,18 +244,18 @@ class SequelizeGratificacionRepository {
         )
       ).valor
     );
-    console.log("MONTO_ASIGNACION_FAMILIAR", MONTO_ASIGNACION_FAMILIAR);
+
 
     const MONTO_FALTA_POR_DIA = Number(
       (await dataMantenimientoRepository.obtenerPorCodigo("valor_falta")).valor
     );
-    console.log("MONTO_FALTA_POR_DIA", MONTO_FALTA_POR_DIA);
+   
 
     const MONTO_POR_HORA_EXTRA = Number(
       (await dataMantenimientoRepository.obtenerPorCodigo("valor_hora_extra"))
         .valor
     );
-    console.log("MONTO_POR_HORA_EXTRA", MONTO_POR_HORA_EXTRA);
+    
 
     const MONTO_NO_COMPUTABLE = Number(
       (
@@ -268,7 +264,7 @@ class SequelizeGratificacionRepository {
         )
       ).valor
     );
-    console.log("MONTO_NO_COMPUTABLE", MONTO_NO_COMPUTABLE);
+   
 
     const PORCENTAJE_BONIFICACION_ESSALUD = Number(
       (
@@ -276,10 +272,6 @@ class SequelizeGratificacionRepository {
           "valor_bonificacion_essalud"
         )
       ).valor
-    );
-    console.log(
-      "PORCENTAJE_BONIFICACION_ESSALUD",
-      PORCENTAJE_BONIFICACION_ESSALUD
     );
 
     const PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO = Number(
@@ -290,11 +282,7 @@ class SequelizeGratificacionRepository {
       ).valor
     );
 
-    console.log(
-      "PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO",
-      PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO
-    );
-
+  
     const dataMantenimiento = {
       MONTO_ASIGNACION_FAMILIAR,
       MONTO_FALTA_POR_DIA,
@@ -316,6 +304,11 @@ class SequelizeGratificacionRepository {
         {
           model: db.trabajadores,
           as: "trabajador",
+          required: true,
+          where: {
+            estado: 'activo',
+            fecha_baja: { [Op.is]: null }  // 👈 importante
+          }
         },
       ],
       raw: false,
@@ -323,12 +316,16 @@ class SequelizeGratificacionRepository {
     });
 
 
-    return await calcularComponentesGratificaciones(
+    const gratificacionesCalculo =  await calcularComponentesGratificaciones(
       contratos,
       periodo,
       anio,
       dataMantenimiento,
     )
+
+    gratificacionesCalculo.data_mantenimiento_detalle = dataMantenimiento;
+
+    return gratificacionesCalculo;
   }
 
   async obtenerGratificacionPorTrabajadorYRangoFecha(
@@ -380,17 +377,12 @@ class SequelizeGratificacionRepository {
         break;
     }
 
-    console.log({
-      trabajador_id,
-      periodo: periodoBuscar,
-      filial_id
-    });
+   
     const gratificacionPorTrabajador = await Gratificacion.findAll({
       where: { trabajador_id, periodo: periodoBuscar, filial_id },
       transaction,
     });
 
-    console.log('gratificacionPorTrabajador', gratificacionPorTrabajador);
 
     const total = gratificacionPorTrabajador.reduce((total, gratificacion) => {
       return total + Number(gratificacion.total_pagar);

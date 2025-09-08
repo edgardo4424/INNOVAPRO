@@ -197,8 +197,6 @@ class SequelizeAsistenciaRepository {
 
    async obtenerAsistenciasPorRangoFecha(trabajador_id, fechaInicio, fechaFin) {
       try {
-         console.log("inicio", fechaInicio);
-         console.log("Fin", fechaFin);
 
          const asistencias = await Asistencia.findAll({
             where: {
@@ -217,9 +215,7 @@ class SequelizeAsistenciaRepository {
 
    async obtenerFaltasPorRangoFecha(trabajador_id, fechaInicio, fechaFin) {
       try {
-         console.log("inicio", fechaInicio);
-         console.log("Fin", fechaFin);
-
+        
          const asistencias = await Asistencia.findAll({
             where: {
                trabajador_id,

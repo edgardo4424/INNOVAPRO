@@ -26,8 +26,6 @@ module.exports = async (
         filial_id
       );
 
-    console.log("gratificacionCerrada", gratificacionCerrada);
-
     if (gratificacionCerrada && gratificacionCerrada?.locked_at) {
       return {
         codigo: 400,
@@ -42,6 +40,8 @@ module.exports = async (
         anio,
         filial_id
       );
+
+      console.log('graaaaaaaaaatiiiiiii', gratificaciones);
 
     // Verificar si hay gratificaciones para registrar
     if (gratificaciones.planilla.trabajadores.length === 0) {
@@ -62,6 +62,7 @@ module.exports = async (
         {
           locked_at: new Date(),
           usuario_cierre_id,
+          data_mantenimiento_detalle: gratificaciones.data_mantenimiento_detalle
         },
         transaction
       );
@@ -74,6 +75,7 @@ module.exports = async (
         periodo: `${anio}-${periodo === "JULIO" ? "07" : "12"}`, // ejemplo de mapeo
         locked_at: new Date(),
         usuario_cierre_id,
+        data_mantenimiento_detalle: gratificaciones.data_mantenimiento_detalle
       };
 
       const cierre = await gratificacionRepository.insertarCierreGratificacion(
@@ -92,8 +94,6 @@ module.exports = async (
         anio,
         filial_id
       );
-
-      console.log('trabajadoresConGratificacionCerrada', trabajadoresConGratificacionCerrada);
 
     const trabajadoresConGratificacionCerradas = trabajadoresConGratificacionCerrada.map(
       (gratificacion) => {
@@ -115,8 +115,6 @@ module.exports = async (
       cierre_id
     );
 
-    console.log('dataGratificaciones',dataGratificaciones);
-
     const dataGratificacionesSinCerrar = dataGratificaciones.filter((gratificacion) => {
       return !trabajadoresConGratificacionCerradas.some((gratificacionCerrada) => {
         return (
@@ -127,7 +125,6 @@ module.exports = async (
       });
     });
 
-    console.log('dataGratificacionesSinCerrar', dataGratificacionesSinCerrar);
 
     await gratificacionRepository.insertarVariasGratificaciones(
       dataGratificacionesSinCerrar,

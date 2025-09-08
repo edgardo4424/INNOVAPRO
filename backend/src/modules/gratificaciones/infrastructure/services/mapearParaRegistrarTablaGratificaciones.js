@@ -51,6 +51,8 @@ function mapearParaRegistrarTablaGratificaciones(registros, periodo, anio, filia
     banco: r.banco,
     numero_cuenta: r.numero_cuenta,
     contratos: r.contratos,
+    data_mantenimiento_detalle: r.data_mantenimiento_detalle,
+    info_detalle: r.info_detalle
   }})
 }
 

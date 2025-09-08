@@ -230,7 +230,7 @@ class SequelizeTrabajadorRepository {
 }
 
  async  obtenerTrabajadoresConContratosVigentes(filial_id) {
-  const hoy = moment().startOf("day");
+  //const hoy = moment().startOf("day");
 
   const trabajadores = await Trabajador.findAll({
     where: {
@@ -243,15 +243,13 @@ class SequelizeTrabajadorRepository {
         as: "contratos_laborales",
         where: {
           estado: 1,
-          fecha_inicio: { [Op.lte]: hoy.toDate() }, // iniciados
+          //fecha_inicio: { [Op.lte]: hoy.toDate() }, // iniciados
           filial_id
         },
         required: false,
       },
     ],
   });
-
-  console.log('trabajadores', trabajadores);
 
   // Obtener los ultimos contratos de cada trabajador
   const trabajadoresConUltimosContratos = trabajadores.map((trabajador) => {

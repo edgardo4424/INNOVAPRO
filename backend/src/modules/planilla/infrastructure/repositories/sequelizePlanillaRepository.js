@@ -179,7 +179,7 @@ class SequelizePlanillaRepository {
       const sueldoBase = Number(contrato.sueldo);
 
       const asignacionFamiliar = trabajador.asignacion_familiar
-        ? MONTO_ASIGNACION_FAMILIAR
+        ? +((MONTO_ASIGNACION_FAMILIAR/2).toFixed(2))
         : 0;
 
       const diasLaborados = calcularDiasLaboradosQuincena(
@@ -261,8 +261,6 @@ class SequelizePlanillaRepository {
         quinta_categoria
       ).toFixed(2);
       const totalAPagar = +(sueldoBruto - totalDescuentos).toFixed(2);
-
-      console.log("contrato.fecha_inicio", contrato.fecha_inicio);
 
       listaPlanillaTipoPlanilla.push({
          trabajador_id: trabajador.id,
