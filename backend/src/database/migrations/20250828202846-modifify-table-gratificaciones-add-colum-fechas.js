@@ -28,6 +28,15 @@ module.exports = {
       type: Sequelize.JSON,
       allowNull: false,
     });
+
+    await queryInterface.addColumn("gratificaciones", "data_mantenimiento_detalle", {
+      type: Sequelize.JSON,
+    });
+
+    await queryInterface.addColumn("gratificaciones", "info_detalle", {
+      type: Sequelize.JSON,
+    });
+
   },
 
   async down(queryInterface, Sequelize) {
@@ -37,5 +46,7 @@ module.exports = {
     await queryInterface.removeColumn("gratificaciones", "banco");
     await queryInterface.removeColumn("gratificaciones", "numero_cuenta");
     await queryInterface.removeColumn("gratificaciones", "contratos");
+    await queryInterface.removeColumn("gratificaciones", "data_mantenimiento_detalle");
+    await queryInterface.removeColumn("gratificaciones", "info_detalle");
   },
 };

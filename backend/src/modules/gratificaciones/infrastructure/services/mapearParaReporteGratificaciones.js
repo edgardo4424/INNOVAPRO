@@ -1,9 +1,21 @@
 
 function mapearParaReporteGratificaciones(trabajadoresRaw) {
 
+  console.log('trabajadoresRaw: ', trabajadoresRaw);
+
   return trabajadoresRaw.flatMap(t => {
 
     return t.partes_por_regimen.map(parte => {
+      console.log('parteee', parte);
+
+      const dataMantenimiento = {
+        valor_asignacion_familiar: parte.data_mantenimiento_detalle.MONTO_ASIGNACION_FAMILIAR,
+        valor_falta: parte.data_mantenimiento_detalle.MONTO_FALTA_POR_DIA,
+        valor_hora_extra: parte.data_mantenimiento_detalle.MONTO_POR_HORA_EXTRA,
+        valor_no_computable: parte.data_mantenimiento_detalle.MONTO_NO_COMPUTABLE,
+        valor_bonificacion_essalud: parte.data_mantenimiento_detalle.PORCENTAJE_BONIFICACION_ESSALUD,
+        valor_desc_quinta_categoria_no_domiciliado: parte.data_mantenimiento_detalle.PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO
+      }
 
       const fila = {
         trabajador_id: t.trabajador_id,
@@ -32,7 +44,9 @@ function mapearParaReporteGratificaciones(trabajadoresRaw) {
         total_a_pagar: +(parte.total.toFixed(2)),
         banco: parte.banco,
         numero_cuenta: parte.numero_cuenta,
-        contratos: parte.lista_contratos_ids 
+        contratos: parte.lista_contratos_ids,
+        data_mantenimiento_detalle: dataMantenimiento,
+        info_detalle: parte.info_detalle
       };
       return fila;
     });

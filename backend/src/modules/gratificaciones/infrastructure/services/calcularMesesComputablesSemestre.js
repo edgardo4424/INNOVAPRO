@@ -8,8 +8,6 @@ const factorPorRegimen = (r) => (r === 'GENERAL' ? 1 : r === 'MYPE' ? 0.5 : 0);
 
 function mergeRangosConRegimen(contratos = []) {
 
-  console.log('contratos', contratos);
-
   const arr = contratos
     .map(c => ({
       fecha_inicio: c.fecha_inicio,
@@ -33,7 +31,7 @@ function mergeRangosConRegimen(contratos = []) {
     const lastFinEff = last.fin || INF;
 
     const mismosAtributos =
-      last.regimen == r.regimen &&
+
       last.sistema_salud == r.sistema_salud &&
       last.tipo_contrato == r.tipo_contrato;
 
@@ -48,6 +46,7 @@ function mergeRangosConRegimen(contratos = []) {
       last.fin = maxFin.isSame(INF, 'day') ? null : maxFin;
       last.sueldo_base = r.sueldo_base; // Actualizamos al último sueldo
       last.fecha_fin = r.fecha_fin; // Actualizamos la fecha de fin
+      last.regimen = r.regimen;
     } else {
       out.push(r);
     }

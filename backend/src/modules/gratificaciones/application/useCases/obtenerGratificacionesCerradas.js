@@ -35,12 +35,23 @@ module.exports = async (dataBody, gratificacionRepository) => {
     banco: g.banco,
     numero_cuenta: g.numero_cuenta,
     contratos: g.contratos,
+    data_mantenimiento_detalle: g.data_mantenimiento_detalle,
+    info_detalle: g.info_detalle,
   }));
+
+    const gratificacionCerrada =
+      await gratificacionRepository.obtenerCierreGratificacion(
+        periodo,
+        anio,
+        filial_id
+      );
+
 
   const res = {
     planilla: {
       trabajadores: gratificacionesMapeadas,
     },
+    data_mantenimiento_detalle: gratificacionCerrada.data_mantenimiento_detalle
   };
   return { codigo: 200, respuesta: res };
 }; // Exporta la función para que pueda ser utilizada en otros módulos

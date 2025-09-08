@@ -47,13 +47,15 @@ import {
 //import { formatoFechaBeneficios } from "../utils/formatoFechaBeneficios";
 import { toast } from "sonner";
 import trabajadoresDadosDeBajaService from "../services/trabajadoresDadosDeBaja";
+import { formatearFecha } from "@/modules/gratificacion/utils/formatearFecha";
 
 const GestionTrabajadoresDadosDeBaja = () => {
-
   const [loading, setLoading] = useState(true);
   const [filiales, setFiliales] = useState([]);
   const [trabajadores, setTrabajadores] = useState([]);
   const [trabajadorElegido, setTrabajadorElegido] = useState(null);
+
+  const [trabajadoresDadosDeBaja, setTrabajadoresDadosDeBaja] = useState([]);
 
   const [errorMsg, setErrorMsg] = useState(null);
   const [infoMsg, setInfoMsg] = useState(null);
@@ -62,7 +64,7 @@ const GestionTrabajadoresDadosDeBaja = () => {
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [viewMode, setViewMode] = useState("crear"); // "crear" | "editar" | "ver"
- 
+
   const [form, setForm] = useState({
     filial_id: "",
     trabajador_id: "",
@@ -73,29 +75,41 @@ const GestionTrabajadoresDadosDeBaja = () => {
 
   const fetchFiliales = async () => {
     try {
-      setLoading(true);
       const res = await trabajadoresDadosDeBajaService.getFiliales();
-      console.log('res', res);
+      
       const filialesMapeados = res?.data?.map((f) => ({
         value: f.id,
         label: f.razon_social,
-      }))
+      }));
       setFiliales(filialesMapeados);
     } catch (e) {
       console.error(e?.message ?? "No se pudo cargar la lista de filiales");
     } finally {
-      setLoading(false);
     }
   };
 
   const obtenerTrabajadores = async (filial_id) => {
     try {
-      setLoading(true);
-      const res = await trabajadoresDadosDeBajaService.getTrabajadoresConContratosVigentes({filial_id});
-      console.log('res', res);
-      
+      const res =
+        await trabajadoresDadosDeBajaService.getTrabajadoresConContratosVigentes(
+          { filial_id }
+        );
+
       setTrabajadores(res.data.trabajadores);
-      
+    } catch (e) {
+      console.error(e?.message ?? "No se pudo cargar la lista de trabajadores");
+    } finally {
+    }
+  };
+
+  const fetchTrabajadoresDadosDeBaja = async () => {
+    try {
+     
+      setLoading(true);
+      const res =
+        await trabajadoresDadosDeBajaService.getTrabajadoresDadosDeBaja();
+    
+      setTrabajadoresDadosDeBaja(res.data);
     } catch (e) {
       console.error(e?.message ?? "No se pudo cargar la lista de trabajadores");
     } finally {
@@ -104,41 +118,46 @@ const GestionTrabajadoresDadosDeBaja = () => {
   };
 
   useEffect(() => {
-    fetchFiliales();
+    fetchTrabajadoresDadosDeBaja();
   }, []);
-
 
   const openCreate = () => {
     setViewMode("crear");
+    Promise.all([
+      fetchFiliales(),
+      obtenerTrabajadores(form?.filial_id || ""),
+    ]).finally(() => {
+      setLoading(false);
+    });
+
     setForm({
-    filial_id: "",
-    trabajador_id: "",
-    fecha_baja: "",
-    motivo: "",
-    observacion: "",
-  });
-  setTrabajadorElegido(null);
+      filial_id: "",
+      trabajador_id: "",
+      fecha_baja: "",
+      motivo: "",
+      observacion: "",
+    });
+    setTrabajadorElegido(null);
     setDialogOpen(true);
   };
 
-  
   const handleSave = async () => {
     try {
       setErrorMsg(null);
-      
+
       if (viewMode === "crear") {
         await trabajadoresDadosDeBajaService.darDeBajaTrabajador(form);
         toast.success("Trabajador dado de baja correctamente");
-      } 
+        await fetchTrabajadoresDadosDeBaja();
+      }
       setDialogOpen(false);
     } catch (e) {
-      console.log('eerrr', e);
+
       toast.error(
-        e?.response?.data?.mensaje ??  "No se pudo dar de baja al trabajador"
+        e?.response?.data?.mensaje ?? "No se pudo dar de baja al trabajador"
       );
     }
   };
-
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -212,7 +231,41 @@ const GestionTrabajadoresDadosDeBaja = () => {
                 </tr>
               </thead>
               <tbody className="divide-y">
-                
+                {loading && (
+                  <tr>
+                    <td
+                      className="px-4 py-6 text-center text-gray-500"
+                      colSpan={7}
+                    >
+                      Cargando...
+                    </td>
+                  </tr>
+                )}
+
+                {!loading &&
+                  trabajadoresDadosDeBaja.map((t) => {
+                    return (
+                      <tr key={t.id} className="hover:bg-gray-50/50">
+                        <td className="px-4 py-3">
+                          {t.trabajador.numero_documento ?? "-"}
+                        </td>
+                        <td className="px-4 py-3">
+                          {`${t.trabajador.nombres ?? ""} ${
+                            t.trabajador.apellidos ?? ""
+                          }`.trim() || "-"}
+                        </td>
+
+                        <td className="px-4 py-3">
+                          {formatearFecha(t.fecha_ingreso_real)}
+                        </td>
+                        <td className="px-4 py-3">{formatearFecha(t.fecha_baja)}</td>
+                        <td className="px-4 py-3 ">{t.motivo}</td>
+                        <td className="px-4 py-3 ">{t.estado_liquidacion}</td>
+                        <td className="px-4 py-3 "></td>
+                       
+                      </tr>
+                    );
+                  })}
               </tbody>
             </table>
           </div>
@@ -224,7 +277,6 @@ const GestionTrabajadoresDadosDeBaja = () => {
             <AlertDialogHeader>
               <AlertDialogTitle>
                 {viewMode === "crear" && "Dar de baja a un Trabajador"}
-               
               </AlertDialogTitle>
               <AlertDialogDescription>
                 {viewMode === "ver"
@@ -239,12 +291,12 @@ const GestionTrabajadoresDadosDeBaja = () => {
                 <Label>Filial</Label>
                 <Select
                   value={form.filial_id}
-                  onValueChange={async(val) =>{
+                  onValueChange={async (val) => {
                     setForm((prevForm) => ({
                       ...prevForm,
                       filial_id: val,
-                    }))
-                    await obtenerTrabajadores(val)
+                    }));
+                    await obtenerTrabajadores(val);
                   }}
                   disabled={viewMode === "ver" || viewMode === "editar"}
                 >
@@ -266,16 +318,17 @@ const GestionTrabajadoresDadosDeBaja = () => {
                 <Label>Trabajador</Label>
                 <Select
                   value={form.trabajador_id}
-                  onValueChange={(val) =>{
-                   
-                   const trabajadorElegido = trabajadores.find((t) => t.id === val)
+                  onValueChange={(val) => {
+                    const trabajadorElegido = trabajadores.find(
+                      (t) => t.id === val
+                    );
 
-                  setTrabajadorElegido(trabajadorElegido)
+                    setTrabajadorElegido(trabajadorElegido);
                     setForm((prevForm) => ({
                       ...prevForm,
                       trabajador_id: val,
-                      contrato_id: trabajadorElegido?.ultimo_contrato?.id
-                    }))
+                      contrato_id: trabajadorElegido?.ultimo_contrato?.id,
+                    }));
                   }}
                   disabled={viewMode === "ver" || viewMode === "editar"}
                 >
@@ -292,13 +345,27 @@ const GestionTrabajadoresDadosDeBaja = () => {
                 </Select>
               </div>
 
-               {/* Contrato */}
+              {/* Contrato */}
               <div className="grid gap-1">
                 <Label>Último contrato</Label>
-               
-                <div className="text-sm leading-6 flex justify-center gap-4">
-                  <div>Fecha inicio: {trabajadorElegido?.ultimo_contrato?.fecha_inicio}</div>
-                  <div>Fecha fin: {trabajadorElegido?.ultimo_contrato?.fecha_fin}</div>
+
+                <div className="text-sm flex justify-center gap-16">
+                  <div className="">
+                    <div>Fecha inicio</div>
+                    <div>
+                      {formatearFecha(
+                        trabajadorElegido?.ultimo_contrato?.fecha_inicio
+                      )}
+                    </div>
+                  </div>
+                  <div className="">
+                    <div>Fecha fin</div>
+                    <div>
+                      {formatearFecha(
+                        trabajadorElegido?.ultimo_contrato?.fecha_fin
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
 

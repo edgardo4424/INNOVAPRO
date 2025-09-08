@@ -230,6 +230,9 @@ db.planilla_quincenal = PlanillaQuincenal;
 const { CierrePlanillaQuincenal } = require("../../modules/planilla/infrastructure/models/CierrePlanillaQuincenalModel");
 db.cierres_planilla_quincenal = CierrePlanillaQuincenal;
 
+const { BajasTrabajadores } = require("../../modules/dar_baja_trabajadores/infrastructure/models/BajasTrabajadoresModel");
+db.bajas_trabajadores = BajasTrabajadores;
+
 // ✅ Solo se asocian los que tienen .associate()
 if (db.contactos.associate) db.contactos.associate(db);
 if (db.clientes.associate) db.clientes.associate(db);
@@ -269,6 +272,7 @@ if(db.gratificaciones) db.gratificaciones.associate(db)
 if(db.cierres_gratificaciones) db.cierres_gratificaciones.associate(db)
 if(db.planilla_quincenal) db.planilla_quincenal.associate(db)
 if(db.cierres_planilla_quincenal) db.cierres_planilla_quincenal.associate(db)
+if(db.bajas_trabajadores) db.bajas_trabajadores.associate(db)
 
 // ? Conexion Facturacion
 if(db.factura.associate) db.factura.associate(db);

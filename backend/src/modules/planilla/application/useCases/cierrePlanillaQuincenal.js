@@ -56,6 +56,7 @@ module.exports = async (
         {
           locked_at: new Date(),
           usuario_cierre_id,
+          data_mantenimiento_detalle: planillaQuincenal.data_mantenimiento_detalle
         },
         transaction
       );
@@ -67,6 +68,7 @@ module.exports = async (
         periodo: fecha_anio_mes,
         locked_at: new Date(),
         usuario_cierre_id,
+        data_mantenimiento_detalle: planillaQuincenal.data_mantenimiento_detalle
       };
       const cierrePlanillaQuincenal =
         await planillaQuincenalRepository.insertarCierrePlanillaQuincenal(
@@ -103,7 +105,8 @@ module.exports = async (
       fecha_anio_mes,
       filial_id,
       usuario_cierre_id,
-      cierre_planilla_quincenal_id
+      cierre_planilla_quincenal_id,
+      planillaQuincenal.data_mantenimiento_detalle
     );
 
     console.log('dataPlanillaQuincenal', dataPlanillaQuincenal);

@@ -20,33 +20,6 @@ module.exports = async (
 
     let periodo = mes <= 6 ? 'JULIO' : 'DICIEMBRE';
     
-    // Verificar si ya fue generado la gratificacion para ese trabajador hasta ese momento
-    
-    const gratificacion_del_trabajador =
-      await gratificacionRepository.obtenerGratificacionPorTrabajador(
-        periodo,
-        anio,
-        filial_id,
-        trabajador_id,
-        transaction
-      );
-
-      console.log('gratificacion_del_trabajador',gratificacion_del_trabajador);
-
-      
-      let cierreId = null;
-
-
-    if (gratificacion_del_trabajador.length > 0) {
-      return {
-        codigo: 400,
-        respuesta: {
-          mensaje: "La gratificacion ya fue cerrada para ese trabajador",
-        },
-      };
-    } else {
-      // Si no fue cerrada, cerrarla
-
       // Verificar si ya hay un registro en cierres_Gratificaciones
       const cierreGratificacion =
         await gratificacionRepository.obtenerCierreGratificacion(
@@ -86,12 +59,7 @@ module.exports = async (
         // Registrar la grati del trabajador
         // Calcular gratificaciones
 
-        console.log({
-          periodo,
-          anio,
-          filial_id,
-          trabajador_id
-        });
+      
         const gratificacionesTrab =
           await gratificacionRepository.calcularGratificacionTruncaPorTrabajador(
             periodo,
@@ -101,8 +69,7 @@ module.exports = async (
             transaction
           );
 
-          console.log('gratificacionesTrab',gratificacionesTrab);
-
+       
           const gratificacionDelTrabajador = gratificacionesTrab.planilla.trabajadores; 
 
         // Verificar si hay gratificaciones para registrar
@@ -122,14 +89,13 @@ module.exports = async (
           cierreId
         );
 
+
         await gratificacionRepository.insertarVariasGratificaciones(
           dataGratificaciones,
           transaction
         );
       }
-    }
 
- 
     return {
       codigo: 201,
       respuesta: {
