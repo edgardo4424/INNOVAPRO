@@ -8,5 +8,6 @@ router.use(verificarToken); // Verificamos el token y el rol de Gerente para tod
 
 // 📌 Rutas protegidas solo para Gerencia
 router.post("/", darDeBajaController.darBajaTrabajador);
+router.get("/", darDeBajaController.obtenerTrabajadoresDadosDeBaja);
 
 module.exports = router;

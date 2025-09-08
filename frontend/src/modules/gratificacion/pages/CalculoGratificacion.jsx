@@ -7,7 +7,10 @@ import { viGratificacion } from "../utils/valorInicial";
 import { format } from "date-fns";
 import { ModalCerrarGratificacion } from "../components/ModalCerrarGratificacion";
 
-const CalculoGratificacion = () => {
+const CalculoGratificacion = ({setDataMantenimiento, setEsCalculo}) => {
+
+
+  setEsCalculo(true)
   const [filiales, setFiliales] = useState([]);
 
   // ?? loading
@@ -28,7 +31,10 @@ const CalculoGratificacion = () => {
   const buscarGratificacion = async () => {
     try {
       setLoading(true);
+      setEsCalculo(true)
+
       const res = await gratificacionService.obtenerGratificaciones(filtro);
+      setDataMantenimiento(res.data_mantenimiento_detalle)
       console.log('ressss', res);
       setGratificacion(res);
     } catch (error) {
@@ -38,6 +44,7 @@ const CalculoGratificacion = () => {
   };
 
   useEffect(() => {
+    
     const obtenerFiliales = async () => {
       try {
         const res = await gratificacionService.obtenerFiliales();

@@ -7,6 +7,7 @@ const obtenerBonosPorTrabajadorId = require("../../application/useCases/obtenerB
 const SequelizeBonoRepository = require("../../infraestructure/repositories/sequelizeBonoRepository");
 
 const bonoRepository = new SequelizeBonoRepository();
+
 const BonosController = {
    async crearBono(req, res) {
       try {

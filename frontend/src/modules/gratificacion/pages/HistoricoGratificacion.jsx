@@ -6,7 +6,9 @@ import gratificacionService from "../services/gratificacionService";
 import { viGratificacion } from "../utils/valorInicial";
 import { format } from "date-fns";
 
-const HistoricoGratificacion = () => {
+const HistoricoGratificacion = ({setEsCalculo}) => {
+
+  setEsCalculo(false)
   const [filiales, setFiliales] = useState([]);
 
   // ?? loading
@@ -26,6 +28,7 @@ const HistoricoGratificacion = () => {
 
   const buscarGratificacionCerrada = async () => {
     try {
+      setEsCalculo(false)
       setLoading(true);
       const res = await gratificacionService.obtenerGratificacionesCerradas(filtro);
       setGratificacion(res);
@@ -36,6 +39,7 @@ const HistoricoGratificacion = () => {
   };
 
   useEffect(() => {
+    
     const obtenerFiliales = async () => {
       try {
         const res = await gratificacionService.obtenerFiliales();

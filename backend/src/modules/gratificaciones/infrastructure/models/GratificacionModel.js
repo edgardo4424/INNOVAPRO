@@ -2,95 +2,95 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../../../../config/db"); // Asegúrate de importar correctamente tu instancia de Sequelize
 
 const Gratificacion = sequelize.define(
-   "gratificaciones",
-   {
-       id: {
+  "gratificaciones",
+  {
+    id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
-      primaryKey: true
+      primaryKey: true,
     },
     trabajador_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-       references: {
+      references: {
         model: "trabajadores",
         key: "id",
       },
     },
     tipo_contrato: {
-      type: DataTypes.ENUM('PLANILLA', 'HONORARIOS'),
+      type: DataTypes.ENUM("PLANILLA", "HONORARIOS"),
       allowNull: false,
-      defaultValue: 'PLANILLA'
+      defaultValue: "PLANILLA",
     },
     periodo: {
       type: DataTypes.STRING(7),
-      allowNull: false
+      allowNull: false,
     },
     fecha_calculo: {
       type: DataTypes.DATEONLY,
-      allowNull: false
+      allowNull: false,
     },
     regimen: {
-      type: DataTypes.ENUM('GENERAL', 'MYPE', 'MICRO'),
-      allowNull: false
+      type: DataTypes.ENUM("GENERAL", "MYPE", "MICRO"),
+      allowNull: false,
     },
     factor_regimen: {
       type: DataTypes.DECIMAL(4, 2),
       allowNull: false,
-      comment: '1.00 general, 0.50 mype, 0.00 micro'
+      comment: "1.00 general, 0.50 mype, 0.00 micro",
     },
     sueldo_base: {
       type: DataTypes.DECIMAL(10, 2),
-      allowNull: false
+      allowNull: false,
     },
     asignacion_familiar: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
-      defaultValue: 0.00
+      defaultValue: 0.0,
     },
     promedio_horas_extras: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
-      defaultValue: 0.00
+      defaultValue: 0.0,
     },
     promedio_bono_obra: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
-      defaultValue: 0.00
+      defaultValue: 0.0,
     },
     remuneracion_computable: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
-      comment: 'suma de los 4 componentes'
+      comment: "suma de los 4 componentes",
     },
     meses_computables: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
     },
     gratificacion_bruta: {
       type: DataTypes.DECIMAL(10, 2),
-      allowNull: false
+      allowNull: false,
     },
     faltas_dias: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0
+      defaultValue: 0,
     },
     faltas_monto: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
-      defaultValue: 0.00
+      defaultValue: 0.0,
     },
     no_computable: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
-      defaultValue: 0.00,
-      comment: 'solo informativo, no entra a RC'
+      defaultValue: 0.0,
+      comment: "solo informativo, no entra a RC",
     },
     gratificacion_neta: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
-      comment: 'grati bruta - faltas'
+      comment: "grati bruta - faltas",
     },
     /* sistema_salud: {
       type: DataTypes.ENUM('ESSALUD', 'EPS'),
@@ -100,30 +100,30 @@ const Gratificacion = sequelize.define(
     bonificacion_extraordinaria: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
-      defaultValue: 0.00
+      defaultValue: 0.0,
     },
     renta_5ta: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
-      defaultValue: 0.00
+      defaultValue: 0.0,
     },
     adelantos: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
-      defaultValue: 0.00
+      defaultValue: 0.0,
     },
     total_pagar: {
       type: DataTypes.DECIMAL(10, 2),
-      allowNull: false
+      allowNull: false,
     },
     locked_at: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: true,
     },
     usuario_cierre_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-       references: {
+      references: {
         model: "usuarios",
         key: "id",
       },
@@ -131,7 +131,7 @@ const Gratificacion = sequelize.define(
     filial_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-       references: {
+      references: {
         model: "empresas_proveedoras",
         key: "id",
       },
@@ -139,7 +139,7 @@ const Gratificacion = sequelize.define(
     cierre_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-       references: {
+      references: {
         model: "cierres_gratificaciones",
         key: "id",
       },
@@ -147,12 +147,12 @@ const Gratificacion = sequelize.define(
     fecha_ingreso: {
       type: DataTypes.DATEONLY,
       allowNull: false,
-   },
-   fecha_fin: {
+    },
+    fecha_fin: {
       type: DataTypes.DATEONLY,
       allowNull: false,
-   },
-     banco: {
+    },
+    banco: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -160,44 +160,52 @@ const Gratificacion = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-     contratos: {
-         type: DataTypes.JSON,
-         allowNull: false,
-      },
+    contratos: {
+      type: DataTypes.JSON,
+      allowNull: false,
+    },
+
+    data_mantenimiento_detalle: {
+      type: DataTypes.JSON,
+    },
+    info_detalle: {
+      type: DataTypes.JSON,
+    },
   },
-   {
-      timestamps: true,
-      tableName: "gratificaciones",
-       indexes: [
+  {
+    timestamps: true,
+    tableName: "gratificaciones",
+    /*   indexes: [
       {
         unique: true,
-        fields: ['trabajador_id', 'periodo', 'regimen', 'filial_id', 'cierre_id, fecha_ingreso, fecha_fin'],
+        fields: ['trabajador_id', 'periodo', 'regimen', 'filial_id', 'cierre_id, fecha_ingreso, fecha_fin', 'contratos'],
+        fields: ['contratos'],
         name: 'uniq_trabajador_periodo_extendido'
       }
-    ]
-   }
+    ] */
+  }
 );
 
 Gratificacion.associate = (models) => {
-    Gratificacion.belongsTo(models.trabajadores, {
-        foreignKey: 'trabajador_id',
-        as: 'trabajador'
-      });
+  Gratificacion.belongsTo(models.trabajadores, {
+    foreignKey: "trabajador_id",
+    as: "trabajador",
+  });
 
-      Gratificacion.belongsTo(models.usuarios, {
-        foreignKey: 'usuario_cierre_id',
-        as: 'usuarioCierre'
-      });
+  Gratificacion.belongsTo(models.usuarios, {
+    foreignKey: "usuario_cierre_id",
+    as: "usuarioCierre",
+  });
 
-      Gratificacion.belongsTo(models.empresas_proveedoras, {
-        foreignKey: 'filial_id',
-        as: 'filial'
-      });
+  Gratificacion.belongsTo(models.empresas_proveedoras, {
+    foreignKey: "filial_id",
+    as: "filial",
+  });
 
-      Gratificacion.belongsTo(models.cierres_gratificaciones, {
-        foreignKey: 'cierre_id',
-        as: 'cierreGratificacion'
-      });
+  Gratificacion.belongsTo(models.cierres_gratificaciones, {
+    foreignKey: "cierre_id",
+    as: "cierreGratificacion",
+  });
 };
 
 module.exports = { Gratificacion }; // Exporta el modelo para que pueda ser utilizado en otros módulos

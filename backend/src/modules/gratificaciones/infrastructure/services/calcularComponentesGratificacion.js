@@ -8,6 +8,7 @@ const SequelizeBonoRepository = require("../../../bonos/infraestructure/reposito
 const SequelizeAdelantoSueldoRepository = require("../../../adelanto_sueldo/infraestructure/repositories/sequlizeAdelantoSueldoRepository");
 const calcularPromedioHorasExtras = require("../../../../services/calculoHorasEsxtras");
 const calculaPromedioBonos = require("../../../../services/calculoBonos");
+const { mapearInfoDetalleGratificacion } = require("./mapearInfoDetalleGratificacion");
 
 const asistenciaRepository = new SequelizeAsistenciaRepository();
 const bonoRepository = new SequelizeBonoRepository();
@@ -165,11 +166,6 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
 
               // Obtener los contratos que esta dentro del rango p.fecha_inicio y fechaFin
 
-              console.log({
-                fecha_inicio: p.fecha_inicio,
-                fechaFin
-              });
-
               let fechaInicioPeriodo = null;
               let fechaFinPeriodo = null;
 
@@ -194,11 +190,13 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
 
               const lista_id_contratos = contratosQueCumplen.map((c) => c.id);
 
-              console.log('lista_id_contratos',lista_id_contratos);
 
               const banco = contratosQueCumplen[contratosQueCumplen.length - 1].banco || ""
               const numeroCuenta= contratosQueCumplen[contratosQueCumplen.length - 1].numero_cuenta || ""
 
+              const info_detalle = mapearInfoDetalleGratificacion({asistencias: asistenciasDelTrabajador, bonos: bonosDelTrabajador});
+
+              console.log('info_detalle', info_detalle);
               return {
                 tipo_contrato: p.tipo_contrato,
                 regimen: p.regimen,
@@ -224,7 +222,9 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
 
                 banco: banco,
                 numero_cuenta: numeroCuenta,
-                lista_contratos_ids: lista_id_contratos
+                lista_contratos_ids: lista_id_contratos,
+                data_mantenimiento_detalle: dataMantenimiento,
+                info_detalle: info_detalle
               };
             })
           );
