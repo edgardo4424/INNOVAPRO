@@ -272,12 +272,21 @@ class SequelizePlanillaRepository {
 
       const quinta_categoria = found ? +(retencion_base_mes / 2).toFixed(2) : 0;
 
+       const totalAdelantosSueldo =
+                await adelantoSueldoRepository.obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
+                  trabajador.id,
+                  "simple",
+                  contrato.fecha_inicio,
+                  contrato.fecha_fin
+                );
+
       const totalDescuentos = +(
         onp +
         afp +
         seguro +
         comision +
-        quinta_categoria
+        quinta_categoria +
+        totalAdelantosSueldo
       ).toFixed(2);
       const totalAPagar = +(sueldoBruto - totalDescuentos).toFixed(2);
 
@@ -309,6 +318,8 @@ class SequelizePlanillaRepository {
         banco: contrato.banco,
         numero_cuenta: contrato.numero_cuenta,
         tipo_afp: sistema_pension == "AFP" ? tipo_afp : "ONP",
+
+        adelanto_prestamo: totalAdelantosSueldo
       });
     }
 
@@ -331,7 +342,16 @@ class SequelizePlanillaRepository {
         (sueldoBase / 30) * diasLaborados) 
       .toFixed(2);
 
-      const totalAPagar = sueldoQuincenal;
+      
+       const totalAdelantosSueldo =
+                await adelantoSueldoRepository.obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
+                  trabajador.id,
+                  "simple",
+                  contrato.fecha_inicio,
+                  contrato.fecha_fin
+                );
+
+      const totalAPagar = sueldoQuincenal - totalAdelantosSueldo;
       listaPlanillaTipoHonorarios.push({
          trabajador_id: trabajador.id,
         tipo_documento: trabajador.tipo_documento,
@@ -349,7 +369,9 @@ class SequelizePlanillaRepository {
         total_a_pagar: totalAPagar,
 
         banco: contrato.banco,
-        numero_cuenta: contrato.numero_cuenta
+        numero_cuenta: contrato.numero_cuenta,
+
+        adelanto_prestamo: totalAdelantosSueldo
       });
     }
 
