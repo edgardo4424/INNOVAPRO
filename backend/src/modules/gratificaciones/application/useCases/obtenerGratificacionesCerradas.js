@@ -46,12 +46,11 @@ module.exports = async (dataBody, gratificacionRepository) => {
         filial_id
       );
 
-
   const res = {
     planilla: {
       trabajadores: gratificacionesMapeadas,
     },
-    data_mantenimiento_detalle: gratificacionCerrada.data_mantenimiento_detalle
+    data_mantenimiento_detalle: gratificacionCerrada ? gratificacionCerrada.data_mantenimiento_detalle : null
   };
   return { codigo: 200, respuesta: res };
 }; // Exporta la función para que pueda ser utilizada en otros módulos
