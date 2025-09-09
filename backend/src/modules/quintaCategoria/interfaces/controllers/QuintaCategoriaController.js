@@ -54,7 +54,6 @@ async function _recortarPreviosDesdeCutoff({
   const m = Number(mes) || 0;
   if (!dj || !aplica || m < aplica) return; // recortamos solo cuando mes >= aplica
 
-  // ⚠️ IMPORTANTE: este UC espera 'trabajadorId' (camelCase), no 'trabajador_id'
   const baseExec = {
     trabajadorId: Number(trabajadorId) || undefined,
     dni,
@@ -444,6 +443,20 @@ module.exports = {
       const djSinPrevios = await sinPrevRepo.obtenerPorDniAnio({ dni, anio });
       const sinPreviosAplicaDesde = Number(djSinPrevios?.aplica_desde_mes || 0) || null;
 
+      const djMulti = await repoMulti.obtenerPorDniAnio({ dni, anio });
+      const multiAplicaDesde = Number(djMulti?.aplica_desde_mes || 0) || null;
+
+      const certificado = await certRepo.obtenerPorDniAnio({ dni, anio });
+      const certificadoDTO = certificado ? {
+        id: certificado.id,
+        renta_bruta_total: Number(certificado.renta_bruta_total || 0),
+        remuneraciones: Number(certificado.remuneraciones || 0),
+        gratificaciones: Number(certificado.gratificaciones || 0),
+        otros: Number(certificado.otros || 0),
+        asignacion_familiar: Number(certificado.asignacion_familiar || 0),
+        retenciones_previas: Number(certificado.retenciones_previas || 0)
+      } : null;
+
       // 2) BASE de ingresos previos (recortada si aplica)
       const obtenerPrevUC = new ObtenerIngresosPrevios();
       let base = await obtenerPrevUC.execute({
@@ -453,7 +466,7 @@ module.exports = {
         mes,
         remuneracionMensualActual,
         fuentePrevios,
-        certificadoQuinta: req.body.certificadoQuinta || null,
+        certificadoQuinta: (fuentePrevios === 'CERTIFICADO' && certificadoDTO) ? certificadoDTO : null,
         filialIdPreferida: filialActualId,
         contratoId,
         asignacion_familiar: req.body.__tiene_asignacion_familiar || false,
@@ -525,7 +538,7 @@ module.exports = {
       const dto = await calcularUC.execute(payload);
 
       // Si somos secundarios la retención base del mes = 0
-      if (soportes.meta.es_secundaria) {
+      if (soportes.meta.es_secundaria || payload?._saltarRetener) {
         dto.retencion_base_mes = 0;
         dto.retencion_adicional_mes = 0;
       }

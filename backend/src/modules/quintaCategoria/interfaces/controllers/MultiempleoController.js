@@ -22,35 +22,47 @@ function absolutize(url, req) {
 module.exports = {
     async obtenerDeclaracion(req, res) {
         try {
-            const { dni, anio } = req.query || {};
-            const out = await obtenerUC.execute({ dni, anio: Number(anio) });
-            if (out?.archivo_url) out.archivo_url = absolutize(out.archivo_url, req);
-            return res.status(200).json({ ok: true, data: out });
-        } catch (err) {
-            return res.status(err.status || 500).json({ ok: false, message: err.message || "Error interno al obtener declaración de quinta categoría"})
+            const { dni, anio } = req.query;
+            const dj = await obtenerUC.obtenerPorDniAnio({ dni, anio: Number(anio) || 0 });
+            if (!dj) return res.status(200).json({ ok: true, data: { found: false } });
+            const d = dj.toJSON();
+            return res.status(200).json({
+            ok: true,
+            data: {
+                found: true,
+                id: d.id,
+                aplica_desde_mes: Number(d.aplica_desde_mes || 0),
+                es_secundaria: !!d.es_secundaria,
+                principal_ruc: d.principal_ruc || null,
+                principal_nombre: d.principal_nombre || null,
+                observaciones: d.observaciones || null,
+                archivo_url: d.archivo_url || null,
+            }
+            });
+        } catch (e) {
+            console.error('[Multiempleo] obtener error:', e);
+            return res.status(500).json({ ok: false, message: e.message || 'Error' });
         }
     },
 
     async insertarDeclaracion(req, res) {
         try {
-            const { dni, anio } = req.body;
-            // Validamos
-            const certificado = await obtenerCertificadoUC.execute({ dni, anio: Number(anio) });
-            if (certificado?.found) {
-                return res.status(409).json({ ok: false, message:"No puede registrar Multiempleo porque ya exite un Certificado de Quinta."});
-            }
-            const sinPrevios = await obtenerSinPreviosUC.execute({ dni, anio: Number(anio) });
-            if (sinPrevios?.found) {
-                return res.status(409).json({ ok: false, message:"No puede registrar Multiempleo porque ya existe una Declaración Jurada 'Sin ingresos previos'."});
-            }
-            
-            const guardado = await registrarUC.execute(req.body || {});
-            const data = (guardado && typeof guardado.toJSON === 'function') ? guardado.toJSON() : guardado;
-            if (data?.archivo_url) data.archivo_url = absolutize(data.archivo_url, req);
-            return res.status(201).json({ ok: true, data });
-        } catch(err) {
-            console.error("Error insertarDeclaración Multiempleo: ", err);
-            return res.status(err.status || 500).json({ ok: false, message: err.message || "Error interno al insertar declaración de quinta"})
+            const b = req.body || {};
+            const nuevo = await obtenerUC.registrarOficial({
+            dni: b.dni,
+            anio: Number(b.anio),
+            aplica_desde_mes: Number(b.aplica_desde_mes),
+            es_secundaria: !!b.es_secundaria,
+            principal_ruc: b.principal_ruc || null,
+            principal_nombre: b.principal_nombre || null,
+            observaciones: b.observaciones || null,
+            archivo_url: b.archivo_url || null,
+            es_oficial: true,
+            });
+            return res.status(201).json({ ok: true, data: { id: nuevo.id } });
+        } catch (e) {
+            console.error('[Multiempleo] registrar error:', e);
+            return res.status(500).json({ ok: false, message: e.message || 'Error' });
         }
     },
 }

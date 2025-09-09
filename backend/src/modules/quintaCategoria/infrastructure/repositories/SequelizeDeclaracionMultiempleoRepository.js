@@ -3,17 +3,24 @@ const Model = require('../models/DeclaracionMultiempleoModel');
 const DetalleModel = require('../models/DeclaracionMultiempleoDetalleModel');
 
 class SequelizeDeclaracionMultiempleoRepository extends DeclaracionMultiempleoRepository {
-    async insertarPorDniAnio(entidad) {
-        const { dni, anio } = entidad;
-        const [fila, creado] = await Model.findOrCreate({ where: { dni, anio }, defaults: entidad });
-        if (!creado) {
-            await fila.update(entidad);
+    async registrarOficial(dto) {
+        if (!dto?.dni || !dto?.anio || !dto?.aplica_desde_mes) {
+        throw new Error('Faltan campos obligatorios (dni, anio, aplica_desde_mes)');
         }
-        return fila;
+        await Model.update(
+            { es_oficial: false },
+            { where: { dni: dto.dni, anio: Number(dto.anio) } }
+        );
+        dto.es_oficial = true;
+        return await Model.create(dto);
     }
 
     async obtenerPorDniAnio({ dni, anio }) {
-        return await Model.findOne({ where: { dni, anio, estado: "VIGENTE" } });
+        if (!dni || !anio) return null;
+        return await Model.findOne({
+            where: { dni, anio: Number(anio), es_oficial: true },
+            order: [['updated_at', 'DESC'], ['id', 'DESC']],
+        });
     }
 
     async insertarDetalles(multiempleoId, detalles=[]) {

@@ -12,15 +12,15 @@ export async function uploadQuintaArchivo(categoria, dni, anio, archivo) {
   const form = new FormData();
   form.append('file', archivo);
 
-  const resp = await api.post(
-    `/archivos/quinta/upload`, 
-    form,
-    {
-      headers: { "Content-Type": "multipart/form-data" },
-      params: { categoria, dni, anio }
-    }
-  );
+  const { data } = await api.post("/archivos/quinta/upload", form, {
+    headers: { "Content-Type": "multipart/form-data", "Cache-Control": "no-cache" },
+    params: { categoria, dni, anio },
+  });
 
-  return resp.data?.url || null;
+  const url =
+    data?.url ??
+    data?.data?.url ??
+    (data?.ok ? data?.data?.url : null);
 
+  return url || null;
 }

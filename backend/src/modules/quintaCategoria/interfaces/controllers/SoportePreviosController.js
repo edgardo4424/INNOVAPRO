@@ -28,31 +28,53 @@ function absolutize(url, req) {
 module.exports = {
   async obtenerCertificado(req, res) {
     try {
-      const out = await obtenerCertificadoUC.execute({ dni: req.query?.dni, anio: Number(req.query?.anio) });
-      if (out?.archivo_url) out.archivo_url = absolutize(out.archivo_url, req);
-      return res.status(200).json({ ok: true, data: out });
-    } catch (error) { return res.status(error.status||500).json({ ok:false, message:error.message }); }
+      const { dni, anio } = req.query;
+      const certificado = await certificadoRepo.obtenerPorDniAnio({ dni, anio: Number(anio) || 0 });
+      if (!certificado) return res.status(200).json({ ok: true, data: { found: false } });
+      const data = certificado.toJSON();
+      return res.status(200).json({
+        ok: true,
+        data: {
+          found: true,
+          id: data.id, empresa_ruc: data.empresa_ruc, empresa_razon_social: data.empresa_razon_social,
+          renta_bruta_total: Number(data.renta_bruta_total || 0),
+          remuneraciones: Number(data.remuneraciones || 0),
+          gratificaciones: Number(data.gratificaciones || 0),
+          otros: Number(data.otros || 0),
+          asignacion_familiar: Number(data.asignacion_familiar || 0),
+          retenciones_previas: Number(data.retenciones_previas || 0),
+          fecha_emision: data.fecha_emision || null,
+          archivo_url: data.archivo_url || null
+        }
+      });
+    } catch (e) {
+      console.error('[Certificado] obtener error:', e);
+      return res.status(500).json({ ok: false, message: e.message || 'Error' });
+    }
   },
 
   async insertarCertificado(req, res) {
-    const { dni, anio, aplica_desde_mes } = req.body;
-    if (!aplica_desde_mes || aplica_desde_mes < 1 || aplica_desde_mes > 12 ) {
-        return res.status(400).json({ ok: false, message:'aplica_desde_mes (1..12) es obligatorio'})
-    }
-    const ultimoCerrado = await quintaRepo.ultimoMesCerradoPorDniAnio({ dni, anio: Number(anio) });
-    if (aplica_desde_mes <= ultimoCerrado) {
-        return res.status(409).json({ ok: false, message:`No se puede registrar/editar soportes con aplica_desde_mes <= mes cerrado (${ultimoCerrado}).`})
-    }
-    const multi = await multiEmpleoRepo.obtenerPorDniAnio({ dni, anio });
-    if (multi?.found) {
-        return res.status(409).json({ ok: false, message:"No puede registrar Certificado porque ya existe Multiempleo en este año."});
-    }
     try {
-      const guardado = await insertarCertificadoUC.execute(req.body || {});
-      const data = guardado?.toJSON?.() ?? guardado;
-      if(data?.archivo_url) data.archivo_url = absolutize(data.archivo_url, req);
-      return res.status(201).json({ ok: true, data });
-    } catch (error) { return res.status(error.status||500).json({ ok:false, message:error.message }); }
+      const body = req.body || {};
+      const nuevo = await certificadoRepo.registrarOficial({
+        dni: body.dni, anio: Number(body.anio),
+        empresa_ruc: body.empresa_ruc || null,
+        empresa_razon_social: body.empresa_razon_social || null,
+        renta_bruta_total: Number(body.renta_bruta_total || 0),
+        remuneraciones: Number(body.remuneraciones || 0),
+        gratificaciones: Number(body.gratificaciones || 0),
+        otros: Number(body.otros || 0),
+        asignacion_familiar: Number(body.asignacion_familiar || 0),
+        retenciones_previas: Number(body.retenciones_previas || 0),
+        fecha_emision: body.fecha_emision || null,
+        archivo_url: body.archivo_url || null,
+        es_oficial: true,
+      });
+      return res.status(201).json({ ok: true, data: { id: nuevo.id } });
+    } catch (e) {
+      console.error('[Certificado] registrar error:', e);
+      return res.status(500).json({ ok: false, message: e.message || 'Error' });
+    }
   },
 
   async obtenerSinPrevios(req, res) {

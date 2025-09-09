@@ -21,20 +21,20 @@ export const quintaList = (params) =>
 
 // MULTIEMPLEO
 export const quintaObtenerMulti = (dni, anio) =>
-  api.get("/quintaCategoria/multiempleo/declaracion", { params: {dni, anio }});
+  api.get("/quintaCategoria/multiempleo/declaracion", { params: {dni, anio, _ts: Date.now() } });
 
 export const quintaGuardarMulti = (payload) =>
   api.post("/quintaCategoria/multiempleo/declaracion", payload);
 
 // CERTIFICADO DE 5ta
 export const quintaObtenerCertificado = (dni, anio) =>
-  api.get("/quintaCategoria/certificado", { params: { dni, anio }});
+  api.get("/quintaCategoria/certificado", { params: { dni, anio, _ts: Date.now()}});
 
 export const quintaGuardarCertificado = (payload) =>
   api.post("/quintaCategoria/certificado", payload);
 
 // DECLARACION JURADA "SIN PREVIOS"
-export const quintaObtenerSinPrevios = (dni, anio) =>
+export const quintaObtenerSinPrevios = (dni, anio ) =>
   api.get("/quintaCategoria/sin-previos", { 
     params: { dni, anio, _ts: Date.now() },
     headers: { 'Cache-Control': 'no-cache' },
