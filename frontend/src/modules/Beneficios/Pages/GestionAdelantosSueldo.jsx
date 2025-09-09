@@ -541,7 +541,7 @@ const GestionAdelantoSueldo = () => {
                      </section>
                      <section className="grid grid-cols-2 space-x-3">
                         <div className="grid gap-1">
-                           <Label>Fecha</Label>
+                           <Label>Fecha Primera Cuota</Label>
                            <Input
                               type="date"
                               value={form.primera_cuota}

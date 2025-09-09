@@ -2,6 +2,7 @@ export const trabajador_rxh_model = () => ({
    // datos no nulos
    trabajador_id: 0,
    tipo_contrato: "",
+   contrato_id:0,
    periodo: "",
    tipo_documento: "",
    numero_documento: "",
@@ -23,4 +24,6 @@ export const trabajador_rxh_model = () => ({
    sueldo_neto: 0,
    sueldo_quincenal: 0,
    saldo_por_pagar: 0,
+   banco:"",
+   numero_cuenta:"",
 });

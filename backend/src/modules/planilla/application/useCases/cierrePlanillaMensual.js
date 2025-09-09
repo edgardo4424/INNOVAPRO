@@ -20,8 +20,6 @@ module.exports = async (
    }
    let cierre_planilla_mensual;
    if (planillaMensualCerrada) {
-      console.log("Entra al creado");
-
       cierre_planilla_mensual = planillaMensualCerrada;
    } else {
       const payload = {
@@ -31,8 +29,9 @@ module.exports = async (
       };
       cierre_planilla_mensual =
          await planillaRepository.generarRegistroCierrePeriodoPlanillaMensual(
-            payload
-         );
+            payload,
+            transaction
+      );      
    }
 
    const hoy = new Date();
@@ -46,9 +45,14 @@ module.exports = async (
       data.fecha_calculo = new Date().toISOString().split("T")[0];
       return data;
    });
+   
    let planillas_creadas = [];
    for (const t of transform_data) {
-      const response = await planillaRepository.crearRegistroPlanilla(t);
+      if(t.trabajador_id==8){
+         console.log("asdasd");
+         console.log(t);
+      }
+      const response = await planillaRepository.crearRegistroPlanilla(t,transaction);
       planillas_creadas.push(response);
    }
    const locked = new Date();
