@@ -26,7 +26,7 @@ const calcular_periodo_grati_cts=(anio_mes_dia)=>{
       ) {
          periodocts = "NOVIEMBRE";
       }
-
+      
       return{
         periodocts,
         periodograti
