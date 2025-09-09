@@ -7,19 +7,22 @@ const unir_planillas_mensuales = (
    PORCENTAJE_DESCUENTO_AFP,
    PORCENTAJE_DESCUENTO_SEGURO
 ) => {
-   const grupo_planilla = { ...trabajador_planilla_model };
+   const grupo_planilla = trabajador_planilla_model();
+   grupo_planilla.info_detalle = planillas_obtenidas;
+
    for (const p of planillas_obtenidas) {
       grupo_planilla.trabajador_id = p.trabajador_id;
       grupo_planilla.contrato_id = p.contrato_id;
-      grupo_planilla.tipo_contrato = "PLANILLA ";
-      grupo_planilla.periodo = "POR DEFINIR";
+      grupo_planilla.tipo_contrato = p.tipo_contrato;
+      grupo_planilla.regimen=p.regimen
+      grupo_planilla.periodo = p.periodo;
       grupo_planilla.tipo_documento = p.tipo_documento;
       grupo_planilla.numero_documento = p.numero_documento;
       grupo_planilla.nombres_apellidos = p.nombres_apellidos;
       grupo_planilla.area = p.area;
       grupo_planilla.afp = p.afp;
-      grupo_planilla.fecha_ingreso = "";
-
+      grupo_planilla.fecha_ingreso = p.fecha_ingreso;
+      // grupo_planilla.info_detalle.sueldos_mensuales.push(p.detalle_sueldo_mensual)
       grupo_planilla.dias_labor += Number(p.dias_labor);
       grupo_planilla.sueldo_basico = Number(p.sueldo_basico);
       grupo_planilla.sueldo_del_mes += Number(p.sueldo_del_mes);
@@ -54,7 +57,7 @@ const unir_planillas_mensuales = (
       );
       grupo_planilla.bono_primera_quincena += Number(p.bono_primera_quincena);
       grupo_planilla.bono_segunda_quincena += Number(p.bono_segunda_quincena);
-    //   grupo_planilla.sueldos_brutos_obtenidos.push(Number(p.sueldo_bruto));
+      // grupo_planilla.sueldos_brutos_obtenidos.push(Number(p.sueldo_bruto));
       grupo_planilla.quinta_categoria = Number(p.quinta_categoria);
       grupo_planilla.sueldo_quincenal = Number(p.sueldo_quincenal);
       grupo_planilla.adelanto_prestamo += Number(p.adelanto_prestamo);

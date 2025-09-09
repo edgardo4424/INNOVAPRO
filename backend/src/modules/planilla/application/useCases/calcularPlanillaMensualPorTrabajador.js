@@ -59,15 +59,21 @@ module.exports = async (
 
 
       // 4. Devolver uno de cada uno si existen
-      if (contratoSeleccionadoPlanilla) {
-         console.log('entro a obtenr planulla mesual por tarvbajador');
-         
+      if (contratoSeleccionadoPlanilla) {         
          const res =
             await planillaRepository.obtenerPlanillaMensualPorTrabajador(
                anio_mes_dia,
                t.id,
                filial_id
             );
+         // console.log('Repsuesta del planila mensual: ',res);
+         // console.log("||");
+         // console.log("||");
+         // console.log("||");
+         // console.log("||");
+         // console.log("||");
+         
+         
          payload.planilla.trabajadores.push(res);
       }
 
@@ -75,7 +81,8 @@ module.exports = async (
          const res =
             await planillaRepository.calcularPlanillaMensualPorTrabajadorRXH(
                anio_mes_dia,
-               t.id
+               t.id,
+               filial_id
             );
          payload.honorarios.trabajadores.push(res);
       }
