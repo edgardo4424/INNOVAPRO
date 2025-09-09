@@ -10,6 +10,7 @@ import ModalDescargaGuia from "./components/ModalDescargaGuia";
 import TablaGuias from "./components/TablaGuias";
 import ModalDescarga from "../../components/modal/ModalDescarga";
 import ModalAnularDocumento from "../list-factura-boleta/components/modal/ModalAnularDocumento";
+import TablaSkeleton from "../../components/TablaSkeleton";
 
 const ListaGuiaRemision = () => {
     const navigate = useNavigate();
@@ -171,12 +172,7 @@ const ListaGuiaRemision = () => {
 
             <div className="w-full">
                 {loading ? (
-                    <div className="flex justify-center items-center py-8 flex-col ">
-                        <LoaderCircle className="animate-spin text-blue-500 " size={200} />
-                        <h2 className="text-2xl md:text-3xl font-bold text-blue-600  ">
-                            Cargando...
-                        </h2>
-                    </div>
+                    <TablaSkeleton rows={limit} />
                 ) : guias.length === 0 ? (
                     <div className="w-full max-w-6xl">
                         <div className="flex items-center justify-between mb-6"></div>

@@ -1,15 +1,14 @@
-import { LoaderCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import Paginacion from "../../components/Paginacion";
 import FiltroTabla from "../../components/FiltroTabla";
-import ModalVisualizarDocumento from "../../components/modal/ModalVisualizarDocumento";
-import facturaService from "../../service/FacturaService";
 import ModalDescarga from "../../components/modal/ModalDescarga";
-import TablaDocumentos from "./components/TablaDocumentos";
-import { useFacturaBoleta } from "../../context/FacturaBoletaContext";
+import ModalVisualizarDocumento from "../../components/modal/ModalVisualizarDocumento";
+import Paginacion from "../../components/Paginacion";
+import TablaSkeleton from "../../components/TablaSkeleton";
+import facturaService from "../../service/FacturaService";
 import ModalAnularDocumento from "./components/modal/ModalAnularDocumento";
+import TablaDocumentos from "./components/TablaDocumentos";
 
 const ListaDocumentos = () => {
 
@@ -176,12 +175,7 @@ const ListaDocumentos = () => {
 
             <div className="w-full">
                 {loading ? (
-                    <div className="flex justify-center items-center py-8 flex-col ">
-                        <LoaderCircle className="animate-spin text-blue-500 " size={200} />
-                        <h2 className="text-2xl md:text-3xl font-bold text-blue-600  ">
-                            Cargando...
-                        </h2>
-                    </div>
+                    <TablaSkeleton rows={limit} />
                 ) : documentos.length === 0 ? (
                     <div className="w-full max-w-6xl">
                         <div className="flex items-center justify-between mb-6"></div>
