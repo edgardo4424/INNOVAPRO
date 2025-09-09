@@ -10,11 +10,7 @@ const obtenerDatosPorQuincena = async (
    fecha_cierre_periodo,
    trabajador_id
 ) => {
-   if(trabajador_id==7){
-      console.log('Fecha de ciere de peio den datos por quincena: ',fecha_cierre_periodo);
-      
-   }
-   
+
    const responseAsistencias =
       await asistenciasRepository.obtenerAsistenciasPorRangoFecha(
          trabajador_id,

@@ -16,12 +16,9 @@ const calcularDiasLaboradosQuincena = require("../../../../services/calcularDias
 
 const { Op } = db.Sequelize;
 const SequelizeTrabajadorRepository = require("../../../trabajadores/infraestructure/repositories/sequelizeTrabajadorRepository");
-const {
-   trabajador_planilla_model,
-} = require("../utils/trabajador_planilla_model");
+
 const filtrarContratosSinInterrupcion = require("../../../../services/filtrarContratosSinInterrupcion");
 const SequelizeAsistenciaRepository = require("../../../asistencias/infraestructure/repositories/sequelizeAsistenciaRepository");
-const { trabajador_rxh_model } = require("../utils/trabajador_rxh_model");
 
 const SequelizeGratificacionRepository = require("../../../gratificaciones/infrastructure/repositories/sequelizeGratificacionRepository");
 const filtrarGratificacionesSinInterrupcion = require("../../../../services/filtrarGratificacionesSinInterrupcion");
@@ -53,10 +50,14 @@ const calcularDiasNoContratado = require("../utils/calcular_dias_no_contratados"
 const obtenerDatosAsistencia = require("../services/obtener_datos_asistencia");
 const obtenerDatosPorQuincena = require("../services/obtenerDatosPorQuicena");
 const unir_planillas_mensuales = require("../utils/unir_planillas_mensuales");
+const {
+   trabajador_planilla_model,
+} = require("../utils/trabajador_planilla_model");
+const { trabajador_rxh_model } = require("../utils/trabajador_rxh_model");
 
 class SequelizePlanillaRepository {
-
-  async calcularPlanillaQuincenal(
+   // prettier-ignore
+   async calcularPlanillaQuincenal(
     fecha_anio_mes,
     filial_id,
     transaction = null
@@ -367,16 +368,15 @@ class SequelizePlanillaRepository {
       data_mantenimiento_detalle: data_mat,
     };
   }
-  
+
    async calcularPlanillaMensualPorTrabajador(
       anio_mes_dia,
       trabajador_id,
       filial_id
    ) {
-
-      const incio_de_mes=`${anio_mes_dia.slice(0, -2)}01`;
-      const fin_de_mes=anio_mes_dia;
-      const datos_planilla_inicial = { ...trabajador_planilla_model };
+      const incio_de_mes = `${anio_mes_dia.slice(0, -2)}01`;
+      const fin_de_mes = anio_mes_dia;
+      const datos_planilla_inicial = trabajador_planilla_model();
 
       const PORCENTAJE_DESCUENTO_ONP = Number(
          (await dataMantenimientoRepository.obtenerPorCodigo("valor_onp")).valor
@@ -393,7 +393,8 @@ class SequelizePlanillaRepository {
       const fecha_cierre_periodo = anio_mes_dia;
       let fecha_inicio_periodo = `${anio_mes_dia.slice(0, -2)}01`;
 
-      const {periodocts,periodograti}=calcular_periodo_grati_cts(anio_mes_dia);
+      const { periodocts, periodograti } =
+         calcular_periodo_grati_cts(anio_mes_dia);
 
       const dias_mes = anio_mes_dia.slice(-2);
       const response_trabajador = await db.trabajadores.findByPk(
@@ -424,7 +425,8 @@ class SequelizePlanillaRepository {
       }
       const contratosEnRango = trabajador.contratos_laborales.filter((c) => {
          return (
-            c.fecha_fin >= fecha_inicio_periodo && c.fecha_inicio <= fecha_cierre_periodo &&
+            c.fecha_fin >= fecha_inicio_periodo &&
+            c.fecha_inicio <= fecha_cierre_periodo &&
             c.filial_id == filial_id
          );
       });
@@ -439,32 +441,33 @@ class SequelizePlanillaRepository {
          throw new Error("El trabajador no cuenta con un contrato laboral.");
       }
 
-      const contratoInicial = filtrarContratosSinInterrupcion(
-         contratosEnRango
-      );
-   let inicio_contrato = new Date(contratoInicial[0].fecha_inicio);
-   let fin_contrato = new Date(contratoInicial[0].fecha_fin);
+      const contratoInicial = filtrarContratosSinInterrupcion(contratosEnRango);
+      let inicio_contrato = new Date(contratoInicial[0].fecha_inicio);
+      let fin_contrato = new Date(contratoInicial[0].fecha_fin);
 
-   let inicio_rango = new Date(fecha_inicio_periodo);
-   let fin_rango = new Date(fecha_cierre_periodo);
+      let inicio_rango = new Date(fecha_inicio_periodo);
+      let fin_rango = new Date(fecha_cierre_periodo);
 
-   // Determinar el rango real cubierto por el contrato dentro del rango general
-   let inicio_real = inicio_contrato > inicio_rango ? inicio_contrato : inicio_rango;
-   let fin_real = fin_contrato < fin_rango ? fin_contrato : fin_rango;
+      // Determinar el rango real cubierto por el contrato dentro del rango general
+      let inicio_real =
+         inicio_contrato > inicio_rango ? inicio_contrato : inicio_rango;
+      let fin_real = fin_contrato < fin_rango ? fin_contrato : fin_rango;
 
-   // Calcular días contratados (solo si hay solapamiento)
-   let dias_contratados = fin_real >= inicio_real
-      ? Math.floor((fin_real - inicio_real) / (1000 * 60 * 60 * 24)) + 1
-      : 0;
+      // Calcular días contratados (solo si hay solapamiento)
+      let dias_contratados =
+         fin_real >= inicio_real
+            ? Math.floor((fin_real - inicio_real) / (1000 * 60 * 60 * 24)) + 1
+            : 0;
 
-   // Calcular total de días en el rango general
-   let total_dias_rango = Math.floor((fin_rango - inicio_rango) / (1000 * 60 * 60 * 24)) + 1;
+      // Calcular total de días en el rango general
+      let total_dias_rango =
+         Math.floor((fin_rango - inicio_rango) / (1000 * 60 * 60 * 24)) + 1;
 
-   // Días no contratados (no laborados)
-   let resto_dias_no_contratados = total_dias_rango - dias_contratados;
-   if (trabajador.id === 7) {
-      console.log('Días no contratados: ', resto_dias_no_contratados);
-   }
+      // Días no contratados (no laborados)
+      let resto_dias_no_contratados = total_dias_rango - dias_contratados;
+      if (trabajador.id === 7) {
+         console.log("Días no contratados: ", resto_dias_no_contratados);
+      }
 
       const faltas =
          await asistenciasRepository.obtenerCantidadFaltasPorRangoFecha(
@@ -593,10 +596,6 @@ class SequelizePlanillaRepository {
             SUMA_BONO_SEGUNDA_Q += Number(b.monto);
          }
       }
-      console.log("Bonos primera Q: ", SUMA_BONO_PRIMERA_Q);
-      console.log("Bonos segunda Q: ", SUMA_BONO_SEGUNDA_Q);
-
-      //Renta de quinta
 
       const { found, retencion_base_mes, registro } =
          await quintaCategoriaService.getRetencionBaseMesPorDni({
@@ -626,12 +625,10 @@ class SequelizePlanillaRepository {
             trabajador_id
          );
       const adelantos = responseAdelantos.map((r) => r.get({ plain: true }));
-      
 
       for (const a_s of adelantos) {
          MONTO_ADELANTO_SUELDO += a_s.monto / a_s.cuotas;
       }
-      console.log("Adelantos: ", MONTO_ADELANTO_SUELDO);
 
       datos_planilla_inicial.tipo_documento = trabajador.tipo_documento;
       datos_planilla_inicial.numero_documento = trabajador.numero_documento;
@@ -639,8 +636,8 @@ class SequelizePlanillaRepository {
       datos_planilla_inicial.area = trabajador.cargo.area.nombre;
       datos_planilla_inicial.afp = trabajador.tipo_afp ?? "ONP";
       datos_planilla_inicial.fecha_ingreso = contratoInicial[0].fecha_inicio;
-      datos_planilla_inicial.trabajador_id=trabajador.id;
-      datos_planilla_inicial.contrato_id=contrato_actual.id
+      datos_planilla_inicial.trabajador_id = trabajador.id;
+      datos_planilla_inicial.contrato_id = contrato_actual.id;
       // dias de labor se resta a los dias del mes, los dias no contradados faltas, vacaciones, (preguntar otros estados?)
       datos_planilla_inicial.dias_labor =
          dias_mes - resto_dias_no_contratados - faltas - DIAS_VACACIONES;
@@ -673,12 +670,10 @@ class SequelizePlanillaRepository {
          DIAS_VACACIONES
       ).toFixed(2);
 
-      //! Estos datos iran en la sumatoria 
+      //! Estos datos iran en la sumatoria
       datos_planilla_inicial.gratificacion = MONTO_GRATIFICACION.toFixed(2);
       datos_planilla_inicial.cts = MONTO_CTS.toFixed(2);
-      
-      
-      
+
       datos_planilla_inicial.h_extras_primera_quincena = (
          CANTIDAD_HE_PRIMERA_Q * 10
       ).toFixed(2);
@@ -704,10 +699,9 @@ class SequelizePlanillaRepository {
          SUMA_BONO_PRIMERA_Q.toFixed(2);
       datos_planilla_inicial.bono_segunda_quincena =
          SUMA_BONO_SEGUNDA_Q.toFixed(2);
-      
-      //! Este data ira en la sumatoria 
-      datos_planilla_inicial.quinta_categoria = quinta_categoria;
 
+      //! Este data ira en la sumatoria
+      datos_planilla_inicial.quinta_categoria = quinta_categoria;
 
       datos_planilla_inicial.sueldo_bruto = Number(
          (
@@ -781,10 +775,24 @@ class SequelizePlanillaRepository {
       return datos_planilla_inicial;
    }
    // prettier-ignore
-   async calcularPlanillaMensualPorTrabajadorRXH(anio_mes_dia, trabajador_id) {
-      const dataInicialRxH = trabajador_rxh_model;
-      const fecha_cierre_periodo = anio_mes_dia;
-      let fecha_inicio_periodo = `${anio_mes_dia.slice(0, -2)}01`;
+   async calcularPlanillaMensualPorTrabajadorRXH(anio_mes_dia, trabajador_id,filial_id) {
+      const responseQuicenas = await this.obtenerPlanillaQuincenalPorTrabajador(
+         `${anio_mes_dia.slice(0, -3)}`,
+         filial_id,
+         trabajador_id
+      );
+      const quincenas = responseQuicenas.map((q) => q.get({ plain: true }));
+      let MONTO_QUINCENAS = 0;
+      if (quincenas.length >=1) {
+         for (const q of quincenas) {
+            MONTO_QUINCENAS += Number(q.total_pagar);            
+         }
+      }
+      if(trabajador_id==7){
+         console.log('Valnetina monto quince rxh',MONTO_QUINCENAS);
+      }
+      const inicio_de_mes = `${anio_mes_dia.slice(0, -2)}01`;
+      const fin_de_mes = anio_mes_dia;     
       const dias_mes = anio_mes_dia.slice(-2);
       const response_trabajador = await db.trabajadores.findByPk(
          trabajador_id,
@@ -811,52 +819,117 @@ class SequelizePlanillaRepository {
       if (!trabajador) {
          throw new Error("El trabajador no existe.");
       }
-      const contrato_actual = trabajador.contratos_laborales.find((c) => {
-         return (
-            c.fecha_inicio <= fecha_cierre_periodo &&
-            c.fecha_fin >= fecha_cierre_periodo
-         );
-      });
-      if (!contrato_actual) {
-         throw new Error("El trabajador no cuenta con un contrato laboral.");
-      }
-
+      //!Obtenemos el contrato inicial del trbaajdor, no del rango
       const contratoInicial = filtrarContratosSinInterrupcion(
          trabajador.contratos_laborales
       );
-      let resto_dias_no_contratados = 0;
-      if (contratoInicial[0].fecha_inicio > fecha_inicio_periodo) {
-         resto_dias_no_contratados =
-            (new Date(contratoInicial[0].fecha_inicio) -
-               new Date(fecha_inicio_periodo)) /
-            (1000 * 60 * 60 * 24);
-         fecha_inicio_periodo = contratoInicial[0].fecha_inicio;
+      // !Obtenemos los contratos en rango del mes 
+      const contratosEnRango = trabajador.contratos_laborales.filter((c) => {
+         return (
+            c.fecha_fin >= inicio_de_mes &&
+            c.fecha_inicio <= fin_de_mes &&
+            c.filial_id == filial_id
+         );
+      });
+      //!validamos que no halla interrupciones entre contratos
+      const contratos_tratados =
+         filtrarContratosSinInterrupcion(contratosEnRango);
+
+      let planillasRxhObtenidas=[]
+
+      for (const c of contratos_tratados) {
+
+         const data= trabajador_rxh_model();
+         let inicio_real =
+            c.fecha_inicio > inicio_de_mes ? c.fecha_inicio : inicio_de_mes;
+         let fin_real = c.fecha_fin < fin_de_mes ? c.fecha_fin : fin_de_mes;
+
+         const {
+            CANTIDAD_HE_PRIMERA_Q,
+            CANTIDAD_HE_SEGUNDA_Q,
+            FALTAS_PRIMERA_Q,
+            FALTAS_SEGUNDA_Q,
+            MONTO_ADELANTO_SUELDO,
+            SUMA_BONO_PRIMERA_Q,
+            SUMA_BONO_SEGUNDA_Q,
+            TARDANZA_PRIMERA_Q,
+            TARDANZA_SEGUNDA_Q,
+         } = await obtenerDatosPorQuincena(
+            inicio_real,
+            fin_real,
+            trabajador.id
+         );
+
+         const DIAS_NO_CONTRATADOS = calcularDiasNoContratado(
+            inicio_real,
+            fin_real,
+            inicio_de_mes,
+            fin_de_mes
+         );
+         const SUMA_FALTAS=FALTAS_PRIMERA_Q+FALTAS_SEGUNDA_Q;
+         data.trabajador_id=trabajador.id;
+         data.tipo_contrato=c.tipo_contrato;
+         data.periodo = anio_mes_dia.slice(0, -3);
+
+         data.tipo_documento = trabajador.tipo_documento;
+         data.numero_documento = trabajador.numero_documento;
+         data.nombres_apellidos = `${trabajador.nombres} ${trabajador.apellidos}`;
+         data.area = trabajador.cargo.area.nombre;
+         data.fecha_ingreso = contratoInicial[0].fecha_inicio;
+         data.dias_labor = (dias_mes>30?30:dias_mes) - DIAS_NO_CONTRATADOS - SUMA_FALTAS;
+         data.sueldo_basico = c.sueldo;
+         data.sueldo_del_mes =(c.sueldo / 30) * data.dias_labor;
+         data.vacaciones = 0;
+         data.h_extras_primera_quincena=CANTIDAD_HE_PRIMERA_Q;
+         data.h_extras_segunda_quincena=CANTIDAD_HE_SEGUNDA_Q;
+         data.faltas_primera_quincena=(c.sueldo / 30)*FALTAS_PRIMERA_Q;
+         data.faltas_segunda_quincena=(c.sueldo / 30)*FALTAS_SEGUNDA_Q;
+         data.tardanza_primera_quincena=(TARDANZA_PRIMERA_Q * 15).toFixed(2);
+         data.tardanza_segunda_quincena=(TARDANZA_SEGUNDA_Q*15).toFixed(2);
+         data.bono_primera_quincena=SUMA_BONO_PRIMERA_Q;
+         data.bono_segunda_quincena=SUMA_BONO_SEGUNDA_Q;
+         planillasRxhObtenidas.push(data)
+      }
+      
+      const grupoRxh=trabajador_rxh_model();
+      for (const p of planillasRxhObtenidas) {
+         grupoRxh.trabajador_id=p.trabajador_id;
+         grupoRxh.tipo_contrato=p.tipo_contrato;
+         grupoRxh.periodo=p.periodo;
+         grupoRxh.tipo_documento=p.tipo_documento;
+         grupoRxh.numero_documento=p.numero_documento;
+         grupoRxh.nombres_apellidos=p.nombres_apellidos;
+         grupoRxh.area=p.area;
+         grupoRxh.fecha_ingreso=p.fecha_ingreso;
+         grupoRxh.dias_labor+=p.dias_labor;
+         grupoRxh.sueldo_basico=p.sueldo_basico;
+         grupoRxh.sueldo_del_mes+=p.sueldo_del_mes;
+         grupoRxh.vacaciones+=p.vacaciones;
+         grupoRxh.h_extras_primera_quincena+=p.h_extras_primera_quincena;
+         grupoRxh.h_extras_segunda_quincena+=p.h_extras_segunda_quincena;
+         grupoRxh.faltas_primera_quincena+=p.faltas_primera_quincena;
+         grupoRxh.faltas_segunda_quincena+=p.faltas_segunda_quincena
+         grupoRxh.tardanza_primera_quincena+=Number(p.tardanza_primera_quincena);
+         grupoRxh.tardanza_segunda_quincena+=Number(p.tardanza_segunda_quincena);
+         grupoRxh.bono_primera_quincena+=p.bono_primera_quincena;
+         grupoRxh.bono_segunda_quincena+=p.bono_segunda_quincena;
+
+
       }
 
-      const faltas =
-         await asistenciasRepository.obtenerCantidadFaltasPorRangoFecha(
-            trabajador.id,
-            fecha_inicio_periodo,
-            fecha_cierre_periodo
-         );
-      dataInicialRxH.tipo_documento = trabajador.tipo_documento;
-      dataInicialRxH.numero_documento = trabajador.numero_documento;
-      dataInicialRxH.nombres_apellidos = `${trabajador.nombres} ${trabajador.apellidos}`;
-      dataInicialRxH.area = trabajador.cargo.area.nombre;
-      dataInicialRxH.fecha_ingreso = contratoInicial[0].fecha_inicio;
-      dataInicialRxH.dias_labor = dias_mes - resto_dias_no_contratados - faltas;
-      dataInicialRxH.bruto = contrato_actual.sueldo;
-      dataInicialRxH.sueldo_del_mes =
-         (contrato_actual.sueldo / 30) * dataInicialRxH.dias_labor;
-      dataInicialRxH.vacaciones = 0;
-      dataInicialRxH.horas_extras = 0;
-      dataInicialRxH.falta = (contrato_actual.sueldo / 30) * faltas;
-      dataInicialRxH.sueldo_neto =
-         Number(dataInicialRxH.sueldo_del_mes) +
-         Number(dataInicialRxH.vacaciones) +
-         Number(dataInicialRxH.horas_extras) +
-         dataInicialRxH.falta * -1;
-      return dataInicialRxH;
+      grupoRxh.sueldo_neto =
+         Number(grupoRxh.sueldo_del_mes) +
+         Number(grupoRxh.vacaciones) +
+         Number(grupoRxh.h_extras_primera_quincena)+
+         Number(grupoRxh.h_extras_segunda_quincena)+
+         Number(grupoRxh.tardanza_primera_quincena)*-1+
+         Number(grupoRxh.tardanza_segunda_quincena)*-1+
+         Number(grupoRxh.faltas_primera_quincena) * -1
+         Number(grupoRxh.faltas_segunda_quincena) * -1;
+      grupoRxh.sueldo_quincenal=MONTO_QUINCENAS;
+      grupoRxh.saldo_por_pagar=grupoRxh.sueldo_neto-MONTO_QUINCENAS;
+      console.log('Respusta del grupo',grupoRxh);
+      return grupoRxh;
    }
    // prettier-ignore
    async obtenerCierrePlanillaQuincenal(
@@ -1040,7 +1113,18 @@ class SequelizePlanillaRepository {
       trabajador_id,
       filial_id
    ) {
-      console.log("Entro ala funcion");
+      const responseQuicenas = await this.obtenerPlanillaQuincenalPorTrabajador(
+         `${anio_mes_dia.slice(0, -3)}`,
+         filial_id,
+         trabajador_id
+      );
+      const quincenas = responseQuicenas.map((q) => q.get({ plain: true }));
+      let MONTO_QUINCENAS = 0;
+      if (quincenas.length >= 1) {
+         for (const q of quincenas) {
+            MONTO_QUINCENAS += Number(q.total_pagar);
+         }
+      }
 
       const inicio_de_mes = `${anio_mes_dia.slice(0, -2)}01`;
       const fin_de_mes = anio_mes_dia;
@@ -1056,6 +1140,10 @@ class SequelizePlanillaRepository {
       //Todo: validamos que el mes que se recibe se integrara la grati o cts
       const { periodocts, periodograti } =
          calcular_periodo_grati_cts(fin_de_mes);
+      if (trabajador_id == 8) {
+         console.log("Periodos", periodocts, periodograti);
+      }
+
       const response_trabajador = await db.trabajadores.findByPk(
          trabajador_id,
          {
@@ -1107,14 +1195,15 @@ class SequelizePlanillaRepository {
       //       anio: anio_mes_dia.slice(0, -6),
       //       mes: anio_mes_dia.slice(5, -3),
       // });
-
       // const quinta_categoria = found ? +(retencion_base_mes / 2).toFixed(2) : 0;
+
       let MONTO_GRATIFICACION = await calcularGratificacionPlanilla(
          periodograti,
          filial_id,
          anio_mes_dia.slice(0, -6),
          trabajador.id
       );
+
       let MONTO_CTS = await calcularCTSPlanilla(
          periodocts,
          anio_mes_dia.slice(0, -6),
@@ -1125,7 +1214,7 @@ class SequelizePlanillaRepository {
       let planillas_obtenidas = [];
       //Todo: Aqui se comenzara a llenar los objetos de la
       for (const c of contratos_tratados) {
-         const planilla = { ...trabajador_planilla_model };
+         const planilla = trabajador_planilla_model();
          // fecha_inicio fecha_fin
          let inicio_real =
             c.fecha_inicio > inicio_de_mes ? c.fecha_inicio : inicio_de_mes;
@@ -1165,8 +1254,6 @@ class SequelizePlanillaRepository {
             inicio_real,
             fin_real
          );
-         console.log("paso interseccion");
-
          planilla.tipo_documento = trabajador.tipo_documento;
          planilla.numero_documento = trabajador.numero_documento;
          planilla.nombres_apellidos = `${trabajador.nombres} ${trabajador.apellidos}`;
@@ -1175,12 +1262,13 @@ class SequelizePlanillaRepository {
          planilla.fecha_ingreso = contratoInicial[0].fecha_inicio;
          planilla.trabajador_id = trabajador.id;
          planilla.contrato_id = c.id;
+         planilla.tipo_contrato = c.tipo_contrato;
+         planilla.periodo = anio_mes_dia.slice(0, -3);
+         planilla.regimen = c.regimen;
 
          // ! dias de labor, se le resta--> dias mo contatados, faltas y dias de vacaciones;
          // prettier-ignore
-         planilla.dias_labor=((dias_mes - DIAS_NO_CONTRATADOS) - faltas) - DIAS_VACACIONES;
-         console.log("dias de labor: ", planilla.dias_labor);
-
+         planilla.dias_labor=((30 - DIAS_NO_CONTRATADOS) - faltas) - DIAS_VACACIONES;
          planilla.sueldo_basico = c.sueldo;
          // sueldo del mes: suedo que corresponde por los dias laborados
          // prettier-ignore
@@ -1240,16 +1328,13 @@ class SequelizePlanillaRepository {
                Number(planilla.bono_segunda_quincena)
             ).toFixed(2)
          );
-         console.log("PASO SUELOD BRUTO");
-
          planilla.quinta_categoria = 0;
          planilla.adelanto_prestamo = MONTO_ADELANTO_SUELDO.toFixed(2);
-         planilla.sueldo_quincenal = planilla.sueldo_basico / 2;
+         planilla.sueldo_quincenal = MONTO_QUINCENAS;
          planilla.filial_id = c.filial_id;
          planilla.banco = c.banco;
          planilla.numero_cuenta = c.numero_cuenta;
          planillas_obtenidas.push(planilla);
-         //Hasta aqui hemos obtenido el sueldo bruto del trabajador
       }
 
       const SUMATORIA_PLANILLA = unir_planillas_mensuales(
@@ -1260,19 +1345,6 @@ class SequelizePlanillaRepository {
          PORCENTAJE_DESCUENTO_SEGURO
       );
 
-      if (trabajador.id == 7) {
-         console.log(
-            "contratos obtenidos despues del bucle: ",
-            planillas_obtenidas
-         );
-         console.log("**********");
-         console.log("**********");
-         console.log("**********");
-         console.log("**********");
-
-         console.log("Datos de los contrato unidos");
-         console.log(SUMATORIA_PLANILLA);
-      }
       return SUMATORIA_PLANILLA;
    }
 }

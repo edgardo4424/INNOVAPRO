@@ -1,7 +1,8 @@
-export const trabajador_planilla_model = {
+export const trabajador_planilla_model =()=>( {
    trabajador_id:"",
    contrato_id:"",
    tipo_contrato:"",
+   regimen:"",
    periodo:"",
    tipo_documento: "",
    numero_documento: "",
@@ -43,20 +44,6 @@ export const trabajador_planilla_model = {
    filial_id:"",
    banco:"",
    numero_cuenta:"",
-   sueldos_brutos_obtenidos:[],
-   info_detalle: {
-      descanso_med: [],
-      lic_goce: [],
-      lic_sin_goce: [],
-      vacaciones: [],
-      horas_e_pq: [],
-      horas_e_sq: [],
-      faltas_pq: [],
-      faltas_sq: [],
-      tardanza_pq: [],
-      tardanza_sq: [],
-      bonos_pq: [],
-      bonos_sq: [],
-      prestamos: [],
-   },
-};
+   info_detalle:[],
+}
+)
