@@ -14,6 +14,10 @@ export default function ModalVistaPrevia({ items, handleSubirDatos }) {
     const closeModal = () => {
         setOpen(false);
     };
+    const plasmarDatos = () => {
+        handleSubirDatos();
+        setOpen(false);
+    }
 
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
@@ -53,7 +57,7 @@ export default function ModalVistaPrevia({ items, handleSubirDatos }) {
                     </table>
                     <div className="w-full flex justify-end pt-3">
                         <button
-                            onClick={handleSubirDatos}
+                            onClick={plasmarDatos}
                             className="flex items-center text-white bg-innova-blue cursor-pointer p-2 rounded-md">
                             <ArrowUpNarrowWideIcon className="size-5" />
                             <span>Subir Datos</span>

@@ -7,6 +7,7 @@ const { LegendNotaCreditoDebito } = require("../models/notas-credito-debito/lege
 const { DetalleNotaCreditoDebito } = require("../models/notas-credito-debito/detalleNotaCreditoDebitoModel");
 const { SunatRespuesta } = require("../models/sunatRespuestaModel");
 const { Factura } = require("../models/factura-boleta/facturaModel");
+const { Filial } = require("../../../filiales/infrastructure/models/filialModel");
 const { GuiaRemision } = require("../models/guia-remision/guiaRemisionModel");
 const { Op, fn, col } = require('sequelize');
 
@@ -257,10 +258,9 @@ class SequelizeNotasCreditoDebitoRepository {
         }
     }
     async obtenerNotaDetallada(data) {
-        console.log("desde el repositorio", data);
         const { correlativo, serie, empresa_ruc, tipo_doc } = data;
 
-        const nota = await NotasCreditoDebito.findOne({
+        const nota = await NotasCreditoDebito.findAll({
             where: {
                 correlativo,
                 serie,
@@ -274,9 +274,16 @@ class SequelizeNotasCreditoDebitoRepository {
             ],
         });
 
-        if (!nota) return null;
+        const empresa = await Filial.findOne({
+            where: { ruc: empresa_ruc },
+            attributes: ["ruc", "razon_social", "direccion"],
+        });
 
-        return nota;
+        return nota.map(f => ({
+            ...f.dataValues,
+            empresa_nombre: empresa?.razon_social,
+            empresa_direccion: empresa?.direccion,
+        }));
     }
 
     async documentoPorFilial(data) {

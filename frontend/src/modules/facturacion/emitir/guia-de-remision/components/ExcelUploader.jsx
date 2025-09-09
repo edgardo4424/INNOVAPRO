@@ -68,7 +68,7 @@ const ExcelUploader = ({ onDataLoaded, handleSubirDatos }) => {
                 throw new Error("No se encontraron datos válidos en las columnas B, C y D.");
             }
 
-            setPreviewData(processedData.slice(0, 3)); // Mostrar preview de los primeros 3 registros
+            setPreviewData(processedData); // Mostrar preview de los primeros 3 registros
             setSuccess(true);
 
             if (onDataLoaded) {

@@ -114,7 +114,7 @@ export default function ModalVizualizarNota({
             try {
                 const { succes, status, message, data } = await facturaService.obtenerNotaDetallada(documentoAVisualizar);
                 if (succes && status === 200) {
-                    setNota(data);
+                    setNota(data[0]);
                     return;
                 }
                 toast.error(message || "Error al obtener el documento");
@@ -148,6 +148,7 @@ export default function ModalVizualizarNota({
     const {
         empresa_nombre,
         empresa_Ruc,
+        empresa_direccion,
         tipo_Doc,
         fecha_Emision,
         cliente_Razon_Social,
@@ -192,9 +193,14 @@ export default function ModalVizualizarNota({
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
                             <div className="col-span-2">
                                 <h1 className="text-2xl md:text-3xl font-bold text-blue-700">
-                                    {empresa_nombre || "Empresa no disponible"}
+                                    {empresa_nombre}
                                 </h1>
-                                <p className="mt-2 text-sm text-gray-700">RUC: {empresa_Ruc}</p>
+                                <p className="mt-2 text-sm text-gray-700">
+                                    {empresa_Ruc}
+                                </p>
+                                <p className="text-sm text-gray-700">
+                                    {empresa_direccion}
+                                </p>
                             </div>
                             <div className="md:text-center">
                                 <p className="text-lg font-semibold text-gray-700">{getTipoDocLabel(tipo_Doc)}</p>

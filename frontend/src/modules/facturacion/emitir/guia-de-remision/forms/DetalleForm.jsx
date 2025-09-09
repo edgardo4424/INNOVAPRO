@@ -8,11 +8,11 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext";
+import useProducto from "@/modules/facturacion/hooks/useProducto";
 import { useEffect, useState } from "react";
 import ExcelUploader from "../components/ExcelUploader";
 import ModalProducto from "../components/modal/ModalProducto";
 import TablaDetalles from "../components/tabla/TablaDetalles";
-import useProducto from "@/modules/facturacion/hooks/useProducto";
 
 
 const DetalleForm = () => {
@@ -32,7 +32,6 @@ const DetalleForm = () => {
             try {
                 const data = await ObtenerProductos();
                 setPiezasDisponibles(data);
-                console.log(data);
             } catch (error) {
                 console.error('Error al cargar piezas', error);
             }
@@ -83,11 +82,11 @@ const DetalleForm = () => {
             };
         });
 
-        console.log("Datos procesados y formateados:", datosFormateados);
         setGuiaTransporte(prev => ({
             ...prev,
             detalle: datosFormateados
         }));
+        setExcelData(null);
     };
 
     return (
@@ -98,7 +97,6 @@ const DetalleForm = () => {
             <div className="flex justify-between px-4 gap-4 py-4 items-start">
                 <div className="flex-1">
                     <ExcelUploader onDataLoaded={handleExcelDataLoaded} handleSubirDatos={handleSubirDatos} />
-
                 </div>
 
                 <div className="flex flex-col gap-x-2 gap-y-4 bg-gray-200 rounded-md p-4">
