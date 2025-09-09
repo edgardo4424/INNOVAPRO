@@ -38,7 +38,8 @@ function mapearParaRegistrarTablaPlanillaQuincenal(
       usuario_cierre_id: usuario_cierre_id,
       filial_id: filial_id,
       cierre_planilla_quincenal_id: cierre_planilla_quincenal_id,
-      data_mantenimiento_detalle: data_mantenimiento_detalle
+      data_mantenimiento_detalle: data_mantenimiento_detalle,
+      registro_planilla_quincenal_detalle: r.registro_planilla_quincenal_detalle
     };
   });
 }

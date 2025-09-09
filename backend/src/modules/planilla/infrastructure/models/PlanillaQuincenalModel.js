@@ -143,6 +143,9 @@ const PlanillaQuincenal = sequelize.define(
     info_detalle: {
       type: DataTypes.JSON,
     },
+    registro_planilla_quincenal_detalle: {
+      type: DataTypes.JSON,
+    }
   },
   {
     timestamps: true,

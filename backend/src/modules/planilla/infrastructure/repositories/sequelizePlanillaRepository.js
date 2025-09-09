@@ -53,6 +53,8 @@ const calcularDiasNoContratado = require("../utils/calcular_dias_no_contratados"
 const obtenerDatosAsistencia = require("../services/obtener_datos_asistencia");
 const obtenerDatosPorQuincena = require("../services/obtenerDatosPorQuicena");
 const unir_planillas_mensuales = require("../utils/unir_planillas_mensuales");
+const { unificarTrabajadoresTipoPlanillaQuincenal } = require("../services/unificarTrabajadoresTipoPlanillaQuincenal");
+const { unificarTrabajadoresTipoHonorariosQuincenal } = require("../services/unificarTrabajadoresTipoHonorariosQuincenal");
 
 class SequelizePlanillaRepository {
 
@@ -189,9 +191,15 @@ class SequelizePlanillaRepository {
 
       const sueldoBase = Number(contrato.sueldo);
 
-      const asignacionFamiliar = trabajador.asignacion_familiar
+     /*  const asignacionFamiliar = trabajador.asignacion_familiar
         ? +((MONTO_ASIGNACION_FAMILIAR).toFixed(2))
-        : 0;
+        : 0; */
+
+       const asignacionFamiliar =
+                (trabajador.asignacion_familiar &&
+                (new Date(trabajador.asignacion_familiar) <= new Date(contrato.fecha_fin)))
+                  ? dataMantenimiento.MONTO_ASIGNACION_FAMILIAR
+                  : 0;
 
       const diasLaborados = calcularDiasLaboradosQuincena(
         contrato.fecha_inicio,
@@ -199,10 +207,10 @@ class SequelizePlanillaRepository {
         fecha_anio_mes
       );
 
+      // (SUELDO/30)*DÍAS LABORADOS
       const sueldoQuincenal = +(
-        ((sueldoBase / 15) * diasLaborados) /
-        2
-      ).toFixed(2);
+        (sueldoBase / 30) * diasLaborados) 
+      .toFixed(2);
 
       const sueldoBruto = +(sueldoQuincenal + asignacionFamiliar).toFixed(2);
 
@@ -304,6 +312,7 @@ class SequelizePlanillaRepository {
       });
     }
 
+
     const listaPlanillaTipoHonorarios = [];
 
     for (const contrato of contratosRxh) {
@@ -317,7 +326,7 @@ class SequelizePlanillaRepository {
         fecha_anio_mes
       );
 
-      // (SUELDO/2)/15*DÍAS LABORADOS
+      // (SUELDO/30)*DÍAS LABORADOS
       const sueldoQuincenal = +(
         (sueldoBase / 30) * diasLaborados) 
       .toFixed(2);
@@ -344,6 +353,18 @@ class SequelizePlanillaRepository {
       });
     }
 
+    const listaPlanillaTipoPlanillaConDetalle = unificarTrabajadoresTipoPlanillaQuincenal(
+      listaPlanillaTipoPlanilla)
+
+       console.dir(listaPlanillaTipoPlanillaConDetalle, { depth: null });
+
+
+ const listaPlanillaTipoHonorariosConDetalle = unificarTrabajadoresTipoHonorariosQuincenal(
+      listaPlanillaTipoHonorarios)
+
+   //console.dir(listaPlanillaTipoHonorariosConDetalle, { depth: null });
+
+
     const data_mat = {
         valor_asignacion_familiar: dataMantenimiento.MONTO_ASIGNACION_FAMILIAR,
         valor_onp: dataMantenimiento.PORCENTAJE_DESCUENTO_ONP,
@@ -359,10 +380,10 @@ class SequelizePlanillaRepository {
 
     return {
       planilla: {
-        trabajadores: listaPlanillaTipoPlanilla,
+        trabajadores: listaPlanillaTipoPlanillaConDetalle,
       },
       honorarios: {
-        trabajadores: listaPlanillaTipoHonorarios,
+        trabajadores: listaPlanillaTipoHonorariosConDetalle,
       },
       data_mantenimiento_detalle: data_mat,
     };
