@@ -201,6 +201,10 @@ module.exports = {
               type: Sequelize.JSON,
         },
 
+        registro_planilla_quincenal_detalle: {
+              type: Sequelize.JSON,
+        },
+
         createdAt: {
           type: Sequelize.DATE,
           allowNull: false,

@@ -50,10 +50,15 @@ const calcularDiasNoContratado = require("../utils/calcular_dias_no_contratados"
 const obtenerDatosAsistencia = require("../services/obtener_datos_asistencia");
 const obtenerDatosPorQuincena = require("../services/obtenerDatosPorQuicena");
 const unir_planillas_mensuales = require("../utils/unir_planillas_mensuales");
+
+const { unificarTrabajadoresTipoPlanillaQuincenal } = require("../services/unificarTrabajadoresTipoPlanillaQuincenal");
+const { unificarTrabajadoresTipoHonorariosQuincenal } = require("../services/unificarTrabajadoresTipoHonorariosQuincenal");
+
 const {
    trabajador_planilla_model,
 } = require("../utils/trabajador_planilla_model");
 const { trabajador_rxh_model } = require("../utils/trabajador_rxh_model");
+
 
 class SequelizePlanillaRepository {
    // prettier-ignore
@@ -190,9 +195,15 @@ class SequelizePlanillaRepository {
 
       const sueldoBase = Number(contrato.sueldo);
 
-      const asignacionFamiliar = trabajador.asignacion_familiar
+     /*  const asignacionFamiliar = trabajador.asignacion_familiar
         ? +((MONTO_ASIGNACION_FAMILIAR).toFixed(2))
-        : 0;
+        : 0; */
+
+       const asignacionFamiliar =
+                (trabajador.asignacion_familiar &&
+                (new Date(trabajador.asignacion_familiar) <= new Date(contrato.fecha_fin)))
+                  ? dataMantenimiento.MONTO_ASIGNACION_FAMILIAR
+                  : 0;
 
       const diasLaborados = calcularDiasLaboradosQuincena(
         contrato.fecha_inicio,
@@ -200,10 +211,10 @@ class SequelizePlanillaRepository {
         fecha_anio_mes
       );
 
+      // (SUELDO/30)*DÍAS LABORADOS
       const sueldoQuincenal = +(
-        ((sueldoBase / 15) * diasLaborados) /
-        2
-      ).toFixed(2);
+        (sueldoBase / 30) * diasLaborados) 
+      .toFixed(2);
 
       const sueldoBruto = +(sueldoQuincenal + asignacionFamiliar).toFixed(2);
 
@@ -265,12 +276,21 @@ class SequelizePlanillaRepository {
 
       const quinta_categoria = found ? +(retencion_base_mes / 2).toFixed(2) : 0;
 
+       const totalAdelantosSueldo =
+                await adelantoSueldoRepository.obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
+                  trabajador.id,
+                  "simple",
+                  contrato.fecha_inicio,
+                  contrato.fecha_fin
+                );
+
       const totalDescuentos = +(
         onp +
         afp +
         seguro +
         comision +
-        quinta_categoria
+        quinta_categoria +
+        totalAdelantosSueldo
       ).toFixed(2);
       const totalAPagar = +(sueldoBruto - totalDescuentos).toFixed(2);
 
@@ -302,8 +322,11 @@ class SequelizePlanillaRepository {
         banco: contrato.banco,
         numero_cuenta: contrato.numero_cuenta,
         tipo_afp: sistema_pension == "AFP" ? tipo_afp : "ONP",
+
+        adelanto_prestamo: totalAdelantosSueldo
       });
     }
+
 
     const listaPlanillaTipoHonorarios = [];
 
@@ -318,12 +341,21 @@ class SequelizePlanillaRepository {
         fecha_anio_mes
       );
 
-      // (SUELDO/2)/15*DÍAS LABORADOS
+      // (SUELDO/30)*DÍAS LABORADOS
       const sueldoQuincenal = +(
         (sueldoBase / 30) * diasLaborados) 
       .toFixed(2);
 
-      const totalAPagar = sueldoQuincenal;
+      
+       const totalAdelantosSueldo =
+                await adelantoSueldoRepository.obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
+                  trabajador.id,
+                  "simple",
+                  contrato.fecha_inicio,
+                  contrato.fecha_fin
+                );
+
+      const totalAPagar = sueldoQuincenal - totalAdelantosSueldo;
       listaPlanillaTipoHonorarios.push({
          trabajador_id: trabajador.id,
         tipo_documento: trabajador.tipo_documento,
@@ -341,9 +373,23 @@ class SequelizePlanillaRepository {
         total_a_pagar: totalAPagar,
 
         banco: contrato.banco,
-        numero_cuenta: contrato.numero_cuenta
+        numero_cuenta: contrato.numero_cuenta,
+
+        adelanto_prestamo: totalAdelantosSueldo
       });
     }
+
+    const listaPlanillaTipoPlanillaConDetalle = unificarTrabajadoresTipoPlanillaQuincenal(
+      listaPlanillaTipoPlanilla)
+
+       console.dir(listaPlanillaTipoPlanillaConDetalle, { depth: null });
+
+
+ const listaPlanillaTipoHonorariosConDetalle = unificarTrabajadoresTipoHonorariosQuincenal(
+      listaPlanillaTipoHonorarios)
+
+   //console.dir(listaPlanillaTipoHonorariosConDetalle, { depth: null });
+
 
     const data_mat = {
         valor_asignacion_familiar: dataMantenimiento.MONTO_ASIGNACION_FAMILIAR,
@@ -360,10 +406,10 @@ class SequelizePlanillaRepository {
 
     return {
       planilla: {
-        trabajadores: listaPlanillaTipoPlanilla,
+        trabajadores: listaPlanillaTipoPlanillaConDetalle,
       },
       honorarios: {
-        trabajadores: listaPlanillaTipoHonorarios,
+        trabajadores: listaPlanillaTipoHonorariosConDetalle,
       },
       data_mantenimiento_detalle: data_mat,
     };
