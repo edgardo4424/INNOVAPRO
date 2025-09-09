@@ -34,6 +34,8 @@ class SequelizeGratificacionRepository {
       transaction,
     });
 
+    if (!cierreGratificacion) return [];
+    
     const gratificacionesCerradas = await Gratificacion.findAll({
       where: { cierre_id: cierreGratificacion.id },
       transaction,
@@ -49,18 +51,15 @@ class SequelizeGratificacionRepository {
         )
       ).valor
     );
-    console.log("MONTO_ASIGNACION_FAMILIAR", MONTO_ASIGNACION_FAMILIAR);
 
     const MONTO_FALTA_POR_DIA = Number(
       (await dataMantenimientoRepository.obtenerPorCodigo("valor_falta")).valor
     );
-    console.log("MONTO_FALTA_POR_DIA", MONTO_FALTA_POR_DIA);
 
     const MONTO_POR_HORA_EXTRA = Number(
       (await dataMantenimientoRepository.obtenerPorCodigo("valor_hora_extra"))
         .valor
     );
-    console.log("MONTO_POR_HORA_EXTRA", MONTO_POR_HORA_EXTRA);
 
     const MONTO_NO_COMPUTABLE = Number(
       (
@@ -69,7 +68,6 @@ class SequelizeGratificacionRepository {
         )
       ).valor
     );
-    console.log("MONTO_NO_COMPUTABLE", MONTO_NO_COMPUTABLE);
 
     const PORCENTAJE_BONIFICACION_ESSALUD = Number(
       (
@@ -78,10 +76,7 @@ class SequelizeGratificacionRepository {
         )
       ).valor
     );
-    console.log(
-      "PORCENTAJE_BONIFICACION_ESSALUD",
-      PORCENTAJE_BONIFICACION_ESSALUD
-    );
+
 
     const PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO = Number(
       (
@@ -91,10 +86,6 @@ class SequelizeGratificacionRepository {
       ).valor
     );
 
-    console.log(
-      "PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO",
-      PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO
-    );
 
     const dataMantenimiento = {
       MONTO_ASIGNACION_FAMILIAR,
@@ -226,9 +217,7 @@ class SequelizeGratificacionRepository {
 
   async calcularGratificacionTruncaPorTrabajador(periodo, anio, filial_id, trabajador_id, transaction = null) {
     
-    console.log({
-      periodo, anio, filial_id, trabajador_id
-    });
+
 
     const MONTO_ASIGNACION_FAMILIAR = Number(
       (
@@ -237,18 +226,15 @@ class SequelizeGratificacionRepository {
         )
       ).valor
     );
-    console.log("MONTO_ASIGNACION_FAMILIAR", MONTO_ASIGNACION_FAMILIAR);
 
     const MONTO_FALTA_POR_DIA = Number(
       (await dataMantenimientoRepository.obtenerPorCodigo("valor_falta")).valor
     );
-    console.log("MONTO_FALTA_POR_DIA", MONTO_FALTA_POR_DIA);
 
     const MONTO_POR_HORA_EXTRA = Number(
       (await dataMantenimientoRepository.obtenerPorCodigo("valor_hora_extra"))
         .valor
     );
-    console.log("MONTO_POR_HORA_EXTRA", MONTO_POR_HORA_EXTRA);
 
     const MONTO_NO_COMPUTABLE = Number(
       (
@@ -257,7 +243,6 @@ class SequelizeGratificacionRepository {
         )
       ).valor
     );
-    console.log("MONTO_NO_COMPUTABLE", MONTO_NO_COMPUTABLE);
 
     const PORCENTAJE_BONIFICACION_ESSALUD = Number(
       (
@@ -266,10 +251,7 @@ class SequelizeGratificacionRepository {
         )
       ).valor
     );
-    console.log(
-      "PORCENTAJE_BONIFICACION_ESSALUD",
-      PORCENTAJE_BONIFICACION_ESSALUD
-    );
+
 
     const PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO = Number(
       (
@@ -279,10 +261,6 @@ class SequelizeGratificacionRepository {
       ).valor
     );
 
-    console.log(
-      "PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO",
-      PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO
-    );
 
     const dataMantenimiento = {
       MONTO_ASIGNACION_FAMILIAR,

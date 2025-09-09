@@ -1,81 +1,112 @@
-// Card de ingresos previos + fuente de esos ingresos previos
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useMemo } from "react";
+import { Button } from "@/components/ui/button";
 import { currency } from "../utils/ui";
 
 export default function IngresosPreviosCard({
-  preview,
-  fuentePrevios,
-  certificadoQuinta,
-  errors,
-  onFuenteChange,
-  onCertificadoChange,
-  dense,
-  className
+  preview, fuentePrevios, filiales = [], onClickAuto, onOpenMulti, onOpenCertificado, onOpenSinPrevios, dense, className
 }) {
-    
+
   if (!preview) return null;
 
+  const inPrev = preview?.ingresos_previos || {};
+  const total = Number(inPrev?.total_ingresos || 0);
+  const meta = preview?.retencion_meta || {};
+  const warnings = preview?.warnings || [];
+
+  const rsById = useMemo(() => {
+    const dict = {};
+    (filiales || []).forEach(f => {
+      dict[String(f.filial_id)] = f.filial_razon_social || f.razon_social || `Filial #${f.filial_id}`;
+    });
+    return dict;
+  }, [filiales]);
+
+  const Chip = ({ active, children, onClick }) => (
+    <Button size="sm" variant={active ? "default" : "outline"} className={`h-6 px-2 text-[11px] ${active ? "" : "bg-white"}`} onClick={onClick}>
+      {children}
+    </Button>
+  );
+
+  const Row = ({ llave, valor }) => (
+    <div className="flex items-center justify-between">
+      <span className="text-slate-600">{llave}</span>
+      <span className="font-medium">{valor}</span>
+    </div>
+  );
+
+  const C = (valor) => currency.format(Number(valor || 0));
+  const labelFilial = (id) => rsById[String(id)] || `Filial #${id}`;
+
   return (
-    <div className={["p-4 py-5 border rounded bg-white w-80", dense ? "text-[11px]" : "text-xs", className].join(" ")}>
-      <h4 className="font-semibold text-gray-700">{dense ? "Ingresos previos" : "Ingresos previos acumulados"}</h4>
+    <div className={["p-3 border rounded bg-white w-full", dense ? "text-[11.5px]" : "text-sm", className].join(" ")}>
 
-      {preview?.ingresos_previos?.total_ingresos > 0 && fuentePrevios !== "SIN_PREVIOS" ? (
-        <ul className="mt-1 list-disc list-inside space-y-0">
-          <li>Remuneraciones: {currency.format(preview.ingresos_previos.remuneraciones)}</li>
-          <li>Gratificaciones: {currency.format(preview.ingresos_previos.gratificaciones)}</li>
-          <li>Bonos: {currency.format(preview.ingresos_previos.bonos)}</li>
-          <li>Asignación familiar: {currency.format(preview.ingresos_previos.asignacion_familiar)}</li>
-          <li className="font-semibold">Total: {currency.format(preview.ingresos_previos.total_ingresos)}</li>
-        </ul>
-      ) : (
-        <p className="text-gray-500 italic">No existen ingresos previos registrados.</p>
-      )}
-
-      {/* Fuente de ingresos previos */}
-      <div className={["mt-1 p-2 border rounded bg-yellow-50 text-gray-700", dense ? "text-[11px]" : "text-xs"].join(" ")}>
-        <p className="font-semibold mb-0">Fuente de ingresos previos</p>
-        <div className="flex flex-cols h-17 gap-0">
-          <label className="flex items-center gap-0.5">
-            <input type="radio" name="fuentePrevios" checked={fuentePrevios === "AUTO"} onChange={() => onFuenteChange("AUTO")} />
-            Proyección automática
-          </label>
-          <label className="flex items-center gap-0.5">
-            <input type="radio" name="fuentePrevios" checked={fuentePrevios === "CERTIFICADO"} onChange={() => onFuenteChange("CERTIFICADO")} />
-            Certificado de 5ta
-          </label>
-          <label className="flex items-center gap-0.5">
-            <input type="radio" name="fuentePrevios" checked={fuentePrevios === "SIN_PREVIOS"} onChange={() => onFuenteChange("SIN_PREVIOS")} />
-            Sin ingresos previos
-          </label>
+      {/* Contexto de varias filiales */}
+      {meta?.origen_retencion !== "NINGUNO" && (
+      <div className="mt-2 p-2 border rounded bg-slate-50">
+        <div className="text-[11px] text-slate-700 font-semibold mb-1">Contexto de retención (varias filiales)</div>
+        <div className="grid gap-1">
+          <Row llave="Origen" valor={meta?.origen_retencion || "—"} />
+          <Row llave="Rol" valor={meta?.es_secundaria ? "Secundaria (no retiene)" : "Principal (retiene)"} />
+          <Row 
+            llave="Filial que retiene" 
+            valor={
+              meta?.filial_retiene_id != null 
+              ? `${labelFilial(meta.filial_retiene_id)}` 
+              : (meta?.filial_retiene_id ?? "—")
+            } 
+          />
+          {meta?.ingresos_previos_internos > 0 && (
+            <Row llave="Previos internos" valor={C(meta?.ingresos_previos_internos)} />
+          )}
+          {meta?.ingresos_previos_externos > 0 && (
+            <Row llave="Previos externos" valor={C(meta?.ingresos_previos_externos)} />
+          )}
+          {meta?.retenciones_previas_internas > 0 && (
+            <Row llave="Retenciones internas" valor={C(meta?.retenciones_previas_internas)} />
+          )}
+          {meta?.retenciones_previas_externas > 0 && (
+            <Row llave="Retenciones externas" valor={C(meta?.retenciones_previas_externas)} />
+          )}
         </div>
-
-        {/* Form mini de certificado */}
-        {fuentePrevios === "CERTIFICADO" && (
-          <div className="flex flex-cols gap-2 mt-0">
-            <div className="w-40">
-              <Label className="text-[11px]">Renta bruta total (S/.)</Label>
-              <Input
-                value={certificadoQuinta.renta_bruta_total}
-                onChange={(e) => onCertificadoChange({ ...certificadoQuinta, renta_bruta_total: e.target.value })}
-              />
-              {errors?.cert_renta && <p className="text-red-600">{errors.cert_renta}</p>}
-            </div>
-            <div className="w-40">
-              <Label className="text-[11px]">Retenciones previas (S/.)</Label>
-              <Input
-                value={certificadoQuinta.retenciones_previas}
-                onChange={(e) => onCertificadoChange({ ...certificadoQuinta, retenciones_previas: e.target.value })}
-              />
-              {errors?.cert_ret && <p className="text-red-600">{errors.cert_ret}</p>}
-            </div>
-          </div>
-        )}
-
-        {fuentePrevios === "SIN_PREVIOS" && (
-          <p className="mt-2 text-yellow-700">⚠️ Requiere Declaración Jurada firmada por el trabajador.</p>
-        )}
       </div>
+      )}
+      
+      {/* Acumulados */}
+      <div className="mt-2 p-2 border rounded bg-slate-50">
+        <div className="text-[11px] text-slate-700 font-semibold mb-1">Acumulados de esta filial</div>
+        <div className="grid gap-1">
+          {total > 0 && fuentePrevios !== "SIN_PREVIOS" ? (
+            <>
+              <Row llave="Remuneraciones" valor={C(inPrev.remuneraciones)} />
+              <Row llave="Gratificaciones" valor={C(inPrev.gratificaciones)} />
+              <Row llave="Bonos" valor={C(inPrev.bonos)} />
+              <Row llave="Asignación familiar" valor={C(inPrev.asignacion_familiar)} />
+              <Row llave="TOTAL" valor={C(total)} />
+            </>
+          ) : (
+            <p className="text-gray-500 italic">No existen ingresos previos registrados.</p>
+          )}
+        </div>
+      </div>
+
+      {/* Fuente */}
+      <div className="mt-2 p-2 border rounded bg-yellow-50 text-gray-700">
+        <p className="font-semibold mb-1">Fuente de ingresos previos (Selecciona)</p>
+        <div className="flex flex-wrap gap-1.5">
+          <Chip active={fuentePrevios === "AUTO"} onClick={onClickAuto}>Proyección automática</Chip>
+          <Chip active={fuentePrevios === "CERTIFICADO"} onClick={onOpenCertificado}>Certificado de 5ta…</Chip>
+          <Chip active={fuentePrevios === "SIN_PREVIOS"} onClick={onOpenSinPrevios}>Sin ingresos previos…</Chip>
+          <Button size="sm" variant="outline" className="h-6 px-2 text-[11px] bg-white" onClick={onOpenMulti}>Multiempleo…</Button>
+        </div>
+      </div>
+
+      {/* Warnings */}
+      {Array.isArray(warnings) && warnings.length > 0 && (
+        <div className="mt-2 p-2 border rounded bg-amber-50 text-amber-900">
+          <div className="text-[11px] font-semibold">Advertencias</div>
+          <ul className="list-disc list-inside">{warnings.map((w, i) => <li key={i}>{w}</li>)}</ul>
+        </div>
+      )}
     </div>
   );
 }

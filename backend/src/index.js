@@ -16,6 +16,7 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const db = require("./database/models"); // Importa Sequelize para la conexión
 const routes = require("./routes"); // Importa rutas
+const path = require("path");
 
 // Iniciar el bot de telegram
 //require('./shared/utils/botTelegram');
@@ -41,10 +42,21 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads'), {
+    cacheControl: true,
+    maxAge: '30d',
+}));
+
+
+
 // 📂 Cargar rutas correctamente (SIN DUPLICAR)
 const API_BASE_PATH = process.env.NODE_ENV === "production" ? "/backend/api" : "/api";
 app.use(API_BASE_PATH, routes);
 console.log(`🔀 API corriendo en: ${API_BASE_PATH}`);
+
+// Ruta de archivos
+const archivoRoutes = require('./modules/archivos/interfaces/routes/archivosRoutes');
+app.use(`${API_BASE_PATH}/archivos`, archivoRoutes);
 
 
 // ✅ Verificar conexión a la base de datos antes de iniciar el servidor

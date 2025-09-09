@@ -22,6 +22,23 @@ class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository 
     });
   }
 
+  // Validador de bloqueo por mes (cierre)
+  async ultimoMesCerradoPorDniAnio({ dni, anio }) {
+    try {
+      const filas = await CalculoQuintaModel
+      .unscoped()
+      .findAll({
+        where: { dni, anio, es_oficial: true },
+        attributes: ['mes'],
+        order: [['mes', 'DESC']],
+        raw: true,
+      })
+    return filas ? Number(filas.mes) : 0;
+    } catch (e) {
+      return 0;
+    }
+  }
+
   // Método para ser usado por otros módulos
   async findUltimoVigentePorDniMes({ dni, anio, mes }) {
       return CalculoQuintaModel.findOne({

@@ -1,7 +1,8 @@
 // fuente: https://orientacion.sunat.gob.pe/3071-02-calculo-del-impuesto
 // ÚNICA constante local: TRAMOS.
 
-const { TRAMOS } = require('../../constants/tributario/quinta');
+const { TRAMOS, FUENTE_PREVIOS } = require('../../constants/tributario/quinta');
+
 const SequelizeParametrosTributariosRepository = require('../../../infrastructure/repositories/SequelizeParametrosTributariosRepository');
 
 const repoParametros = new SequelizeParametrosTributariosRepository();
@@ -67,48 +68,72 @@ function denominadorFraccionamiento(mes) {
 
 function proyectarIngresosAnuales({
   // Estimamos el ingreso bruto anual del trabajador en base al mes actual y las proyecciones que exige la SUNAT
-  mes, remuneracionMensualActual, ingresosPreviosAcumulados = 0,
-  gratiJulioProyectada = 0, gratiDiciembreProyectada = 0, otrosIngresosProyectados,
-  fuentePrevios = 'AUTO'
+  mes, remuneracionMensualActual, ingresosPreviosAcumulados = 0, ingresos_previos_internos = 0,
+  gratiJulioProyectada = 0, gratiDiciembreProyectada = 0, otrosIngresosProyectados, grati_multi, af_multi,
+  remu_multi, fuentePrevios = 'AUTO', asignacion_familiar_proj_actual = 0,
 }) {
-  const m = Number(mes);
 
   // Si el usuario declaró "SIN_PREVIOS", ignoramos cualquier acumulado
-  const prev = (fuentePrevios === "SIN_PREVIOS") ? 0 : Number(ingresosPreviosAcumulados || 0);
+  const prev = (fuentePrevios === FUENTE_PREVIOS.SIN_PREVIOS) ? 0 : Number(ingresosPreviosAcumulados || 0);
 
   // Calculamos cuántos meses faltan incluyendo el actual
-  const mesesRest = 12 - (m - 1);
+  const mesesRest = 12 - (mes - 1);
 
   // Proyectamos cuanto ganará el trabajador de aquí a fin de año con su sueldo mensual
   const proySueldos = Number(remuneracionMensualActual || 0) * mesesRest;
 
+  /* let proySueldosInternos = 0;
+  // Proyectamos cuanto ganará por otras filiales en caso vengan ingresos previos internos
+  if (ingresos_previos_internos > 0) {
+    proySueldosInternos = Number((ingresos_previos_internos/mes) || 0) * mesesRest;
+  } */
+
   // Proyectamos gratificación según el mes
   let proyGrati = 0;
-  if ( m <= 6) {
+  if ( mes <= 6) {
     //Ene-Jun: faltan Julio y Diciembre
     proyGrati = Number(gratiJulioProyectada || 0) + Number(gratiDiciembreProyectada || 0);
-  } else if ( m >= 7 && m <= 11) {
+  
+  } else if ( mes >= 7 && mes <= 11) {
     // Jul-Nov: solo falta diciembre
     proyGrati = Number(gratiDiciembreProyectada || 0);
   }
     // En diciembre ya no hay gratificaciones proyectadas
   
-  const total = prev + proySueldos + proyGrati + Number(otrosIngresosProyectados || 0);
+    // --- MULTI EMPLEAO ---
+  const grati_pagadas_multi = grati_multi?.pagadas_total_otras || 0;
+  const grati_proy_julio_multi = grati_multi?.proyeccion_total_otras.julio || 0;
+  const grati_proy_diciembre_multi = grati_multi?.proyeccion_total_otras.diciembre || 0;
 
-  // Retornamos la sumatoria:
-  // Lo ya ganado +
-  // lo que falta de sueldo +
-  // grati de julio +
-  // grati de diciembre +
-  // otros ingresos proyectados
-  // y lo devolvemos redondeado a dos decimales
+  const asignacion_familiar_prev_multi = af_multi?.previos_total_otras || 0;
+  const asignacion_familiar_proj_multi = af_multi?.proyeccion_total_otras || 0;
+
+  const remunearcion_prev_multi = remu_multi?.previos_total_otras || 0;
+  const remuneracion_proj_multi = remu_multi?.proyeccion_total_otras || 0;
+
+  const total_multi_empleo =
+    grati_pagadas_multi + grati_proy_julio_multi + grati_proy_diciembre_multi +
+    asignacion_familiar_prev_multi + asignacion_familiar_proj_multi +
+    remunearcion_prev_multi + remuneracion_proj_multi;
+  
+    const af_proj_actual = Number(asignacion_familiar_proj_actual || 0);
+
+  const total = 
+    prev + 
+    proySueldos +
+    round2(proyGrati) +
+    total_multi_empleo +
+    af_proj_actual +    
+    Number(otrosIngresosProyectados || 0);
+
   console.log("Llegó al cálculo de proyección anual:",
-    "mes: ", m,
+    "mes: ", mes,
     "fuente previos: ", fuentePrevios,
     "previos usados: ", prev,
     "meses restantes: ", mesesRest,
     "sueldos proyectados: ", proySueldos,
-    "gratificación proyectada: ", proyGrati,
+    "gratificación proyectada: ", round2(proyGrati),
+    "total de multi empleos: ", total_multi_empleo,
     "otros ingresos proyectados: ", otrosIngresosProyectados,
     "para un total de: ", total
   )
@@ -118,9 +143,13 @@ function proyectarIngresosAnuales({
 function confirmarParametrosTributarios(parametros) {
   const uit = Number(parametros?.uit);
   const deduccion_fija = Number(parametros?.deduccionFijaUit);
+  const valor_hora_extra = Number(parametros?.valorHoraExtra);
+  const valor_asignacion_familiar = Number(parametros?.valorAsignacionFamiliar)
   if (!Number.isFinite(uit) || uit <= 0) throw new Error('Parámetro "uit" inválido.');
   if (!Number.isFinite(deduccion_fija) || deduccion_fija <= 0) throw new Error('Parámetro "deduccionFijaUit" inválido.');
-  return { uit: uit, deduccionFijaUit: deduccion_fija };
+  if (!Number.isFinite(valor_hora_extra) || valor_hora_extra <= 0) throw new Error('Parámetro "valorHoraExtra" inválido');
+  if (!Number.isFinite(valor_asignacion_familiar) || valor_asignacion_familiar <= 0) throw new Error('Parámetro "valorAsignacionFamiliar" inválido')
+  return { uit: uit, deduccionFijaUit: deduccion_fija, valorHoraExtra: valor_hora_extra, valorAsignacionFamiliar: valor_asignacion_familiar };
 }
 
 function calcularRetencionBaseMes({ anio, mes, brutoAnualProyectado, retencionesAcumuladas = 0, deduccionAdicionalAnual = 0, parametros }) {
@@ -198,6 +227,7 @@ function calcularRetencionAdicionalMes({ anio, rentaNetaAnual, montoExtraGravado
 
 module.exports = {
   getParametrosTributarios,
+  confirmarParametrosTributarios,
   proyectarIngresosAnuales,
   calcularRetencionBaseMes,
   calcularRetencionAdicionalMes,

@@ -217,8 +217,6 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
       listaTrabajadoresPlanilla
     );
 
-    console.table(listaTrabajadoresPlanilla);
-    //console.table(totalesHonorarios)
 
     return {
       planilla: {
