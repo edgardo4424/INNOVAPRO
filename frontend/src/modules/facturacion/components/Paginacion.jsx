@@ -32,8 +32,8 @@ const Paginacion = ({ currentPage, totalPages, totalRecords, limit, onPageChange
             // Renderiza el rango alrededor de la página actual
             let start = Math.max(1, currentPage - half);
             let end = Math.min(totalPages, currentPage + half);
-            
-            if(currentPage <= half) {
+
+            if (currentPage <= half) {
                 end = maxPagesToShow;
             } else if (currentPage + half >= totalPages) {
                 start = totalPages - maxPagesToShow + 1;
@@ -78,7 +78,7 @@ const Paginacion = ({ currentPage, totalPages, totalRecords, limit, onPageChange
                                 <span className="py-2 px-4 text-gray-700">...</span>
                             ) : (
                                 <button
-                                    className={`py-2 px-4 rounded-md shadow-sm cursor-pointer ${currentPage === page ? "bg-blue-600 text-white" : "bg-gray-200 hover:bg-gray-300"
+                                    className={`py-2 px-4 rounded-md shadow-sm cursor-pointer ${currentPage === page ? "bg-innova-blue text-white" : "bg-gray-200 hover:bg-gray-300"
                                         }`}
                                     onClick={() => onPageChange(page)}
                                 >

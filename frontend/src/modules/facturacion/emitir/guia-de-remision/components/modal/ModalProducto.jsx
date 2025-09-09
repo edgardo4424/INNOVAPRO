@@ -25,7 +25,7 @@ export default function ModalProducto({ open, setOpen }) {
             <div className="flex md:items-end justify-start items-start">
 
                 <AlertDialogTrigger asChild>
-                    <Button className="bg-blue-500 hover:scale-105 hover:bg-blue-600 cursor-pointer"
+                    <Button className="bg-innova-blue/90 rounded-md text-white hover:bg-innova-blue-hover cursor-pointer"
                     // disabled={pagosCompletos}
                     >
                         <Package />

@@ -1,7 +1,11 @@
 import { Download, EyeIcon } from 'lucide-react';
-import React from 'react'
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 
-const TablaGuias = ({ documentos, setIdDocumento, setModalOpen, setDocumentoAVisualizar, setModalDescargar, setGuiaADescargar }) => {
+const TablaGuias = ({ documentos, setIdDocumento, setModalOpen, setDocumentoAVisualizar, setModalDescargar, setGuiaADescargar, setDocumentoAAnular, setModalAnular }) => {
 
     // Función para obtener el color del estado
     const getEstadoColor = (estado) => {
@@ -62,12 +66,11 @@ const TablaGuias = ({ documentos, setIdDocumento, setModalOpen, setDocumentoAVis
                             {new Date(guia.fecha_emision).toLocaleDateString("es-PE", { year: "numeric", month: "2-digit", day: "2-digit" })}
                         </td>
                         <td className="py-3 px-6 text-xs text-gray-700">{guia.empresa_ruc}</td>
-                        <td className="py-3 px-6 text-xs text-gray-700">
-                            {guia.cliente_num_doc
-                                ? `${guia.cliente_num_doc} - ${guia.cliente_razon_social}`
-                                : guia.cliente_razon_social}
+                        <td className="py-3 px-2 text-xs text-gray-700 flex flex-col ">
+                            <span>{guia.cliente_num_doc || ""} -</span>
+                            <span>{guia.cliente_razon_social || ""}</span>
                         </td>
-                        {/* <td className="py-3 px-6 text-xs text-gray-700">{factura.usuario_id}</td> */}
+                        {/* <td className="py-3 px-6 text-xs text-gray-700">{guia.usuario_id}</td> */}
                         <td className="py-3">
                             <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getEstadoColor(guia.estado)}`}>
                                 {getEstadoTexto(guia.estado)}
@@ -75,23 +78,69 @@ const TablaGuias = ({ documentos, setIdDocumento, setModalOpen, setDocumentoAVis
                         </td>
                         <td className="py-3 px-6">
                             <div className="flex justify-start gap-x-2">
-                                <button onClick={() => { setIdDocumento(guia.id); setModalOpen(true); setDocumentoAVisualizar({ correlativo: String(guia.correlativo), serie: guia.serie, empresa_ruc: guia.empresa_ruc, tipo_doc: guia.tipo_doc }) }}>
-                                    <EyeIcon className="h-5 w-5 cursor-pointer text-blue-600 hover:text-blue-800" />
-                                </button>
-                                <button
+
+
+
+                                <Tooltip side="bottom" align="center" className="mr-2">
+                                    <TooltipTrigger asChild>
+                                        <button onClick={() => {
+                                            setIdDocumento(guia.id);
+                                            setModalOpen(true);
+                                            setDocumentoAVisualizar({
+                                                correlativo: String(guia.correlativo),
+                                                serie: guia.serie,
+                                                empresa_ruc: guia.empresa_ruc,
+                                                tipo_doc: guia.tipo_doc
+                                            })
+                                        }}>
+                                            <EyeIcon className="h-5 w-5 cursor-pointer text-blue-600 hover:text-blue-800" />
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>Ver guia</p>
+                                    </TooltipContent>
+                                </Tooltip>
+
+                                <Tooltip side="bottom" align="center" className="mr-2">
+                                    <TooltipTrigger asChild>
+                                        <button
+                                            onClick={() => {
+                                                setIdDocumento(guia.id);
+                                                setModalDescargar(true);
+                                                setGuiaADescargar({
+                                                    serie: guia.serie,
+                                                    correlativo: guia.correlativo,
+                                                    numRuc: guia.empresa_ruc,
+                                                    tipoDoc: guia.tipo_doc,
+                                                    numDocumentoComprobante: guia.cliente_num_doc
+                                                });
+                                            }}>
+                                            <Download className="h-5 w-5 cursor-pointer text-green-600 hover:text-green-800" />
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>Descargar</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                                {/* <button
+                                    disabled={guia.estado == "ANULADA" || guia.estado == "ANULADA-NOTA"}
                                     onClick={() => {
                                         setIdDocumento(guia.id);
-                                        setModalDescargar(true);
-                                        setGuiaADescargar({
+                                        setModalAnular(true);
+                                        setDocumentoAAnular({
+                                            empresa_ruc: guia.empresa_ruc,
+                                            tipo_Doc: guia.tipo_doc,
                                             serie: guia.serie,
                                             correlativo: guia.correlativo,
-                                            numRuc: guia.empresa_ruc,
-                                            tipoDoc: guia.tipo_doc,
-                                            numDocumentoComprobante: guia.cliente_num_doc
-                                        });
-                                    }}>
-                                    <Download className="h-5 w-5 cursor-pointer text-green-600 hover:text-green-800" />
-                                </button>
+                                            anulacion_Motivo: "",
+                                            estado_Documento: "0",
+                                        })
+                                    }}
+                                    className={`${guia.estado == "ANULADA" || guia.estado == "ANULADA-NOTA" ? "" : "hover:bg-red-100 text-red-500 hover:text-red-700 "}p-1 rounded transition-colors`}
+                                    title="Más opciones"
+                                >
+                                    <BookX className="h-5 w-5 cursor-pointer" />
+                                </button> */}
                             </div>
                         </td>
                     </tr>

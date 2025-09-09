@@ -51,12 +51,12 @@ const ValorInicialFactura = {
     ],
 };
 
-const valorIncialPago = {
+const valorIncialPago = [{
     tipo: "",
     monto: 0,
     cuota: 0,
     fecha_Pago: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
-};
+}];
 
 
 const valorIncialRetencion = {

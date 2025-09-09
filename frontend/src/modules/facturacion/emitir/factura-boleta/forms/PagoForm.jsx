@@ -12,6 +12,7 @@ import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaCon
 import { Calculator } from 'lucide-react';
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { Calendar24 } from '../../notas-de-credito/components/calendar24';
 import { Calendar22 } from "../components/Calendar22";
 import { validarModal } from '../utils/validarModal';
 import { PagoValidarEstados, valorIncialPago } from '../utils/valoresInicial';
@@ -68,12 +69,12 @@ const PagoForm = ({ closeModal }) => {
 
             // Ajustar la última cuota para compensar redondeos
             if (i === numCuotas - 1) {
-                const sumaAnteriores = cuotas.reduce((sum, c) => sum + c.monto, 0);
-                monto = montoTotalDisponible - sumaAnteriores;
+                const sumaAnteriores = cuotas.reduce((sum, c) => sum + parseFloat(c.monto), 0);
+                monto = parseFloat((montoTotalDisponible - sumaAnteriores).toFixed(2));
             }
 
             cuotas.push({
-                tipo: "CREDITO",
+                tipo: "Credito",
                 monto: monto,
                 cuota: ListaDePago.length + i + 1,
                 fecha_Pago: getEndOfMonth(i)
@@ -86,12 +87,14 @@ const PagoForm = ({ closeModal }) => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
 
+        const pago = pagoActual[0]; // Acceder al primer objeto del array
+
         // Permitir que el campo quede vacío sin bloquearlo
         if (value === "") {
-            setPagoActual({
-                ...pagoActual,
+            setPagoActual([{
+                ...pago,
                 [name]: value,
-            });
+            }]);
             return;
         }
 
@@ -104,7 +107,7 @@ const PagoForm = ({ closeModal }) => {
 
         // Validar solo si es el campo 'monto'
         if (name === "monto") {
-            const previo = parseFloat(pagoActual.monto) || 0;
+            const previo = parseFloat(pago.monto) || 0;
             const sumaReal = montoTotalPagos - previo + valorNumerico;
 
             if (sumaReal > montoTotalFactura) {
@@ -112,10 +115,9 @@ const PagoForm = ({ closeModal }) => {
             }
         }
 
-        setPagoActual({
-            ...pagoActual,
-            [name]: valorNumerico,
-        });
+        // Modificar el primer objeto del array
+        const updatedPago = { ...pago, [name]: valorNumerico };
+        setPagoActual([updatedPago]);
     };
 
     // Manejar cambio en número de cuotas
@@ -124,18 +126,13 @@ const PagoForm = ({ closeModal }) => {
         const numCuotas = parseInt(value);
 
         if (value === "" || isNaN(numCuotas) || numCuotas < 1) {
-            setNumeroCuotas(""); // Asigna una cadena vacía para que el input se muestre vacío
-            setCuotasGeneradas([]); // Limpia las cuotas
+            setNumeroCuotas("");
+            setCuotasGeneradas([]);
         } else {
             setNumeroCuotas(numCuotas);
-            if (pagoActual.tipo === "CREDITO") {
-                const nuevasCuotas = generarCuotas(numCuotas, parseFloat(pagoActual.monto.toFixed(2)));
-                const nuevasCuotasConDosDecimales = nuevasCuotas.map(cuota => ({
-                    ...cuota,
-                    monto: parseFloat(cuota.monto.toFixed(2))
-                }));
-                console.log(nuevasCuotasConDosDecimales)
-                setCuotasGeneradas(nuevasCuotasConDosDecimales);
+            if (pagoActual[0].tipo === "Credito") {
+                const nuevasCuotas = generarCuotas(numCuotas);
+                setCuotasGeneradas(nuevasCuotas);
             }
         }
     };
@@ -171,38 +168,37 @@ const PagoForm = ({ closeModal }) => {
 
         const fechaPagoISO = `${ymdPeru}T00:00:00-05:00`;
 
-        setPagoActual(prev => ({
-            ...prev,
-            fecha_Pago: fechaPagoISO,
-        }));
+        setPagoActual(prev => {
+            const newPago = { ...prev[0], fecha_Pago: fechaPagoISO };
+            return [newPago];
+        });
 
         setShowCalculadora(false);
         setDaysToAdd("");
     };
 
     const handleSelectChange = (value, name) => {
-        setPagoActual((prevValores) => ({
-            ...prevValores,
-            [name]: value,
-        }));
+        setPagoActual((prevValores) => {
+            const newPago = { ...prevValores[0], [name]: value };
+            return [newPago];
+        });
     };
 
     const handleAgregar = async () => {
         let validar;
 
-        if (pagoActual.tipo === "CONTADO") {
-            // Validar pago CONTADO
-            validar = await validarModal("pago", pagoActual, factura);
-        } else if (pagoActual.tipo === "CREDITO") {
-            // Validar pago CREDITO con cuotas generadas
+        const pago = pagoActual[0]; // Acceder al primer objeto
+
+        if (pago.tipo === "Contado") {
+            validar = await validarModal("pago", pago, factura, cuotasGeneradas);
+        } else if (pago.tipo === "Credito") {
             if (cuotasGeneradas.length === 0) {
                 toast.error("Debe generar al menos una cuota", { position: "top-right" });
                 return;
             }
-
-            validar = await validarModal("pago", pagoActual, factura, cuotasGeneradas);
+            validar = await validarModal("pago", pago, factura, cuotasGeneradas);
         } else {
-            validar = await validarModal("pago", pagoActual, factura);
+            validar = await validarModal("pago", pago, factura);
         }
 
         if (!validar.validos) {
@@ -213,10 +209,8 @@ const PagoForm = ({ closeModal }) => {
             return;
         }
 
-
-        if (pagoActual.tipo === "CONTADO") {
-            // Lógica para CONTADO (sin cambios)
-            if (pagoActual.monto > montoRestante) {
+        if (pago.tipo === "Contado") {
+            if (pago.monto > montoRestante) {
                 toast.error("El monto de la cuota no puede ser mayor al monto restante", { position: "top-right" });
                 return;
             }
@@ -225,28 +219,22 @@ const PagoForm = ({ closeModal }) => {
                 ...prevFactura,
                 forma_pago: [
                     ...prevFactura.forma_pago,
-                    {
-                        ...pagoActual,
-                    }
+                    pago // Se agrega el objeto, no un array
                 ],
             }));
-
             setPagoActual(valorIncialPago);
-        } else if (pagoActual.tipo === "CREDITO") {
-            // Lógica para CREDITO con cuotas múltiples
+        } else if (pago.tipo === "Credito") {
             if (cuotasGeneradas.length === 0) {
                 toast.error("Debe generar al menos una cuota", { position: "top-right" });
                 return;
             }
 
-            // Validar que todas las cuotas tengan fecha
             const cuotasSinFecha = cuotasGeneradas.some(cuota => !cuota.fecha_Pago);
             if (cuotasSinFecha) {
                 toast.error("Todas las cuotas deben tener fecha de pago", { position: "top-right" });
                 return;
             }
 
-            // Agregar todas las cuotas a la factura
             setFactura((prevFactura) => ({
                 ...prevFactura,
                 forma_pago: [
@@ -255,12 +243,10 @@ const PagoForm = ({ closeModal }) => {
                 ],
             }));
 
-            // Limpiar formulario
             setPagoActual(valorIncialPago);
             setCuotasGeneradas([]);
             setNumeroCuotas(1);
         }
-
         closeModal();
     };
 
@@ -270,20 +256,25 @@ const PagoForm = ({ closeModal }) => {
     }, []);
 
     useEffect(() => {
-        if (pagoActual.tipo === "CREDITO") {
-            setMontoActivo(true); // Deshabilitar monto manual para crédito
+        if (pagoActual[0].tipo === "Credito") {
+            setMontoActivo(true);
             setCuotasGeneradas([]);
-            setNumeroCuotas(""); // Muestra vacío al cambiar a crédito
+            setNumeroCuotas("");
         } else {
             setMontoActivo(false);
-            setPagoActual(prev => ({
-                ...prev,
+            setPagoActual(prev => [{
+                ...prev[0],
                 cuota: 0,
                 monto: parseFloat(montoRestante)
-            }));
+            }]);
             setCuotasGeneradas([]);
         }
-    }, [pagoActual.tipo, montoRestante]);
+    }, [pagoActual[0].tipo, montoRestante]);
+
+    useEffect(() => {
+        console.log(pagoActual)
+        console.log(cuotasGeneradas)
+    }, [pagoActual, cuotasGeneradas])
 
     return (
         <div className="overflow-y-auto col-span-4 w-full">
@@ -291,6 +282,7 @@ const PagoForm = ({ closeModal }) => {
                 action=""
                 className="w-full grid grid-cols-4 gap-x-2 gap-y-3 py-8"
             >
+                {/* ... (el resto del JSX es el mismo) ... */}
                 {/* Método de pago */}
                 <div className="flex flex-col gap-1 col-span-4 md:col-span-2">
                     <Label>Método de pago</Label>
@@ -299,16 +291,16 @@ const PagoForm = ({ closeModal }) => {
                         onValueChange={(e) => {
                             handleSelectChange(e, "tipo");
                         }}
-                        value={pagoActual.tipo || ""}
+                        value={pagoActual[0].tipo || ""}
                     >
                         <SelectTrigger className="w-full border-1 border-gray-400">
                             <SelectValue placeholder="Selecciona un tipo" />
                         </SelectTrigger>
                         <SelectContent>
-                            {!factura.forma_pago.some(item => item.tipo === "CONTADO") && (
-                                <SelectItem value="CONTADO">CONTADO</SelectItem>
+                            {!factura.forma_pago.some(item => item.tipo === "Contado") && (
+                                <SelectItem value="Contado">Contado</SelectItem>
                             )}
-                            <SelectItem value="CREDITO">CREDITO</SelectItem>
+                            <SelectItem value="Credito">Credito</SelectItem>
                         </SelectContent>
                     </Select>
                     {pagoValida.tipo && (
@@ -318,8 +310,8 @@ const PagoForm = ({ closeModal }) => {
                     )}
                 </div>
 
-                {/* Número de cuotas (solo para CREDITO) */}
-                {pagoActual.tipo === "CREDITO" && (
+                {/* Número de cuotas (solo para Credito) */}
+                {pagoActual[0].tipo === "Credito" && (
                     <div className="flex flex-col gap-1 col-span-4 md:col-span-2">
                         <Label>Número de cuotas</Label>
                         <Input
@@ -333,8 +325,8 @@ const PagoForm = ({ closeModal }) => {
                     </div>
                 )}
 
-                {/* Monto (solo para CONTADO) */}
-                {pagoActual.tipo === "CONTADO" && (
+                {/* Monto (solo para Contado) */}
+                {pagoActual[0].tipo === "Contado" && (
                     <div className="flex flex-col gap-1 col-span-4 md:col-span-2">
                         <Label>Monto a pagar</Label>
                         <Input
@@ -343,13 +335,13 @@ const PagoForm = ({ closeModal }) => {
                             placeholder="Monto"
                             className="border-1 border-gray-400"
                             onWheel={(e) => e.target.blur()}
-                            value={pagoActual.monto}
+                            value={pagoActual[0].monto}
                             onChange={handleInputChange}
-                            disabled={montoActivo}
+                            disabled
                         />
-                        <p className="text-sm pl-4 text-gray-600">
+                        {/* <p className="text-sm pl-4 text-gray-600">
                             Monto Restante: {factura.tipo_Moneda} {montoRestante}
-                        </p>
+                        </p> */}
                         {pagoValida.monto && (
                             <span className="text-red-500 text-sm">
                                 Debes ingresar un monto
@@ -358,8 +350,8 @@ const PagoForm = ({ closeModal }) => {
                     </div>
                 )}
 
-                {/* Fecha de Pago (solo para CONTADO) */}
-                {pagoActual.tipo === "CONTADO" && (
+                {/* Fecha de Pago (solo para Contado) */}
+                {pagoActual[0].tipo === "Contado" && (
                     <div className="flex flex-col gap-1 col-span-4 md:col-span-2">
                         <div className='flex justify-between'>
                             <Label>Fecha de Pago:</Label>
@@ -369,7 +361,7 @@ const PagoForm = ({ closeModal }) => {
                                 <Calculator />
                             </button>
                         </div>
-                        <Calendar22 Dato={pagoActual} setDato={setPagoActual} tipo={"fecha_Pago"} />
+                        <Calendar22 Dato={pagoActual[0]} setDato={(data) => setPagoActual([data])} tipo={"fecha_Pago"} />
                         {pagoValida.fecha_Pago && (
                             <span className="text-red-500 text-sm">
                                 Debes ingresar una fecha
@@ -398,7 +390,7 @@ const PagoForm = ({ closeModal }) => {
             </form>
 
             {/* Vista previa de cuotas generadas */}
-            {pagoActual.tipo === "CREDITO" && cuotasGeneradas.length > 0 && (
+            {pagoActual[0].tipo === "Credito" && cuotasGeneradas.length > 0 && (
                 <div className="mt-4 border rounded-lg p-4">
                     <h3 className="text-lg font-semibold mb-3">Cuotas Generadas:</h3>
                     <div className="space-y-3 overflow-y-auto max-h-[300px]">
@@ -412,12 +404,12 @@ const PagoForm = ({ closeModal }) => {
                                 </div>
                                 <div className="col-span-2">
                                     <Label className="text-sm">Fecha de Pago:</Label>
-                                    <Calendar22
-                                        Dato={{ fecha_Pago: cuota.fecha_Pago }}
+                                    <Calendar24
+                                        initialDate={cuota.fecha_Pago}
                                         setDato={(newData) => {
                                             actualizarFechaCuota(index, newData.fecha_Pago);
                                         }}
-                                        tipo="fecha_Pago"
+                                        tipo="fecha_Pago" // `tipo` ya no es tan crítico, pero se mantiene por convención
                                     />
                                 </div>
                             </div>

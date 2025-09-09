@@ -22,7 +22,7 @@ const ModalDocumentos = ({ open, setOpen }) => {
             <div className="flex md:items-end justify-start items-start">
 
                 <AlertDialogTrigger asChild>
-                    <Button className="bg-blue-500 hover:scale-105 hover:bg-blue-600 cursor-pointer"
+                    <Button className="bg-innova-blue/90 hover:scale-105 hover:bg-innova-blue cursor-pointer"
                     >
                         <ClipboardPlus />
                         <span className="hidden md:block">Documentos</span>

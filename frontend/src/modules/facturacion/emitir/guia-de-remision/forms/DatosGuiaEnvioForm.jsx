@@ -11,6 +11,8 @@ import { Calendar22 } from "../../factura-boleta/components/Calendar22";
 import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext";
 import { Ubigeos } from "../utils/ubigeo";
 import { useEffect, useMemo, useState } from "react";
+import { Search } from "lucide-react";
+import facturaService from "@/modules/facturacion/service/FacturaService";
 
 const DatosGuiaEnvioForm = () => {
     const {
@@ -94,7 +96,7 @@ const DatosGuiaEnvioForm = () => {
     }, [partidaUbigeoInput]);
 
     const handleSelectPartidaUbigeo = (ubigeo) => {
-        setPartidaUbigeoInput(`${ubigeo.IDDIST},${ubigeo.DISTRITO}, ${ubigeo.PROVINCIA}, ${ubigeo.DEPARTAMENTO}`);
+        setPartidaUbigeoInput(`${ubigeo.DISTRITO}, ${ubigeo.PROVINCIA}, ${ubigeo.DEPARTAMENTO}`);
         setGuiaTransporte((prevGuiaTransporte) => ({
             ...prevGuiaTransporte,
             guia_Envio_Partida_Ubigeo: ubigeo.IDDIST, // Setea solo el IDDIST
@@ -182,6 +184,25 @@ const DatosGuiaEnvioForm = () => {
             ...prevGuiaTransporte,
             guia_Envio_Vehiculo_Placa: value.toUpperCase(),
         }));
+    };
+
+    const handleBuscarPartida = async () => {
+        // guia_Envio_Llegada_Direccion
+        const { message, ubigeo, distrito, provincia, departamento } = await facturaService.obtenerUbigeoDireccion({ direccion: guia_Envio_Partida_Direccion });
+        if (message == "ok") {
+            let newObj = { IDDIST: ubigeo, DISTRITO: distrito, PROVINCIA: provincia, DEPARTAMENTO: departamento };
+            handleSelectPartidaUbigeo(newObj);
+        }
+
+    };
+
+    const handleBuscarLlegada = async () => {
+        // guia_Envio_Llegada_Direccion
+        const { message, ubigeo, distrito, provincia, departamento } = await facturaService.obtenerUbigeoDireccion({ direccion: guia_Envio_Llegada_Direccion });
+        if (message == "ok") {
+            let newObj = { IDDIST: ubigeo, DISTRITO: distrito, PROVINCIA: provincia, DEPARTAMENTO: departamento };
+            handleSelectLlegadaUbigeo(newObj);
+        }
     };
 
     const opcionesCodigos = [
@@ -295,72 +316,52 @@ const DatosGuiaEnvioForm = () => {
                         </Select>
                     }
                 </div>
-                <div>
-                    {tipoGuia == "transporte-privado" &&
-                        <>
-                            <Label
-                                htmlFor="guia_Envio_Mod_Traslado"
-                                className="block text-sm font-semibold text-gray-700 text-left mb-1"
-                            >
-                                Modalidad de Traslado
-                            </Label>
-                            <Select
-                                name="guia_Envio_Mod_Traslado"
-                                value={guiaDatosPrivado.guia_Envio_Mod_Traslado}
-                                disabled
-                            >
-                                <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> {/* Estilo de borde mejorado */}
-                                    <SelectValue placeholder="Selecciona un codigo" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="01">01 - Transporte público</SelectItem>
-                                    <SelectItem value="02">02 - Transporte privado</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </>
-                    }
-                    {tipoGuia == "transporte-publico" &&
-                        <>
-                            <Label
-                                htmlFor="guia_Envio_Cod_Traslado"
-                                className="block text-sm font-semibold text-gray-700 text-left mb-1"
-                            >
-                                Descripción de Traslado
-                            </Label>
-                            <Input
-                                type="text"
-                                id="guia_Envio_Des_Traslado"
-                                name="guia_Envio_Des_Traslado"
-                                value={guiaDatosPublico.guia_Envio_Des_Traslado}
-                                // onChange={handleChange}
-                                disabled
-                                className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
-                            />
-                        </>
-                    }
-                    {tipoGuia == "traslado-misma-empresa" &&
-                        <>
-                            <Label
-                                htmlFor="guia_Envio_Mod_Traslado"
-                                className="block text-sm font-semibold text-gray-700 text-left mb-1"
-                            >
-                                Modalidad de Traslado
-                            </Label>
-                            <Select
-                                name="guia_Envio_Mod_Traslado"
-                                value={guiaDatosInternos.guia_Envio_Mod_Traslado}
-                                disabled
-                            >
-                                <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> {/* Estilo de borde mejorado */}
-                                    <SelectValue placeholder="Selecciona un codigo" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="01">01 - Transporte público</SelectItem>
-                                    <SelectItem value="02">02 - Transporte privado</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </>}
-                </div>
+                {tipoGuia == "transporte-privado" &&
+                    <div>
+                        <Label
+                            htmlFor="guia_Envio_Mod_Traslado"
+                            className="block text-sm font-semibold text-gray-700 text-left mb-1"
+                        >
+                            Modalidad de Traslado
+                        </Label>
+                        <Select
+                            name="guia_Envio_Mod_Traslado"
+                            value={guiaDatosPrivado.guia_Envio_Mod_Traslado}
+                            disabled
+                        >
+                            <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> {/* Estilo de borde mejorado */}
+                                <SelectValue placeholder="Selecciona un codigo" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="01">01 - Transporte público</SelectItem>
+                                <SelectItem value="02">02 - Transporte privado</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                }
+                {tipoGuia == "traslado-misma-empresa" &&
+                    <div>
+                        <Label
+                            htmlFor="guia_Envio_Mod_Traslado"
+                            className="block text-sm font-semibold text-gray-700 text-left mb-1"
+                        >
+                            Modalidad de Traslado
+                        </Label>
+                        <Select
+                            name="guia_Envio_Mod_Traslado"
+                            value={guiaDatosInternos.guia_Envio_Mod_Traslado}
+                            disabled
+                        >
+                            <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm"> {/* Estilo de borde mejorado */}
+                                <SelectValue placeholder="Selecciona un codigo" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="01">01 - Transporte público</SelectItem>
+                                <SelectItem value="02">02 - Transporte privado</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                }
 
                 {tipoGuia == "transporte-publico" &&
                     <div>
@@ -408,7 +409,6 @@ const DatosGuiaEnvioForm = () => {
                 </div>
 
                 <div className="col-span-1 md:col-span-2 lg:col-span-2">
-                    {" "}
                     {/* Made address span full width on small screens too */}
                     <Label
                         htmlFor="guia_Envio_Partida_Direccion"
@@ -416,14 +416,22 @@ const DatosGuiaEnvioForm = () => {
                     >
                         Dirección de Partida
                     </Label>
-                    <Input
-                        type="text"
-                        id="guia_Envio_Partida_Direccion"
-                        name="guia_Envio_Partida_Direccion"
-                        value={guia_Envio_Partida_Direccion}
-                        onChange={handleChange}
-                        className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
-                    />
+                    <div className="flex gap-x-2">
+                        <Input
+                            type="text"
+                            id="guia_Envio_Partida_Direccion"
+                            name="guia_Envio_Partida_Direccion"
+                            value={guia_Envio_Partida_Direccion}
+                            onChange={handleChange}
+                            className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
+                        />
+                        <button
+                            onClick={handleBuscarPartida}
+                            className="p-2 bg-innova-blue/90 rounded-md text-white hover:bg-innova-blue-hover focus:outline-none focus:ring-2 focus:ring-innova-blue focus:ring-offset-2 transition-colors duration-200 cursor-pointer"
+                        >
+                            <Search className="h-5 w-5" />
+                        </button>
+                    </div>
                 </div>
                 {/* --- Ubigeo de Partida --- */}
                 <div className="relative">
@@ -461,7 +469,6 @@ const DatosGuiaEnvioForm = () => {
 
 
                 <div className="col-span-1 md:col-span-2 lg:col-span-2">
-                    {" "}
                     {/* Made address span full width on small screens too */}
                     <Label
                         htmlFor="guia_Envio_Llegada_Direccion"
@@ -469,14 +476,22 @@ const DatosGuiaEnvioForm = () => {
                     >
                         Dirección de Llegada
                     </Label>
-                    <Input
-                        type="text"
-                        id="guia_Envio_Llegada_Direccion"
-                        name="guia_Envio_Llegada_Direccion"
-                        value={guia_Envio_Llegada_Direccion}
-                        onChange={handleChange}
-                        className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
-                    />
+                    <div className="flex gap-x-2">
+                        <Input
+                            type="text"
+                            id="guia_Envio_Llegada_Direccion"
+                            name="guia_Envio_Llegada_Direccion"
+                            value={guia_Envio_Llegada_Direccion}
+                            onChange={handleChange}
+                            className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
+                        />
+                        <button
+                            onClick={handleBuscarLlegada}
+                            className="p-2 bg-innova-blue/90 rounded-md text-white hover:bg-innova-blue-hover focus:outline-none focus:ring-2 focus:ring-innova-blue focus:ring-offset-2 transition-colors duration-200 cursor-pointer"
+                        >
+                            <Search className="h-5 w-5" />
+                        </button>
+                    </div>
                 </div>
                 {/* --- Ubigeo de Llegada --- */}
                 <div className="relative">
@@ -530,6 +545,26 @@ const DatosGuiaEnvioForm = () => {
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                     />
                 </div>
+
+                {tipoGuia == "transporte-publico" &&
+                    <div>
+                        <Label
+                            htmlFor="guia_Envio_Cod_Traslado"
+                            className="block text-sm font-semibold text-gray-700 text-left mb-1"
+                        >
+                            Descripción de Traslado
+                        </Label>
+                        <Input
+                            type="text"
+                            id="guia_Envio_Des_Traslado"
+                            name="guia_Envio_Des_Traslado"
+                            value={guiaDatosPublico.guia_Envio_Des_Traslado}
+                            // onChange={handleChange}
+                            disabled
+                            className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
+                        />
+                    </div>
+                }
             </div>
         </div>
     );

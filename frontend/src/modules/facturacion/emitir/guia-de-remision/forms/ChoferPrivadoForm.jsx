@@ -14,11 +14,11 @@ import factilizaService from "../../../service/FactilizaService";
 import { toast } from "react-toastify";
 
 const ChoferPrivadoForm = () => {
-    const { guiaDatosPrivado, setGuiaDatosPrivado } = useGuiaTransporte();
+    const { guiaTransporte, setGuiaTransporte } = useGuiaTransporte();
 
     // Función unificada para manejar cambios en inputs y selects
     const handleChange = (value, name, index) => {
-        setGuiaDatosPrivado(prev => ({
+        setGuiaTransporte(prev => ({
             ...prev,
             chofer: prev.chofer.map((chofer, i) =>
                 i === index ? { ...chofer, [name]: value } : chofer
@@ -28,7 +28,7 @@ const ChoferPrivadoForm = () => {
 
     // Función para agregar un nuevo chofer
     const addChofer = () => {
-        setGuiaDatosPrivado(prev => ({
+        setGuiaTransporte(prev => ({
             ...prev,
             chofer: [
                 ...prev.chofer,
@@ -39,7 +39,7 @@ const ChoferPrivadoForm = () => {
 
     // Función para eliminar un chofer
     const removeChofer = (index) => {
-        setGuiaDatosPrivado(prev => ({
+        setGuiaTransporte(prev => ({
             ...prev,
             chofer: prev.chofer.filter((_, i) => i !== index),
         }));
@@ -49,7 +49,7 @@ const ChoferPrivadoForm = () => {
     const handleBuscar = async (e, index) => {
         e.preventDefault();
 
-        const chofer = guiaDatosPrivado.chofer[index];
+        const chofer = guiaTransporte.chofer[index];
 
         if (!chofer.nro_doc) {
             toast.error("Por favor, ingresa el número de documento del chofer.");
@@ -79,7 +79,7 @@ const ChoferPrivadoForm = () => {
                 const apellidos = `${data_inf.apellido_paterno || ''} ${data_inf.apellido_materno || ''}`.trim();
                 const licencia = data_lic.licencia?.numero || '';
 
-                setGuiaDatosPrivado((prev) => ({
+                setGuiaTransporte((prev) => ({
                     ...prev,
                     chofer: prev.chofer.map((c, i) => {
                         if (i === index) {
@@ -107,13 +107,13 @@ const ChoferPrivadoForm = () => {
             <h1 className="text-2xl text-left   font-semibold mb-6  pb-2">
                 Datos del Chofer
             </h1>
-            {guiaDatosPrivado.chofer.map((chofer, index) => (
+            {guiaTransporte.chofer.map((chofer, index) => (
                 <div
                     key={index}
                     className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-6 mb-6 p-6 border border-gray-400  rounded-md"
                 >
                     {/* Botón para eliminar chofer (visible si hay más de uno) */}
-                    {index > 0 && (
+                    {(
                         <div className="flex items-center justify-center absolute top-2 right-2">
                             <button
                                 type="button"
@@ -191,7 +191,7 @@ const ChoferPrivadoForm = () => {
                             <button
                                 type="button" // Importante: usa type="button" para evitar que el botón envíe el formulario
                                 onClick={(e) => handleBuscar(e, index)}
-                                className="p-2 bg-blue-500 rounded-md text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 cursor-pointer"
+                                className="p-2 bg-innova-blue/90 rounded-md text-white hover:bg-innova-blue-hover focus:outline-none focus:ring-2 focus:ring-innova-blue focus:ring-offset-2 transition-colors duration-200 cursor-pointer"
                             >
                                 <Search className="h-5 w-5" />
                             </button>

@@ -198,7 +198,6 @@ const ListaDocumentos = () => {
                             setIdDocumento={setIdDocumento}
                             setDocumentoADescargar={setDocumentoADescargar}
                             setDocumentoAVisualizar={setDocumentoAVisualizar}
-                            documentoOpciones={documentoAAnular}
                             setModalAnular={setModalAnular}
                             setDocumentoAAnular={setDocumentoAAnular}
                         />
@@ -211,6 +210,7 @@ const ListaDocumentos = () => {
                                 setDocumentoAVisualizar={setDocumentoAVisualizar}
                             />
                         )}
+                        
                         {modalDescargar && idDocumento && (
                             <ModalDescarga
                                 id_documento={idDocumento}

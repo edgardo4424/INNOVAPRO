@@ -1,73 +1,12 @@
 import factilizaService from '@/modules/facturacion/service/FactilizaService';
 import { FileCode, FileText, Folders, X } from 'lucide-react';
 import { useState } from 'react';
+// npm install file-saver
+import { saveAs } from 'file-saver';
 
-/* ================== helpers comunes ================== */
-const detectMimeAndExt = (b64) => {
-    const head = (b64 || '').slice(0, 20);
-    if (head.startsWith('data:')) {
-        const mime = head.slice(5, head.indexOf(';'));
-        const ext = mime.split('/')[1] || 'bin';
-        return { mime, ext };
-    }
-    if (head.startsWith('UEsDB')) return { mime: 'application/zip', ext: 'zip' }; // ZIP
-    if (head.startsWith('JVBER')) return { mime: 'application/pdf', ext: 'pdf' }; // PDF
-    if (head.startsWith('PD94') || (b64 || '').includes('PHhtbA')) {
-        return { mime: 'application/xml', ext: 'xml' }; // XML en base64
-    }
-    return { mime: 'application/octet-stream', ext: 'bin' };
-};
-
-const cleanBase64 = (b64) =>
-    (b64 || '').trim().replace(/[\r\n\s]/g, '').replace(/-/g, '+').replace(/_/g, '/');
-
-const base64ToBlob = (b64, mime = 'application/octet-stream') => {
-    const cleaned = cleanBase64(b64);
-    let data = cleaned;
-    let contentType = mime;
-    if (cleaned.startsWith('data:')) {
-        const [preamble, payload] = cleaned.split(',');
-        const m = preamble.match(/^data:(.*?);base64$/i);
-        if (m) contentType = m[1] || contentType;
-        data = payload || '';
-    }
-    const padLen = data.length % 4;
-    if (padLen) data += '='.repeat(4 - padLen);
-
-    const byteString = atob(data);
-    const len = byteString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) bytes[i] = byteString.charCodeAt(i);
-    return new Blob([bytes], { type: contentType });
-};
-
-const downloadBlob = (blob, filename = 'archivo.bin') => {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-};
-
-const downloadBase64 = (b64, filenameBase = 'archivo', forcedExt) => {
-    if (!b64) throw new Error('Sin contenido');
-    const { mime, ext } = detectMimeAndExt(b64);
-    const finalExt = forcedExt || ext;
-    const blob = base64ToBlob(b64, mime);
-    downloadBlob(blob, `${filenameBase}.${finalExt}`);
-};
-
-const downloadText = (text, filenameBase = 'archivo', mime = 'application/xml', ext = 'xml') => {
-    downloadBlob(new Blob([text], { type: `${mime};charset=utf-8` }), `${filenameBase}.${ext}`);
-};
-/* ===================================================== */
-
-/** Payload al API (NO toco tu correlativoSrc) */
+/* ================== helpers simplificados ================== */
 const toDocumentoPayload = (doc = {}) => {
-    const correlativoSrc = doc.correlativo ?? doc.correlativo ?? ''; // <- tal cual
+    const correlativoSrc = doc.correlativo ?? doc.correlativo ?? '';
     const correlativo = String(correlativoSrc).replace(/^0+/, '') || '0';
     const empresa_ruc = String(doc.numRuc ?? doc.empresa_ruc ?? doc.empresa_Ruc ?? '');
     const serie = String(doc.serie ?? '');
@@ -86,64 +25,58 @@ const filenameBaseFromDoc = (doc = {}) => {
     return 'documento';
 };
 
-/* Para XML plano/base64/dataURL */
-const isXmlText = (s) => typeof s === 'string' && s.trim().startsWith('<?xml');
-const isDataUrl = (s) => typeof s === 'string' && s.startsWith('data:');
-const looksLikeB64Header = (s) => {
-    const c = cleanBase64(s || '');
-    return c.startsWith('UEsDB') || c.startsWith('JVBER') || c.startsWith('PD94');
-};
-
-const extractDownloadPayload = (respRaw) => {
-    if (respRaw == null) throw new Error('Sin respuesta del servidor');
-
-    if (typeof respRaw === 'string') {
-        const s = respRaw.trim();
-        if (isDataUrl(s)) return { kind: 'data-url', data: s };
-        if (isXmlText(s)) return { kind: 'xml-text', data: s };
-        if (s.startsWith('{') || s.startsWith('[')) {
-            try { return extractDownloadPayload(JSON.parse(s)); } catch { }
+// Función simplificada para procesar respuestas
+const processResponse = async (response, filename, type = 'auto') => {
+    // Si es un string que parece XML
+    if (typeof response === 'string' && response.trim().startsWith('<?xml')) {
+        const blob = new Blob([response], { type: 'application/xml;charset=utf-8' });
+        saveAs(blob, `${filename}.xml`);
+        return;
+    }
+    
+    // Si es un Blob directo (PDF)
+    if (response instanceof Blob) {
+        saveAs(response, `${filename}.pdf`);
+        return;
+    }
+    
+    // Si viene en un wrapper con blob
+    if (response?.blob instanceof Blob) {
+        const extension = type === 'pdf' ? '.pdf' : '.xml';
+        saveAs(response.blob, `${filename}${extension}`);
+        return;
+    }
+    
+    // Si es base64
+    if (typeof response === 'string' && (response.startsWith('UEsDB') || response.startsWith('JVBER'))) {
+        // Detectar si es ZIP o PDF por la cabecera
+        const isZip = response.startsWith('UEsDB');
+        const isPdf = response.startsWith('JVBER');
+        
+        const binaryString = atob(response);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
         }
-        if (looksLikeB64Header(s)) return { kind: 'base64', data: s };
-        throw new Error('Respuesta string no es XML ni base64');
-    }
-
-    // Blob (PDF binario)
-    if (respRaw instanceof Blob) return { kind: 'blob', data: respRaw, filename: null };
-
-    // { blob, headers, filename, status }
-    if (respRaw?.blob instanceof Blob) {
-        return { kind: 'blob', data: respRaw.blob, filename: respRaw.filename || null };
-    }
-
-    const status = respRaw.status ?? respRaw.code ?? respRaw.httpStatus;
-    if (status === 401) throw new Error(respRaw.message || respRaw.response || 'No autorizado (401)');
-    if (status === 400) throw new Error(respRaw.message || 'Bad Request (400)');
-    if (status === 404) throw new Error(respRaw.message || 'No encontrado (404)');
-
-    const candidates = [respRaw.data, respRaw.payload, respRaw.result, respRaw.base64, respRaw.file, respRaw.content];
-    for (const c of candidates) {
-        if (c instanceof Blob) return { kind: 'blob', data: c, filename: null };
-        if (typeof c === 'string') {
-            if (isDataUrl(c)) return { kind: 'data-url', data: c };
-            if (isXmlText(c)) return { kind: 'xml-text', data: c };
-            if (looksLikeB64Header(c)) return { kind: 'base64', data: c };
+        
+        if (isZip) {
+            const blob = new Blob([bytes], { type: 'application/zip' });
+            saveAs(blob, `${filename}-CDR.zip`);
+        } else if (isPdf) {
+            const blob = new Blob([bytes], { type: 'application/pdf' });
+            saveAs(blob, `${filename}-PDF.pdf`);
         }
+        return;
     }
-
-    // data.data... (por si acaso)
-    let deep = respRaw;
-    for (let i = 0; i < 3; i++) {
-        if (deep && typeof deep === 'object' && 'data' in deep) deep = deep.data;
+    
+    // Intentar extraer de objetos anidados
+    const data = response?.data || response?.payload || response?.result;
+    if (data) {
+        await processResponse(data, filename, type);
+        return;
     }
-    if (deep instanceof Blob) return { kind: 'blob', data: deep, filename: null };
-    if (typeof deep === 'string') {
-        if (isDataUrl(deep)) return { kind: 'data-url', data: deep };
-        if (isXmlText(deep)) return { kind: 'xml-text', data: deep };
-        if (looksLikeB64Header(deep)) return { kind: 'base64', data: deep };
-    }
-
-    throw new Error(`Respuesta no reconocida${status ? ` (status ${status})` : ''}`);
+    
+    throw new Error('Formato de respuesta no reconocido');
 };
 
 const ModalDescarga = ({
@@ -153,8 +86,6 @@ const ModalDescarga = ({
     documentoADescargar,
     setDocumentoADescargar
 }) => {
-
-    console.log(documentoADescargar)
     const [isOpen, setIsOpen] = useState(true);
     const [loading, setLoading] = useState(false);
     const [msg, setMsg] = useState('');
@@ -181,60 +112,34 @@ const ModalDescarga = ({
             }
 
             if (format === 'xml') {
-                const resp = await factilizaService.consultarXml(payload);
-                const out = extractDownloadPayload(resp);
-                if (out.kind === 'xml-text') {
-                    downloadText(out.data, `${baseName}-XML`, 'application/xml', 'xml');
-                } else {
-                    const { ext } = detectMimeAndExt(out.data);
-                    const suffix = ext === 'zip' ? 'CDR' : 'XML';
-                    downloadBase64(out.data, `${baseName}-${suffix}`);
-                }
-                setMsg('XML/CDR descargado.');
+                const response = await factilizaService.consultarXml(payload);
+                await processResponse(response, `${baseName}-XML`, 'xml');
+                setMsg('XML/CDR descargado exitosamente.');
             }
 
             if (format === 'pdf') {
-                const resp = await factilizaService.consultarPdf(payload);
-                const out = extractDownloadPayload(resp);
-                if (out.kind === 'blob') {
-                    // PDF binario (lo que tu backend está enviando)
-                    downloadBlob(out.data, `${baseName}-PDF.pdf`);
-                } else if (out.kind === 'base64' || out.kind === 'data-url') {
-                    downloadBase64(out.data, `${baseName}-PDF`, 'pdf');
-                } else {
-                    throw new Error('El endpoint /sunat/pdf no devolvió PDF.');
-                }
-                setMsg('PDF descargado.');
+                const response = await factilizaService.consultarPdf(payload);
+                await processResponse(response, `${baseName}-PDF`, 'pdf');
+                setMsg('PDF descargado exitosamente.');
             }
 
             if (format === 'all') {
-                // XML
-                const xmlResp = await factilizaService.consultarXml(payload);
-                const xmlOut = extractDownloadPayload(xmlResp);
-                if (xmlOut.kind === 'xml-text') {
-                    downloadText(xmlOut.data, `${baseName}-XML`, 'application/xml', 'xml');
-                } else {
-                    const { ext } = detectMimeAndExt(xmlOut.data);
-                    const xmlSuffix = ext === 'zip' ? 'CDR' : 'XML';
-                    downloadBase64(xmlOut.data, `${baseName}-${xmlSuffix}`);
-                }
-
-                // PDF
-                const pdfResp = await factilizaService.consultarPdf(payload);
-                const pdfOut = extractDownloadPayload(pdfResp);
-                if (pdfOut.kind === 'blob') {
-                    downloadBlob(pdfOut.data, `${baseName}-PDF.pdf`);
-                } else if (pdfOut.kind === 'base64' || pdfOut.kind === 'data-url') {
-                    downloadBase64(pdfOut.data, `${baseName}-PDF`, 'pdf');
-                } else {
-                    throw new Error('El endpoint /sunat/pdf no devolvió PDF.');
-                }
-
-                setMsg('XML/CDR y PDF descargados.');
+                // Descargar XML
+                const xmlResponse = await factilizaService.consultarXml(payload);
+                await processResponse(xmlResponse, `${baseName}-XML`, 'xml');
+                
+                // Pequeña pausa para evitar bloqueos del navegador
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                // Descargar PDF
+                const pdfResponse = await factilizaService.consultarPdf(payload);
+                await processResponse(pdfResponse, `${baseName}-PDF`, 'pdf');
+                
+                setMsg('XML/CDR y PDF descargados exitosamente.');
             }
         } catch (err) {
-            console.error(err);
-            setMsg(err?.message || 'Error al descargar');
+            console.error('Error en descarga:', err);
+            setMsg(err?.message || 'Error al descargar el archivo');
         } finally {
             setLoading(false);
         }

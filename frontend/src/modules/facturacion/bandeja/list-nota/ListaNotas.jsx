@@ -8,6 +8,8 @@ import TablaNotas from "./components/TablaNotas";
 import { LoaderCircle } from "lucide-react";
 import ModalVizualizarNota from "../../components/modal/ModalVizualizarNota";
 import ModalDescarga from "../../components/modal/ModalDescarga";
+import ModalAnularDocumento from "../list-factura-boleta/components/modal/ModalAnularDocumento";
+import ModalVisualizarDocumento from "../../components/modal/ModalVisualizarDocumento";
 
 const ListaNotas = () => {
     const navigate = useNavigate();
@@ -18,12 +20,15 @@ const ListaNotas = () => {
 
     // ?? modales
     const [modalVisualizar, setModalVisualizar] = useState(false);
+    const [modalVisualizarAfectado, setModalVisualizarAfectado] = useState(false);
     const [modalDescargar, setModalDescargar] = useState(false);
+    const [modalAnular, setModalAnular] = useState(false);
     // ?? identificador
     const [idDocumento, setIdDocumento] = useState("");
     const [documentoADescargar, setDocumentoADescargar] = useState({});
     const [documentoAVisualizar, setDocumentoAVisualizar] = useState({});
-    const [documentoOpciones, setDocumentoOpciones] = useState({});
+    const [documentoAfectadoVisualizar, setDocumentoAfectadoVisualizar] = useState({});
+    const [documentoAAnular, setDocumentoAAnular] = useState({});
 
     const [filtro, setFiltro] = useState({
         page: 1,
@@ -191,8 +196,10 @@ const ListaNotas = () => {
                             setIdDocumento={setIdDocumento}
                             setDocumentoADescargar={setDocumentoADescargar}
                             setDocumentoAVisualizar={setDocumentoAVisualizar}
-                            documentoOpciones={documentoOpciones}
-                            setDocumentoOpciones={setDocumentoOpciones}
+                            setModalAnular={setModalAnular}
+                            setDocumentoAAnular={setDocumentoAAnular}
+                            setModalVisualizarAfectado={setModalVisualizarAfectado}
+                            setDocumentoAfectadoVisualizar={setDocumentoAfectadoVisualizar}
                         />
                         {/* Modal */}
                         {modalVisualizar && documentoAVisualizar && (
@@ -202,6 +209,13 @@ const ListaNotas = () => {
                                 setDocumentoAVisualizar={setDocumentoAVisualizar}
                             />
                         )}
+                        {modalVisualizarAfectado && documentoAVisualizar && (
+                            <ModalVisualizarDocumento
+                                setModalOpen={setModalVisualizarAfectado}
+                                documentoAVisualizar={documentoAfectadoVisualizar}
+                                setDocumentoAVisualizar={setDocumentoAfectadoVisualizar}
+                            />
+                        )}
                         {modalDescargar && idDocumento && (
                             <ModalDescarga
                                 id_documento={idDocumento}
@@ -209,6 +223,16 @@ const ListaNotas = () => {
                                 setModalOpen={setModalDescargar}
                                 documentoADescargar={documentoADescargar}
                                 setDocumentoADescargar={setDocumentoADescargar}
+                            />
+                        )}
+                        {modalAnular && idDocumento && (
+                            <ModalAnularDocumento
+                                id_documento={idDocumento}
+                                setIdDocumento={setIdDocumento}
+                                setModalOpen={setModalAnular}
+                                documentoAAnular={documentoAAnular}
+                                setDocumentoAAnular={setDocumentoAAnular}
+                                refetchTableData={handleAplicarFiltros}
                             />
                         )}
                     </div>

@@ -229,6 +229,7 @@ class SequelizeNotasCreditoDebitoRepository {
                     "afectado_Tipo_Doc",
                     "afectado_Num_Doc",
                     "motivo_Cod",
+                    "estado"
                 ],
                 where,
                 offset,

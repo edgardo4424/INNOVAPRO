@@ -9,6 +9,7 @@ import facturaService from "../../service/FacturaService";
 import ModalDescargaGuia from "./components/ModalDescargaGuia";
 import TablaGuias from "./components/TablaGuias";
 import ModalDescarga from "../../components/modal/ModalDescarga";
+import ModalAnularDocumento from "../list-factura-boleta/components/modal/ModalAnularDocumento";
 
 const ListaGuiaRemision = () => {
     const navigate = useNavigate();
@@ -17,14 +18,14 @@ const ListaGuiaRemision = () => {
     const [loading, setLoading] = useState(true);
 
     // ?? modales
-    const [modalOpen, setModalOpen] = useState(false);
-    const [modalVisualizar, setModalVisualizar] = useState(false);
+    const [modalAnular, setModalAnular] = useState(false);
     const [modalDescargar, setModalDescargar] = useState(false);
+    const [modalVisualizar, setModalVisualizar] = useState(false);
     // ?? identificador
     const [idDocumento, setIdDocumento] = useState("");
     const [guiaADescargar, setGuiaADescargar] = useState({});
     const [documentoAVisualizar, setDocumentoAVisualizar] = useState({});
-    const [documentoOpciones, setDocumentoOpciones] = useState({});
+    const [documentoAAnular, setDocumentoAAnular] = useState({});
 
     const [filtro, setFiltro] = useState({
         page: 1,
@@ -192,8 +193,8 @@ const ListaGuiaRemision = () => {
                             setIdDocumento={setIdDocumento}
                             setGuiaADescargar={setGuiaADescargar}
                             setDocumentoAVisualizar={setDocumentoAVisualizar}
-                            documentoOpciones={documentoOpciones}
-                            setDocumentoOpciones={setDocumentoOpciones}
+                            setModalAnular={setModalAnular}
+                            setDocumentoAAnular={setDocumentoAAnular}
                         />
 
                         {/* Modal */}
@@ -211,6 +212,16 @@ const ListaGuiaRemision = () => {
                                 setModalOpen={setModalDescargar}
                                 documentoADescargar={guiaADescargar}
                                 setDocumentoADescargar={setGuiaADescargar}
+                            />
+                        )}
+                        {modalAnular && idDocumento && (
+                            <ModalAnularDocumento
+                                id_documento={idDocumento}
+                                setIdDocumento={setIdDocumento}
+                                setModalOpen={setModalAnular}
+                                documentoAAnular={documentoAAnular}
+                                setDocumentoAAnular={setDocumentoAAnular}
+                                refetchTableData={handleAplicarFiltros}
                             />
                         )}
                     </div>

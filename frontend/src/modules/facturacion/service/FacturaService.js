@@ -83,6 +83,10 @@ const facturaService = {
         const res = await api.post(`/facturacion/guia-remision/relaciones`, body);
         return res.data;
     },
+    obtenerUbigeoDireccion: async (body) => {
+        const rest = await api.post(`/localizacion/ubigeo`, body);
+        return rest.data
+    },
 
 
     // * ENDPOINTS NOTA DE CREDITO O DEBITO

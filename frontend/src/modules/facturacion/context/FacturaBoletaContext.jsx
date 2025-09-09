@@ -178,7 +178,7 @@ export function FacturaBoletaProvider({ children }) {
                 if (["10", "11", "12", "13", "14", "15", "16", "17"].includes(producto.tip_Afe_Igv)) {
                     gravadas += valorVenta;
                     igvTotal += valorVenta * 0.18;
-                } else if (["20", "21", "30", "31", "32", "33", "34", "35", "36", "40"].includes(producto.tipAfeIgv)) {
+                } else if (["20", "21", "30", "31", "32", "33", "34", "35", "36", "40"].includes(producto.tip_Afe_Igv)) { // 👈 Aquí está el cambio
                     exoneradas += valorVenta;
                 }
             });
@@ -201,6 +201,17 @@ export function FacturaBoletaProvider({ children }) {
 
         if (factura.detalle?.length > 0) {
             actualizarFacturaMontos();
+        } else {
+            setFactura((prev) => ({
+                ...prev,
+                monto_Oper_Gravadas: 0,
+                monto_Oper_Exoneradas: 0,
+                monto_Igv: 0,
+                total_Impuestos: 0,
+                valor_Venta: 0,
+                sub_Total: 0,
+                monto_Imp_Venta: 0,
+            }));
         }
     }, [factura.detalle]);
 
@@ -229,11 +240,6 @@ export function FacturaBoletaProvider({ children }) {
         }, 0);
 
         montoPendiente = montoBase - pagosRealizados;
-        console.log("else defecto", montoPendiente);
-
-        console.log("monto pendiente")
-        console.log(montoPendiente)
-
         setPagoActual((prev) => ({
             ...prev,
             monto: parseFloat(montoPendiente.toFixed(2)),
@@ -244,57 +250,6 @@ export function FacturaBoletaProvider({ children }) {
 
 
     // TODO LOS USEEFFECT DE LOS FORMULARIOS DE LOS MODALES ------- FINAL
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        let validatedValue = value;
-
-        if (name === "cantidad" || name === "monto_Valor_Unitario") {
-            let numericValue = parseFloat(value);
-            if (isNaN(numericValue) || numericValue < 0) {
-                validatedValue = 0;
-            } else {
-                validatedValue = numericValue;
-            }
-        }
-
-        const cantidad = name === "cantidad" ? validatedValue : parseFloat(productoActual.cantidad);
-        const valorUnitario = name === "monto_Valor_Unitario" ? validatedValue : parseFloat(productoActual.monto_Valor_Unitario);
-        // const tipAfeIgv = productoActual.tip_Afe_Igv || "10";
-
-        let monto_Base_Igv = cantidad * valorUnitario;
-        let igv = 0;
-        let total_Impuestos = 0;
-        let monto_Precio_Unitario = valorUnitario;
-        let monto_Valor_Venta = cantidad * valorUnitario;
-
-        if (["10", "11", "12", "13", "14", "15", "16", "17"].includes(productoActual.tip_Afe_Igv)) {
-            igv = +(monto_Base_Igv * 0.18).toFixed(2);
-            total_Impuestos = igv;
-            monto_Precio_Unitario = +(valorUnitario * 1.18).toFixed(2);
-        } else if (["20", "21", "30", "31", "32", "33", "34", "35", "36", "40"].includes(productoActual.tip_Afe_Igv)) {
-            igv = 0;
-            total_Impuestos = 0;
-            monto_Precio_Unitario = valorUnitario;
-        } else {
-            igv = 0;
-            total_Impuestos = 0;
-            monto_Precio_Unitario = valorUnitario;
-        }
-
-        setProductoActual((prevValores) => ({
-            ...prevValores,
-            [name]: validatedValue,
-            monto_Base_Igv: +monto_Base_Igv.toFixed(2),
-            igv,
-            total_Impuestos,
-            monto_Precio_Unitario,
-            monto_Valor_Venta: +monto_Valor_Venta.toFixed(2),
-            porcentaje_Igv: (["10", "11", "12", "13", "14", "15", "16", "17"].includes(tipAfeIgv)) ? 18 : 0,
-        }));
-    };
-
-
 
     const agregarProducto = () => {
         const { edicion, index } = edicionProducto;
@@ -474,7 +429,7 @@ export function FacturaBoletaProvider({ children }) {
         <FacturaBoletaContext.Provider
             value={{
                 correlativos, setCorrelativos, correlativoEstado, setCorrelativoEstado, loadingCorrelativo, setLoadingCorrelativo,
-                serieFactura,serieBoleta,
+                serieFactura, serieBoleta,
                 filiales,
                 idBorrador,
                 detallesExtra,
@@ -497,7 +452,6 @@ export function FacturaBoletaProvider({ children }) {
                 productoValida,
                 productoActual,
                 setProductoActual,
-                handleInputChange, // Exposed for use in product form inputs
                 editarProducto,
                 edicionProducto,
                 setEdicionProducto,

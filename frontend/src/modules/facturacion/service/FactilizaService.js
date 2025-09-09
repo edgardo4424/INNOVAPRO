@@ -85,9 +85,9 @@ const factilizaService = {
     },
 
     // !! ANULACION FACTURA - BOLETA
-    anularDocumento: async (doc) => {
+    anularDocumento: async (url,doc) => {
         const res = await apiFactilizaFacturacion.post(
-            `/voided/cancel`,
+            `/${url}/cancel`,
             doc
         );
         return res.data;

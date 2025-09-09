@@ -109,6 +109,18 @@ const NotasCreditoDebito = sequelize.define(
             type: DataTypes.STRING,
             allowNull: true,
         },
+        estado: {
+            type: DataTypes.ENUM(
+                "EMITIDA",
+                "RECHAZADA",
+                "ANULADA-NOTA",
+                "MODIFICADA-NOTA",
+                "ANULADA",
+                "OBSERVADA",
+                "PENDIENTE",
+            ),
+            allowNull: true,
+        },
         usuario_id: {
             type: DataTypes.INTEGER,
             allowNull: true,

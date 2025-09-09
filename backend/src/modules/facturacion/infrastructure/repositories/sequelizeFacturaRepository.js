@@ -3,6 +3,8 @@ const { DetalleFactura } = require("../models/factura-boleta/facturaDetalleModel
 const { FormaPagoFactura } = require("../models/factura-boleta/formaPagoModel");
 const { LegendFactura } = require("../models/factura-boleta/legendFacturaModel");
 const { SunatRespuesta } = require("../models/sunatRespuestaModel");
+const { GuiaRemision } = require("../models/guia-remision/guiaRemisionModel");
+const { NotasCreditoDebito } = require("../models/notas-credito-debito/notasCreditoDebitoModel");
 const { Filial } = require("../../../filiales/infrastructure/models/filialModel");
 const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 const { Op, fn, col } = require('sequelize');
@@ -457,30 +459,80 @@ class SequelizeFacturaRepository {
 
         //? Iniciar transacción
         const transaction = await db.sequelize.transaction();
+        let documento = null; // Variable para almacenar el documento encontrado
 
         try {
-            //? Buscar la factura
-            const factura = await Factura.findOne({
-                where: {
-                    empresa_ruc: empresa_ruc,
-                    correlativo: correlativo,
-                    serie: serie,
-                    tipo_Doc: tipo_Doc
-                },
-                transaction
-            });
+            if (tipo_Doc !== "09") {
+                //? Buscar la factura o boleta si el tipo de documento no es '09'
+                documento = await Factura.findOne({
+                    where: {
+                        empresa_ruc: empresa_ruc,
+                        correlativo: correlativo,
+                        serie: serie,
+                        tipo_Doc: tipo_Doc
+                    },
+                    transaction
+                });
 
-            if (!factura) {
-                throw new Error(`No se encontró la factura con serie ${serie} y correlativo ${correlativo}`);
+                if (!documento) {
+                    throw new Error(`No se encontró la factura/boleta con serie ${serie} y correlativo ${correlativo}`);
+                }
+
+            } else if (tipo_Doc === "09") {
+                //? Si el tipo de documento es '09', buscar la Guía de Remisión
+                documento = await GuiaRemision.findOne({
+                    where: {
+                        empresa_ruc: empresa_ruc,
+                        correlativo: correlativo,
+                        serie: serie,
+                        tipo_Doc: tipo_Doc
+                    },
+                    transaction
+                });
+
+                //? Validar si la Guía de Remisión existe
+                if (!documento) {
+                    throw new Error(`No se encontró la Guía de Remisión con serie ${serie} y correlativo ${correlativo}`);
+                }
+
+            } else if (tipo_Doc === "07" || tipo_Doc === "08") {
+                //? Si el tipo de documento es '09', buscar la Guía de Remisión
+                documento = await NotasCreditoDebito.findOne({
+                    where: {
+                        empresa_ruc: empresa_ruc,
+                        correlativo: correlativo,
+                        serie: serie,
+                        tipo_Doc: tipo_Doc
+                    },
+                    transaction
+                });
+
+                const toUpdate = await Factura.findByPk(documento.factura_id);
+                if (!toUpdate) {
+                    throw new Error("No se encontró la factura para anular.");
+                }
+                // Se cambia el valor "ANULADO" a "A" para evitar el error de truncamiento de datos
+                await toUpdate.update({ estado: "EMITIDA" }, { transaction });
+
+
+                //? Validar si la Guía de Remisión existe
+                if (!documento) {
+                    throw new Error(`No se encontró la Nota de Remisión con serie ${serie} y correlativo ${correlativo}`);
+                }
+
+            }
+            else {
+                // Manejar otros tipos de documentos no soportados si es necesario
+                throw new Error('Tipo de documento no soportado para anulación.');
             }
 
-            //? Verificar si ya está anulada
-            if (factura.estado === 'ANULADA') {
-                throw new Error('La factura ya se encuentra anulada');
+            //? Verificar si el documento ya está anulado
+            if (documento.estado === 'ANULADA') {
+                throw new Error(`El documento con serie ${serie} y correlativo ${correlativo} ya se encuentra anulado.`);
             }
 
-            //? Actualizar el estado de la factura a ANULADA
-            await factura.update(
+            //? Actualizar el estado del documento a 'ANULADA'
+            await documento.update(
                 {
                     estado: 'ANULADA',
                     anulacion_motivo: anulacion_Motivo || null
@@ -491,13 +543,17 @@ class SequelizeFacturaRepository {
             //? Crear la respuesta de SUNAT para la anulación
             let sunatRespuestaCreated = null;
             if (sunat_respuesta) {
-                sunatRespuestaCreated = await SunatRespuesta.create(
-                    {
-                        factura_id: factura.id,
-                        ...sunat_respuesta,
-                    },
-                    { transaction }
-                );
+                // Crear el objeto de datos para SunatRespuesta
+                const sunatData = { ...sunat_respuesta };
+
+                // Determinar la clave foránea correcta
+                if (tipo_Doc === "09") {
+                    sunatData.guia_id = documento.id;
+                } else {
+                    sunatData.factura_id = documento.id;
+                }
+
+                sunatRespuestaCreated = await SunatRespuesta.create(sunatData, { transaction });
 
                 if (!sunatRespuestaCreated) {
                     throw new Error("No se pudo crear la respuesta de SUNAT para la anulación.");
@@ -507,11 +563,12 @@ class SequelizeFacturaRepository {
             //? Si todo salió bien, confirmar la transacción
             await transaction.commit();
 
+            const tipoDocumentoAnulado = (tipo_Doc === "09") ? "Guía de Remisión" : "Factura/Boleta";
             return {
                 success: true,
-                message: "Factura anulada correctamente.",
+                message: `${tipoDocumentoAnulado} anulada correctamente.`,
                 data: {
-                    factura: factura,
+                    documento: documento,
                     sunat_respuesta: sunatRespuestaCreated
                 }
             };
@@ -519,11 +576,11 @@ class SequelizeFacturaRepository {
         } catch (error) {
             //? Si ocurre algún error, revertir la transacción
             await transaction.rollback();
-            console.error("Error en anular factura:", error.message, error.stack);
+            console.error("Error en anular documento:", error.message, error.stack);
 
             return {
                 success: false,
-                message: error.message || "Ocurrió un error inesperado al anular la factura.",
+                message: error.message || "Ocurrió un error inesperado al anular el documento.",
                 data: null
             };
         }

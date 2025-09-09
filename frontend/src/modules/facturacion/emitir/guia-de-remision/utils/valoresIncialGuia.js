@@ -29,14 +29,6 @@ const guiaInical = {
     detalle: [
     ],
 
-}
-
-// ? GUIA DE REMISION PRIVADA
-const ValoresPrivado = {
-
-    guia_Envio_Cod_Traslado: "01",
-    guia_Envio_Mod_Traslado: "02",
-
     chofer: [
         {
             tipo: "Principal",
@@ -47,6 +39,24 @@ const ValoresPrivado = {
             apellidos: "DELGADO RIVERA",
         },
     ],
+}
+
+// ? GUIA DE REMISION PRIVADA
+const ValoresPrivado = {
+
+    guia_Envio_Cod_Traslado: "01",
+    guia_Envio_Mod_Traslado: "02",
+
+    // chofer: [
+    //     {
+    //         tipo: "Principal",
+    //         tipo_doc: "1",
+    //         nro_doc: "10400310",
+    //         licencia: "Q10400310",
+    //         nombres: "CARLOS EDGARDO",
+    //         apellidos: "DELGADO RIVERA",
+    //     },
+    // ],
 };
 
 

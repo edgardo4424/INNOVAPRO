@@ -11,7 +11,7 @@ import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteC
 
 const TablaDetalles = ({ open, setOpen }) => {
 
-    const { guiaTransporte, setGuiaTransporte ,setProductoActual} = useGuiaTransporte();
+    const { guiaTransporte, setGuiaTransporte, setProductoActual } = useGuiaTransporte();
 
     const seleccionarProducto = async (pro) => {
         setProductoActual(pro);
@@ -23,9 +23,6 @@ const TablaDetalles = ({ open, setOpen }) => {
     return (
         <div className="w-full overflow-x-auto mt-6">
             <Table className={"border-2 border-gray-200"}>
-                <TableCaption className="text-gray-600 italic mt-2">
-                    Lista de productos agregados
-                </TableCaption>
 
                 <TableHeader className="bg-gray-100 border-b-2 border-gray-400">
                     <TableRow>
@@ -49,7 +46,7 @@ const TablaDetalles = ({ open, setOpen }) => {
                     <TableBody className={"bg-gray-200"}>
                         {detalle.map((item, index) => (
                             <TableRow key={index}
-                                onClick={() => seleccionarProducto({...item, index})}
+                                onClick={() => seleccionarProducto({ ...item, index })}
                             >
                                 <TableCell className={"pl-3"}>{item.cod_Producto}</TableCell>
                                 <TableCell className="pl-3 whitespace-normal overflow-hidden text-ellipsis max-w-[250px] break-words">

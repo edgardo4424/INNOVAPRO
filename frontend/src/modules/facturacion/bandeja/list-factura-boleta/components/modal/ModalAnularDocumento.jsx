@@ -30,8 +30,16 @@ const ModalAnularDocumento = ({
 
         setLoading(true);
         try {
+            let url = "";
+            if (documentoAAnular.tipo_Doc == "01") {
+                url = "voided";
+            } else if (documentoAAnular.tipo_Doc == "03" || documentoAAnular.tipo_Doc == "07" || documentoAAnular.tipo_Doc == "08") {
+                url = "summary";
+            } else if (documentoAAnular.tipo_Doc == "09") {
+                url = "invoice";
+            }
             // 1. Primer paso: Anular en Factiliza (SUNAT)
-            const factilizaResponse = await factilizaService.anularDocumento({
+            const factilizaResponse = await factilizaService.anularDocumento(url, {
                 ...documentoAAnular,
                 anulacion_Motivo: motivoAnulacion
             });
@@ -101,6 +109,22 @@ const ModalAnularDocumento = ({
         }
     };
 
+    const tipoDocumento = (tipo) => {
+        if (tipo == "01") {
+            return "Factura"
+        } else if (tipo == "03") {
+            return "Boleta"
+        } else if (tipo == "07") {
+            return "Nota de Credito"
+        } else if (tipo == "08") {
+            return "Nota de Debito"
+        } else if (tipo == "09") {
+            return "Guia de Remision"
+        } else {
+            return "Desconocido"
+        }
+    }
+
     useEffect(() => {
         console.log("Documento a anular:", documentoAAnular);
     }, [documentoAAnular]);
@@ -124,7 +148,7 @@ const ModalAnularDocumento = ({
                     {serie && correlativo ? (
                         <>
                             <h2 className="text-2xl font-bold text-gray-900">
-                                Anular {tipo_Doc === "01" ? "Factura" : "Boleta"}
+                                Anular {tipoDocumento(tipo_Doc)}
                             </h2>
                             <h2 className="text-xl font-semibold text-red-600">
                                 {serie}-{correlativo}

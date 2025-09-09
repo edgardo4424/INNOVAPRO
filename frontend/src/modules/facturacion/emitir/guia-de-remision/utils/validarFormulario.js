@@ -40,18 +40,18 @@ export async function validarFormulario(tipo, Guia) {
     if (tipo == "PRIVADO") {
         camposRequeridosEspecificos = [
             { key: "guia_Envio_Mod_Traslado", name: "Modalidad de Traslado" },
-            {
-                key: "chofer",
-                name: "Chofer", // Agregado el nombre para el objeto chofer
-                camposRequeridos: [
-                    { key: "tipo", name: "Tipo de Chofer" },
-                    { key: "tipo_doc", name: "Tipo de Documento del Chofer" },
-                    { key: "nro_doc", name: "N° Documento del Chofer" },
-                    { key: "licencia", name: "Licencia del Chofer" },
-                    { key: "nombres", name: "Nombres del Chofer" },
-                    { key: "apellidos", name: "Apellidos del Chofer" },
-                ]
-            },
+            // {
+            //     key: "chofer",
+            //     name: "Chofer", // Agregado el nombre para el objeto chofer
+            //     camposRequeridos: [
+            //         { key: "tipo", name: "Tipo de Chofer" },
+            //         { key: "tipo_doc", name: "Tipo de Documento del Chofer" },
+            //         { key: "nro_doc", name: "N° Documento del Chofer" },
+            //         { key: "licencia", name: "Licencia del Chofer" },
+            //         { key: "nombres", name: "Nombres del Chofer" },
+            //         { key: "apellidos", name: "Apellidos del Chofer" },
+            //     ]
+            // },
         ];
     } else if (tipo == "PUBLICO") {
         camposRequeridosEspecificos = [

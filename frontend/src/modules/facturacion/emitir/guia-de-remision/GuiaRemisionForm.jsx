@@ -14,10 +14,10 @@ const GuiaRemisionForm = () => {
 
 
     const render = () => {
-        if (tipoGuia == "transporte-privado") {
-            return <ChoferPrivadoForm />;
-        } else if (tipoGuia == "transporte-publico") {
+        if (tipoGuia == "transporte-publico") {
             return <TransportistaPublicoForm />;
+        } else if (tipoGuia == "transporte-privado") {
+            return <></>;
         }
     };
 
@@ -44,6 +44,8 @@ const GuiaRemisionForm = () => {
                     {/* Seccion de Datos Guia de Envío */}
                     <DatosGuiaEnvioForm />
 
+                    {/* Seccion de Chofer Privado */}
+                    <ChoferPrivadoForm />;
                     {/* //?Renderizado dinámico segun el tipo de guia que seleccione */}
                     {
                         render()

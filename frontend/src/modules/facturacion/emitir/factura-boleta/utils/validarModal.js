@@ -64,7 +64,7 @@ export async function validarModal(tipo, item, factura, cuotasGeneradas = null) 
             errores.tipo = false;
         }
 
-        if (item.tipo == "CONTADO") {
+        if (item.tipo == "Contado") {
             // Validación para pago CONTADO (lógica original)
             if (!item.monto || item.monto <= 0) {
                 errores.monto = true;
@@ -84,7 +84,7 @@ export async function validarModal(tipo, item, factura, cuotasGeneradas = null) 
                 errores.fecha_Pago = false;
             }
 
-        } else if (item.tipo == "CREDITO") {
+        } else if (item.tipo == "Credito") {
             // Validación para pago CREDITO con múltiples cuotas
 
             // Si se proporcionan cuotas generadas, validar cada una

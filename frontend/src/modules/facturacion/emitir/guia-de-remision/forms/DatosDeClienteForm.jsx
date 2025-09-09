@@ -141,7 +141,7 @@ const DatosDeClienteForm = () => {
                         />
                         <button
                             onClick={handleBuscar}
-                            className="p-2 bg-blue-500 rounded-md text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 cursor-pointer"
+                            className="p-2 bg-innova-blue/90 rounded-md text-white hover:bg-innova-blue-hover focus:outline-none focus:ring-2 focus:ring-innova-blue focus:ring-offset-2 transition-colors duration-200 cursor-pointer"
                         >
                             <Search className="h-5 w-5" />
                         </button>

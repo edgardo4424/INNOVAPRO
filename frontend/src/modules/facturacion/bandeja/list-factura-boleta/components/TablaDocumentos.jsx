@@ -1,4 +1,9 @@
-import { BookX, Download, EllipsisVertical, EyeIcon } from 'lucide-react';
+import { BookX, Download, EyeIcon } from 'lucide-react';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const TablaDocumentos = ({ documentos, setIdDocumento, setModalOpen, setModalDescargar, setDocumentoADescargar, setDocumentoAVisualizar, setDocumentoAAnular, setModalAnular }) => {
 
@@ -72,72 +77,99 @@ const TablaDocumentos = ({ documentos, setIdDocumento, setModalOpen, setModalDes
                                 {/* <span>{factura.empresa_ruc || ""} -</span> */}
                                 <span>{factura.empresa_nombre || ""}</span>
                             </td>
-                            <td className="py-3 px-2 text-xs text-gray-700 flex flex-col ">
-                                <span>{factura.cliente_num_doc || ""} -</span>
+                            <td className="py-3 px-2 text-xs text-gray-700 flex flex-col">
+                                <span>{`${factura.cliente_num_doc || ""} -`}</span>
                                 <span>{factura.cliente_razon_social || ""}</span>
                             </td>
                             <td className="py-3 px-2 text-xs text-gray-700 font-medium">
                                 {`${factura.tipo_moneda} ${factura.monto_imp_venta}`}
                             </td>
-                            <td className="py-3">
+                            <td className="py-3 min-w-[160px]">
                                 <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getEstadoColor(factura.estado)}`}>
                                     {getEstadoTexto(factura.estado)}
                                 </span>
                             </td>
                             <td className="py-3 px-2">
                                 <div className="flex justify-start gap-x-2">
-                                    <button
-                                        onClick={() => {
-                                            setIdDocumento(factura.id);
-                                            setModalOpen(true);
-                                            setDocumentoAVisualizar({
-                                                correlativo: String(factura.correlativo),
-                                                serie: factura.serie,
-                                                empresa_ruc: factura.empresa_ruc,
-                                                tipo_doc: factura.tipo_doc
-                                            })
-                                        }}
-                                        className="hover:bg-blue-100 p-1 rounded transition-colors"
-                                        title="Ver documento"
-                                    >
-                                        <EyeIcon className="h-5 w-5 cursor-pointer text-blue-600 hover:text-blue-800" />
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            setIdDocumento(factura.id);
-                                            setModalDescargar(true);
-                                            setDocumentoADescargar({
-                                                serie: factura.serie,
-                                                correlativo: factura.correlativo,
-                                                numRuc: factura.empresa_ruc,
-                                                tipoDoc: factura.tipo_doc,
-                                                numDocumentoComprobante: factura.cliente_num_doc
-                                            });
-                                        }}
-                                        className="hover:bg-green-100 p-1 rounded transition-colors"
-                                        title="Descargar documento"
-                                    >
-                                        <Download className="h-5 w-5 cursor-pointer text-green-600 hover:text-green-800" />
-                                    </button>
-                                    <button
-                                        disabled={factura.estado == "ANULADA" || factura.estado == "ANULADA-NOTA"}
-                                        onClick={() => {
-                                            setIdDocumento(factura.id);
-                                            setModalAnular(true);
-                                            setDocumentoAAnular({
-                                                empresa_ruc: factura.empresa_ruc,
-                                                tipo_Doc: factura.tipo_doc,
-                                                serie: factura.serie,
-                                                correlativo: factura.correlativo,
-                                                anulacion_Motivo: "",
-                                                estado_Documento: "0",
-                                            })
-                                        }}
-                                        className={`${factura.estado == "ANULADA"|| factura.estado == "ANULADA-NOTA"  ? "" : "hover:bg-red-100 text-red-500 hover:text-red-700 "}p-1 rounded transition-colors`}
-                                        title="Más opciones"
-                                    >
-                                        <BookX className="h-5 w-5 cursor-pointer" />
-                                    </button>
+                                    <Tooltip side="bottom" align="center" className="mr-2">
+                                        <TooltipTrigger asChild>
+                                            <button
+                                                onClick={() => {
+                                                    setIdDocumento(factura.id);
+                                                    setModalOpen(true);
+                                                    setDocumentoAVisualizar({
+                                                        correlativo: String(factura.correlativo),
+                                                        serie: factura.serie,
+                                                        empresa_ruc: factura.empresa_ruc,
+                                                        tipo_doc: factura.tipo_doc
+                                                    })
+                                                }}
+                                                className="hover:bg-blue-100 p-1 rounded transition-colors"
+                                            >
+                                                <EyeIcon className="h-5 w-5 cursor-pointer text-blue-600 hover:text-blue-800" />
+                                            </button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>Ver documento</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+
+                                    <Tooltip side="bottom" align="center" className="mr-2">
+                                        <TooltipTrigger asChild>
+                                            <button
+                                                onClick={() => {
+                                                    setIdDocumento(factura.id);
+                                                    setModalDescargar(true);
+                                                    setDocumentoADescargar({
+                                                        serie: factura.serie,
+                                                        correlativo: factura.correlativo,
+                                                        numRuc: factura.empresa_ruc,
+                                                        tipoDoc: factura.tipo_doc,
+                                                        numDocumentoComprobante: factura.cliente_num_doc
+                                                    });
+                                                }}
+                                                className="hover:bg-green-100 p-1 rounded transition-colors"
+                                            >
+                                                <Download className="h-5 w-5 cursor-pointer text-green-600 hover:text-green-800" />
+                                            </button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>Descargar</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+
+                                    <Tooltip side="bottom" align="center" className="mr-2">
+                                        <TooltipTrigger asChild>
+                                            <button
+                                                disabled={factura.estado !== "EMITIDA"}
+                                                onClick={() => {
+                                                    setIdDocumento(factura.id);
+                                                    setModalAnular(true);
+                                                    setDocumentoAAnular({
+                                                        empresa_ruc: factura.empresa_ruc,
+                                                        tipo_Doc: factura.tipo_doc,
+                                                        serie: factura.serie,
+                                                        correlativo: factura.correlativo,
+                                                        anulacion_Motivo: "",
+                                                        estado_Documento: "0",
+                                                    })
+                                                }}
+                                                className={`${factura.estado !== "EMITIDA" ? "" : "hover:bg-red-100 text-red-500 hover:text-red-700 "}p-1 rounded transition-colors`}
+                                            >
+                                                <BookX className="h-5 w-5 cursor-pointer" />
+                                            </button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            {
+                                                factura.estado !== "EMITIDA" ?
+                                                    <p>Documento anulado</p>
+                                                    :
+                                                    <p>Anular</p>
+                                            }
+                                        </TooltipContent>
+                                    </Tooltip>
+
+
                                 </div>
                             </td>
                         </tr>

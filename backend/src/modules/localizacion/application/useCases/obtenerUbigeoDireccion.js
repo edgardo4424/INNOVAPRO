@@ -7,7 +7,7 @@ const norm = (s = '') => strip(String(s).toUpperCase().trim());
 module.exports = async (direccion, ubigeoRepo) => {
     try {
         if (!direccion) {
-            return { codigo: 400, respuesta: { mensaje: 'direccion requerida', ubigeo: null } };
+            return { codigo: 400, respuesta: { message: 'direccion requerida', ubigeo: null } };
         }
 
         const response = await geocodingClient.get('json', { params: { address: direccion } });
@@ -25,7 +25,7 @@ module.exports = async (direccion, ubigeoRepo) => {
             console.log(distritoRaw, provinciaRaw, departamentoRaw)
 
             if (!distritoRaw || !provinciaRaw || !departamentoRaw) {
-                return { codigo: 404, respuesta: { mensaje: 'no se encontró distrito/provincia/departamento', ubigeo: null } };
+                return { codigo: 404, respuesta: { message: 'no se encontró distrito/provincia/departamento', ubigeo: null } };
             }
 
             // Normalizaciones típicas: “Provincia de Lima” -> “Lima”, tildes, mayúsculas
@@ -40,29 +40,29 @@ module.exports = async (direccion, ubigeoRepo) => {
             const ubigeo = await ubigeoRepo.obtenerUbigeo(distrito, provincia, departamento);
 
             if (!ubigeo) {
-                return { codigo: 404, respuesta: { mensaje: 'no se encontró ubigeo en catálogo', ubigeo: null } };
+                return { codigo: 404, respuesta: { message: 'no se encontró ubigeo en catálogo', ubigeo: null } };
             }
 
             return {
                 codigo: 200,
                 respuesta: {
-                    mensaje: 'ok',
+                    message: 'ok',
                     ubigeo: ubigeo.codigo || ubigeo, // por si tu repo devuelve { codigo } o solo el string
                     // info útil opcional:
-                    distrito: distritoRaw,
-                    provincia: provinciaRaw,
-                    departamento: departamentoRaw,
+                    distrito: distritoRaw.toUpperCase(),
+                    provincia: provinciaRaw.toUpperCase(),
+                    departamento: departamento.toUpperCase(),
                 },
             };
         }
 
         if (status === 'ZERO_RESULTS') {
-            return { codigo: 404, respuesta: { mensaje: 'sin resultados', ubigeo: null , results} };
+            return { codigo: 404, respuesta: { message: 'sin resultados', ubigeo: null , results} };
         }
 
-        return { codigo: 400, respuesta: { mensaje: `error (${status}) ${error_message || ''}`, ubigeo: null } };
+        return { codigo: 400, respuesta: { message: `error (${status}) ${error_message || ''}`, ubigeo: null } };
     } catch (err) {
         console.error('useCase error:', err?.message);
-        return { codigo: 500, respuesta: { mensaje: 'error interno', detalle: err?.message } };
+        return { codigo: 500, respuesta: { message: 'error interno', detalle: err?.message } };
     }
 };

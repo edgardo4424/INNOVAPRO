@@ -233,11 +233,12 @@ const InfDocumentoForm = () => {
                                 <SquarePen />
                             </button>
                         </div>
-                        <button className={`bg-blue-500 hover:bg-blue-600  cursor-pointer  text-white rounded-md px-2 `}
+                        <button
+                            className="p-2 bg-innova-blue/90 rounded-md text-white hover:bg-innova-blue-hover focus:outline-none focus:ring-2 focus:ring-innova-blue focus:ring-offset-2 transition-colors duration-200 cursor-pointer"
                             // disabled={correlativoEstado}
                             onClick={(e) => buscarCorrelativo(e)}
                         >
-                            {loadingCorrelativo ? <LoaderCircle className="size-5 animate-spin" /> : <Search className="size-5"/>}
+                            {loadingCorrelativo ? <LoaderCircle className="size-5 animate-spin" /> : <Search className="size-5" />}
                         </button>
                     </div>
                 </div>

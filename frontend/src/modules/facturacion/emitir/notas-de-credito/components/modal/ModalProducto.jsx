@@ -13,6 +13,7 @@ import DescuentoItemForm from "../../forms/DescuentoItemForm";
 import ItemCambioDescipcion from "../../forms/ItemCambioDescipcion";
 import ItemDevolucionForm from "../../forms/ItemDevolucionForm";
 import PenalidadInteresForm from "../../forms/PenalidadInteresForm";
+import AumnetarValorForm from "../../forms/AumentarValorForm";
 
 const ModalProducto = ({ open, setOpen, closeModal }) => {
 
@@ -52,6 +53,12 @@ const ModalProducto = ({ open, setOpen, closeModal }) => {
                     {
                         (motivo_Cod == "01" || motivo_Cod == "03") && tipo_Doc == "08" &&
                         <span className="hidden md:block">Aplicar {motivo_Cod == "01" ? "Interes" : "Penalidades"}</span>
+                    }
+
+                    {/* //? Caso de Debito  */}
+                    {
+                        motivo_Cod == "02" && tipo_Doc == "08" &&
+                        <span className="hidden md:block">Aumentar valor</span>
                     }
 
                 </Button>
@@ -102,6 +109,12 @@ const ModalProducto = ({ open, setOpen, closeModal }) => {
                 {
                     (motivo_Cod == "01" || motivo_Cod == "03") && tipo_Doc == "08" &&
                     <PenalidadInteresForm closeModal={closeModal} />
+                }
+
+                {/* //? Caso de Interes Por Mora o Penalidades  */}
+                {
+                    motivo_Cod == "02" && tipo_Doc == "08" &&
+                    <AumnetarValorForm closeModal={closeModal} />
                 }
             </AlertDialogContent>
         </AlertDialog>
