@@ -30,7 +30,7 @@ const GuiaRemisionForm = () => {
                     </h2>
                 </div>
 
-                <form
+                <div
                     onSubmit={(e) => { e.preventDefault(); }}
                     className=" shadow-xl border bg-white border-gray-400  rounded-3xl  p-4  transition-all duration-300 mb-6"
                 >
@@ -59,7 +59,7 @@ const GuiaRemisionForm = () => {
                         <ModalVisualizarGuiaPrivada />
                     </div>
 
-                </form>
+                </div>
 
             </div>
         </div>

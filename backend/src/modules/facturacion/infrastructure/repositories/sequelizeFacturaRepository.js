@@ -535,7 +535,7 @@ class SequelizeFacturaRepository {
             await documento.update(
                 {
                     estado: 'ANULADA',
-                    anulacion_motivo: anulacion_Motivo || null
+                    anulacion_Motivo: anulacion_Motivo
                 },
                 { transaction }
             );

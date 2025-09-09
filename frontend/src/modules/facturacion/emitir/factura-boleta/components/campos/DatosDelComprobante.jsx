@@ -72,6 +72,15 @@ const DatosDelComprobante = () => {
         }
     }, [factura.empresa_Ruc, factura.serie, correlativos]);
 
+    useEffect(() => {
+        if (factura.tipo_Doc === "01") {
+            setFactura((prev) => ({
+                ...prev,
+                relDocs: [],
+            }));
+        }
+    }, [factura.tipo_Doc])
+
     return (
         <div className="overflow-y-auto p-4 sm:p-6 lg:px-8 lg:py-4">
             <h1 className="text-2xl font-bold py-3 text-gray-800">Datos del Comprobante</h1>

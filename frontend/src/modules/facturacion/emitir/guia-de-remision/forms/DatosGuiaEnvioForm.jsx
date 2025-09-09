@@ -178,14 +178,6 @@ const DatosGuiaEnvioForm = () => {
         }));
     };
 
-    const handleChangePrv = (e) => {
-        const value = e.target.value;
-        setGuiaDatosPrivado((prevGuiaTransporte) => ({
-            ...prevGuiaTransporte,
-            guia_Envio_Vehiculo_Placa: value.toUpperCase(),
-        }));
-    };
-
     const handleBuscarPartida = async () => {
         // guia_Envio_Llegada_Direccion
         const { message, ubigeo, distrito, provincia, departamento } = await facturaService.obtenerUbigeoDireccion({ direccion: guia_Envio_Partida_Direccion });
@@ -427,7 +419,7 @@ const DatosGuiaEnvioForm = () => {
                         />
                         <button
                             onClick={handleBuscarPartida}
-                            className="p-2 bg-innova-blue/90 rounded-md text-white hover:bg-innova-blue-hover focus:outline-none focus:ring-2 focus:ring-innova-blue focus:ring-offset-2 transition-colors duration-200 cursor-pointer"
+                            className="p-2 bg-innova-blue rounded-md text-white hover:bg-innova-blue-hover focus:outline-none focus:ring-2 focus:ring-innova-blue focus:ring-offset-2 transition-colors duration-200 cursor-pointer"
                         >
                             <Search className="h-5 w-5" />
                         </button>
@@ -487,7 +479,7 @@ const DatosGuiaEnvioForm = () => {
                         />
                         <button
                             onClick={handleBuscarLlegada}
-                            className="p-2 bg-innova-blue/90 rounded-md text-white hover:bg-innova-blue-hover focus:outline-none focus:ring-2 focus:ring-innova-blue focus:ring-offset-2 transition-colors duration-200 cursor-pointer"
+                            className="p-2 bg-innova-blue rounded-md text-white hover:bg-innova-blue-hover focus:outline-none focus:ring-2 focus:ring-innova-blue focus:ring-offset-2 transition-colors duration-200 cursor-pointer"
                         >
                             <Search className="h-5 w-5" />
                         </button>
@@ -541,7 +533,7 @@ const DatosGuiaEnvioForm = () => {
                         id="guia_Envio_Vehiculo_Placa"
                         name="guia_Envio_Vehiculo_Placa"
                         value={guia_Envio_Vehiculo_Placa}
-                        onChange={handleChangePrv}
+                        onChange={handleChange}
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                     />
                 </div>
@@ -559,7 +551,7 @@ const DatosGuiaEnvioForm = () => {
                             id="guia_Envio_Des_Traslado"
                             name="guia_Envio_Des_Traslado"
                             value={guiaDatosPublico.guia_Envio_Des_Traslado}
-                            // onChange={handleChange}
+                            onChange={handleChange}
                             disabled
                             className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                         />

@@ -76,10 +76,6 @@ const EmitirRoutes = lazy(() =>
    import("../modules/facturacion/routes/EmitirRoutes")
 );
 
-const FacturasAnuladas = lazy(() =>
-   import("../modules/facturacion/pages/FacturasAnuladas")
-);
-
 const BandejaRoutes = lazy(() =>
    import("../modules/facturacion/routes/BandejaRoutes")
 );
@@ -246,11 +242,6 @@ export default function AppRoutes() {
                         <Route
                            path="facturacion/bandeja/*"
                            element={<BandejaRoutes />}
-                        />
-
-                        <Route
-                           path="facturacion/anuladas"
-                           element={<FacturasAnuladas />}
                         />
 
                         <Route

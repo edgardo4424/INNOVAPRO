@@ -65,7 +65,7 @@ const iconMap = {
    "Registrar Cotización": FileEdit,
    "Stock de Piezas": Boxes,
    Trabajadores: Users,
-   "Facturación":ScrollText,
+   "Facturación": ScrollText,
    "Gestión de Condiciones": ShieldCheck,
 };
 
@@ -134,7 +134,6 @@ const modulesByRole = {
             // { name: "Emitir", path: "/facturacion/emitir" },
             { name: "Bandeja", path: "/facturacion/bandeja" },
             { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
-            { name: "Anulados", path: "/facturacion/anuladas" },
          ],
       },
 
@@ -143,7 +142,7 @@ const modulesByRole = {
          items: [
             { name: "Planilla quincenal", path: "/planilla-quincenal" },
             { name: "Planilla mensual", path: "/planilla-mensual" },
-        
+
          ],
       },
       { name: "Datos de mantenimiento", path: "/data-mantenimiento" },
@@ -165,7 +164,7 @@ const modulesByRole = {
    ],
    Almacén: [],
    Administración: [
-      { name: "Gestión de condiciones", path: "/condiciones"},
+      { name: "Gestión de condiciones", path: "/condiciones" },
       {
          group: "Retenciones",
          items: [

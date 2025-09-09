@@ -44,6 +44,10 @@ const GuiaChoferes = sequelize.define(
             type: DataTypes.STRING,
             allowNull: true,
         },
+        razon_Social: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
     },
     {
         timestamps: false,

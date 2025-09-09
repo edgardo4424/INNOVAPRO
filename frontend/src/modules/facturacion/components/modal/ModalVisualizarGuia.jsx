@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import DocumentoSkeleton from "../../bandeja/list-factura-boleta/components/DocumentoSkeleton";
 import facturaService from "../../service/FacturaService";
@@ -156,7 +156,7 @@ export default function ModalVisualizarGuia({
                                             {guia.empresa_nombre}
                                         </h1>
                                         <p className="mt-2 text-sm text-gray-700">
-                                            RUC: {guia.empresa_ruc}
+                                            RUC: {guia.empresa_Ruc}
                                         </p>
                                         <p className="text-sm text-gray-700">
                                             {guia.empresa_direccion}
@@ -241,10 +241,35 @@ export default function ModalVisualizarGuia({
                                             <span className="text-gray-700 font-semibold">Placa de vehículo:</span>
                                             <span className="font-medium">{guia.guia_Envio_Vehiculo_Placa || "—"}</span>
                                         </div>
-                                        {guia.guia_choferes && guia.guia_choferes.length > 0 && (
+                                        {(guia.guia_choferes && guia.guia_choferes.length > 0) ||
+                                            (guia.guia_transportista && Object.keys(guia.guia_transportista).length > 0) ? (
+                                            <Fragment>
+                                                {guia.guia_choferes && guia.guia_choferes.length > 0 && (
+                                                    guia.guia_choferes.map((chofer, index) => (
+                                                        <Fragment key={index}>
+                                                            <div className="grid grid-cols-[140px_1fr] gap-x-2">
+                                                                <span className="text-gray-700 font-semibold">{chofer.nro_mtc ? 'Transportista' : 'Chofer'}:</span>
+                                                                <p className="font-medium grid grid-cols-1 ">
+                                                                    {chofer.nombres && <span>{chofer.nombres} {chofer.apellidos}</span>}
+                                                                    {chofer.razon_Social && <span> {chofer.razon_Social}-{chofer.nro_doc}</span>}
+                                                                    {chofer.nro_doc && !chofer.razon_Social && <span> ({chofer.nro_doc})</span>}
+                                                                    {chofer.nro_mtc && <span> (MTC {chofer.nro_mtc})</span>}
+                                                                </p>
+                                                            </div>
+                                                        </Fragment>
+                                                    ))
+                                                )}
+                                                {guia.guia_transportista && Object.keys(guia.guia_transportista).length > 0 && (
+                                                    <div className="grid grid-cols-[140px_1fr] gap-x-2">
+                                                        <span className="text-gray-700 font-semibold">Transportista:</span>
+                                                        <span className="font-medium">{guia.guia_transportista.Razon_Social} ({guia.guia_transportista.Num_Doc})</span>
+                                                    </div>
+                                                )}
+                                            </Fragment>
+                                        ) : (
                                             <div className="grid grid-cols-[140px_1fr] gap-x-2">
-                                                <span className="text-gray-700 font-semibold">Chofer:</span>
-                                                <span className="font-medium">{guia.guia_choferes[0].nombres} {guia.guia_choferes[0].apellidos} ({guia.guia_choferes[0].nro_doc})</span>
+                                                <span className="text-gray-700 font-semibold">Transportista/Chofer:</span>
+                                                <span className="font-medium">—</span>
                                             </div>
                                         )}
                                     </div>

@@ -519,7 +519,7 @@ export default function TrabajadorForm() {
                            type="submit"
                            disabled={isSubmitting}
                            className={
-                              "bg-innova-blue hover:bg-innova-blue/90 cursor-pointer"
+                              "bg-innova-blue hover:bg-innova-blue-hover cursor-pointer"
                            }
                         >
                            {isSubmitting

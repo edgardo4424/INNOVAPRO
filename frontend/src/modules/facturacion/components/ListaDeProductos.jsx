@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
 import useProducto from "../hooks/useProducto";
 
-const ListaDeProductos = ({ closeModal, itemActual, setItemActual, formulario, tipo }) => {
+const ListaDeProductos = ({ closeModal, itemActual, setItemActual, formulario, tipo, piezas = [] }) => {
 
     const { ObtenerProductos } = useProducto();
 
@@ -28,7 +28,11 @@ const ListaDeProductos = ({ closeModal, itemActual, setItemActual, formulario, t
                 console.error('Error al cargar piezas', error);
             }
         };
-        cargarPiezas();
+        if (piezas.length == 0) {
+            cargarPiezas();
+        } else {
+            setPiezasDisponibles(piezas);
+        }
     }, []);
 
     // 🔍 Filtrar productos por código o descripción
@@ -82,8 +86,8 @@ const ListaDeProductos = ({ closeModal, itemActual, setItemActual, formulario, t
                 ...itemActual,
                 cod_Producto: pieza.item,
                 descripcion: pieza.descripcion.toUpperCase(),
-                unidad: "KGM",
-                cantidad: pieza.peso_kg,
+                unidad: "NIU",
+                cantidad: 1,
             });
         }
         closeModal();

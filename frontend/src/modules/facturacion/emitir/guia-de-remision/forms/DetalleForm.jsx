@@ -8,36 +8,22 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext";
-import useProducto from "@/modules/facturacion/hooks/useProducto";
-import { useEffect, useState } from "react";
+import { DecimalsArrowLeft } from "lucide-react";
+import { useState } from "react";
 import ExcelUploader from "../components/ExcelUploader";
 import ModalProducto from "../components/modal/ModalProducto";
 import TablaDetalles from "../components/tabla/TablaDetalles";
 
 
 const DetalleForm = () => {
-    const { guiaTransporte, setGuiaTransporte } = useGuiaTransporte();
-    const { ObtenerProductos } = useProducto();
+    const { guiaTransporte, setGuiaTransporte, pesoTotalCalculado } = useGuiaTransporte();
     const [excelData, setExcelData] = useState(null);
-    const [piezasDisponibles, setPiezasDisponibles] = useState([]);
-    const [piezasExcel, setPiezasExcel] = useState([]);
 
     const {
         guia_Envio_Peso_Total,
         guia_Envio_Und_Peso_Total,
     } = guiaTransporte;
 
-    useEffect(() => {
-        const cargarPiezas = async () => {
-            try {
-                const data = await ObtenerProductos();
-                setPiezasDisponibles(data);
-            } catch (error) {
-                console.error('Error al cargar piezas', error);
-            }
-        };
-        cargarPiezas();
-    }, []);
 
     const [open, setOpen] = useState(false);
 
@@ -45,6 +31,13 @@ const DetalleForm = () => {
         setGuiaTransporte((prevValores) => ({
             ...prevValores,
             [name]: value,
+        }));
+    };
+
+    const handlePesoTotalChange = (value) => {
+        setGuiaTransporte((prevValores) => ({
+            ...prevValores,
+            guia_Envio_Peso_Total: value,
         }));
     };
 
@@ -62,29 +55,14 @@ const DetalleForm = () => {
         }
     };
     const handleSubirDatos = () => {
-        if (!excelData || piezasDisponibles.length === 0) {
+        if (!excelData) {
             console.error("No hay datos de Excel para procesar o la lista de productos está vacía.");
             return;
         }
 
-        //* Paso 1: Filtrar los datos de Excel para encontrar solo los que existen en 'piezasDisponibles'
-        const datosFiltrados = excelData.filter(row => {
-            return piezasDisponibles.some(p => p.item === row.cod_Producto);
-        });
-
-        //* Paso 2: Usar map para transformar los datos filtrados y agregar el peso calculado
-        const datosFormateados = datosFiltrados.map(row => {
-            const productoExistente = piezasDisponibles.find(p => p.item === row.cod_Producto);
-            let pesoCalculado = parseFloat((Number(productoExistente.peso_kg) * Number(row.cantidad)).toFixed(2));
-            return {
-                ...row,
-                cantidad: pesoCalculado,
-            };
-        });
-
         setGuiaTransporte(prev => ({
             ...prev,
-            detalle: datosFormateados
+            detalle: [...prev.detalle, ...excelData],
         }));
         setExcelData(null);
     };
@@ -137,14 +115,27 @@ const DetalleForm = () => {
                         >
                             Peso Total
                         </Label>
-                        <Input
-                            type="number"
-                            id="guia_Envio_Peso_Total"
-                            name="guia_Envio_Peso_Total"
-                            value={guia_Envio_Peso_Total || ""}
-                            className="bg-white px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
-                            step="0.01"
-                        />
+                        <div>
+                            <div className="flex gap-x-2">
+                                <Input
+                                    type="number"
+                                    id="guia_Envio_Peso_Total"
+                                    name="guia_Envio_Peso_Total"
+                                    value={guia_Envio_Peso_Total || ""}
+                                    className="bg-white px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                    step="0.01"
+                                    onChange={(e) => handlePesoTotalChange(e.target.value)}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={(e) => handlePesoTotalChange(pesoTotalCalculado)}
+                                    className="p-2 bg-innova-blue rounded-md text-white hover:bg-innova-blue-hover focus:outline-none focus:ring-2 focus:ring-innova-blue focus:ring-offset-2 transition-colors duration-200 cursor-pointer"
+                                >
+                                    <DecimalsArrowLeft className="h-5 w-5" />
+                                </button>
+                            </div>
+                            <p className="text-sm pt-3 font-semibold text-gray-700">Peso Calculado: {pesoTotalCalculado}</p>
+                        </div>
                     </div>
                 </div>
             </div>

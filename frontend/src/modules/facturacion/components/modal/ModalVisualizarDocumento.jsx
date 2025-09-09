@@ -130,7 +130,7 @@ export default function ModalVisualizarDocumento({
                 // ref={cardRef}
                 role="dialog"
                 aria-modal="true"
-                className="relative p-1 w-full max-w-5xl bg-white rounded-2xl shadow-2xl border border-gray-100 max-h-[95vh] overflow-y-auto animate-scale-in"
+                className={`relative p-1 w-full max-w-5xl bg-white rounded-2xl shadow-2xl ${factura?.estado === "ANULADA" || factura?.estado === "ANULADA-NOTA" ? "border-4 border-red-500" : ""} max-h-[95vh] overflow-y-auto animate-scale-in`}
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* X close */}

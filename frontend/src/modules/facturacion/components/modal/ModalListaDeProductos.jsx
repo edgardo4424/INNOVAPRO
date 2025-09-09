@@ -11,7 +11,7 @@ import { Box, X } from "lucide-react";
 import { useState } from "react";
 import ListaDeProductos from "../ListaDeProductos";
 
-export default function ModalListaDeProductos({ itemActual, setItemActual, formulario, tipo }) {
+export default function ModalListaDeProductos({ itemActual, setItemActual, formulario, tipo, piezas }) {
 
 
     const [open, setOpen] = useState(false);
@@ -51,6 +51,7 @@ export default function ModalListaDeProductos({ itemActual, setItemActual, formu
                     setItemActual={setItemActual}
                     formulario={formulario}
                     tipo={tipo}
+                    piezas={piezas}
                 />
 
             </AlertDialogContent>

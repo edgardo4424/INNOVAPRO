@@ -319,15 +319,15 @@ export function FacturaBoletaProvider({ children }) {
             const { status, success, message, data } = await factilizaService.enviarFactura(facturaAEmitir)
 
 
-            if (status === 200 && success) {
+            if (status === 200 ) {
 
                 const sunat_respuest = {
-                    hash: data.hash,
-                    cdr_zip: data.sunatResponse.cdrZip, // Descomentar si es necesario
-                    sunat_success: data.sunatResponse.success,
-                    cdr_response_id: data.sunatResponse.cdrResponse.id,
-                    cdr_response_code: data.sunatResponse.cdrResponse.code,
-                    cdr_response_description: data.sunatResponse.cdrResponse.description
+                    hash: data?.hash || null,
+                    cdr_zip: data?.sunatResponse?.cdrZip || null, // Descomentar si es necesario
+                    sunat_success: data?.sunatResponse?.success || null,
+                    cdr_response_id: data?.sunatResponse?.cdrResponse?.id || null,
+                    cdr_response_code: data?.sunatResponse?.cdrResponse?.code || null,
+                    cdr_response_description: data?.sunatResponse?.cdrResponse?.description || null
                 };
 
                 // ?? Transformamos los documentos relacionados a texto
@@ -349,7 +349,7 @@ export function FacturaBoletaProvider({ children }) {
                 const dbResult = await registrarBaseDatos(facturaCopia);
 
                 if (dbResult.success) {
-                    result = { success: true, message: message || "Factura emitida y registrada con éxito.", data: facturaCopia };
+                    result = { success: true, message: message || "Factura emitida y registrada con éxito.", data: facturaCopia, detailed_message:  data?.sunatResponse?.cdrResponse?.description || null };
                 } else {
                     result = { success: false, message: dbResult.mensaje || "Factura emitida a SUNAT, pero no se pudo registrar en la base de datos.", data: facturaCopia };
                 }

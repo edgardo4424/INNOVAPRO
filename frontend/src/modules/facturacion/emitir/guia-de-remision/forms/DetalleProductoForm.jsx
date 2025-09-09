@@ -14,7 +14,7 @@ import { useState } from 'react';
 import { detalleInicial } from '../utils/valoresIncialGuia';
 
 const DetalleProductoForm = ({ closeModal }) => {
-    const { productoActual, setProductoActual, guiaTransporte, setGuiaTransporte } = useGuiaTransporte();
+    const { productoActual, setProductoActual, guiaTransporte, setGuiaTransporte, piezas } = useGuiaTransporte();
 
     const { unidad, cantidad, cod_Producto, descripcion } = productoActual
 
@@ -116,6 +116,7 @@ const DetalleProductoForm = ({ closeModal }) => {
                     setItemActual={setProductoActual}
                     formulario={null}
                     tipo="guia"
+                    piezas={piezas}
                 />
             </div>
             <form
@@ -136,11 +137,12 @@ const DetalleProductoForm = ({ closeModal }) => {
                             <SelectValue placeholder="Selecciona una unidad" />
                         </SelectTrigger>
                         <SelectContent>
+                            <SelectItem value="NIU">NIU - Unidades </SelectItem>
                             <SelectItem value="KGM">KGM - Kilogramos </SelectItem>
-                            {/* <SelectItem value="TNE">TNE - Toneladas </SelectItem> */}
-                            {/* <SelectItem value="GRM">GRM - Gramos </SelectItem> */}
-                            {/* <SelectItem value="LBR">LBR - Libras </SelectItem> */}
-                            {/* <SelectItem value="ONZ">ONZ - Onzas </SelectItem> */}
+                            <SelectItem value="TNE">TNE - Toneladas </SelectItem>
+                            <SelectItem value="GRM">GRM - Gramos </SelectItem>
+                            <SelectItem value="LBR">LBR - Libras </SelectItem>
+                            <SelectItem value="ONZ">ONZ - Onzas </SelectItem>
                         </SelectContent>
                     </Select>
                     {/* {
@@ -155,7 +157,7 @@ const DetalleProductoForm = ({ closeModal }) => {
 
                 {/* Cantidad */}
                 <div className="flex flex-col gap-1 md:col-span-1">
-                    <Label>Peso</Label>
+                    <Label>Cantidad</Label>
                     <Input
                         type="number"
                         name="cantidad"

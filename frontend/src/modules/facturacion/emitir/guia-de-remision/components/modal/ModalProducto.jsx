@@ -9,23 +9,28 @@ import {
 import { Button } from "@/components/ui/button";
 import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext";
 import { Package, X } from "lucide-react";
-import DetalleForm from "../../forms/DetalleForm";
 import DetalleProductoForm from "../../forms/DetalleProductoForm";
+import { detalleInicial } from "../../utils/valoresIncialGuia";
 
 export default function ModalProducto({ open, setOpen }) {
 
-    const { guiaTransporte, } = useGuiaTransporte();
+    const { setProductoActual } = useGuiaTransporte();
 
     const closeModal = () => {
         setOpen(false);
+        setProductoActual(detalleInicial);
     };
 
     return (
-        <AlertDialog open={open} onOpenChange={setOpen}>
+        <AlertDialog
+            open={open}
+            onOpenChange={setOpen}
+            onClose={closeModal}
+        >
             <div className="flex md:items-end justify-start items-start">
 
                 <AlertDialogTrigger asChild>
-                    <Button className="bg-innova-blue/90 rounded-md text-white hover:bg-innova-blue-hover cursor-pointer"
+                    <Button className="bg-innova-blue rounded-md text-white hover:bg-innova-blue-hover cursor-pointer"
                     // disabled={pagosCompletos}
                     >
                         <Package />
@@ -59,6 +64,3 @@ export default function ModalProducto({ open, setOpen }) {
         </AlertDialog>
     );
 }
-
-
-{/* <h2>{montoTotalFactura.toFixed(2)} / {montoTotalPagos.toFixed(2)}</h2> */ }

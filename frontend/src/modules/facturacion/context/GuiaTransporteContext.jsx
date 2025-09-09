@@ -5,17 +5,24 @@ import facturaService from "@/modules/facturacion/service/FacturaService";
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import filialesService from "../service/FilialesService";
+import useProducto from "../hooks/useProducto";
 
 const GuiaTransporteContext = createContext();
 
 export function GuiaTransporteProvider({ children }) {
     const [guiaTransporte, setGuiaTransporte] = useState(guiaInical);// ?Datos de guia que abarcan los 3 casos
 
+    const [pesoTotalCalculado, setPesoTotalCalculado] = useState(0);
+
     const [guiaDatosPrivado, setGuiaDatosPrivado] = useState(ValoresPrivado);
     const [guiaDatosPublico, setGuiaDatosPublico] = useState(ValoresPublico);
     const [guiaDatosInternos, setGuiaDatosInternos] = useState(ValoresInterno);
 
     const [guiaTransporteValida, setGuiaTransporteValida] = useState(null);
+
+    // ?? OBTENER LOS PRODUCTOS PARA PODER COMPRAR PESOS, ETC
+    const { ObtenerProductos } = useProducto();
+    const [piezas, setPizas] = useState([]);
 
     const [productoActual, setProductoActual] = useState(detalleInicial);
 
@@ -39,8 +46,22 @@ export function GuiaTransporteProvider({ children }) {
         consultarFiliales();
     }, []);
 
+    // ?? OBTENER PRODUCTOS
+    useEffect(() => {
+        const cargarPiezas = async () => {
+            try {
+                const data = await ObtenerProductos();
+                setPizas(data);
+            } catch (error) {
+                console.error('Error al cargar piezas', error);
+            }
+        };
+        cargarPiezas();
+    }, []);
+
     useEffect(() => {
         const UNIT_TO_KG = {
+            NIU: 1,              // no unidad
             KGM: 1,              // kilogramo
             TNE: 1000,           // tonelada
             GRM: 0.001,          // gramo
@@ -61,7 +82,11 @@ export function GuiaTransporteProvider({ children }) {
 
             // 1) Sumar todo en KG
             const totalKg = detalle.reduce((acc, item) => {
+                const itemEncontrado = piezas.find(p => p.item === item.cod_Producto);
                 const cantidad = Number(item?.cantidad) || 0;
+                if (itemEncontrado && item.unidad === "NIU") {
+                    return acc + (Number(itemEncontrado.peso_kg) || 0) * cantidad;
+                }
                 const unidadItem = item?.unidad || "KGM";
                 return acc + toKg(cantidad, unidadItem);
             }, 0);
@@ -70,10 +95,7 @@ export function GuiaTransporteProvider({ children }) {
             const totalEnUnidad = fromKg(totalKg, unidadTotal);
 
             // 3) Guardar
-            setGuiaTransporte(prev => ({
-                ...prev,
-                guia_Envio_Peso_Total: round(totalEnUnidad, 3),
-            }));
+            setPesoTotalCalculado(round(totalEnUnidad, 3));
         };
 
         actualizarPesoTotal();
@@ -182,14 +204,13 @@ export function GuiaTransporteProvider({ children }) {
                     guiaEstructurada = {
                         ...guiaEstructurada,
                         ...guiaDatosInternos,
-                        chofer: []
                     }
                 } else {
                     const { transportista, ...guiaDPublico } = guiaDatosPublico
                     guiaEstructurada = {
                         ...guiaEstructurada,
                         ...guiaDPublico,
-                        chofer: [transportista]
+                        chofer: [transportista, ...guiaEstructurada.chofer],
                     }
                 }
                 let guiaCopia = { ...guiaEstructurada, sunat_respuesta: sunat_respuest, };
@@ -292,7 +313,9 @@ export function GuiaTransporteProvider({ children }) {
                 validarGuia,
                 tipoGuia,
                 setTipoGuia,
-                EmitirGuia
+                EmitirGuia,
+                piezas,
+                pesoTotalCalculado,
             }}
         >
             {children}

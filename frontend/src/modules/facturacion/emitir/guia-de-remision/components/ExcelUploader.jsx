@@ -59,7 +59,7 @@ const ExcelUploader = ({ onDataLoaded, handleSubirDatos }) => {
                     cod_Producto: row[0] || "", // Columna B es el índice 1
                     descripcion: row[1] || "", // Columna C es el índice 2
                     cantidad: row[2] || "", // Columna D es el índice 3
-                    unidad: "KGM",
+                    unidad: "NIU",
                     // original: [row[0], row[1], row[2]] // Opcional: guardar el array original de estas columnas
                 }));
 

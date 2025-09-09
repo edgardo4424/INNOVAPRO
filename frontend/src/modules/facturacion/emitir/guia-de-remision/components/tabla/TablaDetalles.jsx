@@ -29,7 +29,7 @@ const TablaDetalles = ({ open, setOpen }) => {
                         <TableHead className={"max-w-[50px]"}>Cod. de Producto</TableHead>
                         <TableHead>Descipción</TableHead>
                         <TableHead>Unidad</TableHead>
-                        <TableHead>Peso</TableHead>
+                        <TableHead>Cantidad</TableHead>
 
                     </TableRow>
                 </TableHeader>
