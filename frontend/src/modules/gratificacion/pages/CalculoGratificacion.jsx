@@ -36,7 +36,7 @@ const CalculoGratificacion = ({setDataMantenimiento, setEsCalculo}) => {
       const res = await gratificacionService.obtenerGratificaciones(filtro);
       
       setDataMantenimiento(res.data_mantenimiento_detalle)
-      console.log('ressss', res);
+    
       setGratificacion(res);
     } catch (error) {
     } finally {
@@ -49,7 +49,7 @@ const CalculoGratificacion = ({setDataMantenimiento, setEsCalculo}) => {
     const obtenerFiliales = async () => {
       try {
         const res = await gratificacionService.obtenerFiliales();
-        console.log("res", res);
+       
         setFiliales(res);
         setFiltro({ ...filtro, filial_id: res?.[0]?.id });
       } catch (error) {

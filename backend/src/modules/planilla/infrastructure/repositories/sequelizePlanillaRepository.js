@@ -319,9 +319,8 @@ class SequelizePlanillaRepository {
 
       // (SUELDO/2)/15*DÍAS LABORADOS
       const sueldoQuincenal = +(
-        ((sueldoBase / 15) * diasLaborados) /
-        2
-      ).toFixed(2);
+        (sueldoBase / 30) * diasLaborados) 
+      .toFixed(2);
 
       const totalAPagar = sueldoQuincenal;
       listaPlanillaTipoHonorarios.push({
