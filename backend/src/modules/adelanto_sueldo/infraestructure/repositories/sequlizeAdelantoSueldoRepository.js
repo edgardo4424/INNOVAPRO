@@ -73,7 +73,7 @@ class SequelizeAdelantoSueldoRepository {
       fechaInicio,
       fechaFin
    ) {
-      const total = await AdelantoSueldo.sum("monto", {
+      const adelantos = await AdelantoSueldo.findAll({
          where: {
             trabajador_id,
             tipo: tipo,
@@ -84,7 +84,23 @@ class SequelizeAdelantoSueldoRepository {
          
       });
 
-      return Number(total || 0);
+      let totalAdelantos = 0;
+      switch (tipo) {
+         case "simple":
+            totalAdelantos = adelantos.reduce((total, adelanto) => total + (Number(adelanto.monto)/Number(adelanto.cuotas)), 0);            
+            break;
+         case "gratificacion":
+            totalAdelantos = adelantos.reduce((total, adelanto) => total + Number(adelanto.monto), 0);
+            break;
+         case "cts":
+            totalAdelantos = adelantos.reduce((total, adelanto) => total + Number(adelanto.monto), 0);
+            break;
+      
+         default:
+            break;
+      }
+      
+      return Number(totalAdelantos.toFixed(2));
    }
 }
 

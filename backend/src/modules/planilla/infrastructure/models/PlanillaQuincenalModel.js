@@ -83,6 +83,10 @@ const PlanillaQuincenal = sequelize.define(
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
     },
+    adelanto_sueldo: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+    },
     total_descuentos: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
@@ -138,14 +142,15 @@ const PlanillaQuincenal = sequelize.define(
     },
     
     data_mantenimiento_detalle: {
-      type: DataTypes.JSON,
+      type: DataTypes.JSON, // guardar la info de data mantenimiento con la cual se hizo el calculo
     },
     info_detalle: {
+      type: DataTypes.JSON, // guardar la info adicional de cada registro 
+    },
+    registro_planilla_quincenal_detalle: { // cuando hay mas de dos contratos (renovaciones) guardar la info de cada contrato en un array
       type: DataTypes.JSON,
     },
-    registro_planilla_quincenal_detalle: {
-      type: DataTypes.JSON,
-    }
+
   },
   {
     timestamps: true,

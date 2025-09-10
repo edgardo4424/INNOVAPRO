@@ -30,7 +30,9 @@ function unificarTrabajadoresTipoPlanillaQuincenal(data) {
       t.comision += item.comision;
       t.quinta_categoria += item.quinta_categoria;
       t.total_descuentos += item.total_descuentos;
+      t.adelanto_sueldo += item.adelanto_sueldo;
       t.total_a_pagar += item.total_a_pagar;
+   
 
       // Tomamos el sueldo_base y asignación familiar más altos
       t.sueldo_base = Math.max(t.sueldo_base, item.sueldo_base);

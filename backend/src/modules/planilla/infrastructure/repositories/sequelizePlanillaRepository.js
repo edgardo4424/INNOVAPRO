@@ -324,7 +324,7 @@ class SequelizePlanillaRepository {
         numero_cuenta: contrato.numero_cuenta,
         tipo_afp: sistema_pension == "AFP" ? tipo_afp : "ONP",
 
-        adelanto_prestamo: totalAdelantosSueldo
+        adelanto_sueldo: totalAdelantosSueldo
       });
     }
 
@@ -376,7 +376,7 @@ class SequelizePlanillaRepository {
         banco: contrato.banco,
         numero_cuenta: contrato.numero_cuenta,
 
-        adelanto_prestamo: totalAdelantosSueldo
+        adelanto_sueldo: totalAdelantosSueldo
       });
     }
 
