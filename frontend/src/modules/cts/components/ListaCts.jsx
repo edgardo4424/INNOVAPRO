@@ -10,7 +10,7 @@ import RowCts from "./RowCts";
 // import RowCts from "./RowCts";
 const ListaCts = ({ cts }) => {
    return (
-      <div className="relative py-4 min-h-96 ">
+      <div className="relative py-4 ">
          <Table>
             {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
             <TableHeader>
@@ -20,9 +20,15 @@ const ListaCts = ({ cts }) => {
                      rowSpan={2}
                      className="text-center border-r text-white border-black"
                   >
+                     N
+                  </TableHead>
+                  <TableHead
+                     rowSpan={2}
+                     className="text-center border-r text-white border-black"
+                  >
                      Tipo doc
                   </TableHead>
-                   <TableHead
+                  <TableHead
                      rowSpan={2}
                      className="text-center border-r text-white border-black"
                   >
@@ -95,7 +101,7 @@ const ListaCts = ({ cts }) => {
                      rowSpan={2}
                      className="text-center border-r text-white border-black"
                   >
-                     Gratif. Percib. Dic. 2024
+                   Ultima Gratif. Percib
                   </TableHead>
                   <TableHead
                      rowSpan={2}
@@ -135,12 +141,29 @@ const ListaCts = ({ cts }) => {
                   >
                      Faltas Injustificadas
                   </TableHead>
-
+                  <TableHead
+                     rowSpan={2}
+                     className="text-center border-r text-white border-black"
+                  >
+                     No computable
+                  </TableHead>
                   <TableHead
                      rowSpan={2}
                      className="text-center border-r text-white border-black"
                   >
                      CTS a Depositar
+                  </TableHead>
+                  <TableHead
+                     rowSpan={2}
+                     className="text-center border-r text-white border-black"
+                  >
+                     Banco
+                  </TableHead>
+                  <TableHead
+                     rowSpan={2}
+                     className="text-center border-r text-white border-black"
+                  >
+                     N° cuenta
                   </TableHead>
                </TableRow>
 
@@ -166,20 +189,7 @@ const ListaCts = ({ cts }) => {
 
             <TableBody className="bg-blue-50 min-h-64">
                {/* Render Trabajadores Planilla */}
-               {cts.length > 0 && (
-                  <>
-                     {/* {cts().map(
-                        (e, index) => (
-                        }
-                           <RowCts key={index} e={e} index={index} />
-                        )
-                     )} */}
-                     {cts.map((c, i) => (
-                        <RowCts e={c} key={i} />
-                     ))}
-                     {/* <RowTotalGratificacion gratificacion={totalP} /> */}
-                  </>
-               )}
+               {cts.length > 0 && cts.map((c, i) => <RowCts e={c} key={i} num={i+1}/>)}
             </TableBody>
          </Table>
       </div>

@@ -19,6 +19,8 @@ module.exports = async (vacacionesData, vacacionesRepository) => {
       dataVacaciones.asignacion_familiar,
       dataVacaciones.dias_vendidos
    );
+   // console.log('datos de las vacaciones',dataVacaciones);
+   
    const nuevasVacaciones = await vacacionesRepository.crear(
       dataVacaciones,
       importe_dias_vendidos

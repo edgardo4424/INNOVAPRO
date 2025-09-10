@@ -5,6 +5,8 @@ const SequelizeTrabajadorRepository = require("../../infraestructure/repositorie
 const crearTrabajadorConContrato = require("../../../../application/services/crearTrabajadorConContrato");
 const obtenerTrabajadorpoId = require("../../application/useCases/obtenerTrabajadorpoId");
 const editarTrabajadorConContrato = require("../../../../application/services/editarTrabajadorConContrato");
+const obtenerTrabajadoresYcontratos = require("../../application/useCases/obtenerTrabajadoresYcontratos");
+const obtenerTrabajadoresConContratosVigentes = require("../../application/useCases/obtenerTrabajadoresConContratosVigentes");
 
 const trabajadorRepository = new SequelizeTrabajadorRepository();
 
@@ -20,14 +22,12 @@ const TrabajadorController = {
          res.status(500).json({ error: error.message });
       }
    },
-   async obtenerTrabajadorPorId(req, res) {
+   async obtenerTrabajadorPorId(req, res) {      
       try {
          const trabajador = await obtenerTrabajadorpoId(
             req.params.id,
             trabajadorRepository
          );
-         console.log("Controlador:  ", trabajador.respuesta);
-
          res.status(trabajador.codigo).json(trabajador.respuesta);
       } catch (error) {
          res.status(500).json({ error: error.message });
@@ -69,8 +69,32 @@ const TrabajadorController = {
          );
       } catch (error) {
          console.log(error);
-         
+
          res.status(500).json({ error: error.message });
+      }
+   },
+   async obtenerTrabajadoresYcontratos(req, res) {            
+      try {
+         const response = await obtenerTrabajadoresYcontratos(
+            trabajadorRepository
+         );
+         res.status(response.codigo).json(response.respuesta);
+      } catch (error) {
+         res.status(502).json({ error: error.message });
+      }
+   },
+
+   async obtenerTrabajadoresConContratosVigentes(req, res) {            
+      try {
+
+         const { filial_id } = req.body;
+         const response = await obtenerTrabajadoresConContratosVigentes(
+            filial_id,
+            trabajadorRepository
+         );
+         res.status(response.codigo).json(response.respuesta);
+      } catch (error) {
+         res.status(502).json({ error: error.message });
       }
    },
 };

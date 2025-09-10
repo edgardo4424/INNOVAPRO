@@ -1,6 +1,5 @@
 function calcularResumenGratificaciones(listaTrabajadores) {
 
-  console.log('listaTrabajadores', listaTrabajadores);
   const sumar = (campo) =>
     listaTrabajadores.reduce((acc, t) => acc + parseFloat(t[campo] || 0), 0);
 
@@ -16,8 +15,8 @@ function calcularResumenGratificaciones(listaTrabajadores) {
       sumar("prom_bono_obra")
     ).toFixed(2),
     total_gratificacion_semestral: sumar("gratificacion_semestral").toFixed(2),
-    total_faltas: sumar("falta_dias").toFixed(2),
-    total_importe_falta: -(-sumar("falta_importe")).toFixed(2),
+    total_faltas: sumar("falta_dias"),
+    total_importe_falta: Number(-(-sumar("falta_importe"))).toFixed(2),
     total_no_computable: (-sumar("no_computable")).toFixed(2),
     total_gratificacion_despues_descuento: sumar("grat_despues_descuento").toFixed(2),
     total_bonificacion_essalud: sumar("bonificac_essalud").toFixed(2),

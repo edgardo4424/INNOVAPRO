@@ -48,10 +48,34 @@ const Usuario = sequelize.define(
 );
 
 Usuario.associate = (models) => {
- 
+
   Usuario.hasMany(models.cotizaciones, {
     foreignKey: "usuario_id",
-});
+  });
+  Usuario.hasMany(models.cts, {
+    foreignKey: "usuario_cierre_id",
+  });
+  Usuario.hasMany(models.cierres_cts, {
+    foreignKey: "usuario_cierre_id",
+  });
+  Usuario.hasMany(models.gratificaciones, {
+    foreignKey: "usuario_cierre_id",
+  });
+  Usuario.hasMany(models.cierres_gratificaciones, {
+    foreignKey: "usuario_cierre_id",
+  });
+
+   Usuario.hasMany(models.planilla_quincenal, {
+    foreignKey: "usuario_cierre_id",
+  });
+  
+  Usuario.hasMany(models.cierres_planilla_quincenal, {
+    foreignKey: "usuario_cierre_id",
+  });
+
+  Usuario.hasMany(models.bajas_trabajadores, {
+    foreignKey: "usuario_registro_id",
+  })
 };
 
 module.exports = { Usuario }; // Exporta el modelo para que pueda ser utilizado en otros módulos

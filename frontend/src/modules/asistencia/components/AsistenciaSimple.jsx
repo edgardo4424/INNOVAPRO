@@ -19,7 +19,8 @@ export const estadosAsistencia = [
    { value: "falto", label: "Falto", color: "bg-red-500" },
    { value: "tardanza", label: "Tardanza", color: "bg-yellow-500" },
    { value: "permiso", label: "Permiso", color: "bg-blue-500" },
-   { value: "licencia", label: "Licencia", color: "bg-purple-500" },
+   { value: "licencia_con_goce", label: "Licencia con goce", color: "bg-pink-500" },
+   { value: "licencia_sin_goce", label: "Licencia sin goce", color: "bg-purple-500" },
    { value: "vacaciones", label: "Vacaciones", color: "bg-indigo-500" },
    {
       value: "falta-justificada",

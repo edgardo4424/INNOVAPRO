@@ -33,6 +33,9 @@ const contratoSchema = yup.object({
          "El tipo de contrato debe ser Planilla o RxH"
       )
       .required("El tipo de contrato es obligatorio"),
+   banco: yup.string().required("El nombre es requerido"),
+   numero_cuenta: yup.string().required("El nombre es requerido"),
+
 });
 
 export const trabajadorSchema = (isEdit = false, isGerente = false) =>
@@ -61,9 +64,19 @@ export const trabajadorSchema = (isEdit = false, isGerente = false) =>
          .string()
          .oneOf(["AFP", "ONP"], "Sistema de pensión no válido")
          .required("El sistema de pensión es requerido"),
-      quinta_categoria: yup
-         .boolean()
-         .required("La quinta categoría es requerida"),
+      tipo_afp: yup
+  .string()
+  .trim()
+  .oneOf(["HABITAT", "INTEGRA", "PRIMA", "PROFUTURO"], "Tipo de AFP no válido")
+  .when("sistema_pension", (sistema_pension, schema) =>
+  {
+   
+   return sistema_pension.includes("AFP")
+      ? schema.required("El tipo de AFP es requerido")
+      : schema.nullable().notRequired()
+  }
+    
+  ),
       cargo_id: yup
          .number()
          .transform((value, originalValue) => {

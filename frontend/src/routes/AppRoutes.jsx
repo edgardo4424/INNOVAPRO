@@ -22,7 +22,9 @@ import {
 import ProtectedRoute from "./ProtectedRoute";
 import RoleGuard from "./rol.guard";
 
-import PlanillaQuincenal from "@/modules/planilla/pages/PlanillaQuincenal";
+
+import PlanillaMensual from "@/modules/planilla/pages/CalculoPlanillaMensual";
+import GestionPlanillaMensual from "@/modules/planilla/pages/GestionPlanillaMensual";
 
 // Lazy load components
 const Login = lazy(() => import("@/modules/auth/pages/Login"));
@@ -88,6 +90,9 @@ const GestionGratificacion = lazy(() =>
    import("../modules/gratificacion/pages/GestionGratificacion")
 );
 
+const GestionPlanillaQuincenal = lazy(() =>
+   import("../modules/planilla/pages/GestionPlanillaQuincenal")
+);
 
 //* Facturacion
 const CalculoQuintaCategoria = lazy(() =>
@@ -96,6 +101,8 @@ const CalculoQuintaCategoria = lazy(() =>
 const GestionDataMantenimiento = lazy(() =>
    import("../modules/dataMantenimiento/pages/GestionDataMantenimiento")
 );
+
+const GestionTrabajadoresDadosDeBaja = lazy(() => import("../modules/trabajadoresDadosDeBaja/pages/GestionTrabajadoresDadosDeBaja"));
 
 
 export default function AppRoutes() {
@@ -289,7 +296,11 @@ export default function AppRoutes() {
                         <Route element={<RoleGuard roles={["Gerencia"]} />}>
                            <Route
                               path="planilla-quincenal"
-                              element={<PlanillaQuincenal />}
+                              element={<GestionPlanillaQuincenal />}
+                           />
+                           <Route
+                              path="planilla-mensual"
+                              element={<GestionPlanillaMensual />}
                            />
                         </Route>
                         <Route element={<RoleGuard roles={["Gerencia"]} />}>
@@ -307,6 +318,11 @@ export default function AppRoutes() {
                            <Route
                               path="gratificacion"
                               element={<GestionGratificacion />}
+                           />
+
+                           <Route
+                              path="trabajadores-dados-de-baja"
+                              element={<GestionTrabajadoresDadosDeBaja />}
                            />
 
                         </Route>

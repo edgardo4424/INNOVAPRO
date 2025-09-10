@@ -15,6 +15,10 @@ const {
 } = require("../../modules/trabajadores/infraestructure/models/trabajadorModel");
 db.trabajadores = Trabajador;
 
+const {Cts}=require("../../modules/cts/infraestructure/models/ctsModel");
+db.cts=Cts
+const {CierreCTS}=require("../../modules/cts/infraestructure/models/ctsCierreModel");
+db.cierres_cts=CierreCTS
 const {
    Cargo,
 } = require("../../modules/trabajadores/infraestructure/models/cargoModel");
@@ -59,6 +63,11 @@ db.tipos_trabajo = TipoTrabajo;
 const { Obra } = require("../../modules/obras/infrastructure/models/obraModel");
 db.obras = Obra;
 
+const {PlanillaMensual}=require("../../modules/planilla/infrastructure/models/PlanillaMensualModel")
+db.planilla_mensual=PlanillaMensual;
+
+const {CierresPlanillaMensual}=require("../../modules/planilla/infrastructure/models/CierrePlanillaMensualModel");
+db.cierres_planilla_mensual=CierresPlanillaMensual
 const {
    Filial,
 } = require("../../modules/filiales/infrastructure/models/filialModel");
@@ -209,10 +218,25 @@ db.ruc_facturacion = RucFacturacion
 const { Borrador } = require('../../modules/facturacion/infrastructure/models/borrador/borradorModel')
 db.borradores = Borrador;
 
+
 // * Ubigeo
 const { Ubigeo } = require("../../modules/ubigeo/infrastructure/models/ubigeoModel");
 db.ubigeos = Ubigeo;
 
+const { Gratificacion } = require("../../modules/gratificaciones/infrastructure/models/GratificacionModel");
+db.gratificaciones = Gratificacion;
+
+const { CierreGratificacion } = require("../../modules/gratificaciones/infrastructure/models/CierreGratificacionModel");
+db.cierres_gratificaciones = CierreGratificacion;
+
+const { PlanillaQuincenal } = require("../../modules/planilla/infrastructure/models/PlanillaQuincenalModel");
+db.planilla_quincenal = PlanillaQuincenal;
+
+const { CierrePlanillaQuincenal } = require("../../modules/planilla/infrastructure/models/CierrePlanillaQuincenalModel");
+db.cierres_planilla_quincenal = CierrePlanillaQuincenal;
+
+const { BajasTrabajadores } = require("../../modules/dar_baja_trabajadores/infrastructure/models/BajasTrabajadoresModel");
+db.bajas_trabajadores = BajasTrabajadores;
 
 // ✅ Solo se asocian los que tienen .associate()
 if (db.contactos.associate) db.contactos.associate(db);
@@ -247,6 +271,13 @@ if (db.asistencias.associate) db.asistencias.associate(db);
 if (db.gastos.associate) db.gastos.associate(db);
 if (db.jornadas.associate) db.jornadas.associate(db);
 if (db.tipos_trabajo.associate) db.tipos_trabajo.associate(db);
+if(db.cts)db.cts.associate(db)
+if(db.cierres_cts)db.cierres_cts.associate(db)
+if(db.gratificaciones) db.gratificaciones.associate(db)
+if(db.cierres_gratificaciones) db.cierres_gratificaciones.associate(db)
+if(db.planilla_quincenal) db.planilla_quincenal.associate(db)
+if(db.cierres_planilla_quincenal) db.cierres_planilla_quincenal.associate(db)
+if(db.bajas_trabajadores) db.bajas_trabajadores.associate(db)
 
 // ? Conexion Facturacion
 if (db.factura.associate) db.factura.associate(db);
@@ -268,6 +299,8 @@ if(db.ubigeos) db.ubigeos.associate(db)
 
 if (db.cargos) db.cargos.associate(db);
 if (db.areas) db.areas.associate(db);
+if (db.planilla_mensual) db.planilla_mensual.associate(db);
+if (db.cierres_planilla_mensual) db.cierres_planilla_mensual.associate(db);
 
 
 // Sequelize

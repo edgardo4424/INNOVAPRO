@@ -52,9 +52,12 @@ const TablePlanillaQuincenal = ({ planillaQuincenalTipoPlanilla, total }) => {
           <TableHeader>
             <TableRow className={"bg-gray-800 text-xs "}>
               {/* Estas celdas abarcan 2 filas porque no tienen sub-encabezados */}
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black"></TableHead>
                <TableHead rowSpan={2} className="text-center border-r text-white border-black">Tipo Doc</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">N° Doc</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Nombres y Apellidos</TableHead>
+             {/*  <TableHead rowSpan={2} className="text-center border-r text-white border-black">AFP</TableHead> */}
+                <TableHead rowSpan={2} className="text-center border-r text-white border-black">Fecha Ingreso</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Dias Laborados</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Base</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Quincenal</TableHead>
@@ -68,15 +71,17 @@ const TablePlanillaQuincenal = ({ planillaQuincenalTipoPlanilla, total }) => {
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Total Descuentos</TableHead>
          
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Total a Pagar</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Banco</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">N° Cuenta</TableHead>
             </TableRow>
 
             {/* Sub-encabezados del grupo FALTAS */}
             <TableRow className={"bg-gray-800 text-xs "}>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">ONP</TableHead>
-              <TableHead rowSpan={2} className="text-center border-r text-white border-black">EPS Primera Quincena</TableHead>
+             {/*  <TableHead rowSpan={2} className="text-center border-r text-white border-black">EPS Primera Quincena</TableHead> */}
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">AFP Ap. Oblig</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Seguro</TableHead>
-              {/* <TableHead rowSpan={2} className="text-center border-r text-white border-black">Comisión</TableHead> */}
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Comisión</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">5ta Categ.</TableHead>
             </TableRow>
           </TableHeader>

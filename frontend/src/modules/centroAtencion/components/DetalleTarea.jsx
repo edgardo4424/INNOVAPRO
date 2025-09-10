@@ -25,9 +25,9 @@ import ImportadorDespiece from "./despiece-ot/ImportadorDespiece";
 import DespieceOT from "./despiece-ot/DespieceOT";
 import DespieceAdicional from "./despiece-ot/DespieceAdicional";
 import ResumenDespiece from "@/modules/cotizaciones/components/pasos/paso-confirmacion/ResumenDespiece";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { toast } from "react-toastify";
 import { crearDespieceOT } from "../services/centroAtencionService";
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 
 export default function DetalleTarea({
@@ -258,12 +258,12 @@ export default function DetalleTarea({
                   {console.log("Piezas: ", formData.despiece)}
 
                {mostrarConfirmacion && (
-               <Dialog open={true} onOpenChange={setMostrarConfirmacion}>
-                  <DialogContent>
-                     <DialogHeader>
-                     <DialogTitle>¿Guardar despiece?</DialogTitle>
-                     <DialogDescription>Confirma que los datos son correctos antes de enviar el despiece al sistema.</DialogDescription>
-                     </DialogHeader>
+               <AlertDialog open={true} onOpenChange={setMostrarConfirmacion}>
+                  <AlertDialogContent>
+                     <AlertDialogHeader>
+                     <AlertDialogTitle>¿Guardar despiece?</AlertDialogTitle>
+                     <AlertDialogDescription>Confirma que los datos son correctos antes de enviar el despiece al sistema.</AlertDialogDescription>
+                     </AlertDialogHeader>
                      <div className="flex justify-end gap-2 mt-4">
                      <Button variant="outline" onClick={() => setMostrarConfirmacion(false)}>
                         Cancelar
@@ -297,8 +297,8 @@ export default function DetalleTarea({
                         Confirmar y guardar
                      </Button>
                      </div>
-                  </DialogContent>
-               </Dialog>
+                  </AlertDialogContent>
+               </AlertDialog>
                )}
 
             </div>

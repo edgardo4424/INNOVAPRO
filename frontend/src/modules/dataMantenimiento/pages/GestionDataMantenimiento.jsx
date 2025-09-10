@@ -9,19 +9,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogDescription,
-} from "@/components/ui/dialog";
+
 
 import { Label } from "@/components/ui/label";
 
 import { MoreVertical, Pencil, Eye } from "lucide-react";
 import dataMantenimientoService from "../services/dataMantenimientoService";
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 
 const GestionDataMantenimiento = () => {
@@ -230,19 +224,19 @@ const GestionDataMantenimiento = () => {
         </div>
 
         {/* Dialogo Crear / Editar / Ver */}
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent className="sm:max-w-lg">
-            <DialogHeader>
-              <DialogTitle>
+        <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <AlertDialogContent className="sm:max-w-lg">
+            <AlertDialogHeader>
+              <AlertDialogTitle>
                 {viewMode === "editar" && "Editar dato de mantenimiento"}
                 {viewMode === "ver" && "Detalle del dato de mantenimiento"}
-              </DialogTitle>
-              <DialogDescription>
+              </AlertDialogTitle>
+              <AlertDialogDescription>
                 {viewMode === "ver"
                   ? "Consulta la información del dato de mantenimiento."
                   : "Completa los campos y guarda los cambios."}
-              </DialogDescription>
-            </DialogHeader>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
 
             <div className="space-y-4">
 
@@ -286,7 +280,7 @@ const GestionDataMantenimiento = () => {
 
             </div>
 
-            <DialogFooter className="mt-2">
+            <AlertDialogFooter className="mt-2">
               <Button variant="outline" onClick={() => setDialogOpen(false)}>
                 Cerrar
               </Button>
@@ -295,9 +289,9 @@ const GestionDataMantenimiento = () => {
                   {viewMode === "crear" ? "Crear" : "Guardar cambios"}
                 </Button>
               )}
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );

@@ -12,13 +12,14 @@ import {
 } from "@/components/ui/table";
 
 import { Search } from "lucide-react";
+import RowRHQuincenal from "./RowRHQuincenal";
 
 /* import RowGratificacion from "@/modules/gratificacion/components/RowGratificacion";
 import RowTotalGratificacion from "@/modules/gratificacion/components/RowTotalGratificacion"; */
 
-const TablePlanillaQuincenal = ({ planillaQuincenalTipoRh, total }) => {
+const TableRHQuincenal = ({ planillaQuincenalTipoRh, total }) => {
 
-
+console.log('planillaQuincenalTipoRh', planillaQuincenalTipoRh);
   const [filtro, setFiltro] = useState("");
  
   // Filtrar por nombres y apellidos (case-insensitive)
@@ -49,13 +50,16 @@ const TablePlanillaQuincenal = ({ planillaQuincenalTipoRh, total }) => {
           <TableHeader>
             <TableRow className={"bg-gray-800 text-xs "}>
               {/* Estas celdas abarcan 2 filas porque no tienen sub-encabezados */}
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black"></TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Tipo Doc</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">N° Doc</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Nombres y Apellidos</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Fecha Ingreso</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Dias Laborados</TableHead>
-              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Bruto</TableHead>
-              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Quincenal</TableHead>
-              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Banco</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Base</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Total a Pagar</TableHead>
+               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Banco</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">N° Cuenta</TableHead>
 
             </TableRow>
           </TableHeader>
@@ -64,18 +68,11 @@ const TablePlanillaQuincenal = ({ planillaQuincenalTipoRh, total }) => {
             {/* Render Trabajadores Planilla */}
             {planillaQuincenalTipoRh.length > 0 && (
               <>
-               {/*  <TableRow>
-                  <TableCell
-                    colSpan={20}
-                    className="text-center bg-gray-200 text-black font-semibold"
-                  >
-                    Planilla
-                  </TableCell>
-                </TableRow>
-                 {filtrarTrabajadores(planillaQuincenal).map((e, index) => (
-                  <RowPlanillaQuincenal key={index} e={e} index={index} />
+                
+                 {filtrarTrabajadores(planillaQuincenalTipoRh).map((e, index) => (
+                  <RowRHQuincenal key={index} e={e} index={index} />
                 ))}
-                <RowTotalPlanillaQuincenal total={total} /> */}
+                {/* <RowTotalRHQuincenal total={total} /> */}
               </>
             )}
 
@@ -87,4 +84,4 @@ const TablePlanillaQuincenal = ({ planillaQuincenalTipoRh, total }) => {
   );
 };
 
-export default TablePlanillaQuincenal;
+export default TableRHQuincenal;

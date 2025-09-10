@@ -13,18 +13,14 @@ const Filtro = ({ filiales, filtro, setFiltro, Buscar }) => {
  
 
   return (
-    <div className=" pt-8 flex gap-x-5  bg-red-">
+    <div className="flex gap-x-5">
       <div className="flex flex-col items-center justify-between w-full gap-x-5 border-2 border-gray-300 p-4 rounded-2xl">
         <div className="flex items-between justify-start gap-x-2 w-full py-2">
           <div className="flex">
             <Funnel />
             <h2 className="font-bold">Filtro</h2>
           </div>
-          {/* <div className="flex w-full justify-end">
-                        <Button onClick={Buscar} size="xs" className="h-7 px-2 cursor-pointer" >
-                            <Check className="mr-1 w-3 h-3" /> Aplicar
-                        </Button>
-                    </div> */}
+          
         </div>
         <div className="grid grid-cols-1 md:grid-cols-7  w-full gap-4">
           {/* Select de año */}
@@ -85,10 +81,12 @@ const Filtro = ({ filiales, filtro, setFiltro, Buscar }) => {
             </Select>
           </div>
           <div className="md:col-span-1">
-            <Button onClick={Buscar} className="px-2 cursor-pointer w-full">
-              <Check className="mr-1 w-3 h-3" /> Aplicar
-            </Button>
-          </div>
+              <Button onClick={Buscar} className="px-2 cursor-pointer w-full">
+                <Check className="mr-1 w-3 h-3" /> Aplicar
+              </Button>
+            </div>
+          
+        
         </div>
       </div>
     </div>

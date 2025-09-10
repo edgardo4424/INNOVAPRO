@@ -39,6 +39,24 @@ const AdelantoSueldo = sequelize.define(
          allowNull: false,
          defaultValue: "simple",
       },
+      primera_cuota: {
+         type: DataTypes.DATEONLY,
+         allowNull: false,
+      },
+      forma_descuento: {
+         type: DataTypes.ENUM("mensual", "quincenal"),
+         allowNull: false,
+      },
+      cuotas: {
+         type: DataTypes.INTEGER,
+         allowNull: false,
+         defaultValue:1
+      },
+      cuotas_pagadas: {
+         type: DataTypes.INTEGER,
+         allowNull: false,
+         defaultValue:0
+      },
    },
    {
       tableName: "adelanto_sueldo",

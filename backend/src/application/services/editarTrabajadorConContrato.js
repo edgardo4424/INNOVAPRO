@@ -13,9 +13,15 @@ const trabajadorRepository = new SequelizeTrabajadorRepository();
 module.exports = async function editarTrabajadorConContrato(data) {
    const transaction = await sequelize.transaction();
    const { id: trabajadorId, contratos_laborales } = data;
-
    try {
-      await editarTrabajador(data, trabajadorRepository, transaction);
+      const response_edit = await editarTrabajador(
+         data,
+         trabajadorRepository,
+         transaction
+      );      
+      if (response_edit.codigo !== 201) {
+         throw new Error(response_edit.respuesta.mensaje);
+      }
 
       const contratosFront = contratos_laborales ?? [];
       const res = await obtenerContratosPorTrabajadorId(
@@ -31,7 +37,8 @@ module.exports = async function editarTrabajadorConContrato(data) {
       const contratos_crear = [];
       const contratos_actualizar = [];
       const contratos_eliminar = [];
-
+    
+      
       for (const contrato of contratosFront) {
          if (contratosBdIds.has(String(contrato.id))) {
             contratos_actualizar.push(contrato);
@@ -39,6 +46,8 @@ module.exports = async function editarTrabajadorConContrato(data) {
             contratos_crear.push(contrato);
          }
       }
+
+
       for (const contrato of contratosDb) {
          if (!contratosFrontIds.has(String(contrato.id))) {
             contratos_eliminar.push(contrato);
@@ -55,6 +64,7 @@ module.exports = async function editarTrabajadorConContrato(data) {
             throw new Error("Error al crear comtrato");
          }
       }
+  
       for (const contrato of contratos_actualizar) {
          const response = await editarContratoLaboral(
             contrato,
@@ -65,6 +75,7 @@ module.exports = async function editarTrabajadorConContrato(data) {
             throw new Error("Error al Editar el contrato");
          }
       }
+  
       for (const contrato of contratos_eliminar) {
          const response = await eliminarContratoLaboralPorId(
             contrato.id,
@@ -75,6 +86,7 @@ module.exports = async function editarTrabajadorConContrato(data) {
             throw new Error("Error al crear comtrato");
          }
       }
+  
       await transaction.commit();
 
       return {
@@ -84,13 +96,11 @@ module.exports = async function editarTrabajadorConContrato(data) {
          },
       };
    } catch (error) {
-      console.log("El error recibido es: ", error);
-
       await transaction.rollback();
       return {
          codigo: 500,
          respuesta: {
-            mensaje: "Error Inesperado: " + error.message,
+            mensaje: "Error Inesperado: " + error,
          },
       };
    }

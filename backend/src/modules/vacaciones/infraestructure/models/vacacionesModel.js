@@ -18,11 +18,11 @@ const Vacaciones = sequelize.define(
          },
       },
       fecha_inicio: {
-         type: DataTypes.DATE,
+         type: DataTypes.DATEONLY,
          allowNull: false,
       },
       fecha_termino: {
-         type: DataTypes.DATE,
+         type: DataTypes.DATEONLY,
          allowNull: false,
       },
       dias_tomados: {

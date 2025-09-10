@@ -8,6 +8,7 @@ const SequelizeBonoRepository = require("../../../bonos/infraestructure/reposito
 const SequelizeAdelantoSueldoRepository = require("../../../adelanto_sueldo/infraestructure/repositories/sequlizeAdelantoSueldoRepository");
 const calcularPromedioHorasExtras = require("../../../../services/calculoHorasEsxtras");
 const calculaPromedioBonos = require("../../../../services/calculoBonos");
+const { mapearInfoDetalleGratificacion } = require("./mapearInfoDetalleGratificacion");
 
 const asistenciaRepository = new SequelizeAsistenciaRepository();
 const bonoRepository = new SequelizeBonoRepository();
@@ -21,17 +22,22 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
       const tid = c.trabajador_id;
       if (!porTrabajador.has(tid))
         porTrabajador.set(tid, { trabajador: c.trabajador, contratos: [] });
+     
       porTrabajador.get(tid).contratos.push(c.get({ plain: true }));
     }
 
     const filas = await Promise.all(
       Array.from(porTrabajador.values()).map(
         async ({ trabajador, contratos }) => {
+
+          // Obtener los contratos limpios
+          
+
+          //console.log('contratos del trabajador', contratos);
           // 1) Meses por régimen
           const { porRegimen, totalMeses, detalleMensual } =
             calcularMesesComputablesSemestre(contratos, periodo, anio);
 
-       
           const ultimaFechaFinContrato = obtenerUltimaFechaFin(contratos);
 
 
@@ -50,6 +56,14 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
                   p.fecha_inicio,
                   p.fecha_fin
                 );
+
+                console.log({
+                 
+                  trabajador,
+                  contratos,
+                   fechaInicioCalculo,
+                  fechaFinCalculo,
+                });
 
               //const promedioBonoObra = Number((bonoTotalDelTrabajador / p.meses).toFixed(2));
 
@@ -140,6 +154,7 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
               const totalAdelantosSueldo =
                 await adelantoSueldoRepository.obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
                   trabajador.id,
+                  "gratificacion",
                   fechaInicioCalculo,
                   fechaFinCalculo
                 );
@@ -154,6 +169,40 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
                 contratos.length == 1
                   ? ultimaFechaFinContrato
                   : p.fecha_terminacion_anticipada || p.fecha_fin;
+
+                 
+
+              // Obtener los contratos que esta dentro del rango p.fecha_inicio y fechaFin
+
+              let fechaInicioPeriodo = null;
+              let fechaFinPeriodo = null;
+
+              switch (periodo) {
+                case "JULIO":
+                  fechaInicioPeriodo = `${anio}-01-01`;
+                  fechaFinPeriodo = `${anio}-06-30`;
+                  break;
+                case "DICIEMBRE":
+                  fechaInicioPeriodo = `${anio}-07-01`;
+                  fechaFinPeriodo = `${anio}-12-31`;
+                  break;
+                default:
+                  break;
+              }
+
+              const contratosQueCumplen = contratos.filter((c) => {
+                const inicio = new Date(c.fecha_inicio);
+                const fin = new Date(c.fecha_terminacion_anticipada || c.fecha_fin);
+                return inicio <= new Date(fechaFinPeriodo) && fin >= new Date(fechaInicioPeriodo);
+              })
+
+              const lista_id_contratos = contratosQueCumplen.map((c) => c.id);
+
+
+              const banco = contratosQueCumplen[contratosQueCumplen.length - 1].banco || ""
+              const numeroCuenta= contratosQueCumplen[contratosQueCumplen.length - 1].numero_cuenta || ""
+
+              const info_detalle = mapearInfoDetalleGratificacion({asistencias: asistenciasDelTrabajador, bonos: bonosDelTrabajador});
 
               return {
                 tipo_contrato: p.tipo_contrato,
@@ -177,9 +226,16 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
                 renta_5ta: renta5ta,
                 adelantos: totalAdelantosSueldo,
                 total,
+
+                banco: banco,
+                numero_cuenta: numeroCuenta,
+                lista_contratos_ids: lista_id_contratos,
+                data_mantenimiento_detalle: dataMantenimiento,
+                info_detalle: info_detalle
               };
             })
           );
+
 
           // 3) Consolidado (sumas de partes)
           const sum = (k) => partes.reduce((a, x) => a + Number(x[k] || 0), 0);

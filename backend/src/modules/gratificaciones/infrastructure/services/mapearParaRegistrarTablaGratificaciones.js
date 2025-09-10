@@ -19,18 +19,20 @@ function mapearParaRegistrarTablaGratificaciones(registros, periodo, anio, filia
 
 
   return registros.map(r => {
-   
+   console.log('r', r);
     return {
     trabajador_id: r.trabajador_id,
     tipo_contrato: r.tipo_contrato,
     periodo: periodoGrati,
+    fecha_ingreso: r.fecha_ingreso,
+    fecha_fin: r.fecha_fin,
     fecha_calculo: moment().tz('America/Lima').format('YYYY-MM-DD'),
     regimen: r.regimen,
     factor_regimen: factorPorRegimen(r.regimen),
     sueldo_base: r.sueldo_base,
-    asignacion_familiar: r.asignacion_familiar,
+    asignacion_familiar: r.asig_familiar,
     promedio_horas_extras: r.prom_horas_extras,
-    promedio_bono_obra: r.bono_obra,
+    promedio_bono_obra: r.prom_bono_obra,
     remuneracion_computable: r.sueldo_bruto,
     meses_computables: Number(r?.tiempo_laborado.split(" ")[0]),
     gratificacion_bruta: r.gratificacion_semestral,
@@ -45,7 +47,12 @@ function mapearParaRegistrarTablaGratificaciones(registros, periodo, anio, filia
     locked_at: moment().tz('America/Lima').format('YYYY-MM-DD HH:mm:ss'),
     usuario_cierre_id: usuario_cierre_id,
     filial_id: filial_id,
-    cierre_id: cierre_id
+    cierre_id: cierre_id,
+    banco: r.banco,
+    numero_cuenta: r.numero_cuenta,
+    contratos: r.contratos,
+    data_mantenimiento_detalle: r.data_mantenimiento_detalle,
+    info_detalle: r.info_detalle
   }})
 }
 

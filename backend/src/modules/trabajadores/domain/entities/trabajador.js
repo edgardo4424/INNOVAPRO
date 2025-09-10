@@ -1,4 +1,3 @@
-
 class Trabajador {
    constructor({
       id,
@@ -8,10 +7,12 @@ class Trabajador {
       sueldo_base,
       asignacion_familiar,
       sistema_pension,
-      quinta_categoria,
       tipo_documento,
       cargo_id,
       domiciliado,
+      tipo_afp,
+      comision_afp,
+      fecha_baja
    }) {
       (this.id = id),
          (this.nombres = nombres),
@@ -21,9 +22,11 @@ class Trabajador {
          (this.sueldo_base = sueldo_base),
          (this.asignacion_familiar = asignacion_familiar),
          (this.sistema_pension = sistema_pension),
-         (this.quinta_categoria = quinta_categoria),
          (this.cargo_id = cargo_id);
       this.domiciliado = domiciliado;
+      this.tipo_afp = tipo_afp;
+      this.comision_afp = comision_afp;
+      this.fecha_baja = fecha_baja;
    }
 
    validarCamposObligatorios(editar = false) {
@@ -56,31 +59,35 @@ class Trabajador {
 
          errores.push("El sistema de pension es inválido.");
       }
-      if (
-         this.quinta_categoria === null ||
-         this.quinta_categoria === undefined
-      ) {
-         errores.push("Quinta categoría es inválida.");
-      }
       if (this.cargo_id === null) {
          errores.push("El cargo no se a enviado");
+      }
+      if (this.sistema_pension === "AFP") {
+         if (
+            ["HABITAT", "INTEGRA", "PRIMA", "PROFUTURO"].includes(
+               this.tipo_afp
+            ) === false
+         ) {
+            errores.push("El tipo de AFP es inválido");
+         }
       }
       return errores;
    }
 
    get(editar = false) {
-      
       const datos = {
          nombres: this.nombres,
          apellidos: this.apellidos,
          tipo_documento: this.tipo_documento,
          numero_documento: this.numero_documento,
          sueldo_base: this.sueldo_base,
-         asignacion_familiar:this.asignacion_familiar,
+         asignacion_familiar: this.asignacion_familiar,
          sistema_pension: this.sistema_pension,
-         quinta_categoria: this.quinta_categoria,
          cargo_id: this.cargo_id,
-         domiciliado:this.domiciliado
+         domiciliado: this.domiciliado,
+         tipo_afp: this.tipo_afp,
+         comision_afp: this.comision_afp,
+         fecha_baja: this.fecha_baja
       };
       if (editar) {
          datos.trabajador_id = this.id;

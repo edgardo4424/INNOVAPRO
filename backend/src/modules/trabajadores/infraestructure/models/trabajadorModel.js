@@ -40,10 +40,6 @@ const Trabajador = sequelize.define(
          type: DataTypes.ENUM("AFP", "ONP"),
          allowNull: false,
       },
-      quinta_categoria: {
-         type: DataTypes.BOOLEAN,
-         allowNull: false,
-      },
       estado: {
          type: DataTypes.ENUM("activo", "inactivo"),
          allowNull: false,
@@ -53,6 +49,19 @@ const Trabajador = sequelize.define(
          type: DataTypes.BOOLEAN,
          allowNull: false,
          defaultValue: false,
+      },
+      tipo_afp: {
+         type: DataTypes.ENUM("HABITAT", "INTEGRA", "PRIMA", "PROFUTURO"),
+         allowNull: true,
+      },
+      comision_afp: {
+         type: DataTypes.BOOLEAN,
+         allowNull: false,
+         defaultValue: false,
+      },
+      fecha_baja: {
+         type: DataTypes.DATEONLY,
+         allowNull: true,
       },
    },
    {
@@ -85,6 +94,22 @@ Trabajador.associate = (models) => {
    Trabajador.belongsTo(models.cargos, {
       foreignKey: "cargo_id",
       as: "cargo",
+   });
+   Trabajador.hasMany(models.cts, {
+      foreignKey: "trabajador_id",
+      as: "cts",
+   });
+   Trabajador.hasMany(models.gratificaciones, {
+      foreignKey: "trabajador_id",
+      as: "gratificaciones",
+   });
+   Trabajador.hasMany(models.planilla_quincenal, {
+      foreignKey: "trabajador_id",
+      as: "planilla_quincenal",
+   });
+   Trabajador.hasMany(models.bajas_trabajadores, {
+      foreignKey: "trabajador_id",
+      as: "bajas_trabajadores",
    });
 };
 module.exports = { Trabajador };
