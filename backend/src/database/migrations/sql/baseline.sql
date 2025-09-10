@@ -112,7 +112,7 @@ CREATE TABLE `trabajadores` (
   `numero_documento` varchar(45) NOT NULL,
   `sueldo_base` int NOT NULL,
   `asignacion_familiar` tinyint(1) NOT NULL,
-  `sistema_pension` enum('AFP','ONP') NOT NULL,
+  `sistema_pension` enum('AFP','ONP') DEFAULT NULL,
   `quinta_categoria` tinyint(1) NOT NULL,
   `estado` enum('activo','inactivo') NOT NULL DEFAULT 'activo',
   `cargo_id` int NOT NULL DEFAULT '1',

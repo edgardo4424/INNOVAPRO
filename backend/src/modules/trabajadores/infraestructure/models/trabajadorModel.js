@@ -38,7 +38,7 @@ const Trabajador = sequelize.define(
       },
       sistema_pension: {
          type: DataTypes.ENUM("AFP", "ONP"),
-         allowNull: false,
+         allowNull: true,
       },
       estado: {
          type: DataTypes.ENUM("activo", "inactivo"),

@@ -14,7 +14,7 @@ const unir_planillas_mensuales = (
       grupo_planilla.trabajador_id = p.trabajador_id;
       grupo_planilla.contrato_id = p.contrato_id;
       grupo_planilla.tipo_contrato = p.tipo_contrato;
-      grupo_planilla.regimen=p.regimen
+      grupo_planilla.regimen = p.regimen;
       grupo_planilla.periodo = p.periodo;
       grupo_planilla.tipo_documento = p.tipo_documento;
       grupo_planilla.numero_documento = p.numero_documento;
@@ -97,12 +97,14 @@ const unir_planillas_mensuales = (
          grupo_planilla.sueldo_bruto *
          (PORCENTAJE_DESCUENTO_AFP / 100 )
       ).toFixed(2);
-   }
-   grupo_planilla.seguro = (
-      Number(grupo_planilla.sueldo_bruto) *
-      (PORCENTAJE_DESCUENTO_SEGURO / 100)
-   ).toFixed(2);
+         grupo_planilla.seguro =
+      Number(grupo_planilla.sueldo_bruto) * (PORCENTAJE_DESCUENTO_SEGURO / 100);
 
+   grupo_planilla.seguro = (Math.floor(grupo_planilla.seguro * 100) / 100);
+   }
+
+
+   
    //suamtoria de descueentos:
    grupo_planilla.total_descuentos = (
       Number(grupo_planilla.afp_ap_oblig) +

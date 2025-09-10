@@ -35,7 +35,6 @@ const contratoSchema = yup.object({
       .required("El tipo de contrato es obligatorio"),
    banco: yup.string().required("El nombre es requerido"),
    numero_cuenta: yup.string().required("El nombre es requerido"),
-
 });
 
 export const trabajadorSchema = (isEdit = false, isGerente = false) =>
@@ -62,21 +61,54 @@ export const trabajadorSchema = (isEdit = false, isGerente = false) =>
          .min(1, "Debe haber al menos un trabajo"),
       sistema_pension: yup
          .string()
-         .oneOf(["AFP", "ONP"], "Sistema de pensión no válido")
-         .required("El sistema de pensión es requerido"),
+         .nullable()
+         .test(
+            "validar-solo-si-planilla",
+            "El sistema de pensión es requerido y debe ser AFP u ONP",
+            function (value) {
+               const { contratos_laborales } = this.parent;
+               const ultimoContrato =
+                  contratos_laborales?.[contratos_laborales.length - 1];
+
+               if (
+                  !ultimoContrato ||
+                  ultimoContrato.tipo_contrato === "HONORARIOS"
+               ) {
+                  return true; // No se valida nada
+               }
+
+               return value === "AFP" || value === "ONP"; // Debe ser uno de esos si es PLANILLA
+            }
+         ),
+
       tipo_afp: yup
-  .string()
-  .trim()
-  .oneOf(["HABITAT", "INTEGRA", "PRIMA", "PROFUTURO"], "Tipo de AFP no válido")
-  .when("sistema_pension", (sistema_pension, schema) =>
-  {
-   
-   return sistema_pension.includes("AFP")
-      ? schema.required("El tipo de AFP es requerido")
-      : schema.nullable().notRequired()
-  }
-    
-  ),
+         .string()
+         .nullable()
+         .test(
+            "validar-afp-si-aplica",
+            "El tipo de AFP es requerido y debe ser válido",
+            function (value) {
+               const { sistema_pension, contratos_laborales } = this.parent;
+               const ultimoContrato =
+                  contratos_laborales?.[contratos_laborales.length - 1];
+
+               if (
+                  !ultimoContrato ||
+                  ultimoContrato.tipo_contrato === "HONORARIOS"
+               ) {
+                  return true; // No se valida
+               }
+
+               if (sistema_pension !== "AFP") {
+                  return true; // No aplica AFP
+               }
+
+               return ["HABITAT", "INTEGRA", "PRIMA", "PROFUTURO"].includes(
+                  value
+               ); // Validar contenido
+            }
+         ),
+
       cargo_id: yup
          .number()
          .transform((value, originalValue) => {

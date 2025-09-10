@@ -12,7 +12,8 @@ class Trabajador {
       domiciliado,
       tipo_afp,
       comision_afp,
-      fecha_baja
+      fecha_baja,
+      contratos_laborales,
    }) {
       (this.id = id),
          (this.nombres = nombres),
@@ -27,6 +28,7 @@ class Trabajador {
       this.tipo_afp = tipo_afp;
       this.comision_afp = comision_afp;
       this.fecha_baja = fecha_baja;
+      this.contratos_laborales = contratos_laborales;
    }
 
    validarCamposObligatorios(editar = false) {
@@ -54,23 +56,38 @@ class Trabajador {
       if (this.asignacion_familiar === undefined) {
          errores.push("Asignacion familiar inválida");
       }
-      if (this.sistema_pension !== "AFP" && this.sistema_pension !== "ONP") {
-         console.log(this.sistema_pension);
-
-         errores.push("El sistema de pension es inválido.");
-      }
       if (this.cargo_id === null) {
          errores.push("El cargo no se a enviado");
       }
-      if (this.sistema_pension === "AFP") {
-         if (
-            ["HABITAT", "INTEGRA", "PRIMA", "PROFUTURO"].includes(
-               this.tipo_afp
-            ) === false
-         ) {
-            errores.push("El tipo de AFP es inválido");
+      const hoy = new Date().toISOString().split("T")[0];
+      const c_a = this.contratos_laborales.find(
+         (c) => c.fecha_inicio <= hoy && hoy <= c.fecha_fin
+      );
+      console.log(c_a);
+      console.log("Tipo de contrato", c_a.tipo_contrato);
+
+      if (c_a.tipo_contrato == "PLANILLA") {
+         if (this.sistema_pension !== "AFP" && this.sistema_pension !== "ONP") {
+            errores.push("El sistema de pension es inválido.");
          }
+         if (this.sistema_pension === "AFP") {
+            if (
+               ["HABITAT", "INTEGRA", "PRIMA", "PROFUTURO"].includes(
+                  this.tipo_afp
+               ) === false
+            ) {
+               errores.push("El tipo de AFP es inválido");
+            }
+         }
+         if (this.sistema_pension === "ONP") {
+            this.comision_afp = false;
+         }
+      } else {
+         this.sistema_pension = null;
+         this.tipo_afp = null;
+         this.comision_afp = false;
       }
+
       return errores;
    }
 
@@ -82,12 +99,12 @@ class Trabajador {
          numero_documento: this.numero_documento,
          sueldo_base: this.sueldo_base,
          asignacion_familiar: this.asignacion_familiar,
-         sistema_pension: this.sistema_pension,
+         sistema_pension: this.sistema_pension || null,
          cargo_id: this.cargo_id,
          domiciliado: this.domiciliado,
          tipo_afp: this.tipo_afp,
          comision_afp: this.comision_afp,
-         fecha_baja: this.fecha_baja
+         fecha_baja: this.fecha_baja,
       };
       if (editar) {
          datos.trabajador_id = this.id;

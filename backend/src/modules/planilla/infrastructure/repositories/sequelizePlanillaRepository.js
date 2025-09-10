@@ -1174,10 +1174,13 @@ class SequelizePlanillaRepository {
       let MONTO_QUINCENAS = 0;
       if (quincenas.length >= 1) {
          for (const q of quincenas) {
+            console.log('Monto que viene de la peticion',q.total_pagar);
             MONTO_QUINCENAS += Number(q.total_pagar);
          }
       }
 
+      console.log('Monto de la sumatoria: ,',MONTO_QUINCENAS);
+      
       const inicio_de_mes = `${anio_mes_dia.slice(0, -2)}01`;
       const fin_de_mes = anio_mes_dia;
       const dias_mes = anio_mes_dia.slice(-2);
@@ -1247,7 +1250,7 @@ class SequelizePlanillaRepository {
             anio: anio_mes_dia.slice(0, -6),
             mes: anio_mes_dia.slice(5, -3),
       });
-      const quinta_categoria = found ? +(retencion_base_mes / 2).toFixed(2) : 0;
+      const QUINTA_CATEGORIA = found ? +retencion_base_mes.toFixed(2) : 0;
 
       let MONTO_GRATIFICACION = await calcularGratificacionPlanilla(
          periodograti,
@@ -1380,8 +1383,10 @@ class SequelizePlanillaRepository {
                Number(planilla.bono_segunda_quincena)
             ).toFixed(2)
          );
-         planilla.quinta_categoria = quinta_categoria;
+         planilla.quinta_categoria = QUINTA_CATEGORIA;
          planilla.adelanto_prestamo = MONTO_ADELANTO_SUELDO.toFixed(2);
+         // console.log('monto quincen a agaurdar: ',MONTO_QUINCENAS);
+         
          planilla.sueldo_quincenal = MONTO_QUINCENAS;
          planilla.filial_id = c.filial_id;
          planilla.banco = c.banco;
