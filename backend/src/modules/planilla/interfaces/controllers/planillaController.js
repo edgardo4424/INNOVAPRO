@@ -8,6 +8,8 @@ const obtenerPlanillaQuincenalCerradas = require("../../application/useCases/obt
 const obtenerPlanillaQuincenalPorTrabajador = require("../../application/useCases/obtenerPlanillaQuincenalPorTrabajador");
 const obtenerTotalPlanillaQuincenalPorTrabajador = require("../../application/useCases/obtenerTotalPlanillaQuincenalPorTrabajador");
 const cierrePlanillaMensual = require("../../application/useCases/cierrePlanillaMensual");
+const sequelize = require("../../../.././config/db");
+const obtenerPlanillaMensualCerradas = require("../../application/useCases/obtenerPlanillaMensualCerradas");
 
 const planillaRepository = new sequelizePlanillaRepository();
 const trabajadorRepository = new SequelizeTrabajadorRepository();
@@ -44,7 +46,7 @@ const PlanillaController = {
          res.status(planilla.codigo).json(planilla.respuesta);
       } catch (error) {
          console.log(error);
-         
+
          res.status(503).json({ error: error.message });
       }
    },
@@ -67,20 +69,26 @@ const PlanillaController = {
    },
 
    async cierrePlanillaMensual(req, res) {
+      const transaction = await sequelize.transaction();
+
       try {
          const { fecha, filial_id, array_trabajadores } = req.body;
          const usuario_cierre_id = req.usuario.id;
-         
+
          const cierrePM = await cierrePlanillaMensual(
             usuario_cierre_id,
             planillaRepository,
             array_trabajadores,
             filial_id,
-            fecha
+            fecha,
+            transaction
          );
-        res.status(cierrePM.codigo).json(cierrePM.respuesta)
+         await transaction.commit();
+
+         res.status(cierrePM.codigo).json(cierrePM.respuesta);
       } catch (error) {
          console.log(error);
+         await transaction.rollback();
          res.status(500).json({ error: error.message });
       }
    },
@@ -95,6 +103,22 @@ const PlanillaController = {
 
          res.status(planillaQuincenalCerradas.codigo).json(
             planillaQuincenalCerradas.respuesta
+         ); // 🔥 Siempre devuelve un array, aunque esté vacío
+      } catch (error) {
+         console.log("error", error);
+         res.status(500).json({ error: error.message }); // Respondemos con un error
+      }
+   },
+
+   async obtenerPlanillaMensualCerradas(req, res) {
+      try {
+         const planillaMensualCerradas = await obtenerPlanillaMensualCerradas(
+            req.body,
+            planillaRepository
+         ); // Llamamos al caso de uso para obtener todos los planillaQuincenalCerradas
+
+         res.status(planillaMensualCerradas.codigo).json(
+            planillaMensualCerradas.respuesta
          ); // 🔥 Siempre devuelve un array, aunque esté vacío
       } catch (error) {
          console.log("error", error);

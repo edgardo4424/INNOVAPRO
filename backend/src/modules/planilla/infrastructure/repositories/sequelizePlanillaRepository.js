@@ -58,6 +58,7 @@ const {
    trabajador_planilla_model,
 } = require("../utils/trabajador_planilla_model");
 const { trabajador_rxh_model } = require("../utils/trabajador_rxh_model");
+const { PlanillaMensual } = require("../models/PlanillaMensualModel");
 
 
 class SequelizePlanillaRepository {
@@ -914,9 +915,10 @@ class SequelizePlanillaRepository {
          );
          const SUMA_FALTAS=FALTAS_PRIMERA_Q+FALTAS_SEGUNDA_Q;
          data.trabajador_id=trabajador.id;
+         data.contrato_id=c.id
          data.tipo_contrato=c.tipo_contrato;
          data.periodo = anio_mes_dia.slice(0, -3);
-
+         data.con
          data.tipo_documento = trabajador.tipo_documento;
          data.numero_documento = trabajador.numero_documento;
          data.nombres_apellidos = `${trabajador.nombres} ${trabajador.apellidos}`;
@@ -934,6 +936,8 @@ class SequelizePlanillaRepository {
          data.tardanza_segunda_quincena=(TARDANZA_SEGUNDA_Q*15).toFixed(2);
          data.bono_primera_quincena=SUMA_BONO_PRIMERA_Q;
          data.bono_segunda_quincena=SUMA_BONO_SEGUNDA_Q;
+         data.banco=c.banco
+         data.numero_cuenta=c.numero_cuenta
          planillasRxhObtenidas.push(data)
       }
       
@@ -941,7 +945,10 @@ class SequelizePlanillaRepository {
       for (const p of planillasRxhObtenidas) {
          grupoRxh.trabajador_id=p.trabajador_id;
          grupoRxh.tipo_contrato=p.tipo_contrato;
+         grupoRxh.contrato_id=p.contrato_id
          grupoRxh.periodo=p.periodo;
+         grupoRxh.banco=p.banco
+         grupoRxh.numero_cuenta=p.numero_cuenta
          grupoRxh.tipo_documento=p.tipo_documento;
          grupoRxh.numero_documento=p.numero_documento;
          grupoRxh.nombres_apellidos=p.nombres_apellidos;
@@ -974,8 +981,7 @@ class SequelizePlanillaRepository {
          Number(grupoRxh.faltas_segunda_quincena) * -1;
       grupoRxh.sueldo_quincenal=MONTO_QUINCENAS;
       grupoRxh.saldo_por_pagar=grupoRxh.sueldo_neto-MONTO_QUINCENAS;
-      console.log('Respusta del grupo',grupoRxh);
-      return grupoRxh;
+            return grupoRxh;
    }
    // prettier-ignore
    async obtenerCierrePlanillaQuincenal(
@@ -1150,7 +1156,7 @@ class SequelizePlanillaRepository {
          if (transaction) {
             options.transaction = transaction;
          }
-         const planilla = db.planilla_mensual.create(datos, transaction);
+         const planilla = db.planilla_mensual.create(datos, options);
          return planilla;
       }
 
@@ -1235,13 +1241,13 @@ class SequelizePlanillaRepository {
       const contratos_tratados =
          filtrarContratosSinInterrupcion(contratosEnRango);
 
-      // const { found, retencion_base_mes, registro } =
-      // await quintaCategoriaService.getRetencionBaseMesPorDni({
-      //       dni: trabajador.numero_documento,
-      //       anio: anio_mes_dia.slice(0, -6),
-      //       mes: anio_mes_dia.slice(5, -3),
-      // });
-      // const quinta_categoria = found ? +(retencion_base_mes / 2).toFixed(2) : 0;
+      const { found, retencion_base_mes, registro } =
+      await quintaCategoriaService.getRetencionBaseMesPorDni({
+            dni: trabajador.numero_documento,
+            anio: anio_mes_dia.slice(0, -6),
+            mes: anio_mes_dia.slice(5, -3),
+      });
+      const quinta_categoria = found ? +(retencion_base_mes / 2).toFixed(2) : 0;
 
       let MONTO_GRATIFICACION = await calcularGratificacionPlanilla(
          periodograti,
@@ -1374,7 +1380,7 @@ class SequelizePlanillaRepository {
                Number(planilla.bono_segunda_quincena)
             ).toFixed(2)
          );
-         planilla.quinta_categoria = 0;
+         planilla.quinta_categoria = quinta_categoria;
          planilla.adelanto_prestamo = MONTO_ADELANTO_SUELDO.toFixed(2);
          planilla.sueldo_quincenal = MONTO_QUINCENAS;
          planilla.filial_id = c.filial_id;
@@ -1392,6 +1398,25 @@ class SequelizePlanillaRepository {
       );
 
       return SUMATORIA_PLANILLA;
+   }
+    async obtenerPlanillaMensualCerradas(
+      fecha_anio_mes,
+      filial_id,
+      transaction = null
+   ) {
+      const cierrePlanillaMensual = await CierresPlanillaMensual.findOne({
+         where: { periodo: fecha_anio_mes, filial_id },
+         transaction,
+      });
+      if (!cierrePlanillaMensual) {
+         return [];
+      }
+
+      const planillaMensualCerradas = await PlanillaMensual.findAll({
+         where: { cierre_planilla_mensual_id: cierrePlanillaMensual.id },
+         transaction,
+      });
+      return planillaMensualCerradas;
    }
 }
 

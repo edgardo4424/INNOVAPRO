@@ -89,18 +89,18 @@ const unir_planillas_mensuales = (
    if (trabajador.sistema_pension === "ONP") {
       grupo_planilla.onp = (
          grupo_planilla.sueldo_bruto *
-         (PORCENTAJE_DESCUENTO_ONP / 100 / 2)
+         (PORCENTAJE_DESCUENTO_ONP / 100 )
       ).toFixed(2);
    }
    if (trabajador.sistema_pension === "AFP") {
       grupo_planilla.afp_ap_oblig = (
          grupo_planilla.sueldo_bruto *
-         (PORCENTAJE_DESCUENTO_AFP / 100 / 2)
+         (PORCENTAJE_DESCUENTO_AFP / 100 )
       ).toFixed(2);
    }
    grupo_planilla.seguro = (
       Number(grupo_planilla.sueldo_bruto) *
-      (PORCENTAJE_DESCUENTO_SEGURO / 100 / 2)
+      (PORCENTAJE_DESCUENTO_SEGURO / 100)
    ).toFixed(2);
 
    //suamtoria de descueentos:

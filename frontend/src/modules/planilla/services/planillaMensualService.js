@@ -8,6 +8,13 @@ const planillaMensualService = {
       );
       return res.data;
    },
+   obtenerHistoricoPlanillaMensual: async (dataPOST) => {
+      const res = await api.post(
+         "/planilla/mensual",
+         dataPOST
+      );
+      return res.data;
+   },
    obtenerFiliales: async () => {
       const res = await api.get("/filiales");
       return res.data;

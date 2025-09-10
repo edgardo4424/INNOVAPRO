@@ -15,14 +15,14 @@ import { Button } from "@/components/ui/button";
 import { ShieldAlert, Lock } from "lucide-react"; // 👈 asegúrate de tener lucide-react instalado
 import { useState } from "react";
 
-export function ModalCts({ guardarCts }) {
+export function ModalCerrarPlanilla({ guardarPlanilla }) {
    const [isOpen, setIsOpen] = useState(false);
    const handleClose = () => {
       setIsOpen(false);
    };
 
    const handleSave = () => {
-      guardarCts();
+      guardarPlanilla();
       handleClose();
    };
 
@@ -45,10 +45,10 @@ export function ModalCts({ guardarCts }) {
             </AlertDialogHeader>
             <AlertDialogDescription className="mt-3 text-gray-700 leading-relaxed text-base">
                ⚠️ Una vez confirmes, los registros de{" "}
-               <span className="font-semibold">CTS</span>
+               <span className="font-semibold">Planilla Mensual </span>
                quedarán{" "}
                <span className="font-semibold text-red-600">
-                  guardados y bloqueados
+                   guardados y bloqueados
                </span>
                .
                <br />
