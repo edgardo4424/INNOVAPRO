@@ -29,6 +29,13 @@ const factilizaService = {
         return res.data;
     },
 
+    // !!! NOTA DE CREDITO o DEBITO
+    enviarNota: async (nota) => {
+        const res = await apiFactilizaFacturacion.post("/note/send", nota);
+        return res.data;
+    },
+
+
     // !!! Guia de Remision
 
     // ?? CONSULTA DE DOCUMENTOS FACTILIZA
@@ -37,6 +44,7 @@ const factilizaService = {
         return res.data;
     },
 
+    
     // ?? ============ CONSULTAS DOCUMENTOS ============
     consultarDocumentoJson: async (documento) => {
         const res = await apiFactilizaConsultasDocumentos.post(
@@ -76,7 +84,17 @@ const factilizaService = {
         };
     },
 
+    // !! ANULACION FACTURA - BOLETA
+    anularDocumento: async (url,doc) => {
+        const res = await apiFactilizaFacturacion.post(
+            `/${url}/cancel`,
+            doc
+        );
+        return res.data;
+    },
 
+    // ?? TIPO DE CAMBIO
+    obtenerTipoCambio: (fecha) => getRequest(apiFactilizaConsultas, `/tipocambio/info/dia?fecha=${fecha}`),
 
     // !!! CONSULTAS
     obtenerPersonaPorDni: (dni) => getRequest(apiFactilizaConsultas, `/dni/info/${dni}`),

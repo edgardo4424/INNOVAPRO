@@ -9,23 +9,20 @@ import {
 import { Button } from "@/components/ui/button";
 import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
 import { ClipboardPlus, X } from "lucide-react";
-import { useState } from "react";
 import PagoForm from "../../forms/PagoForm";
 
-export default function ModalPagos() {
+export default function ModalPagos({ open, setOpen }) {
 
-    const { factura } = useFacturaBoleta();
+    const { factura, } = useFacturaBoleta();
 
     const montoTotalPagos = factura.forma_pago.reduce(
         (total, pago) => total + (parseFloat(pago.monto) || 0),
         0
     );
 
-    const montoTotalFactura = parseFloat(factura.monto_Imp_Venta || 0);
+    const montoTotalFactura = parseFloat(factura.monto_Imp_Venta || 0)
     const pagosCompletos = montoTotalPagos.toFixed(2) >= montoTotalFactura;
 
-
-    const [open, setOpen] = useState(false);
     const closeModal = () => {
         setOpen(false);
     };

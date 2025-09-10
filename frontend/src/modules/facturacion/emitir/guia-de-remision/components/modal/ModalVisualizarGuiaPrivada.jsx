@@ -297,20 +297,20 @@ export default function ModalVisualizarGuiaPrivada() {
                                         <table className="min-w-full bg-white">
                                             <thead className="bg-gray-100">
                                                 <tr>
-                                                    <th className="py-2 px-4 border-b text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Cant.</th>
-                                                    <th className="py-2 px-4 border-b text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Unidad</th>
                                                     <th className="py-2 px-4 border-b text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Cód. Producto</th>
                                                     <th className="py-2 px-4 border-b text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Descripción</th>
+                                                    <th className="py-2 px-4 border-b text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Unidad</th>
+                                                    <th className="py-2 px-4 border-b text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Cant.</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {guiaTransporte.detalle && guiaTransporte.detalle.length > 0 ? (
                                                     guiaTransporte.detalle.map((item, index) => (
                                                         <tr key={index} className="hover:bg-gray-50 border-b last:border-b-0">
-                                                            <td className="py-2 px-4 text-sm">{item.cantidad || '0'}</td>
-                                                            <td className="py-2 px-4 text-sm">{item.unidad || 'N/A'}</td>
                                                             <td className="py-2 px-4 text-sm">{item.cod_Producto || 'N/A'}</td>
                                                             <td className="py-2 px-4 text-sm">{item.descripcion || 'N/A'}</td>
+                                                            <td className="py-2 px-4 text-sm">{item.unidad || 'N/A'}</td>
+                                                            <td className="py-2 px-4 text-sm">{item.cantidad || '0'}</td>
                                                         </tr>
                                                     ))
                                                 ) : (
@@ -323,11 +323,11 @@ export default function ModalVisualizarGuiaPrivada() {
                                     </div>
                                 </div>
 
-                                {/* Sección de Observaciones */}
+                                {/* Sección de Observacion */}
                                 <div className="">
-                                    <h3 className="font-bold text-md mb-2 text-gray-600 border-b pb-1">OBSERVACIONES:</h3>
+                                    <h3 className="font-bold text-md mb-2 text-gray-600 border-b pb-1">OBSERVACION:</h3>
                                     <div className="p-4 border border-gray-200 rounded-md bg-white text-sm text-gray-800">
-                                        {guiaTransporte.observacion || 'No hay observaciones registradas.'}
+                                        {guiaTransporte.observacion || 'No hay observacion registradas.'}
                                     </div>
                                 </div>
 

@@ -23,6 +23,10 @@ class SequelizeFilialRepository {
         return await Filial.findByPk(id); // Llama al método del repositorio para obtener un cliente por ID
     }
 
+    async obtenerPorRuc(ruc) {
+      return await Filial.findOne({ where: { ruc: ruc } });
+  }
+
     async actualizarFilial(id, filialData) {
         const filial = await Filial.findByPk(id); // Busca el filial por ID
         if (!filial) { // Si no se encuentra el filial, retorna null

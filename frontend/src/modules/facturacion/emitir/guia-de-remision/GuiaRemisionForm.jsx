@@ -1,12 +1,12 @@
 import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext";
-import GuiaMismaEmpresa from "./components/guias/GuiaMismaEmpresa";
-import GuiaPrivado from "./components/guias/GuiaPrivado";
-import GuiaPublico from "./components/guias/GuiaPublico";
 import ModalVisualizarGuiaPrivada from "./components/modal/ModalVisualizarGuiaPrivada";
+import ChoferPrivadoForm from "./forms/ChoferPrivadoForm";
 import DatosDeClienteForm from "./forms/DatosDeClienteForm";
-import DatosDeEmpresaForm from "./forms/DatosDeEmpresaForm";
-import DetalleProductoForm from "./forms/DetalleProductoForm";
+import DatosGuiaEnvioForm from "./forms/DatosGuiaEnvioForm";
+import DetalleForm from "./forms/DetalleForm";
 import InfDocumentoForm from "./forms/InfDocumentoForm";
+import TransportistaPublicoForm from "./forms/TransportistaPublicoForm";
+
 
 const GuiaRemisionForm = () => {
 
@@ -14,12 +14,10 @@ const GuiaRemisionForm = () => {
 
 
     const render = () => {
-        if (tipoGuia == "transporte-privado") {
-            return <GuiaPrivado />;
-        } else if (tipoGuia == "transporte-publico") {
-            return <GuiaPublico />;
-        } else if (tipoGuia == "traslado-misma-empresa") {
-            return <GuiaMismaEmpresa />;
+        if (tipoGuia == "transporte-publico") {
+            return <TransportistaPublicoForm />;
+        } else if (tipoGuia == "transporte-privado") {
+            return <></>;
         }
     };
 
@@ -32,48 +30,36 @@ const GuiaRemisionForm = () => {
                     </h2>
                 </div>
 
-                <form
+                <div
                     onSubmit={(e) => { e.preventDefault(); }}
-                    className=" shadow-xl border border-gray-400 bg-white  rounded-3xl  p-10  transition-all duration-300 mb-6"
+                    className=" shadow-xl border bg-white border-gray-400  rounded-3xl  p-4  transition-all duration-300 mb-6"
                 >
                     {/* Sección de Documento Principal */}
                     <InfDocumentoForm />
 
-                    {/* Sección de Datos de la Empresa */}
-                    <DatosDeEmpresaForm />
 
                     {/* Sección de Datos del Cliente */}
                     <DatosDeClienteForm />
 
+                    {/* Seccion de Datos Guia de Envío */}
+                    <DatosGuiaEnvioForm />
+
+                    {/* Seccion de Chofer Privado */}
+                    <ChoferPrivadoForm />;
                     {/* //?Renderizado dinámico segun el tipo de guia que seleccione */}
                     {
                         render()
                     }
 
                     {/* Sección de Detalle de Productos */}
-                    <DetalleProductoForm />
+                    <DetalleForm />
 
                     {/* Botón de Enviar */}
-                    <div className="flex justify-between">
-                        <div className="flex gap-x-3">
-                            <button
-                                type="submit"
-                                className="px-6 py-3 bg-blue-700 text-white font-medium rounded-md hover:bg-blue-800 focus:outline-none focus:ring-2 cursor-pointer"
-                            >
-                                Guardar
-                            </button>
-                            <button
-                                type="submit"
-                                className="px-6 py-3 bg-red-700 text-white font-medium rounded-md hover:bg-red-800 focus:outline-none focus:ring-2 cursor-pointer"
-                            >
-                                Cancelar
-                            </button>
-                        </div>
-                        
+                    <div className="flex justify-end">
                         <ModalVisualizarGuiaPrivada />
                     </div>
 
-                </form>
+                </div>
 
             </div>
         </div>

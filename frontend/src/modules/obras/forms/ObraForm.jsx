@@ -126,6 +126,11 @@ export default function ObraForm({
       }
    }, [isLoaded]);
 
+
+   useEffect(()=>{
+      console.log(obra.ubicacion)
+   },[obra.ubicacion])
+
    return (
       <>
          <div className="max-h-96 overflow-y-auto px-2">

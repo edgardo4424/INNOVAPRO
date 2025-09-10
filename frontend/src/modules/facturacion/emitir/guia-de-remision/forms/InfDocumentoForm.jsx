@@ -10,30 +10,36 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext";
 import { LoaderCircle, Search, SquarePen } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Calendar22 } from "../../factura-boleta/components/Calendar22";
 import facturaService from "../../../service/FacturaService";
 import { toast } from "react-toastify";
 
+const serieGuia = [
+    { value: "T001" },
+    { value: "T002" },
+    { value: "T003" },
+    { value: "T004" },
+    { value: "T005" },
+];
+
 const InfDocumentoForm = () => {
 
-    const { guiaTransporte, setGuiaTransporte, tipoGuia, setTipoGuia } = useGuiaTransporte();
+    const { guiaTransporte, setGuiaTransporte, tipoGuia, setTipoGuia, filiales, setGuiaDatosInternos } = useGuiaTransporte();
 
-    const { tipo_Doc, serie, correlativo, observacion } = guiaTransporte;
+    const { tipo_Doc, serie, correlativo, observacion, empresa_Ruc } = guiaTransporte;
+    const [correlativos, setCorrelativos] = useState([]);
     const [correlativoEstado, setCorrelativoEstado] = useState(false);
-    const [serieEstado, setSerieEstado] = useState(false);
     const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
+
+    const rucsFiliales = filiales.map((filial) => ({ ruc: filial.ruc }));
 
 
     const activarCorrelativo = (e) => {
         e.preventDefault();
         setCorrelativoEstado(!correlativoEstado);
     }
-    const activarSerie = (e) => {
-        console.log("clicl")
-        e.preventDefault();
-        setSerieEstado(!serieEstado);
-    }
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         const newValue = typeof value === 'string' ? value.toUpperCase() : value;
@@ -52,37 +58,79 @@ const InfDocumentoForm = () => {
 
 
     const buscarCorrelativo = async (e) => {
-        e.preventDefault();
+        if (loadingCorrelativo) return;
+        if (e) {
+            e.preventDefault();
+        }
         try {
             setLoadingCorrelativo(true);
-            // Lógica para buscar el correlativo
-            const { mensaje, estado, correlativos } = await facturaService.obtenerCorrelativoGuia();
+            const rucsAndSeries = filiales.map((filial) => ({
+                ruc: filial.ruc,
+                serie: serieGuia,
+            }));
 
-
-            if (estado) {
-                setGuiaTransporte({
-                    ...guiaTransporte,
-                    correlativo: correlativos
-                })
-            }
-
-            setCorrelativoEstado(false);
-            setLoadingCorrelativo(false);
-
+            const { data } = await facturaService.obtenerCorrelativoGuia(rucsAndSeries);
+            setCorrelativos(data);
         } catch (error) {
-            toast.error('Error al obtener el correlativo: ' + error.message);
-            setLoadingCorrelativo(false);
+            console.error("Error al obtener correlativos:", error);
         } finally {
             setLoadingCorrelativo(false);
         }
     };
 
+    useEffect(() => {
+        if (filiales.length !== 0) {
+            buscarCorrelativo();
+        }
+    }, [filiales]);
+
+    useEffect(() => {
+        // Buscar y establecer el correlativo bas ndose en la serie y el RUC actual
+        if (correlativos.length > 0 && guiaTransporte.empresa_Ruc && guiaTransporte.serie) {
+            const correlativoEncontrado = correlativos.find(
+                (item) => item.ruc === guiaTransporte.empresa_Ruc && item.serie === guiaTransporte.serie
+            );
+            const siguienteCorrelativo = correlativoEncontrado ? correlativoEncontrado.siguienteCorrelativo : "0001";
+            setGuiaTransporte((prev) => ({
+                ...prev,
+                correlativo: siguienteCorrelativo,
+            }));
+        }
+    }, [guiaTransporte.empresa_Ruc, guiaTransporte.serie, correlativos]);
+
+    useEffect(() => {
+        if (guiaTransporte.empresa_Ruc) {
+            setGuiaDatosInternos((prevValores) => ({
+                ...prevValores,
+                guia_Envio_Partida_Ruc: guiaTransporte.empresa_Ruc,
+                guia_Envio_Llegada_Ruc: guiaTransporte.empresa_Ruc
+            }))
+        }
+    }, [guiaTransporte.empresa_Ruc])
+
+    useEffect(() => {
+        if (tipoGuia === "traslado-misma-empresa") {
+            const filialSameRuc = filiales.find((filial) => filial.ruc === guiaTransporte.empresa_Ruc);
+            console.log(filialSameRuc)
+            setGuiaTransporte((prevValores) => ({
+                ...prevValores,
+                cliente_Tipo_Doc: "6",
+                cliente_Num_Doc: filialSameRuc.ruc,
+                cliente_Razon_Social: filialSameRuc.razon_social,
+                cliente_Direccion: filialSameRuc.direccion
+            }))
+        }
+    }, [tipoGuia])
+
     return (
-        <div>
+        <div className="overflow-y-auto p-4 sm:p-6 lg:px-8 lg:py-4">
             <h2 className="text-2xl font-semibold mb-2 flex">
                 Información del Documento
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-6 mb-8">
+            <form
+                onSubmit={e => e.preventDefault()}
+                action=""
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-6 mb-8">
                 {/* Added gap-y for vertical spacing on small screens */}
                 <div>
                     <Label
@@ -142,18 +190,25 @@ const InfDocumentoForm = () => {
                         Serie
                     </Label>
                     <div className="relative w-full">
-                        <Input
-                            type="text"
-                            id="serie"
-                            name="serie"
-                            className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none text-sm"
+                        <Select
                             value={serie}
-                            onChange={handleChange}
-                            disabled={!serieEstado}
-                        />
-                        <button onClick={activarSerie} className={`absolute right-2 top-1/2 transform -translate-y-1/2 ${serieEstado ? "text-blue-500" : "text-gray-400"} `}>
-                            <SquarePen />
-                        </button>
+                            name="serie"
+                            onValueChange={(value) => handleSelectChange(value, "serie")}
+                        >
+                            <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm">
+                                <SelectValue placeholder="Selecciona una serie" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {
+                                    serieGuia.map((item) => (
+                                        <SelectItem key={item.value} value={item.value}>
+                                            {item.value}
+                                        </SelectItem>
+                                    ))
+                                }
+                            </SelectContent>
+                        </Select>
+
                     </div>
                 </div>
                 <div>
@@ -178,11 +233,12 @@ const InfDocumentoForm = () => {
                                 <SquarePen />
                             </button>
                         </div>
-                        <button className={`bg-blue-500 hover:bg-blue-600  cursor-pointer  text-white rounded-md px-2 `}
-                            disabled={correlativoEstado}
+                        <button
+                            className="p-2 bg-innova-blue rounded-md text-white hover:bg-innova-blue-hover focus:outline-none focus:ring-2 focus:ring-innova-blue focus:ring-offset-2 transition-colors duration-200 cursor-pointer"
+                            // disabled={correlativoEstado}
                             onClick={(e) => buscarCorrelativo(e)}
                         >
-                            {loadingCorrelativo ? <LoaderCircle className="w-4 h-4 animate-spin" /> : <Search />}
+                            {loadingCorrelativo ? <LoaderCircle className="size-5 animate-spin" /> : <Search className="size-5" />}
                         </button>
                     </div>
                 </div>
@@ -203,6 +259,34 @@ const InfDocumentoForm = () => {
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none text-sm"
                     />
                 </div>
+                <div>
+                    <div>
+                        <Label
+                            htmlFor="empresa_Ruc"
+                            className="block text-sm text-gray-700 text-left mb-1 font-semibold"
+                        >
+                            RUC Empresa
+                        </Label>
+                        <Select
+                            value={empresa_Ruc}
+                            name="empresa_Ruc"
+                            onValueChange={(e) => {
+                                handleSelectChange(e, "empresa_Ruc");
+                            }}
+                        >
+                            <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm">
+                                <SelectValue placeholder="Selecciona un codigo" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {filiales.map((filial) => (
+                                    <SelectItem key={filial.id} value={filial.ruc}>
+                                        {filial.razon_social} - {filial.ruc}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
                 <div className="col-span-1 md:col-span-2 lg:col-span-3">
                     <Label
                         htmlFor="observacion"
@@ -220,7 +304,7 @@ const InfDocumentoForm = () => {
                     ></Textarea>
                 </div>
 
-            </div>
+            </form>
         </div>
     );
 };

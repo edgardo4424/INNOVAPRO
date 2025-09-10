@@ -3,7 +3,7 @@ function isNullOrEmpty(value) {
     return value === undefined || value === null || (typeof value === 'string' && value.trim() === '');
 }
 
-export async function validarFacturaCompleta(Factura) {
+export async function validarFacturaCompleta(Factura, Detraccion, retencionActivado, Retencion) {
     if (!Factura) {
         return {
             errores: null,
@@ -52,6 +52,21 @@ export async function validarFacturaCompleta(Factura) {
         }
     ];
 
+    const camposDetraccion = [
+        { key: "detraccion_cod_bien_detraccion", name: "Código de Bien Detracción" },
+        { key: "detraccion_cod_medio_pago", name: "Código de Medio de Pago de Detracción" },
+        { key: "detraccion_cta_banco", name: "N° Cuenta Banco de Detracción" },
+        { key: "detraccion_percent", name: "Porcentaje de Detracción" },
+        { key: "detraccion_mount", name: "Monto de Detracción" }
+    ];
+
+    const camposRetencion = [
+        { key: "descuento_cod_tipo", name: "Código de Tipo de Retención" },
+        { key: "descuento_factor", name: "Factor de Retención" },
+        { key: "descuento_monto_base", name: "Monto Base de Retención" },
+        { key: "descuento_monto", name: "Monto de Retención" }
+    ];
+
     // 1. Validar campos globales
     camposGlobales.forEach(campo => {
         if (isNullOrEmpty(Factura[campo.key])) {
@@ -93,15 +108,48 @@ export async function validarFacturaCompleta(Factura) {
         }
     }
 
+    if (Factura.tipo_Operacion === "1001") {
+        console.log(Detraccion);
+        camposDetraccion.forEach(campo => {
+            if (isNullOrEmpty(Detraccion[campo.key])) {
+                errores[campo.key] = `El campo de'${campo.name}' en Detracción es requerido.`;
+                validos = false;
+            }
+        });
+    } else if (retencionActivado) {
+        camposRetencion.forEach(campo => {
+            if (isNullOrEmpty(Retencion[campo.key])) {
+                errores[campo.key] = `El campo de'${campo.name}' en Detracción es requerido.`;
+                validos = false;
+            }
+        });
+    }
+
     if (Factura.forma_pago && Factura.forma_pago.length > 0) {
-        const montoTotalPagos = Factura.forma_pago.reduce(
-            (total, pago) => total + (parseFloat(pago.monto) || 0),
+        // SOLUCIÓN: Usar centavos para evitar errores de punto flotante
+        const montoTotalFacturaCentavos = Math.round(Factura.monto_Imp_Venta * 100);
+
+        const montoTotalPagosCentavos = Factura.forma_pago.reduce(
+            (total, pago) => total + Math.round((parseFloat(pago.monto) || 0) * 100),
             0
         );
-        const montoTotalFactura = parseFloat(Factura.monto_Imp_Venta || 0);
 
-        if (montoTotalPagos < montoTotalFactura) {
+        // La validación ahora compara los valores enteros, que son exactos.
+        if (montoTotalPagosCentavos !== montoTotalFacturaCentavos) {
             errores.forma_pago_monto = "La suma de los pagos no cubre el monto total de la factura.";
+            validos = false;
+        }
+
+        const fechaEmision = new Date(Factura.fecha_Emision);
+        const pagosACredito = Factura.forma_pago.filter(pago => pago.tipo === "CREDITO");
+
+        const pagosConFechaAnterior = pagosACredito.filter(pago => {
+            const fechaPago = new Date(pago.fecha_Pago);
+            return fechaPago <= fechaEmision;
+        });
+
+        if (pagosConFechaAnterior.length > 0) {
+            errores.forma_pago_fecha = "Los pagos a crédito no pueden ser iguales o anteriores a la fecha de emisión.";
             validos = false;
         }
     }
@@ -113,4 +161,3 @@ export async function validarFacturaCompleta(Factura) {
         message: validos ? "🎉 ¡Factura lista para emitir!" : "⚠️ El formulario contiene errores. Por favor, revísalos."
     };
 }
-

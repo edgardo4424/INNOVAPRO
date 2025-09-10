@@ -1,8 +1,8 @@
 import React from "react";
 import { Button } from "@/components/ui/button"; // Adjust path based on your project structure
 import facturaService from "../../service/FacturaService";
-import { toast } from "react-toastify";
-import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+
+import { toast } from "sonner";
 
 const ModalEliminarBorrador = ({
     documentoEliminar,
@@ -23,7 +23,7 @@ const ModalEliminarBorrador = ({
                 id
             );
             if (success) {
-                toast.success(`Borrador ${documentoEliminar.correlativo} eliminado exitosamente.`);
+                // toast.success(`Borrador ${documentoEliminar.correlativo} eliminado exitosamente.`);
                 obtenerBorradores();
                 setModalEliminar(false);
                 setDocumentoEliminar(null);

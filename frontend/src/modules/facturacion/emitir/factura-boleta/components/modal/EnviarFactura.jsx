@@ -12,64 +12,66 @@ const EnviarFactura = ({ open, setOpen, ClosePreviu }) => {
     const { emitirFactura, validarFactura } = useFacturaBoleta();
 
     // * Estados unificados para el modal
-    const [isLoading, setIsLoading] = useState(false);
-    const [status, setStatus] = useState("idle"); // 'idle' | 'loading' | 'success' | 'error' | 'details'
+    const [status, setStatus] = useState("idle"); // 'idle' | 'loading' | 'success' | 'error'
     const [displayMessage, setDisplayMessage] = useState("");
     const [detailedMessage, setDetailedMessage] = useState("");
     const [validado, setValidado] = useState(false);
 
     // * Resetear estados cuando el modal se abre/cierra
     useEffect(() => {
-        if (open) {
+        if (!open) {
             setStatus("idle");
             setDisplayMessage("");
             setDetailedMessage("");
-            setIsLoading(false);
+            setValidado(false);
         }
     }, [open]);
 
+    // * Validar al abrir el modal
+    useEffect(() => {
+        const validateAndOpen = async () => {
+            if (open) {
+                const isValid = await validarFactura();
+                if (isValid) {
+                    setValidado(true);
+                } else {
+                    setValidado(false);
+                    // Esto cerrará el modal si la validación falla
+                    setOpen(false);
+                }
+            }
+        };
+        validateAndOpen();
+    }, [open, setOpen]);
+
     const handleEmitirFacturaClick = async () => {
-        setIsLoading(true);
         setStatus("loading");
         setDisplayMessage("Emitiendo documento...");
+        setDetailedMessage(""); // Limpiar mensajes de error anteriores
 
         try {
             const result = await emitirFactura();
-            console.log("el resultado de la emision es: ", result);
 
-            // Lógica unificada para manejar la respuesta
-            if (result.success && (result.status === 200 || result.status === 201)) {
+            if (result.success) {
                 // Caso de éxito
                 setStatus("success");
                 setDisplayMessage(result.message || "Factura emitida con éxito.");
-            } else if (result.data?.error) {
-                // Caso de error "detallado" (por ejemplo, desde la API)
-                setStatus("details");
-                setDisplayMessage(result.message);
-                setDetailedMessage(result.data.details || "");
             } else {
-                // Cualquier otro caso que no sea un éxito directo
+                // Caso de error lógico desde la API (ej. validaciones de SUNAT)
                 setStatus("error");
                 setDisplayMessage(result.message || "Error al emitir la factura.");
-                setDetailedMessage(result.detailedMessage || "");
+                setDetailedMessage(result.detailed_message || "");
             }
         } catch (err) {
             // Manejo de errores de red o del sistema
             setStatus("error");
             setDisplayMessage(err.message || "Error inesperado al emitir la factura.");
-            setDetailedMessage("Por favor, inténtelo de nuevo más tarde.");
-        } finally {
-            setIsLoading(false); // Detener el loading siempre
+            setDetailedMessage("Ocurrió un error al comunicarse con el servidor. Por favor, inténtelo de nuevo.");
         }
     };
 
     const closeModal = () => {
         setOpen(false);
-        // Resetea todos los estados
-        setStatus("idle");
-        setDisplayMessage("");
-        setDetailedMessage("");
-        setIsLoading(false);
         ClosePreviu();
     };
 
@@ -96,24 +98,15 @@ const EnviarFactura = ({ open, setOpen, ClosePreviu }) => {
                     <>
                         <AlertCircle className="text-red-500 mb-4" size={120} />
                         <h2 className="text-lg font-semibold text-red-700 text-center">{displayMessage}</h2>
-                        {detailedMessage && <p className="text-sm text-red-600">{detailedMessage}</p>}
+                        {detailedMessage && <p className="text-sm text-red-600 text-center mt-2">{detailedMessage}</p>}
                         <Button onClick={closeModal} className="mt-4 bg-red-500 hover:bg-red-600">Cerrar</Button>
-                    </>
-                );
-            case "details":
-                return (
-                    <>
-                        <TriangleAlert className="text-orange-500 mb-4" size={120} />
-                        <h2 className="text-lg font-semibold text-orange-700 text-center">{displayMessage}</h2>
-                        {detailedMessage && <p className="text-sm text-orange-600">{detailedMessage}</p>}
-                        <Button onClick={closeModal} className="mt-4 bg-orange-500 hover:bg-orange-600">Cerrar</Button>
                     </>
                 );
             case "idle":
             default:
                 return (
                     <>
-                        <h2 className="text-lg font-semibold text-gray-700 mb-4">
+                        <h2 className="text-lg font-semibold text-gray-700 mb-4 text-center">
                             ¿Estás seguro de emitir esta factura?
                         </h2>
                         <Button
@@ -127,34 +120,9 @@ const EnviarFactura = ({ open, setOpen, ClosePreviu }) => {
         }
     };
 
-    useEffect(() => {
-        setValidado(false);
-        const validar = async () => {
-            let result = await validarFactura();
-            if (!result) {
-                closeModal();
-                setValidado(false);
-            } else {
-                setValidado(true);
-            }
-        }
-        if (open) {
-            validar();
-        }
-    }, [open]);
-
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
-            <AlertDialogTrigger asChild>
-                <Button>
-                    <ClipboardPlus />
-                    <span className="hidden md:block">
-                        Emitir Factura
-                    </span>
-                </Button>
-            </AlertDialogTrigger>
-            {
-                validado &&
+            {validado && (
                 <AlertDialogContent className="flex flex-col gap-4">
                     <button
                         className="absolute top-4 right-4 text-gray-500 hover:text-red-600 cursor-pointer"
@@ -166,7 +134,15 @@ const EnviarFactura = ({ open, setOpen, ClosePreviu }) => {
                         {renderContent()}
                     </div>
                 </AlertDialogContent>
-            }
+            )}
+            <AlertDialogTrigger asChild>
+                <Button>
+                    <ClipboardPlus />
+                    <span className="hidden md:block">
+                        Emitir Factura
+                    </span>
+                </Button>
+            </AlertDialogTrigger>
         </AlertDialog>
     );
 };

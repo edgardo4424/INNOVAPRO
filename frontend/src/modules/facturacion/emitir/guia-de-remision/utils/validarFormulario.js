@@ -2,7 +2,7 @@ const camposRequeridosGlobal = [
     { key: "tipo_Doc", name: "Tipo de Documento" },
     { key: "serie", name: "Serie" },
     { key: "correlativo", name: "Correlativo" },
-    { key: "observacion", name: "Observaciones" },
+    { key: "observacion", name: "Observacion" },
     { key: "fecha_Emision", name: "Fecha de Emision" },
     { key: "empresa_Ruc", name: "RUC Empresa" },
     { key: "cliente_Tipo_Doc", name: "Tipo de Documento del Cliente" },
@@ -17,6 +17,7 @@ const camposRequeridosGlobal = [
     { key: "guia_Envio_Partida_Direccion", name: "Partida Dirección" },
     { key: "guia_Envio_Llegada_Ubigeo", name: "Llegada Ubigeo" },
     { key: "guia_Envio_Llegada_Direccion", name: "Llegada Dirección" },
+    { key: "guia_Envio_Vehiculo_Placa", name: "Placa del Vehículo" },
     {
         key: "detalle",
         camposRequeridos: [
@@ -39,19 +40,18 @@ export async function validarFormulario(tipo, Guia) {
     if (tipo == "PRIVADO") {
         camposRequeridosEspecificos = [
             { key: "guia_Envio_Mod_Traslado", name: "Modalidad de Traslado" },
-            { key: "guia_Envio_Vehiculo_Placa", name: "Placa del Vehículo" },
-            {
-                key: "chofer",
-                name: "Chofer", // Agregado el nombre para el objeto chofer
-                camposRequeridos: [
-                    { key: "tipo", name: "Tipo de Chofer" },
-                    { key: "tipo_doc", name: "Tipo de Documento del Chofer" },
-                    { key: "nro_doc", name: "N° Documento del Chofer" },
-                    { key: "licencia", name: "Licencia del Chofer" },
-                    { key: "nombres", name: "Nombres del Chofer" },
-                    { key: "apellidos", name: "Apellidos del Chofer" },
-                ]
-            },
+            // {
+            //     key: "chofer",
+            //     name: "Chofer", // Agregado el nombre para el objeto chofer
+            //     camposRequeridos: [
+            //         { key: "tipo", name: "Tipo de Chofer" },
+            //         { key: "tipo_doc", name: "Tipo de Documento del Chofer" },
+            //         { key: "nro_doc", name: "N° Documento del Chofer" },
+            //         { key: "licencia", name: "Licencia del Chofer" },
+            //         { key: "nombres", name: "Nombres del Chofer" },
+            //         { key: "apellidos", name: "Apellidos del Chofer" },
+            //     ]
+            // },
         ];
     } else if (tipo == "PUBLICO") {
         camposRequeridosEspecificos = [

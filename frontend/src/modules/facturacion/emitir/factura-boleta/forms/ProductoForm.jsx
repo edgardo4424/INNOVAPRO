@@ -10,11 +10,13 @@ import {
 } from "@/components/ui/select";
 import { useFacturaBoleta } from '@/modules/facturacion/context/FacturaBoletaContext';
 import { useEffect, useState } from 'react';
-import ModalListaDeProductos from '../components/modal/ModalListaDeProductos';
+import { toast } from 'react-toastify';
+import ModalListaDeProductos from '../../../components/modal/ModalListaDeProductos';
+import { validarModal } from '../utils/validarModal';
 import { ProductoValidarEstados } from '../utils/valoresInicial';
 
 const ProductoForm = ({ closeModal }) => {
-    const { agregarProducto, productoActual, setProductoActual, edicionProducto, validarCampos, productoValida, eliminarProducto, setProductoValida } = useFacturaBoleta();
+    const { setFactura, agregarProducto, productoActual, setProductoActual, edicionProducto, productoValida, eliminarProducto, setProductoValida, factura } = useFacturaBoleta();
 
 
     const [activeButton, setActiveButton] = useState(false);
@@ -85,11 +87,20 @@ const ProductoForm = ({ closeModal }) => {
 
     const handleAgregar = async () => {
         setActiveButton(true);
-        const validar = await validarCampos("producto");
-        if (validar === false) {
+
+        let validar = await validarModal("producto", productoActual);
+
+        if (!validar.validos) {
+            if (validar.message) {
+                toast.error(validar.message, { position: "top-right" });
+            }
+            setProductoValida(validar.errores);
+            setActiveButton(false);
             return;
         }
+        setActiveButton(false);
         agregarProducto();
+        setFactura((prev) => ({ ...prev, forma_pago: [] }))
         closeModal();
     };
 
@@ -106,7 +117,12 @@ const ProductoForm = ({ closeModal }) => {
     return (
         <div className='max-h-[60vh] min-h-[40dvh] overflow-y-auto col-span-4 w-full'>
             <div className='w-full flex justify-end'>
-                <ModalListaDeProductos />
+                <ModalListaDeProductos
+                    itemActual={productoActual}
+                    setItemActual={setProductoActual}
+                    formulario={factura}
+                    tipo="factura"
+                />
             </div>
 
             <form
@@ -268,17 +284,17 @@ const ProductoForm = ({ closeModal }) => {
                         <SelectContent>
                             {/* Gravado */}
                             <SelectItem value="10">10 - Gravado - Operación Onerosa</SelectItem>
-                            <SelectItem value="11">11 - Retiro por premio</SelectItem>
-                            <SelectItem value="12">12 - Retiro por donación</SelectItem>
-                            <SelectItem value="13">13 - Retiro</SelectItem>
-                            <SelectItem value="14">14 - Retiro por publicidad</SelectItem>
-                            <SelectItem value="15">15 - Bonificaciones</SelectItem>
-                            <SelectItem value="16">16 - Entrega a trabajadores</SelectItem>
-                            <SelectItem value="17">17 - IVAP</SelectItem>
+                            {/* <SelectItem value="11">11 - Retiro por premio</SelectItem> */}
+                            {/* <SelectItem value="12">12 - Retiro por donación</SelectItem> */}
+                            {/* <SelectItem value="13">13 - Retiro</SelectItem> */}
+                            {/* <SelectItem value="14">14 - Retiro por publicidad</SelectItem> */}
+                            {/* <SelectItem value="15">15 - Bonificaciones</SelectItem> */}
+                            {/* <SelectItem value="16">16 - Entrega a trabajadores</SelectItem> */}
+                            {/* <SelectItem value="17">17 - IVAP</SelectItem> */}
 
                             {/* Exonerado */}
                             <SelectItem value="20">20 - Exonerado - Operación Onerosa</SelectItem>
-                            <SelectItem value="21">21 - Transferencia Gratuita</SelectItem>
+                            {/* <SelectItem value="21">21 - Transferencia Gratuita</SelectItem> */}
 
                             {/* Inafecto */}
                             <SelectItem value="30">30 - Inafecto - Operación Onerosa</SelectItem>
@@ -378,11 +394,16 @@ const ProductoForm = ({ closeModal }) => {
             <div className="flex justify-end gap-3 border-t pt-4 mt-4 flex-wrap"> {/* Added flex-wrap for smaller screens */}
                 {
                     edicionProducto?.edicion == true &&
-                    <Button variant="outline" onClick={handleEliminar} className={"cursor-pointer hover:bg-red-600 bg-red-400 hover:text-white text-white border-2 w-full md:w-auto"}> {/* Full width on small, auto on medium+ */}
+                    <Button
+                        variant="outline"
+                        onClick={handleEliminar}
+                        className={"cursor-pointer hover:bg-red-600 bg-red-400 hover:text-white text-white border-2 w-full md:w-auto"}> {/* Full width on small, auto on medium+ */}
                         Eliminar
                     </Button>
                 }
-                <Button variant="outline" onClick={closeModal} className={"cursor-pointer hover:bg-red-50 hover:text-red-600 border-2 w-full md:w-auto"}> {/* Full width on small, auto on medium+ */}
+                <Button variant="outline"
+                    onClick={closeModal}
+                    className={"cursor-pointer hover:bg-red-50 hover:text-red-600 border-2 w-full md:w-auto"}> {/* Full width on small, auto on medium+ */}
                     Cancelar
                 </Button>
                 <Button

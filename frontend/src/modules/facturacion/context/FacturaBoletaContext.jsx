@@ -1,22 +1,56 @@
-import { PagoValidarEstados, ProductoValidarEstados, valorIncialDetracion, valorIncialPago, ValorInicialFactura, valorInicialProducto } from "@/modules/facturacion/emitir/factura-boleta/utils/valoresInicial";
+import { PagoValidarEstados, ProductoValidarEstados, valorIncialDetracion, valorIncialPago, valorIncialRetencion, ValorInicialFactura, valorInicialProducto } from "@/modules/facturacion/emitir/factura-boleta/utils/valoresInicial";
 import factilizaService from "@/modules/facturacion/service/FactilizaService";
 import facturaService from "@/modules/facturacion/service/FacturaService";
 import numeroALeyenda from "@/modules/facturacion/utils/numeroALeyenda";
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { validarModal } from "../emitir/factura-boleta/utils/validarModal";
 import { validarFacturaCompleta } from "../emitir/factura-boleta/utils/validarPasos";
+import filialesService from "../service/FilialesService";
 
 
 const FacturaBoletaContext = createContext();
 
 export function FacturaBoletaProvider({ children }) {
 
-    const [factura, setFactura] = useState(ValorInicialFactura);
 
-    const [detraccion, setDetraccion] = useState(valorIncialDetracion);
+    // ** CORRELATIVOS
+    const [correlativos, setCorrelativos] = useState([]);
+    const [correlativoEstado, setCorrelativoEstado] = useState(false);
+    const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
 
-    const [facturaValida, setFacturaValida] = useState(null);
+    const serieFactura = [
+        { value: "F001" },
+        { value: "F002" },
+        { value: "F003" },
+        { value: "F004" },
+        { value: "F005" },
+    ];
+    const serieBoleta = [
+        { value: "B001" },
+        { value: "B002" },
+        { value: "B003" },
+        { value: "B004" },
+        { value: "B005" },
+    ];
+
+    // ** ID SI LA FACTURA FUE RRELLENADA DESDE EL BORRADOR
+    const [idBorrador, setIdBorrador] = useState(null);
+
+    // ** DATOS PARA FORMULARIO
+    const [factura, setFactura] = useState(ValorInicialFactura); // * FACTURA
+
+    const [detallesExtra, setDetallesExtra] = useState([]);
+
+    // todo: DETRACCION
+    const [detraccionActivado, setDetraccionActivado] = useState(false);
+    const [detraccion, setDetraccion] = useState(valorIncialDetracion); // * DETRACCION
+    const [precioDolarActual, setPrecioDolarActual] = useState(0);
+
+    // todo: RETENCION
+    const [retencionActivado, setRetencionActivado] = useState(false);
+    const [retencion, setRetencion] = useState(valorIncialRetencion);
+
+    const [facturaValida, setFacturaValida] = useState(null); // ? VALIDAR FACTURA
 
     const [productoActual, setProductoActual] = useState(valorInicialProducto);
 
@@ -34,11 +68,11 @@ export function FacturaBoletaProvider({ children }) {
 
     const [pagoValida, setPagoValida] = useState(PagoValidarEstados);
 
-
+    const [filiales, setFiliales] = useState([]);
 
     const validarFactura = async () => {
         try {
-            const { errores, validos, message } = await validarFacturaCompleta(factura);
+            const { errores, validos, message } = await validarFacturaCompleta(factura, detraccion, retencionActivado, retencion);
             if (!validos) {
                 // *Encuentra el primer error y lo muestra en un toast
                 const primerError = Object.values(errores)[0];
@@ -63,37 +97,58 @@ export function FacturaBoletaProvider({ children }) {
         }
     };
 
-    const validarCampos = async (tipo) => {
-        try {
-            let errores, validos, message;
-            if (tipo === "producto") {
-                ({ errores, validos, message } = await validarModal(tipo, productoActual));
-                if (errores) {
-                    setProductoValida((prev) => ({
-                        ...prev,
-                        ...errores,
-                    }));
-                }
-            } else if (tipo === "pago") {
-                ({ errores, validos, message } = await validarModal(tipo, pagoActual));
-                if (errores) {
-                    setPagoValida((prev) => ({
-                        ...prev,
-                        ...errores,
-                    }));
-                }
-            }
+    // ?? OBTENER TODAS LAS FILIALES
 
-            if (!validos && message) {
-                toast.error(message);
-                return false;
+    useEffect(() => {
+        const consultarFiliales = async () => {
+            const data = await filialesService.ObtenerPiezas();
+            if (data.length === 0) {
+                toast.error("No se encontraron filiales");
+                return;
             }
-            return true;
+            setFiliales(data);
+        }
+        consultarFiliales();
+    }, []);
+
+    // ?? OBTENER CORRELATIVO
+    const buscarCorrelativo = async () => {
+        if (loadingCorrelativo) return;
+
+        try {
+            setLoadingCorrelativo(true);
+            const rucsAndSeries = filiales.map((filial) => ({
+                ruc: filial.ruc,
+                serieBoleta: serieBoleta,
+                serieFactura: serieFactura,
+            }));
+
+            const { data } = await facturaService.obtenerCorrelativo(rucsAndSeries);
+            setCorrelativos(data);
         } catch (error) {
-            toast.error(error.message || "Error al validar campos");
-            return false;
+            console.error("Error al obtener correlativos:", error);
+        } finally {
+            setLoadingCorrelativo(false);
         }
     };
+
+    // Al cargar el componente o cambiar la lista de filiales, buscar los correlativos
+    useEffect(() => {
+        if (filiales.length > 0) {
+            buscarCorrelativo();
+        }
+    }, [filiales]);
+
+    // Al cambiar el tipo de documento o la serie, actualizar el correlativo
+    useEffect(() => {
+        // Establecer la serie por defecto al cambiar el tipo de documento
+        const nuevaSerie = factura.tipo_Doc === "01" ? "F001" : "B001";
+        setFactura((prev) => ({
+            ...prev,
+            serie: nuevaSerie,
+            correlativo: "" // Limpiar el correlativo para que se recalcule
+        }));
+    }, [factura.tipo_Doc]);
 
     // TODO LOS USEEFFECT DE LOS FORMULARIOS DE LOS MODALES ------- INICIO
 
@@ -120,18 +175,15 @@ export function FacturaBoletaProvider({ children }) {
             factura.detalle.forEach((producto) => {
                 const valorVenta = parseFloat(producto.monto_Valor_Venta || 0);
 
-                if (producto.tip_Afe_Igv === "10") {
+                if (["10", "11", "12", "13", "14", "15", "16", "17"].includes(producto.tip_Afe_Igv)) {
                     gravadas += valorVenta;
                     igvTotal += valorVenta * 0.18;
-                }
-
-                if (producto.tip_Afe_Igv === "20") {
+                } else if (["20", "21", "30", "31", "32", "33", "34", "35", "36", "40"].includes(producto.tip_Afe_Igv)) { // 👈 Aquí está el cambio
                     exoneradas += valorVenta;
                 }
             });
 
             const subTotal = gravadas + igvTotal + exoneradas;
-            const totalVenta = subTotal;
 
             setTotalProducto(gravadas);
 
@@ -143,21 +195,30 @@ export function FacturaBoletaProvider({ children }) {
                 total_Impuestos: parseFloat(igvTotal.toFixed(2)),
                 valor_Venta: parseFloat((gravadas + exoneradas).toFixed(2)),
                 sub_Total: parseFloat(subTotal.toFixed(2)),
-                monto_Imp_Venta: parseFloat(totalVenta.toFixed(2)),
+                monto_Imp_Venta: parseFloat(subTotal.toFixed(2)),
             }));
         };
 
         if (factura.detalle?.length > 0) {
             actualizarFacturaMontos();
+        } else {
+            setFactura((prev) => ({
+                ...prev,
+                monto_Oper_Gravadas: 0,
+                monto_Oper_Exoneradas: 0,
+                monto_Igv: 0,
+                total_Impuestos: 0,
+                valor_Venta: 0,
+                sub_Total: 0,
+                monto_Imp_Venta: 0,
+            }));
         }
     }, [factura.detalle]);
 
     useEffect(() => {
         if (!factura.monto_Imp_Venta || factura.monto_Imp_Venta <= 0) return;
 
-        const nuevaLegenda = numeroALeyenda(factura.monto_Imp_Venta);
-        console.log("nueva legenda")
-        console.log(nuevaLegenda)
+        const nuevaLegenda = numeroALeyenda(factura.monto_Imp_Venta, factura.tipo_Moneda);
 
         setFactura((prev) => ({
             ...prev,
@@ -170,84 +231,25 @@ export function FacturaBoletaProvider({ children }) {
 
 
     useEffect(() => {
-        let montoPendiente = factura.monto_Imp_Venta;
-        if (factura.forma_pago.length > 0) {
-            const pagosRealizados = factura.forma_pago.reduce((total, item) => {
-                const monto = parseFloat(item.monto.toFixed(2));
-                return total + (isNaN(monto) ? 0 : monto);
-            }, 0);
-            montoPendiente = factura.monto_Imp_Venta - pagosRealizados;
-        }
+        let montoBase = factura.monto_Imp_Venta || 0;
+        let montoPendiente = montoBase;
 
+        const pagosRealizados = factura.forma_pago.reduce((total, item) => {
+            const monto = parseFloat(item.monto || 0); // ✅ Aquí corregimos para evitar NaN
+            return total + (isNaN(monto) ? 0 : monto);
+        }, 0);
+
+        montoPendiente = montoBase - pagosRealizados;
         setPagoActual((prev) => ({
             ...prev,
-            cuota: factura.forma_pago.length,
             monto: parseFloat(montoPendiente.toFixed(2)),
         }));
-    }, [factura.monto_Imp_Venta, factura.forma_pago]);
+
+    }, [factura.monto_Imp_Venta, factura.forma_pago, detraccion.detraccion_mount, retencionActivado]);
+
 
 
     // TODO LOS USEEFFECT DE LOS FORMULARIOS DE LOS MODALES ------- FINAL
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        let validatedValue = value;
-
-        if (name === "cantidad" || name === "monto_Valor_Unitario") {
-            let numericValue = parseFloat(value);
-            if (isNaN(numericValue) || numericValue < 0) {
-                validatedValue = 0;
-            } else {
-                validatedValue = numericValue;
-            }
-        }
-
-        const cantidad = name === "cantidad" ? validatedValue : parseFloat(productoActual.cantidad || 0);
-        const valorUnitario = name === "monto_Valor_Unitario" ? validatedValue : parseFloat(productoActual.monto_Valor_Unitario || 0);
-        const tipAfeIgv = productoActual.tip_Afe_Igv || "10";
-
-        let monto_Base_Igv = cantidad * valorUnitario;
-        let igv = 0;
-        let total_Impuestos = 0;
-        let monto_Precio_Unitario = valorUnitario;
-        let monto_Valor_Venta = cantidad * valorUnitario;
-
-        if (["10", "11", "12", "13", "14", "15", "16", "17"].includes(tipAfeIgv)) {
-            igv = +(monto_Base_Igv * 0.18).toFixed(2);
-            total_Impuestos = igv;
-            monto_Precio_Unitario = +(valorUnitario * 1.18).toFixed(2);
-        } else if (["20", "21", "30", "31", "32", "33", "34", "35", "36", "40"].includes(tipAfeIgv)) {
-            igv = 0;
-            total_Impuestos = 0;
-            monto_Precio_Unitario = valorUnitario;
-        } else {
-            igv = 0;
-            total_Impuestos = 0;
-            monto_Precio_Unitario = valorUnitario;
-        }
-
-        setProductoActual((prevValores) => ({
-            ...prevValores,
-            [name]: validatedValue,
-            monto_Base_Igv: +monto_Base_Igv.toFixed(2),
-            igv,
-            total_Impuestos,
-            monto_Precio_Unitario,
-            monto_Valor_Venta: +monto_Valor_Venta.toFixed(2),
-            porcentaje_Igv: (["10", "11", "12", "13", "14", "15", "16", "17"].includes(tipAfeIgv)) ? 18 : 0,
-        }));
-    };
-
-    const agregarPago = () => {
-        setFactura((prevFactura) => ({
-            ...prevFactura,
-            forma_pago: [...prevFactura.forma_pago, {
-                ...pagoActual,
-                monto: parseFloat(pagoActual.monto),
-            }],
-        }));
-        setPagoActual(valorIncialPago);
-    };
 
     const agregarProducto = () => {
         const { edicion, index } = edicionProducto;
@@ -296,32 +298,65 @@ export function FacturaBoletaProvider({ children }) {
     };
 
     const emitirFactura = async () => {
+        const { id: id_logeado } = await JSON.parse(localStorage.getItem("user"));
         let result = { success: false, message: "Error desconocido al emitir la factura", data: null };
         try {
-            const { status, success, message, data } = await factilizaService.enviarFactura(factura)
+            let facturaAEmitir;
+
+            if (retencionActivado && factura.tipo_Doc !== "03" && factura.monto_Imp_Venta > 699) {
+                facturaAEmitir = {
+                    ...factura,
+                    ...retencion,
+                };
+            } else if (factura.tipo_Operacion === "1001" && factura.tipo_Doc !== "03") {
+                facturaAEmitir = {
+                    ...factura,
+                    ...detraccion
+                };
+            } else {
+                facturaAEmitir = factura;
+            }
+            const { status, success, message, data } = await factilizaService.enviarFactura(facturaAEmitir)
 
 
-            if (status === 200 && success) {
+            if (status === 200 ) {
+
                 const sunat_respuest = {
-                    hash: data.hash,
-                    cdr_zip: data.sunatResponse.cdrZip, // Descomentar si es necesario
-                    sunat_success: data.sunatResponse.success,
-                    cdr_response_id: data.sunatResponse.cdrResponse.id,
-                    cdr_response_code: data.sunatResponse.cdrResponse.code,
-                    cdr_response_description: data.sunatResponse.cdrResponse.description
+                    hash: data?.hash || null,
+                    cdr_zip: data?.sunatResponse?.cdrZip || null, // Descomentar si es necesario
+                    sunat_success: data?.sunatResponse?.success || null,
+                    cdr_response_id: data?.sunatResponse?.cdrResponse?.id || null,
+                    cdr_response_code: data?.sunatResponse?.cdrResponse?.code || null,
+                    cdr_response_description: data?.sunatResponse?.cdrResponse?.description || null
                 };
 
-                const facturaCopia = { ...factura, estado: "EMITIDA", sunat_respuesta: sunat_respuest };
+                // ?? Transformamos los documentos relacionados a texto
+                facturaAEmitir.relDocs = factura.relDocs.length > 0 ? JSON.stringify(facturaAEmitir.relDocs) : null;
+
+                // ?? Si se agregaron detalles esta
+                if (detallesExtra.length > 0) {
+                    facturaAEmitir.extraDetails = JSON.stringify(detallesExtra);
+                }
+
+                const facturaCopia = {
+                    ...facturaAEmitir,
+                    usuario_id: id_logeado,
+                    estado: "EMITIDA",
+                    sunat_respuesta: sunat_respuest,
+                    id_borrador: idBorrador ? idBorrador : null
+                };
                 // ?Intentar registrar en base de datos
                 const dbResult = await registrarBaseDatos(facturaCopia);
 
                 if (dbResult.success) {
-                    result = { success: true, message: message || "Factura emitida y registrada con éxito.", data: facturaCopia };
+                    result = { success: true, message: message || "Factura emitida y registrada con éxito.", data: facturaCopia, detailed_message:  data?.sunatResponse?.cdrResponse?.description || null };
                 } else {
                     result = { success: false, message: dbResult.mensaje || "Factura emitida a SUNAT, pero no se pudo registrar en la base de datos.", data: facturaCopia };
                 }
+            } else if (status === 200 && !success) {
+                result = { success: false, message: message, detailed_message: `${data.error.code} - ${data.error.message}` || "Error desconocido al enviar la factura.", data: facturaAEmitir };
             } else {
-                result = { success: false, message: message, detailed_message: data.error.message || "Error desconocido al enviar la factura.", data: null };
+                result = { success: false, message: message, detailed_message: `${data.error.code} - ${data.error.message}` || "Error desconocido al enviar la factura.", data: null };
             }
         } catch (error) {
             console.error("Error al enviar factura:", error);
@@ -340,7 +375,7 @@ export function FacturaBoletaProvider({ children }) {
 
     };
 
-    const registrarBaseDatos = async (documento = factura) => {
+    const registrarBaseDatos = async (documento) => {
         try {
             if (!documento) {
                 return { success: false, mensaje: "No se pudo registrar la factura" }
@@ -379,6 +414,13 @@ export function FacturaBoletaProvider({ children }) {
         setEdicionProducto({ edicion: false, index: null });
         setPagoActual(valorIncialPago);
         setTotalProducto(0);
+        setDetraccionActivado(false);
+        setDetraccion(valorIncialDetracion);
+        setRetencion(valorIncialRetencion);
+        setRetencionActivado(false);
+        setIdBorrador(null);
+        setDetallesExtra([])
+        buscarCorrelativo()
     };
 
 
@@ -386,17 +428,30 @@ export function FacturaBoletaProvider({ children }) {
     return (
         <FacturaBoletaContext.Provider
             value={{
+                correlativos, setCorrelativos, correlativoEstado, setCorrelativoEstado, loadingCorrelativo, setLoadingCorrelativo,
+                serieFactura, serieBoleta,
+                filiales,
+                idBorrador,
+                detallesExtra,
+                setDetallesExtra,
+                setIdBorrador,
                 factura,
                 setFactura,
                 detraccion,
                 setDetraccion,
+                detraccionActivado,
+                setDetraccionActivado,
+                retencion,
+                setRetencion,
+                retencionActivado,
+                setRetencionActivado,
+                precioDolarActual,
+                setPrecioDolarActual,
                 validarFactura,
-                validarCampos,
                 facturaValida,
                 productoValida,
                 productoActual,
                 setProductoActual,
-                handleInputChange, // Exposed for use in product form inputs
                 editarProducto,
                 edicionProducto,
                 setEdicionProducto,
@@ -408,9 +463,9 @@ export function FacturaBoletaProvider({ children }) {
                 pagoActual,
                 pagoValida,
                 setPagoActual,
-                agregarPago,
                 emitirFactura,
-                registrarBaseDatos
+                registrarBaseDatos,
+                Limpiar
             }}
         >
             {children}

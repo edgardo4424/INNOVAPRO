@@ -1,12 +1,13 @@
-module.exports = async (facturaRepository) => {
+module.exports = async (body, facturaRepository) => {
     // * Llamamos al repositorio para obtener todas las facturas
-    const ultimosCorrelativos = await facturaRepository.correlativo();
+    const ultimosCorrelativos = await facturaRepository.correlativo(body);
 
     // ? si no encuenta  ningun correlativo
     if (!ultimosCorrelativos)
         return {
             codigo: 200,
             respuesta: {
+                status: 400,
                 mensaje: "Ocurrio un error al buscar el correlativo",
                 estado: false,
                 correlativos: null
@@ -17,9 +18,10 @@ module.exports = async (facturaRepository) => {
     return {
         codigo: 200,
         respuesta: {
-            mensaje: "Se encontro correctamente los correlativo",
-            estado: true,
-            correlativos: ultimosCorrelativos,
+            status: 200,
+            message: "Se encontro correctamente los correlativo",
+            succes: true,
+            data: ultimosCorrelativos,
         },
     };
 };

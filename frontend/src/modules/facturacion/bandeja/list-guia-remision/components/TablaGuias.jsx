@@ -1,7 +1,46 @@
 import { Download, EyeIcon } from 'lucide-react';
-import React from 'react'
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 
-const TablaGuias = ({ documentos, setIdDocumento, setModalOpen, setModalDescargar, setGuiaADescargar }) => {
+const TablaGuias = ({ documentos, setIdDocumento, setModalOpen, setDocumentoAVisualizar, setModalDescargar, setGuiaADescargar, setDocumentoAAnular, setModalAnular }) => {
+
+    // Función para obtener el color del estado
+    const getEstadoColor = (estado) => {
+        switch (estado) {
+            case "EMITIDA":
+                return "text-green-600 bg-green-100 border border-green-200";
+            case "RECHAZADA":
+                return "text-red-600 bg-red-100 border border-red-200";
+            case "ANULADA-NOTA":
+                return "text-red-600 bg-red-100 border border-red-200";
+            case "ANULADA":
+                return "text-red-600 bg-red-100 border border-red-200";
+            case "MODIFICADA-NOTA":
+                return "text-blue-600 bg-blue-100 border border-blue-200";
+            case "OBSERVADA":
+                return "text-yellow-600 bg-yellow-100 border border-yellow-200";
+            case "PENDIENTE":
+                return "text-orange-600 bg-orange-100 border border-orange-200";
+            default:
+                return "text-gray-600 bg-gray-100 border border-gray-200";
+        }
+    };
+
+    // Función para obtener el texto a mostrar del estado
+    const getEstadoTexto = (estado) => {
+        switch (estado) {
+            case "ANULADA-NOTA":
+                return "ANULADA POR NOTA";
+            case "MODIFICADA-NOTA":
+                return "MODIFICADA POR NOTA";
+            default:
+                return estado;
+        }
+    };
+
     return (
         <table className="min-w-full bg-white rounded-xl shadow-md overflow-hidden">
             <thead className="bg-innova-blue text-white">
@@ -18,32 +57,90 @@ const TablaGuias = ({ documentos, setIdDocumento, setModalOpen, setModalDescarga
                 </tr>
             </thead>
             <tbody>
-                {documentos.map((factura, index) => (
-                    <tr key={factura.id} className={`${index % 2 === 0 ? "bg-white" : "bg-gray-50"} border-b border-gray-200`}>
-                        <td className="py-3 px-6 text-xs text-gray-700">{factura.id}</td>
-                        <td className="py-3 px-6 text-xs text-gray-700">{factura.tipo_doc}</td>
-                        <td className="py-3 px-6 text-xs text-gray-700">{`${factura.serie}-${factura.correlativo}`}</td>
+                {documentos.map((guia, index) => (
+                    <tr key={guia.id} className={`${index % 2 === 0 ? "bg-white" : "bg-gray-50"} border-b border-gray-200`}>
+                        <td className="py-3 px-6 text-xs text-gray-700">{guia.id}</td>
+                        <td className="py-3 px-6 text-xs text-gray-700">{guia.tipo_doc}</td>
+                        <td className="py-3 px-6 text-xs text-gray-700">{`${guia.serie}-${guia.correlativo}`}</td>
                         <td className="py-3 px-6 text-xs text-gray-700">
-                            {new Date(factura.fecha_emision).toLocaleDateString("es-PE", { year: "numeric", month: "2-digit", day: "2-digit" })}
+                            {new Date(guia.fecha_emision).toLocaleDateString("es-PE", { year: "numeric", month: "2-digit", day: "2-digit" })}
                         </td>
-                        <td className="py-3 px-6 text-xs text-gray-700">{factura.empresa_ruc}</td>
-                        <td className="py-3 px-6 text-xs text-gray-700">
-                            {factura.cliente_num_doc
-                                ? `${factura.cliente_num_doc} - ${factura.cliente_razon_social}`
-                                : factura.cliente_razon_social}
+                        <td className="py-3 px-6 text-xs text-gray-700">{guia.empresa_ruc}</td>
+                        <td className="py-3 px-2 text-xs text-gray-700 flex flex-col ">
+                            <span>{guia.cliente_num_doc || ""} -</span>
+                            <span>{guia.cliente_razon_social || ""}</span>
                         </td>
-                        {/* <td className="py-3 px-6 text-xs text-gray-700">{factura.usuario_id}</td> */}
-                        <td className={`py-3 px-6 text-xs font-semibold ${factura.estado === "Anulada" ? "text-red-500" : "text-green-500"} `}>
-                            {factura.estado}
+                        {/* <td className="py-3 px-6 text-xs text-gray-700">{guia.usuario_id}</td> */}
+                        <td className="py-3">
+                            <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getEstadoColor(guia.estado)}`}>
+                                {getEstadoTexto(guia.estado)}
+                            </span>
                         </td>
                         <td className="py-3 px-6">
                             <div className="flex justify-start gap-x-2">
-                                <button onClick={() => { setIdDocumento(factura.id); setModalOpen(true); }}>
-                                    <EyeIcon className="h-5 w-5 cursor-pointer hover:text-blue-500" />
-                                </button>
-                                <button onClick={() => { setIdDocumento(factura.id); setModalDescargar(true); setGuiaADescargar({ serie: factura.serie, correlativo: factura.correlativo }); }}>
-                                    <Download className="h-5 w-5 cursor-pointer hover:text-green-500" />
-                                </button>
+
+
+
+                                <Tooltip side="bottom" align="center" className="mr-2">
+                                    <TooltipTrigger asChild>
+                                        <button onClick={() => {
+                                            setIdDocumento(guia.id);
+                                            setModalOpen(true);
+                                            setDocumentoAVisualizar({
+                                                correlativo: String(guia.correlativo),
+                                                serie: guia.serie,
+                                                empresa_ruc: guia.empresa_ruc,
+                                                tipo_doc: guia.tipo_doc
+                                            })
+                                        }}>
+                                            <EyeIcon className="h-5 w-5 cursor-pointer text-blue-600 hover:text-blue-800" />
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>Ver guia</p>
+                                    </TooltipContent>
+                                </Tooltip>
+
+                                <Tooltip side="bottom" align="center" className="mr-2">
+                                    <TooltipTrigger asChild>
+                                        <button
+                                            onClick={() => {
+                                                setIdDocumento(guia.id);
+                                                setModalDescargar(true);
+                                                setGuiaADescargar({
+                                                    serie: guia.serie,
+                                                    correlativo: guia.correlativo,
+                                                    numRuc: guia.empresa_ruc,
+                                                    tipoDoc: guia.tipo_doc,
+                                                    numDocumentoComprobante: guia.cliente_num_doc
+                                                });
+                                            }}>
+                                            <Download className="h-5 w-5 cursor-pointer text-green-600 hover:text-green-800" />
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>Descargar</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                                {/* <button
+                                    disabled={guia.estado == "ANULADA" || guia.estado == "ANULADA-NOTA"}
+                                    onClick={() => {
+                                        setIdDocumento(guia.id);
+                                        setModalAnular(true);
+                                        setDocumentoAAnular({
+                                            empresa_ruc: guia.empresa_ruc,
+                                            tipo_Doc: guia.tipo_doc,
+                                            serie: guia.serie,
+                                            correlativo: guia.correlativo,
+                                            anulacion_Motivo: "",
+                                            estado_Documento: "0",
+                                        })
+                                    }}
+                                    className={`${guia.estado == "ANULADA" || guia.estado == "ANULADA-NOTA" ? "" : "hover:bg-red-100 text-red-500 hover:text-red-700 "}p-1 rounded transition-colors`}
+                                    title="Más opciones"
+                                >
+                                    <BookX className="h-5 w-5 cursor-pointer" />
+                                </button> */}
                             </div>
                         </td>
                     </tr>

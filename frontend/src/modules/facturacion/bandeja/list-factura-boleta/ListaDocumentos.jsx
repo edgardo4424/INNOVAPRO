@@ -1,15 +1,17 @@
-import { LoaderCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import PaginacionBorradores from "../../borrador/components/PaginacionBorradores";
 import FiltroTabla from "../../components/FiltroTabla";
+import ModalDescarga from "../../components/modal/ModalDescarga";
 import ModalVisualizarDocumento from "../../components/modal/ModalVisualizarDocumento";
+import Paginacion from "../../components/Paginacion";
+import TablaSkeleton from "../../components/TablaSkeleton";
 import facturaService from "../../service/FacturaService";
-import ModalDescargaDocumento from "./components/ModalDescargaDocumento";
+import ModalAnularDocumento from "./components/modal/ModalAnularDocumento";
 import TablaDocumentos from "./components/TablaDocumentos";
 
 const ListaDocumentos = () => {
+
     const navigate = useNavigate();
 
     const [documentos, setDocumentos] = useState([]);
@@ -18,10 +20,12 @@ const ListaDocumentos = () => {
     // ?? modales
     const [modalVisualizar, setModalVisualizar] = useState(false);
     const [modalDescargar, setModalDescargar] = useState(false);
+    const [modalAnular, setModalAnular] = useState(false);
     // ?? identificador
     const [idDocumento, setIdDocumento] = useState("");
-    const [documentoADescargar, setDocumentoADescargar] = useState({});
     const [documentoAVisualizar, setDocumentoAVisualizar] = useState({});
+    const [documentoADescargar, setDocumentoADescargar] = useState({});
+    const [documentoAAnular, setDocumentoAAnular] = useState({});
 
     const [filtro, setFiltro] = useState({
         page: 1,
@@ -30,6 +34,7 @@ const ListaDocumentos = () => {
         tip_doc: "",
         fec_des: "",
         fec_ast: "",
+        empresa_ruc: "",
     });
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
@@ -43,6 +48,7 @@ const ListaDocumentos = () => {
     const cliente_num_doc = searchParams.get("cliente_num_doc");
     const fec_des = searchParams.get("fec_des");
     const fec_ast = searchParams.get("fec_ast");
+    const empresa_ruc = searchParams.get("empresa_ruc");
 
 
     const obtenerDocumentos = async () => {
@@ -52,6 +58,9 @@ const ListaDocumentos = () => {
 
             if (tipo_doc) {
                 query += `tipo_doc=${tipo_doc}`;
+            }
+            if (empresa_ruc) {
+                query += `empresa_ruc=${empresa_ruc}`;
             }
             if (page) {
                 query += `&page=${page}`;
@@ -101,6 +110,7 @@ const ListaDocumentos = () => {
         if (filtro.tip_doc != "") query.push(`tipo_doc=${filtro.tip_doc}`);
         if (filtro.cliente_num_doc != "")
             query.push(`cliente_num_doc=${filtro.cliente_num_doc}`);
+        if (filtro.empresa_ruc) query.push(`empresa_ruc=${filtro.empresa_ruc}`);
         if (filtro.fec_des) query.push(`fec_des=${filtro.fec_des}`);
         if (filtro.fec_ast) query.push(`fec_ast=${filtro.fec_ast}`);
         if (filtro.limit != "") query.push(`limit=${filtro.limit}`);
@@ -116,6 +126,7 @@ const ListaDocumentos = () => {
             tip_doc: "",
             fec_des: "",
             fec_ast: "",
+            empresa_ruc: "",
         });
         navigate(`?limit=10&page=1`);
     };
@@ -140,6 +151,7 @@ const ListaDocumentos = () => {
         { name: "Todos", value: "" },
         { name: "Factura", value: "01" },
         { name: "Boleta", value: "03" },
+        { name: "Anulada", value: "99" },
     ];
 
     return (
@@ -163,12 +175,7 @@ const ListaDocumentos = () => {
 
             <div className="w-full">
                 {loading ? (
-                    <div className="flex justify-center items-center py-8 flex-col ">
-                        <LoaderCircle className="animate-spin text-blue-500 " size={200} />
-                        <h2 className="text-2xl md:text-3xl font-bold text-blue-600  ">
-                            Cargando...
-                        </h2>
-                    </div>
+                    <TablaSkeleton rows={limit} />
                 ) : documentos.length === 0 ? (
                     <div className="w-full max-w-6xl">
                         <div className="flex items-center justify-between mb-6"></div>
@@ -184,7 +191,10 @@ const ListaDocumentos = () => {
                             setModalDescargar={setModalDescargar}
                             setIdDocumento={setIdDocumento}
                             setDocumentoADescargar={setDocumentoADescargar}
-                            setDocumentoAVisualizar={setDocumentoAVisualizar} />
+                            setDocumentoAVisualizar={setDocumentoAVisualizar}
+                            setModalAnular={setModalAnular}
+                            setDocumentoAAnular={setDocumentoAAnular}
+                        />
 
                         {/* Modal */}
                         {modalVisualizar && documentoAVisualizar && (
@@ -194,8 +204,9 @@ const ListaDocumentos = () => {
                                 setDocumentoAVisualizar={setDocumentoAVisualizar}
                             />
                         )}
+                        
                         {modalDescargar && idDocumento && (
-                            <ModalDescargaDocumento
+                            <ModalDescarga
                                 id_documento={idDocumento}
                                 setIdDocumento={setIdDocumento}
                                 setModalOpen={setModalDescargar}
@@ -203,9 +214,19 @@ const ListaDocumentos = () => {
                                 setDocumentoADescargar={setDocumentoADescargar}
                             />
                         )}
+                        {modalAnular && idDocumento && (
+                            <ModalAnularDocumento
+                                id_documento={idDocumento}
+                                setIdDocumento={setIdDocumento}
+                                setModalOpen={setModalAnular}
+                                documentoAAnular={documentoAAnular}
+                                setDocumentoAAnular={setDocumentoAAnular}
+                                refetchTableData={handleAplicarFiltros}
+                            />
+                        )}
                     </div>
                 )}
-                <PaginacionBorradores
+                <Paginacion
                     currentPage={currentPage}
                     totalPages={totalPages}
                     totalRecords={totalRecords}

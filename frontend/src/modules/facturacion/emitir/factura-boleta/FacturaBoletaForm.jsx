@@ -1,5 +1,4 @@
-import { useSearchParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useFacturaBoleta } from "../../context/FacturaBoletaContext";
 import facturaService from "../../service/FacturaService";
 import { formatearBorrador } from "../../utils/formatearBorrador";
@@ -10,15 +9,26 @@ import FormaDePago from "./components/campos/FormaDePago";
 import MontoyProductos from "./components/campos/MontoyProductos";
 import ModalVisualizarFactura from "./components/modal/ModalVisualizarFactura";
 import { ValorInicialFactura } from "./utils/valoresInicial";
+import DatosDeRetencion from "./components/campos/DatosDeRetencion";
+import { toast } from "sonner";
+import RelacionDocs from "./components/campos/RelacionDocs";
+import { useEffect } from "react";
+import factilizaService from "../../service/FactilizaService";
 
 const FacturaBoletaForm = () => {
-    const { factura, setFactura } = useFacturaBoleta();
+    const { factura, setFactura, idBorrador, Limpiar, setPrecioDolarActual } = useFacturaBoleta();
+    const navigate = useNavigate();
 
     const [searchParams] = useSearchParams();
     const tipo = searchParams.get("tipo");
     const id = searchParams.get("id");
 
     const handleRegister = async () => {
+        if (idBorrador) {
+            toast.error("Estas tratando de registrar la factura como un borrardor, pero esta fue rellenada con un borrador previo")
+            return
+        }
+
         // *conseguir id usuario
         const user = localStorage.getItem("user");
         const userData = JSON.parse(user);
@@ -64,6 +74,23 @@ const FacturaBoletaForm = () => {
         }
     };
 
+    const handleCancelar = () => {
+        Limpiar();
+        // navigate("/facturacion/bandeja/factura-boleta?page=1&limit=10");
+    };
+
+    useEffect(() => {
+        const cambioDelDia = async () => {
+            const hoy = new Date();
+            const hoyISO = new Date().toISOString().slice(0, 10);
+            const { status, success, data } = await factilizaService.obtenerTipoCambio(hoyISO);
+            if (success && status === 200) {
+                setPrecioDolarActual(data.compra);
+            }
+        }
+        cambioDelDia();
+    }, []);
+    
     return (
         <div
             className=" shadow-xl border bg-white border-gray-400  rounded-3xl  p-4  transition-all duration-300 mb-6"
@@ -71,14 +98,24 @@ const FacturaBoletaForm = () => {
             {/* Form */}
             {/* Datos del comprobante */}
             <DatosDelComprobante />
+
+            {/* Documentos Relacionados */}
+            <RelacionDocs />
+
             {/* Datos del cliente */}
             <DatosDelCliente />
+
             {/* Montos y productos */}
             <MontoyProductos />
-            {/* Forma de pago */}
-            <FormaDePago />
+
+            {/* Datos de retencion */}
+            <DatosDeRetencion />
+
             {/* Datos de detraccion */}
             <DatosDeDetraccion />
+
+            {/* Forma de pago */}
+            <FormaDePago />
 
             {/* Facturar  */}
             <div className="flex justify-between">
@@ -88,7 +125,9 @@ const FacturaBoletaForm = () => {
                         className="py-3 px-4 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-600 cursor-pointer ">
                         Guardar
                     </button>
-                    <button className="py-3 px-4 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 cursor-pointer ">
+                    <button
+                        onClick={handleCancelar}
+                        className="py-3 px-4 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 cursor-pointer ">
                         Cancelar
                     </button>
                 </div>

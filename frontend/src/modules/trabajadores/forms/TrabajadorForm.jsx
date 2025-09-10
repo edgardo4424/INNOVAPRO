@@ -240,6 +240,7 @@ export default function TrabajadorForm() {
               : "Error al crear el trabajador")
         );
       }
+
     } finally {
       setIsSubmitting(false);
     }
@@ -544,4 +545,5 @@ export default function TrabajadorForm() {
       </Card>
     </div>
   );
+
 }

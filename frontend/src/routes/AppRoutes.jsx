@@ -7,8 +7,6 @@ import GestionAdelantoSueldo from "@/modules/Beneficios/Pages/GestionAdelantosSu
 import GestionBonos from "@/modules/Beneficios/Pages/GestionBonos";
 import GestionVacaciones from "@/modules/Beneficios/Pages/GestionVacaciones";
 import { WizardProvider } from "@/modules/cotizaciones/context/WizardCotizacionContext";
-import { FacturaBoletaProvider } from "@/modules/facturacion/context/FacturaBoletaContext";
-import { GuiaTransporteProvider } from "@/modules/facturacion/context/GuiaTransporteContext";
 import PlanillaEnConstruccion from "@/modules/planilla/pages/planilla";
 import EditarTrabajador from "@/modules/trabajadores/pages/EditarTrabajador";
 import GestionTrabajadores from "@/modules/trabajadores/pages/GestionTrabajadores";
@@ -76,24 +74,8 @@ const GestionCts = lazy(() =>
 
 //* Facturacion
 
-const FacturaBoleta = lazy(() =>
-   import("../modules/facturacion/pages/FacturaBoleta")
-);
-
-const GuiaRemision = lazy(() =>
-   import("../modules/facturacion/pages/GuiaRemision")
-);
-
-const NotaCredito = lazy(() =>
-   import("../modules/facturacion/pages/NotaCredito")
-);
-
 const EmitirRoutes = lazy(() =>
    import("../modules/facturacion/routes/EmitirRoutes")
-);
-
-const FacturasAnuladas = lazy(() =>
-   import("../modules/facturacion/pages/FacturasAnuladas")
 );
 
 const BandejaRoutes = lazy(() =>
@@ -256,30 +238,6 @@ export default function AppRoutes() {
 
                      {/*    //************************INICIO-FACTURACION************************* */}
                      <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
-                        <Route
-                           path="facturacion/factura-boleta"
-                           element={
-                              <FacturaBoletaProvider>
-                                 <FacturaBoleta />
-                              </FacturaBoletaProvider>
-                           }
-                        />
-
-                        <Route
-                           path="facturacion/guia-remision/:tipoGuia"
-                           element={
-                              <GuiaTransporteProvider>
-                                 <GuiaRemision />
-                              </GuiaTransporteProvider>
-                           }
-                        />
-
-                        <Route
-                           path="facturacion/nota-credito"
-                           element={
-                              <NotaCredito />
-                           }
-                        />
 
                         <Route
                            path="facturacion/emitir/*"
@@ -291,11 +249,6 @@ export default function AppRoutes() {
                         <Route
                            path="facturacion/bandeja/*"
                            element={<BandejaRoutes />}
-                        />
-
-                        <Route
-                           path="facturacion/anuladas"
-                           element={<FacturasAnuladas />}
                         />
 
                         <Route
@@ -325,7 +278,7 @@ export default function AppRoutes() {
                               </WizardProvider>
                            }
                         />
-                        
+
                         <Route
                            path="retenciones/calculoQuintaCategoria"
                            element={<CalculoQuintaCategoria />}
@@ -360,7 +313,7 @@ export default function AppRoutes() {
 
                            <Route path="bonos" element={<GestionBonos />} />
                            <Route path="adelanto-sueldo" element={<GestionAdelantoSueldo />} />
-                           <Route path="gestion-cts" element={<GestionCts/>}/>
+                           <Route path="gestion-cts" element={<GestionCts />} />
 
                            <Route
                               path="gratificacion"

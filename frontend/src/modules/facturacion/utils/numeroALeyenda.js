@@ -1,4 +1,5 @@
-function numeroALeyenda(nro) {
+
+function numeroALeyenda(nro, moneda = "PEN") {
     let numero = Number(nro);
     if (typeof numero !== 'number' || isNaN(numero)) {
         return "Número inválido";
@@ -71,8 +72,9 @@ function numeroALeyenda(nro) {
 
     const textoDecimal = parteDecimal.toString().padStart(2, '0');
 
-    return `SON: ${textoEntero} CON ${textoDecimal}/100 SOLES`.replace(/\s+/g, ' ').trim();
+    return `SON ${textoEntero} CON ${textoDecimal}/100 ${moneda === 'PEN' ? 'SOLES' : 'DOLARES'}`.replace(/\s+/g, ' ').trim();
 }
+
 // Ejemplo de uso:
 // console.log(numeroALeyenda(118));     // SON CIENTO DIECIOCHO CON 00/100 SOLES
 // console.log(numeroALeyenda(1.50));    // SON UN CON 50/100 SOLES

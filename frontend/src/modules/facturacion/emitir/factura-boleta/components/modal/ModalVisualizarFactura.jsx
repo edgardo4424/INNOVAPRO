@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext"; // Import your context
 import { ClipboardPlus, Eye, X } from "lucide-react"; // Still using Lucide icons
 import EnviarFactura from "./EnviarFactura";
+import { getDescripcion } from "../../utils/codRetenciones";
 
 export default function ModalVisualizarFactura() {
 
@@ -25,7 +26,10 @@ export default function ModalVisualizarFactura() {
     };
 
     // Get the factura object from your context
-    const { factura } = useFacturaBoleta();
+    const { factura, detraccion, filiales, retencion, retencionActivado, detallesExtra } = useFacturaBoleta();
+
+    // Filtro para obtener la filial que coincide con el ruc de la factura
+    const filialActual = filiales.find((filial) => filial.ruc === factura.empresa_Ruc);
 
     // Helper to get document type description
     const getTipoDocDescription = (typeCode) => {
@@ -114,10 +118,10 @@ export default function ModalVisualizarFactura() {
                                     <div className="px-6 py-6 md:py-8 grid grid-cols-1 md:grid-cols-3 gap-6 items-start ">
                                         <div className="col-span-2">
                                             <h1 className="text-2xl md:text-3xl font-bold text-blue-700">
-                                                TU EMPRESA S.A.C.
+                                                {filialActual.razon_social}
                                             </h1>
-                                            <p className="text-sm">{factura.empresa_Ruc}</p>
-                                            <p className="text-sm">DIRECCIÓN: [Tu dirección de empresa aquí]</p>
+                                            <p className="text-sm">{filialActual.ruc}</p>
+                                            <p className="text-sm">DIRECCIÓN: {filialActual.direccion}</p>
                                         </div>
                                         <div className="md:text-center">
                                             <p className="text-lg font-bold">{getTipoDocDescription(factura.tipo_Doc)}</p>
@@ -132,8 +136,8 @@ export default function ModalVisualizarFactura() {
 
                                 {/* Cliente + Pago (dos columnas) */}
                                 <div className="rounded-xl border border-gray-200 bg-white">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-                                        <div>
+                                    <div className={`grid grid-cols-1 ${factura.relDocs.length > 0 ? "md:grid-cols-7" : "md:grid-cols-6"} gap-6 p-6`}>
+                                        <div className="col-span-3">
                                             <h3 className="text-sm font-bold text-gray-600 mb-3">
                                                 CLIENTE
                                             </h3>
@@ -151,7 +155,7 @@ export default function ModalVisualizarFactura() {
                                             </div>
                                         </div>
 
-                                        <div>
+                                        <div className="col-span-2">
                                             <h3 className="text-sm font-bold text-gray-600 mb-3">
                                                 DETALLES DEL PAGO
                                             </h3>
@@ -162,10 +166,27 @@ export default function ModalVisualizarFactura() {
                                                     <span className="text-gray-700 font-semibold">Total:</span>
                                                     <span className="font-medium">{factura.monto_Imp_Venta ?? "—"}</span>
                                                     <span className="text-gray-700 font-semibold">Tipo de pago:</span>
-                                                    <span className="font-medium">{factura.tipo_pago ?? "—"}</span>
+                                                    <span className="font-medium uppercase">{factura.forma_pago.length > 0 ? factura.forma_pago[0].tipo : "—"}</span>
                                                 </div>
                                             </div>
                                         </div>
+                                        {factura.relDocs.length > 0 &&
+                                            <div className="col-span-2">
+                                                <h3 className="text-sm font-bold text-gray-600 mb-3">
+                                                    DOCUMENTOS RELACIONADOS
+                                                </h3>
+                                                <div className="text-sm text-gray-800 space-y-1">
+                                                    <div className="grid grid-cols-[110px_1fr] gap-x-2">
+                                                        {factura.relDocs.map((doc, index) => (
+                                                            <>
+                                                                <span className="text-gray-700 font-semibold">Nro. doc:</span>
+                                                                <span className="font-medium">{doc.nroDoc ?? "—"}</span>
+                                                            </>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
                                     </div>
                                 </div>
 
@@ -179,7 +200,8 @@ export default function ModalVisualizarFactura() {
                                                     <th className="py-2 px-4 border-b text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Unidad</th>
                                                     <th className="py-2 px-4 border-b text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Descripción</th>
                                                     <th className="py-2 px-4 border-b text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">V. Unit.</th>
-                                                    <th className="py-2 px-4 border-b text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">P. Unit.</th>
+                                                    <th className="py-2 px-4 border-b text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Subtotal</th>
+                                                    <th className="py-2 px-4 border-b text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">IGV</th>
                                                     <th className="py-2 px-4 border-b text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Total</th>
                                                 </tr>
                                             </thead>
@@ -189,19 +211,23 @@ export default function ModalVisualizarFactura() {
                                                         <tr key={index} className="hover:bg-gray-50 border-b last:border-b-0">
                                                             <td className="py-2 px-4 text-sm">{item.cantidad}</td>
                                                             <td className="py-2 px-4 text-sm">{item.unidad}</td>
-                                                            <td className="py-2 px-4 text-sm">{item.descripcion}</td>
-                                                            <td className="py-2 px-4 text-right text-sm">{item.monto_Valor_Unitario || '0.00'}</td>
-                                                            <td className="py-2 px-4 text-right text-sm">{item.monto_Precio_Unitario || '0.00'}</td>
-                                                            <td className="py-2 px-4 text-right text-sm">{(item.monto_Valor_Venta + (item.igv || 0)) || '0.00'}</td>
+                                                            <td className="py-2 px-4 text-sm max-w-[240px]">{item.descripcion}</td>
+                                                            <td className="py-2 px-4 text-right text-sm">{Number(item.monto_Valor_Unitario || 0).toFixed(2)}</td>
+                                                            <td className="py-2 px-4 text-right text-sm">{Number(item.monto_Valor_Venta || 0).toFixed(2)}</td>
+                                                            <td className="py-2 px-4 text-right text-sm">{Number(item.igv || 0).toFixed(2)}</td>
+                                                            <td className="py-2 px-4 text-right text-sm">{(Number(item.monto_Valor_Venta || 0) + Number(item.igv || 0)).toFixed(2)}</td>
                                                         </tr>
                                                     ))
                                                 ) : (
                                                     <tr>
-                                                        <td colSpan="6" className="py-4 text-center text-gray-500">No hay productos en el detalle.</td>
+                                                        <td colSpan="7" className="py-4 text-center text-gray-500">
+                                                            No hay productos en el detalle.
+                                                        </td>
                                                     </tr>
                                                 )}
                                             </tbody>
                                         </table>
+
                                     </div>
                                 </div>
 
@@ -211,35 +237,33 @@ export default function ModalVisualizarFactura() {
                                     <div className="rounded-xl border border-gray-200 bg-white p-2">
                                         {/* // Observations Section */}
                                         <div className="">
-                                            <h3 className="font-bold text-md mb-2 text-gray-600">OBSERVACIONES:</h3>
+                                            <h3 className="font-bold text-md mb-2 text-gray-600">OBSERVACION:</h3>
                                             <div className="p-2 rounded-md bg-white text-sm text-gray-800">
-                                                {factura.observaciones || 'No hay observaciones registradas.'}
+                                                {factura.observacion || 'No hay observacion registradas.'}
                                             </div>
                                         </div>
-
-                                        <div>
-                                            <h3 className="font-bold text-md mb-2 text-gray-600">FORMA DE PAGO:</h3>
-                                            {factura.forma_pago && factura.forma_pago.length > 0 ? (
-                                                <ul className="list-disc list-inside text-sm text-gray-700">
-                                                    {factura.forma_pago.map((pago, index) => (
-                                                        <li key={index} className="mb-1">
-                                                            {pago.tipo} - {pago.monto} {factura.tipo_Moneda} ({formatDate(pago.fecha_Pago)})
-                                                        </li>
+                                        {
+                                            detallesExtra.length > 0 && (
+                                                <div className="grid  w-full ">
+                                                    {detallesExtra.map((detalle, index) => (
+                                                        <div
+                                                            key={index}
+                                                            className="flex justify-between p-3 text-sm "
+                                                        >
+                                                            <p className="font-semibold  pr-4">
+                                                                {detalle.detalle} :
+                                                            </p>
+                                                            <p className="pl-4 text-right text-gray-600 dark:text-gray-400">
+                                                                {detalle.valor}
+                                                            </p>
+                                                        </div>
                                                     ))}
-                                                </ul>
-                                            ) : (
-                                                <p className="text-sm p-2 text-gray-500">No se han registrado formas de pago.</p>
-                                            )}
-                                            {factura.legend && factura.legend.length > 0 && (
-                                                <div className="mt-4 pt-2 border-gray-200">
-                                                    <p className="font-semibold text-blue-700 text-sm">
-                                                        {factura.legend[0].legend_Value}
-                                                    </p>
                                                 </div>
-                                            )}
-                                        </div>
-
+                                            )
+                                        }
                                     </div>
+
+
                                     <div className="text-right p-4 border border-gray-200 rounded-md bg-white">
                                         <p className="flex justify-between text-sm mb-1">
                                             <span className="font-semibold text-gray-700">Op. Gravadas:</span>
@@ -252,14 +276,110 @@ export default function ModalVisualizarFactura() {
                                         {/* Assuming IGV percentage is dynamic or a fixed 18% based on your context state */}
                                         <p className="flex justify-between text-sm mb-1">
                                             <span className="font-semibold text-gray-700">IGV (18%):</span>
-                                            <span className="text-gray-900">{factura.tipo_Moneda} {factura.total_Impuestos || '0.00'}</span>
+                                            <span className="text-gray-900">{factura.tipo_Moneda} {factura.monto_Igv || '0.00'}</span>
                                         </p>
+
                                         <p className="flex justify-between text-lg font-bold mt-4 pt-4 border-t-2 border-gray-300 text-blue-800">
                                             <span>TOTAL:</span>
                                             <span>{factura.tipo_Moneda} {factura.monto_Imp_Venta || '0.00'}</span>
                                         </p>
                                     </div>
                                 </div>
+
+                                {/* Detraccion */}
+                                {
+                                    factura.tipo_Operacion == "1001" && (
+                                        <div className="mt-4 pt-2 border-gray-200 border-2 p-4 rounded-md">
+                                            <h3 className="font-bold text-md mb-2 text-gray-600">DETRACCION:</h3>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <div className="flex justify-between pr-3">
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800 font-semibold">Cta. Cte. Banco</p>
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800">{detraccion.detraccion_cta_banco}</p>
+                                                </div>
+                                                <div className="flex justify-between pr-3">
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800 font-semibold">Detraccion ({detraccion.detraccion_percent}%)</p>
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800">{detraccion.detraccion_mount}</p>
+                                                </div>
+                                                <div className="flex justify-between pr-3">
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800 font-semibold min-w-[130px]">Bien o Servicio</p>
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800">{getDescripcion(detraccion.detraccion_cod_bien_detraccion) || ""}</p>
+                                                </div>
+                                                <div className="flex justify-between pr-3">
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800 font-semibold">Neto a Pagar</p>
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800">{(factura.monto_Imp_Venta - detraccion.detraccion_mount).toFixed(2)}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                }
+
+                                {
+                                    factura.tipo_Operacion !== "1001" && retencionActivado && (
+                                        <div className="mt-4 pt-2 border-gray-200 border-2 p-4 rounded-md">
+                                            <h3 className="font-bold text-md mb-2 text-gray-600">RETENCION:</h3>
+                                            <div className="grid grid-cols-3 gap-x-10 ">
+                                                {/* <div className="flex justify-between pr-3">
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800 font-semibold">Tipo</p>
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800">{retencion.descuento_cod_tipo}</p>
+                                                </div> */}
+                                                <div className="flex justify-between pr-3">
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800 font-semibold">Porcentaje</p>
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800">{retencion.descuento_factor}%</p>
+                                                </div>
+                                                <div className="flex justify-between pr-3">
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800 font-semibold">Base</p>
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800">PEN {retencion.descuento_monto_base}</p>
+                                                </div>
+                                                <div className="flex justify-between pr-3">
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800 font-semibold">Retencion</p>
+                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800">PEN {retencion.descuento_monto}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                }
+
+                                {/* Legends */}
+                                {factura.legend && factura.legend.length > 0 && (
+                                    <div className="mt-4 pt-2 border-gray-200 border-2 p-4 rounded-md">
+                                        {factura.legend.map((legend, index) => (
+                                            <>
+                                                <p key={index} className="font-semibold text-innova-blue text-sm py-1">
+                                                    {legend.legend_Value}
+                                                </p>
+                                            </>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {/* Pagos */}
+                                {factura.forma_pago && factura.forma_pago.length > 0 ? (
+                                    <div className=" border-gray-200 rounded-md bg-white">
+                                        {/* <h3 className="font-bold text-md mb-2 text-gray-600">FORMA DE PAGO:</h3> */}
+                                        <table className="w-full text-sm text-gray-700 border-2 rounded-md">
+                                            <thead className="bg-gray-200">
+                                                <tr>
+                                                    <th className="px-4 py-2">Cuota</th>
+                                                    <th className="px-4 py-2">Tipo</th>
+                                                    <th className="px-4 py-2">Monto</th>
+                                                    <th className="px-4 py-2">Fecha</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {factura.forma_pago.map((pago, index) => (
+                                                    <tr key={index} className="hover:bg-gray-50 border-b last:border-b-0">
+                                                        <td className="text-center px-4 py-2">{pago.cuota}</td>
+                                                        <td className="text-center px-4 py-2">{pago.tipo}</td>
+                                                        <td className="text-center px-4 py-2">{factura.tipo_Moneda} {pago.monto.toFixed(2)}</td>
+                                                        <td className="text-center px-4 py-2">{formatDate(pago.fecha_Pago)}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                ) : (
+                                    <p className="text-sm p-2 text-gray-500">No se han registrado formas de pago.</p>
+                                )}
 
                             </div>
                             {/* --- End Invoice Detail --- */}
