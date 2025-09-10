@@ -197,8 +197,6 @@ export default function TrabajadorForm() {
       setIsSubmitting(true);
 
       const dataToSubmit = buildPayload();
-    console.log('El payload es: ',dataToSubmit);
-
       if (isEditMode) {
         dataToSubmit.id = trabajador_id;
         await trabajadorSchema(isEditMode).validate(dataToSubmit, {
@@ -218,8 +216,6 @@ export default function TrabajadorForm() {
       }
       navigate("/tabla-trabajadores");
     } catch (error) {
-      console.log(error);
-
       if (error && error.name === "ValidationError") {
         const newErrors =
           error.inner?.reduce((acc, curr) => {

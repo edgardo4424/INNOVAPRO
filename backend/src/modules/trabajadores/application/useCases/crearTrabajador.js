@@ -6,10 +6,13 @@ module.exports = async (empleadoData, trabajadorRepository,transaction = null) =
     
     
    const errores = trabajador.validarCamposObligatorios(); // Validamos campos obligatorios
+   
    if (errores.length > 0)
       return { codigo: 400, respuesta: { mensaje: errores } };
 
    const nuevoTrabajadorData = trabajador.get(); // Almacenamos los datos del contacto a crear
+   console.log('DATA TARAB',nuevoTrabajadorData);
+   
    const nuevoTrabajador = await trabajadorRepository.crear(
       nuevoTrabajadorData,
       transaction
