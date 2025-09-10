@@ -6,7 +6,12 @@ const INF = moment.tz('9999-12-31', 'YYYY-MM-DD', TZ);
 const parse = (s) => s ? moment.tz(s, 'YYYY-MM-DD', true, TZ) : null;
 const factorPorRegimen = (r) => (r === 'GENERAL' ? 1 : r === 'MYPE' ? 0.5 : 0);
 
-function mergeRangosConRegimen(contratos = []) {
+function mergeRangosConRegimen(contratos = [], periodo = 'JULIO', anio) {
+  const periodoFin = moment.tz(
+    periodo === 'JULIO' ? `${anio}-06-30` : `${anio}-12-31`,
+    'YYYY-MM-DD',
+    TZ
+  );
 
   const arr = contratos
     .map(c => ({
@@ -21,32 +26,34 @@ function mergeRangosConRegimen(contratos = []) {
       sueldo_base: Number(c.sueldo ?? 0),
     }))
     .filter(r => r.ini && r.ini.isValid())
-    .sort((a,b) => a.ini.valueOf() - b.ini.valueOf());
+    .sort((a, b) => a.ini.valueOf() - b.ini.valueOf());
 
   const out = [];
   for (const r of arr) {
     const curFinEff = r.fin || INF;
-    if (!out.length) { out.push(r); continue; }
+    if (!out.length) {
+      out.push(r);
+      continue;
+    }
     const last = out[out.length - 1];
     const lastFinEff = last.fin || INF;
 
     const mismosAtributos =
-
       last.sistema_salud == r.sistema_salud &&
       last.tipo_contrato == r.tipo_contrato;
-
-      
-    // Si el nuevo rango inicia antes o en la fecha de fin del último rango
-    // y tienen los mismos atributos, los unimos
 
     const continuaInmediatamente = lastFinEff.clone().add(1, 'day').isSame(r.ini, 'day');
 
     if (mismosAtributos && (r.ini.isSameOrBefore(lastFinEff, 'day') || continuaInmediatamente)) {
       const maxFin = moment.max(lastFinEff, curFinEff);
       last.fin = maxFin.isSame(INF, 'day') ? null : maxFin;
-      last.sueldo_base = r.sueldo_base; // Actualizamos al último sueldo
-      last.fecha_fin = r.fecha_fin; // Actualizamos la fecha de fin
-      last.regimen = r.regimen;
+
+      // ✅ Solo si el contrato empieza dentro del semestre
+      if (r.ini.isBefore(periodoFin, 'day')) {
+        last.sueldo_base = r.sueldo_base;
+        last.fecha_fin = r.fecha_fin;
+        last.regimen = r.regimen;
+      }
     } else {
       out.push(r);
     }
@@ -63,7 +70,9 @@ function calcularMesesComputablesSemestre(contratos, periodo, anio) {
   const semInicio = parse(periodo === 'JULIO' ? `${year}-01-01` : `${year}-07-01`);
   const semFin    = parse(periodo === 'JULIO' ? `${year}-06-30` : `${year}-12-31`);
 
-  const rangos = mergeRangosConRegimen(contratos);
+ // 👇 ✅ Pasamos periodo y año
+  const rangos = mergeRangosConRegimen(contratos, periodo, anio);
+  
 
   const detalleMensual = [];
   const contadores = new Map();

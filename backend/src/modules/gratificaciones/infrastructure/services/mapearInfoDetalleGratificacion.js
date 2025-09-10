@@ -1,11 +1,9 @@
 function mapearInfoDetalleGratificacion({asistencias, bonos}) {
 
-    console.log('asistecias', asistencias);
     // obtener info de horas extras
 
     const asistencias_con_horas_extras = asistencias.filter(a => a.horas_extras > 0).sort((a, b) => a.fecha.localeCompare(b.fecha));
     
-    console.log('asistencias_con_horas_extras', asistencias_con_horas_extras);
     const info_horas_extras = asistencias_con_horas_extras.map(a => ({
         trabajador_id: a.trabajador_id,
         fecha: a.fecha,

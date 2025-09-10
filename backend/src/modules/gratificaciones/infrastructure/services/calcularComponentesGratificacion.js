@@ -38,7 +38,6 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
           const { porRegimen, totalMeses, detalleMensual } =
             calcularMesesComputablesSemestre(contratos, periodo, anio);
 
-       
           const ultimaFechaFinContrato = obtenerUltimaFechaFin(contratos);
 
 
@@ -57,6 +56,14 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
                   p.fecha_inicio,
                   p.fecha_fin
                 );
+
+                console.log({
+                 
+                  trabajador,
+                  contratos,
+                   fechaInicioCalculo,
+                  fechaFinCalculo,
+                });
 
               //const promedioBonoObra = Number((bonoTotalDelTrabajador / p.meses).toFixed(2));
 
@@ -197,7 +204,6 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
 
               const info_detalle = mapearInfoDetalleGratificacion({asistencias: asistenciasDelTrabajador, bonos: bonosDelTrabajador});
 
-              console.log('info_detalle', info_detalle);
               return {
                 tipo_contrato: p.tipo_contrato,
                 regimen: p.regimen,

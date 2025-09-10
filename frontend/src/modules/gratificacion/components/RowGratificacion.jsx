@@ -113,7 +113,7 @@ const RowGratificacion = ({ key, e, index }) => {
             typeof e.prom_bono_obra === "number" ? (e.prom_bono_obra).toFixed(2) : e.prom_bono_obra
           )}
         </TableCell>
-        <TableCell className="text-right">{e.sueldo_bruto}</TableCell>
+        <TableCell className="text-right">{Number(e.sueldo_bruto).toFixed(2)}</TableCell>
         <TableCell className="text-right">
           {typeof e.gratificacion_semestral === "number" ? (e.gratificacion_semestral).toFixed(2) : e.gratificacion_semestral}
         </TableCell>

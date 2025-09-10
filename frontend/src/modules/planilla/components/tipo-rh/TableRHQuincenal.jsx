@@ -50,6 +50,7 @@ console.log('planillaQuincenalTipoRh', planillaQuincenalTipoRh);
           <TableHeader>
             <TableRow className={"bg-gray-800 text-xs "}>
               {/* Estas celdas abarcan 2 filas porque no tienen sub-encabezados */}
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black"></TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Tipo Doc</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">N° Doc</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Nombres y Apellidos</TableHead>

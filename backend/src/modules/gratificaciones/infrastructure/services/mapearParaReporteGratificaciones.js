@@ -1,13 +1,10 @@
 
 function mapearParaReporteGratificaciones(trabajadoresRaw) {
 
-  console.log('trabajadoresRaw: ', trabajadoresRaw);
-
   return trabajadoresRaw.flatMap(t => {
 
     return t.partes_por_regimen.map(parte => {
-      console.log('parteee', parte);
-
+      
       const dataMantenimiento = {
         valor_asignacion_familiar: parte.data_mantenimiento_detalle.MONTO_ASIGNACION_FAMILIAR,
         valor_falta: parte.data_mantenimiento_detalle.MONTO_FALTA_POR_DIA,

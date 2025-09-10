@@ -1,11 +1,17 @@
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Eye, FileDown } from "lucide-react";
 import { formatearFecha } from "../../utils/formatearFecha";
+import ModalInfoDetallesQuincenal from "./ModalInfoDetallesQuincenal";
 
 const RowPlanillaQuincenal = ({ key, e, index }) => {
   console.log('e', e);
   return (
     <TableRow key={key} className={"text-xs"}>
+      <TableCell className="text-center">
+                  {e.registro_planilla_quincenal_detalle && e.registro_planilla_quincenal_detalle.length > 1 && (
+                     <ModalInfoDetallesQuincenal data={e.registro_planilla_quincenal_detalle} />
+                  )}
+               </TableCell>
       <TableCell className="text-right">{e.tipo_documento}</TableCell>
       <TableCell className="text-right">{e.numero_documento}</TableCell>
 
@@ -15,22 +21,22 @@ const RowPlanillaQuincenal = ({ key, e, index }) => {
       <TableCell className="text-right">{formatearFecha(e.fecha_ingreso)}</TableCell>
 
       <TableCell className="text-right">{e.dias_laborados}</TableCell>
-      <TableCell className="text-right">{e.sueldo_base}</TableCell>
-      <TableCell className="text-right">{e.sueldo_quincenal}</TableCell>
-      <TableCell className="text-right">{e.asignacion_familiar}</TableCell>
+      <TableCell className="text-right">{Number(e.sueldo_base).toFixed(2)}</TableCell>
+      <TableCell className="text-right">{Number(e.sueldo_quincenal).toFixed(2)}</TableCell>
+      <TableCell className="text-right">{Number(e.asignacion_familiar).toFixed(2)}</TableCell>
 
-      <TableCell className="text-right">{e.sueldo_bruto}</TableCell>
+      <TableCell className="text-right">{Number(e.sueldo_bruto).toFixed(2)}</TableCell>
 
-      <TableCell className="text-right">{e.onp}</TableCell>
+      <TableCell className="text-right">{Number(e.onp).toFixed(2)}</TableCell>
    
-      <TableCell className="text-right">{e.afp}</TableCell>
-      <TableCell className="text-right">{e.seguro}</TableCell>
-      <TableCell className="text-right">{e.comision}</TableCell>
+      <TableCell className="text-right">{Number(e.afp).toFixed(2)}</TableCell>
+      <TableCell className="text-right">{Number(e.seguro).toFixed(2)}</TableCell>
+      <TableCell className="text-right">{Number(e.comision).toFixed(2)}</TableCell>
 
-      <TableCell className="text-right">{e?.quinta_categoria}</TableCell>
+      <TableCell className="text-right">{Number(e?.quinta_categoria).toFixed(2)}</TableCell>
 
-      <TableCell className="text-right">{e.total_descuentos}</TableCell>
-      <TableCell className="text-right">{e.total_a_pagar}</TableCell>
+      <TableCell className="text-right">{Number(e.total_descuentos).toFixed(2)}</TableCell>
+      <TableCell className="text-right">{Number(e.total_a_pagar).toFixed(2)}</TableCell>
       <TableCell className="text-right">{e.banco}</TableCell>
       <TableCell className="text-right">{e.numero_cuenta}</TableCell>
 

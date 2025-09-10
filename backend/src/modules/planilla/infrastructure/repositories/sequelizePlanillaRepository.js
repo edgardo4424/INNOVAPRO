@@ -201,8 +201,8 @@ class SequelizePlanillaRepository {
 
        const asignacionFamiliar =
                 (trabajador.asignacion_familiar &&
-                (new Date(trabajador.asignacion_familiar) <= new Date(contrato.fecha_fin)))
-                  ? dataMantenimiento.MONTO_ASIGNACION_FAMILIAR
+                (new Date(trabajador.asignacion_familiar) >= new Date(contrato.fecha_inicio)))
+                  ? dataMantenimiento.MONTO_ASIGNACION_FAMILIAR/2
                   : 0;
 
       const diasLaborados = calcularDiasLaboradosQuincena(
