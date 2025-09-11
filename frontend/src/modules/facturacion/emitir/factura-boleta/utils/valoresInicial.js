@@ -8,6 +8,7 @@ const ValorInicialFactura = {
     correlativo: "",
     tipo_Moneda: "PEN",
     fecha_Emision: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
+    fecha_vencimiento: null,
     empresa_Ruc: "10749283781",//?? nuevo ruc de prueba
 
     // ?Datos del cliente
@@ -60,7 +61,7 @@ const valorIncialPago = [{
 
 
 const valorIncialRetencion = {
-    descuento_cod_tipo: "00",
+    descuento_cod_tipo: "06",
     descuento_factor: 0,
     descuento_monto_base: 0,
     descuento_monto: 0,
