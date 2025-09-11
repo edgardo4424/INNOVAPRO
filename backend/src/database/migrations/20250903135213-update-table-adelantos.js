@@ -9,8 +9,7 @@ module.exports = {
       });
       await queryInterface.addColumn("adelanto_sueldo", "forma_descuento", {
          type: Sequelize.ENUM("mensual", "quincenal"),
-         allowNull: false,
-         defaultValue: "mensual",
+         allowNull: true,
       });
 
       await queryInterface.addColumn("adelanto_sueldo", "cuotas", {

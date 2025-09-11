@@ -57,6 +57,8 @@ console.log('planillaQuincenalTipoRh', planillaQuincenalTipoRh);
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Fecha Ingreso</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Dias Laborados</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Base</TableHead>
+                            <TableHead rowSpan={2} className="text-center border-r text-white border-black">Adelantos</TableHead>
+              
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Total a Pagar</TableHead>
                <TableHead rowSpan={2} className="text-center border-r text-white border-black">Banco</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">N° Cuenta</TableHead>

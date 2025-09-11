@@ -1,3 +1,4 @@
+const { actualizarCuotasPagadas } = require("../../../../application/services/actualizarCuotasPagadas");
 const db = require("../../../../database/models");
 const { mapearParaRegistrarTablaPlanillaQuincenal } = require("../../infrastructure/services/mapearParaRegistrarTablaPlanillaQuincenal");
 
@@ -109,7 +110,6 @@ module.exports = async (
       planillaQuincenal.data_mantenimiento_detalle
     );
 
-    console.log('dataPlanillaQuincenal', dataPlanillaQuincenal);
 
     const dataPlanillaQuincenalSinCerrar = dataPlanillaQuincenal.filter((planillaQuincenal) => {
       return !trabajadoresConPlanillaQuincenalCerradas.some((planillaQuincenalCerrada) => {
@@ -127,7 +127,24 @@ module.exports = async (
       transaction
     );
 
+    // Actualizar la tabla adelanto_sueldo si en caso en dataPlanillaQuincenalSinCerrar existen adelantos de sueldo
+    if (dataPlanillaQuincenalSinCerrar.length > 0) {
 
+       const dataPlanillaQuincenalSinCerrarConAdelantoSueldo = dataPlanillaQuincenalSinCerrar.filter((planillaQuincenal) => {
+          return planillaQuincenal.adelanto_sueldo > 0
+       })
+
+       console.log('dataPlanillaQuincenalSinCerrarConAdelantoSueldo', dataPlanillaQuincenalSinCerrarConAdelantoSueldo);
+      
+       const adelantos_ids = dataPlanillaQuincenalSinCerrarConAdelantoSueldo.map((planillaQuincenal) => {
+          return planillaQuincenal.adelantos_ids
+       })
+      
+       await actualizarCuotasPagadas(adelantos_ids.flat(), fecha_anio_mes, transaction)
+      }
+
+      asd 
+      
     await transaction.commit(); // ✔ Confirmar transacción
 
     return {

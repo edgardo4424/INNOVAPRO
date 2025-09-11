@@ -10,7 +10,7 @@ function mapearParaRegistrarTablaPlanillaQuincenal(
 ) {
   console.log("registros", registros);
   return registros.map((r) => {
-    console.log('r', r);
+    
     return {
       trabajador_id: r.trabajador_id,
       tipo_contrato: r.tipo_contrato,
@@ -39,7 +39,9 @@ function mapearParaRegistrarTablaPlanillaQuincenal(
       filial_id: filial_id,
       cierre_planilla_quincenal_id: cierre_planilla_quincenal_id,
       data_mantenimiento_detalle: data_mantenimiento_detalle,
-      registro_planilla_quincenal_detalle: r.registro_planilla_quincenal_detalle
+      registro_planilla_quincenal_detalle: r.registro_planilla_quincenal_detalle,
+      adelanto_sueldo: r.adelanto_sueldo || 0,
+      adelantos_ids: r.adelantos_ids
     };
   });
 }

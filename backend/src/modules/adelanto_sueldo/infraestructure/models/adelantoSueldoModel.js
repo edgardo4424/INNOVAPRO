@@ -45,7 +45,7 @@ const AdelantoSueldo = sequelize.define(
       },
       forma_descuento: {
          type: DataTypes.ENUM("mensual", "quincenal"),
-         allowNull: false,
+         allowNull: true,
       },
       cuotas: {
          type: DataTypes.INTEGER,

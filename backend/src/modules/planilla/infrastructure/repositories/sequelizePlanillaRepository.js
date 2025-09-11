@@ -277,12 +277,12 @@ class SequelizePlanillaRepository {
 
       const quinta_categoria = found ? +(retencion_base_mes / 2).toFixed(2) : 0;
 
-       const totalAdelantosSueldo =
+       const {totalAdelantosSueldo, adelantos_ids} =
                 await adelantoSueldoRepository.obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
                   trabajador.id,
                   "simple",
                   contrato.fecha_inicio,
-                  contrato.fecha_fin
+                  contrato.fecha_fin,
                 );
 
       const totalDescuentos = +(
@@ -324,10 +324,10 @@ class SequelizePlanillaRepository {
         numero_cuenta: contrato.numero_cuenta,
         tipo_afp: sistema_pension == "AFP" ? tipo_afp : "ONP",
 
-        adelanto_sueldo: totalAdelantosSueldo
+        adelanto_sueldo: totalAdelantosSueldo,
+        adelantos_ids: adelantos_ids
       });
     }
-
 
     const listaPlanillaTipoHonorarios = [];
 
@@ -348,7 +348,7 @@ class SequelizePlanillaRepository {
       .toFixed(2);
 
       
-       const totalAdelantosSueldo =
+       const {totalAdelantosSueldo, adelantos_ids} =
                 await adelantoSueldoRepository.obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
                   trabajador.id,
                   "simple",
@@ -376,7 +376,8 @@ class SequelizePlanillaRepository {
         banco: contrato.banco,
         numero_cuenta: contrato.numero_cuenta,
 
-        adelanto_sueldo: totalAdelantosSueldo
+        adelanto_sueldo: totalAdelantosSueldo,
+        adelantos_ids: adelantos_ids
       });
     }
 
@@ -403,7 +404,6 @@ class SequelizePlanillaRepository {
         valor_comision_afp_profuturo: dataMantenimiento.PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO,
        
       }
-
 
     return {
       planilla: {

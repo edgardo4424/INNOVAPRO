@@ -151,6 +151,8 @@ const PlanillaQuincenal = sequelize.define(
       type: DataTypes.JSON,
     },
 
+  
+
   },
   {
     timestamps: true,
