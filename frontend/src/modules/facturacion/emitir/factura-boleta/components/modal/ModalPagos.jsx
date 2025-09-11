@@ -13,14 +13,22 @@ import PagoForm from "../../forms/PagoForm";
 
 export default function ModalPagos({ open, setOpen }) {
 
-    const { factura, } = useFacturaBoleta();
+    const { factura, retencionActivado, retencion, detraccion } = useFacturaBoleta();
 
     const montoTotalPagos = factura.forma_pago.reduce(
         (total, pago) => total + (parseFloat(pago.monto) || 0),
         0
     );
 
-    const montoTotalFactura = parseFloat(factura.monto_Imp_Venta || 0)
+    let montoTotalFactura;
+    if (retencionActivado) {
+        montoTotalFactura = factura.monto_Imp_Venta - retencion.descuento_monto;
+    } else if (factura.tipo_Operacion == "1001" && !retencionActivado) {
+        montoTotalFactura = factura.monto_Imp_Venta - detraccion.detraccion_mount
+    }
+    else {
+        montoTotalFactura = factura.monto_Imp_Venta
+    }
     const pagosCompletos = montoTotalPagos.toFixed(2) >= montoTotalFactura;
 
     const closeModal = () => {
@@ -75,6 +83,3 @@ export default function ModalPagos({ open, setOpen }) {
         </AlertDialog>
     );
 }
-
-
-{/* <h2>{montoTotalFactura.toFixed(2)} / {montoTotalPagos.toFixed(2)}</h2> */ }

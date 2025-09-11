@@ -18,7 +18,7 @@ import { validarModal } from '../utils/validarModal';
 import { PagoValidarEstados, valorIncialPago } from '../utils/valoresInicial';
 
 const PagoForm = ({ closeModal }) => {
-    const { factura, setFactura, pagoActual, pagoValida, setPagoActual, validarCampos, setPagoValida } = useFacturaBoleta();
+    const { factura, setFactura, pagoActual, pagoValida, setPagoActual, retencionActivado, retencion, detraccion, setPagoValida } = useFacturaBoleta();
 
     const { forma_pago: ListaDePago } = factura;
 
@@ -27,7 +27,14 @@ const PagoForm = ({ closeModal }) => {
         0
     );
 
-    let montoRestante = (factura.monto_Imp_Venta - montoTotalPagos).toFixed(2);
+    let montoRestante = parseFloat(
+        (retencionActivado
+            ? factura.monto_Imp_Venta - retencion.descuento_monto
+            : factura.tipo_Operacion == "1001" && !retencionActivado
+                ? factura.monto_Imp_Venta - detraccion.detraccion_mount
+                : factura.monto_Imp_Venta
+        ).toFixed(2)
+    );
 
     const [activeButton, setActiveButton] = useState(false);
     const [montoActivo, setMontoActivo] = useState(false);
@@ -38,7 +45,7 @@ const PagoForm = ({ closeModal }) => {
     const [showCalculadora, setShowCalculadora] = useState(false);
     const [daysToAdd, setDaysToAdd] = useState("");
 
-    const montoTotalFactura = parseFloat(factura.monto_Imp_Venta || 0);
+    const montoTotalFactura = montoRestante.toFixed(2);
     const pagosCompletos = montoTotalPagos >= montoTotalFactura;
 
     // Función para generar fecha de fin de mes
@@ -60,7 +67,7 @@ const PagoForm = ({ closeModal }) => {
     const generarCuotas = (numCuotas) => {
         if (numCuotas <= 0 || !factura.monto_Imp_Venta) return [];
 
-        const montoTotalDisponible = parseFloat(montoRestante);
+        const montoTotalDisponible = parseFloat(montoRestante).toFixed(2);
         const montoPorCuota = (montoTotalDisponible / numCuotas).toFixed(2);
         const cuotas = [];
 
@@ -271,11 +278,6 @@ const PagoForm = ({ closeModal }) => {
         }
     }, [pagoActual[0].tipo, montoRestante]);
 
-    useEffect(() => {
-        console.log(pagoActual)
-        console.log(cuotasGeneradas)
-    }, [pagoActual, cuotasGeneradas])
-
     return (
         <div className="overflow-y-auto col-span-4 w-full">
             <form
@@ -353,38 +355,14 @@ const PagoForm = ({ closeModal }) => {
                 {/* Fecha de Pago (solo para Contado) */}
                 {pagoActual[0].tipo === "Contado" && (
                     <div className="flex flex-col gap-1 col-span-4 md:col-span-2">
-                        <div className='flex justify-between'>
-                            <Label>Fecha de Pago:</Label>
-                            <button
-                                onClick={(e) => { e.preventDefault(); setShowCalculadora(!showCalculadora) }}
-                                className='bg-purple-700 text-white p-1 rounded-md cursor-pointer'>
-                                <Calculator />
-                            </button>
-                        </div>
-                        <Calendar22 Dato={pagoActual[0]} setDato={(data) => setPagoActual([data])} tipo={"fecha_Pago"} />
-                        {pagoValida.fecha_Pago && (
-                            <span className="text-red-500 text-sm">
-                                Debes ingresar una fecha
-                            </span>
-                        )}
-                        {showCalculadora && (
-                            <div className="mt-2 flex items-center space-x-2">
-                                <Input
-                                    type="number"
-                                    placeholder="Días"
-                                    value={daysToAdd}
-                                    onChange={(e) => setDaysToAdd(e.target.value)}
-                                    className="w-24 border-1 border-gray-400"
-                                />
-                                <Button
-                                    type="button"
-                                    onClick={handleCalculateDate}
-                                    className="bg-green-600 hover:bg-green-800 text-white"
-                                >
-                                    Aplicar
-                                </Button>
-                            </div>
-                        )}
+                        <Label>Fecha de Pago:</Label>
+                        <Input
+                            type="date"
+                            name="fecha_Pago"
+                            className="border-1 border-gray-400"
+                            value={pagoActual[0].fecha_Pago?.split('T')[0]}
+                            disabled
+                        />
                     </div>
                 )}
             </form>

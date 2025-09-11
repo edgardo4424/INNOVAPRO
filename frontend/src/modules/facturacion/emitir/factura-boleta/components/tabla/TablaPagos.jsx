@@ -10,7 +10,7 @@ import {
 import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
 
 const TablaPagos = ({ open, setOpen }) => {
-    const { factura, setFactura, setPagoActual } = useFacturaBoleta();
+    const { factura, setFactura, setPagoActual, } = useFacturaBoleta();
     const { forma_pago: ListaDePago } = factura;
 
     const seleccionarPago = async (pago, index) => {

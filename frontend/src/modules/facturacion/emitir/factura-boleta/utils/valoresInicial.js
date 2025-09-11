@@ -10,6 +10,8 @@ const ValorInicialFactura = {
     fecha_Emision: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
     fecha_vencimiento: null,
     empresa_Ruc: "10749283781",//?? nuevo ruc de prueba
+    dias_pagar: "",
+    orden_compra: "",
 
     // ?Datos del cliente
     cliente_Tipo_Doc: "6",
@@ -36,7 +38,7 @@ const ValorInicialFactura = {
     // ?Parametros para innova Pro
     observacion: "", //? nuevo campo solo para bd
     // usuario_id: 1, //* cambiar a el usuario logeado
-    
+
     // ?Lista de Productos
     detalle: [],
 
@@ -61,7 +63,7 @@ const valorIncialPago = [{
 
 
 const valorIncialRetencion = {
-    descuento_cod_tipo: "06",
+    descuento_cod_tipo: "62",
     descuento_factor: 0,
     descuento_monto_base: 0,
     descuento_monto: 0,

@@ -56,17 +56,23 @@ const DatosDeRetencion = () => {
     }
   };
 
-  useEffect(() => {
-    if (retencionActivado) {
-      handleSelectChange(retencion.descuento_factor);
-    }
-  }, [factura.monto_Imp_Venta,factura.tipo_Moneda]);
+
 
   if (factura.monto_Imp_Venta < 699) return null
 
   if (factura.tipo_Doc == "03") return null
 
   if (factura.tipo_Operacion == "1001") return null
+
+  useEffect(() => {
+    if (retencionActivado) {
+      handleSelectChange(retencion.descuento_factor);
+    }
+  }, [factura.monto_Imp_Venta, factura.tipo_Moneda]);
+
+  useEffect(() => {
+    setFactura({ ...factura, forma_pago: [] });
+  }, [retencionActivado, retencion.descuento_factor]);
 
   return (
     // Contenedor principal con espaciado y layout responsivo

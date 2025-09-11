@@ -210,7 +210,7 @@ const DatosDelComprobante = () => {
                 </div>
 
                 {/* Ruc de la empresa */}
-                <div className="flex flex-col gap-1 col-span-full sm:col-span-1 md:col-span-2">
+                <div className="flex flex-col gap-1 col-span-full sm:col-span-1 md:col-span-1">
                     <Label htmlFor="empresa_Ruc">Ruc de la empresa</Label>
                     <Select
                         value={factura.empresa_Ruc}
@@ -229,6 +229,33 @@ const DatosDelComprobante = () => {
                         </SelectContent>
                     </Select>
                 </div>
+
+                {/* Orden de compra */}
+                <div className="flex flex-col gap-1 col-span-full sm:col-span-1">
+                    <Label htmlFor="correlativo">Orden de compra</Label>
+                    <Input
+                        type="text"
+                        name="orden_compra"
+                        id="orden_compra"
+                        placeholder="orden de compra"
+                        className="border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                        value={factura.orden_compra}
+                        onChange={handleInputChange}
+                    />
+                </div>
+
+                {/* Fecha de vencimiento */}
+                {/* <div className="flex flex-col gap-1 col-span-full sm:col-span-1">
+                    <Label htmlFor="correlativo">Orden de compra</Label>
+                    <Input
+                        type="date"
+                        name="fecha_vencimiento"
+                        id="fecha_vencimiento"
+                        className="border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                        value={factura.fecha_vencimiento}
+                        disabled
+                    />
+                </div> */}
             </form>
         </div>
     );

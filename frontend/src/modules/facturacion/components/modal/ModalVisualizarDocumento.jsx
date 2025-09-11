@@ -364,7 +364,7 @@ export default function ModalVisualizarDocumento({
                                     <div className="mt-4 pt-2 border border-gray-200 rounded-md p-4">
                                         <h3 className="font-bold text-md mb-2 text-gray-600 flex items-center gap-x-4">RETENCION:
                                         </h3>
-                                        <div className="grid grid-cols-3 gap-x-10 gap-y-2">
+                                        <div className="grid grid-cols-4 gap-x-10 gap-y-2">
                                             <div className="flex justify-between">
                                                 <p className="text-sm text-gray-800 font-semibold">Base del descuento</p>
                                                 <p className="text-sm text-gray-800">{factura.descuento_monto_base}</p>
@@ -376,6 +376,10 @@ export default function ModalVisualizarDocumento({
                                             <div className="flex justify-between">
                                                 <p className="text-sm text-gray-800 font-semibold">Monto del descuento</p>
                                                 <p className="text-sm text-gray-800">{factura.descuento_monto}</p>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <p className="text-sm text-gray-800 font-semibold">Monto Neto a Pagar</p>
+                                                <p className="text-sm text-gray-800">{(factura.monto_Imp_Venta - factura.descuento_monto)}</p>
                                             </div>
                                         </div>
                                         <div className="flex justify-center">

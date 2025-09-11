@@ -8,10 +8,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { ClipboardPlus, X } from "lucide-react";
+import { useState } from "react";
 import ListaDeDocumentos from "../ListaDeDocumentos";
 
-const ModalListaDocumentos = ({ open, setOpen }) => {
+const ModalListaDocumentos = () => {
 
+    const [open, setOpen] = useState(false);
     const closeModal = () => {
         setOpen(false);
     };

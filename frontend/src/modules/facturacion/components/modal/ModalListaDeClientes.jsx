@@ -22,7 +22,7 @@ export default function ModalListaDeClientes({ setContext }) {
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
-                <Button className="bg-innova-blue rounded-md text-white hover:bg-innova-blue-hover cursor-pointer">
+                <Button className="bg-innova-blue rounded-md text-white hover:scale-105 hover:bg-innova-blue cursor-pointer">
                     <UserRoundSearch />
                     <span className="hidden md:block">Buscar Cliente</span>
                 </Button>
