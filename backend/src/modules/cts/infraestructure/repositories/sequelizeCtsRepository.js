@@ -281,7 +281,7 @@ class SequelizeCtsRopository {
       return arreglo_cts;
    }
 
-   async calcularCtsIndividualTrunca(periodo, anio, filial_id, trabajador_id) {
+   async calcularCtsIndividualTrunca(periodo, anio, filial_id, trabajador_id, transaction = null) {
       console.log('entre a calcular');
       const responseTrabajador = await db.trabajadores.findOne({
          where: {
@@ -357,7 +357,9 @@ class SequelizeCtsRopository {
             filial_id: filial_id,
             trabajador_id: trabajador_id,
             tipo_contrato: "PLANILLA",
+            estado:true
          },
+         transaction
       });
       const contratos_limpios = responseContratos.map((c) =>
          c.get({ plain: true })
