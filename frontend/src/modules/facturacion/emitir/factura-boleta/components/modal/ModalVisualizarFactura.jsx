@@ -480,10 +480,6 @@ export default function ModalVisualizarFactura() {
                       RETENCION:
                     </h3>
                     <div className="grid grid-cols-4 gap-x-10">
-                      {/* <div className="flex justify-between pr-3">
-                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800 font-semibold">Tipo</p>
-                                                    <p className="px-2 rounded-md bg-white text-sm text-gray-800">{retencion.descuento_cod_tipo}</p>
-                                                </div> */}
                       <div className="flex justify-between pr-3">
                         <p className="rounded-md bg-white px-2 text-sm font-semibold text-gray-800">
                           Porcentaje
