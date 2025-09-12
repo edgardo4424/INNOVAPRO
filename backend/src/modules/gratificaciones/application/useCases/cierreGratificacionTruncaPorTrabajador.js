@@ -89,6 +89,8 @@ module.exports = async (
           cierreId
         );
 
+        console.log('dataGratificaciones', dataGratificaciones);
+
 
         await gratificacionRepository.insertarVariasGratificaciones(
           dataGratificaciones,

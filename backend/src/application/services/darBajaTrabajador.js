@@ -77,19 +77,7 @@ if (fechaBaja.isSame(fechaFinContrato, "day")) {
 
     await contratoLaboralEncontrado.save({ transaction });
 
-    const trabajadorActualizado = await db.trabajadores.findByPk(
-      trabajador_id,
-      {
-        transaction,
-      }
-    );
-
-    trabajadorActualizado.fecha_baja = fecha_baja;
-    await trabajadorActualizado.save({ transaction });
-
-   
     
-
     // Cerrar gratificacion trunca
     const gratificacionTrunca = await cierreGratificacionTruncaPorTrabajador(
       usuario_cierre_id,
@@ -159,6 +147,19 @@ console.log('planillaMensualTrunca',planillaMensualTrunca);
         respuesta: registroBajaTrabajador.respuesta,
       };
     }
+
+    
+    const trabajadorActualizado = await db.trabajadores.findByPk(
+      trabajador_id,
+      {
+        transaction,
+      }
+    );
+
+    trabajadorActualizado.fecha_baja = fecha_baja;
+    await trabajadorActualizado.save({ transaction });
+
+   
     await transaction.commit();
     return {
       codigo: 201,
