@@ -59,6 +59,10 @@ const Trabajador = sequelize.define(
          allowNull: false,
          defaultValue: false,
       },
+      fecha_nacimiento: {
+         type: DataTypes.DATEONLY,
+         allowNull: true,
+      },
       fecha_baja: {
          type: DataTypes.DATEONLY,
          allowNull: true,

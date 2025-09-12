@@ -19,7 +19,6 @@ import RowTotalGratificacion from "@/modules/gratificacion/components/RowTotalGr
 
 const TablePlanillaMensual = ({ planillaMensualTipoRh, total }) => {
 
-console.log('planillaMensualTipoRh', planillaMensualTipoRh);
   const [filtro, setFiltro] = useState("");
  
   // Filtrar por nombres y apellidos (case-insensitive)

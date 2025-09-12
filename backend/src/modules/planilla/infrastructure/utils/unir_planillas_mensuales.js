@@ -1,3 +1,4 @@
+const calcularEdad = require("./cacular_edad");
 const { trabajador_planilla_model } = require("./trabajador_planilla_model");
 
 const unir_planillas_mensuales = (
@@ -9,7 +10,8 @@ const unir_planillas_mensuales = (
 ) => {
    const grupo_planilla = trabajador_planilla_model();
    grupo_planilla.info_detalle = planillas_obtenidas;
-
+   if(trabajador.id==7)console.log('La edad de valeri es',trabajador);
+   
    for (const p of planillas_obtenidas) {
       grupo_planilla.trabajador_id = p.trabajador_id;
       grupo_planilla.contrato_id = p.contrato_id;
@@ -22,7 +24,6 @@ const unir_planillas_mensuales = (
       grupo_planilla.area = p.area;
       grupo_planilla.afp = p.afp;
       grupo_planilla.fecha_ingreso = p.fecha_ingreso;
-      // grupo_planilla.info_detalle.sueldos_mensuales.push(p.detalle_sueldo_mensual)
       grupo_planilla.dias_labor += Number(p.dias_labor);
       grupo_planilla.sueldo_basico = Number(p.sueldo_basico);
       grupo_planilla.sueldo_del_mes += Number(p.sueldo_del_mes);
@@ -75,8 +76,6 @@ const unir_planillas_mensuales = (
          Number(grupo_planilla.licencia_con_goce_de_haber) +
          Number(grupo_planilla.licencia_sin_goce_de_haber) * -1 +
          Number(grupo_planilla.vacaciones) +
-         Number(grupo_planilla.gratificacion) +
-         Number(grupo_planilla.cts) +
          Number(grupo_planilla.h_extras_primera_quincena) +
          Number(grupo_planilla.h_extras_segunda_quincena) +
          Number(grupo_planilla.faltas_primera_quincena) * -1 +
@@ -123,7 +122,6 @@ const unir_planillas_mensuales = (
       grupo_planilla.sueldo_quincenal -
       grupo_planilla.adelanto_prestamo
    ).toFixed(2);
-
    return grupo_planilla;
 };
 

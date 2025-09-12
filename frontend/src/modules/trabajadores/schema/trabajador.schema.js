@@ -55,6 +55,11 @@ export const trabajadorSchema = (isEdit = false, isGerente = false) =>
       numero_documento: yup
          .string()
          .required("El número de documento es requerido"),
+      fecha_nacimiento: yup
+      .date()
+      .transform((value, originalValue) => new Date(originalValue))
+      .typeError("La fecha de nacimiento no es válida")
+      .required("La fecha de nacimiento es requerida"),
       contratos_laborales: yup
          .array()
          .of(contratoSchema)

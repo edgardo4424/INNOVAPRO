@@ -4,6 +4,7 @@ const obtenerDataMantenimiento = require('../../application/useCases/obtenerData
 const obtenerDataMantenimientoPorId = require('../../application/useCases/obtenerDataMantenimientoPorId'); 
 const actualizarDataMantenimiento = require('../../application/useCases/actualizarDataMantenimiento'); 
 const obtenerDataMantenimientoPorCodigo = require('../../application/useCases/obtenerDataMantenimientoPorCodigo');
+const obtenerDataMantenimientoPorCodigoImporte = require('../../application/useCases/obtenerDataMantenimientoPorCodigoImporte');
 
 const dataMantenimientoRepository = new sequelizeDataMantenimientoRepository(); 
 
@@ -31,6 +32,16 @@ const DataMantenimientoController = {
     async obtenerDataMantenimientoPorCodigo(req, res) {
         try {
             const dataMantenimiento = await obtenerDataMantenimientoPorCodigo(req.params.codigo, dataMantenimientoRepository); 
+            res.status(dataMantenimiento.codigo).json(dataMantenimiento.respuesta); 
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
+    async obtenerDataMantenimientoPorCodigoImporte(req, res) {
+
+        try {            
+            const dataMantenimiento = 
+            await obtenerDataMantenimientoPorCodigoImporte(req.params.codigo_importe, dataMantenimientoRepository); 
             res.status(dataMantenimiento.codigo).json(dataMantenimiento.respuesta); 
         } catch (error) {
             res.status(500).json({ error: error.message });

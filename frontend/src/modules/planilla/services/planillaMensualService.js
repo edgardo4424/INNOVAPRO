@@ -22,6 +22,11 @@ const planillaMensualService = {
    
    generarCierreRegistroPlanillaMensual: async (data) =>
       api.post("/planilla/planilla-mensual-cierre", data),
+
+   obtenerDatosMantenimiento:async(filial_id)=>
+      api.get(`/data_mantenimiento/codigo-importe/${filial_id}_importe`),
+   editDataMantenimiento: (id, data) => api.put(`/data_mantenimiento/${id}`, data),
+
 };
 
 export default planillaMensualService;
