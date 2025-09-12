@@ -10,6 +10,7 @@ const obtenerTotalPlanillaQuincenalPorTrabajador = require("../../application/us
 const cierrePlanillaMensual = require("../../application/useCases/cierrePlanillaMensual");
 const sequelize = require("../../../.././config/db");
 const obtenerPlanillaMensualCerradas = require("../../application/useCases/obtenerPlanillaMensualCerradas");
+const calcularPlanillaMensualTruncaPorTrabajador = require("../../application/useCases/calcularPlanillaMensualTruncaPorTrabajador");
 
 const planillaRepository = new sequelizePlanillaRepository();
 const trabajadorRepository = new SequelizeTrabajadorRepository();
@@ -50,7 +51,22 @@ const PlanillaController = {
          res.status(503).json({ error: error.message });
       }
    },
-
+   async calcularPlanillaMensualTruncaPorTrabajador(req, res) {
+      try {
+         const { anio_mes_dia, filial_id,trabajador_id } = req.body;
+         const planilla = await calcularPlanillaMensualTruncaPorTrabajador(
+            anio_mes_dia,
+            filial_id,
+            planillaRepository,
+            trabajadorRepository,
+            trabajador_id
+         );
+         res.status(planilla.codigo).json(planilla.respuesta);
+      } catch (error) {
+         console.log(error);
+         res.status(503).json({ error: error.message });
+      }
+   },   
    async cierrePlanillaQuincenal(req, res) {
       try {
          const { fecha_anio_mes, filial_id } = req.body;
