@@ -93,4 +93,4 @@ function isCuotaAplicable(primera_cuota, cuotas, fecha_anio_mes_dia, forma_descu
   });
 }
 
-module.exports = { isCuotaAplicable, obtenerFechasCuotas };
+module.exports = { isCuotaAplicable, obtenerFechasCuotas, obtenerUltimoDiaDelMes };

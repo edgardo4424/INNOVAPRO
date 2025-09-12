@@ -10,6 +10,7 @@ import ModalInfoDetalle from "./ModalInfoDetalles";
 
 const RowPlanillaMensual = ({ key, e, index }) => {
 
+   console.log("e", e);
 
    return (
       <TableRow key={key} className={"text-xs"}>

@@ -14,6 +14,13 @@ const SequelizeDarBajaTrabajadorRepository = require("../../modules/dar_baja_tra
 
 const darBajaTrabajadorRepository = new SequelizeDarBajaTrabajadorRepository();
 
+const SequelizePlanillaRepository = require("../../modules/planilla/infrastructure/repositories/sequelizePlanillaRepository");
+
+const planillaRepository = new SequelizePlanillaRepository();
+
+const SequelizeTrabajadorRepository = require("../../modules/trabajadores/infraestructure/repositories/sequelizeTrabajadorRepository");
+
+const trabajadorRepository = new SequelizeTrabajadorRepository();
 
 const SequelizeContratoLaboralRepository = require("../../modules/contratos_laborales/infraestructure/repositories/sequelizeContratoLaboralRepository");
 const db = require("../../database/models");
@@ -22,6 +29,8 @@ const InsertarRegistroBajaTrabajador = require("../../modules/dar_baja_trabajado
 
 const moment = require("moment");
 const cierreCtsTruncaPorTrabajador = require("../../modules/cts/application/cierreCtsTruncaPorTrabajador");
+const { obtenerUltimoDiaDelMes } = require("../../modules/adelanto_sueldo/infraestructure/repositories/utils/validarCuotaAplicable");
+const calcularPlanillaMensualTruncaPorTrabajador = require("../../modules/planilla/application/useCases/calcularPlanillaMensualTruncaPorTrabajador");
 
 module.exports = async function darBajaTrabajador(dataBody) {
   const transaction = await sequelize.transaction();
@@ -102,8 +111,30 @@ if (fechaBaja.isSame(fechaFinContrato, "day")) {
       ctsRepository,
       transaction
     );
+
+    console.log('ctsTrunca',ctsTrunca);
+    // Calcular Planilla mensual trunca
+
+    const fecha = new Date(fechaTerminacionAnticipada);
+
+    const anio = fecha.getFullYear();
+    const mes = fecha.getMonth() + 1;
+
+    const ultimoDiaDelMes = obtenerUltimoDiaDelMes(anio, mes);
+
+    const anio_mes_dia = `${anio}-${mes}-${ultimoDiaDelMes}`;
     
-console.log('ctsTrunca',ctsTrunca);
+    const planillaMensualTrunca = await calcularPlanillaMensualTruncaPorTrabajador(
+      anio_mes_dia,
+      filial_id,
+      planillaRepository,
+      trabajadorRepository,
+      trabajador_id,
+      usuario_cierre_id,
+      transaction
+    );
+    
+console.log('planillaMensualTrunca',planillaMensualTrunca);
 
     const darBajaTrabajador = {
       trabajador_id: trabajador_id,
