@@ -3,7 +3,9 @@ module.exports = async (
    filial_id,
    planillaRepository,
    trabajadorRepository,
-   trabajador_id
+   trabajador_id,
+   usuario_cierre_id,
+   transaction = null
 ) => {
    const fin_mes = anio_mes_dia;
 
@@ -85,11 +87,71 @@ module.exports = async (
       payload.honorarios.push(res);
    }
 
+   //! Proceso de cierre de planilla:
+   const PERIODO = `${anio_mes_dia.slice(0, -3)}`;
+
+   const planillaMensualCerrada =
+      await planillaRepository.obtenerCierrePlanillaMensual(PERIODO, filial_id);
+   if (planillaMensualCerrada && planillaMensualCerrada?.locked_at) {
+      return {
+         codigo: 400,
+         respuesta: { mensaje: "La planilla Mensual ya fue cerrada" },
+      };
+   }
+   let cierre_planilla_mensual;
+   if (planillaMensualCerrada) {
+      cierre_planilla_mensual = planillaMensualCerrada;
+   } else {
+      const payload = {
+         filial_id,
+         periodo: PERIODO,
+         usuario_cierre_id,
+      };
+      cierre_planilla_mensual =
+         await planillaRepository.generarRegistroCierrePeriodoPlanillaMensual(
+            payload,
+            transaction
+         );
+   }
+   let planillas_creadas = [];
+   const hoy = new Date();
+   for (const t of payload.honorarios) {
+      let data = { ...t };
+      data.locked_at = hoy;
+      data.usuario_cierre_id = usuario_cierre_id;
+      data.filial_id = filial_id;
+      data.cierre_planilla_mensual_id = cierre_planilla_mensual.id;
+      data.periodo = PERIODO;
+      data.fecha_calculo = new Date().toISOString().split("T")[0];
+
+      const response = await planillaRepository.crearRegistroPlanilla(
+         data,
+         transaction
+      );
+      planillas_creadas.push(response);
+   }
+   //!borrar el dato fecha de caluclo para genrar error
+   for (const t of payload.planilla) {
+      let data = { ...t };
+      data.locked_at = hoy;
+      data.usuario_cierre_id = usuario_cierre_id;
+      data.filial_id = filial_id;
+      data.cierre_planilla_mensual_id = cierre_planilla_mensual.id;
+      data.periodo = PERIODO;
+      data.fecha_calculo = new Date().toISOString().split("T")[0];
+
+      const response = await planillaRepository.crearRegistroPlanilla(
+         data,
+         transaction
+      );
+      planillas_creadas.push(response);
+   }
+
    return {
       codigo: 202,
       respuesta: {
          mensaje: "Se obtuvo correctamente la planilla mensua Trunca.",
-         payload,
+         planillas_creadas,
       },
    };
 };
