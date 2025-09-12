@@ -1,3 +1,4 @@
+const { actualizarCuotasPagadas } = require("../../../../application/services/actualizarCuotasPagadas");
 const db = require("../../../../database/models");
 const {
   mapearParaRegistrarTablaGratificaciones,
@@ -130,6 +131,23 @@ module.exports = async (
       dataGratificacionesSinCerrar,
       transaction
     );
+
+    console.log('dataGratificacionesSinCerrar', dataGratificacionesSinCerrar);
+
+    // Actualizar la tabla adelanto_sueldo si en caso en dataPlanillaQuincenalSinCerrar existen adelantos de sueldo
+    if (dataGratificacionesSinCerrar.length > 0) {
+
+       const dataGratificacionesSinCerrarConAdelantoSueldo = dataGratificacionesSinCerrar.filter((grati) => {
+          return grati.adelanto_sueldo > 0
+       })
+
+       const adelantos_ids = dataGratificacionesSinCerrarConAdelantoSueldo.map((grati) => {
+          return grati.adelantos_ids
+       })
+
+      
+       await actualizarCuotasPagadas(adelantos_ids.flat(), transaction)
+      }
 
     await transaction.commit(); // ✔ Confirmar transacción
 

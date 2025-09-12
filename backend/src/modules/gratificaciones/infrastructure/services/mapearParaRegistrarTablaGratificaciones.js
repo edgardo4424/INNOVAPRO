@@ -52,7 +52,9 @@ function mapearParaRegistrarTablaGratificaciones(registros, periodo, anio, filia
     numero_cuenta: r.numero_cuenta,
     contratos: r.contratos,
     data_mantenimiento_detalle: r.data_mantenimiento_detalle,
-    info_detalle: r.info_detalle
+    info_detalle: r.info_detalle,
+    adelanto_sueldo: r.mont_adelanto,
+    adelantos_ids: r.adelantos_ids
   }})
 }
 

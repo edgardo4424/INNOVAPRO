@@ -134,17 +134,13 @@ module.exports = async (
           return planillaQuincenal.adelanto_sueldo > 0
        })
 
-       console.log('dataPlanillaQuincenalSinCerrarConAdelantoSueldo', dataPlanillaQuincenalSinCerrarConAdelantoSueldo);
-      
        const adelantos_ids = dataPlanillaQuincenalSinCerrarConAdelantoSueldo.map((planillaQuincenal) => {
           return planillaQuincenal.adelantos_ids
        })
-      
-       await actualizarCuotasPagadas(adelantos_ids.flat(), fecha_anio_mes, transaction)
+
+       await actualizarCuotasPagadas(adelantos_ids.flat(), transaction)
       }
 
-      asd 
-      
     await transaction.commit(); // ✔ Confirmar transacción
 
     return {

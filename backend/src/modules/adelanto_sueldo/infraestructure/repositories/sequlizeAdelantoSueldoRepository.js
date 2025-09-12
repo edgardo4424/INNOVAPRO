@@ -71,17 +71,33 @@ class SequelizeAdelantoSueldoRepository {
     trabajador_id,
     tipo, // tipo: 'simple' , 'gratificacion' o 'cts'
     fechaInicio,
-    fechaFin
+    fechaFin,
+    fecha_anio_mes_dia
   ) {
-    const adelantos = await AdelantoSueldo.findAll({
-      where: {
-        trabajador_id,
+
+   console.log({
+     trabajador_id,
+     tipo, // tipo: 'simple' , 'gratificacion' o 'cts'
+     fechaInicio,
+     fechaFin
+   });
+
+   let optionsWhere = {
+      trabajador_id,
         tipo: tipo,
         estado: true, // ajusta si tu campo es 1/0 o 'ACTIVO'
-        fecha: { [Op.between]: [fechaInicio, fechaFin] }, // inclusivo
         cuotas_pagadas: { [Op.lt]: Sequelize.col("cuotas") }, // cuotas_pagadas < cuotas
-      },
+   }
+   if(fecha_anio_mes_dia){
+     optionsWhere.fecha = { [Op.between]: [fechaInicio, fechaFin] }
+   }
+    const adelantos = await AdelantoSueldo.findAll({
+      where: optionsWhere,
     });
+
+    console.log('adelantos', adelantos);
+
+    let adelantosQueAplican = [];
 
     if (adelantos.length === 0) {
       return {
@@ -90,23 +106,40 @@ class SequelizeAdelantoSueldoRepository {
       };
     }
 
+    if (tipo == "simple") {
+      for (const adelanto of adelantos) {
+        const aplica = isCuotaAplicable(
+          adelanto.primera_cuota,
+          adelanto.cuotas,
+          fecha_anio_mes_dia,
+          adelanto.forma_descuento
+        );
+
+        if (aplica) {
+          adelantosQueAplican.push(adelanto);
+        }
+      }
+    }else{
+      adelantosQueAplican = adelantos
+    }
+
     let totalAdelantos = 0;
     switch (tipo) {
       case "simple":
-        totalAdelantos = adelantos.reduce(
+        totalAdelantos = adelantosQueAplican.reduce(
           (total, adelanto) =>
             total + Number(adelanto.monto) / Number(adelanto.cuotas),
           0
         );
         break;
       case "gratificacion":
-        totalAdelantos = adelantos.reduce(
+        totalAdelantos = adelantosQueAplican.reduce(
           (total, adelanto) => total + Number(adelanto.monto),
           0
         );
         break;
       case "cts":
-        totalAdelantos = adelantos.reduce(
+        totalAdelantos = adelantosQueAplican.reduce(
           (total, adelanto) => total + Number(adelanto.monto),
           0
         );
@@ -116,78 +149,13 @@ class SequelizeAdelantoSueldoRepository {
         break;
     }
 
+    const adelantos_ids = adelantosQueAplican.map((adelanto) => adelanto.id);
+
     return {
       totalAdelantosSueldo: Number(totalAdelantos.toFixed(2)) || 0,
-      adelantos_ids: adelantos.map((adelanto) => adelanto.id),
+      adelantos_ids: adelantos_ids,
     };
   }
-
- async obtenerTotalAdelantosDelTrabajadorPorFechaPeriodo(
-  trabajador_id,
-  tipo, // 'simple' | 'gratificacion' | 'cts'
-  fechaInicio,
-  fechaFin,
-  fecha_anio_mes,
-) {
-  const adelantos = await AdelantoSueldo.findAll({
-    where: {
-      trabajador_id,
-      tipo,
-      estado: true,
-      primera_cuota: { [Op.between]: [fechaInicio, fechaFin] },
-      cuotas_pagadas: { [Op.lt]: Sequelize.col("cuotas") },
-    },
-  });
-
-  const adelantosSueldo = [];
-
-  for (const adelanto of adelantos) {
-    const aplica = isCuotaAplicable(
-      adelanto.primera_cuota,
-      adelanto.cuotas,
-      fecha_anio_mes,
-      adelanto.forma_descuento
-    );
-
-   
-
-    if (aplica) {
-      adelantosSueldo.push(adelanto);
-    }
-  }
-
-  if (adelantosSueldo.length === 0) {
-    return {
-      totalAdelantosSueldo: 0,
-      adelantos_ids: [],
-    };
-  }
-
-  let totalAdelantos = 0;
-
-  switch (tipo) {
-    case "simple":
-      totalAdelantos = adelantosSueldo.reduce(
-        (total, adelanto) =>
-          total + Number(adelanto.monto) / Number(adelanto.cuotas),
-        0
-      );
-      break;
-
-    case "gratificacion":
-    case "cts":
-      totalAdelantos = adelantosSueldo.reduce(
-        (total, adelanto) => total + Number(adelanto.monto),
-        0
-      );
-      break;
-  }
-
-  return {
-    totalAdelantosSueldo: Number(totalAdelantos.toFixed(2)) || 0,
-    adelantos_ids: adelantosSueldo.map((a) => a.id),
-  };
-}
 }
 
 module.exports = SequelizeAdelantoSueldoRepository;

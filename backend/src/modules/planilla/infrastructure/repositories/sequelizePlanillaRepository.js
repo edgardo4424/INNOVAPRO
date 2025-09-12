@@ -133,6 +133,8 @@ class SequelizePlanillaRepository {
     const fechaInicioMes = moment(`${fecha_anio_mes}-01`).format("YYYY-MM-DD");
     const fechaQuincena = moment(`${fecha_anio_mes}-15`).format("YYYY-MM-DD");
 
+    const fecha_anio_mes_dia = `${fecha_anio_mes}-15`
+
     const contratosPlanilla = await db.contratos_laborales.findAll({
       where: {
         filial_id: filial_id,
@@ -283,6 +285,7 @@ class SequelizePlanillaRepository {
                   "simple",
                   contrato.fecha_inicio,
                   contrato.fecha_fin,
+                  fecha_anio_mes_dia
                 );
 
       const totalDescuentos = +(
@@ -353,7 +356,8 @@ class SequelizePlanillaRepository {
                   trabajador.id,
                   "simple",
                   contrato.fecha_inicio,
-                  contrato.fecha_fin
+                  contrato.fecha_fin,
+                  fecha_anio_mes_dia
                 );
 
       const totalAPagar = sueldoQuincenal - totalAdelantosSueldo;

@@ -54,7 +54,9 @@ class AdelantoSueldo {
       if (!options.includes(this.tipo)) {
          errores.push("El tipo de adelanto de sueldo no existe");
       }
-      const f_desc = ["mensual", "quincenal"];
+
+      if(this.tipo == "simple"){
+         const f_desc = ["mensual", "quincenal"];
       if (!f_desc.includes(this.forma_descuento)) {
          errores.push("El tipo de forma de pago no ");
       }
@@ -85,8 +87,9 @@ class AdelantoSueldo {
       if (!this.cuotas||this.cuotas < 1) {
          errores.push("Numero de cuotas no validas");
       }
-      console.log(errores);
 
+      }
+      
       return errores;
    }
    construirDatosAdelantoSueldo(editar = false) {
