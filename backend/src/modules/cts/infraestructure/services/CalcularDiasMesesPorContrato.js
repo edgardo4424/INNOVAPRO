@@ -107,10 +107,11 @@ function calcularDiasMesesPorContrato(rangoInicioStr, rangoFinStr, contratos,tru
    // Solo cálculo individual por contrato
    return contratos.map((c, idx) => {
       const cIni = parseClampUTC(c.fecha_inicio);
-      // Si se manda un true en trunco se va a validar la fecha anticipada
-      const cFin =trunco?
-            c.fecha_terminacion_anticipada?parseClampUTC(c.fecha_terminacion_anticipada):parseClampUTC(c.fecha_fin)
-            :parseClampUTC(c.fecha_fin);
+      // Si se manda un true en trunco se va a validar la fecha anticipada      
+      const cFin =
+         trunco && c.fecha_terminacion_anticipada
+            ? parseClampUTC(c.fecha_terminacion_anticipada)
+            : parseClampUTC(c.fecha_fin);
       // Solapamiento contrato-rango
       const ini = cIni > rangoInicio ? cIni : rangoInicio;
       const fin = cFin < rangoFin ? cFin : rangoFin;
