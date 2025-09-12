@@ -41,11 +41,11 @@ const AdelantoSueldo = sequelize.define(
       },
       primera_cuota: {
          type: DataTypes.DATEONLY,
-         allowNull: false,
+         allowNull: true,
       },
       forma_descuento: {
          type: DataTypes.ENUM("mensual", "quincenal"),
-         allowNull: false,
+         allowNull: true,
       },
       cuotas: {
          type: DataTypes.INTEGER,

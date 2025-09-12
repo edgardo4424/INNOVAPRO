@@ -6,6 +6,10 @@ const SequelizeGratificacionRepository = require("../../modules/gratificaciones/
 
 const gratificacionRepository = new SequelizeGratificacionRepository();
 
+const SequelizeCtsRepository = require("../../modules/cts/infraestructure/repositories/sequelizeCtsRepository");
+
+const ctsRepository = new SequelizeCtsRepository();
+
 const SequelizeDarBajaTrabajadorRepository = require("../../modules/dar_baja_trabajadores/infrastructure/repositories/sequelizeDarBajaTrabajadorRepository");
 
 const darBajaTrabajadorRepository = new SequelizeDarBajaTrabajadorRepository();
@@ -17,6 +21,7 @@ const sequelize = require("../../database/sequelize");
 const InsertarRegistroBajaTrabajador = require("../../modules/dar_baja_trabajadores/application/useCases/InsertarRegistroBajaTrabajador");
 
 const moment = require("moment");
+const cierreCtsTruncaPorTrabajador = require("../../modules/cts/application/cierreCtsTruncaPorTrabajador");
 
 module.exports = async function darBajaTrabajador(dataBody) {
   const transaction = await sequelize.transaction();
@@ -88,6 +93,18 @@ if (fechaBaja.isSame(fechaFinContrato, "day")) {
 
     console.log("gratificacionTrunca", gratificacionTrunca);
 
+    // Cerrar cts trunca
+    const ctsTrunca = await cierreCtsTruncaPorTrabajador(
+      usuario_cierre_id,
+      filial_id,
+      trabajador_id,
+      fechaTerminacionAnticipada,
+      ctsRepository,
+      transaction
+    );
+    
+console.log('ctsTrunca',ctsTrunca);
+
     const darBajaTrabajador = {
       trabajador_id: trabajador_id,
       contrato_id: contrato_id,
@@ -111,7 +128,6 @@ if (fechaBaja.isSame(fechaFinContrato, "day")) {
         respuesta: registroBajaTrabajador.respuesta,
       };
     }
-
     await transaction.commit();
     return {
       codigo: 201,

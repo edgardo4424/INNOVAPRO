@@ -1,4 +1,5 @@
 const destruturarFecha = require("../../infraestructure/repositories/utils/destructurarFecha");
+const obtenerUltimoDiaLaboralDeQuincena = require("../../infraestructure/repositories/utils/quincena_dia_laboral");
 const obtenerUltimoDiaLaboral = require("../../infraestructure/repositories/utils/ultimo_dia_laboral");
 
 class AdelantoSueldo {
@@ -53,7 +54,9 @@ class AdelantoSueldo {
       if (!options.includes(this.tipo)) {
          errores.push("El tipo de adelanto de sueldo no existe");
       }
-      const f_desc = ["mensual", "quincenal"];
+
+      if(this.tipo == "simple"){
+         const f_desc = ["mensual", "quincenal"];
       if (!f_desc.includes(this.forma_descuento)) {
          errores.push("El tipo de forma de pago no ");
       }
@@ -67,23 +70,26 @@ class AdelantoSueldo {
          if (fecha_recibida < hoy) {
             errores.push("La fecha de la primera cuota es menor a hoy.");
          }
+
+         const quincena_dia_laboral = obtenerUltimoDiaLaboralDeQuincena(anio,mes);
          const ultimo_dia_laboral = obtenerUltimoDiaLaboral(anio,mes);
          console.log('ultimo dia laboral',ultimo_dia_laboral);
          
          if (!ultimo_dia_laboral)
             errores.push("Fallo la obtencion del ultimo dia laboral");
-         const dias_aceptados = [15, Number(ultimo_dia_laboral)];
+         const dias_aceptados = [quincena_dia_laboral, Number(ultimo_dia_laboral)];
 
          if (!dias_aceptados.includes(Number(dia))) {
-            errores.push(`La primera cuota debe ser en quincena o fin de mes (${ultimo_dia_laboral}).`);
+            errores.push(`La primera cuota debe ser en quincena (${quincena_dia_laboral}) o fin de mes (${ultimo_dia_laboral}).`);
          }
       }
       
       if (!this.cuotas||this.cuotas < 1) {
          errores.push("Numero de cuotas no validas");
       }
-      console.log(errores);
 
+      }
+      
       return errores;
    }
    construirDatosAdelantoSueldo(editar = false) {

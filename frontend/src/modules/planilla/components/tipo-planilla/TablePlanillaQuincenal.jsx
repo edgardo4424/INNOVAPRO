@@ -67,6 +67,7 @@ const TablePlanillaQuincenal = ({ planillaQuincenalTipoPlanilla, total }) => {
               {/* Grupo DESCUENTOS AL TRABAJADOR ocupa 6 columnas */}
               <TableHead colSpan={5} className="text-center border-r h-5 text-white border-black">DESCUENTOS AL TRABAJADOR</TableHead>
 
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Adelantos</TableHead>
               
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Total Descuentos</TableHead>
          

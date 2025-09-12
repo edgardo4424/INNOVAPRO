@@ -34,6 +34,8 @@ const RowPlanillaQuincenal = ({ key, e, index }) => {
       <TableCell className="text-right">{Number(e.comision).toFixed(2)}</TableCell>
 
       <TableCell className="text-right">{Number(e?.quinta_categoria).toFixed(2)}</TableCell>
+      <TableCell className="text-right">{Number(e?.adelanto_sueldo).toFixed(2)}</TableCell>
+
 
       <TableCell className="text-right">{Number(e.total_descuentos).toFixed(2)}</TableCell>
       <TableCell className="text-right">{Number(e.total_a_pagar).toFixed(2)}</TableCell>

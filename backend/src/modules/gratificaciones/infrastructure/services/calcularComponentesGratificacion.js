@@ -151,13 +151,16 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
                 ).toFixed(2);
               }
 
-              const totalAdelantosSueldo =
+              const {totalAdelantosSueldo, adelantos_ids} =
                 await adelantoSueldoRepository.obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
                   trabajador.id,
                   "gratificacion",
                   fechaInicioCalculo,
-                  fechaFinCalculo
+                  fechaFinCalculo,
+                  null
                 );
+
+                console.log('totalAdelantosSueldo', totalAdelantosSueldo);
 
               const total = +(
                 gratiNeta +
@@ -231,7 +234,8 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
                 numero_cuenta: numeroCuenta,
                 lista_contratos_ids: lista_id_contratos,
                 data_mantenimiento_detalle: dataMantenimiento,
-                info_detalle: info_detalle
+                info_detalle: info_detalle,
+                adelantos_ids: adelantos_ids
               };
             })
           );

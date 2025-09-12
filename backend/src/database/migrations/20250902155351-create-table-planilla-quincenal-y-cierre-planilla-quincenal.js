@@ -141,6 +141,10 @@ module.exports = {
           type: Sequelize.DECIMAL(10, 2),
           allowNull: false,
         },
+        adelanto_sueldo: {
+          type: Sequelize.DECIMAL(10, 2),
+          allowNull: false,
+        },
         total_descuentos: {
           type: Sequelize.DECIMAL(10, 2),
           allowNull: false,

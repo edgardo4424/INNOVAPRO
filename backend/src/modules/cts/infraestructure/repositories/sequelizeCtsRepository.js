@@ -17,6 +17,7 @@ const { Cts } = require("../models/ctsModel");
 const filtrarContratosSinInterrupcion = require("../../../../services/filtrarContratosSinInterrupcion");
 const filtrarGratificacionesSinInterrupcion = require("../../../../services/filtrarGratificacionesSinInterrupcion");
 const calcularTotalDiasEnRangoFecha = require("../utils/calcularTotalDiasEnRangoFecha");
+const { CierreCTS } = require("../models/ctsCierreModel");
 
 const objeto_inicial_cts = {
    contrato_id: null,
@@ -281,6 +282,7 @@ class SequelizeCtsRopository {
    }
 
    async calcularCtsIndividualTrunca(periodo, anio, filial_id, trabajador_id) {
+      console.log('entre a calcular');
       const responseTrabajador = await db.trabajadores.findOne({
          where: {
             id: trabajador_id,
@@ -611,6 +613,42 @@ class SequelizeCtsRopository {
       const ctsPorTrabajador = await Cts.findOne(options);
       return ctsPorTrabajador;
    }
+
+    async obtenerCierreCts(
+       periodo,
+       anio,
+       filial_id,
+       transaction = null
+     ) {
+       let periodoBuscar;
+       switch (periodo) {
+         case "MAYO":
+            periodoBuscar = `${anio}-05`;
+            break;
+         case "NOVIEMBRE":
+            periodoBuscar = `${anio}-11`;
+            break;
+         default:
+            break;
+      }
+
+       const cierreCTS = await CierreCTS.findOne({
+         where: { periodo: periodoBuscar, filial_id },
+         transaction,
+       });
+       return cierreCTS;
+     }
+
+     async insertarVariasCts(data, transaction = null) {
+         const options = {};
+         if (transaction) {
+           options.transaction = transaction;
+         }
+     
+         const lista_cts = await Cts.bulkCreate(data, options);
+         return lista_cts;
+       }
+
 }
 
 module.exports = SequelizeCtsRopository;

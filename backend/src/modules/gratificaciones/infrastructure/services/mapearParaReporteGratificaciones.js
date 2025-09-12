@@ -43,7 +43,8 @@ function mapearParaReporteGratificaciones(trabajadoresRaw) {
         numero_cuenta: parte.numero_cuenta,
         contratos: parte.lista_contratos_ids,
         data_mantenimiento_detalle: dataMantenimiento,
-        info_detalle: parte.info_detalle
+        info_detalle: parte.info_detalle,
+        adelantos_ids: parte.adelantos_ids
       };
       return fila;
     });

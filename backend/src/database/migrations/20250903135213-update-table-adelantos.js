@@ -5,12 +5,11 @@ module.exports = {
    async up(queryInterface, Sequelize) {
       await queryInterface.addColumn("adelanto_sueldo", "primera_cuota", {
          type: Sequelize.DATEONLY,
-         allowNull: false,
+         allowNull: true,
       });
       await queryInterface.addColumn("adelanto_sueldo", "forma_descuento", {
          type: Sequelize.ENUM("mensual", "quincenal"),
-         allowNull: false,
-         defaultValue: "mensual",
+         allowNull: true,
       });
 
       await queryInterface.addColumn("adelanto_sueldo", "cuotas", {

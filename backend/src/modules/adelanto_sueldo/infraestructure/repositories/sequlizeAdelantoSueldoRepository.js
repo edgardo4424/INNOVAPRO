@@ -1,91 +1,161 @@
 const { Op, Sequelize } = require("sequelize");
 const db = require("../../../../database/models");
 const { AdelantoSueldo } = require("../models/adelantoSueldoModel");
+const { isCuotaAplicable } = require("./utils/validarCuotaAplicable");
 
 class SequelizeAdelantoSueldoRepository {
-   async crearAdelantoSueldo(adelantoSueldoData) {      
-      return await AdelantoSueldo.create(adelantoSueldoData);
-   }
-   async editarAdelantoSueldo(adelantoSueldoData, transaction = null) {
-      const options = {
-         where: { id: adelantoSueldoData.adelanto_sueldo_id },
-      };
-      if (transaction) options.transaction = transaction;
+  async crearAdelantoSueldo(adelantoSueldoData) {
+    return await AdelantoSueldo.create(adelantoSueldoData);
+  }
+  async editarAdelantoSueldo(adelantoSueldoData, transaction = null) {
+    const options = {
+      where: { id: adelantoSueldoData.adelanto_sueldo_id },
+    };
+    if (transaction) options.transaction = transaction;
 
-      await AdelantoSueldo.update(adelantoSueldoData, options);
-   }
-   async eliminarAdelantoSueldoPorId(id, transaction = null) {
-      
-      const options = {
-         where: { id },
-      };
-      if (transaction) options.transaction = transaction;
-      await AdelantoSueldo.update({ estado: 0 }, options);
-   }
-   async obtenerAdelantosSueldo(transaction = null) {
-      const options = {
-         where: { estado: 1 },
-         include: [{ model: db.trabajadores, as: "trabajadores" }],
-      };
-      if (transaction) options.transaction = transaction;
-      return await AdelantoSueldo.findAll(options);
-   }
-   async obtenerAdelantosDelTrabajadorEnRango(
+    await AdelantoSueldo.update(adelantoSueldoData, options);
+  }
+  async eliminarAdelantoSueldoPorId(id, transaction = null) {
+    const options = {
+      where: { id },
+    };
+    if (transaction) options.transaction = transaction;
+    await AdelantoSueldo.update({ estado: 0 }, options);
+  }
+  async obtenerAdelantosSueldo(transaction = null) {
+    const options = {
+      where: { estado: 1 },
+      include: [{ model: db.trabajadores, as: "trabajadores" }],
+    };
+    if (transaction) options.transaction = transaction;
+    return await AdelantoSueldo.findAll(options);
+  }
+  async obtenerAdelantosDelTrabajadorEnRango(
+    trabajador_id,
+    inicio,
+    fin,
+    transaction = null
+  ) {
+    const options = {
+      where: {
+        trabajador_id,
+        estado: 1,
+        fecha: {
+          [Op.between]: [inicio, fin],
+        },
+      },
+      order: [["fecha", "ASC"]],
+    };
+
+    if (transaction) {
+      options.transaction = transaction;
+    }
+
+    return await AdelantoSueldo.findAll(options);
+  }
+  async obtenerAdelantosPorTrabajadorId(id, transaction = null) {
+    const options = {
+      where: {
+        trabajador_id: id,
+        estado: 1,
+        cuotas_pagadas: {
+          [Op.lt]: Sequelize.col("cuotas"), // cuotas_pagadas < cuotas
+        },
+      },
+    };
+    if (transaction) options.transaction = transaction;
+    return await AdelantoSueldo.findAll(options);
+  }
+
+  async obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
+    trabajador_id,
+    tipo, // tipo: 'simple' , 'gratificacion' o 'cts'
+    fechaInicio,
+    fechaFin,
+    fecha_anio_mes_dia
+  ) {
+
+   console.log({
+     trabajador_id,
+     tipo, // tipo: 'simple' , 'gratificacion' o 'cts'
+     fechaInicio,
+     fechaFin
+   });
+
+   let optionsWhere = {
       trabajador_id,
-      inicio,
-      fin,
-      transaction = null
-   ) {
-      const options = {
-         where: {
-            trabajador_id,
-            estado: 1,
-            fecha: {
-               [Op.between]: [inicio, fin],
-            },
-         },
-         order: [["fecha", "ASC"]],
-      };
+        tipo: tipo,
+        estado: true, // ajusta si tu campo es 1/0 o 'ACTIVO'
+        cuotas_pagadas: { [Op.lt]: Sequelize.col("cuotas") }, // cuotas_pagadas < cuotas
+   }
+   if(fecha_anio_mes_dia){
+     optionsWhere.fecha = { [Op.between]: [fechaInicio, fechaFin] }
+   }
+    const adelantos = await AdelantoSueldo.findAll({
+      where: optionsWhere,
+    });
 
-      if (transaction) {
-         options.transaction = transaction;
+    console.log('adelantos', adelantos);
+
+    let adelantosQueAplican = [];
+
+    if (adelantos.length === 0) {
+      return {
+        totalAdelantosSueldo: 0,
+        adelantos_ids: [],
+      };
+    }
+
+    if (tipo == "simple") {
+      for (const adelanto of adelantos) {
+        const aplica = isCuotaAplicable(
+          adelanto.primera_cuota,
+          adelanto.cuotas,
+          fecha_anio_mes_dia,
+          adelanto.forma_descuento
+        );
+
+        if (aplica) {
+          adelantosQueAplican.push(adelanto);
+        }
       }
+    }else{
+      adelantosQueAplican = adelantos
+    }
 
-      return await AdelantoSueldo.findAll(options);
-   }
-   async obtenerAdelantosPorTrabajadorId(id, transaction = null) {
-      const options = {
-         where: {
-            trabajador_id: id,
-            estado: 1,
-            cuotas_pagadas: {
-               [Op.lt]: Sequelize.col("cuotas"), // cuotas_pagadas < cuotas
-            },
-         },
-      };
-      if (transaction) options.transaction = transaction;
-      return await AdelantoSueldo.findAll(options);
-   }
+    let totalAdelantos = 0;
+    switch (tipo) {
+      case "simple":
+        totalAdelantos = adelantosQueAplican.reduce(
+          (total, adelanto) =>
+            total + Number(adelanto.monto) / Number(adelanto.cuotas),
+          0
+        );
+        break;
+      case "gratificacion":
+        totalAdelantos = adelantosQueAplican.reduce(
+          (total, adelanto) => total + Number(adelanto.monto),
+          0
+        );
+        break;
+      case "cts":
+        totalAdelantos = adelantosQueAplican.reduce(
+          (total, adelanto) => total + Number(adelanto.monto),
+          0
+        );
+        break;
 
-   async obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
-      trabajador_id,
-      tipo, // tipo: 'simple' , 'gratificacion' o 'cts'
-      fechaInicio,
-      fechaFin
-   ) {
-      const total = await AdelantoSueldo.sum("monto", {
-         where: {
-            trabajador_id,
-            tipo: tipo,
-            estado: true, // ajusta si tu campo es 1/0 o 'ACTIVO'
-            fecha: { [Op.between]: [fechaInicio, fechaFin] }, // inclusivo
-            cuotas_pagadas: { [Op.lt]: Sequelize.col("cuotas") }, // cuotas_pagadas < cuotas
-         },
-         
-      });
+      default:
+        break;
+    }
 
-      return Number(total || 0);
-   }
+    const adelantos_ids = adelantosQueAplican.map((adelanto) => adelanto.id);
+
+    return {
+      totalAdelantosSueldo: Number(totalAdelantos.toFixed(2)) || 0,
+      adelantos_ids: adelantos_ids,
+    };
+  }
 }
 
 module.exports = SequelizeAdelantoSueldoRepository;

@@ -22,6 +22,7 @@ function unificarTrabajadoresTipoHonorariosQuincenal(data) {
       // Acumulamos los valores sumables
       t.dias_laborados += item.dias_laborados;
       t.sueldo_quincenal += item.sueldo_quincenal;
+      t.adelanto_sueldo += item.adelanto_sueldo;
       t.total_a_pagar += item.total_a_pagar;
 
       // Tomamos el sueldo_base más alto
