@@ -11,5 +11,6 @@ router.get("/", dataMantenimientoController.obtenerDataMantenimiento);
 router.get("/:id", dataMantenimientoController.obtenerDataMantenimientoPorId);
 router.get("/codigo/:codigo", dataMantenimientoController.obtenerDataMantenimientoPorCodigo);
 router.put("/:id", dataMantenimientoController.actualizarDataMantenimiento);
+router.get("/codigo-importe/:codigo_importe", dataMantenimientoController.obtenerDataMantenimientoPorCodigoImporte);
 
 module.exports = router;

@@ -9,9 +9,11 @@ import { viPlanillaMensual } from "../utils/valorInicial";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { ModalCerrarPlanilla } from "../components/tipo-planilla/ModalCerrarPlanilla";
+import { calculo_aportes_trabajador } from "../hooks/calculo_aportes_trabajador";
 
 const CalculoPlanillaMensual = () => {
    const [filiales, setFiliales] = useState([]);
+   const [importes, setImportes] = useState([]);
 
    // ?? loading
    const [loading, setLoading] = useState(false);
@@ -19,6 +21,18 @@ const CalculoPlanillaMensual = () => {
    // ?? Estados Solo para los que son planilla
    const [planillaMensualTipoPlanilla, setPlanillaMensualTipoPlanilla] =
       useState(viPlanillaMensual.planilla);
+
+   const [datosTotalesPlanilla, setDatosTotalesPlanilla] = useState({
+      sumatoria_sueldo_basico: 0,
+      sumatoria_sueldo_mensual: 0,
+      sumatoria_sueldo_bruto: 0,
+      sumatoria_sueldo_neto: 0,
+      sumatoria_saldo_por_pagar: 0,
+      sumatoria_essalud: 0,
+      sumatoria_vida_ley: 0,
+      sumatoria_sctr_salud: 0,
+      sumatoria_sctr_pension: 0,
+   });
 
    // ?? Estados Solo para los que son por honorarios
 
@@ -44,17 +58,21 @@ const CalculoPlanillaMensual = () => {
             anio_mes_dia,
             filial_id: filtro.filial_id,
          };
-         console.log('data enviada',dataPOST);
-         
+
          const res = await planillaMensualService.obtenerPlanillaMensual(
             dataPOST
          );
-         setPlanillaMensualTipoPlanilla(res.payload.planilla.trabajadores);
+         const { datos_totales, recalculo_planillas } =
+            calculo_aportes_trabajador(
+               res.payload.planilla.trabajadores,
+               importes
+            );
+         setPlanillaMensualTipoPlanilla(recalculo_planillas);
+         setDatosTotalesPlanilla(datos_totales)
          setPlanillaMensualTipoRh(res.payload.honorarios.trabajadores);
          setDatosCalculo(res.datosCalculo);
       } catch (error) {
          console.log(error);
-         
       } finally {
          setLoading(false);
       }
@@ -84,6 +102,11 @@ const CalculoPlanillaMensual = () => {
             <div className="w-full px-7">
                <TablePlanillaMensual
                   planillaMensualTipoPlanilla={planillaMensualTipoPlanilla}
+                  filial_id={filtro.filial_id}
+                  filiales={filiales}
+                  importes={importes}
+                  setImportes={setImportes}
+                  datosTotalesPlanilla={datosTotalesPlanilla}
                />
             </div>
          );
@@ -116,14 +139,13 @@ const CalculoPlanillaMensual = () => {
             await planillaMensualService.generarCierreRegistroPlanillaMensual(
                payload
             );
-            toast.success("Planilla guardada con éxito.")
-         } catch (error) {
+         toast.success("Planilla guardada con éxito.");
+      } catch (error) {
          if (error.response?.data?.mensaje) {
             toast.error(error.response?.data?.mensaje);
             return;
          }
          toast.error("Error Desconocido");
-         
       } finally {
          setLoading(false);
       }
@@ -159,7 +181,7 @@ const CalculoPlanillaMensual = () => {
          )}
 
          {/* <Button onClick={handleChangeGuardarPlanilla}>Guardar Planilla</Button> */}
-         <ModalCerrarPlanilla guardarPlanilla={handleChangeGuardarPlanilla}/>
+         <ModalCerrarPlanilla guardarPlanilla={handleChangeGuardarPlanilla} />
       </div>
    );
 };

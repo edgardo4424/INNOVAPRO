@@ -14,6 +14,7 @@ class Trabajador {
       comision_afp,
       fecha_baja,
       contratos_laborales,
+      fecha_nacimiento
    }) {
       (this.id = id),
          (this.nombres = nombres),
@@ -29,6 +30,7 @@ class Trabajador {
       this.comision_afp = comision_afp;
       this.fecha_baja = fecha_baja;
       this.contratos_laborales = contratos_laborales;
+      this.fecha_nacimiento = fecha_nacimiento;
    }
 
    validarCamposObligatorios(editar = false) {
@@ -56,6 +58,13 @@ class Trabajador {
       if (this.asignacion_familiar === undefined) {
          errores.push("Asignacion familiar inválida");
       }
+      if (
+         !this.fecha_nacimiento ||
+         new Date(this.fecha_nacimiento) > new Date()
+      ) {
+         errores.push("Fecha de nacimiento inválida");
+      }
+
       if (this.cargo_id === null) {
          errores.push("El cargo no se a enviado");
       }
@@ -105,6 +114,7 @@ class Trabajador {
          tipo_afp: this.tipo_afp,
          comision_afp: this.comision_afp,
          fecha_baja: this.fecha_baja,
+         fecha_nacimiento:this.fecha_nacimiento
       };
       if (editar) {
          datos.trabajador_id = this.id;

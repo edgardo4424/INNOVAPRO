@@ -44,6 +44,10 @@ export const trabajador_planilla_model =()=>( {
    filial_id:"",
    banco:"",
    numero_cuenta:"",
+   essalud:"",
+   seguro_vida_ley:"",
+   sctr_salud:"",
+   sctr_pension:"",
    info_detalle:[],
 }
 )

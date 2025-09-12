@@ -42,7 +42,14 @@ module.exports = {
          const last2 = apellidos[(n * 7) % apellidos.length];
          return { nombres: first, apellidos: `${last1} ${last2}` };
       }
-
+      function generarFechaNacimiento() {
+         const hoy = new Date();
+         const edadMin = 25;
+         const edadMax = 60;
+         const edad = Math.floor(Math.random() * (edadMax - edadMin + 1)) + edadMin;
+         const fecha = new Date(hoy.getFullYear() - edad, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1);
+         return fecha.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+      }            
       const trabajadoresData = [];
       const baseDoc = 10000000;
 
@@ -67,6 +74,7 @@ module.exports = {
                estado: "activo",
                cargo_id: (globalIdx % 8) + 1,
                domiciliado: globalIdx % 2,
+               fecha_nacimiento:generarFechaNacimiento()
             });
          }
       }

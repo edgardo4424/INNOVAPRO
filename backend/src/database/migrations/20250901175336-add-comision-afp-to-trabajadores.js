@@ -8,9 +8,14 @@ module.exports = {
       allowNull: false,
       defaultValue: false,
     });
+    await queryInterface.addColumn('trabajadores', 'fecha_nacimiento', {
+      type: Sequelize.DATEONLY,
+      allowNull: false,
+    });
   },
 
   async down(queryInterface, Sequelize) {
     await queryInterface.removeColumn('trabajadores', 'comision_afp');
+    await queryInterface.removeColumn('trabajadores', 'fecha_nacimiento');
   }
 };
