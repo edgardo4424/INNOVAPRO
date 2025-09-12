@@ -49,7 +49,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
     observacion,
   } = dataBody;
 
-  console.log("dataBody", dataBody);
+  // console.log("dataBody", dataBody);
 
   try {
     // Buscar el contrato laboral del trabajador asignando la fecha_baja
@@ -96,7 +96,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
       transaction
     );
 
-    console.log("gratificacionTrunca", gratificacionTrunca);
+    // console.log("gratificacionTrunca", gratificacionTrunca);
 
     // Cerrar cts trunca
     const ctsTrunca = await cierreCtsTruncaPorTrabajador(
@@ -107,6 +107,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
       ctsRepository,
       transaction
     );
+
 
     console.log("ctsTrunca", ctsTrunca);
 
@@ -138,6 +139,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
     }
     // Sino cerrar planilla
 
+
      const anioMesDia = fechaTerminacionAnticipada.clone().endOf("month").format("YYYY-MM-DD");
 
     console.log('anioMesDia', anioMesDia);
@@ -154,6 +156,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
       );
 
     console.log("planillaMensualTrunca", planillaMensualTrunca);
+
 
     const darBajaTrabajador = {
       trabajador_id: trabajador_id,

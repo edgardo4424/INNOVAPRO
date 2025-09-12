@@ -6,7 +6,8 @@ const calcularGratificacionPlanilla = async (
    periodograti,
    filial_id,
    anioGratificacion,
-   trabajador_id
+   trabajador_id,
+   transaction
 ) => {
    if (periodograti) {
       const responseGratificacion =
@@ -14,7 +15,8 @@ const calcularGratificacionPlanilla = async (
             periodograti,
             anioGratificacion,
             filial_id,
-            trabajador_id
+            trabajador_id,
+            transaction
          );
       if (responseGratificacion.length > 0) {
          let monto = 0;

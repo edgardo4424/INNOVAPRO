@@ -288,6 +288,7 @@ class SequelizeCtsRopository {
             id: trabajador_id,
             estado: 1,
          },
+         transaction
       });
       if (!responseTrabajador) {
          throw new Error("Eñ trabajador no existe");
@@ -335,7 +336,8 @@ class SequelizeCtsRopository {
             periodoGratificacion,
             anioGratificacion,
             filial_id,
-            trabajador.id
+            trabajador.id,
+            transaction
          );
       if (responseGratificacion.length > 0) {
          const gratificacionesLimpias = responseGratificacion.map((g) =>

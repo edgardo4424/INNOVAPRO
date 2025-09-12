@@ -11,7 +11,8 @@ module.exports = async (
    const fin_mes = anio_mes_dia;
 
    const trabajadorData = await trabajadorRepository.obtenerTrabajadorPorId(
-      trabajador_id
+      trabajador_id,
+      transaction
    );
 
    const payload = {
@@ -21,7 +22,7 @@ module.exports = async (
 
    const inicio_mes = `${anio_mes_dia.slice(0, -2)}01`;
 
-   const t = trabajadorData;
+   const t = trabajadorData.get({ plain: true });
    // 1. Filtrar contratos en rango del mes
    const contratosEnRango = t.contratos_laborales.filter((c) => {
       return (
@@ -73,7 +74,8 @@ module.exports = async (
       const res = await planillaRepository.obtenerPlanillaMensualPorTrabajador(
          anio_mes_dia,
          t.id,
-         filial_id
+         filial_id,
+         transaction
       );
       payload.planilla.push(res);
    }

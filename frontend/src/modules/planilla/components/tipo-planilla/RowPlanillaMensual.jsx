@@ -9,7 +9,6 @@ import { Eye, FileDown } from "lucide-react";
 import ModalInfoDetalle from "./ModalInfoDetalles";
 
 const RowPlanillaMensual = ({ key, e, index }) => {
-
    console.log("e", e);
 
    return (
@@ -85,10 +84,18 @@ const RowPlanillaMensual = ({ key, e, index }) => {
          <TableCell className="text-right">-{e.adelanto_prestamo}</TableCell>
 
          <TableCell className="text-right">{e.saldo_por_pagar}</TableCell>
-         <TableCell className="text-right">{e.essalud.toFixed(2)}</TableCell>
-         <TableCell className="text-right">{e.seguro_vida_ley.toFixed(2)}</TableCell>
-         <TableCell className="text-right">{e.sctr_salud.toFixed(2)}</TableCell>
-         <TableCell className="text-right">{e.sctr_pension.toFixed(2)}</TableCell>
+         <TableCell className="text-right">
+            {e.essalud ? e.essalud.toFixed(2) : 0}
+         </TableCell>
+         <TableCell className="text-right">
+            {e.seguro_vida_ley ? e.seguro_vida_ley.toFixed(2) : 0}
+         </TableCell>
+         <TableCell className="text-right">
+            {e.sctr_salud ? e.sctr_salud.toFixed(2) : 0}
+         </TableCell>
+         <TableCell className="text-right">
+            {e.sctr_pension ? e.sctr_pension.toFixed(2) : 0}
+         </TableCell>
 
          {/*       <TableCell className={"flex gap-x-4 items-center"}>
         <button className="border border-gray-400 rounded-md p-1">

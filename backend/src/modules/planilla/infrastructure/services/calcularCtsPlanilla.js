@@ -2,13 +2,14 @@ const SequelizeCtsRopository = require("../../../cts/infraestructure/repositorie
 
 const ctsRepository = new SequelizeCtsRopository();
 
-const calcularCTSPlanilla = async (periodo, anio, filial_id, trabajador_id) => {
+const calcularCTSPlanilla = async (periodo, anio, filial_id, trabajador_id,transaction) => {
    if (periodo) {
       const responseCts = await ctsRepository.obtenerCtsPorTrabajador(
          periodo,
          anio,
          filial_id,
-         trabajador_id
+         trabajador_id,
+         transaction
       );      
       if (responseCts) {
          return Number(responseCts.cts_depositar);
