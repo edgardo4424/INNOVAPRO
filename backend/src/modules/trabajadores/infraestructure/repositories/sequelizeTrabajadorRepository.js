@@ -24,7 +24,7 @@ class SequelizeTrabajadorRepository {
       return trabajador;
    }
 
-   async obtenerTrabajadorPorId(id) {
+   async obtenerTrabajadorPorId(id,transaction=null) {
       const trabajador = await Trabajador.findOne({
          where: { id: id },
          include: [
@@ -35,6 +35,7 @@ class SequelizeTrabajadorRepository {
                required: false,
             },
          ],
+         transaction
       });
       return trabajador;
    }

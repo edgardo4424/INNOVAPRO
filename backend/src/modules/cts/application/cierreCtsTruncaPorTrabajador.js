@@ -92,7 +92,6 @@ console.log('anioDeposito', anioDeposito);
     );
 
 
-    console.log('ctsDelTrabajador', ctsDelTrabajador);
 
     // Verificar si hay CTS para registrar
     if (ctsDelTrabajador.length === 0) {
@@ -111,7 +110,6 @@ console.log('anioDeposito', anioDeposito);
       cierreId
     );
 
-    console.log('dataCTS', dataCTS);
     await ctsRepository.insertarVariasCts(dataCTS, transaction);
   }
 

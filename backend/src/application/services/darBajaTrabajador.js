@@ -45,7 +45,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
     observacion,
   } = dataBody;
 
-  console.log("dataBody", dataBody);
+  // console.log("dataBody", dataBody);
 
   try {
     // Actualizar el contrato laboral del trabajador asignando la fecha_baja
@@ -54,7 +54,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
       { transaction }
     );
 
-    console.log("contratoLaboralEncontrado", contratoLaboralEncontrado);
+    // console.log("contratoLaboralEncontrado", contratoLaboralEncontrado);
     // Comparar si la fecha de baja es menor a la fecha de fin contrato, tomar la fecha de baja como fecha_terminacion_anticipada
     // sino tomar la fecha fin contrato como fecha_terminacion_anticipada
 
@@ -88,7 +88,7 @@ if (fechaBaja.isSame(fechaFinContrato, "day")) {
       transaction
     );
 
-    console.log("gratificacionTrunca", gratificacionTrunca);
+    // console.log("gratificacionTrunca", gratificacionTrunca);
 
     // Cerrar cts trunca
     const ctsTrunca = await cierreCtsTruncaPorTrabajador(
@@ -100,7 +100,7 @@ if (fechaBaja.isSame(fechaFinContrato, "day")) {
       transaction
     );
 
-    console.log('ctsTrunca',ctsTrunca);
+    // console.log('ctsTrunca',ctsTrunca);
     // Calcular Planilla mensual trunca
 
     const fecha = new Date(fechaTerminacionAnticipada);
@@ -110,7 +110,7 @@ if (fechaBaja.isSame(fechaFinContrato, "day")) {
 
     const ultimoDiaDelMes = obtenerUltimoDiaDelMes(anio, mes);
 
-    const anio_mes_dia = `${anio}-${mes}-${ultimoDiaDelMes}`;
+    const anio_mes_dia = `${anio}-${Number(mes)<10?"0":""}${mes}-${ultimoDiaDelMes}`;
     
     const planillaMensualTrunca = await calcularPlanillaMensualTruncaPorTrabajador(
       anio_mes_dia,
@@ -122,7 +122,7 @@ if (fechaBaja.isSame(fechaFinContrato, "day")) {
       transaction
     );
     
-console.log('planillaMensualTrunca',planillaMensualTrunca);
+// console.log('planillaMensualTrunca',planillaMensualTrunca);
 
     const darBajaTrabajador = {
       trabajador_id: trabajador_id,
@@ -159,7 +159,6 @@ console.log('planillaMensualTrunca',planillaMensualTrunca);
     trabajadorActualizado.fecha_baja = fecha_baja;
     await trabajadorActualizado.save({ transaction });
 
-   
     await transaction.commit();
     return {
       codigo: 201,

@@ -781,12 +781,14 @@ class SequelizePlanillaRepository {
    async obtenerPlanillaMensualPorTrabajador(
       anio_mes_dia,
       trabajador_id,
-      filial_id
+      filial_id,
+      transaction=null
    ) {
       const responseQuicenas = await this.obtenerPlanillaQuincenalPorTrabajador(
          `${anio_mes_dia.slice(0, -3)}`,
          filial_id,
-         trabajador_id
+         trabajador_id,
+         transaction
       );
       const quincenas = responseQuicenas.map((q) => q.get({ plain: true }));
       let MONTO_QUINCENAS = 0;
@@ -811,9 +813,7 @@ class SequelizePlanillaRepository {
       //Todo: validamos que el mes que se recibe se integrara la grati o cts
       const { periodocts, periodograti } =
          calcular_periodo_grati_cts(fin_de_mes);
-      if (trabajador_id == 8) {
-         console.log("Periodos", periodocts, periodograti);
-      }
+
 
       const response_trabajador = await db.trabajadores.findByPk(
          trabajador_id,
@@ -837,11 +837,14 @@ class SequelizePlanillaRepository {
                   ],
                },
             ],
-         }
+            transaction
+         },
       );
       if (!response_trabajador) throw new Error("El trabajador no existe.");
       //Se valido que el trabajador exista
       const trabajador = response_trabajador.get({ plain: true });
+      console.log("Contratos laborales del trabjador.");
+      console.log(trabajador.contratos_laborales);
 
       const contratoInicial = filtrarContratosSinInterrupcion(
          trabajador.contratos_laborales
@@ -879,7 +882,8 @@ class SequelizePlanillaRepository {
          periodocts,
          anio_mes_dia.slice(0, -6),
          filial_id,
-         trabajador.id
+         trabajador.id,
+         transaction
       );
       const DIAS_LABORALES = diasLaborales(
          inicio_de_mes,
@@ -893,7 +897,9 @@ class SequelizePlanillaRepository {
          // fecha_inicio fecha_fin
          let inicio_real =
             c.fecha_inicio > inicio_de_mes ? c.fecha_inicio : inicio_de_mes;
-         const fin_contrato=c.fecha_terminacion_anticipada?c.fecha_terminacion_anticipada:c.fecha_fin;
+         const fin_contrato = c.fecha_terminacion_anticipada
+            ? c.fecha_terminacion_anticipada
+            : c.fecha_fin;
          let fin_real = fin_contrato < fin_de_mes ? fin_contrato : fin_de_mes;
          const DIAS_NO_CONTRATADOS = calcularDiasNoContratado(
             inicio_real,
