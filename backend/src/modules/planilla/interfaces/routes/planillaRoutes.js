@@ -17,5 +17,6 @@ router.post("/quincenal-por-trabajador", planillaController.obtenerPlanillaQuinc
 router.post("/quincenal-total-por-trabajador", planillaController.obtenerTotalPlanillaQuincenalPorTrabajador)
 router.post("/planilla-mensual-cierre",planillaController.cierrePlanillaMensual)
 router.post("/mensual", planillaController.obtenerPlanillaMensualCerradas);
+router.post("/planilla-mensual-trunca", planillaController.calcularPlanillaMensualTruncaPorTrabajador);
 
 module.exports = router; 

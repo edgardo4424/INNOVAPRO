@@ -48,10 +48,6 @@ module.exports = async (
    
    let planillas_creadas = [];
    for (const t of transform_data) {
-      if(t.trabajador_id==8){
-         console.log("asdasd");
-         console.log(t);
-      }
       const response = await planillaRepository.crearRegistroPlanilla(t,transaction);
       planillas_creadas.push(response);
    }
