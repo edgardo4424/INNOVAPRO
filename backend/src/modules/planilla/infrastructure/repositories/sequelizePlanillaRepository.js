@@ -434,6 +434,376 @@ class SequelizePlanillaRepository {
     };
   }
 
+  async calcularPlanillaQuincenalTruncaPorTrabajador(
+    fecha_anio_mes,
+    filial_id,
+    trabajador_id,
+    transaction = null
+  ) {
+    const MONTO_ASIGNACION_FAMILIAR = Number(
+      (
+        await dataMantenimientoRepository.obtenerPorCodigo(
+          "valor_asignacion_familiar"
+        )
+      ).valor
+    );
+
+    const PORCENTAJE_DESCUENTO_ONP = Number(
+      (await dataMantenimientoRepository.obtenerPorCodigo("valor_onp")).valor
+    );
+
+    const PORCENTAJE_DESCUENTO_AFP = Number(
+      (await dataMantenimientoRepository.obtenerPorCodigo("valor_afp")).valor
+    );
+
+    const PORCENTAJE_DESCUENTO_SEGURO = Number(
+      (await dataMantenimientoRepository.obtenerPorCodigo("valor_seguro")).valor
+    );
+
+    const PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT = Number(
+      (
+        await dataMantenimientoRepository.obtenerPorCodigo(
+          "valor_comision_afp_habitat"
+        )
+      ).valor
+    );
+    const PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA = Number(
+      (
+        await dataMantenimientoRepository.obtenerPorCodigo(
+          "valor_comision_afp_integra"
+        )
+      ).valor
+    );
+
+    const PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA = Number(
+      (
+        await dataMantenimientoRepository.obtenerPorCodigo(
+          "valor_comision_afp_prima"
+        )
+      ).valor
+    );
+
+    const PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO = Number(
+      (
+        await dataMantenimientoRepository.obtenerPorCodigo(
+          "valor_comision_afp_profuturo"
+        )
+      ).valor
+    );
+
+    const dataMantenimiento = {
+      MONTO_ASIGNACION_FAMILIAR,
+      PORCENTAJE_DESCUENTO_ONP,
+      PORCENTAJE_DESCUENTO_AFP,
+      PORCENTAJE_DESCUENTO_SEGURO,
+      PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT,
+      PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA,
+      PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA,
+      PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO,
+    };
+
+    const fechaInicioMes = moment(`${fecha_anio_mes}-01`).format("YYYY-MM-DD");
+    const fechaQuincena = moment(`${fecha_anio_mes}-15`).format("YYYY-MM-DD");
+
+    const fecha_anio_mes_dia = `${fecha_anio_mes}-15`
+
+    const contratosPlanilla = await db.contratos_laborales.findAll({
+      where: {
+        filial_id: filial_id,
+        trabajador_id: trabajador_id,
+        estado: true,
+        tipo_contrato: "PLANILLA",
+        fecha_inicio: { [Op.lte]: fechaQuincena },
+        [Op.or]: [
+          { fecha_terminacion_anticipada: null },
+          { fecha_terminacion_anticipada: { [Op.gte]: fechaInicioMes } },
+        ],
+        fecha_fin: { [Op.gte]: fechaInicioMes },
+      },
+      include: [
+        {
+          model: db.trabajadores,
+          as: "trabajador",
+        },
+      ],
+      raw: false,
+      transaction,
+    });
+
+    const contratosRxh = await db.contratos_laborales.findAll({
+      where: {
+        filial_id: filial_id,
+        estado: true,
+        tipo_contrato: "HONORARIOS",
+        fecha_inicio: { [Op.lte]: fechaQuincena },
+        [Op.or]: [
+          { fecha_terminacion_anticipada: null },
+          { fecha_terminacion_anticipada: { [Op.gte]: fechaInicioMes } },
+        ],
+        fecha_fin: { [Op.gte]: fechaInicioMes },
+      },
+      include: [
+        {
+          model: db.trabajadores,
+          as: "trabajador",
+        },
+      ],
+      raw: false,
+      transaction,
+    });
+
+    const anio = fecha_anio_mes.split("-")[0];
+    const mes = fecha_anio_mes.split("-")[1];
+
+    const listaPlanillaTipoPlanilla = [];
+
+
+    for (const contrato of contratosPlanilla) {
+      const trabajador = contrato.trabajador;
+
+      const sistema_pension = trabajador.sistema_pension; // 'ONP' o 'AFP'
+      const tipo_afp = trabajador.tipo_afp; // 'HABITAT', 'INTEGRA', 'PRIMA', 'PROFUTURO' o null si es ONP
+
+      let onp = 0;
+      let afp = 0;
+      let seguro = 0;
+      let comision = 0;
+
+      const sueldoBase = Number(contrato.sueldo);
+
+     /*  const asignacionFamiliar = trabajador.asignacion_familiar
+        ? +((MONTO_ASIGNACION_FAMILIAR).toFixed(2))
+        : 0; */
+
+       const asignacionFamiliar =
+                (trabajador.asignacion_familiar &&
+                (new Date(trabajador.asignacion_familiar) >= new Date(contrato.fecha_inicio)))
+                  ? dataMantenimiento.MONTO_ASIGNACION_FAMILIAR/2
+                  : 0;
+
+      const diasLaborados = calcularDiasLaboradosQuincena(
+        contrato.fecha_inicio,
+        contrato.fecha_fin,
+        fecha_anio_mes
+      );
+
+      // (SUELDO/30)*DÍAS LABORADOS
+      const sueldoQuincenal = +(
+        (sueldoBase / 30) * diasLaborados) 
+      .toFixed(2);
+
+      const sueldoBruto = +(sueldoQuincenal + asignacionFamiliar).toFixed(2);
+
+      if (sistema_pension === "ONP") {
+        onp = +(
+          (sueldoBruto * dataMantenimiento.PORCENTAJE_DESCUENTO_ONP) /
+          100
+        ).toFixed(2);
+      } else if (sistema_pension === "AFP") {
+        afp = +(
+          (sueldoBruto * dataMantenimiento.PORCENTAJE_DESCUENTO_AFP) /
+          100
+        ).toFixed(2);
+
+        seguro = +(
+          (sueldoBruto * dataMantenimiento.PORCENTAJE_DESCUENTO_SEGURO) /
+          100
+        ).toFixed(2);
+
+        if (trabajador.comision_afp) {
+          switch (tipo_afp) {
+            case "HABITAT":
+              comision = +(
+                (sueldoBruto * PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT) /
+                100
+              ).toFixed(2);
+              break;
+            case "INTEGRA":
+              comision = +(
+                (sueldoBruto * PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA) /
+                100
+              ).toFixed(2);
+              break;
+            case "PRIMA":
+              comision = +(
+                (sueldoBruto * PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA) /
+                100
+              ).toFixed(2);
+              break;
+            case "PROFUTURO":
+              comision = +(
+                (sueldoBruto * PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO) /
+                100
+              ).toFixed(2);
+              break;
+            default:
+              break;
+          }
+        }
+      }
+
+      /* const quinta_categoria = 0; */
+      const { found, retencion_base_mes, registro } =
+        await quintaCategoriaService.getRetencionBaseMesPorDni({
+          dni: trabajador.numero_documento,
+          anio,
+          mes,
+        });
+
+      const quinta_categoria = found ? +(retencion_base_mes / 2).toFixed(2) : 0;
+
+       const {totalAdelantosSueldo, adelantos_ids} =
+                await adelantoSueldoRepository.obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
+                  trabajador.id,
+                  "simple",
+                  /* contrato.fecha_inicio,
+                  contrato.fecha_fin, */
+                  fecha_anio_mes_dia
+                );
+
+      const totalDescuentos = +(
+        onp +
+        afp +
+        seguro +
+        comision +
+        quinta_categoria +
+        totalAdelantosSueldo
+      ).toFixed(2);
+     if (trabajador.id == 7) {
+  console.log('--- Detalle de descuentos para Valeria ---');
+  console.log('ONP:', onp);
+  console.log('AFP:', afp);
+  console.log('Seguro:', seguro);
+  console.log('Comisión:', comision);
+  console.log('Quinta Categoría:', quinta_categoria);
+  console.log('Adelantos de Sueldo:', totalAdelantosSueldo);
+  console.log('Total Descuentos:', totalDescuentos);
+}
+      
+      const totalAPagar = +(sueldoBruto - totalDescuentos).toFixed(2);
+
+      listaPlanillaTipoPlanilla.push({
+         trabajador_id: trabajador.id,
+         
+        tipo_documento: trabajador.tipo_documento,
+        numero_documento: trabajador.numero_documento,
+        nombres: trabajador.nombres,
+        apellidos: trabajador.apellidos,
+        contrato_id: contrato.id,
+        tipo_contrato: contrato.tipo_contrato,
+         regimen: contrato.regimen,
+        fecha_ingreso: contrato.fecha_inicio,
+        fecha_fin: contrato.fecha_fin,
+        dias_laborados: diasLaborados,
+        sueldo_base: sueldoBase,
+        sueldo_quincenal: sueldoQuincenal,
+        asignacion_familiar: asignacionFamiliar,
+        sueldo_bruto: sueldoBruto,
+        onp,
+        afp,
+        seguro,
+        comision,
+        quinta_categoria,
+        total_descuentos: totalDescuentos,
+        total_a_pagar: totalAPagar,
+
+        banco: contrato.banco,
+        numero_cuenta: contrato.numero_cuenta,
+        tipo_afp: sistema_pension == "AFP" ? tipo_afp : "ONP",
+
+        adelanto_sueldo: totalAdelantosSueldo,
+        adelantos_ids: adelantos_ids
+      });
+    }
+
+    const listaPlanillaTipoHonorarios = [];
+
+    for (const contrato of contratosRxh) {
+      const trabajador = contrato.trabajador;
+
+      const sueldoBase = Number(contrato.sueldo);
+
+      const diasLaborados = calcularDiasLaboradosQuincena(
+        contrato.fecha_inicio,
+        contrato.fecha_fin,
+        fecha_anio_mes
+      );
+
+      // (SUELDO/30)*DÍAS LABORADOS
+      const sueldoQuincenal = +(
+        (sueldoBase / 30) * diasLaborados) 
+      .toFixed(2);
+
+      
+       const {totalAdelantosSueldo, adelantos_ids} =
+                await adelantoSueldoRepository.obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
+                  trabajador.id,
+                  "simple",
+                  /* contrato.fecha_inicio,
+                  contrato.fecha_fin, */
+                  fecha_anio_mes_dia
+                );
+
+      const totalAPagar = sueldoQuincenal - totalAdelantosSueldo;
+      listaPlanillaTipoHonorarios.push({
+         trabajador_id: trabajador.id,
+        tipo_documento: trabajador.tipo_documento,
+        numero_documento: trabajador.numero_documento,
+        nombres: trabajador.nombres,
+        apellidos: trabajador.apellidos,
+        contrato_id: contrato.id,
+        tipo_contrato: contrato.tipo_contrato,
+        regimen: contrato.regimen,
+        fecha_ingreso: contrato.fecha_inicio,
+        fecha_fin: contrato.fecha_fin,
+        dias_laborados: diasLaborados,
+        sueldo_base: sueldoBase,
+        sueldo_quincenal: sueldoQuincenal,
+        total_a_pagar: totalAPagar,
+
+        banco: contrato.banco,
+        numero_cuenta: contrato.numero_cuenta,
+
+        adelanto_sueldo: totalAdelantosSueldo,
+        adelantos_ids: adelantos_ids
+      });
+    }
+
+    const listaPlanillaTipoPlanillaConDetalle = unificarTrabajadoresTipoPlanillaQuincenal(
+      listaPlanillaTipoPlanilla)
+
+       console.dir(listaPlanillaTipoPlanillaConDetalle, { depth: null });
+
+
+ const listaPlanillaTipoHonorariosConDetalle = unificarTrabajadoresTipoHonorariosQuincenal(
+      listaPlanillaTipoHonorarios)
+
+   //console.dir(listaPlanillaTipoHonorariosConDetalle, { depth: null });
+
+
+    const data_mat = {
+        valor_asignacion_familiar: dataMantenimiento.MONTO_ASIGNACION_FAMILIAR,
+        valor_onp: dataMantenimiento.PORCENTAJE_DESCUENTO_ONP,
+        valor_afp: dataMantenimiento.PORCENTAJE_DESCUENTO_AFP,
+        valor_seguro: dataMantenimiento.PORCENTAJE_DESCUENTO_SEGURO,
+        valor_comision_afp_habitat: dataMantenimiento.PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT,
+        valor_comision_afp_integra: dataMantenimiento.PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA,
+        valor_comision_afp_prima: dataMantenimiento.PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA,
+        valor_comision_afp_profuturo: dataMantenimiento.PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO,
+       
+      }
+
+    return {
+      planilla: {
+        trabajadores: listaPlanillaTipoPlanillaConDetalle,
+      },
+      honorarios: {
+        trabajadores: listaPlanillaTipoHonorariosConDetalle,
+      },
+      data_mantenimiento_detalle: data_mat,
+    };
+  }
+
    // prettier-ignore
    async calcularPlanillaMensualPorTrabajadorRXH(anio_mes_dia, trabajador_id,filial_id) {
       const responseQuicenas = await this.obtenerPlanillaQuincenalPorTrabajador(

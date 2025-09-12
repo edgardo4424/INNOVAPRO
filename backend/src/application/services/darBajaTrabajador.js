@@ -29,8 +29,12 @@ const InsertarRegistroBajaTrabajador = require("../../modules/dar_baja_trabajado
 
 const moment = require("moment");
 const cierreCtsTruncaPorTrabajador = require("../../modules/cts/application/cierreCtsTruncaPorTrabajador");
-const { obtenerUltimoDiaDelMes } = require("../../modules/adelanto_sueldo/infraestructure/repositories/utils/validarCuotaAplicable");
+const {
+  obtenerUltimoDiaDelMes,
+} = require("../../modules/adelanto_sueldo/infraestructure/repositories/utils/validarCuotaAplicable");
 const calcularPlanillaMensualTruncaPorTrabajador = require("../../modules/planilla/application/useCases/calcularPlanillaMensualTruncaPorTrabajador");
+const cierrePlanillaQuincenal = require("../../modules/planilla/application/useCases/cierrePlanillaQuincenal");
+const cierrePlanillaQuincenalTruncaPorTrabajador = require("../../modules/planilla/application/useCases/cierrePlanillaQuincenalTruncaPorTrabajador");
 
 module.exports = async function darBajaTrabajador(dataBody) {
   const transaction = await sequelize.transaction();
@@ -48,36 +52,40 @@ module.exports = async function darBajaTrabajador(dataBody) {
   // console.log("dataBody", dataBody);
 
   try {
-    // Actualizar el contrato laboral del trabajador asignando la fecha_baja
+    // Buscar el contrato laboral del trabajador asignando la fecha_baja
     const contratoLaboralEncontrado = await db.contratos_laborales.findByPk(
       contrato_id,
       { transaction }
     );
 
-    // console.log("contratoLaboralEncontrado", contratoLaboralEncontrado);
+    if (!contratoLaboralEncontrado) {
+  await transaction.rollback();
+  return { codigo: 404, respuesta: { mensaje: "Contrato no encontrado" } };
+}
+
+    console.log("contratoLaboralEncontrado", contratoLaboralEncontrado);
+
     // Comparar si la fecha de baja es menor a la fecha de fin contrato, tomar la fecha de baja como fecha_terminacion_anticipada
     // sino tomar la fecha fin contrato como fecha_terminacion_anticipada
 
-     // Comparar 2 fechas con Date
     const fechaBaja = moment(fecha_baja, "YYYY-MM-DD");
-    const fechaFinContrato = moment(contratoLaboralEncontrado.fecha_fin, "YYYY-MM-DD");
-
+    const fechaFinContrato = moment(
+      contratoLaboralEncontrado.fecha_fin,
+      "YYYY-MM-DD"
+    );
     let fechaTerminacionAnticipada = null;
+     if (fechaBaja.isSameOrBefore(fechaFinContrato, "day")) {
+      // Si fechaBaja es menor o igual a la fechaFinContrato
+      fechaTerminacionAnticipada = fechaBaja.clone();
+    } else {
+      // Si fechaBaja es mayor a la fechaFinContrato
+      fechaTerminacionAnticipada = fechaFinContrato.clone();
+    }
 
-if (fechaBaja.isSame(fechaFinContrato, "day")) {
-  fechaTerminacionAnticipada=fechaBaja
-} else if (fechaBaja.isBefore(fechaFinContrato, "day")) {
-  fechaTerminacionAnticipada=fechaBaja
-} else {
-  fechaTerminacionAnticipada=fechaFinContrato
-}
-
-
-    contratoLaboralEncontrado.fecha_terminacion_anticipada = fechaTerminacionAnticipada;
-
+    // Actualizar el contrato laboral con la fecha_terminacion_anticipada
+    contratoLaboralEncontrado.fecha_terminacion_anticipada = fechaTerminacionAnticipada.format("YYYY-MM-DD");
     await contratoLaboralEncontrado.save({ transaction });
 
-    
     // Cerrar gratificacion trunca
     const gratificacionTrunca = await cierreGratificacionTruncaPorTrabajador(
       usuario_cierre_id,
@@ -100,29 +108,55 @@ if (fechaBaja.isSame(fechaFinContrato, "day")) {
       transaction
     );
 
-    // console.log('ctsTrunca',ctsTrunca);
-    // Calcular Planilla mensual trunca
 
-    const fecha = new Date(fechaTerminacionAnticipada);
+    console.log("ctsTrunca", ctsTrunca);
 
-    const anio = fecha.getFullYear();
-    const mes = fecha.getMonth() + 1;
+    // Crear una fecha que represente el día 15 de ese mes/año
+    const dia15 = moment({
+      year: fechaTerminacionAnticipada.year(),
+      month: fechaTerminacionAnticipada.month(), // month() es 0-based
+      day: 15,
+    });
 
-    const ultimoDiaDelMes = obtenerUltimoDiaDelMes(anio, mes);
+    // Si fechaTerminacionAnticipada es posterior al dia 15, cerrar planilla quincenal
+    // Si no cerrar solamente la planilla mensual trunca
+    if (fechaTerminacionAnticipada.isAfter(dia15, "day")) {
+      
+      // Cerrar planilla quincenal trunca
+      const fecha_anio_mes = fechaTerminacionAnticipada.format("YYYY-MM");
 
-    const anio_mes_dia = `${anio}-${Number(mes)<10?"0":""}${mes}-${ultimoDiaDelMes}`;
-    
-    const planillaMensualTrunca = await calcularPlanillaMensualTruncaPorTrabajador(
-      anio_mes_dia,
-      filial_id,
-      planillaRepository,
-      trabajadorRepository,
-      trabajador_id,
-      usuario_cierre_id,
-      transaction
-    );
-    
-// console.log('planillaMensualTrunca',planillaMensualTrunca);
+      const planillaQuincenalTrunca =
+        await cierrePlanillaQuincenalTruncaPorTrabajador(
+          usuario_cierre_id,
+          filial_id,
+          trabajador_id,
+          fecha_anio_mes,
+          planillaRepository,
+          transaction
+        );
+
+      console.log("planillaQuincenalTrunca", planillaQuincenalTrunca);
+    }
+    // Sino cerrar planilla
+
+
+     const anioMesDia = fechaTerminacionAnticipada.clone().endOf("month").format("YYYY-MM-DD");
+
+    console.log('anioMesDia', anioMesDia);
+
+    const planillaMensualTrunca =
+      await calcularPlanillaMensualTruncaPorTrabajador(
+        anioMesDia,
+        filial_id,
+        planillaRepository,
+        trabajadorRepository,
+        trabajador_id,
+        usuario_cierre_id,
+        transaction
+      );
+
+    console.log("planillaMensualTrunca", planillaMensualTrunca);
+
 
     const darBajaTrabajador = {
       trabajador_id: trabajador_id,
@@ -148,7 +182,6 @@ if (fechaBaja.isSame(fechaFinContrato, "day")) {
       };
     }
 
-    
     const trabajadorActualizado = await db.trabajadores.findByPk(
       trabajador_id,
       {

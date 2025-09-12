@@ -7,6 +7,7 @@ module.exports = async (
    usuario_cierre_id,
    transaction = null
 ) => {
+   console.log('anio_mes_dia', anio_mes_dia);
    const fin_mes = anio_mes_dia;
 
    const trabajadorData = await trabajadorRepository.obtenerTrabajadorPorId(
