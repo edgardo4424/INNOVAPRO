@@ -193,6 +193,31 @@ const Arraydetracciones = [
     }
 ];
 
+
+const ArrayFormasDePago = [
+    { value: "001", act: true, description: "001 - Depósito en cuenta. SUNAT" },
+    { value: "002", act: true, description: "002 - Giro. SUNAT" },
+    { value: "003", act: true, description: "003 - Transferencia de fondos. SUNAT" },
+    { value: "004", act: true, description: "004 - Orden de pago. SUNAT" },
+    { value: "005", act: true, description: "005 - Tarjeta de débito. SUNAT" },
+    { value: "006", act: true, description: "006 - Tarjeta de crédito emitida en el país por una empresa del sistema financiero. SUNAT" },
+    { value: "007", act: true, description: "007 - Cheques con la cláusula “no negociable”,“intransferible”, “no a la orden” u otra equivalente. SUNAT" },
+    { value: "008", act: true, description: "008 - Efectivo (cuando no existe obligación de usar medio de pago). SUNAT" },
+    { value: "009", act: true, description: "009 - Efectivo (en los demás casos). SUNAT" },
+    { value: "010", act: true, description: "010 - Medios de pago usados en comercio exterior. SUNAT" },
+    { value: "011", act: true, description: "011 - Documentos emitidos por EDPYMES y cooperativas no autorizadas a captar depósitos. SUNAT" },
+    { value: "012", act: true, description: "012 - Tarjeta de crédito (país o exterior) emitida por empresa no perteneciente al sistema financiero. SUNAT" },
+    { value: "013", act: true, description: "013 - Tarjetas de crédito emitidas en el exterior por bancos o financieras no domiciliadas. SUNAT" },
+    { value: "101", act: true, description: "101 - Transferencias – comercio exterior. SUNAT" },
+    { value: "102", act: true, description: "102 - Cheques bancarios – comercio exterior. SUNAT" },
+    { value: "103", act: true, description: "103 - Orden de pago simple – comercio exterior. SUNAT" },
+    { value: "104", act: true, description: "104 - Orden de pago documentario – comercio exterior. SUNAT" },
+    { value: "105", act: true, description: "105 - Remesa simple – comercio exterior. SUNAT" },
+    { value: "106", act: true, description: "106 - Remesa documentaria – comercio exterior. SUNAT" },
+    { value: "107", act: true, description: "107 - Carta de crédito simple – comercio exterior. SUNAT" },
+    { value: "108", act: true, description: "108 - Carta de crédito documentario – comercio exterior. SUNAT" },
+    { value: "999", act: true, description: "999 - Otros medios de pago. SUNAT" },
+];
 function getDescripcion(codigo) {
     const encontrado = Arraydetracciones.find((item) => item.value === codigo);
     if (encontrado) {
@@ -202,4 +227,4 @@ function getDescripcion(codigo) {
 }
 
 
-export { Arraydetracciones, getDescripcion };
+export { Arraydetracciones, getDescripcion, ArrayFormasDePago };

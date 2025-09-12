@@ -38,6 +38,7 @@ const FormaDePago = () => {
                         setFactura((prevFactura) => ({
                             ...prevFactura,
                             forma_pago: [],
+                            cuotas_Real: [],
                         }));
                     }}
                 >

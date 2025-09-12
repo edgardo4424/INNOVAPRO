@@ -294,6 +294,7 @@ export function FacturaBoletaProvider({ children }) {
         setFactura((prevFactura) => ({
             ...prevFactura,
             forma_pago: [],
+            cuotas_Real: []
         }));
     };
 
@@ -319,7 +320,7 @@ export function FacturaBoletaProvider({ children }) {
             const { status, success, message, data } = await factilizaService.enviarFactura(facturaAEmitir)
 
 
-            if (status === 200 ) {
+            if (status === 200) {
 
                 const sunat_respuest = {
                     hash: data?.hash || null,
@@ -342,6 +343,7 @@ export function FacturaBoletaProvider({ children }) {
                     ...facturaAEmitir,
                     usuario_id: id_logeado,
                     estado: "EMITIDA",
+                    cuotas_Real: JSON.stringify(facturaAEmitir.cuotas_Real),
                     sunat_respuesta: sunat_respuest,
                     id_borrador: idBorrador ? idBorrador : null
                 };
@@ -349,7 +351,7 @@ export function FacturaBoletaProvider({ children }) {
                 const dbResult = await registrarBaseDatos(facturaCopia);
 
                 if (dbResult.success) {
-                    result = { success: true, message: message || "Factura emitida y registrada con éxito.", data: facturaCopia, detailed_message:  data?.sunatResponse?.cdrResponse?.description || null };
+                    result = { success: true, message: message || "Factura emitida y registrada con éxito.", data: facturaCopia, detailed_message: data?.sunatResponse?.cdrResponse?.description || null };
                 } else {
                     result = { success: false, message: dbResult.mensaje || "Factura emitida a SUNAT, pero no se pudo registrar en la base de datos.", data: facturaCopia };
                 }

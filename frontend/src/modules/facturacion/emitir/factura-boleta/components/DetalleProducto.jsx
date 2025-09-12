@@ -1,108 +1,164 @@
-import ModalDetalleExtra from '@/modules/facturacion/components/modal/ModalDetallesExtra';
-import { useFacturaBoleta } from '../../../context/FacturaBoletaContext';
-import React, { useState } from 'react'
+import ModalDetalleExtra from "@/modules/facturacion/components/modal/ModalDetallesExtra";
+import { useFacturaBoleta } from "../../../context/FacturaBoletaContext";
+import React, { useState } from "react";
 
 const DetalleProducto = () => {
-    const { factura, setFactura, TotalProducto, detallesExtra } = useFacturaBoleta();
-    const { detalle: listaProductos, tipo_Moneda } = factura;
+  const { factura, setFactura, TotalProducto, detallesExtra } =
+    useFacturaBoleta();
+  const { detalle: listaProductos, tipo_Moneda } = factura;
 
-    const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
-    let subTotalConIgv = factura.total_Impuestos + factura.monto_Oper_Gravadas;
+  let subTotalConIgv = factura.total_Impuestos + factura.monto_Oper_Gravadas;
 
-    const handleObservacion = (e) => {
-        setFactura((prevFactura) => ({
-            ...prevFactura,
-            observacion: e.target.value.toUpperCase(),
-        }));
-    }
+  const handleObservacion = (e) => {
+    setFactura((prevFactura) => ({
+      ...prevFactura,
+      observacion: e.target.value.toUpperCase(),
+    }));
+  };
 
-    return (
-        <div className='w-full flex'>
-            <div className='flex flex-col items-start py-4 pr-6 w-7/12 '>
-                <div className='w-full flex flex-col items-start'>
-                    <h2 className='text-xl font-semibold '>Observacion:</h2>
-                    <textarea
-                        name=""
-                        id=""
-                        className="border border-gray-300 rounded-md p-2 w-full resize-none h-35"
-                        placeholder="Ingrese observacion..."
-                        onChange={handleObservacion}
-                        value={factura.observacion}
-                    ></textarea>
-                </div>
-                <div className='py-4 w-full'>
-                    <div className='flex items-center gap-x-4 pb-4'>
-                        <h2 className='text-xl font-semibold'>Detalles Extra:</h2>
-                        <ModalDetalleExtra open={open} setOpen={setOpen} />
-                    </div>
-                    {
-                        detallesExtra.length > 0 && (
-                            <div className="grid border border-gray-400 dark:border-gray-700 rounded-md overflow-hidden w-full ">
-                                {detallesExtra.map((detalle, index) => (
-                                    <div
-                                        key={index}
-                                        className="grid grid-cols-2 px-3 py-1 text-sm even:bg-gray-50 even:dark:bg-gray-800"
-                                    >
-                                        <p className="font-semibold border-r-2 border-gray-400 dark:border-gray-600 pr-4">
-                                            {detalle.detalle}
-                                        </p>
-                                        <p className="pl-4 text-right text-gray-600 dark:text-gray-400">
-                                            {detalle.valor}
-                                        </p>
-                                    </div>
-                                ))}
-                            </div>
-                        )
-                    }
-                </div>
-            </div>
-            <div className='w-5/12 p-6 '>
-
-                {/* {listaProductos.length > 0 && TotalProducto > 0 && ( */}
-                <div className="flex flex-col items-end gap-y-2 p-4 bg-gray-100 rounded-2xl"> {/* Contenedor principal para los totales */}
-                    {/* Total */}
-                    <div className="flex justify-between w-full max-w-sm py-1">
-                        <span className="font-semibold">Total</span>
-                        <span>{tipo_Moneda == "PEN" ? "S/." : "$"} {TotalProducto.toFixed(2)}</span>
-                    </div>
-
-                    {/* IGV */}
-                    <div className="flex justify-between w-full max-w-sm py-1">
-                        <span className="font-semibold">IGV</span>
-                        <span>{tipo_Moneda == "PEN" ? "S/." : "$"} {factura.monto_Igv.toFixed(2)}</span>
-                    </div>
-
-
-                    {/* Sub Total + IGV */}
-                    <div className="flex justify-between w-full max-w-sm py-1">
-                        <span className="font-semibold">Sub Total + IGV</span>
-                        <span>{tipo_Moneda == "PEN" ? "S/." : "$"} {subTotalConIgv.toFixed(2)}</span>
-                    </div>
-
-                    {/* Exonerados */}
-                    <div className="flex justify-between w-full max-w-sm py-1">
-                        <span className="font-semibold">Exonerados</span>
-                        <span>{tipo_Moneda == "PEN" ? "S/." : "$"} {factura.monto_Oper_Exoneradas.toFixed(2)}</span>
-                    </div>
-
-                    {/* Sub Total */}
-                    <div className="flex justify-between w-full max-w-sm py-1">
-                        <span className="font-semibold">Sub Total</span>
-                        <span>{tipo_Moneda == "PEN" ? "S/." : "$"} {factura.sub_Total.toFixed(2)}</span>
-                    </div>
-
-
-                    {/* Monto Importes Venta */}
-                    <div className="flex justify-between w-full max-w-sm py-1">
-                        <span className="font-semibold">Monto Importes Venta</span>
-                        <span>{tipo_Moneda == "PEN" ? "S/." : "$"} {factura.monto_Imp_Venta.toFixed(2)}</span>
-                    </div>
-                </div>
-                {/* )} */}
-            </div>
+  return (
+    <div className="flex w-full gap-6">
+      {/* Sección Izquierda - Observaciones y Detalles Extra */}
+      <div className="flex w-7/12 flex-col items-start py-6">
+        {/* Observaciones */}
+        <div className="mb-6 flex w-full flex-col items-start">
+          <h2 className="mb-3 flex items-center text-xl font-semibold text-gray-800">
+            <span className="mr-3 h-6 w-1 rounded-full bg-blue-500"></span>
+            Observación:
+          </h2>
+          <textarea
+            name=""
+            id=""
+            className="h-32 w-full resize-none rounded-lg border border-gray-300 bg-white p-4 placeholder-gray-400 shadow-sm transition-all duration-200 hover:shadow-md "
+            placeholder="Ingrese observación adicional para el documento..."
+            onChange={handleObservacion}
+            value={factura.observacion}
+          ></textarea>
         </div>
-    )
-}
 
-export default DetalleProducto
+        {/* Detalles Extra */}
+        <div className="w-full">
+          <div className="flex items-center gap-x-4 pb-4">
+            <h2 className="flex items-center text-xl font-semibold text-gray-800">
+              <span className="mr-3 h-6 w-1 rounded-full bg-green-500"></span>
+              Detalles Extra:
+            </h2>
+            <ModalDetalleExtra open={open} setOpen={setOpen} />
+          </div>
+          {detallesExtra.length > 0 && (
+            <div className="w-full overflow-hidden rounded-lg border border-gray-300 ">
+              {detallesExtra.map((detalle, index) => (
+                <div
+                  key={index}
+                  className="grid grid-cols-2 px-4 py-3 text-sm transition-colors duration-150 even:bg-gray-50 hover:bg-blue-50"
+                >
+                  <p className="border-r border-gray-300 pr-4 font-semibold text-gray-700">
+                    {detalle.detalle}
+                  </p>
+                  <p className="pl-4 text-right font-medium text-gray-600">
+                    {detalle.valor}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+          {detallesExtra.length === 0 && (
+            <div className="py-8 text-center text-gray-500 italic">
+              No hay detalles extra agregados
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Sección Derecha - Resumen de Totales */}
+      <div className="w-5/12 py-6">
+        <div className="space-y-1 rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-6 ">
+          {/* Encabezado */}
+          <div className="mb-4 border-b border-gray-200 pb-3">
+            <h3 className="flex items-center text-lg font-bold text-gray-800">
+              <span className="mr-3 h-6 w-2 rounded-full bg-gradient-to-b from-blue-500 to-blue-600"></span>
+              Resumen Financiero
+            </h3>
+          </div>
+
+          {/* Total Principal */}
+          <div className="mb-3 flex items-center justify-between rounded-lg border border-blue-200 bg-gradient-to-r from-blue-50 to-blue-100 px-3 py-2">
+            <span className="font-bold text-blue-800">Total</span>
+            <span className="text-lg font-bold text-blue-800">
+              {tipo_Moneda == "PEN" ? "S/." : "$"} {TotalProducto.toFixed(2)}
+            </span>
+          </div>
+
+          {/* Desglose de Impuestos */}
+          <div className="mb-3 space-y-2">
+            <div className="mb-2 text-xs font-semibold tracking-wide text-gray-600 uppercase">
+              Desglose de Impuestos
+            </div>
+
+            <div className="flex items-center justify-between rounded-md px-3 py-2 transition-colors duration-150 hover:bg-gray-50">
+              <span className="font-medium text-gray-700">IGV</span>
+              <span className="font-semibold text-gray-800">
+                {tipo_Moneda == "PEN" ? "S/." : "$"}{" "}
+                {factura.monto_Igv.toFixed(2)}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between rounded-md px-3 py-2 transition-colors duration-150 hover:bg-gray-50">
+              <span className="font-medium text-gray-700">Sub Total + IGV</span>
+              <span className="font-semibold text-gray-800">
+                {tipo_Moneda == "PEN" ? "S/." : "$"} {subTotalConIgv.toFixed(2)}
+              </span>
+            </div>
+          </div>
+
+          {/* Separador */}
+          <div className="my-3 border-t border-gray-200"></div>
+
+          {/* Desglose de Operaciones */}
+          <div className="space-y-2">
+            <div className="mb-2 text-xs font-semibold tracking-wide text-gray-600 uppercase">
+              Desglose de Operaciones
+            </div>
+
+            <div className="flex items-center justify-between rounded-md px-3 py-2 transition-colors duration-150 hover:bg-gray-50">
+              <span className="font-medium text-gray-700">Exonerados</span>
+              <span className="font-semibold text-gray-800">
+                {tipo_Moneda == "PEN" ? "S/." : "$"}{" "}
+                {factura.monto_Oper_Exoneradas.toFixed(2)}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between rounded-md px-3 py-2 transition-colors duration-150 hover:bg-gray-50">
+              <span className="font-medium text-gray-700">Sub Total</span>
+              <span className="font-semibold text-gray-800">
+                {tipo_Moneda == "PEN" ? "S/." : "$"}{" "}
+                {factura.sub_Total.toFixed(2)}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between rounded-md border-t border-gray-100 px-3 py-2 transition-colors duration-150 hover:bg-gray-50">
+              <span className="font-bold text-gray-800">
+                Monto Importe Venta
+              </span>
+              <span className="font-bold text-gray-900">
+                {tipo_Moneda == "PEN" ? "S/." : "$"}{" "}
+                {factura.monto_Imp_Venta.toFixed(2)}
+              </span>
+            </div>
+          </div>
+
+          {/* Footer con gradiente sutil */}
+          <div className="mt-4 border-t border-gray-200 pt-3">
+            <div className="text-center text-xs text-gray-500">
+              Montos calculados automáticamente
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DetalleProducto;

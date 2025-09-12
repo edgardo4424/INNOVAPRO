@@ -184,6 +184,14 @@ const Factura = sequelize.define(
             type: DataTypes.DATE,
             allowNull: true,
         },
+        neto_Pagar: {
+            type: DataTypes.DECIMAL,
+            allowNull: true,
+        },
+        cuotas_Real: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        },
     },
     {
         timestamps: false,

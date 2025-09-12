@@ -18,7 +18,7 @@ const TablaBorradores = ({ documentos, setIdDocumento, setModalOpen, setDocument
     const body = JSON.parse(data.body);
     const documento = [body, { borr_id_delete: doc.id }];
     console.log(documento);
-    navigate("/facturacion/factura-boleta", { state: documento });
+    navigate("/facturacion/emitir/factura-boleta", { state: documento });
   };
 
 

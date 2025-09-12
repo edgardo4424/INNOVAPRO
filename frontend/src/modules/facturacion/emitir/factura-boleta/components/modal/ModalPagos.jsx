@@ -20,15 +20,8 @@ export default function ModalPagos({ open, setOpen }) {
         0
     );
 
-    let montoTotalFactura;
-    if (retencionActivado) {
-        montoTotalFactura = factura.monto_Imp_Venta - retencion.descuento_monto;
-    } else if (factura.tipo_Operacion == "1001" && !retencionActivado) {
-        montoTotalFactura = factura.monto_Imp_Venta - detraccion.detraccion_mount
-    }
-    else {
-        montoTotalFactura = factura.monto_Imp_Venta
-    }
+    let montoTotalFactura = factura.monto_Imp_Venta;
+    
     const pagosCompletos = montoTotalPagos.toFixed(2) >= montoTotalFactura;
 
     const closeModal = () => {

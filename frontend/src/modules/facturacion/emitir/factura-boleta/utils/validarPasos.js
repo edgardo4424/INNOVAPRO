@@ -128,11 +128,17 @@ export async function validarFacturaCompleta(Factura, Detraccion, retencionActiv
     if (Factura.forma_pago && Factura.forma_pago.length > 0) {
         // SOLUCIÓN: Usar centavos para evitar errores de punto flotante
         const montoTotalFacturaCentavos = Math.round(Factura.monto_Imp_Venta * 100);
+
         const montoTotalPagosCentavos = Factura.forma_pago.reduce(
             (total, pago) => total + Math.round((parseFloat(pago.monto) || 0) * 100),
             0
         );
 
+        // La validación ahora compara los valores enteros, que son exactos.
+        if (montoTotalPagosCentavos !== montoTotalFacturaCentavos) {
+            errores.forma_pago_monto = "La suma de los pagos no cubre el monto total de la factura.";
+            validos = false;
+        }
 
         const fechaEmision = new Date(Factura.fecha_Emision);
         const pagosACredito = Factura.forma_pago.filter(pago => pago.tipo === "CREDITO");
@@ -141,24 +147,6 @@ export async function validarFacturaCompleta(Factura, Detraccion, retencionActiv
             const fechaPago = new Date(pago.fecha_Pago);
             return fechaPago <= fechaEmision;
         });
-        if (retencionActivado) {
-            let montoTotalRetencionCentavos = Math.round(Retencion.descuento_monto * 100);
-            let montoNetoCentavos = montoTotalFacturaCentavos - montoTotalRetencionCentavos;
-            if (montoTotalPagosCentavos !== montoNetoCentavos) {
-                errores.forma_pago_monto = "La suma de los pagos no cubre el monto total de la factura.";
-                validos = false;
-            }
-
-        } else if (Factura.tipo_Operacion === "1001" && !retencionActivado) {
-
-        }
-        else {
-            // La validación ahora compara los valores enteros, que son exactos.
-            if (montoTotalPagosCentavos !== montoTotalFacturaCentavos) {
-                errores.forma_pago_monto = "La suma de los pagos no cubre el monto total de la factura.";
-                validos = false;
-            }
-        }
 
         if (pagosConFechaAnterior.length > 0) {
             errores.forma_pago_fecha = "Los pagos a crédito no pueden ser iguales o anteriores a la fecha de emisión.";

@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import DocumentoSkeleton from "../../bandeja/list-factura-boleta/components/DocumentoSkeleton";
 import facturaService from "../../service/FacturaService";
-import { getDescripcion } from "../../emitir/factura-boleta/utils/codRetenciones";
+import { getDescripcion } from "../../emitir/factura-boleta/utils/codDetraccion";
 
 export default function ModalVisualizarDocumento({
     setModalOpen,
@@ -13,14 +13,45 @@ export default function ModalVisualizarDocumento({
     const [factura, setFactura] = useState(null);
     const [isOpen, setIsOpen] = useState(true);
 
+
+    // ** METODO VISUALIZAR DOCUMENTO CON ENDPOINT DE INNOVA
+    useEffect(() => {
+        if (!isOpen || !documentoAVisualizar) return;
+
+        (async () => {
+            try {
+                const { succes, status, message, data } = await facturaService.obtenerFacturaDetallada(documentoAVisualizar);
+                console.log(data)
+                if (succes && status === 200) {
+                    console.log("data", data[0]);
+                    setFactura(data[0]);
+                    return;
+                }
+            } catch (e) {
+                console.log(e)
+                toast.error(e.response.data.message || "Error al obtener el documento");
+                closeModal();
+            }
+        })();
+    }, [isOpen, documentoAVisualizar]);
+
+
+
+    let pagosTabla;
+
     let documentoRelacionados;
     let detallesExtra;
+    let cuotasReales;
     if (factura?.relDocs) {
         documentoRelacionados = JSON.parse(factura.relDocs);
-
     }
     if (factura?.extraDetails) {
         detallesExtra = JSON.parse(factura.extraDetails);
+    }
+    if (factura?.cuotas_Real) {
+        pagosTabla = JSON.parse(factura.cuotas_Real);
+    } else if (factura?.forma_pago) {
+        pagosTabla = factura.forma_pago;
     }
 
 
@@ -91,26 +122,7 @@ export default function ModalVisualizarDocumento({
         }
     };
 
-    // ** METODO VISUALIZAR DOCUMENTO CON ENDPOINT DE INNOVA
-    useEffect(() => {
-        if (!isOpen || !documentoAVisualizar) return;
 
-        (async () => {
-            try {
-                const { succes, status, message, data } = await facturaService.obtenerFacturaDetallada(documentoAVisualizar);
-                console.log(data)
-                if (succes && status === 200) {
-                    console.log("data", data[0]);
-                    setFactura(data[0]);
-                    return;
-                }
-            } catch (e) {
-                console.log(e)
-                toast.error(e.response.data.message || "Error al obtener el documento");
-                closeModal();
-            }
-        })();
-    }, [isOpen, documentoAVisualizar]);
 
 
     const numeroDoc = useMemo(() => {
@@ -185,7 +197,7 @@ export default function ModalVisualizarDocumento({
                                             CLIENTE
                                         </h3>
                                         <div className="text-sm text-gray-800 space-y-1">
-                                            <div className="grid grid-cols-[110px_1fr] gap-x-2">
+                                            <div className="grid grid-cols-2 gap-x-2">
                                                 <span className="text-gray-700 font-semibold">Razón social:</span>
                                                 <span className="font-medium">
                                                     {factura.cliente_Razon_Social || "—"}
@@ -206,12 +218,12 @@ export default function ModalVisualizarDocumento({
                                         </div>
                                     </div>
 
-                                    <div className="col-span-2">
+                                    <div className="col-span-2 md:col-span-3">
                                         <h3 className="text-sm font-bold text-gray-600 mb-3">
                                             DETALLES DEL PAGO
                                         </h3>
                                         <div className="text-sm text-gray-800 space-y-1">
-                                            <div className="grid grid-cols-[110px_1fr] gap-x-2">
+                                            <div className="grid grid-cols-2 gap-x-2">
                                                 <span className="text-gray-700 font-semibold">Moneda:</span>
                                                 <span className="font-medium">
                                                     {factura.tipo_Moneda}
@@ -220,8 +232,19 @@ export default function ModalVisualizarDocumento({
                                                 <span className="font-medium">
                                                     {currency(factura.sub_Total, factura.tipo_Moneda)}
                                                 </span>
-                                                <span className="text-gray-700 font-semibold">Tipo de pago:</span>
-                                                <span className="font-medium uppercase">{factura.forma_pago_facturas[0].tipo}</span>
+                                                {factura.forma_pago_facturas[0].tipo.toUpperCase() === "CREDITO" ?
+                                                    <>
+                                                        <span className="text-gray-700 font-semibold">Tipo de pago:</span>
+                                                        <span className="font-medium ">{factura.forma_pago_facturas[0].tipo.toUpperCase()} {factura.dias_pagar !== "" && `a ${factura.dias_pagar} dias`} </span>
+                                                        <span className="text-gray-700 font-semibold">Fecha de vencimiento:</span>
+                                                        <span className="font-medium">{formatDateTime(factura.fecha_vencimiento)}</span>
+                                                    </>
+                                                    :
+                                                    <>
+                                                        <span className="text-gray-700 font-semibold">Tipo de pago:</span>
+                                                        <span className="font-medium">{factura.forma_pago_facturas[0].tipo.toUpperCase()}</span>
+                                                    </>
+                                                }
                                             </div>
                                         </div>
                                     </div>
@@ -426,7 +449,7 @@ export default function ModalVisualizarDocumento({
                                 </div>
 
                                 <div className="divide-y divide-gray-200">
-                                    {(factura.forma_pago_facturas?.length ? factura.forma_pago_facturas : []).map(
+                                    {(pagosTabla?.length ? pagosTabla : []).map(
                                         (it, idx) => {
                                             const { id, factura_id, tipo, monto, cuota, fecha_Pago } = it;
 
