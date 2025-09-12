@@ -286,8 +286,8 @@ class SequelizePlanillaRepository {
                 await adelantoSueldoRepository.obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
                   trabajador.id,
                   "simple",
-                  contrato.fecha_inicio,
-                  contrato.fecha_fin,
+                  /* contrato.fecha_inicio,
+                  contrato.fecha_fin, */
                   fecha_anio_mes_dia
                 );
 
@@ -369,8 +369,8 @@ class SequelizePlanillaRepository {
                 await adelantoSueldoRepository.obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
                   trabajador.id,
                   "simple",
-                  contrato.fecha_inicio,
-                  contrato.fecha_fin,
+                  /* contrato.fecha_inicio,
+                  contrato.fecha_fin, */
                   fecha_anio_mes_dia
                 );
 

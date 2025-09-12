@@ -70,17 +70,11 @@ class SequelizeAdelantoSueldoRepository {
   async obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
     trabajador_id,
     tipo, // tipo: 'simple' , 'gratificacion' o 'cts'
-    fechaInicio,
-    fechaFin,
-    fecha_anio_mes_dia
+   /*  fechaInicio,
+    fechaFin, */
+    fecha_anio_mes_dia// 2025-09-31
   ) {
 
-   console.log({
-     trabajador_id,
-     tipo, // tipo: 'simple' , 'gratificacion' o 'cts'
-     fechaInicio,
-     fechaFin
-   });
 
    let optionsWhere = {
       trabajador_id,
@@ -88,9 +82,9 @@ class SequelizeAdelantoSueldoRepository {
         estado: true, // ajusta si tu campo es 1/0 o 'ACTIVO'
         cuotas_pagadas: { [Op.lt]: Sequelize.col("cuotas") }, // cuotas_pagadas < cuotas
    }
-   if(fecha_anio_mes_dia){
-     optionsWhere.fecha = { [Op.between]: [fechaInicio, fechaFin] }
-   }
+   /* if(fecha_anio_mes_dia){
+     optionsWhere.primera_cuota = { [Op.between]: [fechaInicio, fechaFin] }
+   } */
     const adelantos = await AdelantoSueldo.findAll({
       where: optionsWhere,
     });

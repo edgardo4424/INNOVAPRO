@@ -1,4 +1,3 @@
-import { map } from "zod";
 
 export const calculo_aportes_trabajador = (planillas = [], importes) => {
    let seguro_vida = 0;
