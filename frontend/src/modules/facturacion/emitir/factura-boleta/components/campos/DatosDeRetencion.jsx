@@ -51,7 +51,7 @@ const DatosDeRetencion = () => {
 
       if (factura.tipo_Moneda === "PEN") {
         // Cálculo para moneda nacional (PEN)
-        montoBase = factura.monto_Imp_Venta;
+        montoBase = factura.monto_Imp_Venta - factura.monto_Oper_Exoneradas;
         montoPorcentaje = montoBase * porcentaje;
 
         setRetencion({
@@ -63,7 +63,7 @@ const DatosDeRetencion = () => {
 
         setFactura({
           ...factura,
-          neto_Pagar: Number((montoBase - montoPorcentaje).toFixed(2)),
+          neto_Pagar: Number((factura.monto_Imp_Venta - montoPorcentaje).toFixed(2)),
         });
       } else {
         // Cálculo para moneda extranjera (USD)
@@ -80,7 +80,7 @@ const DatosDeRetencion = () => {
 
         setFactura({
           ...factura,
-          neto_Pagar: Number((montoBase - montoPorcentaje).toFixed(2)),
+          neto_Pagar: Number((factura.monto_Imp_Venta - montoPorcentaje).toFixed(2)),
         });
       }
     },

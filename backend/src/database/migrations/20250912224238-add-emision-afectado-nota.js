@@ -9,12 +9,8 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-    await queryInterface.addColumn('factura', 'anulacion_Motivo', {
-      type: Sequelize.STRING,
-      allowNull: true,
-    });
-    await queryInterface.addColumn('guias_de_remision', 'anulacion_Motivo', {
-      type: Sequelize.STRING,
+    await queryInterface.addColumn('notas_credito_debito', 'fecha_Emision_Afectado', {
+      type: Sequelize.DATE,
       allowNull: true,
     });
   },
@@ -26,7 +22,6 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-    await queryInterface.removeColumn('factura', 'anulacion_Motivo');
-    await queryInterface.removeColumn('guias_de_remision', 'anulacion_Motivo');
+    await queryInterface.removeColumn('notas_credito_debito', 'fecha_Emision_Afectado');
   }
 };

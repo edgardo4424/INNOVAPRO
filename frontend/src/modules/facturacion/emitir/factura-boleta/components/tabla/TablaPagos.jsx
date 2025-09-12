@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
+import { formatearFecha } from "@/modules/facturacion/utils/formatearFecha";
 
 const TablaPagos = ({ open, setOpen }) => {
   const { factura, retencionActivado, retencion, setPagoActual } =
@@ -17,14 +18,6 @@ const TablaPagos = ({ open, setOpen }) => {
   const seleccionarPago = async () => {
     setPagoActual(factura.forma_pago);
     setOpen(true);
-  };
-
-  const formatearFecha = (fecha) => {
-    const fechaDate = new Date(fecha);
-    const dia = fechaDate.getDate().toString().padStart(2, "0");
-    const mes = (fechaDate.getMonth() + 1).toString().padStart(2, "0");
-    const anio = fechaDate.getFullYear();
-    return `${anio}/${mes}/${dia}`;
   };
 
   return (

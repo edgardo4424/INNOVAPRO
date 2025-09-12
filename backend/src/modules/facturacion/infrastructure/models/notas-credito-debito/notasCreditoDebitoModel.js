@@ -133,19 +133,23 @@ const NotasCreditoDebito = sequelize.define(
                 key: "id",
             },
         },
-        guia_id: {
+        nota_id: {
             type: DataTypes.INTEGER,
             allowNull: true,
             references: {
-                model: "guias_de_remision",
+                model: "notas_credito_debito",
                 key: "id",
             },
         },
-        //! -- Campo de anulacion
-        anulacion_Motivo: {
-            type: DataTypes.STRING,
+        fecha_Emision_Afectado: {
+            type: DataTypes.DATE,
             allowNull: true,
         }
+        //! -- Campo de anulacion
+        // anulacion_Motivo: {
+        //     type: DataTypes.STRING,
+        //     allowNull: true,
+        // }
     },
     {
         timestamps: false,
@@ -166,8 +170,8 @@ NotasCreditoDebito.associate = (models) => {
     NotasCreditoDebito.belongsTo(models.factura, {
         foreignKey: "factura_id",
     })
-    NotasCreditoDebito.belongsTo(models.guias_de_remision, {
-        foreignKey: "guia_id",
+    NotasCreditoDebito.belongsTo(models.notas_credito_debito, {
+        foreignKey: "nota_id",
     })
 }
 

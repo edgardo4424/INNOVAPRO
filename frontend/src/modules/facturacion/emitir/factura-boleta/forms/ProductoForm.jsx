@@ -337,14 +337,14 @@ const ProductoForm = ({ closeModal }) => {
                 30 - Inafecto - Operación Onerosa
               </SelectItem>
               <SelectItem value="31">31 - Retiro por Bonificación</SelectItem>
-              <SelectItem value="32">32 - Retiro</SelectItem>
-              <SelectItem value="33">33 - Muestras Médicas</SelectItem>
-              <SelectItem value="34">34 - Convenio Colectivo</SelectItem>
-              <SelectItem value="35">35 - Retiro por premio</SelectItem>
-              <SelectItem value="36">36 - Retiro por publicidad</SelectItem>
+              {/* <SelectItem value="32">32 - Retiro</SelectItem> */}
+              {/* <SelectItem value="33">33 - Muestras Médicas</SelectItem> */}
+              {/* <SelectItem value="34">34 - Convenio Colectivo</SelectItem> */}
+              {/* <SelectItem value="35">35 - Retiro por premio</SelectItem> */}
+              {/* <SelectItem value="36">36 - Retiro por publicidad</SelectItem> */}
 
               {/* Exportación */}
-              <SelectItem value="40">40 - Exportación</SelectItem>
+              {/* <SelectItem value="40">40 - Exportación</SelectItem> */}
             </SelectContent>
           </Select>
           <span

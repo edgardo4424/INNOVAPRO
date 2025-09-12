@@ -163,7 +163,7 @@ export default function ModalVisualizarFactura() {
                 {/* Cliente + Pago (dos columnas) */}
                 <div className="rounded-xl border border-gray-200 bg-white">
                   <div
-                    className={`grid grid-cols-1 ${factura.relDocs.length > 0 || factura.orden_compra !== "" ? "md:grid-cols-7" : "md:grid-cols-6"} gap-6 p-6`}
+                    className={`grid grid-cols-1 ${factura.relDocs.length > 0 || factura.orden_compra !== "" ? "md:grid-cols-7" : "md:grid-cols-5"} gap-x-2 p-6`}
                   >
                     <div className="col-span-3">
                       <h3 className="mb-3 text-sm font-bold text-gray-600">
@@ -230,49 +230,37 @@ export default function ModalVisualizarFactura() {
                         </div>
                       </div>
                     </div>
-                    {factura.relDocs.length > 0 ||
-                      (factura.orden_compra !== "" && (
-                        <div className="col-span-2 flex flex-col">
-                          {factura.relDocs.length > 0 && (
-                            <div>
-                              <h3 className="mb-3 text-sm font-bold text-gray-600">
-                                DOCUMENTOS RELACIONADOS
-                              </h3>
-                              <div className="space-y-1 text-sm text-gray-800">
-                                <div className="grid grid-cols-[110px_1fr] gap-x-2">
-                                  {factura.relDocs.map((doc, index) => (
-                                    <>
-                                      <span className="font-semibold text-gray-700">
-                                        Nro. doc:
-                                      </span>
-                                      <span className="font-medium">
-                                        {doc.nroDoc ?? "—"}
-                                      </span>
-                                    </>
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-                          )}
+                    <div
+                      className={` ${factura.relDocs.length > 0 || factura.orden_compra !== "" ? "" : "hidden"} col-span-2 flex flex-col`}
+                    >
+                      <h3 className="mb-3 text-sm font-bold text-gray-600">
+                        DOCUMENTOS RELACIONADOS
+                      </h3>
+                      <div className="space-y-1 text-sm text-gray-800">
+                        <div className="grid grid-cols-[110px_1fr] gap-x-2">
+                          {factura.relDocs.map((doc, index) => (
+                            <>
+                              <span className="font-semibold text-gray-700">
+                                Nro. doc:
+                              </span>
+                              <span className="font-medium">
+                                {doc.nroDoc ?? "—"}
+                              </span>
+                            </>
+                          ))}
                           {factura.orden_compra !== "" && (
-                            <div>
-                              <h3 className="mb-3 text-sm font-bold text-gray-600">
-                                ORDEN DE COMPRA
-                              </h3>
-                              <div className="space-y-1 text-sm text-gray-800">
-                                <div className="grid grid-cols-[110px_1fr] gap-x-2">
-                                  <span className="font-semibold text-gray-700">
-                                    Nro. Orden:
-                                  </span>
-                                  <span className="font-medium">
-                                    {factura.orden_compra ?? "—"}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
+                            <>
+                              <span className="font-semibold text-gray-700">
+                                Nro. Orden:
+                              </span>
+                              <span className="font-medium">
+                                {factura.orden_compra ?? "—"}
+                              </span>
+                            </>
                           )}
                         </div>
-                      ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
 

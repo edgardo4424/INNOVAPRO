@@ -1,6 +1,6 @@
 import ModalDetalleExtra from "@/modules/facturacion/components/modal/ModalDetallesExtra";
+import { useState } from "react";
 import { useFacturaBoleta } from "../../../context/FacturaBoletaContext";
-import React, { useState } from "react";
 
 const DetalleProducto = () => {
   const { factura, setFactura, TotalProducto, detallesExtra } =
@@ -31,7 +31,7 @@ const DetalleProducto = () => {
           <textarea
             name=""
             id=""
-            className="h-32 w-full resize-none rounded-lg border border-gray-300 bg-white p-4 placeholder-gray-400 shadow-sm transition-all duration-200 hover:shadow-md "
+            className="h-32 w-full resize-none rounded-lg border border-gray-300 bg-white p-4 placeholder-gray-400 transition-all duration-200"
             placeholder="Ingrese observación adicional para el documento..."
             onChange={handleObservacion}
             value={factura.observacion}
@@ -48,7 +48,7 @@ const DetalleProducto = () => {
             <ModalDetalleExtra open={open} setOpen={setOpen} />
           </div>
           {detallesExtra.length > 0 && (
-            <div className="w-full overflow-hidden rounded-lg border border-gray-300 ">
+            <div className="w-full overflow-hidden rounded-lg border border-gray-300">
               {detallesExtra.map((detalle, index) => (
                 <div
                   key={index}
@@ -74,7 +74,7 @@ const DetalleProducto = () => {
 
       {/* Sección Derecha - Resumen de Totales */}
       <div className="w-5/12 py-6">
-        <div className="space-y-1 rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-6 ">
+        <div className="space-y-1 rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-6">
           {/* Encabezado */}
           <div className="mb-4 border-b border-gray-200 pb-3">
             <h3 className="flex items-center text-lg font-bold text-gray-800">
@@ -83,13 +83,15 @@ const DetalleProducto = () => {
             </h3>
           </div>
 
-          {/* Total Principal */}
-          <div className="mb-3 flex items-center justify-between rounded-lg border border-blue-200 bg-gradient-to-r from-blue-50 to-blue-100 px-3 py-2">
-            <span className="font-bold text-blue-800">Total</span>
-            <span className="text-lg font-bold text-blue-800">
+          <div className="flex items-center justify-between rounded-md px-3 py-2 transition-colors duration-150 hover:bg-gray-50">
+            <span className="font-medium text-gray-700">Gravadas</span>
+            <span className="font-semibold text-gray-800">
               {tipo_Moneda == "PEN" ? "S/." : "$"} {TotalProducto.toFixed(2)}
             </span>
           </div>
+
+          {/* Separador */}
+          <div className="my-3 border-t border-gray-200"></div>
 
           {/* Desglose de Impuestos */}
           <div className="mb-3 space-y-2">
@@ -138,13 +140,11 @@ const DetalleProducto = () => {
               </span>
             </div>
 
-            <div className="flex items-center justify-between rounded-md border-t border-gray-100 px-3 py-2 transition-colors duration-150 hover:bg-gray-50">
-              <span className="font-bold text-gray-800">
-                Monto Importe Venta
-              </span>
-              <span className="font-bold text-gray-900">
+            <div className="mb-3 flex items-center justify-between rounded-lg border border-blue-200 bg-gradient-to-r from-blue-50 to-blue-100 px-3 py-2">
+              <span className="font-bold text-blue-800">Total</span>
+              <span className="text-lg font-bold text-blue-800">
                 {tipo_Moneda == "PEN" ? "S/." : "$"}{" "}
-                {factura.monto_Imp_Venta.toFixed(2)}
+                {factura.monto_Imp_Venta.toFixed(2)}{" "}
               </span>
             </div>
           </div>

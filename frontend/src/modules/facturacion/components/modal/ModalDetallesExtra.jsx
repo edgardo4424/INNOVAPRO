@@ -60,7 +60,7 @@ export default function ModalDetalleExtra({ open, setOpen }) {
   const handleInputChange = (e, index) => {
     const { name, value } = e.target;
     const nuevaLista = listaDetalles.map((item, i) =>
-      i === index ? { ...item, [name]: value } : item,
+      i === index ? { ...item, [name]: value.toUpperCase() } : item,
     );
     setListaDetalles(nuevaLista);
     setShowError(false); // Ocultar el error al editar un campo
