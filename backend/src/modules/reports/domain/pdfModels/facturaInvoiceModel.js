@@ -1,14 +1,14 @@
 const path = require("path");
 const logo_innova = path.join(__dirname, "../../../../assets/pdf/logo_innova.png")
 const logo = path.join(__dirname, "../../../../assets/pdf/logo.png")
-const { pdfheader } = require("../components/pdfHeader");
-const { pdfDetalleFactura } = require("../components/pdfDetalleFactura");
-const { pdfClienteFactura } = require("../components/pdfClienteFactura");
-const { pdfProductoFactura } = require("../components/pdfProductosFactura");
-const { pdfDetallesTotal } = require("../components/pdfDetallesTotal");
-const { pdfDetalleRelacionados } = require("../components/pdfDetalleRelacionados");
-const { pdfCuotasFactura } = require("../components/pdfCuotasFactura");
-const { pdfLegendFactura } = require("../components/pdfLegendFactura");
+const { pdfheader } = require("../components-facturacion/pdfHeader");
+const { pdfDetalleFactura } = require("../components-facturacion/pdfDetalleFactura");
+const { pdfClienteFactura } = require("../components-facturacion/pdfClienteFactura");
+const { pdfProductoFactura } = require("../components-facturacion/pdfProductosFactura");
+const { pdfDetallesTotal } = require("../components-facturacion/pdfDetallesTotal");
+const { pdfDetalleRelacionados } = require("../components-facturacion/pdfDetalleRelacionados");
+const { pdfCuotasFactura } = require("../components-facturacion/pdfCuotasFactura");
+const { pdfLegendFactura } = require("../components-facturacion/pdfLegendFactura");
 
 function facturaInvoiceModel(data) {
     const factura = data[0];
@@ -25,18 +25,6 @@ function facturaInvoiceModel(data) {
     const innova_black = '#212121'   //? Texto fuerte o títulos
 
     // Helper functions for formatting
-    const formatCurrency = (value, code = "PEN") => {
-        const n = Number(value ?? 0);
-        return `${n.toFixed(2)}`;
-    };
-
-    const formatDateTime = (dateStr) => {
-        if (!dateStr) return "";
-        const d = new Date(dateStr);
-        if (isNaN(d)) return dateStr;
-        return d.toLocaleDateString("es-PE");
-    };
-
 
     const content = [
         // ! seccion de identificadores de la factura y empresa emisora

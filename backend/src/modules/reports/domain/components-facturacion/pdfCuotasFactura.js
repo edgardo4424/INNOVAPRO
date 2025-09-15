@@ -43,7 +43,7 @@ function pdfCuotasFactura(factura) {
             {
                 columns: [
                     { text: "PLAN DE PAGO", style: "paymentPlanHeader" },
-                    { text: `TOTAL DE CUOTAS: ${cuotas.length}`, style: "paymentPlanInfo", alignment: "right" }
+                    { text: `${factura.forma_pago_facturas[0].tipo.toUpperCase() === "CREDITO" ? `TOTAL DE CUOTAS: ${cuotas.length}` : ""}`, style: "paymentPlanInfo", alignment: "right" }
                 ],
                 margin: [0, 10, 0, 5]
             },

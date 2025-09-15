@@ -1,18 +1,18 @@
 const { PdfService } = require('../../../infrastructure/pdf/PdfService');
-const { facturaInvoiceModel } = require('../../../domain/pdfModels/facturaInvoiceModel');
+const { guiaInvoiceModel } = require('../../../domain/pdfModels/guiaInvoiceModel');
 
-module.exports = async (body, facturaRepository) => {
+module.exports = async (body, guiaRepository) => {
     // ? destructuramos el body
     const { correlativo, serie, empresa_ruc, tipo_doc } = body;
     // ? buscamos la factura
-    const facturaObtenida = await facturaRepository.obtenerFacturaPorInformacion(correlativo, serie, empresa_ruc, tipo_doc);
-    console.log(facturaObtenida);
-    if (!facturaObtenida) {
-        return { codigo: 404, respuesta: { error: 'Factura no encontrada' } };
+    const guiaObtenida = await guiaRepository.obtenerGuiaPorInformacion(correlativo, serie, empresa_ruc, tipo_doc);
+    console.log(guiaObtenida);
+    if (!guiaObtenida) {
+        return { codigo: 404, respuesta: { error: 'Guia no encontrada' } };
     }
 
     // 2. Armar modelo PDF
-    const docDefinition = facturaInvoiceModel(facturaObtenida);
+    const docDefinition = guiaInvoiceModel(guiaObtenida);
 
     // 3. Generar PDF con servicio
     const pdfService = new PdfService();
@@ -23,7 +23,7 @@ module.exports = async (body, facturaRepository) => {
         codigo: 200,
         respuesta: {
             success: true,
-            message: 'Factura generada correctamente',
+            message: 'Guia generada correctamente',
             pdf: pdfBuffer.toString('base64'), // puedes mandar base64 si quieres
         },
     };

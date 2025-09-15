@@ -55,7 +55,7 @@ function pdfheader(
                             body: [
                                 [
                                     {
-                                        text: `RUC: ${doc.empresa_ruc}`,
+                                        text: `RUC: ${doc.empresa_ruc || doc.empresa_Ruc}`,
                                         style: "docTypeHeader",
                                         alignment: "center",
                                         border: [false, false, false, false],

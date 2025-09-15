@@ -2,6 +2,7 @@ const { GuiaRemision } = require("../models/guia-remision/guiaRemisionModel");
 const { GuiaDetalles } = require("../models/guia-remision/guiaDetallesModel");
 const { GuiaChoferes } = require("../models/guia-remision/guiaChoferesModel");
 const { Filial } = require("../../../filiales/infrastructure/models/filialModel");
+const { Ubigeo } = require("../../../ubigeo/infrastructure/models/ubigeoModel");
 const { SunatRespuesta } = require("../models/sunatRespuestaModel");
 const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 const { Op, fn, col } = require('sequelize');
@@ -294,13 +295,31 @@ class SequelizeGuiaRemisionRepository {
 
         const empresa = await Filial.findOne({
             where: { ruc: empresa_ruc },
-            attributes: ["ruc", "razon_social", "direccion"],
+            attributes: [
+                "ruc",
+                "razon_social",
+                "direccion",
+                "telefono_oficina",
+                "correo",
+                "cuenta_banco",
+                "link_website",
+                "codigo_ubigeo"],
         });
+
+        const ubigeo = await Ubigeo.findOne({ where: { Codigo: empresa?.codigo_ubigeo } });
+
 
         return guias.map(f => ({
             ...f.dataValues,
             empresa_nombre: empresa?.razon_social,
             empresa_direccion: empresa?.direccion,
+            empresa_telefono: empresa?.telefono_oficina || null,
+            empresa_correo: empresa?.correo || null,
+            empresa_cuenta_banco: empresa?.cuenta_banco || null,
+            empresa_link_website: empresa?.link_website || null,
+            departamento: ubigeo?.departamento || null,
+            provincia: ubigeo?.provincia || null,
+            distrito: ubigeo?.distrito || null,
         }));
     }
 }

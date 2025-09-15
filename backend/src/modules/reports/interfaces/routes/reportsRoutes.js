@@ -1,17 +1,15 @@
 const express = require("express");
 const router = express.Router();
 
-const reportsController = require("../../interfaces/controller/reportsController");
+const reporteFacturaController = require("../controller/reporteFacturaController");
 
 const { verificarToken } = require("../../../../shared/middlewares/authMiddleware");
 
 
 // router.use(verificarToken); // Verificamos el token y el rol de Gerente para todas las rutas
 
-router.get("/reportes", (req, res) => {
-    res.json({ message: "Reportes" });
-});
-router.post("/reporte-factura", reportsController.reporteFactura);
+router.post("/reporte-factura", reporteFacturaController.reporteFactura);
+router.post("/reporte-guia", reporteFacturaController.reporteGuia);
 
 
 module.exports = router;
