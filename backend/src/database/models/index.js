@@ -41,6 +41,12 @@ const {
    Vacaciones,
 } = require("../../modules/vacaciones/infraestructure/models/vacacionesModel");
 db.vacaciones = Vacaciones;
+
+const {
+   AsistenciaVacaciones
+} = require("../../modules/vacaciones/infraestructure/models/asistenciasVacacionesModel");
+db.asistencias_vacaciones = AsistenciaVacaciones;
+
 const { Bonos } = require("../../modules/bonos/infraestructure/models/bonoModel");
 db.bonos = Bonos;
 
@@ -264,6 +270,7 @@ if (db.cotizaciones_transporte) db.cotizaciones_transporte.associate(db);
 if (db.cotizaciones_instalacion) db.cotizaciones_instalacion.associate(db);
 if (db.trabajadores.associate) db.trabajadores.associate(db);
 if (db.vacaciones.associate) db.vacaciones.associate(db);
+if(db.asistencias_vacaciones.associate) db.asistencias_vacaciones.associate(db)
 if (db.contratos_laborales.associate) db.contratos_laborales.associate(db);
 if (db.bonos.associate) db.bonos.associate(db);
 if (db.adelanto_sueldo.associate) db.adelanto_sueldo.associate(db);
