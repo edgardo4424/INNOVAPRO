@@ -1,7 +1,6 @@
-import { Button } from '@/components/ui/button';
 import { useFacturaBoleta } from '@/modules/facturacion/context/FacturaBoletaContext';
-import { RotateCcw, Trash } from 'lucide-react';
-import { useState } from 'react';
+import { Trash } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import ModalPagos from '../modal/ModalPagos';
 import TablaPagos from '../tabla/TablaPagos';
 
@@ -10,6 +9,23 @@ const FormaDePago = () => {
     const { factura, setFactura } = useFacturaBoleta();
 
     const [open, setOpen] = useState(false);
+
+    useEffect(() => {
+        if (factura.forma_pago.length > 0 && factura.forma_pago[0].tipo == "Credito") {
+            setFactura((prevFactura) => ({
+                ...prevFactura,
+                fecha_vencimiento: factura.forma_pago[0].fecha_Pago,
+                dias_pagar: Math.ceil((new Date(factura.forma_pago[0].fecha_Pago).getTime() - new Date(factura.fecha_Emision).getTime()) / (1000 * 60 * 60 * 24)) + 1
+            }))
+        } else {
+            setFactura((prevFactura) => ({
+                ...prevFactura,
+                fecha_vencimiento: null,
+                dias_pagar: null
+            }))
+        }
+    }, [factura.forma_pago]);
+
 
     return (
         <div className=" overflow-y-auto p-4 sm:p-6 lg:p-8 ">
@@ -22,6 +38,7 @@ const FormaDePago = () => {
                         setFactura((prevFactura) => ({
                             ...prevFactura,
                             forma_pago: [],
+                            cuotas_Real: [],
                         }));
                     }}
                 >

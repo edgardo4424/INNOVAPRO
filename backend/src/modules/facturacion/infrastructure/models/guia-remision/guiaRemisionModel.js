@@ -163,9 +163,9 @@ GuiaRemision.associate = (models) => {
     GuiaRemision.hasMany(models.sunat_respuesta, {
         foreignKey: "guia_id",
     })
-    GuiaRemision.hasMany(models.notas_credito_debito, {
-        foreignKey: "guia_id",
-    });
+    // GuiaRemision.hasMany(models.notas_credito_debito, {
+    //     foreignKey: "guia_id",
+    // });
 }
 
 module.exports = { GuiaRemision };

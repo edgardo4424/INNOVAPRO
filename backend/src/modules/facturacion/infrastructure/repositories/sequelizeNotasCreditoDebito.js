@@ -96,17 +96,21 @@ class SequelizeNotasCreditoDebitoRepository {
             console.log("RESPUESTA CREADA", sunat);
 
             //* 5. Anular la factura asociada (MOVIDO DENTRO DE LA TRANSACCIÓN)
-            const { factura_id, guia_id, } = data.nota;
+            const {
+                factura_id,
+                // guia_id,
+            } = data.nota;
             let modelToUpdate = null;
             if (factura_id) {
                 modelToUpdate = Factura;
-            } else if (guia_id) {
-                modelToUpdate = GuiaRemision;
             }
+            // else if (guia_id) {
+            // modelToUpdate = GuiaRemision;
+            // }
             if (!modelToUpdate) {
                 throw new Error("No se encontró ni la factura ni la guía para anular.");
             }
-            const toUpdate = await modelToUpdate.findByPk(factura_id || guia_id);
+            const toUpdate = await modelToUpdate.findByPk(factura_id);
             if (!toUpdate) {
                 throw new Error("No se encontró la factura o guía para anular.");
             }

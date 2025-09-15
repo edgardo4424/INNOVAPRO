@@ -31,6 +31,7 @@ const notaInical = {
     monto_Imp_Venta: 0.0,
 
     // ?Datos del afectado
+    fecha_Emision_Afectado: null,
     afectado_Tipo_Doc: "",
     afectado_Num_Doc: "",
     motivo_Cod: "",
@@ -42,6 +43,11 @@ const notaInical = {
 }
 
 const ValorInicialDetalleNota = {
+    factura_id: "",
+    guia_id: "",
+
+    // ?Fecha emision
+    fecha_Emision: "",
 
     // ?Montos
     monto_Igv: 0,

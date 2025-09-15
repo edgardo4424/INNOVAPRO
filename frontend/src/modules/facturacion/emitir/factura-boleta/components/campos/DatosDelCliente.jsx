@@ -140,7 +140,7 @@ const DatosDelCliente = () => {
                         />
                         <button
                             type="submit"
-                            className="p-2 bg-blue-500 rounded-md text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200" // Estilos de botón mejorados
+                            className="p-2 bg-innova-blue hover:bg-innova-blue hover:scale-105 rounded-md text-white transition-colors duration-200" // Estilos de botón mejorados
                         >
                             <Search className="h-5 w-5" />
                         </button>
@@ -157,7 +157,7 @@ const DatosDelCliente = () => {
                         placeholder="Razón Social"
                         className="border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500" // Estilos mejorados
                         value={cliente_Razon_Social || ""}
-                        onChange={handleInputChange}
+                        // onChange={handleInputChange}
                     />
                 </div>
 
@@ -171,7 +171,7 @@ const DatosDelCliente = () => {
                         placeholder="Dirección"
                         className="border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
                         value={cliente_Direccion || ""}
-                        onChange={handleInputChange}
+                        // onChange={handleInputChange}
                     />
                 </div>
             </form>

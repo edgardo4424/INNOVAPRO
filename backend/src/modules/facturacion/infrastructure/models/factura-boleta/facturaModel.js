@@ -171,7 +171,27 @@ const Factura = sequelize.define(
         anulacion_Motivo: {
             type: DataTypes.STRING,
             allowNull: true,
-        }
+        },
+        orden_compra: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        dias_pagar: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        fecha_vencimiento: {
+            type: DataTypes.DATE,
+            allowNull: true,
+        },
+        neto_Pagar: {
+            type: DataTypes.DECIMAL,
+            allowNull: true,
+        },
+        cuotas_Real: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        },
     },
     {
         timestamps: false,

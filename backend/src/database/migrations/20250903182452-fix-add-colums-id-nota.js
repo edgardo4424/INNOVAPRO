@@ -17,11 +17,11 @@ module.exports = {
         key: 'id',
       },
     });
-    await queryInterface.addColumn('notas_credito_debito', 'guia_id', {
+    await queryInterface.addColumn('notas_credito_debito', 'nota_id', {
       type: Sequelize.INTEGER,
       allowNull: true,
       references: {
-        model: { tableName: 'guias_de_remision' },
+        model: { tableName: 'notas_credito_debito' },
         key: 'id',
       },
     });
@@ -35,6 +35,6 @@ module.exports = {
      * await queryInterface.dropTable('users');
      */
     await queryInterface.removeColumn('notas_credito_debito', 'factura_id');
-    await queryInterface.removeColumn('notas_credito_debito', 'guia_id');
+    await queryInterface.removeColumn('notas_credito_debito', 'nota_id');
   }
 };

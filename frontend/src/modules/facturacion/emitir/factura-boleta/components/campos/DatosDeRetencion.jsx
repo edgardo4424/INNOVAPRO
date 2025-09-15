@@ -1,19 +1,19 @@
 // Importaciones necesarias de React y tu contexto personalizado
-import React, { useEffect } from 'react';
-import { useFacturaBoleta } from '@/modules/facturacion/context/FacturaBoletaContext';
+import React, { useEffect, useCallback } from "react";
+import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
 
 // Importaciones de los componentes de shadcn/ui
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch'; // Usamos un switch para un mejor UX
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
 const DatosDeRetencion = () => {
   const {
@@ -23,153 +23,201 @@ const DatosDeRetencion = () => {
     setRetencionActivado,
     retencion,
     setRetencion,
-    precioDolarActual
+    precioDolarActual,
   } = useFacturaBoleta();
 
-  let importeNeto = 0;
+  // Verificaciones de visibilidad del componente
+  if (factura.monto_Imp_Venta < 699) return null;
+  if (factura.tipo_Doc === "03") return null;
+  if (factura.tipo_Operacion === "1001") return null;
 
+  // Función para calcular la retención de forma más robusta
+  const calcularRetencion = useCallback(
+    (porcentaje) => {
+      if (!porcentaje || porcentaje <= 0) {
+        // Si no hay porcentaje válido, resetear valores
+        setRetencion({
+          ...retencion,
+          descuento_factor: 0,
+          descuento_monto_base: 0,
+          descuento_monto: 0,
+        });
+        setFactura({ ...factura, neto_Pagar: 0 });
+        return;
+      }
+
+      let montoBase;
+      let montoPorcentaje;
+
+      if (factura.tipo_Moneda === "PEN") {
+        // Cálculo para moneda nacional (PEN)
+        montoBase = factura.monto_Imp_Venta - factura.monto_Oper_Exoneradas;
+        montoPorcentaje = montoBase * porcentaje;
+
+        setRetencion({
+          ...retencion,
+          descuento_factor: porcentaje,
+          descuento_monto_base: Number(montoBase.toFixed(2)),
+          descuento_monto: Number(montoPorcentaje.toFixed(2)),
+        });
+
+        setFactura({
+          ...factura,
+          neto_Pagar: Number((factura.monto_Imp_Venta - montoPorcentaje).toFixed(2)),
+        });
+      } else {
+        // Cálculo para moneda extranjera (USD)
+        const montoVentaEnSoles = factura.monto_Imp_Venta * precioDolarActual;
+        montoBase = montoVentaEnSoles;
+        montoPorcentaje = montoBase * porcentaje;
+
+        setRetencion({
+          ...retencion,
+          descuento_factor: porcentaje,
+          descuento_monto_base: Number(montoBase.toFixed(2)),
+          descuento_monto: Number(montoPorcentaje.toFixed(2)),
+        });
+
+        setFactura({
+          ...factura,
+          neto_Pagar: Number((factura.monto_Imp_Venta - montoPorcentaje).toFixed(2)),
+        });
+      }
+    },
+    [factura, retencion, setRetencion, setFactura, precioDolarActual],
+  );
+
+  // Manejo del cambio de porcentaje
   const handleSelectChange = (value) => {
-    if (factura.tipo_Moneda == "PEN") {
-      let montoPorcentaje = factura.monto_Imp_Venta * value;
-      let montoBase = factura.monto_Imp_Venta;
+    const porcentaje = parseFloat(value);
+    calcularRetencion(porcentaje);
+  };
 
+  // Efecto para recalcular cuando cambian valores relevantes
+  useEffect(() => {
+    if (retencionActivado && retencion.descuento_factor) {
+      calcularRetencion(retencion.descuento_factor);
+    }
+  }, [
+    factura.monto_Imp_Venta,
+    factura.tipo_Moneda,
+    precioDolarActual,
+    retencionActivado,
+  ]);
+
+  // Efecto para resetear cuando se desactiva la retención
+  useEffect(() => {
+    setFactura({
+      ...factura,
+      forma_pago: [],
+      cuotas_Real: [],
+    });
+    if (!retencionActivado) {
       setRetencion({
         ...retencion,
-        descuento_factor: value,
-        descuento_monto_base: Number(montoBase.toFixed(2)),
-        descuento_monto: Number(montoPorcentaje.toFixed(2)),
+        descuento_factor: 0,
+        descuento_monto_base: 0,
+        descuento_monto: 0,
       });
+      setFactura({
+        ...factura,
+        forma_pago: [],
+        cuotas_Real: [],
+        neto_Pagar: 0,
+      });
+    }
+  }, [retencionActivado, retencion.descuento_factor]);
 
-      importeNeto = (montoBase - montoPorcentaje).toFixed(2);
-    } else {
-      let montoPorcentaje = (factura.monto_Imp_Venta * precioDolarActual) * value;
-      let montoBase = factura.monto_Imp_Venta * precioDolarActual;
-
+  // Manejo del cambio de estado del switch
+  const handleSwitchChange = (checked) => {
+    setRetencionActivado(checked);
+    if (!checked) {
+      // Resetear valores cuando se desactiva
       setRetencion({
         ...retencion,
-        descuento_factor: value,
-        descuento_monto_base: Number(montoBase).toFixed(2),
-        descuento_monto: Number(montoPorcentaje).toFixed(2),
+        descuento_factor: 0,
+        descuento_monto_base: 0,
+        descuento_monto: 0,
       });
-
-      importeNeto = Number(montoBase - montoPorcentaje)
     }
   };
 
-  useEffect(() => {
-    if (retencionActivado) {
-      handleSelectChange(retencion.descuento_factor);
-    }
-  }, [factura.monto_Imp_Venta,factura.tipo_Moneda]);
-
-  if (factura.monto_Imp_Venta < 699) return null
-
-  if (factura.tipo_Doc == "03") return null
-
-  if (factura.tipo_Operacion == "1001") return null
-
   return (
-    // Contenedor principal con espaciado y layout responsivo
-    <div className='overflow-y-auto pt-4 px-4 lg:px-8 flex flex-col gap-y-6'>
-      <div className='flex items-center gap-x-4'>
-        <h1 className="text-2xl font-bold">
-          Retención
-        </h1>
-        {/* Usamos un Switch de shadcn para un mejor control de activación */}
+    <div className="flex flex-col gap-y-6 overflow-y-auto px-4 pt-4 lg:px-8">
+      <div className="flex items-center gap-x-4">
+        <h1 className="text-2xl font-bold">Retención</h1>
         <Switch
           checked={retencionActivado}
-          onCheckedChange={setRetencionActivado}
+          onCheckedChange={handleSwitchChange}
           id="retencion-switch"
           aria-label="Activar retención"
-          className={retencionActivado ? '!bg-blue-500' : 'bg-gray-200'}
+          className={retencionActivado ? "!bg-blue-500" : "bg-gray-200"}
         />
         <Label htmlFor="retencion-switch" className="text-gray-700">
-          {retencionActivado ? 'Activado' : 'Desactivado'}
+          {retencionActivado ? "Activado" : "Desactivado"}
         </Label>
       </div>
 
-      {/* Contenedor del formulario, se muestra solo si la retención está activada */}
+      {/* Contenedor del formulario */}
       {retencionActivado && (
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full'>
-          {/* Campo de selección de tipo de descuento */}
-          {/* <div className='flex flex-col space-y-2'>
-            <Label htmlFor="descuento_cod_tipo">
-              Tipo de descuento
-            </Label>
-            <Select
-              value={retencion.descuento_cod_tipo}
-              onValueChange={handleSelectChange}
-            >
-              <SelectTrigger id="descuento_cod_tipo">
-                <SelectValue placeholder="Selecciona un tipo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="00">00 - Descuento en el valor</SelectItem>
-                <SelectItem value="01">01 - Descuento en el impuesto</SelectItem>
-              </SelectContent>
-            </Select>
-          </div> */}
-
-          {/* Campo de factor */}
-          <div className='flex flex-col space-y-2'>
-            <Label htmlFor="descuento_factor">
-              Porcentaje
-            </Label>
+        <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {/* Campo de porcentaje */}
+          <div className="flex flex-col space-y-2">
+            <Label htmlFor="descuento_factor">Porcentaje de Retención</Label>
             <Select
               name="descuento_factor"
-              value={retencion.descuento_factor || ''}
+              value={retencion.descuento_factor?.toString() || ""}
               onValueChange={handleSelectChange}
-              placeholder="Selecciona un porcentaje"
             >
-              <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm">
-                <SelectValue placeholder="Selecciona un porcentaje de detracción" />
+              <SelectTrigger className="w-full rounded-md border border-gray-300 shadow-sm">
+                <SelectValue placeholder="Selecciona porcentaje" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={0.03}>3%</SelectItem>
-                <SelectItem value={0.06}>6%</SelectItem>
+                <SelectItem value="0.03">3%</SelectItem>
+                <SelectItem value="0.06">6%</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          {/* Campo de monto base */}
-          <div className='flex flex-col space-y-2'>
+          {/* Monto base */}
+          <div className="flex flex-col space-y-2">
             <Label htmlFor="descuento_monto_base">
-              Monto a base
+              Monto Base {factura.tipo_Moneda === "USD" ? "(PEN)" : ""}
             </Label>
             <Input
               type="number"
               id="descuento_monto_base"
-              value={retencion.descuento_monto_base}
+              value={retencion.descuento_monto_base || 0}
               disabled
-            // onChange={(e) => setRetencion({ ...retencion, des}cuento_monto_base: Number(e.target.value) })}
+              className="bg-gray-50"
             />
           </div>
 
-          {/* Campo de monto */}
-          <div className='flex flex-col space-y-2'>
+          {/* Importe a retener */}
+          <div className="flex flex-col space-y-2">
             <Label htmlFor="descuento_monto">
-              Importe a retener
+              Importe a Retener {factura.tipo_Moneda === "USD" ? "(PEN)" : ""}
             </Label>
             <Input
               type="number"
               id="descuento_monto"
-              value={retencion.descuento_monto}
+              value={retencion.descuento_monto || 0}
               disabled
-            // onChange={(e) => setRetencion({ ...retencion, descuento_monto: Number(e.target.value) })}
+              className="bg-gray-50"
             />
           </div>
 
-          {/* Campo de monto */}
-          <div className='flex flex-col space-y-2'>
-            <Label htmlFor="descuento_monto">
-              Importe neto a pagar
+          {/* Importe neto a pagar */}
+          <div className="flex flex-col space-y-2">
+            <Label htmlFor="neto_pagar">
+              Neto a Pagar {factura.tipo_Moneda === "USD" ? "(PEN)" : ""}
             </Label>
             <Input
               type="number"
-              id="descuento_monto"
-              value={(retencion.descuento_monto_base - retencion.descuento_monto).toFixed(2)}
+              id="neto_pagar"
+              value={factura.neto_Pagar}
               disabled
-            // onChange={(e) => setRetencion({ ...retencion, descuento_monto: Number(e.target.value) })}
+              className="bg-gray-50 font-semibold"
             />
           </div>
         </div>

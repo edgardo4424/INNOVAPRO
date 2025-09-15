@@ -12,6 +12,7 @@ import {
 import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
 import facturaService from "@/modules/facturacion/service/FacturaService";
 import { useEffect, useState } from "react";
+import { formatearFecha } from "../../../utils/formatearFecha";
 
 const ListaDeDocumentos = ({ closeModal }) => {
 
@@ -21,10 +22,11 @@ const ListaDeDocumentos = ({ closeModal }) => {
     const [documentosRelacionados, setDocumentosRelacionados] = useState([]);
     const [filtro, setFiltro] = useState("");
 
-    // Filtrar documentos por serie y correlativo
-    const documentosFiltrados = documentosRelacionados.filter(doc =>
-        `${doc.serie} ${doc.correlativo}`.toLowerCase().includes(filtro.toLowerCase())
-    );
+    // Filtrar documentos por serie y correlativo, no relacionados con la factura actual
+    const documentosFiltrados = documentosRelacionados.filter(doc => {
+        const existe = factura.relDocs.some(item => item.nroDoc === `${doc.serie}-${doc.correlativo}`);
+        return !existe && `${doc.serie} ${doc.correlativo}`.toLowerCase().includes(filtro.toLowerCase());
+    });
 
     useEffect(() => {
         const cargarDocumentos = async () => {
@@ -37,15 +39,6 @@ const ListaDeDocumentos = ({ closeModal }) => {
         };
         cargarDocumentos();
     }, [])
-
-
-    const formatearFecha = (fecha) => {
-        const fechaDate = new Date(fecha);
-        const dia = fechaDate.getDate().toString().padStart(2, '0');
-        const mes = (fechaDate.getMonth() + 1).toString().padStart(2, '0');
-        const anio = fechaDate.getFullYear();
-        return `${anio}/${mes}/${dia}`
-    }
 
     const handleClick = (doc) => {
         const existe = factura.relDocs.some(item => item.nroDoc === `${doc.serie}-${doc.correlativo}`);

@@ -47,6 +47,22 @@ const Filial = sequelize.define(
          type: DataTypes.INTEGER,
          allowNull: false,
       },
+      cuenta_banco: {
+         type: DataTypes.STRING,
+         allowNull: true,
+      },
+      correo: {
+         type: DataTypes.STRING,
+         allowNull: true,
+      },
+      link_website: {
+         type: DataTypes.STRING,
+         allowNull: true,
+      },
+      codigo_ubigeo: {
+         type: DataTypes.STRING(6),
+         allowNull: true,
+      },
    },
    {
       timestamps: false,
@@ -59,14 +75,14 @@ Filial.associate = (models) => {
       foreignKey: "filial_id",
    });
    Filial.hasMany(models.contratos_laborales, {
-    foreignKey: "filial_id",
-  });
-  Filial.hasMany(models.cts, {
-    foreignKey: "filial_id",
-  });
-  Filial.hasMany(models.cierres_planilla_mensual, {
-    foreignKey: "filial_id",
-  });
+      foreignKey: "filial_id",
+   });
+   Filial.hasMany(models.cts, {
+      foreignKey: "filial_id",
+   });
+   Filial.hasMany(models.cierres_planilla_mensual, {
+      foreignKey: "filial_id",
+   });
 };
 
 module.exports = { Filial }; // Exporta el modelo para que pueda ser utilizado en otros módulos

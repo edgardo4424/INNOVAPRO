@@ -6,6 +6,7 @@ const { SunatRespuesta } = require("../models/sunatRespuestaModel");
 const { GuiaRemision } = require("../models/guia-remision/guiaRemisionModel");
 const { NotasCreditoDebito } = require("../models/notas-credito-debito/notasCreditoDebitoModel");
 const { Filial } = require("../../../filiales/infrastructure/models/filialModel");
+const { Ubigeo } = require("../../../ubigeo/infrastructure/models/ubigeoModel");
 const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 const { Op, fn, col } = require('sequelize');
 
@@ -118,20 +119,38 @@ class SequelizeFacturaRepository {
                 // Si hay un filtro de empresa, usar ese RUC exacto
                 empresa = await Filial.findOne({
                     where: { ruc: nEmpresaRuc },
-                    attributes: ["ruc", "razon_social", "direccion"],
+                    attributes: [
+                        "ruc",
+                        "razon_social",
+                        "direccion",
+                        "telefono_oficina",
+                        "cuenta_banco",
+                        "link_website",
+                        "codigo_ubigeo"],
                 });
             } else if (rows.length > 0 && rows[0].empresa_ruc) {
                 // Si no hay filtro de empresa pero hay resultados, usar el RUC del primer registro
                 empresa = await Filial.findOne({
                     where: { ruc: rows[0].empresa_ruc },
-                    attributes: ["ruc", "razon_social", "direccion"],
+                    attributes: [
+                        "ruc",
+                        "razon_social",
+                        "direccion",
+                        "telefono_oficina",
+                        "cuenta_banco",
+                        "link_website",
+                        "codigo_ubigeo"],
                 });
             }
+
 
             const documentos = rows.map(f => ({
                 ...f.dataValues,
                 empresa_nombre: empresa?.razon_social || null,
                 empresa_direccion: empresa?.direccion || null,
+                empresa_telefono: empresa?.telefono_oficina || null,
+                empresa_cuenta_banco: empresa?.cuenta_banco || null,
+                empresa_link_website: empresa?.link_website || null,
             }));
 
             return {
@@ -255,13 +274,31 @@ class SequelizeFacturaRepository {
 
         const empresa = await Filial.findOne({
             where: { ruc: empresa_ruc },
-            attributes: ["ruc", "razon_social", "direccion"],
+            attributes: [
+                "ruc",
+                "razon_social",
+                "direccion",
+                "telefono_oficina",
+                "correo",
+                "cuenta_banco",
+                "link_website",
+                "codigo_ubigeo"],
         });
+
+        const ubigeo = await Ubigeo.findOne({ where: { Codigo: empresa?.codigo_ubigeo } });
+
 
         return facturas.map(f => ({
             ...f.dataValues,
             empresa_nombre: empresa?.razon_social,
             empresa_direccion: empresa?.direccion,
+            empresa_telefono: empresa?.telefono_oficina || null,
+            empresa_correo: empresa?.correo || null,
+            empresa_cuenta_banco: empresa?.cuenta_banco || null,
+            empresa_link_website: empresa?.link_website || null,
+            departamento: ubigeo?.departamento || null,
+            provincia: ubigeo?.provincia || null,
+            distrito: ubigeo?.distrito || null,
         }));
 
     }

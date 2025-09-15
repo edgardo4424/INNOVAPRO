@@ -17,10 +17,6 @@ module.exports = {
       type: Sequelize.STRING,
       allowNull: true,
     });
-    await queryInterface.addColumn('notas_credito_debito', 'anulacion_Motivo', {
-      type: Sequelize.STRING,
-      allowNull: true,
-    });
   },
 
   async down(queryInterface, Sequelize) {
@@ -32,6 +28,5 @@ module.exports = {
      */
     await queryInterface.removeColumn('factura', 'anulacion_Motivo');
     await queryInterface.removeColumn('guias_de_remision', 'anulacion_Motivo');
-    await queryInterface.removeColumn('notas_credito_debito', 'anulacion_Motivo');
   }
 };
