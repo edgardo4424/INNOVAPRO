@@ -42,6 +42,11 @@ const Vacaciones = sequelize.define(
          allowNull: true,
          defaultValue: 0,
       },
+      estado: {
+         type: DataTypes.ENUM("pendiente", "aprobada", "rechazada"),
+         defaultValue: "pendiente",
+         allowNull: false,
+      },
    },
    {
       tableName: "vacaciones",
@@ -53,6 +58,10 @@ Vacaciones.associate = (models) => {
    Vacaciones.belongsTo(models.trabajadores, {
       foreignKey: "trabajador_id",
       as: "trabajadores",
+   });
+   Vacaciones.hasMany(models.asistencias_vacaciones, {
+      foreignKey: 'vacaciones_id',
+      as: 'vacaciones_asistencias'
    });
 };
 module.exports = { Vacaciones };
