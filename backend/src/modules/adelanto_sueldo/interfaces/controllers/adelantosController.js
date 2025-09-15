@@ -7,12 +7,18 @@ const obtenerAdelantosPorTrabajadorId = require("../../application/useCases/obte
 const SequelizeAdelantoSueldoRepository = require("../../infraestructure/repositories/sequlizeAdelantoSueldoRepository");
 
 const adelantoSueldoRepository = new SequelizeAdelantoSueldoRepository();
+
+const SequelizeContratoLaboralRepository = require("../../../contratos_laborales/infraestructure/repositories/sequelizeContratoLaboralRepository");
+
+const contratoLaboralRepository = new SequelizeContratoLaboralRepository();
+
 const AdelantoSueldoController = {
    async crearAdelantoSueldo(req, res) {
       try {
          const nuevo_adelanto_sueldo = await crearAdelantoSueldo(
             req.body,
-            adelantoSueldoRepository
+            adelantoSueldoRepository,
+            contratoLaboralRepository
          );
 
          res.status(nuevo_adelanto_sueldo.codigo).json(

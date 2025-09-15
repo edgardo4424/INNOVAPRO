@@ -14,8 +14,6 @@ async function actualizarCuotasPagadas(
     transaction,
   });
 
-  console.log('registros', registros);
-
   for (const registro of registros) {
 
       const registrooo = await registro.update(
@@ -25,8 +23,6 @@ async function actualizarCuotasPagadas(
         { transaction }
       );
 
-      console.log("registrooooo", registrooo);
-      console.log(`✅ Adelanto ID ${registro.id} actualizado.`);
     
   }
 }

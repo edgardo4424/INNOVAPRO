@@ -73,8 +73,7 @@ class AdelantoSueldo {
 
          const quincena_dia_laboral = obtenerUltimoDiaLaboralDeQuincena(anio,mes);
          const ultimo_dia_laboral = obtenerUltimoDiaLaboral(anio,mes);
-         console.log('ultimo dia laboral',ultimo_dia_laboral);
-         
+ 
          if (!ultimo_dia_laboral)
             errores.push("Fallo la obtencion del ultimo dia laboral");
          const dias_aceptados = [quincena_dia_laboral, Number(ultimo_dia_laboral)];

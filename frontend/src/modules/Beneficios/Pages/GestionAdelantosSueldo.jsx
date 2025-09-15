@@ -45,6 +45,7 @@ import beneficiosService from "../services/beneficiosService";
 import { toast } from "sonner";
 import { formatoDinero } from "../utils/formatoDinero";
 import { formatoFechaBeneficios } from "../utils/formatoFechaBeneficios";
+import { formatearFecha } from "@/utils/formatearFecha";
 
 const GestionAdelantoSueldo = () => {
   const [adelantoSueldos, setAdelantoSueldos] = useState([]);
@@ -178,6 +179,8 @@ const GestionAdelantoSueldo = () => {
       setDialogOpen(false);
       await fetchAdelantoSueldos();
     } catch (e) {
+
+      console.log('error', e);
       if (e?.response?.data?.mensaje && e?.response?.data?.mensaje.length > 0) {
         const err = e?.response?.data?.mensaje;
         for (const er of err) {
@@ -287,7 +290,7 @@ const GestionAdelantoSueldo = () => {
                           {t.numero_documento ?? "-"}
                         </td>
                         <td className="px-4 py-3">
-                          {formatoFechaBeneficios(b.fecha)}
+                          {formatearFecha(b.fecha)}
                         </td>
                         <td className="px-4 py-3">{formatoDinero(b.monto)}</td>
                         <td

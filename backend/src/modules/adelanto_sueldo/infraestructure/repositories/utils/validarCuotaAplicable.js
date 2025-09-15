@@ -77,14 +77,9 @@ function parseYMD(fechaStr) {
  * @returns {boolean}
  */
 function isCuotaAplicable(primera_cuota, cuotas, fecha_anio_mes_dia, forma_descuento) {
-  console.log({
-    primera_cuota,
-    cuotas,
-    fecha_anio_mes_dia,
-    forma_descuento
-  });
+  
   const fechasCuotas = obtenerFechasCuotas(primera_cuota, cuotas, forma_descuento);
-  console.log('fechsCuotas', fechasCuotas);
+  //console.log('fechsCuotas', fechasCuotas);
   const { anio: anioActual, mes: mesActual } = parseYMD(fecha_anio_mes_dia);
 
   return fechasCuotas.some((f) => {

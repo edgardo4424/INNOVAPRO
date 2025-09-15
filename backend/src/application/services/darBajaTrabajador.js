@@ -23,6 +23,8 @@ const SequelizeTrabajadorRepository = require("../../modules/trabajadores/infrae
 const trabajadorRepository = new SequelizeTrabajadorRepository();
 
 const SequelizeContratoLaboralRepository = require("../../modules/contratos_laborales/infraestructure/repositories/sequelizeContratoLaboralRepository");
+const contratoLaboralRepository = new SequelizeContratoLaboralRepository();
+
 const db = require("../../database/models");
 const sequelize = require("../../database/sequelize");
 const InsertarRegistroBajaTrabajador = require("../../modules/dar_baja_trabajadores/application/useCases/InsertarRegistroBajaTrabajador");
@@ -35,6 +37,7 @@ const {
 const calcularPlanillaMensualTruncaPorTrabajador = require("../../modules/planilla/application/useCases/calcularPlanillaMensualTruncaPorTrabajador");
 const cierrePlanillaQuincenal = require("../../modules/planilla/application/useCases/cierrePlanillaQuincenal");
 const cierrePlanillaQuincenalTruncaPorTrabajador = require("../../modules/planilla/application/useCases/cierrePlanillaQuincenalTruncaPorTrabajador");
+const { calcularTiempoLaborado } = require("../utils/calcularTiempoEnEmpresa");
 
 module.exports = async function darBajaTrabajador(dataBody) {
   const transaction = await sequelize.transaction();
@@ -52,41 +55,74 @@ module.exports = async function darBajaTrabajador(dataBody) {
   // console.log("dataBody", dataBody);
 
   try {
-    // Buscar el contrato laboral del trabajador asignando la fecha_baja
+    //! Buscar el contrato laboral del trabajador asignando la fecha_baja
     const contratoLaboralEncontrado = await db.contratos_laborales.findByPk(
       contrato_id,
       { transaction }
     );
 
     if (!contratoLaboralEncontrado) {
-  await transaction.rollback();
-  return { codigo: 404, respuesta: { mensaje: "Contrato no encontrado" } };
-}
+      await transaction.rollback();
+      return { codigo: 404, respuesta: { mensaje: "Contrato no encontrado" } };
+    }
 
-    console.log("contratoLaboralEncontrado", contratoLaboralEncontrado);
+    //! Calcular beneficios. (Para que tenga beneficios, minimo tiene que cumplir un mes en la empresa)
 
-    // Comparar si la fecha de baja es menor a la fecha de fin contrato, tomar la fecha de baja como fecha_terminacion_anticipada
-    // sino tomar la fecha fin contrato como fecha_terminacion_anticipada
+    //* Obtener primero los contratos del trabajador
+    const contratos = await contratoLaboralRepository.obtenerHistoricoContratosDesdeUltimaAlta(
+      trabajador_id,
+      transaction
+    );
+
+    const contratosDelTrabajador = contratos.map((contrato) => contrato.get({ plain: true }));
+
+    //console.log('contratosDelTrabajador',contratosDelTrabajador);
+
+
+    //! Comparar si la fecha de baja es menor a la fecha de fin contrato, tomar la fecha de baja como fecha_terminacion_anticipada
+    // !sino tomar la fecha fin contrato como fecha_terminacion_anticipada
 
     const fechaBaja = moment(fecha_baja, "YYYY-MM-DD");
     const fechaFinContrato = moment(
       contratoLaboralEncontrado.fecha_fin,
       "YYYY-MM-DD"
     );
+
     let fechaTerminacionAnticipada = null;
-     if (fechaBaja.isSameOrBefore(fechaFinContrato, "day")) {
-      // Si fechaBaja es menor o igual a la fechaFinContrato
+    if (fechaBaja.isSameOrBefore(fechaFinContrato, "day")) {
+
+      //! Si fechaBaja es menor o igual a la fechaFinContrato
       fechaTerminacionAnticipada = fechaBaja.clone();
     } else {
-      // Si fechaBaja es mayor a la fechaFinContrato
+
+      //! Si fechaBaja es mayor a la fechaFinContrato
       fechaTerminacionAnticipada = fechaFinContrato.clone();
     }
 
-    // Actualizar el contrato laboral con la fecha_terminacion_anticipada
-    contratoLaboralEncontrado.fecha_terminacion_anticipada = fechaTerminacionAnticipada.format("YYYY-MM-DD");
+    //! Actualizar el contrato laboral con la fecha_terminacion_anticipada
+    contratoLaboralEncontrado.fecha_terminacion_anticipada =
+      fechaTerminacionAnticipada.format("YYYY-MM-DD");
+
     await contratoLaboralEncontrado.save({ transaction });
 
-    // Cerrar gratificacion trunca
+    
+    const contratosParaCalcularTiempoLaborado = contratosDelTrabajador.map(
+      (contrato) => {
+        if(contrato.id == contrato_id){
+        return {
+          ...contrato,
+          fecha_terminacion_anticipada: fechaTerminacionAnticipada.format(
+            "YYYY-MM-DD"
+          ),
+        }
+        }
+      })
+
+    
+    //! CAlcular el tiempo en la empresa
+    const { tiempoLaborado } = calcularTiempoLaborado(contratosParaCalcularTiempoLaborado);
+
+    //! Cerrar gratificacion trunca
     const gratificacionTrunca = await cierreGratificacionTruncaPorTrabajador(
       usuario_cierre_id,
       filial_id,
@@ -108,7 +144,6 @@ module.exports = async function darBajaTrabajador(dataBody) {
       transaction
     );
 
-
     console.log("ctsTrunca", ctsTrunca);
 
     // Crear una fecha que represente el día 15 de ese mes/año
@@ -121,7 +156,6 @@ module.exports = async function darBajaTrabajador(dataBody) {
     // Si fechaTerminacionAnticipada es posterior al dia 15, cerrar planilla quincenal
     // Si no cerrar solamente la planilla mensual trunca
     if (fechaTerminacionAnticipada.isAfter(dia15, "day")) {
-      
       // Cerrar planilla quincenal trunca
       const fecha_anio_mes = fechaTerminacionAnticipada.format("YYYY-MM");
 
@@ -135,14 +169,13 @@ module.exports = async function darBajaTrabajador(dataBody) {
           transaction
         );
 
-      console.log("planillaQuincenalTrunca", planillaQuincenalTrunca);
     }
     // Sino cerrar planilla
 
-
-     const anioMesDia = fechaTerminacionAnticipada.clone().endOf("month").format("YYYY-MM-DD");
-
-    console.log('anioMesDia', anioMesDia);
+    const anioMesDia = fechaTerminacionAnticipada
+      .clone()
+      .endOf("month")
+      .format("YYYY-MM-DD");
 
     const planillaMensualTrunca =
       await calcularPlanillaMensualTruncaPorTrabajador(
@@ -155,8 +188,6 @@ module.exports = async function darBajaTrabajador(dataBody) {
         transaction
       );
 
-    console.log("planillaMensualTrunca", planillaMensualTrunca);
-
 
     const darBajaTrabajador = {
       trabajador_id: trabajador_id,
@@ -167,6 +198,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
       usuario_registro_id: usuario_cierre_id,
       estado_liquidacion: "CALCULADA",
     };
+
     // Insertar en la tabla bajas_trabajadores
     const registroBajaTrabajador = await InsertarRegistroBajaTrabajador(
       darBajaTrabajador,

@@ -89,8 +89,6 @@ class SequelizeAdelantoSueldoRepository {
       where: optionsWhere,
     });
 
-    console.log('adelantos', adelantos);
-
     let adelantosQueAplican = [];
 
     if (adelantos.length === 0) {
