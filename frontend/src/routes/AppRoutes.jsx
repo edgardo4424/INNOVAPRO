@@ -25,6 +25,7 @@ import RoleGuard from "./rol.guard";
 
 import PlanillaMensual from "@/modules/planilla/pages/CalculoPlanillaMensual";
 import GestionPlanillaMensual from "@/modules/planilla/pages/GestionPlanillaMensual";
+import { BandejaProvider } from "@/modules/facturacion/context/BandejaContext";
 
 // Lazy load components
 const Login = lazy(() => import("@/modules/auth/pages/Login"));
@@ -253,7 +254,11 @@ export default function AppRoutes() {
 
                         <Route
                            path="facturacion/borradores"
-                           element={<Borrador />}
+                           element={
+                                 <BandejaProvider>
+                                    <Borrador />
+                                 </BandejaProvider>
+                                 }
                         />
 
                      </Route>

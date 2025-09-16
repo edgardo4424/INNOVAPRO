@@ -1,4 +1,4 @@
-const { utils } = require('../../utils/utils')
+const { utils } = require('../../../utils/utils')
 
 function pdfheader(
     doc,
@@ -7,12 +7,23 @@ function pdfheader(
     innova_border = "#DCDBDB",
     border_content = [false, false, false, false],
     margin_content = [0, 0, 0, 10],
+    text_color = '#616161'
 ) {
+    const qrData = 'https://app.factiliza.com/consulta-comprobante'
+
+    let qr = false;
+
+    if (doc.tipo_Doc == "09") {
+        qr = true;
+    }
+
+
+
     const numeroDoc = `${doc.serie ?? ""}-${String(doc.correlativo ?? "").padStart(8, "0")}`;
     return {
         columns: [
             {
-                width: "20%",
+                width: "18%",
                 stack: [
                     {
                         image: logo_innova,
@@ -23,7 +34,7 @@ function pdfheader(
                 ],
             },
             {
-                width: "45%",
+                width: qr ? "30%" : "47%",
                 stack: [
                     { text: doc.empresa_nombre, style: "companyName" },
                     { text: `${doc.empresa_direccion}`, style: "companyAddress" },
@@ -42,6 +53,25 @@ function pdfheader(
                     },
                 ],
             },
+            qr ?
+                {
+                    width: "17%",
+                    table: {
+                        widths: ["100%"],
+                        body: [
+                            [
+                                {
+                                    qr: qrData,
+                                    fit: 60,
+                                    alignment: "center",
+                                    margin: [0, -10, 0, 0]
+                                }
+                            ],
+                        ]
+                    },
+                    fillColor: '#ffffff',
+                    layout: "noBorders"
+                } : null,
             {
                 borderWidth: 1,
                 borderColor: innova_border,

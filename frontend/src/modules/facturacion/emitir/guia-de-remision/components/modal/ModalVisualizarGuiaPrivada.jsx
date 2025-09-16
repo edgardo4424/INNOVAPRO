@@ -11,7 +11,13 @@ export default function ModalVisualizarGuiaPrivada() {
     guiaDatosPublico,
     guiaDatosInternos,
     tipoGuia,
+    filiales,
   } = useGuiaTransporte();
+
+  //? Filtro para obtener la filial que coincide con el ruc de la factura
+  const filialActual = filiales.find(
+    (filial) => filial.ruc === guiaTransporte.empresa_Ruc,
+  );
 
   // ?? Estado para controlar la visibilidad del modal
   const [open, setOpen] = useState(false);
@@ -139,13 +145,11 @@ export default function ModalVisualizarGuiaPrivada() {
                   <div className="grid grid-cols-1 items-start gap-6 px-6 py-6 md:grid-cols-4">
                     <div className="col-span-2">
                       <h1 className="text-2xl font-bold text-blue-700 md:text-3xl">
-                        TU EMPRESA S.A.C.
+                        {filialActual.razon_social}
                       </h1>
+                      <p className="text-sm">{filialActual.ruc}</p>
                       <p className="text-sm">
-                        RUC: {guiaTransporte.empresa_Ruc || "N/A"}
-                      </p>
-                      <p className="text-sm">
-                        DIRECCIÓN: [Tu dirección de empresa aquí]
+                        DIRECCIÓN: {filialActual.direccion}
                       </p>{" "}
                       {/* Placeholder */}
                     </div>

@@ -150,8 +150,8 @@ const InfDocumentoForm = () => {
                             <SelectValue placeholder="Selecciona un tipo de Documento" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="transporte-privado">Guia de Remision - Transporte Privado</SelectItem>
                             <SelectItem value="transporte-publico">Guia de Remision - Transporte Publico</SelectItem>
+                            <SelectItem value="transporte-privado">Guia de Remision - Transporte Privado</SelectItem>
                             <SelectItem value="traslado-misma-empresa">Nota de Remision - Traslado Interno</SelectItem>
                         </SelectContent>
                     </Select>

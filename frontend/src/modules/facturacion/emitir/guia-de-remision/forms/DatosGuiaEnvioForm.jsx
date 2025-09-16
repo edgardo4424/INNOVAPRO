@@ -184,6 +184,16 @@ const DatosGuiaEnvioForm = () => {
     }
   };
 
+  
+
+  const handleChangePublico = (e) => {
+    const { name, value } = e.target;
+    setGuiaDatosPublico((prevGuiaTransporte) => ({
+        ...prevGuiaTransporte,
+        [name]: value.toUpperCase(),
+      }));
+  };
+
   const handleSelectChangePrv = (value, name) => {
     setGuiaDatosPrivado((prevValores) => ({
       ...prevValores,
@@ -616,8 +626,8 @@ const DatosGuiaEnvioForm = () => {
               id="guia_Envio_Des_Traslado"
               name="guia_Envio_Des_Traslado"
               value={guiaDatosPublico.guia_Envio_Des_Traslado}
-              onChange={handleChange}
-              disabled
+              onChange={handleChangePublico}
+              // disabled
               className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
             />
           </div>

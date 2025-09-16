@@ -1,16 +1,16 @@
 const path = require("path");
-const logo_innova = path.join(__dirname, "../../../../assets/pdf/logo_innova.png")
-const logo = path.join(__dirname, "../../../../assets/pdf/logo.png")
-const { pdfheader } = require("../components-facturacion/pdfHeader");
-const { pdfDetalleFactura } = require("../components-facturacion/pdfDetalleFactura");
-const { pdfClienteFactura } = require("../components-facturacion/pdfClienteFactura");
-const { pdfProductoFactura } = require("../components-facturacion/pdfProductosFactura");
-const { pdfDetallesTotal } = require("../components-facturacion/pdfDetallesTotal");
-const { pdfDetalleRelacionados } = require("../components-facturacion/pdfDetalleRelacionados");
-const { pdfCuotasFactura } = require("../components-facturacion/pdfCuotasFactura");
-const { pdfLegendFactura } = require("../components-facturacion/pdfLegendFactura");
+const logo_innova = path.join(__dirname, "../../../../../assets/pdf/logo_innova.png")
+const logo = path.join(__dirname, "../../../../../assets/pdf/logo.png")
+const { pdfDetalleFactura } = require("../../components/facturacion/pdfDetalleFactura");
+const { pdfClienteFactura } = require("../../components/facturacion/pdfClienteFactura");
+const { pdfProductoFactura } = require("../../components/facturacion/pdfProductosFactura");
+const { pdfDetallesTotal } = require("../../components/facturacion/pdfDetallesTotal");
+const { pdfDetalleRelacionados } = require("../../components/facturacion/pdfDetalleRelacionados");
+const { pdfCuotasFactura } = require("../../components/facturacion/pdfCuotasFactura");
+const { pdfLegendFactura } = require("../../components/facturacion/pdfLegendFactura");
+const { pdfheader } = require("../../components/facturacion/pdfHeader");
 
-function facturaInvoiceModel(data) {
+function facturaTemplate(data) {
     const factura = data[0];
     //* Colores base
     const text_innova_gray = '#616161'   //? Texto principal
@@ -77,7 +77,7 @@ function facturaInvoiceModel(data) {
         content: content,
         styles: {
             companyName: { fontSize: 8, fontWeight: '800', color: text_innova_gray, },
-            companyAddress: { fontSize: 7, margin: [0, 1, 0, 0], color: text_innova_gray, },
+            companyAddress: { fontSize: 7, margin: [0, 1, 0, 1], color: text_innova_gray, },
             companyContact: { fontSize: 7, margin: [0, 1, 0, 0], color: text_innova_gray, },
             // ** tipo
             docTypeHeader: {
@@ -108,8 +108,8 @@ function facturaInvoiceModel(data) {
             detractionHeader: { fontSize: 10, bold: true },
             detractionInfo: { fontSize: 9, margin: [0, 1, 0, 1] },
             // ** Totales
-            totalfactor: { fontSize: 6, margin: [5, 2, 5, 2], color: text_innova_gray,},
-            totalLabel: { fontSize: 6, margin: [5, 2, 5, 2], color: text_innova_gray, fillColor: bg_innova_gray },
+            totalfactor: { fontSize: 6, margin: [5, 2, 5, 2], color: text_innova_gray, },
+            totalLabel: { fontSize: 6, margin: [5, 2, 5, 2], color: text_innova_gray, fillColor: innova_gray_soft },
             totalValue: { fontSize: 6, margin: [5, 2, 5, 2], color: text_innova_gray },
             totalFinalLabel: { fontSize: 6, bold: true, margin: [5, 3, 5, 3], color: innova_white, fillColor: innova_blue_light },
             totalFinalValue: { fontSize: 6, bold: true, margin: [5, 3, 5, 3], color: text_innova_gray },
@@ -145,16 +145,16 @@ function facturaInvoiceModel(data) {
             return {
                 columns: [
                     {
-                        text: `Página ${currentPage} de ${pageCount}`,
-                        style: "footer",
-                        alignment: "right",
-                        margin: [0, 0, 40, 0]
-                    },
-                    {
                         text: `Emitido desde ${factura.empresa_link_website}`,
                         style: "footer",
                         alignment: "center",
                         margin: [0, 0, 0, 0]
+                    },
+                    {
+                        text: `Página ${currentPage} de ${pageCount}`,
+                        style: "footer",
+                        alignment: "right",
+                        margin: [0, 0, 40, 0]
                     }
                 ]
             };
@@ -162,4 +162,4 @@ function facturaInvoiceModel(data) {
     };
 }
 
-module.exports = { facturaInvoiceModel };
+module.exports = { facturaTemplate };

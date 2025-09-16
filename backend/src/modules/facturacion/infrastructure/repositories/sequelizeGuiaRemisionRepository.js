@@ -308,6 +308,9 @@ class SequelizeGuiaRemisionRepository {
 
         const ubigeo = await Ubigeo.findOne({ where: { Codigo: empresa?.codigo_ubigeo } });
 
+        const ubigeoPartida = await Ubigeo.findOne({ where: { Codigo: guias[0]?.guia_Envio_Partida_Ubigeo } });
+        const ubigeoDestino = await Ubigeo.findOne({ where: { Codigo: guias[0]?.guia_Envio_Llegada_Ubigeo } });
+
 
         return guias.map(f => ({
             ...f.dataValues,
@@ -320,6 +323,8 @@ class SequelizeGuiaRemisionRepository {
             departamento: ubigeo?.departamento || null,
             provincia: ubigeo?.provincia || null,
             distrito: ubigeo?.distrito || null,
+            partidaUbigeo: `(${ubigeoPartida?.codigo}) ${ubigeoPartida?.departamento} - ${ubigeoPartida?.provincia} - ${ubigeoPartida?.distrito}` || null,
+            llegadaUbigeo: `(${ubigeoDestino?.codigo}) ${ubigeoDestino?.departamento} - ${ubigeoDestino?.provincia} - ${ubigeoDestino?.distrito}` || null
         }));
     }
 }

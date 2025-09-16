@@ -270,6 +270,38 @@ const utils = {
             return `${encontrado.value} - ${encontrado.description}`;
         }
         return "";
+    },
+    getModalidadTrasladoDescription(code) {
+        switch (code) {
+            case "01":
+                return "PÚBLICO";
+            case "02":
+                return "PRIVADO";
+            default:
+                return "NO ESPECIFICADO";
+        }
+    },
+    getMotivoTrasladoDescription(code) {
+        switch (code) {
+            case "01":
+                return "01 - VENTA";
+            case "02":
+                return "02 - COMPRA";
+            case "04":
+                return "04 - TRASLADO ENTRE ESTABLECIMIENTOS DE LA MISMA EMPRESA";
+            case "08":
+                return "08 - IMPORTACIÓN";
+            case "09":
+                return "09 - EXPORTACIÓN";
+            case "18":
+                return "18 - TRASLADO EMISOR ITINERANTE DE COMPROBANTES DE PAGO";
+            case "19":
+                return "19 - TRASLADO A ZONA PRIMARIA";
+            case "13":
+                return "13 - OTROS";
+            default:
+                return "NO ESPECIFICADO";
+        }
     }
 }
 

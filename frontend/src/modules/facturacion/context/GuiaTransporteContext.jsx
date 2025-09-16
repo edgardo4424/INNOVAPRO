@@ -32,7 +32,7 @@ export function GuiaTransporteProvider({ children }) {
 
   const [productoActual, setProductoActual] = useState(detalleInicial);
 
-  const [tipoGuia, setTipoGuia] = useState("transporte-privado");
+  const [tipoGuia, setTipoGuia] = useState("transporte-publico");
 
   const [filiales, setFiliales] = useState([]);
 

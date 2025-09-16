@@ -1,4 +1,4 @@
-const { utils } = require("../../utils/utils");
+const { utils } = require('../../../utils/utils')
 
 function pdfCuotasFactura(factura) {
     // 1. Parsear cuotas_Real si viene como string JSON

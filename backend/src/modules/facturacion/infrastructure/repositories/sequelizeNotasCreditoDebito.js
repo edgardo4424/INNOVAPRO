@@ -8,7 +8,6 @@ const { DetalleNotaCreditoDebito } = require("../models/notas-credito-debito/det
 const { SunatRespuesta } = require("../models/sunatRespuestaModel");
 const { Factura } = require("../models/factura-boleta/facturaModel");
 const { Filial } = require("../../../filiales/infrastructure/models/filialModel");
-const { GuiaRemision } = require("../models/guia-remision/guiaRemisionModel");
 const { Op, fn, col } = require('sequelize');
 
 class SequelizeNotasCreditoDebitoRepository {
@@ -196,7 +195,7 @@ class SequelizeNotasCreditoDebitoRepository {
                 where.tipo_doc = nTipoDoc;
             }
             if (nEmpresaRuc) {
-                where.empresa_ruc = { [Op.like]: `%${nEmpresaRuc}%` };
+                where.empresa_Ruc = { [Op.like]: `%${nEmpresaRuc}%` };
             }
             if (nClienteNumDoc) {
                 where.cliente_num_doc = { [Op.like]: `%${nClienteNumDoc}%` };

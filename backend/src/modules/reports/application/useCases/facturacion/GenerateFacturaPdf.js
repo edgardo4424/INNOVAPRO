@@ -1,5 +1,5 @@
 const { PdfService } = require('../../../infrastructure/pdf/PdfService');
-const { facturaInvoiceModel } = require('../../../domain/pdfModels/facturaInvoiceModel');
+const { facturaTemplate } = require('../../../domain/pdfModels/facturacion/facturaTemplate');
 
 module.exports = async (body, facturaRepository) => {
     // ? destructuramos el body
@@ -12,11 +12,13 @@ module.exports = async (body, facturaRepository) => {
     }
 
     // 2. Armar modelo PDF
-    const docDefinition = facturaInvoiceModel(facturaObtenida);
+    const docDefinition = facturaTemplate(facturaObtenida);
 
     // 3. Generar PDF con servicio
     const pdfService = new PdfService();
+    console.log("dad")
     const pdfBuffer = await pdfService.generatePdfBuffer(docDefinition);
+
 
     // 4. Respuesta al controller
     return {

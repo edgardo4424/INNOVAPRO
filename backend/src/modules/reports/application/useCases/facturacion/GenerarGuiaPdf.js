@@ -1,5 +1,5 @@
 const { PdfService } = require('../../../infrastructure/pdf/PdfService');
-const { guiaInvoiceModel } = require('../../../domain/pdfModels/guiaInvoiceModel');
+const {  guiaTemplate } = require('../../../domain/pdfModels/facturacion/guiaTemplate');
 
 module.exports = async (body, guiaRepository) => {
     // ? destructuramos el body
@@ -12,7 +12,7 @@ module.exports = async (body, guiaRepository) => {
     }
 
     // 2. Armar modelo PDF
-    const docDefinition = guiaInvoiceModel(guiaObtenida);
+    const docDefinition = guiaTemplate(guiaObtenida);
 
     // 3. Generar PDF con servicio
     const pdfService = new PdfService();
