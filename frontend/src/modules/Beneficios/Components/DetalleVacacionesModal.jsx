@@ -1,10 +1,24 @@
-
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Calendar, Clock, AlertTriangle, CheckCircle, Eye } from "lucide-react";
-import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Calendar, Clock, AlertTriangle, CheckCircle, Eye, XIcon } from "lucide-react";
+import {
+   AlertDialog,
+   AlertDialogCancel,
+   AlertDialogContent,
+   AlertDialogDescription,
+   AlertDialogHeader,
+   AlertDialogTitle,
+   AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { contarDiasLaborables } from "../utils/dias_laborales_en_rango";
+import { contarDiasLaborablesDelMes } from "../utils/dias_laborales_mes";
+import { sumarMeses } from "../utils/sumar_meses";
+import { useEffect, useState } from "react";
+import { mergeTipoByFecha } from "../utils/merge_arrays_fecha";
+import { generarFechasDesdeRango } from "../utils/genrar_arreglo_fechas";
+import clsx from "clsx";
 
 export default function DetalleVacacionesModal({ datosEmpleado }) {
    const contratos = datosEmpleado.contratos_laborales || [];
@@ -17,38 +31,9 @@ export default function DetalleVacacionesModal({ datosEmpleado }) {
       return ordenados[0].fecha_inicio;
    })();
 
-   const contarDiasLaborables = (inicio, fin) => {
-      let contador = 0;
-      const actual = new Date(inicio);
-      while (actual <= fin) {
-         const dia = actual.getDay();
-         if (dia !== 0 && dia !== 6) contador++; // lunes a viernes
-         actual.setDate(actual.getDate() + 1);
-      }
-      return contador;
-   };
-
-   const contarDiasLaborablesDelMes = (anio, mes) => {
-      let contador = 0;
-      const fecha = new Date(anio, mes, 1);
-      while (fecha.getMonth() === mes) {
-         const dia = fecha.getDay();
-         if (dia !== 0 && dia !== 6) contador++;
-         fecha.setDate(fecha.getDate() + 1);
-      }
-      return contador;
-   };
-
-   const sumarMeses = (fecha, cantidad) => {
-      const nuevaFecha = new Date(fecha);
-      nuevaFecha.setMonth(nuevaFecha.getMonth() + cantidad);
-      return nuevaFecha;
-   };
-
    const calcularDiasGenerados = () => {
       const hoy = new Date();
       let totalVacaciones = 0;
-
       for (const contrato of contratos) {
          const inicio = new Date(contrato.fecha_inicio);
          const fin = new Date(contrato.fecha_fin);
@@ -72,6 +57,8 @@ export default function DetalleVacacionesModal({ datosEmpleado }) {
             const diasTrabajados = contarDiasLaborables(inicioReal, finReal);
 
             const tasaVacaciones = contrato.regimen === "MYPE" ? 1.25 : 2.5;
+            const tasaVendibles = contrato.regimen === "MYPE" ? 8 / 12 : 1.25;
+
             const proporcionVacaciones =
                (diasTrabajados / diasLaborablesTotales) * tasaVacaciones;
 
@@ -118,19 +105,23 @@ export default function DetalleVacacionesModal({ datosEmpleado }) {
       ? calcularDiasTrabajados(fechaIngreso)
       : 0;
 
+   //Dias tomados
    const diasTomados = datosEmpleado.vacaciones.reduce(
-      (sum, v) => sum + v.dias_tomados,
+      (sum, v) => sum + v.dias_tomados || 0,
       0
    );
-
+   //DIAS VENDIOS
    const diasVendidos = datosEmpleado.vacaciones.reduce(
-      (sum, v) => sum + v.dias_vendidos,
+      (sum, v) => sum + v.dias_vendidos || 0,
       0
    );
-
+   //DIAS GENERADOS
    const diasGenerados = calcularDiasGenerados();
-   const diasTotales = diasTomados + diasVendidos;
-   const diasRestantes = diasGenerados - diasTotales;
+
+   const diasTotalesUsados = diasTomados + diasVendidos;
+
+   //DIAS DISPONIBLES
+   const diasRestantes = diasGenerados - diasTotalesUsados;
 
    return (
       <AlertDialog>
@@ -151,7 +142,11 @@ export default function DetalleVacacionesModal({ datosEmpleado }) {
                   {/* {datosEmpleado.empresa_proveedora.razon_social} */}
                </AlertDialogDescription>
             </AlertDialogHeader>
-
+                         <AlertDialogCancel asChild className="absolute right-3 top-3 ">
+                     <Button size={"icon"} className={"size-8 text-neutral-800"}>
+                           <XIcon/>
+                     </Button>
+               </AlertDialogCancel>
             <div className="space-y-4">
                <Card>
                   <CardHeader className="pb-3">
@@ -293,6 +288,69 @@ export default function DetalleVacacionesModal({ datosEmpleado }) {
                                        </p>
                                     </div>
                                  )}
+                                 {vacacion.asitencias?.length > 0 &&
+                                    (() => {
+                                       console.log(vacacion.fecha_inicio);
+                                       console.log(vacacion.fecha_termino);
+
+                                       const fechasGeneradas =
+                                          generarFechasDesdeRango({
+                                             from: vacacion.fecha_inicio,
+                                             to: vacacion.fecha_termino,
+                                          });
+                                       console.log(fechasGeneradas);
+
+                                       const fechasConTipo = mergeTipoByFecha(
+                                          fechasGeneradas,
+                                          vacacion.asitencias
+                                       );
+
+                                       return (
+                                          <article className="w-full grid-cols-1 space-y-2">
+                                             <section className="grid grid-cols-4 gap-4 text-xs text-neutral-600 pt-1">
+                                                <div className="flex items-center gap-1">
+                                                   <span className="w-4 h-4 rounded bg-innova-blue"></span>
+                                                   <span>
+                                                      Gozada{" "}
+                                                   </span>
+                                                </div>
+                                                <div className="flex items-center gap-1">
+                                                   <span className="w-4 h-4 rounded bg-green-700"></span>
+                                                   <span>
+                                                      Vendida{" "}
+                                                   </span>
+                                                </div>
+                                                <div className="flex items-center gap-1">
+                                                   <span className="w-4 h-4 rounded bg-neutral-100 border shadow-sm"></span>
+                                                   <span>
+                                                      Sin utilizar{" "}
+                                                   </span>
+                                                </div>
+                                             </section>
+
+                                             <div className="  flex space-x-3 space-y-3 flex-wrap">
+                                                {fechasConTipo.map((d, i) => (
+                                                   <Button
+                                                      size="icon"
+                                                      className={clsx(
+                                                         "size-7 text-xs text-neutral-700 shadow-md bg-neutral-100",
+                                                         d.tipo === "gozada" &&
+                                                            "bg-innova-blue text-white hover:bg-innova-blue-hover hover:text-white",
+                                                         d.tipo === "vendida" &&
+                                                            "bg-green-700 text-white hover:bg-green-600 hover:text-white"
+                                                      )}
+                                                      variant={"ghost"}
+                                                      key={i}
+                                                      type="button"
+                                                      onClick={console.log("s")}
+                                                   >
+                                                      {d.fecha.slice(-2)}
+                                                   </Button>
+                                                ))}
+                                             </div>
+                                          </article>
+                                       );
+                                    })()}
                               </div>
                            ))}
                         </div>

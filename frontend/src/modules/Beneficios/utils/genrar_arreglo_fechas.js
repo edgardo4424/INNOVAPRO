@@ -1,23 +1,40 @@
-//Basado en un rango de fechas,
 export const generarFechasDesdeRango = (rango) => {
-   const { from, to } = rango;
+  const { from, to } = rango;
 
-   if (!from || !to) return [];
+  // Convertir a Date (por si vienen como string)
+  const fromDate = new Date(from);
+  const toDate = new Date(to);
 
-   const fechas = [];
-   const actual = new Date(from);
+  // Validación: fechas válidas
+  if (isNaN(fromDate) || isNaN(toDate)) {
+    console.warn("Fechas inválidas en el rango:", { from, to });
+    return [];
+  }
 
-   while (actual <= to) {
-      const fechaFormateada = actual.toISOString().split("T")[0]; // YYYY-MM-DD
-      fechas.push({
-         fecha: fechaFormateada,
-         tipo: "gozada", // puedes rellenar luego como "gozada" o "vendida",
-         clicks: 1,
-      });
+  // Si el rango está al revés, no hacemos nada
+  if (fromDate > toDate) {
+    console.warn("La fecha 'from' es mayor que 'to':", { from, to });
+    return [];
+  }
 
-      // Avanzar al día siguiente
-      actual.setDate(actual.getDate() + 1);
-   }
+  const fechas = [];
 
-   return fechas;
+  // Copiar la fecha de inicio para no mutar fromDate
+  const actual = new Date(fromDate);
+
+  // Generar fechas desde el rango
+  while (actual <= toDate) {
+    const fechaFormateada = actual.toISOString().split("T")[0]; // formato YYYY-MM-DD
+
+    fechas.push({
+      fecha: fechaFormateada,
+      tipo: "gozada", // valor por defecto, lo puedes actualizar luego
+      clicks: 1,       // lo que sea que necesites
+    });
+
+    // Avanzar al día siguiente
+    actual.setDate(actual.getDate() + 1);
+  }
+
+  return fechas;
 };

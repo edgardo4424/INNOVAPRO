@@ -35,6 +35,7 @@ class Trabajador {
 
    validarCamposObligatorios(editar = false) {
       const errores = [];
+
       if (editar) {
          if (!this.id) {
             errores.push("El id es inválido");
@@ -68,12 +69,15 @@ class Trabajador {
       if (this.cargo_id === null) {
          errores.push("El cargo no se a enviado");
       }
+      
       const hoy = new Date().toISOString().split("T")[0];
       const c_a = this.contratos_laborales.find(
          (c) => c.fecha_inicio <= hoy && hoy <= c.fecha_fin
       );
-      console.log(c_a);
-      console.log("Tipo de contrato", c_a.tipo_contrato);
+      if(!c_a){
+         errores.push("No se encontró un contrato laboral vigente para la fecha actual.");
+         return errores;
+      }
 
       if (c_a.tipo_contrato == "PLANILLA") {
          if (this.sistema_pension !== "AFP" && this.sistema_pension !== "ONP") {

@@ -132,6 +132,23 @@ class SequelizeAsistenciaRepository {
          throw new Error(error.message);
       }
    }
+   async crearAsistenciaVacaciones(asistenciaData, transaction = null) {
+      const options = {};
+      if (transaction) {
+         options.transaction = transaction;
+      }
+      const asistencia = await Asistencia.create(
+         {
+            trabajador_id: asistenciaData.trabajador_id,
+            horas_trabajadas: 0,
+            estado_asistencia: asistenciaData.estado_asistencia,
+            fecha: asistenciaData.fecha,
+         },
+         options
+      );
+      const parse = asistencia.get({ plain: true });
+      return parse;
+   }
 
    async actualizarAsistenciaSimple(asistenciaData) {
       try {
@@ -197,7 +214,6 @@ class SequelizeAsistenciaRepository {
 
    async obtenerAsistenciasPorRangoFecha(trabajador_id, fechaInicio, fechaFin) {
       try {
-
          const asistencias = await Asistencia.findAll({
             where: {
                trabajador_id,
@@ -215,7 +231,6 @@ class SequelizeAsistenciaRepository {
 
    async obtenerFaltasPorRangoFecha(trabajador_id, fechaInicio, fechaFin) {
       try {
-        
          const asistencias = await Asistencia.findAll({
             where: {
                trabajador_id,

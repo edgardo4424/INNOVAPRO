@@ -197,7 +197,7 @@ export default function TrabajadorForm() {
       if (!valorUit) return;
 
       try {
-         setIsSubmitting(true);
+         // setIsSubmitting(true);
 
          const dataToSubmit = buildPayload();
          if (isEditMode) {
@@ -217,7 +217,7 @@ export default function TrabajadorForm() {
             await trabajadoresService.crearTrabajador(dataToSubmit);
             toast.success("Trabajador creado con éxito");
          }
-         navigate("/tabla-trabajadores");
+         // navigate("/tabla-trabajadores");
       } catch (error) {
          if (error && error.name === "ValidationError") {
             const newErrors =
@@ -229,6 +229,12 @@ export default function TrabajadorForm() {
             setErrors(newErrors);
          } else {
             console.error(error);
+            if (error?.response?.data?.mensaje) {
+               for (const e of error.response.data.mensaje) {
+                  toast.error(e);
+               }
+               return;
+            }
             toast.error(
                (error &&
                   error.response &&
@@ -240,7 +246,7 @@ export default function TrabajadorForm() {
             );
          }
       } finally {
-         setIsSubmitting(false);
+         // setIsSubmitting(false);
       }
    };
 
