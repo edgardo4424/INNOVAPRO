@@ -50,7 +50,55 @@ const BajasTrabajadores = sequelize.define(
       type: DataTypes.ENUM('CALCULADA', 'PAGADA'),
       allowNull: false,
       defaultValue: 'CALCULADA'
-    }
+    },
+    // Tiempo laborado (sin descontar faltas)
+    tiempo_laborado_anios: { type: DataTypes.INTEGER, defaultValue: 0 },
+    tiempo_laborado_meses: { type: DataTypes.INTEGER, defaultValue: 0 },
+    tiempo_laborado_dias: { type: DataTypes.INTEGER, defaultValue: 0 },
+
+    // Tiempo computado (con faltas/sanciones descontadas)
+    tiempo_computado_anios: { type: DataTypes.INTEGER, defaultValue: 0 },
+    tiempo_computado_meses: { type: DataTypes.INTEGER, defaultValue: 0 },
+    tiempo_computado_dias: { type: DataTypes.INTEGER, defaultValue: 0 },
+
+    // 🟨 Referencias opcionales a cálculos (si los necesitas)
+    gratificacion_trunca_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: { model: "gratificaciones", key: "id" },
+    },
+    cts_trunca_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: { model: "cts", key: "id" },
+    },
+    planilla_mensual_trunca_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: { model: "planilla_mensual", key: "id" },
+    },
+
+    // 🧮 Montos truncos
+    cts_trunca_monto: { type: DataTypes.DECIMAL(10, 2), allowNull: true, defaultValue: 0.00 },
+    vacaciones_truncas_monto: { type: DataTypes.DECIMAL(10, 2), allowNull: true, defaultValue: 0.00  },
+    gratificacion_trunca_monto: { type: DataTypes.DECIMAL(10, 2), allowNull: true, defaultValue: 0.00  },
+    remuneracion_trunca_monto: { type: DataTypes.DECIMAL(10, 2), allowNull: true, defaultValue: 0.00  },
+
+    // ➖ Descuentos
+    afp_descuento: { type: DataTypes.DECIMAL(10, 2), allowNull: true, defaultValue: 0.00  },
+    adelanto_descuento: { type: DataTypes.DECIMAL(10, 2), allowNull: true, defaultValue: 0.00  },
+    otros_descuentos: { type: DataTypes.DECIMAL(10, 2), allowNull: true, defaultValue: 0.00  },
+    //detalle_otros_descuentos: { type: DataTypes.TEXT, allowNull: true },
+
+    // 💰 Total a pagar (neto)
+    total_liquidacion: { type: DataTypes.DECIMAL(10, 2), allowNull: true, defaultValue: 0.00  },
+
+    // 🔍 Detalle remuneración (útil si varían componentes)
+    detalle_remuneracion_computable: {
+      type: DataTypes.JSON,
+      allowNull: true,
+      // Ejemplo: { sueldo: 1800, asignacion_familiar: 113, promedio_gratificacion: 91.88 }
+    },
   },
    {
       timestamps: true,

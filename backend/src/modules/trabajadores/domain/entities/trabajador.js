@@ -69,6 +69,7 @@ class Trabajador {
          errores.push("El cargo no se a enviado");
       }
       const hoy = new Date().toISOString().split("T")[0];
+      console.log('this.contratos_laborales', this.contratos_laborales);
       const c_a = this.contratos_laborales.find(
          (c) => c.fecha_inicio <= hoy && hoy <= c.fecha_fin
       );

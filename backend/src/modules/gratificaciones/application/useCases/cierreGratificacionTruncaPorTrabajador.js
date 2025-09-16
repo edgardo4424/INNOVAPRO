@@ -29,6 +29,8 @@ module.exports = async (
           transaction
         );
 
+      let gratificacion_trunca = null;
+
       if (!cierreGratificacion) {
         // Registrar el registro de la tabla cierres_gratificaciones
         // Crear registro de cierre
@@ -53,7 +55,7 @@ module.exports = async (
       if (cierreGratificacion?.locked_at) {
         return {
           codigo: 400,
-          respuesta: { mensaje: "La gratificacion ya fue cerrada" },
+          respuesta: { mensaje: "La gratificacion ya fue cerrada", gratificacion_trunca: null },
         };
       } else {
         // Registrar la grati del trabajador
@@ -76,7 +78,7 @@ module.exports = async (
         if (gratificacionDelTrabajador.length === 0) {
           return {
             codigo: 400,
-            respuesta: { mensaje: "No hay gratificaciones del trabajador" },
+            respuesta: { mensaje: "No hay gratificaciones del trabajador", gratificacion_trunca: null },
           };
         }
 
@@ -92,16 +94,18 @@ module.exports = async (
         console.log('dataGratificaciones', dataGratificaciones);
 
 
-        await gratificacionRepository.insertarVariasGratificaciones(
+       gratificacion_trunca = await gratificacionRepository.insertarVariasGratificaciones(
           dataGratificaciones,
           transaction
         );
+
       }
 
     return {
       codigo: 201,
       respuesta: {
         mensaje: "Se registro la gratificacion del trabajador exitosamente",
+        gratificacion_trunca: gratificacion_trunca ? gratificacion_trunca[0].dataValues : null
       },
     };
   
