@@ -5,7 +5,6 @@ const { Op, fn, col, where } = require("sequelize");
 const filtrarContratosSinInterrupcion = require("../../../../services/filtrarContratosSinInterrupcion");
 const moment = require("moment");
 class SequelizeTrabajadorRepository {
-   
    async crear(trabajadorData, transaction = null) {
       const options = {};
       if (transaction) {
@@ -24,9 +23,9 @@ class SequelizeTrabajadorRepository {
       return trabajador;
    }
 
-   async obtenerTrabajadorPorId(id,transaction=null) {
-      const trabajador = await Trabajador.findOne({
-         where: { id: id },
+   async obtenerTrabajadorPorId(id, transaction = null) {
+      const options = {
+         where: { id },
          include: [
             {
                model: db.contratos_laborales,
@@ -35,9 +34,14 @@ class SequelizeTrabajadorRepository {
                required: false,
             },
          ],
-         transaction
-      });
-      return trabajador;
+      };
+
+      if (transaction) {
+         options.transaction = transaction;
+      }
+
+      const trabajador = await Trabajador.findOne(options);
+      return trabajador.get({plain:true});
    }
    async obtenerTrabajadoresPorArea(areaId, fecha) {
       const trabajadores = await Trabajador.findAll({
@@ -73,9 +77,9 @@ class SequelizeTrabajadorRepository {
             {
                model: db.contratos_laborales,
                as: "contratos_laborales",
-               include:[
-                  {model:db.empresas_proveedoras,as:"empresa_proveedora"}
-               ]
+               include: [
+                  { model: db.empresas_proveedoras, as: "empresa_proveedora" },
+               ],
             },
          ],
       });
@@ -88,15 +92,12 @@ class SequelizeTrabajadorRepository {
          const hoy = new Date().toISOString().split("T")[0];
 
          const contrato_actual = data.contratos_laborales.find((c) => {
-            return (
-               c.fecha_inicio <=hoy  &&
-               c.fecha_fin >= hoy
-            );
+            return c.fecha_inicio <= hoy && c.fecha_fin >= hoy;
          });
          if (!contrato_actual) {
             throw new Error("El trabajador no cuenta con un contrato laboral.");
          }
-         data.filial=contrato_actual.empresa_proveedora.razon_social;
+         data.filial = contrato_actual.empresa_proveedora.razon_social;
          delete data.contratos_laborales;
          return data;
       });
@@ -180,129 +181,124 @@ class SequelizeTrabajadorRepository {
       return transformData;
    }
 
-  async  obtenerTrabajadoresConContratosAPuntoDeVencer() {
-  const hoy = moment().startOf("day");
-  const haceNDias = moment().subtract(15, "days").startOf("day");
+   async obtenerTrabajadoresConContratosAPuntoDeVencer() {
+      const hoy = moment().startOf("day");
+      const haceNDias = moment().subtract(15, "days").startOf("day");
 
-  const trabajadores = await Trabajador.findAll({
-    where: {
-      estado: "activo",
-      fecha_baja: null
-    },
-    include: [
-      {
-        model: db.contratos_laborales,
-        as: "contratos_laborales",
-        where: {
-          estado: 1,
-          fecha_inicio: { [Op.lte]: hoy.toDate() }, // iniciados
-        },
-        required: false,
-      },
-    ],
-  });
-
-  const resultado = trabajadores.map((trabajador) => {
-
-    const contratosOrdenados = [...trabajador.contratos_laborales].sort(
-      (a, b) => new Date(b.fecha_inicio) - new Date(a.fecha_inicio)
-    );
-
-
-    const contratosFiltrados = [];
-    for (let i = 0; i < contratosOrdenados.length; i++) {
-      
-      const contrato = contratosOrdenados[i];
-     
-      if(contrato.fecha_terminacion_anticipada){
-         break;
-      }
-      const fechaFinReal = contrato.fecha_fin;
-      const fin = fechaFinReal ? moment(fechaFinReal).startOf("day") : null;
-
-      let estadoContrato = "VIGENTE";
-
-      if (fin && fin.isSameOrBefore(hoy)) {
-        if (fin.isSameOrAfter(haceNDias)) {
-          estadoContrato = "PENDIENTE"; // venció hace <= 3 días
-        } else {
-          estadoContrato = "VENCIDO";
-          // Si hay otro contrato más reciente, se omite el vencido
-          if (i > 0) continue;
-        }
-      }
-
-      contratosFiltrados.push({
-        ...contrato.toJSON(),
-        estadoContrato,
+      const trabajadores = await Trabajador.findAll({
+         where: {
+            estado: "activo",
+            fecha_baja: null,
+         },
+         include: [
+            {
+               model: db.contratos_laborales,
+               as: "contratos_laborales",
+               where: {
+                  estado: 1,
+                  fecha_inicio: { [Op.lte]: hoy.toDate() }, // iniciados
+               },
+               required: false,
+            },
+         ],
       });
 
-      // Solo mostrar el contrato más reciente por trabajador
-      break;
-    }
+      const resultado = trabajadores.map((trabajador) => {
+         const contratosOrdenados = [...trabajador.contratos_laborales].sort(
+            (a, b) => new Date(b.fecha_inicio) - new Date(a.fecha_inicio)
+         );
 
-    return {
-      ...trabajador.toJSON(),
-      contratos_laborales: contratosFiltrados,
-    };
-  });
+         const contratosFiltrados = [];
+         for (let i = 0; i < contratosOrdenados.length; i++) {
+            const contrato = contratosOrdenados[i];
 
-  return resultado;
-}
+            if (contrato.fecha_terminacion_anticipada) {
+               break;
+            }
+            const fechaFinReal = contrato.fecha_fin;
+            const fin = fechaFinReal
+               ? moment(fechaFinReal).startOf("day")
+               : null;
 
- async  obtenerTrabajadoresConContratosVigentes(filial_id) {
-  //const hoy = moment().startOf("day");
+            let estadoContrato = "VIGENTE";
 
-  const trabajadores = await Trabajador.findAll({
-    where: {
-      estado: "activo",
-      fecha_baja: null
-    },
-    include: [
-      {
-        model: db.contratos_laborales,
-        as: "contratos_laborales",
-        where: {
-          estado: 1,
-          //fecha_inicio: { [Op.lte]: hoy.toDate() }, // iniciados
-          filial_id
-        },
-        required: false,
-      },
-    ],
-  });
+            if (fin && fin.isSameOrBefore(hoy)) {
+               if (fin.isSameOrAfter(haceNDias)) {
+                  estadoContrato = "PENDIENTE"; // venció hace <= 3 días
+               } else {
+                  estadoContrato = "VENCIDO";
+                  // Si hay otro contrato más reciente, se omite el vencido
+                  if (i > 0) continue;
+               }
+            }
 
-  // Obtener los ultimos contratos de cada trabajador
-  const trabajadoresConUltimosContratos = trabajadores.map((trabajador) => {
+            contratosFiltrados.push({
+               ...contrato.toJSON(),
+               estadoContrato,
+            });
 
-   if(trabajador.contratos_laborales.length === 0){
-      return null;
-   };
+            // Solo mostrar el contrato más reciente por trabajador
+            break;
+         }
 
-    const contratosOrdenados = [...trabajador.contratos_laborales].sort(
-      (a, b) => new Date(b.fecha_inicio) - new Date(a.fecha_inicio)
-    );
+         return {
+            ...trabajador.toJSON(),
+            contratos_laborales: contratosFiltrados,
+         };
+      });
 
-    const ultimoContrato = contratosOrdenados[0];
+      return resultado;
+   }
 
-    const { contratos_laborales, ...resto } = trabajador.toJSON();
+   async obtenerTrabajadoresConContratosVigentes(filial_id) {
+      //const hoy = moment().startOf("day");
 
-    return {
-      ...resto,
-      ultimo_contrato: ultimoContrato,
-    };
-  });
+      const trabajadores = await Trabajador.findAll({
+         where: {
+            estado: "activo",
+            fecha_baja: null,
+         },
+         include: [
+            {
+               model: db.contratos_laborales,
+               as: "contratos_laborales",
+               where: {
+                  estado: 1,
+                  //fecha_inicio: { [Op.lte]: hoy.toDate() }, // iniciados
+                  filial_id,
+               },
+               required: false,
+            },
+         ],
+      });
 
-  // Eliminar trabajadores sin contratos vigentes
-  const trabajadoresFiltrados = trabajadoresConUltimosContratos.filter(
-    (trabajador) => trabajador !== null
-  );
-    
+      // Obtener los ultimos contratos de cada trabajador
+      const trabajadoresConUltimosContratos = trabajadores.map((trabajador) => {
+         if (trabajador.contratos_laborales.length === 0) {
+            return null;
+         }
 
-  return trabajadoresFiltrados;
-}
+         const contratosOrdenados = [...trabajador.contratos_laborales].sort(
+            (a, b) => new Date(b.fecha_inicio) - new Date(a.fecha_inicio)
+         );
 
+         const ultimoContrato = contratosOrdenados[0];
 
+         const { contratos_laborales, ...resto } = trabajador.toJSON();
+
+         return {
+            ...resto,
+            ultimo_contrato: ultimoContrato,
+         };
+      });
+
+      // Eliminar trabajadores sin contratos vigentes
+      const trabajadoresFiltrados = trabajadoresConUltimosContratos.filter(
+         (trabajador) => trabajador !== null
+      );
+
+      return trabajadoresFiltrados;
+   }
 }
 
 module.exports = SequelizeTrabajadorRepository;
