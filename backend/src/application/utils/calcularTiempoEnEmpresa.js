@@ -6,6 +6,7 @@ const moment = require("moment");
  * @returns {Object} - Tiempo total en años, meses y días.
  */
 function calcularTiempoLaborado(contratos = []) {
+
   let totalAnios = 0;
   let totalMeses = 0;
   let totalDias = 0;

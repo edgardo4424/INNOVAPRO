@@ -1,8 +1,8 @@
 const darBajaTrabajador = require("../../../../application/services/darBajaTrabajador");
+const visualizarBajaTrabajador = require("../../../../application/services/visualizarBajaTrabajador");
 const ObtenerTrabajadoresDadosDeBaja = require("../../application/useCases/ObtenerTrabajadoresDadosDeBaja");
 
 const sequelizeDarBajaTrabajadorRepository = require('../../infrastructure/repositories/sequelizeDarBajaTrabajadorRepository'); 
-
 const darBajaTrabajadorRepository = new sequelizeDarBajaTrabajadorRepository();
 
 const DarBajaTrabajadorController = {
@@ -30,9 +30,25 @@ const DarBajaTrabajadorController = {
     async obtenerTrabajadoresDadosDeBaja(req, res) {
 
         try {
-          console.log('emtre');
 
             const response = await ObtenerTrabajadoresDadosDeBaja(darBajaTrabajadorRepository); 
+           
+            res.status(response.codigo).json(response.respuesta); 
+        } catch (error) {
+            console.log('error',error);
+            res.status(500).json({ error: error.message }); 
+        }
+    },
+
+    async visualizarBajaTrabajador(req, res) {
+
+        try {
+
+            const { id } = req.params;
+
+            console.log('id',id);
+
+            const response = await visualizarBajaTrabajador(id); 
            
             res.status(response.codigo).json(response.respuesta); 
         } catch (error) {

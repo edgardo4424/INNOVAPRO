@@ -49,6 +49,9 @@ console.log('anioDeposito', anioDeposito);
     transaction
   );
 
+  
+      let cts_trunca = null;
+
   console.log('cierreCTS', cierreCTS);
   let cierreId;
   if (!cierreCTS) {
@@ -97,7 +100,7 @@ console.log('anioDeposito', anioDeposito);
     if (ctsDelTrabajador.length === 0) {
       return {
         codigo: 400,
-        respuesta: { mensaje: "No hay CTS del trabajador" },
+        respuesta: { mensaje: "No hay CTS del trabajador", cts_trunca: null },
       };
     }
 
@@ -110,13 +113,14 @@ console.log('anioDeposito', anioDeposito);
       cierreId
     );
 
-    await ctsRepository.insertarVariasCts(dataCTS, transaction);
+    cts_trunca = await ctsRepository.insertarVariasCts(dataCTS, transaction);
   }
 
   return {
     codigo: 201,
     respuesta: {
       mensaje: "Se registró la CTS del trabajador exitosamente",
+      cts_trunca: cts_trunca ? cts_trunca[0].dataValues : null
     },
   };
 };

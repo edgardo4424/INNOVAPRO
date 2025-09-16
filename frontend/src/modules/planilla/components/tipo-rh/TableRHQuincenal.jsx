@@ -44,7 +44,7 @@ console.log('planillaQuincenalTipoRh', planillaQuincenalTipoRh);
         <Search className="absolute right-3 top-1 text-gray-400" />
       </div>
 
-      <div className="py-4 xl:w-3/4">
+      <div className="py-4">
         <Table>
           {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
           <TableHeader>
