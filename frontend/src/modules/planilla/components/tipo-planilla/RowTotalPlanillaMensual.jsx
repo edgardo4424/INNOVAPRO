@@ -9,32 +9,10 @@ const RowTotalPlanillaMensual = ({ datosTotalesPlanilla: d }) => {
          <TableCell className="text-right bg-orange-300">
             {d?.sumatoria_sueldo_basico?d.sumatoria_sueldo_basico:0}
          </TableCell>
-         <TableCell className="text-right bg-orange-300"></TableCell>
-         <TableCell className="text-right bg-orange-300"></TableCell>
-         <TableCell className="text-right bg-orange-300"></TableCell>
-         <TableCell className="text-right"></TableCell>
-         <TableCell className="text-right"></TableCell>
-         <TableCell className="text-right bg-orange-300"></TableCell>
-         <TableCell className="text-right"></TableCell>
-         <TableCell className="text-right"></TableCell>
-         <TableCell className="text-right"></TableCell>
-         <TableCell className="text-right"></TableCell>
-         <TableCell className="text-right"></TableCell>
-         <TableCell className="text-right"></TableCell>
-         <TableCell className="text-right"></TableCell>
-         <TableCell className="text-right"></TableCell>
-         <TableCell className="text-right"></TableCell>
-         <TableCell className="text-right"></TableCell>
+         <TableCell className="text-right bg-orange-300">Por def.</TableCell>
+         <TableCell className="text-right" colSpan={16}></TableCell>
          <TableCell className="text-right">45</TableCell>
-         <TableCell className="text-right"></TableCell>
-         <TableCell className="text-right"></TableCell>
-         <TableCell className="text-right"></TableCell>
-         <TableCell className="text-right"></TableCell>
-         <TableCell className="text-right"></TableCell>
-         <TableCell className="text-right"></TableCell>
-         <TableCell className="text-right"></TableCell>
-         <TableCell className="text-right"></TableCell>
-         <TableCell className="text-right"></TableCell>
+         <TableCell className="text-right" colSpan={9}></TableCell>
          <TableCell className="text-right bg-amber-600 text-white">
             {d?.sumatoria_saldo_por_pagar
                ? d.sumatoria_saldo_por_pagar.toFixed(2)

@@ -90,16 +90,6 @@ const obtenerDatosPorQuincena = async (
          SUMA_BONO_SEGUNDA_Q += Number(b.monto);
       }
    }
-   let MONTO_ADELANTO_SUELDO = 0;
-   const responseAdelantos =
-      await adelantoSueldoRepository.obtenerAdelantosPorTrabajadorId(
-         trabajador_id
-      );
-   const adelantos = responseAdelantos.map((r) => r.get({ plain: true }));
-   for (const a_s of adelantos) {
-      MONTO_ADELANTO_SUELDO += a_s.monto / a_s.cuotas;
-   }
-
    return {
       CANTIDAD_HE_PRIMERA_Q,
       CANTIDAD_HE_SEGUNDA_Q,
@@ -109,7 +99,6 @@ const obtenerDatosPorQuincena = async (
       TARDANZA_SEGUNDA_Q,
       SUMA_BONO_PRIMERA_Q,
       SUMA_BONO_SEGUNDA_Q,
-      MONTO_ADELANTO_SUELDO,
       CANTIDAD_VACACIONES_GOZADAS,
       CANTIDAD_VACACIONES_VENDIDAS
    };

@@ -39,6 +39,7 @@ export const trabajador_planilla_model =()=>( {
    sueldo_neto: 0,
    sueldo_quincenal: 0,
    adelanto_prestamo: 0,
+   adelantos_ids:[],
    saldo_por_pagar: 0,
    filial_id:"",
    banco:"",

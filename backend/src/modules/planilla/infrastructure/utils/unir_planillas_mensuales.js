@@ -6,7 +6,9 @@ const unir_planillas_mensuales = (
    trabajador,
    PORCENTAJE_DESCUENTO_ONP,
    PORCENTAJE_DESCUENTO_AFP,
-   PORCENTAJE_DESCUENTO_SEGURO
+   PORCENTAJE_DESCUENTO_SEGURO,
+   totalAdelantosSueldo, 
+   adelantos_ids
 ) => {
    const grupo_planilla = trabajador_planilla_model();
    grupo_planilla.info_detalle = planillas_obtenidas;
@@ -62,7 +64,6 @@ const unir_planillas_mensuales = (
       // grupo_planilla.sueldos_brutos_obtenidos.push(Number(p.sueldo_bruto));
       grupo_planilla.quinta_categoria = Number(p.quinta_categoria);
       grupo_planilla.sueldo_quincenal = Number(p.sueldo_quincenal);
-      grupo_planilla.adelanto_prestamo += Number(p.adelanto_prestamo);
 
       grupo_planilla.filial_id = p.filial_id;
       grupo_planilla.banco = p.banco;
@@ -118,7 +119,8 @@ const unir_planillas_mensuales = (
       Number(grupo_planilla.sueldo_bruto) -
       Number(grupo_planilla.total_descuentos)
    ).toFixed(2);
-
+   grupo_planilla.adelanto_prestamo=totalAdelantosSueldo;
+   grupo_planilla.adelantos_ids=adelantos_ids||[];
    grupo_planilla.saldo_por_pagar = (
       grupo_planilla.sueldo_neto -
       grupo_planilla.sueldo_quincenal -
