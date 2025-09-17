@@ -168,6 +168,12 @@ const TablePlanillaMensual = ({
                         rowSpan={2}
                         className="text-center border-r text-white border-black"
                      >
+                        Vacaciones vendidas
+                     </TableHead>
+                     <TableHead
+                        rowSpan={2}
+                        className="text-center border-r text-white border-black"
+                     >
                         Gratificación
                      </TableHead>
                      <TableHead

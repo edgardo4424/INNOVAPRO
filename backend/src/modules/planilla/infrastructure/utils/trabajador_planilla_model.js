@@ -18,6 +18,7 @@ export const trabajador_planilla_model =()=>( {
    licencia_con_goce_de_haber: 0,
    licencia_sin_goce_de_haber: 0,
    vacaciones: 0,
+   vacaciones_vendidas:0,
    gratificacion: 0,
    cts: 0,
    h_extras_primera_quincena: 0,

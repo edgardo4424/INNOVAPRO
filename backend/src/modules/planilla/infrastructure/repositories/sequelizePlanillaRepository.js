@@ -1213,8 +1213,8 @@ class SequelizePlanillaRepository {
       if (!response_trabajador) throw new Error("El trabajador no existe.");
       //Se valido que el trabajador exista
       const trabajador = response_trabajador.get({ plain: true });
-      console.log("Contratos laborales del trabjador.");
-      console.log(trabajador.contratos_laborales);
+      // console.log("Contratos laborales del trabjador.");
+      // console.log(trabajador.contratos_laborales);
 
       const contratoInicial = filtrarContratosSinInterrupcion(
          trabajador.contratos_laborales
@@ -1295,6 +1295,8 @@ class SequelizePlanillaRepository {
             SUMA_BONO_SEGUNDA_Q,
             TARDANZA_PRIMERA_Q,
             TARDANZA_SEGUNDA_Q,
+            CANTIDAD_VACACIONES_GOZADAS,
+            CANTIDAD_VACACIONES_VENDIDAS
          } = await obtenerDatosPorQuincena(
             inicio_real,
             fin_real,
@@ -1321,7 +1323,7 @@ class SequelizePlanillaRepository {
 
          // ! dias de labor, se le resta--> dias mo contatados, faltas y dias de vacaciones;
          // prettier-ignore
-         planilla.dias_labor=(((dias_mes - DIAS_NO_CONTRATADOS) - faltas) - DIAS_VACACIONES)-licencia_con_goce;
+         planilla.dias_labor=(((dias_mes - DIAS_NO_CONTRATADOS) - faltas) - CANTIDAD_VACACIONES_GOZADAS)-licencia_con_goce;
          planilla.sueldo_basico = c.sueldo;
          // sueldo del mes: suedo que corresponde por los dias laborados
          // prettier-ignore
@@ -1339,7 +1341,16 @@ class SequelizePlanillaRepository {
          planilla.licencia_con_goce_de_haber = ((c.sueldo / 30)*licencia_con_goce).toFixed(2);
          // prettier-ignore
          planilla.licencia_sin_goce_de_haber = ((c.sueldo / 30)*licencia_sin_goce).toFixed(2);
-         planilla.vacaciones = ((c.sueldo / 30) * DIAS_VACACIONES).toFixed(2);
+         planilla.vacaciones = ((c.sueldo / 30) * CANTIDAD_VACACIONES_GOZADAS).toFixed(2);
+         planilla.vacaciones_vendidas=((c.sueldo / 30) * CANTIDAD_VACACIONES_VENDIDAS).toFixed(2);
+  //           if(trabajador.id==7){
+  //     console.log("vacacciones de valnetina");
+  //     console.log('gozadas');
+  //     console.log(vacaciones);
+  //     console.log("vendidas: ");
+  //     console.log();
+      
+  //  }
          planilla.gratificacion = MONTO_GRATIFICACION.toFixed(2);
          planilla.cts = MONTO_CTS.toFixed(2);
          // prettier-ignore
@@ -1353,10 +1364,10 @@ class SequelizePlanillaRepository {
 
          // prettier-ignore
          planilla.faltas_segunda_quincena = ((c.sueldo / DIAS_LABORALES) * FALTAS_SEGUNDA_Q).toFixed(2);
-         console.log(
-            "DIAS LABORALES JULIO DEPENDE EL AREA DEL TRABJADOR: ",
-            DIAS_LABORALES
-         );
+        //  console.log(
+        //     "DIAS LABORALES JULIO DEPENDE EL AREA DEL TRABJADOR: ",
+        //     DIAS_LABORALES
+        //  );
 
          const area_id = trabajador.cargo.area.id;
          const determinar_desc_tardanza_area = [6, 2].includes(area_id);
