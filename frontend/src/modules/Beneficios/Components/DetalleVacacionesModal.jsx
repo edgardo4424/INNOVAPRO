@@ -130,7 +130,18 @@ export default function DetalleVacacionesModal({ datosEmpleado }) {
                <Eye />
             </Button>
          </AlertDialogTrigger>
-         <AlertDialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+         <AlertDialogContent className="max-w-2xl pr-0">
+
+            <AlertDialogCancel asChild>
+              <Button
+                size="icon"
+                className="fixed top-4 right-4 z-50 size-8 text-neutral-800 shadow-md bg-white hover:bg-gray-100"
+              >
+                <XIcon />
+              </Button>
+            </AlertDialogCancel>
+            <div className="max-h-[70vh] overflow-y-auto pr-6">
+               
             <AlertDialogHeader>
                <AlertDialogTitle className="flex items-center gap-2">
                   <Calendar className="h-5 w-5" />
@@ -142,11 +153,7 @@ export default function DetalleVacacionesModal({ datosEmpleado }) {
                   {/* {datosEmpleado.empresa_proveedora.razon_social} */}
                </AlertDialogDescription>
             </AlertDialogHeader>
-                         <AlertDialogCancel asChild className="absolute right-3 top-3 ">
-                     <Button size={"icon"} className={"size-8 text-neutral-800"}>
-                           <XIcon/>
-                     </Button>
-               </AlertDialogCancel>
+
             <div className="space-y-4">
                <Card>
                   <CardHeader className="pb-3">
@@ -365,6 +372,10 @@ export default function DetalleVacacionesModal({ datosEmpleado }) {
                   </CardContent>
                </Card>
             </div>
+            </div>
+
+
+
          </AlertDialogContent>
       </AlertDialog>
    );

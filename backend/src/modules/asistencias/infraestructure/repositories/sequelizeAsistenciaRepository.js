@@ -3,11 +3,23 @@ const sequelize = require("../../../../config/db");
 const { Asistencia } = require("../models/asistenciaModel");
 const { Gasto } = require("../models/gastoModel");
 const { Jornada } = require("../models/jornadaModel");
+const {
+   AsistenciaVacaciones,
+} = require("../../../vacaciones/infraestructure/models/asistenciasVacacionesModel");
 
 class SequelizeAsistenciaRepository {
    async crearAsistencia(asistenciaData) {
       const t = await sequelize.transaction();
       try {
+         const estado_asistencia_values = [
+            "vacacion-gozada",
+            "vacacion-vendida",
+         ];
+         if (
+            estado_asistencia_values.includes(asistenciaData.estado_asistencia)
+         ) {
+            throw new Error("No se pueden crear vacaciones desde este módulo");
+         }
          const asistencia = await Asistencia.create(
             {
                trabajador_id: asistenciaData.trabajador_id,
@@ -55,22 +67,79 @@ class SequelizeAsistenciaRepository {
          throw new Error(error.message);
       }
    }
+
    async actualizarAsistencia(asistenciaData) {
       const t = await sequelize.transaction();
       try {
-         await Asistencia.update(
-            {
-               horas_trabajadas: asistenciaData.horas_trabajadas || null,
-               horas_extras: asistenciaData.horas_extras || null,
-               estado_asistencia: asistenciaData.estado_asistencia,
-            },
-            {
-               where: {
+         const asistencia_previa = await Asistencia.findByPk(
+            asistenciaData.id,
+            { transaction: t }
+         );
+         if (!asistencia_previa) {
+            throw new Error("No existe una asistencia para poder actualizar");
+         }
+         // prettier-ignore
+         const estado_asistencia_values = ["vacacion-gozada","vacacion-vendida"];
+
+         // prettier-ignore
+         // !En el primer if se esta validadndo que alguna de las asistencias(previas o actual) tengo un estado de vacacion
+         if (estado_asistencia_values.includes(asistenciaData.estado_asistencia)||estado_asistencia_values.includes(asistencia_previa.estado_asistencia)) {
+            //! Este valiacacion, es si de una asistencia normal quieres pasarla a una asistencia con estado de vacación
+               if (estado_asistencia_values.includes(asistenciaData.estado_asistencia)&&!estado_asistencia_values.includes(asistencia_previa.estado_asistencia)){
+                     throw new Error("No se pueden agregar vacaciones desde este modulo")
+               }
+            // !Esta validacion es si: quieres pasar una asistencia con estado de vacacion a un estado normal, se tiene que elimianr del registro de "ASISTENCIAS-VACACIONES"
+               if (!estado_asistencia_values.includes(asistenciaData.estado_asistencia)&&estado_asistencia_values.includes(asistencia_previa.estado_asistencia)){
+                     await AsistenciaVacaciones.destroy({where:{asistencia_id:asistencia_previa.id},transaction:t});
+                     await Asistencia.update(
+                     {
+                        horas_trabajadas: asistenciaData.horas_trabajadas || null,
+                        horas_extras: asistenciaData.horas_extras || null,
+                        estado_asistencia: asistenciaData.estado_asistencia,
+                     },
+                     {
+                        where: {
+                        id: asistenciaData.id,
+                        },
+                        transaction: t,
+                     }
+                     );
+               }
+               else{
+                  let tipo="";
+                  if(asistenciaData.estado_asistencia=="vacacion-gozada")tipo="gozada" ;
+                  if(asistenciaData.estado_asistencia=="vacacion-vendida")tipo="vendida";
+                  await AsistenciaVacaciones.update({tipo:tipo},{where:{asistencia_id:asistencia_previa.id},transaction:t})
+                  await Asistencia.update(
+                  {
+                     horas_trabajadas: asistenciaData.horas_trabajadas || null,
+                     horas_extras: asistenciaData.horas_extras || null,
+                     estado_asistencia: asistenciaData.estado_asistencia,
+                  },
+                  {
+                     where: {
+                     id: asistenciaData.id,
+                     },
+                     transaction: t,
+                  }
+                  );
+               }
+         }else{
+               await Asistencia.update(
+               {
+                  horas_trabajadas: asistenciaData.horas_trabajadas || null,
+                  horas_extras: asistenciaData.horas_extras || null,
+                  estado_asistencia: asistenciaData.estado_asistencia,
+               },
+               {
+                  where: {
                   id: asistenciaData.id,
                },
-               transaction: t,
-            }
-         );
+                  transaction: t,
+               }
+               );
+         }
+
          await Gasto.destroy({
             where: {
                asistencia_id: asistenciaData.id,
@@ -119,9 +188,19 @@ class SequelizeAsistenciaRepository {
          throw new Error(error.message);
       }
    }
+
    async crearAsistenciaSimple(asistenciaData) {
       try {
-         const asistencia = await Asistencia.create({
+         const estado_asistencia_values = [
+            "vacacion-gozada",
+            "vacacion-vendida",
+         ];
+         if (
+            estado_asistencia_values.includes(asistenciaData.estado_asistencia)
+         ) {
+            throw new Error("No se pueden crear vacaciones desde este módulo");
+         }
+         await Asistencia.create({
             trabajador_id: asistenciaData.trabajador_id,
             horas_trabajadas: 9,
             estado_asistencia: asistenciaData.estado_asistencia,
@@ -132,6 +211,79 @@ class SequelizeAsistenciaRepository {
          throw new Error(error.message);
       }
    }
+
+   async actualizarAsistenciaSimple(asistenciaData) {
+      const t = await sequelize.transaction();
+      try {
+         const asistencia_previa = await Asistencia.findByPk(
+            asistenciaData.id,
+            { transaction: t }
+         );
+         if (!asistencia_previa) {
+            throw new Error("No existe una asistencia para poder actualizar");
+         }
+         const estado_asistencia_values = [
+            "vacacion-gozada",
+            "vacacion-vendida",
+         ];
+            if (estado_asistencia_values.includes(asistenciaData.estado_asistencia)||estado_asistencia_values.includes(asistencia_previa.estado_asistencia)) {
+               //! Este valiacacion, es si de una asistencia normal quieres pasarla a una asistencia con estado de vacación
+               if (estado_asistencia_values.includes(asistenciaData.estado_asistencia)&&!estado_asistencia_values.includes(asistencia_previa.estado_asistencia)){
+                     throw new Error("No se pueden agregar vacaciones desde este modulo")
+                }
+            // !Esta validacion es si: quieres pasar una asistencia con estado de vacacion a un estado normal, se tiene que elimianr del registro de "ASISTENCIAS-VACACIONES"
+               if (!estado_asistencia_values.includes(asistenciaData.estado_asistencia)&&estado_asistencia_values.includes(asistencia_previa.estado_asistencia)){
+                     await AsistenciaVacaciones.destroy({where:{asistencia_id:asistencia_previa.id},transaction:t});
+                     await Asistencia.update(
+                      {
+                      estado_asistencia: asistenciaData.estado_asistencia,
+                      },
+                      {
+                      where: {
+                      id: asistenciaData.id,
+                         },
+                      transaction: t,              
+                      }
+                      );
+               }
+               else{
+                  let tipo="";
+                  if(asistenciaData.estado_asistencia=="vacacion-gozada")tipo="gozada" ;
+                  if(asistenciaData.estado_asistencia=="vacacion-vendida")tipo="vendida";
+                  await AsistenciaVacaciones.update({tipo:tipo},{where:{asistencia_id:asistencia_previa.id},transaction:t})
+                  await Asistencia.update(
+                  {
+                  estado_asistencia: asistenciaData.estado_asistencia,
+                  },
+                  {
+                  where: {
+                  id: asistenciaData.id,
+                     },
+                  transaction: t,              
+                  }
+                  );
+               }
+         }else{
+            await Asistencia.update(
+            {
+               estado_asistencia: asistenciaData.estado_asistencia,
+            },
+            {
+               where: {
+                  id: asistenciaData.id,
+               },
+               transaction: t,              
+            }
+            );
+         }         
+         await t.commit();
+
+      } catch (error) {
+         await t.rollback();
+         throw new Error(error.message);
+      }
+   }
+
    async crearAsistenciaVacaciones(asistenciaData, transaction = null) {
       const options = {};
       if (transaction) {
@@ -148,23 +300,6 @@ class SequelizeAsistenciaRepository {
       );
       const parse = asistencia.get({ plain: true });
       return parse;
-   }
-
-   async actualizarAsistenciaSimple(asistenciaData) {
-      try {
-         await Asistencia.update(
-            {
-               estado_asistencia: asistenciaData.estado_asistencia,
-            },
-            {
-               where: {
-                  id: asistenciaData.id,
-               },
-            }
-         );
-      } catch (error) {
-         throw new Error(error.message);
-      }
    }
 
    async obtenerHorasExtrasPorRangoFecha(trabajador_id, fechaInicio, fechaFin) {
