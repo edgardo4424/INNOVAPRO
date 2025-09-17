@@ -22,7 +22,7 @@ module.exports = async (
 
    const inicio_mes = `${anio_mes_dia.slice(0, -2)}01`;
 
-   const t = trabajadorData.get({ plain: true });
+   const t = trabajadorData/* .get({ plain: true }); */
    // 1. Filtrar contratos en rango del mes
    const contratosEnRango = t.contratos_laborales.filter((c) => {
       return (

@@ -130,6 +130,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
       contratosParaCalcularTiempoLaborado
     );
 
+
     console.log('tiempoLaborado', tiempoLaborado);
 
     //! Calcular el tiempo del ultimo contrato
@@ -238,10 +239,13 @@ const montoGratificacionTrunca = gratificacion_trunca ? Number(gratificacion_tru
 
       const total_liquidacion = montoCtsTrunca + 0 + montoGratificacionTrunca + montoPlanillaMensualTrunca;
 
+      const fecha_ingreso_trabajador = contratosParaCalcularTiempoLaborado.reverse()[0].fecha_inicio;
+
     const darBajaTrabajador = {
       trabajador_id: trabajador_id,
       contrato_id: contrato_id,
-      fecha_baja: fecha_baja,
+      fecha_ingreso: fecha_ingreso_trabajador,
+      fecha_baja: fechaTerminacionAnticipada.format("YYYY-MM-DD"),
       motivo: motivo,
       observacion: observacion,
       usuario_registro_id: usuario_cierre_id,
@@ -276,6 +280,8 @@ const montoGratificacionTrunca = gratificacion_trunca ? Number(gratificacion_tru
     };
 
     console.log('darBajaTrabajador', darBajaTrabajador);
+
+    console.log('contratosParaCalcularTiempoLaborado', contratosParaCalcularTiempoLaborado);
 
     // Insertar en la tabla bajas_trabajadores
     const registroBajaTrabajador = await InsertarRegistroBajaTrabajador(

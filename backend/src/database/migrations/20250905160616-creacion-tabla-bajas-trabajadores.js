@@ -31,6 +31,10 @@ module.exports = {
           onUpdate: "CASCADE",
           onDelete: "RESTRICT",
         },
+        fecha_ingreso: {
+          type: Sequelize.DATEONLY,
+          allowNull: false,
+        },
         fecha_baja: {
           type: Sequelize.DATEONLY,
           allowNull: false,
