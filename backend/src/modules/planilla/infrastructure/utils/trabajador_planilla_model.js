@@ -31,8 +31,6 @@ export const trabajador_planilla_model =()=>( {
    bono_segunda_quincena: 0,
    sueldo_bruto: 0,
    onp: 0,
-   eps_primera_quincena: 0,
-   eps_segunda_quincena: 0,
    afp_ap_oblig: 0,
    seguro: 0,
    comision: 0,
@@ -45,10 +43,10 @@ export const trabajador_planilla_model =()=>( {
    filial_id:"",
    banco:"",
    numero_cuenta:"",
-   essalud:"",
-   seguro_vida_ley:"",
-   sctr_salud:"",
-   sctr_pension:"",
+   essalud:0,
+   seguro_vida_ley:0,
+   sctr_salud:0,
+   sctr_pension:0,
    info_detalle:[],
 }
 )
