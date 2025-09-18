@@ -19,8 +19,9 @@ const {
   pdfResumenFinal,
 } = require("../../components/liquidacion/pdfResumenFinal");
 const { lineaHorizontal } = require("../../styles/lineaHorizontal");
+const { pdfSeccionVacaciones } = require("../../components/liquidacion/pdfSeccionVacaciones");
 
-function liquidacionTemplate(data) {
+async function liquidacionTemplate(data) {
   const {
     trabajador,
     contrato,
@@ -41,21 +42,19 @@ function liquidacionTemplate(data) {
         title: "LIQUIDACIÓN DE BENEFICIOS SOCIALES",
         logo: logo,
       }),
-      pdfInfoTrabajador({
+     await pdfInfoTrabajador({
         trabajador,
         contrato,
         detalle_liquidacion,
         planilla_mensual,
       }),
-      /* pdfPeriodoLaborado({ detalle_liquidacion, planilla_mensual }), */
 
       lineaHorizontal(),
 
       pdfSeccionCtsTrunca({ cts, planilla_mensual }),
-      //pdfSeccionVacaciones(data.vacaciones),
+      pdfSeccionVacaciones({}),
       pdfSeccionGratificacion({ gratificacion }),
-      pdfSeccionRemuneracion({ planilla_mensual }),
-      //pdfDetalleOtrosDescuentos(descuentos.otros),
+      pdfSeccionRemuneracion({ planilla_mensual, detalle_liquidacion }),
       pdfResumenFinal({ total: total_pagar_liquidacion }),
     ],
     styles: {

@@ -72,7 +72,8 @@ class SequelizeAdelantoSueldoRepository {
     tipo, // tipo: 'simple' , 'gratificacion' o 'cts'
    /*  fechaInicio,
     fechaFin, */
-    fecha_anio_mes_dia// 2025-09-31
+    fecha_anio_mes_dia,// 2025-09-31
+    transaction = null
   ) {
 
 
@@ -87,7 +88,7 @@ class SequelizeAdelantoSueldoRepository {
    } */
     const adelantos = await AdelantoSueldo.findAll({
       where: optionsWhere,
-    });
+    }, transaction);
 
     let adelantosQueAplican = [];
 

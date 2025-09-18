@@ -4,8 +4,8 @@ function pdfResumenFinal({total}) {
       widths: ["*", 100],
       body: [
         [
-          { text: "TOTAL A PAGAR", bold: true },
-          { text: Number(total).toFixed(2), alignment: "right", bold: true },
+          { text: "TOTAL A PAGAR", style: "tableSectionTitle", bold: true },
+          { text: Number(total).toFixed(2), alignment: "right", style: "tableSectionTitle", bold: true },
         ],
       ],
     },

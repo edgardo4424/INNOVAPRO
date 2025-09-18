@@ -63,8 +63,9 @@ function pdfSeccionCtsTrunca({ cts }) {
                     [{ text: "CÁLCULO CTS", colSpan: 2, style: "tablaHeader" }, {}],
                     ["Por los meses", { text: Number(cts.cts_meses).toFixed(2), alignment: "right" }],
                     ["Por los días", { text: Number(cts.cts_dias).toFixed(2), alignment: "right" }],
-                    ["Faltas (descuento)", { text: Number(cts.faltas_importe).toFixed(2), alignment: "right" }],
-                    ["No computable", { text: Number(cts.no_computable).toFixed(2), alignment: "right" }],
+                    ["Faltas (descuento)", { text: `-${Number(cts.faltas_importe).toFixed(2)}`, alignment: "right" }],
+                    ["No computable", { text: `-${Number(cts.no_computable).toFixed(2)}`, alignment: "right" }],
+                    ["Adelantos", { text: `-${Number(cts?.adelantos ?? 0).toFixed(2)}`, alignment: "right" }],
                     [{ text: "TOTAL CTS", bold: true }, {
                       text: Number(cts.cts_depositar).toFixed(2),
                       alignment: "right",

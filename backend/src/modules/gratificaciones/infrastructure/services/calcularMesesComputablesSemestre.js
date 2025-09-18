@@ -1,31 +1,34 @@
 // npm i moment moment-timezone
-const moment = require('moment-timezone');
-const TZ = 'America/Lima';
-const INF = moment.tz('9999-12-31', 'YYYY-MM-DD', TZ);
+const moment = require("moment-timezone");
+const TZ = "America/Lima";
+const INF = moment.tz("9999-12-31", "YYYY-MM-DD", TZ);
 
-const parse = (s) => s ? moment.tz(s, 'YYYY-MM-DD', true, TZ) : null;
-const factorPorRegimen = (r) => (r === 'GENERAL' ? 1 : r === 'MYPE' ? 0.5 : 0);
+const parse = (s) => (s ? moment.tz(s, "YYYY-MM-DD", true, TZ) : null);
+const factorPorRegimen = (r) => (r === "GENERAL" ? 1 : r === "MYPE" ? 0.5 : 0);
 
-function mergeRangosConRegimen(contratos = [], periodo = 'JULIO', anio) {
+function mergeRangosConRegimen(contratos = [], periodo = "JULIO", anio) {
   const periodoFin = moment.tz(
-    periodo === 'JULIO' ? `${anio}-06-30` : `${anio}-12-31`,
-    'YYYY-MM-DD',
+    periodo === "JULIO" ? `${anio}-06-30` : `${anio}-12-31`,
+    "YYYY-MM-DD",
     TZ
   );
 
   const arr = contratos
-    .map(c => ({
+    .map((c) => ({
       fecha_inicio: c.fecha_inicio,
       fecha_fin: c.fecha_terminacion_anticipada || c.fecha_fin,
       fecha_terminacion_anticipada: c.fecha_terminacion_anticipada,
       ini: parse(c.fecha_inicio),
-      fin: (c.fecha_terminacion_anticipada || c.fecha_fin) ? parse(c.fecha_terminacion_anticipada || c.fecha_fin) : null,
-      regimen: c.regimen || 'GENERAL',
-      sistema_salud: c.sistema_salud || 'ESSALUD',
-      tipo_contrato: c.tipo_contrato || 'PLANILLA',
+      fin:
+        c.fecha_terminacion_anticipada || c.fecha_fin
+          ? parse(c.fecha_terminacion_anticipada || c.fecha_fin)
+          : null,
+      regimen: c.regimen || "GENERAL",
+      sistema_salud: c.sistema_salud || "ESSALUD",
+      tipo_contrato: c.tipo_contrato || "PLANILLA",
       sueldo_base: Number(c.sueldo ?? 0),
     }))
-    .filter(r => r.ini && r.ini.isValid())
+    .filter((r) => r.ini && r.ini.isValid())
     .sort((a, b) => a.ini.valueOf() - b.ini.valueOf());
 
   const out = [];
@@ -42,14 +45,20 @@ function mergeRangosConRegimen(contratos = [], periodo = 'JULIO', anio) {
       last.sistema_salud == r.sistema_salud &&
       last.tipo_contrato == r.tipo_contrato;
 
-    const continuaInmediatamente = lastFinEff.clone().add(1, 'day').isSame(r.ini, 'day');
+    const continuaInmediatamente = lastFinEff
+      .clone()
+      .add(1, "day")
+      .isSame(r.ini, "day");
 
-    if (mismosAtributos && (r.ini.isSameOrBefore(lastFinEff, 'day') || continuaInmediatamente)) {
+    if (
+      mismosAtributos &&
+      (r.ini.isSameOrBefore(lastFinEff, "day") || continuaInmediatamente)
+    ) {
       const maxFin = moment.max(lastFinEff, curFinEff);
-      last.fin = maxFin.isSame(INF, 'day') ? null : maxFin;
+      last.fin = maxFin.isSame(INF, "day") ? null : maxFin;
 
       // ✅ Solo si el contrato empieza dentro del semestre
-      if (r.ini.isBefore(periodoFin, 'day')) {
+      if (r.ini.isBefore(periodoFin, "day")) {
         last.sueldo_base = r.sueldo_base;
         last.fecha_fin = r.fecha_fin;
         last.regimen = r.regimen;
@@ -63,37 +72,51 @@ function mergeRangosConRegimen(contratos = [], periodo = 'JULIO', anio) {
 
 function calcularMesesComputablesSemestre(contratos, periodo, anio) {
   const year = Number(anio);
-  if (!year || !['JULIO','DICIEMBRE'].includes(periodo)) {
-    throw new Error('Parámetros inválidos.');
+  if (!year || !["JULIO", "DICIEMBRE"].includes(periodo)) {
+    throw new Error("Parámetros inválidos.");
   }
 
-  const semInicio = parse(periodo === 'JULIO' ? `${year}-01-01` : `${year}-07-01`);
-  const semFin    = parse(periodo === 'JULIO' ? `${year}-06-30` : `${year}-12-31`);
+  const semInicio = parse(
+    periodo === "JULIO" ? `${year}-01-01` : `${year}-07-01`
+  );
+  const semFin = parse(periodo === "JULIO" ? `${year}-06-30` : `${year}-12-31`);
 
- // 👇 ✅ Pasamos periodo y año
+  // 👇 ✅ Pasamos periodo y año
   const rangos = mergeRangosConRegimen(contratos, periodo, anio);
-  
 
   const detalleMensual = [];
   const contadores = new Map();
   let totalMeses = 0;
 
-  let cursor = semInicio.clone().startOf('month');
-  while (cursor.isSameOrBefore(semFin, 'month')) {
-    const mesIni = cursor.clone().startOf('month');
-    const mesFin = cursor.clone().endOf('month');
+  let cursor = semInicio.clone().startOf("month");
+  while (cursor.isSameOrBefore(semFin, "month")) {
+    const mesIni = cursor.clone().startOf("month");
+    const mesFin = cursor.clone().endOf("month");
 
     const mesCompletoPorRegimen = [];
 
-    
     for (const r of rangos) {
       const rIni = r.ini;
       const rFin = r.fin || INF;
 
-      const cubreDesde = rIni.isSameOrBefore(mesIni, 'day');
+      /*  const cubreDesde = rIni.isSameOrBefore(mesIni, 'day');
       const cubreHasta = rFin.isSameOrAfter(mesFin, 'day');
 
       if (cubreDesde && cubreHasta) {
+        mesCompletoPorRegimen.push(r);
+      } */
+
+      const cubreDesde = rIni.isSameOrBefore(mesIni, "day");
+      const cubreHasta = rFin.isSameOrAfter(mesFin, "day");
+
+      // Mes de diciembre especial: considerar si trabajó al menos 15 días
+      const esDiciembre = mesIni.month() === 11; // diciembre es el mes 11 (0-indexed)
+      const diasTrabajados = rFin.diff(mesIni, "days") + 1;
+
+      const cumpleCondicionDiciembre =
+        esDiciembre && rIni.isBefore(mesFin, "day") && diasTrabajados >= 15;
+
+      if ((cubreDesde && cubreHasta) || cumpleCondicionDiciembre) {
         mesCompletoPorRegimen.push(r);
       }
     }
@@ -117,8 +140,8 @@ function calcularMesesComputablesSemestre(contratos, periodo, anio) {
             sistema_salud: elegido.sistema_salud,
             tipo_contrato: elegido.tipo_contrato,
             sueldo_base: elegido.sueldo_base,
-            factor: factorPorRegimen(elegido.regimen)
-          }
+            factor: factorPorRegimen(elegido.regimen),
+          },
         });
       }
 
@@ -127,15 +150,15 @@ function calcularMesesComputablesSemestre(contratos, periodo, anio) {
     }
 
     detalleMensual.push({
-      mes: mesIni.format('YYYY-MM'),
+      mes: mesIni.format("YYYY-MM"),
       computa: mesCompletoPorRegimen.length > 0,
-      regimenAsignado
+      regimenAsignado,
     });
 
-    cursor.add(1, 'month');
+    cursor.add(1, "month");
   }
 
-  const porRegimen = Array.from(contadores.values()).map(x => ({
+  const porRegimen = Array.from(contadores.values()).map((x) => ({
     fecha_inicio: x.attrs.fecha_inicio,
     fecha_fin: x.attrs.fecha_fin,
     fecha_terminacion_anticipada: x.attrs.fecha_terminacion_anticipada,
@@ -144,7 +167,7 @@ function calcularMesesComputablesSemestre(contratos, periodo, anio) {
     factor: x.attrs.factor,
     sistema_salud: x.attrs.sistema_salud,
     tipo_contrato: x.attrs.tipo_contrato,
-    sueldo_base: x.attrs.sueldo_base
+    sueldo_base: x.attrs.sueldo_base,
   }));
 
   return { totalMeses, porRegimen, detalleMensual };
@@ -166,4 +189,9 @@ function obtenerUltimaSueldo(contratos = []) {
   }, null);
 }
 
-module.exports = { calcularMesesComputablesSemestre, obtenerUltimaFechaFin, obtenerUltimaSueldo, factorPorRegimen };
+module.exports = {
+  calcularMesesComputablesSemestre,
+  obtenerUltimaFechaFin,
+  obtenerUltimaSueldo,
+  factorPorRegimen,
+};

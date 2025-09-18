@@ -7,17 +7,7 @@ function pdfSeccionGratificacion({gratificacion}) {
 
   console.log('gratificacion.adelantos', gratificacion.adelantos);
   return {
-   /*  table: {
-      widths: ["*", 100],
-      body: [
-        [{ text: `GRATIFICACIÓN TRUNCA: ${mensaje_gratificacion_tiempo_computado}`, style: "tableSectionTitle", }, {}],
-        ["PERIODO", { text: gratificacion.periodo, alignment: "right" }],
-        [{text: "TOTAL", bold: true}, { text: Number(gratificacion.total_pagar).toFixed(2), alignment: "right" }],
-      ],
-    },
-    layout: "lightHorizontalLines",
-    style: "infoTable", 
-    margin: [0, 0, 0, 10], */
+ 
     stack: [
       {
         text: `GRATIFICACIÓN TRUNCA: ${mensaje_gratificacion_tiempo_computado}`,

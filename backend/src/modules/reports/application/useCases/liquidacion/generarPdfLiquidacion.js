@@ -17,7 +17,7 @@ module.exports = async (baja_trabajador_id, darBajaTrabajadoresRepository) => {
     }
 
     // 2. Armar modelo PDF
-    const docDefinition = liquidacionTemplate(informacionLiquidacion.respuesta.liquidacion);
+    const docDefinition = await liquidacionTemplate(informacionLiquidacion.respuesta.liquidacion);
 
     // 3. Generar PDF con servicio
     const pdfService = new PdfService();

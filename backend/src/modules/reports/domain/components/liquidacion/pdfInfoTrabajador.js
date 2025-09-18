@@ -1,6 +1,9 @@
 const { construirMensajeTiempo } = require("../../../utils/construirMensajeTiempo");
+const SequelizeAsistenciaRepository = require("../../../../asistencias/infraestructure/repositories/sequelizeAsistenciaRepository");
+const asistenciaRepository = new SequelizeAsistenciaRepository();
+const moment = require("moment");
 
-function pdfInfoTrabajador({
+async function pdfInfoTrabajador({
   trabajador,
   contrato,
   detalle_liquidacion,
@@ -29,7 +32,13 @@ function pdfInfoTrabajador({
   const mensaje_tiempo_computado = construirMensajeTiempo(
     detalle_liquidacion.tiempo_computado
   );
-  const faltas_injustificadas = detalle_liquidacion.faltas_injustificadas ?? 0;
+
+  //! Calcular faltas injustificadas
+
+  //* Calcular la fecha del primer dia en base a la fecha_baja
+    const primerDia = moment(detalle_liquidacion.fecha_baja).startOf('month').format('YYYY-MM-DD');
+  
+  const faltas_injustificadas = await asistenciaRepository.obtenerCantidadFaltasPorRangoFecha( trabajador.id ,primerDia, detalle_liquidacion.fecha_baja) ?? 0;
 
   return {
     columns: [
