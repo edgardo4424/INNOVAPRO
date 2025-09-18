@@ -39,6 +39,7 @@ const RowPlanillaMensual = ({ key, e, index }) => {
             {e.licencia_sin_goce_de_haber}
          </TableCell>
          <TableCell className="text-right">{e.vacaciones}</TableCell>
+         <TableCell className="text-right">{e.vacaciones_vendidas||0}</TableCell>
          <TableCell className="text-right">{e.gratificacion}</TableCell>
          <TableCell className="text-right">{e.cts}</TableCell>
 

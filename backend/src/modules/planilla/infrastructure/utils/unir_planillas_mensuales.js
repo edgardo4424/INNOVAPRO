@@ -6,11 +6,13 @@ const unir_planillas_mensuales = (
    trabajador,
    PORCENTAJE_DESCUENTO_ONP,
    PORCENTAJE_DESCUENTO_AFP,
-   PORCENTAJE_DESCUENTO_SEGURO
+   PORCENTAJE_DESCUENTO_SEGURO,
+   totalAdelantosSueldo, 
+   adelantos_ids
 ) => {
    const grupo_planilla = trabajador_planilla_model();
    grupo_planilla.info_detalle = planillas_obtenidas;
-   if(trabajador.id==7)console.log('La edad de valeri es',trabajador);
+   // if(trabajador.id==7)console.log('La edad de valeri es',trabajador);
    
    for (const p of planillas_obtenidas) {
       grupo_planilla.trabajador_id = p.trabajador_id;
@@ -36,6 +38,7 @@ const unir_planillas_mensuales = (
          p.licencia_sin_goce_de_haber
       );
       grupo_planilla.vacaciones += Number(p.vacaciones);
+      grupo_planilla.vacaciones_vendidas += Number(p.vacaciones_vendidas);
       grupo_planilla.gratificacion = Number(p.gratificacion);
       grupo_planilla.cts = Number(p.cts);
       grupo_planilla.h_extras_primera_quincena += Number(
@@ -61,7 +64,6 @@ const unir_planillas_mensuales = (
       // grupo_planilla.sueldos_brutos_obtenidos.push(Number(p.sueldo_bruto));
       grupo_planilla.quinta_categoria = Number(p.quinta_categoria);
       grupo_planilla.sueldo_quincenal = Number(p.sueldo_quincenal);
-      grupo_planilla.adelanto_prestamo += Number(p.adelanto_prestamo);
 
       grupo_planilla.filial_id = p.filial_id;
       grupo_planilla.banco = p.banco;
@@ -76,6 +78,7 @@ const unir_planillas_mensuales = (
          Number(grupo_planilla.licencia_con_goce_de_haber) +
          Number(grupo_planilla.licencia_sin_goce_de_haber) * -1 +
          Number(grupo_planilla.vacaciones) +
+         Number(grupo_planilla.vacaciones_vendidas) +
          Number(grupo_planilla.h_extras_primera_quincena) +
          Number(grupo_planilla.h_extras_segunda_quincena) +
          Number(grupo_planilla.faltas_primera_quincena) * -1 +
@@ -116,7 +119,8 @@ const unir_planillas_mensuales = (
       Number(grupo_planilla.sueldo_bruto) -
       Number(grupo_planilla.total_descuentos)
    ).toFixed(2);
-
+   grupo_planilla.adelanto_prestamo=totalAdelantosSueldo;
+   grupo_planilla.adelantos_ids=adelantos_ids||[];
    grupo_planilla.saldo_por_pagar = (
       grupo_planilla.sueldo_neto -
       grupo_planilla.sueldo_quincenal -

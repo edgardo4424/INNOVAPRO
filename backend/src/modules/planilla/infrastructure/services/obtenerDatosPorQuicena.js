@@ -20,7 +20,8 @@ const obtenerDatosPorQuincena = async (
    const asistencias = responseAsistencias.map((a) => a.get({ plain: true }));
    let CANTIDAD_HE_PRIMERA_Q = 0;
    let CANTIDAD_HE_SEGUNDA_Q = 0;
-
+   let CANTIDAD_VACACIONES_GOZADAS=0;
+   let CANTIDAD_VACACIONES_VENDIDAS=0;
    for (const a of asistencias) {
       if (
          a.fecha >= fecha_inicio_periodo &&
@@ -33,6 +34,12 @@ const obtenerDatosPorQuincena = async (
          a.fecha <= fecha_cierre_periodo
       ) {
          CANTIDAD_HE_SEGUNDA_Q += a.horas_extras;
+      }
+      if(a.estado_asistencia=="vacacion-gozada"){
+         CANTIDAD_VACACIONES_GOZADAS++;
+      }
+      if(a.estado_asistencia=="vacacion-vendida"){
+         CANTIDAD_VACACIONES_VENDIDAS++;
       }
    }
    const FALTAS_PRIMERA_Q =
@@ -83,16 +90,6 @@ const obtenerDatosPorQuincena = async (
          SUMA_BONO_SEGUNDA_Q += Number(b.monto);
       }
    }
-   let MONTO_ADELANTO_SUELDO = 0;
-   const responseAdelantos =
-      await adelantoSueldoRepository.obtenerAdelantosPorTrabajadorId(
-         trabajador_id
-      );
-   const adelantos = responseAdelantos.map((r) => r.get({ plain: true }));
-   for (const a_s of adelantos) {
-      MONTO_ADELANTO_SUELDO += a_s.monto / a_s.cuotas;
-   }
-
    return {
       CANTIDAD_HE_PRIMERA_Q,
       CANTIDAD_HE_SEGUNDA_Q,
@@ -102,7 +99,8 @@ const obtenerDatosPorQuincena = async (
       TARDANZA_SEGUNDA_Q,
       SUMA_BONO_PRIMERA_Q,
       SUMA_BONO_SEGUNDA_Q,
-      MONTO_ADELANTO_SUELDO,
+      CANTIDAD_VACACIONES_GOZADAS,
+      CANTIDAD_VACACIONES_VENDIDAS
    };
 };
 

@@ -66,12 +66,7 @@ module.exports = async (
                t.id,
                filial_id
             );
-         // console.log('Repsuesta del planila mensual: ',res);
-         // console.log("||");
-         // console.log("||");
-         // console.log("||");
-         // console.log("||");
-         // console.log("||");
+
          
          
          payload.planilla.trabajadores.push(res);
