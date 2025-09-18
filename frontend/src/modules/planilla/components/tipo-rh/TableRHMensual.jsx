@@ -60,6 +60,7 @@ const TablePlanillaMensual = ({ planillaMensualTipoRh, total }) => {
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Base</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Mensual</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Vacaciones</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Vacaciones vendidas</TableHead>
 
 
               <TableHead colSpan={2} className="text-center border-r h-5 text-white border-black">Prom. H. Extras.</TableHead>
@@ -70,6 +71,7 @@ const TablePlanillaMensual = ({ planillaMensualTipoRh, total }) => {
 
 
                <TableHead rowSpan={2} className="text-center border-r h-5 text-white border-black">Sueldo Quincenal</TableHead>
+               <TableHead rowSpan={2} className="text-center border-r h-5 text-white border-black"> Adelanto prestamo</TableHead>
 
 
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Saldo por Pagar</TableHead>

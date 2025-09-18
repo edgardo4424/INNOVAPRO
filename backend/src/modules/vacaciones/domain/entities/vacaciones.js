@@ -144,7 +144,7 @@ class Vacaciones {
             const mes = inicioMes.getMonth();
             const finMes = new Date(anio, mes + 1, 0);
             const diasLaborablesTotales = contarDiasLaborablesDelMes(anio, mes);
-
+            //Cambiar los dias a laborlaes a los dias dele mes 
             const inicioReal = inicioMes < inicio ? inicio : inicioMes;
             const finReal = finMes > fechaFin ? fechaFin : finMes;
             const diasTrabajados = contarDiasLaborables(inicioReal, finReal);
@@ -160,6 +160,7 @@ class Vacaciones {
             //  11/22--->  0.5*1.25 ---> 0.625
             //  ese mes solo obtuviste 0.625  del 1.25 de dia que te da tu regimen por mes
             //  solo para comprobar multiplicamos --> 0.625 *2 ---> 1.25
+            //  verificar los dias labroales en el area de almacen y montadores
             const proporcionVacaciones =
                (diasTrabajados / diasLaborablesTotales) * tasaVacaciones;
             const proporcionVendibles =
