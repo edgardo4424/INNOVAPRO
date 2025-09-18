@@ -185,8 +185,10 @@ export function VacationModal({ empleados, fetchEmployees }) {
          toast.success("Las vacaciones fueron registradas con éxito.");
          cerrarModal();
       } catch (error) {
-         console.log(error);
-
+         if(error?.response?.data?.error){
+            toast.error(error.response.data.error)
+            return
+         }
          const errores = error.response?.data?.mensaje || [
             "Error al registrar vacaciones",
          ];

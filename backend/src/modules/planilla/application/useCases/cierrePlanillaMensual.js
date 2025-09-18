@@ -90,7 +90,6 @@ module.exports = async (
          cierre_planilla_mensual.id,
          transaction
       );
-   asd;
 
    return {
       codigo: 202,
