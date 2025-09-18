@@ -1,4 +1,3 @@
-// INNOVA PRO+ v1.2.0
 import { useCallback, useEffect, useRef, useState } from "react";
 import { quintaObtenerCertificado, quintaGuardarCertificado } from "../service/quintaService";
 import { uploadQuintaArchivo } from "../service/archivosService";
@@ -12,9 +11,14 @@ export default function useCertificadoQuinta({ open, dni, anio }) {
   const [asignacionFamiliar, setAsignacionFamiliar] = useState("");
   const [otros, setOtros] = useState("");
 
-  const [retCert, setRetCert] = useState("");   // retenciones previas
+  const [retCert, setRetCert] = useState("");  
   const [archivoUrl, setArchivoUrl] = useState("");
   const [archivoFile, setArchivoFile] = useState(null);
+
+  const [empresaRuc, setEmpresaRuc] = useState("");
+  const [empresaRazon, setEmpresaRazon] = useState("");
+  const [fechaEmision, setFechaEmision] = useState("");
+  const [aplicaDesde, setAplicaDesde] = useState(""); 
 
   const loadedRef = useRef(false);
 
@@ -44,11 +48,14 @@ export default function useCertificadoQuinta({ open, dni, anio }) {
         setIfChanged(otros, String(c.otros ?? ""), setOtros);
         setIfChanged(retCert, String(c.retenciones_previas ?? ""), setRetCert);
         setIfChanged(archivoUrl, c.archivo_url || "", setArchivoUrl);
+        setIfChanged(empresaRuc,   c.empresa_ruc || "", setEmpresaRuc);
+        setIfChanged(empresaRazon, c.empresa_razon_social || "", setEmpresaRazon);
+        setIfChanged(fechaEmision, c.fecha_emision || "", setFechaEmision);
+        setIfChanged(aplicaDesde,  String(c.aplica_desde_mes ?? ""), setAplicaDesde);
       }
     } finally {
       setLoading(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dni, anio]);
 
   useEffect(() => {
@@ -79,6 +86,10 @@ export default function useCertificadoQuinta({ open, dni, anio }) {
       await quintaGuardarCertificado({
         dni,
         anio,
+        aplica_desde_mes: (aplicaDesde === "" ? null : Number(aplicaDesde)),
+        empresa_ruc: empresaRuc,
+        empresa_razon_social: empresaRazon,
+        fecha_emision: fechaEmision || null,
         renta_bruta_total: Number(rentaCert || 0),
         remuneraciones: Number(remuneraciones || 0),
         gratificaciones: Number(gratificaciones || 0),
@@ -91,10 +102,9 @@ export default function useCertificadoQuinta({ open, dni, anio }) {
     } finally {
       setLoading(false);
     }
-  }, [dni, anio, rentaCert, remuneraciones, gratificaciones, asignacionFamiliar, otros, retCert, archivoUrl, archivoFile]);
+  }, [dni, anio, aplicaDesde, rentaCert, empresaRuc, empresaRazon, fechaEmision, remuneraciones, gratificaciones, asignacionFamiliar, otros, retCert, archivoUrl, archivoFile]);
 
   return {
-    // valores que consume el modal
     rentaCert,
     retCert, setRetCert,
     remuneraciones, setRemuneraciones,
@@ -105,5 +115,9 @@ export default function useCertificadoQuinta({ open, dni, anio }) {
     onArchivoChange,
     save,
     loading,
+    empresaRuc, setEmpresaRuc,
+    empresaRazon, setEmpresaRazon,
+    fechaEmision, setFechaEmision,
+    aplicaDesde, setAplicaDesde,
   };
 }

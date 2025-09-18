@@ -70,6 +70,18 @@ export default function CertificadoQuintaModal({ open, onClose, dni, anio, onSav
             />
           </div>
           <div>
+            <Label>Aplica desde (mes)</Label>
+            <select
+              value={certificado.aplicaDesde || ""}
+              onChange={(e) => certificado.setAplicaDesde(e.target.value)}
+              className="border rounded-md h-9 w-full px-3"
+            >
+              <option value="">Todo el año</option>
+              {["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"]
+                .map((m,i)=>(<option key={i+1} value={i+1}>{m}</option>))}
+            </select>
+          </div>
+          <div>
             <Label>Vacaciones/Bonos/Otros</Label>
             <Input
               inputMode="decimal"
@@ -77,6 +89,38 @@ export default function CertificadoQuintaModal({ open, onClose, dni, anio, onSav
               value={certificado.otros}
               onChange={(e) => certificado.setOtros(e.target.value)}
               placeholder="0.00"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <Label>RUC de la empresa</Label>
+            <Input
+              value={certificado.empresaRuc}
+              onChange={(e) => certificado.setEmpresaRuc(e.target.value)}
+              placeholder="11 dígitos"
+              maxLength={11}
+              inputMode="numeric"
+            />
+          </div>
+          <div>
+            <Label>Razón social</Label>
+            <Input
+              value={certificado.empresaRazon}
+              onChange={(e) => certificado.setEmpresaRazon(e.target.value)}
+              placeholder="Razón social del empleador"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <Label>Fecha de emisión</Label>
+            <Input
+              type="date"
+              value={certificado.fechaEmision || ""}
+              onChange={(e) => certificado.setFechaEmision(e.target.value)}
             />
           </div>
         </div>

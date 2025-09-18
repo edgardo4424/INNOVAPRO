@@ -1,15 +1,5 @@
 import { FUENTE_PREVIOS } from "./quinta.constants";
 
-/**
- * @typedef {Object} CalculoRow
- * @property {number|string} id
- * @property {string|number|Date} createdAt
- * @property {number|string} mes
- * @property {number|string|null} retencion_base_mes
- * @property {number|string|null} retencion_adicional_mes
- * @property {boolean|0|1} [es_recalculo]
- */
-
 /** Normaliza el enum de fuente de previos a una de las 3 permitidas. */
 export function normalizarFuentePrevios(valor) {
   if (!valor) return FUENTE_PREVIOS.AUTO;
