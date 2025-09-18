@@ -1,32 +1,29 @@
 const SequelizeDeclaracionSinPreviosRepository = require('../..//infrastructure/repositories/SequelizeDeclaracionSinPreviosRepository');
-const sinPrevRepo = new SequelizeDeclaracionSinPreviosRepository();
+const SequelizeDeclaracionMultiempleoRepository = require('../../infrastructure/repositories/SequelizeDeclaracionMultiempleoRepository');
+const SequelizeCertificadoQuintaRepository = require('../../infrastructure/repositories/SequelizeCertificadoQuintaRepository');
 
-/**
- * Regla actual:
- *   Si existe DJ "Sin Previos" VIGENTE y MES ANTERIOR (mes < aplica_desde_mes),
- *     - previos en el payload (tanto acumulados como internos/Externos a 0)
- *     - fuentePrevios = 'SIN_PREVIOS'
- * si mes >= aplica_desde_mes no borramos aquí 
- *  Si no aplica, no toca nada
- */
+const sinPrevRepo = new SequelizeDeclaracionSinPreviosRepository();
+const multiRepo   = new SequelizeDeclaracionMultiempleoRepository();
+const certRepo    = new SequelizeCertificadoQuintaRepository();
+
 async function aplicarSoportesPrevios({ dni, anio, mes, payload }) {
-  const declaracionJurada = await sinPrevRepo.obtenerPorDniAnio({
+  // Sin Previos
+  const declaracionJuradaSP = await sinPrevRepo.obtenerPorDniAnio({
     dni,
-    anio: Number(anio) || 0,
+    anio,
   });
-  const m = Number(mes) || 0;
-  const aplica = Number(declaracionJurada?.aplica_desde_mes || 0);
-  if(!declaracionJurada || !aplica) return payload;
+  const aplica = Number(declaracionJuradaSP?.aplica_desde_mes || 0);
+  if(!declaracionJuradaSP || !aplica) return payload;
 
   payload._sinPreviosAplicaDesde = aplica;
   payload._soporteSinPrevios = {
-      id: declaracionJurada.id,      
+      id: declaracionJuradaSP.id,      
       aplica_desde_mes: aplica,
-      archivo_url: declaracionJurada.archivo_url || null,
-      observaciones: declaracionJurada.observaciones || null,
+      archivo_url: declaracionJuradaSP.archivo_url || null,
+      observaciones: declaracionJuradaSP.observaciones || null,
   };
   
-  if ( m < aplica ) {
+  if ( mes < aplica ) {
     payload.fuentePrevios = 'SIN_PREVIOS';
     payload.retencionesPrevias = 0;
     payload.ingresosPrevios = {
@@ -45,11 +42,52 @@ async function aplicarSoportesPrevios({ dni, anio, mes, payload }) {
       af_multi: null,
       total_ingresos: 0,
     };
-    console.log(`[DJ SinPrevios] Recorte total aplicado ← aplica=${aplica}, mes=${m}`);
+    console.log(`[DJ SinPrevios] Recorte total aplicado ← aplica=${aplica}, mes=${mes}`);
   } else {
-    console.log(`[DJ SinPrevios] Vigente desde mes=${aplica} (m=${m}). Recorte fino lo hará ObtenerIngresosPrevios.`);
+    console.log(`[DJ SinPrevios] Vigente desde mes=${aplica} (mes=${mes}). Recorte fino lo hará ObtenerIngresosPrevios.`);
   }
+
+  // === MULTIEMPLEO ===
+  const declaracionJuradaMP = await multiRepo.obtenerPorDniAnio({ dni, anio });
+  const aplicaME = Number(declaracionJuradaMP?.aplica_desde_mes || 0);
+  if (declaracionJuradaMP?.id) {
+    payload._soporteMultiempleo = {
+      id: declaracionJuradaMP.id,
+      aplica_desde_mes: aplicaME || null,
+      es_secundaria: !!declaracionJuradaMP.es_secundaria,
+      principal_ruc: declaracionJuradaMP.principal_ruc || null,
+      principal_razon_social: declaracionJuradaMP.principal_razon_social || null,
+      archivo_url: declaracionJuradaMP.archivo_url || null,
+      observaciones: declaracionJuradaMP.observaciones || null,
+    };
+    if (aplicaME && mes >= aplicaME && declaracionJuradaMP.es_secundaria) {
+      payload._saltarRetener = true; // el controller lo aplicará después del cálculo
+      console.log(`[DJ Multiempleo] Somos SECUNDARIA desde mes=${aplicaME}. Saltar retención base.`);
+    }
+  }
+
+  // === CERTIFICADO (solo meta acá) ===
+  const certificado = await certRepo.obtenerPorDniAnio({ dni, anio });
+  if (certificado?.id) {
+    payload._soporteCertificado = {
+      id: certificado.id,
+      aplica_desde_mes: certificado.aplica_desde_mes ? Number(certificado.aplica_desde_mes) : null,
+      empresa_ruc: certificado.empresa_ruc || null,
+      empresa_nombre: certificado.empresa_nombre || null,
+      renta_bruta_total: Number(certificado.renta_bruta_total || 0),
+      remuneraciones: Number(certificado.remuneraciones || 0),
+      gratificaciones: Number(certificado.gratificaciones || 0),
+      otros: Number(certificado.otros || 0),
+      asignacion_familiar: Number(certificado.asignacion_familiar || 0),
+      retenciones_previas: Number(certificado.retenciones_previas || 0),
+      fecha_emision: certificado.fecha_emision || null,
+      archivo_url: certificado.archivo_url || null
+    };
+  }
+
   return payload;
 }
 
-module.exports = { aplicarSoportesPrevios };
+module.exports = { 
+  aplicarSoportesPrevios,
+};

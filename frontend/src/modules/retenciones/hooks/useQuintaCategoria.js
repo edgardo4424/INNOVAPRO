@@ -18,6 +18,19 @@ import {
 } from "../utils/quinta.mappers";
 import { validarFormularioQuinta } from "../utils/quinta.validators";
 
+/** Limpieza profunda para payloads (evita null/undefined/NaN). */
+const limpiarBody = (obj) => {
+  if (Array.isArray(obj)) return obj.map(limpiarBody).filter(v => v !== undefined && v !== null);
+  if (obj && typeof obj === "object") {
+    return Object.fromEntries(
+      Object.entries(obj)
+        .filter(([, v]) => v !== undefined && v !== null && !(typeof v === "number" && Number.isNaN(v)))
+        .map(([k, v]) => [k, limpiarBody(v)])
+    );
+  }
+  return obj;
+};
+
 export function useQuintaCategoria() {
   const [form, setForm] = useState({
     anio: "",
@@ -51,22 +64,7 @@ export function useQuintaCategoria() {
   // Control de concurrencia / debounce
   const debounceRef = useRef(null);
   const reqSeqRef = useRef(0);
-
-  // Limpia null/undefined/NaN (profundo) para evitar "target must be an object"
-  const limpiarBody = (obj) => {
-    if (Array.isArray(obj)) {
-      const arr = obj.map(limpiarBody).filter(v => v !== undefined && v !== null);
-      return arr;
-    }
-    if (obj && typeof obj === "object") {
-      return Object.fromEntries(
-        Object.entries(obj)
-          .filter(([, v]) => v !== undefined && v !== null && !(typeof v === "number" && Number.isNaN(v)))
-          .map(([k, v]) => [k, limpiarBody(v)])
-      );
-    }
-    return obj;
-  };
+  const lastOkPreviewRef = useRef(null);
 
   // Utilidad segura para extraer la DJ desde el preview 
   const obtenerSinPreviosDelPreview = (out) => {
@@ -75,16 +73,17 @@ export function useQuintaCategoria() {
     return a?.found ? a : (b?.found ? b : null);
   };
 
-  // Sincronizar fuente visual con el backend
+  // Sincronizar fuente visual con preview (no toca CERTIFICADO elegido explícitamente)
   const useSincronizarFuenteDesdePreview = ({ form, setFormIfChanged }) => {
     return useCallback((out) => {
+      if (String(form?.fuentePrevios).toUpperCase() === FUENTE_PREVIOS.CERTIFICADO) return;
       const declaracionJurada = obtenerSinPreviosDelPreview(out);
       const mes = Number(form?.mes || 0);
       if (!mes) return;
+
       if (declaracionJurada?.found) {
         const aplica = Number(declaracionJurada.aplica_desde_mes || 0);
         if (mes < aplica) {
-          // Marcamos "Sin previos" solo si aplica en este mes
           setFormIfChanged(prev =>
             prev.fuentePrevios === FUENTE_PREVIOS.SIN_PREVIOS ? prev
             : ({ ...prev, fuentePrevios: FUENTE_PREVIOS.SIN_PREVIOS })
@@ -92,7 +91,6 @@ export function useQuintaCategoria() {
           return;
         }
       }
-      // Si NO aplica y se queda congelado en SIN_PREVIOS, devolvemos AUTO
       setFormIfChanged(prev =>
         prev.fuentePrevios === FUENTE_PREVIOS.SIN_PREVIOS ? ({ ...prev, fuentePrevios: FUENTE_PREVIOS.AUTO }) : prev
       );
@@ -135,10 +133,14 @@ export function useQuintaCategoria() {
   }, []);
 
   /* ---------- Handlers ---------- */
-  const resetPreview = useCallback(() => setPreview(null), []);
   const handleChange = useCallback((k, v) => {
     setFormIfChanged(prev => ({ ...prev, [k]: v }));
   }, [setFormIfChanged]);
+
+  const resetPreview = useCallback(() => {
+    lastOkPreviewRef.current = null;
+    setPreview(null);
+  }, []);
 
   const handleTrabajadorSelect = useCallback((id) => {
     const trabajador = trabajadores.find(t => Number(t.id) === Number(id));
@@ -152,7 +154,7 @@ export function useQuintaCategoria() {
       remuneracionMensualActual: "",
     }));
     setFiliales([]); 
-    setPreview(null);
+    resetPreview(); // SI SE SIGUE SETEANDO NULL MAL BORRA ESTO Y LA FUNCION MISMA
   }, [trabajadores, setFormIfChanged]);
 
   const handleFilialSelect = useCallback((val, filialObj) => {
@@ -166,24 +168,21 @@ export function useQuintaCategoria() {
     }));
   }, [filiales, setFormIfChanged]);
 
-  // Clave estable para preview sin bucles infinitos
-  const previewLlave = useMemo(() => JSON.stringify({
-    anio: form.anio,
-    mes: form.mes,
-    trabajadorId: form.trabajadorId,
-    filial_id: form.filial_id,
-    fuentePrevios: form.fuentePrevios,
-    certificado: {
-      renta_bruta_total: form.certificadoQuinta.renta_bruta_total,
-      retenciones_previas: form.certificadoQuinta.retenciones_previas,
-      remuneraciones: form.certificadoQuinta.remuneraciones,
-      asignacion_familiar: form.certificadoQuinta.asignacion_familiar,
-      vacaciones: form.certificadoQuinta.vacaciones,
-      gratificaciones: form.certificadoQuinta.gratificaciones,
-      otros: form.certificadoQuinta.otros,
-    }
-  }), [
-    form.anio, form.mes, form.trabajadorId, form.filial_id, form.fuentePrevios,
+  // Clave estable para preview (evita bucles)
+  const certificadoKey = useMemo(() => {
+    if (form.fuentePrevios !== FUENTE_PREVIOS.CERTIFICADO) return null;
+    const c = form.certificadoQuinta || {};
+    return {
+      renta_bruta_total: c.renta_bruta_total,
+      retenciones_previas: c.retenciones_previas,
+      remuneraciones: c.remuneraciones,
+      asignacion_familiar: c.asignacion_familiar,
+      vacaciones: c.vacaciones,
+      gratificaciones: c.gratificaciones,
+      otros: c.otros,
+    };
+  }, [
+    form.fuentePrevios,
     form.certificadoQuinta.renta_bruta_total,
     form.certificadoQuinta.retenciones_previas,
     form.certificadoQuinta.remuneraciones,
@@ -192,6 +191,17 @@ export function useQuintaCategoria() {
     form.certificadoQuinta.gratificaciones,
     form.certificadoQuinta.otros,
   ]);
+
+  // Clave estable para preview sin bucles infinitos
+  const previewLlave = useMemo(() => JSON.stringify({
+    anio: form.anio,
+    mes: form.mes,
+    trabajadorId: form.trabajadorId,
+    filial_id: form.filial_id,
+    fuentePrevios: form.fuentePrevios,
+    certificado: certificadoKey
+  }), [
+    form.anio, form.mes, form.trabajadorId, form.filial_id, form.fuentePrevios, certificadoKey ]);
 
   /* ---------- Payload ---------- */
   const crearPayload = useCallback(() => {
@@ -224,19 +234,27 @@ export function useQuintaCategoria() {
     try {
       setLoadingPreview(true);
       const respuesta = await quintaPreview(payload);
-      const data = respuesta?.data;
-      if (reqId !== reqSeqRef.current) return;
-      setPreview(data?.data);
-      setFormIfChanged(prev => {
-        const nuevo = data?.data?.entradas?.remuneracion_mensual ?? prev.remuneracionMensualActual;
-        if (nuevo === prev.remuneracionMensualActual) return prev;
-        return { ...prev, remuneracionMensualActual: nuevo };
-      });
+      if (reqId !== reqSeqRef.current) return respuesta;
+
+      const out = respuesta?.data?.data || respuesta?.data;
+      if (out && out.trabajador) {
+        lastOkPreviewRef.current = out; 
+        setPreview(out);
+        // Sincronizamos sueldo si backend lo devolvió diferente
+        setFormIfChanged(prev => {
+          const nuevo = out?.entradas?.remuneracion_mensual ?? prev.remuneracionMensualActual;
+          if (nuevo === prev.remuneracionMensualActual) return prev;
+          return { ...prev, remuneracionMensualActual: nuevo };
+        });
+      } else if (lastOkPreviewRef.current) {
+        setPreview(lastOkPreviewRef.current);
+      }
       return respuesta;
     } catch (err) {
       if (reqId !== reqSeqRef.current) return;
       console.error(err);
       toast.error(err?.response?.data?.message || "Error al calcular la proyección.");
+      if (lastOkPreviewRef.current) setPreview(lastOkPreviewRef.current);
     } finally {
       if (reqId === reqSeqRef.current) setLoadingPreview(false);
     }
@@ -258,10 +276,11 @@ export function useQuintaCategoria() {
     try {
       const { data } = await quintaList({ dni: form.dni, anio: form.anio });
       const rows = extraerFilas(data);
-      setHistorial(rows.map(normalizarCalculo));
+      const normales = rows.map(normalizarCalculo);
+      //setHistorial(rows.map(normalizarCalculo));
       setHistorialVigente(mostrarUltimoRegistroPorMes(rows));
     } catch (err) {
-      console.error(err);
+      // Silencioso
     }
   }, [form.dni, form.anio]);
 
@@ -271,7 +290,7 @@ export function useQuintaCategoria() {
       setSaving(true);
       await quintaCrear(crearPayload());
       toast.success("Cálculo guardado correctamente");
-      setPreview(null);
+      resetPreview();
       await cargarHistorial();
     } catch (err) {
       console.error(err);
@@ -279,7 +298,7 @@ export function useQuintaCategoria() {
     } finally {
       setSaving(false);
     }
-  }, [validar, crearPayload]);
+  }, [validar, crearPayload, cargarHistorial, resetPreview]);
   
     const handleRecalcular = useCallback(async (row) => {
     if (!row?.id) return;
@@ -290,38 +309,33 @@ export function useQuintaCategoria() {
         const baseTotal = Number(row.retencion_base_mes) + Number(row.retencion_adicional_mes);
 
         const base = {
-        anio: form.anio ? Number(form.anio) : undefined,
-        mes:  form.mes  ? Number(form.mes)  : undefined,
-
-        fuentePrevios: normalizarFuentePrevios(form.fuentePrevios),
-
-        __filialId:     form.filial_id     ? Number(form.filial_id)     : undefined,
-        __contratoId:   form.contrato_id   ? Number(form.contrato_id)   : undefined,
-        __trabajadorId: form.trabajadorId  ? Number(form.trabajadorId)  : undefined,
-
-        filialId:     form.filial_id     ? Number(form.filial_id)     : undefined,
-        contratoId:   form.contrato_id   ? Number(form.contrato_id)   : undefined,
-        trabajadorId: form.trabajadorId  ? Number(form.trabajadorId)  : undefined,
-
-        remuneracionMensualActual: form.remuneracionMensualActual
-            ? Number(form.remuneracionMensualActual)
-            : undefined,
+          anio: form.anio ? Number(form.anio) : undefined,
+          mes:  form.mes  ? Number(form.mes)  : undefined,
+          fuentePrevios: normalizarFuentePrevios(form.fuentePrevios),
+          __filialId:     form.filial_id     ? Number(form.filial_id)     : undefined,
+          __contratoId:   form.contrato_id   ? Number(form.contrato_id)   : undefined,
+          __trabajadorId: form.trabajadorId  ? Number(form.trabajadorId)  : undefined,
+          filialId:     form.filial_id     ? Number(form.filial_id)     : undefined,
+          contratoId:   form.contrato_id   ? Number(form.contrato_id)   : undefined,
+          trabajadorId: form.trabajadorId  ? Number(form.trabajadorId)  : undefined,
+          remuneracionMensualActual: form.remuneracionMensualActual
+              ? Number(form.remuneracionMensualActual)
+              : undefined,
         };
 
         if (form.fuentePrevios === FUENTE_PREVIOS.CERTIFICADO) {
-        base.certificadoQuinta = {
-            renta_bruta_total:   Number(form.certificadoQuinta?.renta_bruta_total   || 0),
-            retenciones_previas: Number(form.certificadoQuinta?.retenciones_previas || 0),
-            remuneraciones:      Number(form.certificadoQuinta?.remuneraciones      || 0),
-            asignacion_familiar: Number(form.certificadoQuinta?.asignacion_familiar || 0),
-            vacaciones:          Number(form.certificadoQuinta?.vacaciones          || 0),
-            gratificaciones:     Number(form.certificadoQuinta?.gratificaciones     || 0),
-            otros:               Number(form.certificadoQuinta?.otros               || 0),
-        };
+          base.certificadoQuinta = {
+              renta_bruta_total:   Number(form.certificadoQuinta?.renta_bruta_total   || 0),
+              retenciones_previas: Number(form.certificadoQuinta?.retenciones_previas || 0),
+              remuneraciones:      Number(form.certificadoQuinta?.remuneraciones      || 0),
+              asignacion_familiar: Number(form.certificadoQuinta?.asignacion_familiar || 0),
+              vacaciones:          Number(form.certificadoQuinta?.vacaciones          || 0),
+              gratificaciones:     Number(form.certificadoQuinta?.gratificaciones     || 0),
+              otros:               Number(form.certificadoQuinta?.otros               || 0),
+          };
         }
 
         const body = limpiarBody(base);
-
         const { data } = await quintaRecalc(row.id, body);
 
         const nuevo = normalizarCalculo(data.data);
@@ -335,12 +349,11 @@ export function useQuintaCategoria() {
         );
 
         if (form.dni && form.anio) {
-        const list = await quintaList({ dni: form.dni, anio: form.anio }); // usa objeto (firma segura)
-        const rows = extraerFilas(list?.data?.data || list?.data || []);
-        setHistorialVigente(mostrarUltimoRegistroPorMes(rows));
+          const list = await quintaList({ dni: form.dni, anio: form.anio }); // usa objeto (firma segura)
+          const rows = extraerFilas(list?.data?.data || list?.data || []);
+          setHistorialVigente(mostrarUltimoRegistroPorMes(rows));
         }
     } catch (err) {
-        console.error(err);
         toast.error(err?.response?.data?.message || "Error al recalcular.");
     }
     }, [
@@ -357,8 +370,10 @@ export function useQuintaCategoria() {
 
   /* ---------- Effects ---------- */
   useEffect(() => { (async () => {
-    try { const { data } = await trabajadoresService.getTrabajadores(); setTrabajadores(data || []); }
-    catch (err) { console.error("Error cargando trabajadores", err); }
+    try { 
+      const { data } = await trabajadoresService.getTrabajadores(); 
+      setTrabajadores(data || []); 
+    } catch (err) { console.error("Error cargando trabajadores", err); }
   })(); }, []);
 
   useEffect(() => { cargarHistorial(); }, [cargarHistorial]);
@@ -381,9 +396,9 @@ export function useQuintaCategoria() {
         } else {
           setFormIfChanged(prev => ({...prev, filial_id: "", contrato_id: "" }));
         }
-      } catch (e) { setFiliales([]); }
+      } catch { setFiliales([]); }
     })();
-  }, [form.dni, form.anio, form.mes]);
+  }, [form.dni, form.anio, form.mes, setFormIfChanged]);
 
   useEffect(() => {
     if (!canCalcular) return;
@@ -393,7 +408,7 @@ export function useQuintaCategoria() {
       handlePreview();
     }, DEBOUNCE_MS);
     return () => clearTimeout(debounceRef.current);
-  }, [canCalcular, previewLlave, handlePreview]);
+  }, [canCalcular, previewLlave, handlePreview, validar]);
 
   useEffect(() => {
     if (!form.dni || !form.anio) return;
@@ -403,18 +418,33 @@ export function useQuintaCategoria() {
           quintaObtenerCertificado(form.dni, form.anio).catch(() => null),
           quintaObtenerSinPrevios(form.dni, form.anio).catch(() => null),
         ]);
+
         if (certificado?.data?.data?.found) {
           const c = certificado.data.data;
-          setFormIfChanged(prev => ({
+          setFormIfChanged(prev => {
+            const next = {
             ...prev,
             certificadoQuinta: {
               ...prev.certificadoQuinta,
               renta_bruta_total: String(c.renta_bruta_total ?? ""),
               retenciones_previas: String(c.retenciones_previas ?? ""),
+              remuneraciones: String(c.remuneraciones ?? ""),
+              gratificaciones: String(c.gratificaciones ?? ""),
+              asignacion_familiar: String(c.asignacion_familiar ?? ""),
+              otros: String(c.otros ?? ""), 
             },
-          }));
+          };
+          const aplica = Number(sinPrevios?.data?.data?.aplica_desde_mes || 0);
+          const mesN = Number(prev.mes || 0);
+          const sinPrevAplicaAhora = sinPrevios?.data?.data?.found && mesN && mesN < aplica;
+
+          if (!sinPrevAplicaAhora && prev.fuentePrevios !== FUENTE_PREVIOS.CERTIFICADO) {
+            next.fuentePrevios = FUENTE_PREVIOS.CERTIFICADO;
+          }
+          return next;
+        });
         }
-        // Solo marcamos SIN_PREVIOS si ya aplica en el mes
+
         const declaracionJurada = sinPrevios?.data?.data;
         const aplica = Number(declaracionJurada?.aplica_desde_mes || 0 );
         if (declaracionJurada?.found && form.mes && Number(form.mes) < aplica) {
@@ -425,24 +455,43 @@ export function useQuintaCategoria() {
   }, [form.dni, form.anio, form.mes, setFormIfChanged]);
 
   const onSoportesGuardado = useCallback(async () => {
-    resetPreview?.();
     try {
       if (form?.dni && form?.anio) {
-        const sp = await quintaObtenerSinPrevios(form.dni, form.anio).catch(() => null);
-        const declaracionJurada = sp?.data?.data;
-        const aplica = Number(declaracionJurada?.aplica_desde_mes || 0);
-        if (declaracionJurada?.found && form?.mes && Number(form.mes) < aplica) {
-          setFormIfChanged(prev => ({...prev, fuentePrevios: FUENTE_PREVIOS.SIN_PREVIOS }));
+        const [cert, sp] = await Promise.all([
+          quintaObtenerCertificado(form.dni, form.anio).catch(() => null),
+          quintaObtenerSinPrevios(form.dni, form.anio).catch(() => null),
+        ]);
+
+        if (cert?.data?.data?.found) {
+          const c = cert.data.data;
+          setFormIfChanged(prev => ({
+            ...prev,
+            fuentePrevios: FUENTE_PREVIOS.CERTIFICADO,
+            certificadoQuinta: {
+              ...prev.certificadoQuinta,
+              renta_bruta_total:   String(c.renta_bruta_total     ?? ""),
+              retenciones_previas: String(c.retenciones_previas   ?? ""),
+              remuneraciones:      String(c.remuneraciones        ?? ""),
+              gratificaciones:     String(c.gratificaciones       ?? ""),
+              asignacion_familiar: String(c.asignacion_familiar   ?? ""),
+              otros:               String(c.otros                 ?? ""),
+            },
+          }));
+        }
+
+        const aplica = Number(sp?.data?.data?.aplica_desde_mes || 0);
+        if (sp?.data?.data?.found && form?.mes && Number(form.mes) < aplica) {
+          setFormIfChanged(prev => ({ ...prev, fuentePrevios: FUENTE_PREVIOS.SIN_PREVIOS }));
         }
       }
     } catch {}
     if (canCalcular) await handlePreview();
-  }, [canCalcular, handlePreview, resetPreview, form?.dni, form?.anio, form?.mes, setFormIfChanged]);
+  }, [canCalcular, handlePreview, form?.dni, form?.anio, form?.mes, setFormIfChanged]);
 
   return {
     form, preview, historial, historialVigente, vigenteDelMes, yaExisteOficialEnMes,
     trabajadores, filiales, loadingPreview, saving, errors,
-    handleChange, resetPreview, handleTrabajadorSelect, handleFilialSelect,
+    handleChange, handleTrabajadorSelect, handleFilialSelect,
     canCalcular, handlePreview, handleGuardar, handleRecalcular,
     onSoportesGuardado,
   };

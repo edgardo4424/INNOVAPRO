@@ -16,12 +16,16 @@ module.exports = class ObtenerDeclaracionMultiempleo {
             id: filaData.id,
             aplica_desde_mes: filaData.aplica_desde_mes || null,
             filial_principal_id: filaData.filial_principal_id || null,
-            somos_secundario_no_retiene: !!filaData.somos_secundario_no_retiene,
+            es_secundaria: !!filaData.es_secundaria,
+            principal_ruc: filaData.principal_ruc || null,
+            principal_razon_social: filaData.principal_razon_social || null,
             renta_bruta_otros_anual: Number(filaData.renta_bruta_otros_anual || 0),
             retenciones_previas_otros: Number(filaData.retenciones_previas_otros || 0),
             detalle_json: filaData.detalle_json || null,
             archivo_url: filaData.archivo_url || null,
+            estado: filaData.estado || 'VIGENTE',
             updateAt: filaData.update_at || filaData.updateAt,
+            observaciones: filaData.observaciones || null,
             detalles: detalles.map(detalle => detalle.toJSON())
         };
     }

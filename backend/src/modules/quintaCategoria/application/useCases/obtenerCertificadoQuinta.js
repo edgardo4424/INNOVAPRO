@@ -1,21 +1,32 @@
 module.exports = class ObtenerCertificadoQuinta {
   constructor({ repo }) { this.repo = repo; }
   async execute({ dni, anio }) {
-    if (!dni || !Number.isInteger(Number(anio))) {
-      const err = new Error('Parámetros inválidos (dni, anio)'); err.status=400; throw err;
+    if (!dni || !anio) {
+      const err = new Error('Parámetros inválidos (dni, anio)'); err.status = 400; throw err;
     }
-    const fila = await this.repo.obtenerPorDniAnio({ dni, anio:Number(anio) });
-    if (!fila) return { found:false };
-    const filaData = fila.dataValues ?? fila;
+
+    const fila = await this.repo.obtenerPorDniAnio({ dni, anio });
+
+    if (!fila || fila.found !== true) {
+      return { found: false };
+    }
+
     return {
-      found:true,
-      id: filaData.id,
-      aplica_desde_mes: filaData.aplica_desde_mes || null,
-      renta_bruta_total: Number(filaData.renta_bruta_total || 0),
-      retenciones_previas: Number(filaData.retenciones_previas || 0),
-      detalle_json: filaData.detalle_json || null,
-      archivo_url: filaData.archivo_url || null,
-      updatedAt: filaData.updated_at || filaData.updatedAt
+      found: true,
+      id: fila.id,
+      aplica_desde_mes: fila.aplica_desde_mes ?? null,
+      empresa_ruc: fila.empresa_ruc || '',
+      empresa_razon_social: fila.empresa_razon_social || '',
+      fecha_emision: fila.fecha_emision || null,
+      renta_bruta_total: Number(fila.renta_bruta_total || 0),
+      remuneraciones: Number(fila.remuneraciones || 0),
+      gratificaciones: Number(fila.gratificaciones || 0),
+      otros: Number(fila.otros || 0),
+      asignacion_familiar: Number(fila.asignacion_familiar || 0),
+      retenciones_previas: Number(fila.retenciones_previas || 0),
+      detalle_json: fila.detalle_json || null,
+      archivo_url: fila.archivo_url || null,
+      updatedAt: fila.updated_at || fila.updatedAt || null,
     };
   }
-}
+};

@@ -30,7 +30,7 @@ router.post('/sin-previos', SoportePreviosController.insertarSinPrevios);
 /**
  * Cuando tenemos más de un get y hay uno con :id hay que ponerlo al último
  * porque va analizando de arriba a abajo y puede generar conflictos con los
- * demás get.
+ * demás get. (RECOMENDACIÓN DE LUIS)
  */
 router.get('/:id', QuintaCategoriaController.getById);
 

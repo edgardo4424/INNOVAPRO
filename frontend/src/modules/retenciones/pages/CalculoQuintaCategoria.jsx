@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -32,14 +31,9 @@ export default function CalculoQuintaCategoria() {
   const [openCert, setOpenCert] = useState(false);
   const [openSP, setOpenSP] = useState(false);
 
-  const obtenerSinPreviosDelPreview = (out) =>
-    out?.soportes?.sinPrevios || out?.retencion_meta?.soportes_json?.sin_previos || null;
-
-  //const dense = true;
-
   const abrirMulti = () => { setOpenMulti(true); handleChange("fuentePrevios", "AUTO"); };
-  const abrirCert  = () => { setOpenCert(true);  handleChange("fuentePrevios", "CERTIFICADO"); };
-  const abrirSP    = () => { setOpenSP(true);    handleChange("fuentePrevios", "SIN_PREVIOS"); };
+  const abrirCert  = () => { setOpenCert(true); };
+  const abrirSP    = () => { setOpenSP(true); };
 
   const onAnioChange = (valor) => { handleChange("anio", valor); resetPreview?.(); };
   const onMesChange  = (valor) => { handleChange("mes", valor);  resetPreview?.(); };
@@ -56,7 +50,17 @@ export default function CalculoQuintaCategoria() {
     const adic = Number(preview?.resultados?.retencion_adicional_mes || 0);
     return { base, adic, total: base + adic, divisor: preview?.calculos?.divisor_calculo ?? "-" };
   }, [preview]);
-  console.log("PREVIEW DEL TRABAJADOR: ", preview)
+
+  const YEARS = useMemo(() => ["2025","2026","2027","2028","2029","2030"], []);
+  const MESES = useMemo(
+    () => ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"],
+    []
+  );
+
+  const obtenerSinPreviosDelPreview = (out) =>
+    out?.soportes?.sinPrevios || out?.retencion_meta?.soportes_json?.sin_previos || null;
+
+  //const dense = true;
 
   return (
     <div className="p-2 sm:p-3 xl:p-4 min-h-[calc(100vh-70px)] overflow-auto">
@@ -78,11 +82,12 @@ export default function CalculoQuintaCategoria() {
                         <SelectValue placeholder="Selecciona el año" />
                       </SelectTrigger>
                       <SelectContent>
-                        {["2025","2026","2027","2028","2029","2030"].map(y => <SelectItem key={y} value={y}>{y}</SelectItem>)}
+                        {YEARS.map(y => <SelectItem key={y} value={y}>{y}</SelectItem>)}
                       </SelectContent>
                     </Select>
                     {errors?.anio && <p className="text-[11px] text-red-600">{errors?.anio}</p>}
                   </div>
+
                   <div className="grid gap-0.5">
                     <Label className="text-[10px]">Mes</Label>
                     <Select value={String(form.mes || "")} onValueChange={onMesChange}>
@@ -90,7 +95,8 @@ export default function CalculoQuintaCategoria() {
                         <SelectValue placeholder="Selecciona el mes" />
                       </SelectTrigger>
                       <SelectContent>
-                        {Array.from({length:12}).map((_,i)=>(<SelectItem key={i+1} value={String(i+1)}>{["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"][i]}</SelectItem>))}
+                        {Array.from({length:12}).map((_,i)=>(
+                          <SelectItem key={i+1} value={String(i+1)}>{MESES[i]}</SelectItem>))}
                       </SelectContent>
                     </Select>
                     {errors?.mes && <p className="text-[11px] text-red-600">{errors?.mes}</p>}
@@ -100,9 +106,14 @@ export default function CalculoQuintaCategoria() {
                 <div className="grid grid-cols-2 gap-2">
                   <div className="grid gap-0.5 min-w-0">
                     <Label className="text-[10px]">Trabajador</Label>
-                    <TrabajadorCombobox trabajadores={trabajadores} value={form.trabajadorId || ""} onSelect={onTrabSelect} dense />
+                    <TrabajadorCombobox 
+                      trabajadores={trabajadores} 
+                      value={form.trabajadorId || ""} 
+                      onSelect={onTrabSelect} dense 
+                    />
                     {errors?.trabajadorId && <p className="text-[11px] text-red-600">{errors?.trabajadorId}</p>}
                   </div>
+
                   <div className="grid gap-0.5 min-w-0">
                     <Label className="text-[10px]">Filial</Label>
                     <Select value={String(form.filial_id || "")} onValueChange={(v)=>handleFilialSelect(v)} disabled={!filiales?.length}>
@@ -110,8 +121,7 @@ export default function CalculoQuintaCategoria() {
                         <SelectValue placeholder={filiales?.length ? "Selecciona la filial" : "Sin filiales vigentes"} />
                       </SelectTrigger>
                       <SelectContent>
-                        {console.log("FILIALES DETECTADAS: ", filiales)}
-                        {filiales.map(f => (
+                        {(filiales || []).map(f => (
                           <SelectItem key={f.filial_id} value={String(f.filial_id)}>
                             {(f.filial_razon_social || `Filial ${f.filial_id}`)} — S/ {Number(f.sueldo || 0).toFixed(2)}
                           </SelectItem>
@@ -128,12 +138,22 @@ export default function CalculoQuintaCategoria() {
                 <Button className="h-7 px-2 text-[11px]" onClick={handlePreview} disabled={!canCalcular || loadingPreview}>
                   {loadingPreview ? "Calculando..." : "Calcular proyección"}
                 </Button>
+
                 {yaExisteOficialEnMes ? (
-                  <Button className="h-7 px-2 text-[11px]" onClick={() => vigenteDelMes && handleRecalcular(vigenteDelMes)} variant="secondary">
+                  <Button 
+                    className="h-7 px-2 text-[11px]" 
+                    onClick={() => vigenteDelMes && handleRecalcular(vigenteDelMes)} 
+                    variant="secondary"
+                  >
                     Recalcular vigente
                   </Button>
                 ) : (
-                  <Button className="h-7 px-2 text-[11px]" onClick={handleGuardar} variant="secondary" disabled={!preview || saving}>
+                  <Button 
+                    className="h-7 px-2 text-[11px]" 
+                    onClick={handleGuardar} 
+                    variant="secondary" 
+                    disabled={!preview || saving}
+                  >
                     {saving ? "Guardando..." : "Guardar como oficial"}
                   </Button>
                 )}
@@ -141,22 +161,38 @@ export default function CalculoQuintaCategoria() {
             </CardContent>
           </Card>
 
-          {/* Dos tarjetas lado a lado con scroll interno y alturas fluidas */}
+          {/* Paneles inferiores */}
           {preview && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 min-h-0">
               <div className="min-h-0">
                 <IngresosPreviosCard
-                  dense preview={preview} fuentePrevios={form.fuentePrevios} filiales={filiales}
-                  onClickAuto={onClickAuto} onOpenMulti={abrirMulti} onOpenCertificado={abrirCert} onOpenSinPrevios={abrirSP}
+                  dense 
+                  preview={preview} 
+                  fuentePrevios={form.fuentePrevios} 
+                  filiales={filiales}
+                  onClickAuto={onClickAuto} 
+                  onOpenMulti={abrirMulti} 
+                  onOpenCertificado={abrirCert} 
+                  onOpenSinPrevios={abrirSP}
                   className="h-full overflow-auto"
                 />
               </div>
+
               <div className="min-h-0 flex flex-col gap-2">
                 {kpis && (
                   <div className="grid grid-cols-3 gap-2 text-center">
-                    <div className="rounded-xl border p-2 bg-white"><div className="text-[10px] text-slate-500">Base del mes</div><div className="text-base text-[12px] ">{currency.format(kpis.base)}</div></div>
-                    <div className="rounded-xl border p-2 bg-white"><div className="text-[10px] text-slate-500">Adicional</div><div className="text-base text-[12px] ">{currency.format(kpis.adic)}</div></div>
-                    <div className="rounded-xl border p-2 bg-white"><div className="text-[10px] text-slate-500">Total</div><div className="text-base text-[12px] font-bold">{currency.format(kpis.total)}</div></div>
+                    <div className="rounded-xl border p-2 bg-white">
+                      <div className="text-[10px] text-slate-500">Base del mes</div>
+                      <div className="text-base text-[12px] ">{currency.format(kpis.base)}</div>
+                    </div>
+                    <div className="rounded-xl border p-2 bg-white">
+                      <div className="text-[10px] text-slate-500">Adicional</div>
+                      <div className="text-base text-[12px] ">{currency.format(kpis.adic)}</div>
+                    </div>
+                    <div className="rounded-xl border p-2 bg-white">
+                      <div className="text-[10px] text-slate-500">Total</div>
+                      <div className="text-base text-[12px] font-bold">{currency.format(kpis.total)}</div>
+                    </div>
                   </div>
                 )}
                 <PreviewResultados dense preview={preview} className="h-full overflow-auto" />
@@ -165,8 +201,25 @@ export default function CalculoQuintaCategoria() {
           )}
 
           {/* Modales */}
-          <MultiempleoModal open={openMulti} onClose={()=>setOpenMulti(false)} dni={form.dni} anio={form.anio} currentFilialId={form.filial_id || undefined} onSaved={onSoportesGuardado}/>
-          <CertificadoQuintaModal open={openCert} onClose={()=>setOpenCert(false)} dni={form.dni} anio={form.anio} onSaved={onSoportesGuardado}/>
+          <MultiempleoModal 
+            open={openMulti} 
+            onClose={()=>setOpenMulti(false)} 
+            dni={form.dni} 
+            anio={form.anio} 
+            filiales={filiales}
+            currentFilialId={form.filial_id || undefined} 
+            onSaved={onSoportesGuardado}
+          />
+          <CertificadoQuintaModal 
+            open={openCert} 
+            onClose={() => {
+              setOpenCert(false); 
+              handleChange("fuentePrevios", "CERTIFICADO");
+            }}
+            dni={form.dni} 
+            anio={form.anio} 
+            onSaved={onSoportesGuardado}
+          />
           <SinPreviosModal 
             open={openSP} 
             onClose={()=>setOpenSP(false)} 
@@ -179,15 +232,23 @@ export default function CalculoQuintaCategoria() {
 
         {/* Derecha: flexible con un único scroll interno */}
         <div className="flex-1 min-w-0 grid gap-3 min-h-0 overflow-auto p-0.5">
-          {preview?.retencion_meta && <RetencionMetaBanner retencionMeta={preview.retencion_meta} trabajador={preview.trabajador} />}
+          {preview?.retencion_meta && (
+            <RetencionMetaBanner retencionMeta={preview.retencion_meta} trabajador={preview.trabajador} />
+          )}
+
           <Card className="shadow-sm h-full">
-            <CardHeader><CardTitle className="text-[13px] leading-none">Historial del año</CardTitle></CardHeader>
+            <CardHeader>
+              <CardTitle className="text-[13px] leading-none">Historial del año</CardTitle>
+            </CardHeader>
             <CardContent className="min-h-0 overflow-auto">
               <HistorialTabla dense rows={historialVigente} onRecalc={handleRecalcular}/>
             </CardContent>
           </Card>
+
           <Card className="shadow-sm">
-            <CardHeader><CardTitle className="text-[13px] leading-none">Detalle por tramos</CardTitle></CardHeader>
+            <CardHeader>
+              <CardTitle className="text-[13px] leading-none">Detalle por tramos</CardTitle>
+            </CardHeader>
             <CardContent className="min-h-0 p-2">
               <TramosDetalle dense preview={preview}/>
               <MultiempleoResumen 

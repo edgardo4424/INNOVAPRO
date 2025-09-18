@@ -1,22 +1,31 @@
 const path = require('path');
+const multer = require('multer');
+const { MAX_MB } = 10;
 
 module.exports = {
   uploadQuinta(req, res) {
     try {
-      if (!req.file) return res.status(400).json({ ok:false, message:'Archivo requerido' });
+      if (!req.file) {
+        return res.status(400).json({
+          ok: false,
+          message: 'Debes seleccionar un archivo para subir.',
+        });
+      }
 
-      // relativo desde carpeta /uploads
-      // ej: /uploads/quinta/multiempleo/2025/DOCF1-10000005/169334234234-archivo.pdf
-      const rel = path
+      const rel = path // acá creamos la ruta relativa para las URL públicas
         .relative(path.resolve(process.cwd(), "uploads"), req.file.path)
         .split(path.sep)
         .join("/");
-      const publicPath = `/uploads/${rel}`;
+      const publicPath = `/uploads/${rel}`; // está será la ruta pública para acceder a los archivos
       const absolute = `${req.protocol}://${req.get('host')}${publicPath}`;
-      return res.status(201).json({ ok:true, url: absolute });
-    } catch (e) {
-      console.error("Error en uploadQuinta:", e);
-      return res.status(500).json({ ok:false, message: e.message || 'Error al subir archivo' });
+
+      return res.status(201).json({ ok: true, url: absolute });
+    } catch (err) {
+      console.error("Error en uploadQuinta:", err);
+      return res.status(500).json({ // EN CASO EL ERROR NO VENGA DE MULTER LO CAPTURAMOS DE FORMA GENÉRICA
+        ok: false,
+        message: "Ocurrió un error inesperado al subir el archivo. Inténtalo de nuevo.",
+      });
     }
-  }
-}
+  },
+};

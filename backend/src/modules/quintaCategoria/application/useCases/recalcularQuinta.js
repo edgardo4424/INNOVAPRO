@@ -2,16 +2,6 @@ module.exports = class RecalcularQuinta {
   constructor(repo) {
     this.repo = repo;
   }
-
-  /**
-   * Crea una nueva versión del cálculo usando el resultado ya armado
-   * en el controller (overrideInput). 
-   *
-   * @param {Object} p
-   * @param {number} p.id                id del cálculo previo (para auditar)
-   * @param {Object} p.overrideInput     DTO calculado por el controller
-   * @param {number} [p.creadoPor]
-   */
   async execute({ id, overrideInput = {}, creadoPor }) {
     const prev = await this.repo.findById(id);
     if (!prev) {

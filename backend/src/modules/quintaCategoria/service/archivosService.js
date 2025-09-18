@@ -8,11 +8,16 @@ import api from "@/shared/services/api";
  * @param {File} file
  */
 export async function uploadQuintaArchivo(categoria, dni, anio, file) {
-  const form = new FormData();
-  form.append('file', file);
-  const { data } = await api.post(`/archivos/quinta/upload`, form, {
-    params: { categoria, dni, anio },
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
-  return data?.url || null;
+  try {
+    const form = new FormData();
+    form.append('file', file);
+    const { data } = await api.post(`/archivos/quinta/upload`, form, {
+      params: { categoria, dni, anio },
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return data?.url || null;
+  } catch (error) {
+    console.error("Error al subir archivo:", error.response?.data?.message || error.message);
+    throw error;
+  }
 }

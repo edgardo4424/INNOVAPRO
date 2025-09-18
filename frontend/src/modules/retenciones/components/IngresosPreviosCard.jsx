@@ -37,6 +37,13 @@ export default function IngresosPreviosCard({
   const C = (valor) => currency.format(Number(valor || 0));
   const labelFilial = (id) => rsById[String(id)] || `Filial #${id}`;
 
+  const mesActual = Number(preview?.trabajador?.mes || 0);
+  const soporteME = meta?.soportes_json?.multiempleo || preview?.soportes?.multiempleo || null;
+  const aplicaDesdeME = Number(soporteME?.aplica_desde_mes || 0);
+  const multiempleoVigente = !!soporteME?.found && (!aplicaDesdeME || (mesActual && mesActual >= aplicaDesdeME));
+  // también consideramos si el origen proviene de DJ (por claridad visual)
+  const multiempleoActivo = multiempleoVigente || meta?.origen_retencion === "DECLARACIÓN JURADA";
+
   return (
     <div className={["p-3 border rounded bg-white w-full", dense ? "text-[11.5px]" : "text-sm", className].join(" ")}>
 
@@ -82,6 +89,12 @@ export default function IngresosPreviosCard({
               <Row llave="Bonos" valor={C(inPrev.bonos)} />
               <Row llave="Asignación familiar" valor={C(inPrev.asignacion_familiar)} />
               <Row llave="TOTAL" valor={C(total)} />
+              {preview?.retencion_meta?.meta?.ingresos_previos_externos > 0 && (
+                <div className="mt-1 text-[11px] text-slate-600">
+                  Externos ({preview?.retencion_meta?.meta?.fuente_externos === 'CERTIFICADO' ? 'Certificado' : 'DJ'}{preview?.retencion_meta?.meta?.certificado_aplica_desde ? ` desde ${['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][preview.retencion_meta.meta.certificado_aplica_desde]}` : ''}):{' '}
+                  <span className="font-semibold">S/ {Number(preview.retencion_meta.meta.ingresos_previos_externos || 0).toFixed(2)}</span>
+                </div>
+              )}
             </>
           ) : (
             <p className="text-gray-500 italic">No existen ingresos previos registrados.</p>
@@ -93,10 +106,15 @@ export default function IngresosPreviosCard({
       <div className="mt-2 p-2 border rounded bg-yellow-50 text-gray-700">
         <p className="font-semibold mb-1">Fuente de ingresos previos (Selecciona)</p>
         <div className="flex flex-wrap gap-1.5">
-          <Chip active={fuentePrevios === "AUTO"} onClick={onClickAuto}>Proyección automática</Chip>
+          <Chip
+            active={fuentePrevios === "AUTO" && !multiempleoActivo}
+            onClick={onClickAuto}
+          >
+            Proyección automática
+          </Chip>
           <Chip active={fuentePrevios === "CERTIFICADO"} onClick={onOpenCertificado}>Certificado de 5ta…</Chip>
           <Chip active={fuentePrevios === "SIN_PREVIOS"} onClick={onOpenSinPrevios}>Sin ingresos previos…</Chip>
-          <Button size="sm" variant="outline" className="h-6 px-2 text-[11px] bg-white" onClick={onOpenMulti}>Multiempleo…</Button>
+          <Chip active={multiempleoActivo} onClick={onOpenMulti}>Multiempleo…</Chip>
         </div>
       </div>
 
