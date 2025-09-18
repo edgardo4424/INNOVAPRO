@@ -156,6 +156,7 @@ export default function ModalVizualizarNota({
         cliente_Tipo_Doc,
         cliente_Num_Doc,
         afectado_Num_Doc,
+        fecha_Emision_Afectado,
         motivo_Cod,
         motivo_Des,
         detalle_nota_cre_debs,
@@ -241,6 +242,10 @@ export default function ModalVizualizarNota({
                                 <div className="grid grid-cols-[140px_1fr] gap-x-2">
                                     <span className="text-gray-700 font-semibold">Doc. afectado:</span>
                                     <span className="font-medium">{afectado_Num_Doc || "—"}</span>
+                                </div>
+                                <div className="grid grid-cols-[140px_1fr] gap-x-2">
+                                    <span className="text-gray-700 font-semibold">Fecha emisión:</span>
+                                    <span className="font-medium">{formatDateTime(fecha_Emision_Afectado) || "—"}</span>
                                 </div>
                                 <div className="grid grid-cols-[140px_1fr] gap-x-2">
                                     <span className="text-gray-700 font-semibold">Motivo:</span>

@@ -31,7 +31,7 @@ const InfDocumentoForm = () => {
     const { name, value } = e.target;
     setNotaCreditoDebito((prevValores) => ({
       ...prevValores,
-      [name]: value,
+      [name]: value.toUpperCase(),
     }));
   };
 
@@ -67,7 +67,7 @@ const InfDocumentoForm = () => {
         correlativo: siguienteCorrelativo,
       }));
     }
-  }, [notaCreditoDebito.empresa_Ruc, notaCreditoDebito.serie, correlativos]);
+  }, [notaCreditoDebito.empresa_Ruc, notaCreditoDebito.serie, correlativos,notaCreditoDebito.tipo_operacion]);
 
   return (
     <div className="overflow-y-auto p-4 sm:p-6 lg:px-8 lg:py-4">

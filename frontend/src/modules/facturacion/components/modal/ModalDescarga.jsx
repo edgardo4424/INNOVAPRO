@@ -3,6 +3,7 @@ import { FileCode, FileText, Folders, X } from 'lucide-react';
 import { useState } from 'react';
 // npm install file-saver
 import { saveAs } from 'file-saver';
+import facturaService from '../../service/FacturaService';
 
 /* ================== helpers simplificados ================== */
 const toDocumentoPayload = (doc = {}) => {
@@ -90,7 +91,7 @@ const ModalDescarga = ({
     const [loading, setLoading] = useState(false);
     const [msg, setMsg] = useState('');
 
-    const { serie, correlativo } = documentoADescargar || {};
+    const { serie, correlativo,tipoDoc } = documentoADescargar || {};
     const baseName = filenameBaseFromDoc(documentoADescargar);
 
     const closeModal = () => {
@@ -115,12 +116,34 @@ const ModalDescarga = ({
                 const response = await factilizaService.consultarXml(payload);
                 await processResponse(response, `${baseName}-XML`, 'xml');
                 setMsg('XML/CDR descargado exitosamente.');
+                return
             }
 
             if (format === 'pdf') {
                 const response = await factilizaService.consultarPdf(payload);
                 await processResponse(response, `${baseName}-PDF`, 'pdf');
                 setMsg('PDF descargado exitosamente.');
+                return
+            }
+
+            if (format === 'pdf-innova') {
+                let response;
+            
+                console.log(documentoADescargar);
+                if (tipoDoc === "01" || tipoDoc === "03") {
+                    response = await facturaService.reporteFactura(documentoADescargar);
+                }else if(tipoDoc === "07" || tipoDoc === "08") {
+                    response = await facturaService.reporteNota(documentoADescargar);
+                }else if(tipoDoc === "09") {
+                    response = await facturaService.reporteGuia(documentoADescargar);
+                }
+                
+                else {
+                    throw new Error('No se puede descargar el PDF para este tipo de documento.');
+                }
+                await processResponse(response, `${documentoADescargar.serie}-${documentoADescargar.correlativo}${documentoADescargar.numRuc ? `-${documentoADescargar.razonSocial}` : ''}-PDF`, 'pdf');
+                setMsg('PDF descargado exitosamente.');
+                return;
             }
 
             if (format === 'all') {
@@ -196,6 +219,15 @@ const ModalDescarga = ({
                             >
                                 <FileText size={20} />
                                 {loading ? 'Procesando…' : 'Descargar PDF'}
+                            </button>
+
+                            <button
+                                onClick={() => handleDownload('pdf-innova')}
+                                disabled={loading}
+                                className="cursor-pointer flex items-center justify-center gap-2 p-4 bg-gray-100 rounded-lg text-gray-700 font-semibold hover:bg-gray-300/90 transition-colors disabled:opacity-60"
+                            >
+                                <FileText size={20} />
+                                {loading ? 'Procesando…' : 'Descargar PDF - Innova'}
                             </button>
 
                             <button

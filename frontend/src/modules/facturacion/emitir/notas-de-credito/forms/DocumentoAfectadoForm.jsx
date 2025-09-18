@@ -27,7 +27,7 @@ const codigosMotivoCredito = [
 ];
 
 const codigosMotivosDebito = [
-    { value: "01", label: "01 - Intereses por mora", descripcion: "INTERESES POR MORAS" },
+    { value: "01", label: "01 - Intereses por mora", descripcion: "INTERESES POR MORA" },
     { value: "02", label: "02 - Aumento en el valor", descripcion: "AUMENTO EN EL VALOR" },
     { value: "03", label: "03 - Penalidades/ otros conceptos", descripcion: "PENALIDADES/ OTROS CONCEPTOS" },
 ]

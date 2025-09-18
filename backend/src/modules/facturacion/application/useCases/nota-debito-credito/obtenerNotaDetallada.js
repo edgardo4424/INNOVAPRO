@@ -1,7 +1,8 @@
 module.exports = async (body, notaRepository) => {
 
+    const { correlativo, serie, empresa_ruc, tipo_doc } = body;
     // * Llamamos al repositorio para obtener todas las facturas
-    const notaObtenida = await notaRepository.obtenerNotaDetallada(body);
+    const notaObtenida = await notaRepository.obtenerNotaDetallada(correlativo, serie, empresa_ruc, tipo_doc);
 
     // ? si no se encuentra la factura
     if (!notaObtenida)
@@ -15,7 +16,7 @@ module.exports = async (body, notaRepository) => {
             },
         };
 
-        console.log(notaObtenida)
+    console.log(notaObtenida)
 
     return {
         codigo: 200,

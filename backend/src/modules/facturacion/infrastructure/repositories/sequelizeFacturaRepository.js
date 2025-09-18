@@ -137,7 +137,11 @@ class SequelizeFacturaRepository {
         const { ruc, tipo_Doc } = body
 
         const facturas = await Factura.findAll({
-            where: { empresa_ruc: ruc, tipo_Doc: tipo_Doc, estado: 'EMITIDA' },
+            where: { empresa_ruc: ruc, tipo_Doc: tipo_Doc, 
+                estado: {
+                    [Op.notIn]: ['ANULADA', 'ANULADA-NOTA']
+                }
+             },
             include: [
                 {
                     model: DetalleFactura,
@@ -264,7 +268,7 @@ class SequelizeFacturaRepository {
     }
 
     async buscarExistencia(serie, correlativo, estado) {
-        console.log("🚚 Atributos para buscar existencia:", serie, correlativo, estado);
+        
         const where = {
             serie: serie,
             correlativo: correlativo,

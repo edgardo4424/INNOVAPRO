@@ -3,6 +3,7 @@ const { GuiaDetalles } = require("../models/guia-remision/guiaDetallesModel");
 const { GuiaChoferes } = require("../models/guia-remision/guiaChoferesModel");
 const { Filial } = require("../../../filiales/infrastructure/models/filialModel");
 const { Ubigeo } = require("../../../ubigeo/infrastructure/models/ubigeoModel");
+const { Pieza } = require("../../../piezas/infrastructure/models/piezaModel");
 const { SunatRespuesta } = require("../models/sunatRespuestaModel");
 const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 const { Op, fn, col } = require('sequelize');
@@ -280,6 +281,7 @@ class SequelizeGuiaRemisionRepository {
     }
 
     async obtenerGuiaPorInformacion(correlativo, serie, empresa_ruc, tipo_doc) {
+
         const guias = await GuiaRemision.findAll({
             where: {
                 correlativo: correlativo,
@@ -307,13 +309,63 @@ class SequelizeGuiaRemisionRepository {
         });
 
         const ubigeo = await Ubigeo.findOne({ where: { Codigo: empresa?.codigo_ubigeo } });
-
         const ubigeoPartida = await Ubigeo.findOne({ where: { Codigo: guias[0]?.guia_Envio_Partida_Ubigeo } });
         const ubigeoDestino = await Ubigeo.findOne({ where: { Codigo: guias[0]?.guia_Envio_Llegada_Ubigeo } });
 
+        //? Procesar cada guía para calcular el peso
+        const guiasConPeso = await Promise.all(guias.map(async (guia) => {
+            let pesoTotalGuia = 0;
 
-        return guias.map(f => ({
-            ...f.dataValues,
+            //? Procesar cada detalle de la guía
+            const detallesConPeso = await Promise.all(
+                guia.dataValues.guia_detalles?.map(async (detalle) => {
+                    const pesoItem = await this.obtenerPeso(detalle.dataValues);
+
+                    //? Calcular peso para este item
+                    let pesoCalculado = 0;
+                    let pesoUnitario = 0;
+
+                    if (pesoItem && pesoItem.length > 0) {
+                        //? Intentar diferentes nombres de campos para peso
+                        pesoUnitario = pesoItem[0].peso_kg || pesoItem[0].peso || pesoItem[0].weight || 0;
+
+                        // console.log(`Producto: ${detalle.dataValues.cod_Producto}, Peso unitario: ${pesoUnitario}, Cantidad: ${detalle.dataValues.cantidad}, Unidad: ${detalle.dataValues.unidad}`);
+
+                        //? Solo multiplicar por cantidad si la unidad es NIU
+                        if (detalle.dataValues.unidad === 'NIU') {
+                            pesoCalculado = pesoUnitario * parseFloat(detalle.dataValues.cantidad || 1);
+                        } else {
+                            pesoCalculado = pesoUnitario;
+                        }
+
+                        // console.log(`Peso calculado: ${pesoCalculado}`);
+                    } else {
+                        console.log(`No se encontró pieza para código: ${detalle.dataValues.cod_Producto}`);
+                    }
+
+                    //? Sumar al peso total de la guía
+                    pesoTotalGuia += pesoCalculado;
+
+                    //? Retornar el detalle con el peso calculado
+                    return {
+                        ...detalle.dataValues,
+                        peso_kg: pesoCalculado,
+                        peso_unitario: pesoUnitario
+                    };
+                }) || []
+            );
+
+            //? Retornar la guía con los detalles actualizados y peso total
+            return {
+                ...guia.dataValues,
+                guia_detalles: detallesConPeso,
+                peso_total_kg: pesoTotalGuia
+            };
+        }));
+
+        //? Mapear el resultado final con la información adicional
+        return guiasConPeso.map(guia => ({
+            ...guia,
             empresa_nombre: empresa?.razon_social,
             empresa_direccion: empresa?.direccion,
             empresa_telefono: empresa?.telefono_oficina || null,
@@ -326,6 +378,26 @@ class SequelizeGuiaRemisionRepository {
             partidaUbigeo: `(${ubigeoPartida?.codigo}) ${ubigeoPartida?.departamento} - ${ubigeoPartida?.provincia} - ${ubigeoPartida?.distrito}` || null,
             llegadaUbigeo: `(${ubigeoDestino?.codigo}) ${ubigeoDestino?.departamento} - ${ubigeoDestino?.provincia} - ${ubigeoDestino?.distrito}` || null
         }));
+    }
+
+    async obtenerPeso(items) {
+        const { id, guia_id, unidad, cantidad, cod_Producto, descripcion } = items;
+
+        try {
+            let piezas = await Pieza.findAll({
+                where: {
+                    item: cod_Producto
+                }
+            });
+            // console.log(`Piezas encontradas para ${cod_Producto}:`, piezas.length);
+            // if (piezas.length > 0) {
+            //     console.log(`Peso encontrado:`, piezas[0].peso_kg || piezas[0].peso);
+            // }
+            return piezas;
+        } catch (error) {
+            console.error(`Error al obtener peso para ${cod_Producto}:`, error);
+            return [];
+        }
     }
 }
 

@@ -1,4 +1,4 @@
-const { utils } = require("../../../utils/utils");
+const { utils } = require('../../../../utils/utils')
 
 function pdfDatosGuiaHeader(guia, choferes, transportistas, invi = "#FFFFFF") {
     let transporte = null;

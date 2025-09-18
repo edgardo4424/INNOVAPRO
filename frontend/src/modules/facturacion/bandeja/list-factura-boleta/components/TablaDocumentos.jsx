@@ -163,6 +163,7 @@ const TablaDocumentos = ({
                             numRuc: factura.empresa_ruc,
                             tipoDoc: factura.tipo_doc,
                             numDocumentoComprobante: factura.cliente_num_doc,
+                            razonSocial: factura.cliente_razon_social,
                           });
                         }}
                         className="rounded p-1 transition-colors hover:bg-green-100"

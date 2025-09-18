@@ -7,6 +7,7 @@ module.exports = async (body, notaRepository) => {
         ...factura
     } = body;
 
+
     //* 2. Construir el objeto 'factura' con los datos principales
     const notaData = {
         ...factura,
@@ -31,7 +32,7 @@ module.exports = async (body, notaRepository) => {
         const resultadoCreacion = await notaRepository.crear({
             nota: notaData,
             detalle: modifiedDetalle, // Usamos el array modificado
-            leyendas: legend,
+            legend: legend,
             sunat_respuesta,
         });
 

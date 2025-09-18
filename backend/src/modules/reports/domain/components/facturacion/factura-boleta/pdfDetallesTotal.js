@@ -1,4 +1,4 @@
-const { utils } = require('../../../utils/utils')
+const { utils } = require('../../../../utils/utils')
 
 function pdfDetallesTotal(
     factura,
@@ -111,7 +111,7 @@ function pdfDetallesTotal(
                     body: [
                         [
                             { text: 'GRAVADA (S/)', style: 'totalLabel', border: [true, true, true, true] },
-                            { text: utils.formatCurrency(factura.monto_Oper_Gravadas), style: 'totalValue', alignment: 'right', border: [true, true, true, true] }
+                            { text: utils.formatMoney(factura.monto_Oper_Gravadas), style: 'totalValue', alignment: 'right', border: [true, true, true, true] }
                         ],
                         [
                             { text: 'OP. INAFECTA (S/)', style: 'totalLabel', border: [true, true, true, true] },
@@ -123,11 +123,11 @@ function pdfDetallesTotal(
                         ],
                         [
                             { text: 'IGV 18.00% (S/)', style: 'totalLabel', border: [true, true, true, true] },
-                            { text: utils.formatCurrency(factura.total_Impuestos), style: 'totalValue', alignment: 'right', border: [true, true, true, true] }
+                            { text: utils.formatMoney(factura.total_Impuestos), style: 'totalValue', alignment: 'right', border: [true, true, true, true] }
                         ],
                         [
                             { text: 'TOTAL (S/)', style: 'totalFinalLabel', border: [true, true, true, true] },
-                            { text: utils.formatCurrency(factura.sub_Total), style: 'totalFinalValue', alignment: 'right', border: [true, true, true, true] }
+                            { text: utils.formatMoney(factura.sub_Total), style: 'totalFinalValue', alignment: 'right', border: [true, true, true, true] }
                         ]
                     ]
                 },

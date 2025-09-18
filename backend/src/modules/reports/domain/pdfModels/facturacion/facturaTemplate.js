@@ -1,14 +1,14 @@
 const path = require("path");
 const logo_innova = path.join(__dirname, "../../../../../assets/pdf/logo_innova.png")
 const logo = path.join(__dirname, "../../../../../assets/pdf/logo.png")
-const { pdfDetalleFactura } = require("../../components/facturacion/pdfDetalleFactura");
-const { pdfClienteFactura } = require("../../components/facturacion/pdfClienteFactura");
-const { pdfProductoFactura } = require("../../components/facturacion/pdfProductosFactura");
-const { pdfDetallesTotal } = require("../../components/facturacion/pdfDetallesTotal");
-const { pdfDetalleRelacionados } = require("../../components/facturacion/pdfDetalleRelacionados");
-const { pdfCuotasFactura } = require("../../components/facturacion/pdfCuotasFactura");
-const { pdfLegendFactura } = require("../../components/facturacion/pdfLegendFactura");
 const { pdfheader } = require("../../components/facturacion/pdfHeader");
+const { pdfDetalleFactura } = require("../../components/facturacion/factura-boleta/pdfDetalleFactura");
+const { pdfClienteFactura } = require("../../components/facturacion/factura-boleta/pdfClienteFactura");
+const { pdfProductoFactura } = require("../../components/facturacion/factura-boleta/pdfProductosFactura");
+const { pdfDetallesTotal } = require("../../components/facturacion/factura-boleta/pdfDetallesTotal");
+const { pdfDetalleRelacionados } = require("../../components/facturacion/factura-boleta/pdfDetalleRelacionados");
+const { pdfLegendFactura } = require("../../components/facturacion/factura-boleta/pdfLegendFactura");
+const { pdfCuotasFactura } = require("../../components/facturacion/factura-boleta/pdfCuotasFactura");
 
 function facturaTemplate(data) {
     const factura = data[0];

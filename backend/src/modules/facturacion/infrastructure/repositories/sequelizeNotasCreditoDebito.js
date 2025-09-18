@@ -1,6 +1,3 @@
-// La importación de la base de datos es la causa del error.
-// La mayoría de los proyectos Sequelize exportan un objeto que contiene los modelos y la instancia de sequelize.
-const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 
 const { NotasCreditoDebito } = require("../models/notas-credito-debito/notasCreditoDebitoModel");
 const { LegendNotaCreditoDebito } = require("../models/notas-credito-debito/legendNotaCreditoDebitoModel");
@@ -8,6 +5,8 @@ const { DetalleNotaCreditoDebito } = require("../models/notas-credito-debito/det
 const { SunatRespuesta } = require("../models/sunatRespuestaModel");
 const { Factura } = require("../models/factura-boleta/facturaModel");
 const { Filial } = require("../../../filiales/infrastructure/models/filialModel");
+const { Ubigeo } = require("../../../ubigeo/infrastructure/models/ubigeoModel");
+const db = require("../../../../database/models");
 const { Op, fn, col } = require('sequelize');
 
 class SequelizeNotasCreditoDebitoRepository {
@@ -62,7 +61,7 @@ class SequelizeNotasCreditoDebitoRepository {
 
             //* 3. Crear las Leyendas de la Nota
             const createdLeyendas = [];
-            for (const leyendaData of data.leyendas) {
+            for (const leyendaData of data.legend) {
                 const leyenda = await LegendNotaCreditoDebito.create(
                     {
                         nota_id: nota.id,
@@ -260,32 +259,55 @@ class SequelizeNotasCreditoDebitoRepository {
             };
         }
     }
-    async obtenerNotaDetallada(data) {
-        const { correlativo, serie, empresa_ruc, tipo_doc } = data;
+    async obtenerNotaDetallada(correlativo, serie, empresa_ruc, tipo_doc) {
 
         const nota = await NotasCreditoDebito.findAll({
             where: {
-                correlativo,
-                serie,
-                empresa_ruc,
-                tipo_doc,
+                correlativo: correlativo,
+                serie: serie,
+                empresa_ruc: empresa_ruc,
+                tipo_doc: tipo_doc,
             },
             include: [
-                {
-                    model: DetalleNotaCreditoDebito,
-                },
+                { model: LegendNotaCreditoDebito},
+                { model: DetalleNotaCreditoDebito },
             ],
+        });
+
+        const datosFactura = await Factura.findAll({
+            where: {
+                id: nota[0]?.dataValues?.factura_id,
+            },
         });
 
         const empresa = await Filial.findOne({
             where: { ruc: empresa_ruc },
-            attributes: ["ruc", "razon_social", "direccion"],
+            attributes: [
+                "ruc",
+                "razon_social",
+                "direccion",
+                "telefono_oficina",
+                "correo",
+                "cuenta_banco",
+                "link_website",
+                "codigo_ubigeo"],
         });
+
+        const ubigeo = await Ubigeo.findOne({ where: { Codigo: empresa?.codigo_ubigeo } });
+
 
         return nota.map(f => ({
             ...f.dataValues,
             empresa_nombre: empresa?.razon_social,
             empresa_direccion: empresa?.direccion,
+            empresa_telefono: empresa?.telefono_oficina || null,
+            empresa_correo: empresa?.correo || null,
+            empresa_cuenta_banco: empresa?.cuenta_banco || null,
+            empresa_link_website: empresa?.link_website || null,
+            departamento: ubigeo?.departamento || null,
+            provincia: ubigeo?.provincia || null,
+            distrito: ubigeo?.distrito || null,
+            documento_relacionado: datosFactura[0]?.dataValues || null
         }));
     }
 

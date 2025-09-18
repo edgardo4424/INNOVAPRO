@@ -2,11 +2,12 @@ const { PdfService } = require('../../../infrastructure/pdf/PdfService');
 const { facturaTemplate } = require('../../../domain/pdfModels/facturacion/facturaTemplate');
 
 module.exports = async (body, facturaRepository) => {
+    console.log("🚚 Atributos para buscar existencia:", body);
     // ? destructuramos el body
-    const { correlativo, serie, empresa_ruc, tipo_doc } = body;
+    const { correlativo, serie, numRuc, tipoDoc } = body;
     // ? buscamos la factura
-    const facturaObtenida = await facturaRepository.obtenerFacturaPorInformacion(correlativo, serie, empresa_ruc, tipo_doc);
-    console.log(facturaObtenida);
+    const facturaObtenida = await facturaRepository.obtenerFacturaPorInformacion(correlativo, serie, numRuc, tipoDoc);
+
     if (!facturaObtenida) {
         return { codigo: 404, respuesta: { error: 'Factura no encontrada' } };
     }
@@ -16,7 +17,6 @@ module.exports = async (body, facturaRepository) => {
 
     // 3. Generar PDF con servicio
     const pdfService = new PdfService();
-    console.log("dad")
     const pdfBuffer = await pdfService.generatePdfBuffer(docDefinition);
 
 

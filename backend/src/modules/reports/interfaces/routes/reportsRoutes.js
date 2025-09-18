@@ -10,6 +10,7 @@ const { verificarToken } = require("../../../../shared/middlewares/authMiddlewar
 
 router.post("/reporte-factura", reporteFacturaController.reporteFactura);
 router.post("/reporte-guia", reporteFacturaController.reporteGuia);
+router.post("/reporte-nota", reporteFacturaController.reporteNota);
 
 
 module.exports = router;

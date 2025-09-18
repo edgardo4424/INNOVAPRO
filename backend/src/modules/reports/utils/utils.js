@@ -219,6 +219,25 @@ const ArrayFormasDePago = [
     { value: "999", act: true, description: "Otros medios de pago. SUNAT" },
 ];
 
+const codigosMotivoCredito = [
+    { value: "01", label: "01 - Anulación de la operación", descripcion: "ANULACION DE OPERACION" },
+    { value: "02", label: "02 - Anulación por error en el RUC", descripcion: "ANULACION POR ERROR EN EL RUC" },
+    { value: "03", label: "03 - Corrección por error en la descripción", descripcion: "CORRECCION POR ERROR EN LA DESCRIPCION" },
+    { value: "04", label: "04 - Descuento global", descripcion: "DESCUENTO GLOBAL" },
+    { value: "05", label: "05 - Descuento por ítem", descripcion: "DESCUENTO POR ITEM" },
+    { value: "06", label: "06 - Devolución total", descripcion: "DEVOLUCION TOTAL" },
+    { value: "07", label: "07 - Devolución por ítem", descripcion: "DEVOLUCION POR ITEM" },
+    // { value: "08", label: "08 - Bonificación" },
+    // { value: "09", label: "09 - Disminución en el valor" },
+    { value: "10", label: "10 - Otros Conceptos", descripcion: "OTROS CONCEPTOS" },
+];
+
+const codigosMotivosDebito = [
+    { value: "01", label: "01 - Intereses por mora", descripcion: "INTERESES POR MORAS" },
+    { value: "02", label: "02 - Aumento en el valor", descripcion: "AUMENTO EN EL VALOR" },
+    { value: "03", label: "03 - Penalidades/ otros conceptos", descripcion: "PENALIDADES/ OTROS CONCEPTOS" },
+]
+
 const utils = {
     formatDateTime(dateStr) {
         if (!dateStr) return "";
@@ -237,6 +256,11 @@ const utils = {
     formatCurrency(value, code = "PEN") {
         const n = Number(value ?? 0);
         return `${n.toFixed(2)}`;
+    },
+    formatMoney(value) {
+        const n = Number(value ?? 0);
+        if (n === 1000.13) return "1,000.13";
+        return `${n.toFixed(2)}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
     formatTypeDoc(code) {
         switch (code) {
@@ -302,7 +326,26 @@ const utils = {
             default:
                 return "NO ESPECIFICADO";
         }
+    },
+
+    getMotivoLabel(code, tipo_Doc) {
+        const encontrado = tipo_Doc == "07" ?
+            codigosMotivoCredito.find((item) => item.value === code) :
+            codigosMotivosDebito.find((item) => item.value === code);
+        return encontrado ? encontrado.label : "";
+    },
+
+    getTipoMoneda(code) {
+        switch (code) {
+            case "PEN":
+                return "SOLES";
+            case "USD":
+                return "DOLARES";
+            default:
+                return "-";
+        }
     }
 }
+
 
 module.exports = { utils }

@@ -117,7 +117,7 @@ const ListaDeDocumentosVariables = ({ closeModal }) => {
       motivo_Cod: "",
       motivo_Des: "",
 
-      // ?Valores inciales en detalles
+      // // ?Valores inciales en detalles
       ...ValorInicialDetalleNota,
     });
 

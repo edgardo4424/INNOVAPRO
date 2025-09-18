@@ -2,14 +2,13 @@ const path = require("path");
 const logo_innova = path.join(__dirname, "../../../../../assets/pdf/logo_innova.png")
 const logo = path.join(__dirname, "../../../../../assets/pdf/logo.png")
 const { pdfheader } = require("../../components/facturacion/pdfHeader");
-const { pdfClienteGuia } = require("../../components/facturacion/guia/pdfClienteGuia");
-const { pdfDatosGuiaHeader } = require("../../components/facturacion/guia/pdfDatosGuiaHeader");
-const { pdfProductosGuia } = require("../../components/facturacion/guia/pdfProductosGuia");
-const { pdfDatosGuia } = require("../../components/facturacion/guia/pdfDatosGuia");
-const { pdfObservacionesGuia } = require("../../components/facturacion/guia/pdfObservacionesGuia");
+const { pdfInformativoHeader } = require("../../components/facturacion/nota/pdfInformativoHeader");
+const { pdfProductoNota } = require("../../components/facturacion/nota/pdfProductoNota");
+const { pdfDetallesMontos } = require("../../components/facturacion/nota/pdfDetalleMontos");
+const { pdfLegendNota } = require("../../components/facturacion/nota/pdfLegendNota");
 
-function guiaTemplate(data) {
-    const guia = data[0];
+function notaTemplate(data) {
+    const nota = data[0];
     //* Colores base
     const text_innova_gray = '#616161'   //? Texto principal
     const bg_innova_gray = '#DCDBDB'   //? Fondo o relleno
@@ -22,46 +21,59 @@ function guiaTemplate(data) {
     const innova_gray_soft = '#dfe1e5'   //? Gris suave, líneas divisorias o bordes
     const innova_black = '#AAAAAA'   //? Texto fuerte o títulos
 
-    const choferes = guia.guia_choferes.filter(item => item.nro_mtc === null);
-    const transportistas = guia.guia_choferes.filter(item => item.nro_mtc !== null);
+    const qrData = 'https://app.factiliza.com/consulta-comprobante'
+
 
     const content = [
-        // ! seccion de identificadores de la guia y empresa emisora
+        // ! seccion de identificadores de la nota y empresa emisora
         pdfheader(
-            guia,
+            nota,
             logo_innova,
         ),
         // { text: '\n' },
-        // ! seccion del cliente y fechas
-        pdfClienteGuia(
-            guia,
+        pdfInformativoHeader(
+            nota
         ),
         { text: '\n' },
-        // ! seccion de la guia, direcciones, motivo, modalidades, choferes, etc
-        pdfDatosGuiaHeader(
-            guia,
-            choferes,
-            transportistas
-        ),
-        // { text: '\n' },
-        // ! seccion de productos
-        pdfProductosGuia(
-            guia,
-            undefined,
-            innova_black,
+        pdfProductoNota(
+            nota
         ),
         { text: '\n' },
-        pdfDatosGuia(
-            guia,
-            choferes,
-            transportistas
+        pdfDetallesMontos(
+            nota
         ),
         { text: '\n' },
-        // ! seccion de observaciones
+        pdfLegendNota(
+            nota
+        ),
+        { text: '\n' },
         {
-            unbreakable: true,
-            stack: [pdfObservacionesGuia(guia)]
-        },
+            width: "30%",
+            table: {
+                widths: ["100%"],
+                body: [
+                    [
+                        {
+                            qr: qrData,
+                            fit: 90,
+                            alignment: "center",
+                            margin: [0, 40, 0, 0]
+                        }
+                    ],
+                    [
+                        {
+                            text: "Código QR",
+                            alignment: "center",
+                            fontSize: 7,
+                            margin: [0, 5, 0, 0],
+                            color: text_innova_gray
+                        }
+                    ]
+                ]
+            },
+            layout: "noBorders"
+        }
+
     ]
 
     return {
@@ -113,6 +125,18 @@ function guiaTemplate(data) {
             datoPesoButo: { fontSize: 8, margin: [3, 6, 0, 0], color: text_innova_gray },
             // ** estilo pdfProductosGuia final
 
+            // ** Totales
+            totalfactor: { fontSize: 6, margin: [5, 2, 5, 2], color: text_innova_gray, },
+            totalLabel: { fontSize: 6, margin: [5, 2, 5, 2], color: text_innova_gray, fillColor: innova_gray_soft },
+            totalValue: { fontSize: 6, margin: [5, 2, 5, 2], color: text_innova_gray },
+            totalFinalLabel: { fontSize: 6, bold: true, margin: [5, 3, 5, 3], color: innova_white, fillColor: innova_blue_light },
+            totalFinalValue: { fontSize: 6, bold: true, margin: [5, 3, 5, 3], color: text_innova_gray },
+            // ** Totales final
+
+            amountInLetters: { fontSize: 7, bold: true, margin: [0, 5, 0, 5], color: text_innova_gray, },
+            notes: { fontSize: 9, italics: true },
+            legalNote: { fontSize: 8, italics: true, color: '#666666' },
+
             footer: { fontSize: 8, color: '#666666' }
         },
         background: function (currentPage, pageSize) {
@@ -132,7 +156,7 @@ function guiaTemplate(data) {
             return {
                 columns: [
                     {
-                        text: `Emitido desde ${guia.empresa_link_website}`,
+                        text: `Emitido desde ${nota.empresa_link_website}`,
                         style: "footer",
                         alignment: "center",
                         margin: [0, 0, 0, 0]
@@ -150,4 +174,4 @@ function guiaTemplate(data) {
 
 }
 
-module.exports = { guiaTemplate }
+module.exports = { notaTemplate }

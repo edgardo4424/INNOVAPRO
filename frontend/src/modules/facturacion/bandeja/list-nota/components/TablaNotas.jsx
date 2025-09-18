@@ -55,7 +55,7 @@ const codigosMotivosDebito = [
   {
     value: "01",
     label: "01 - Intereses por mora",
-    descripcion: "INTERESES POR MORAS",
+    descripcion: "INTERESES POR MORA",
   },
   {
     value: "02",
@@ -239,6 +239,7 @@ const TablaNotas = ({
                             numRuc: nota.empresa_Ruc,
                             tipoDoc: nota.tipo_Doc,
                             numDocumentoComprobante: nota.cliente_Num_Doc,
+                            razonSocial: nota.cliente_Razon_Social,
                           });
                         }}
                       >

@@ -106,6 +106,27 @@ const facturaService = {
         const res = await api.post(`/facturacion/nota-debito-credito/detallada`, body);
         return res.data;
     },
+
+
+    // ? ENDPOINTS REPORTES
+    reporteFactura: async (body) => {
+        const res = await api.post(`/reports/reporte-factura`, body, {
+            responseType: 'blob',
+        });
+        return res.data;
+    },
+    reporteGuia: async (body) => {
+        const res = await api.post(`/reports/reporte-guia`, body, {
+            responseType: 'blob',
+        });
+        return res.data;
+    },
+    reporteNota: async (body) => {
+        const res = await api.post(`/reports/reporte-nota`, body, {
+            responseType: 'blob',
+        });
+        return res.data;
+    },
 }
 
 

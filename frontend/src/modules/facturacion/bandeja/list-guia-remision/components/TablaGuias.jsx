@@ -152,6 +152,7 @@ const TablaGuias = ({
                           numRuc: guia.empresa_ruc,
                           tipoDoc: guia.tipo_doc,
                           numDocumentoComprobante: guia.cliente_num_doc,
+                          razonSocial: guia.cliente_razon_social,
                         });
                       }}
                     >

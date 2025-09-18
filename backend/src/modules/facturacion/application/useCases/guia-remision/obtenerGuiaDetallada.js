@@ -16,8 +16,6 @@ module.exports = async (body, guiaRepository) => {
             },
         };
 
-        console.log(guiaObtenida)
-
     return {
         codigo: 200,
         respuesta: {

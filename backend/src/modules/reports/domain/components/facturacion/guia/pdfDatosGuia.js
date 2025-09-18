@@ -1,4 +1,4 @@
-const { utils } = require("../../../utils/utils");
+const { utils } = require('../../../../utils/utils')
 
 function pdfDatosGuia(guia, choferes, transportistas, invi = "#FFFFFF") {
     let transporte = null;
@@ -19,32 +19,17 @@ function pdfDatosGuia(guia, choferes, transportistas, invi = "#FFFFFF") {
                     width: "100%",
                     columns: [
                         {
-                            width: "40%",
+                            width: "100%",
                             table: {
-                                widths: ["40%", "60%"],
+                                widths: ["4.5%", "8.5%", "7.5%", "10.5%", "7.5%", "10.5%", "16.5%", "34.5%"],
                                 body: [
                                     [
                                         { text: "TIPO:", style: "datosGuiaChoferLabel" },
                                         { text: choferData.tipo || "—", style: "datosGuiaChoferValue" },
-                                    ],
-                                    [
                                         { text: "LICENCIA:", style: "datosGuiaChoferLabel" },
                                         { text: choferData.licencia || "—", style: "datosGuiaChoferValue" },
-                                    ],
-                                ],
-                            },
-                            layout: "noBorders",
-                        },
-                        {
-                            width: "60%",
-                            table: {
-                                widths: ["40%", "60%"],
-                                body: [
-                                    [
                                         { text: "NRO DOC:", style: "datosGuiaChoferLabel" },
                                         { text: choferData.nro_doc || "—", style: "datosGuiaChoferValue" },
-                                    ],
-                                    [
                                         { text: "NOMBRE COMPLETO:", style: "datosGuiaChoferLabel" },
                                         { text: nombreCompleto || "—", style: "datosGuiaChoferValue" },
                                     ],
@@ -52,6 +37,23 @@ function pdfDatosGuia(guia, choferes, transportistas, invi = "#FFFFFF") {
                             },
                             layout: "noBorders",
                         },
+                            // {
+                            //     width: "60%",
+                            //     table: {
+                            //         widths: ["40%", "60%"],
+                            //         body: [
+                            //             [
+                            //                 { text: "NRO DOC:", style: "datosGuiaChoferLabel" },
+                            //                 { text: choferData.nro_doc || "—", style: "datosGuiaChoferValue" },
+                            //             ],
+                            //             [
+                            //                 { text: "NOMBRE COMPLETO:", style: "datosGuiaChoferLabel" },
+                            //                 { text: nombreCompleto || "—", style: "datosGuiaChoferValue" },
+                            //             ],
+                            //         ],
+                            //     },
+                            //     layout: "noBorders",
+                            // },
                     ],
                     margin: [0, 0, 0, 5],
                 };
@@ -80,9 +82,9 @@ function pdfDatosGuia(guia, choferes, transportistas, invi = "#FFFFFF") {
         {
             columns: [
                 {
-                    width: "50%",
+                    width: "100%",
                     table: {
-                        widths: ["60%", "40%"],
+                        widths: ["25%", "15%", "15%", "15%", "10%", "10%"],
                         body: [
                             [
                                 { text: "MODALIDAD DE TRASLADO:", style: "datosGuiaLabel" },
@@ -92,58 +94,55 @@ function pdfDatosGuia(guia, choferes, transportistas, invi = "#FFFFFF") {
                                         "—",
                                     style: "datosGuiaValue",
                                 },
-                            ],
-                            // [
-                            //     { text: "VEHÍCULO:", style: "datosGuiaLabel" },
-                            //     { text: guia.guia_Envio_Vehiculo_Placa || "—", style: "datosGuiaValue" },
-                            // ],
-                            [
+
                                 { text: "PESO TOTAL:", style: "datosGuiaLabel" },
                                 {
                                     text: `${guia.guia_Envio_Peso_Total || "—"} ${guia.guia_Envio_Und_Peso_Total || ""
                                         }`,
                                     style: "datosGuiaValue",
                                 },
-                            ],
-                        ],
-                    },
-                    layout: "noBorders",
-                },
-                {
-                    width: "50%",
-                    table: {
-                        widths: ["40%", "60%"],
-                        body: [
-                            [
                                 { text: "VEHÍCULO:", style: "datosGuiaLabel" },
                                 { text: guia.guia_Envio_Vehiculo_Placa || "—", style: "datosGuiaValue" },
                             ],
-                            // [
-                            //     { text: "UBIGEO DE PARTIDA:", style: "datosGuiaLabel" },
-                            //     { text: guia.partidaUbigeo || "—", style: "datosGuiaValue" },
-                            // ],
-                            // [
-                            //     { text: "PUNTO DE PARTIDA:", style: "datosGuiaLabel" },
-                            //     {
-                            //         text: guia.guia_Envio_Partida_Direccion || "—",
-                            //         style: "datosGuiaValue",
-                            //     },
-                            // ],
-                            // [
-                            //     { text: "UBIGEO DE LLEGADA:", style: "datosGuiaLabel" },
-                            //     { text: guia.llegadaUbigeo || "—", style: "datosGuiaValue" },
-                            // ],
-                            // [
-                            //     { text: "PUNTO DE LLEGADA:", style: "datosGuiaLabel" },
-                            //     {
-                            //         text: guia.guia_Envio_Llegada_Direccion || "—",
-                            //         style: "datosGuiaValue",
-                            //     },
-                            // ],
                         ],
                     },
                     layout: "noBorders",
                 },
+                // {
+                //     width: "50%",
+                //     table: {
+                //         widths: ["40%", "60%"],
+                //         body: [
+                //             [
+                //                 { text: "VEHÍCULO:", style: "datosGuiaLabel" },
+                //                 { text: guia.guia_Envio_Vehiculo_Placa || "—", style: "datosGuiaValue" },
+                //             ],
+                // [
+                //     { text: "UBIGEO DE PARTIDA:", style: "datosGuiaLabel" },
+                //     { text: guia.partidaUbigeo || "—", style: "datosGuiaValue" },
+                // ],
+                // [
+                //     { text: "PUNTO DE PARTIDA:", style: "datosGuiaLabel" },
+                //     {
+                //         text: guia.guia_Envio_Partida_Direccion || "—",
+                //         style: "datosGuiaValue",
+                //     },
+                // ],
+                // [
+                //     { text: "UBIGEO DE LLEGADA:", style: "datosGuiaLabel" },
+                //     { text: guia.llegadaUbigeo || "—", style: "datosGuiaValue" },
+                // ],
+                // [
+                //     { text: "PUNTO DE LLEGADA:", style: "datosGuiaLabel" },
+                //     {
+                //         text: guia.guia_Envio_Llegada_Direccion || "—",
+                //         style: "datosGuiaValue",
+                //     },
+                // ],
+                //         ],
+                //     },
+                //     layout: "noBorders",
+                // },
             ],
             columnGap: 10,
             margin: [0, 0, 0, 10],
