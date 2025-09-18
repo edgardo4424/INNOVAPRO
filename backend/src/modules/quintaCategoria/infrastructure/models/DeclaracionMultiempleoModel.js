@@ -18,7 +18,11 @@ const DeclaracionMultiempleoModel = sequelize.define('quinta_multiempleo_declara
   aplica_desde_mes: { 
     type: DataTypes.TINYINT.UNSIGNED, 
     allowNull: false 
-  }, // 1-12
+  },
+  filial_principal_id: { 
+    type: DataTypes.INTEGER.UNSIGNED, 
+    allowNull: true 
+  },
   es_secundaria: { 
     type: DataTypes.BOOLEAN, allowNull: false, 
     defaultValue: false 
@@ -31,6 +35,20 @@ const DeclaracionMultiempleoModel = sequelize.define('quinta_multiempleo_declara
     type: DataTypes.STRING(150), 
     allowNull: true 
   },
+  renta_bruta_otros_anual:    { 
+    type: DataTypes.DECIMAL(12,2), 
+    allowNull: false, 
+    defaultValue: 0 
+  },
+  retenciones_previas_otros:  { 
+    type: DataTypes.DECIMAL(12,2), 
+    allowNull: false, 
+    defaultValue: 0 
+  },
+  detalle_json: { 
+    type: DataTypes.JSON, 
+    allowNull: true 
+  },
   observaciones: { 
     type: DataTypes.TEXT, 
     allowNull: true 
@@ -38,6 +56,11 @@ const DeclaracionMultiempleoModel = sequelize.define('quinta_multiempleo_declara
   archivo_url: { 
     type: DataTypes.STRING(500), 
     allowNull: true 
+  },
+  estado: { 
+    type: DataTypes.ENUM('VIGENTE','ANULADO'), 
+    allowNull: false, 
+    defaultValue: 'VIGENTE' 
   },
   es_oficial: { 
     type: DataTypes.BOOLEAN, 

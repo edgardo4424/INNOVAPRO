@@ -1,8 +1,5 @@
-const { Op } = require('sequelize');
 const DeclaracionSinPreviosRepository = require('../../domain/repositories/DeclaracionSinPreviosRepository');
 const Model = require('../models/DeclaracionSinPreviosModel');
-
-const ESTADOS_VIGENTES = ['VIGENTE', 'vigente', 'Vigente'];
 
 class SequelizeDeclaracionesSinPreviosRepository extends DeclaracionSinPreviosRepository {
     async insertarPorDniAnio(entidad) {
@@ -15,7 +12,7 @@ class SequelizeDeclaracionesSinPreviosRepository extends DeclaracionSinPreviosRe
     async obtenerPorDniAnio({ dni, anio }) {
         if (!dni || !Number(anio)) return null;
         return await Model.unscoped().findOne({
-            where: { dni, anio, estado: { [Op.in]: ESTADOS_VIGENTES } },
+            where: { dni, anio, estado: 'vigente' },
             attributes: ['id', 'dni', 'anio', 'aplica_desde_mes', 'archivo_url', 'observaciones', 'estado'],
             raw: true,
         });
@@ -24,7 +21,7 @@ class SequelizeDeclaracionesSinPreviosRepository extends DeclaracionSinPreviosRe
     async obtenerAplicablePorDniAnioMes({ dni, anio, mes }) {
         if (!dni || !Number(anio) || !Number(mes)) return null;
         const fila = await Model.unscoped().findOne({
-            where: { dni, anio, estado: { [Op.in]: ESTADOS_VIGENTES } },
+            where: { dni, anio, estado: 'vigente' },
             attributes: ['id', 'dni', 'anio', 'aplica_desde_mes', 'archivo_url', 'observaciones', 'estado'],
             raw: true,
         });

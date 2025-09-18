@@ -15,6 +15,10 @@ const CertificadoQuintaModel = sequelize.define('quinta_certificados_externos', 
     type: DataTypes.INTEGER.UNSIGNED, 
     allowNull: false 
   },
+  aplica_desde_mes: { 
+    type: DataTypes.INTEGER, 
+    allowNull: true 
+  },
   empresa_ruc: { 
     type: DataTypes.STRING(20), 
     allowNull: true 

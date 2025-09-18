@@ -10,5 +10,6 @@ module.exports = {
     AUTO: 'AUTO', // Proyección automática con contrato/bonos/grati
     CERTIFICADO: 'CERTIFICADO', // Datos declarados en certificado 5ta (empleador anterior)
     SIN_PREVIOS: 'SIN_PREVIOS' // Declaración jurada: no considerar ingresos previos
-  }
+  },
+  MES_NOMBRE: ['—','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
 };

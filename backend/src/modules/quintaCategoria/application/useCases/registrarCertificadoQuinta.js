@@ -2,8 +2,8 @@ module.exports = class RegistrarCertificadoQuinta {
   constructor({ repo }) { this.repo = repo; }
   async execute(payload={}) {
     const { dni, anio } = payload;
-    if (!dni || !Number.isInteger(Number(anio))) {
-      const err = new Error('Parámetros inválidos (dni, anio)'); err.status=400; throw e;
+    if (!dni || !anio) {
+      const err = new Error('Parámetros inválidos (dni, anio)'); err.status=400; throw err;
     }
     const entidad = {
       dni, 

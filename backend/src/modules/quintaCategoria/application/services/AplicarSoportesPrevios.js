@@ -5,23 +5,12 @@ const SequelizeCertificadoQuintaRepository = require('../../infrastructure/repos
 const sinPrevRepo = new SequelizeDeclaracionSinPreviosRepository();
 const multiRepo   = new SequelizeDeclaracionMultiempleoRepository();
 const certRepo    = new SequelizeCertificadoQuintaRepository();
-/**
- * Efectos:
- *  - Sin Previos:
- *      mes < aplica → zerea todo y fija fuente = SIN_PREVIOS
- *      mes >= aplica → deja base; recorte fino ya lo hace ObtenerIngresosPrevios por corte
- *  - Multiempleo:
- *      mes >= aplica → marca meta y, si es_secundaria=true, _saltarRetener = true
- *  - Certificado:
- *      Sólo metadata; si el front selecciona FUENTE "CERTIFICADO", el controller pasará el certificado al UC.
- */
-async function aplicarSoportesPrevios({ dni, anio, mes, payload }) {
-  const m = Number(mes) || 0;
 
+async function aplicarSoportesPrevios({ dni, anio, mes, payload }) {
   // Sin Previos
   const declaracionJuradaSP = await sinPrevRepo.obtenerPorDniAnio({
     dni,
-    anio: Number(anio) || 0,
+    anio,
   });
   const aplica = Number(declaracionJuradaSP?.aplica_desde_mes || 0);
   if(!declaracionJuradaSP || !aplica) return payload;
@@ -34,7 +23,7 @@ async function aplicarSoportesPrevios({ dni, anio, mes, payload }) {
       observaciones: declaracionJuradaSP.observaciones || null,
   };
   
-  if ( m < aplica ) {
+  if ( mes < aplica ) {
     payload.fuentePrevios = 'SIN_PREVIOS';
     payload.retencionesPrevias = 0;
     payload.ingresosPrevios = {
@@ -53,13 +42,13 @@ async function aplicarSoportesPrevios({ dni, anio, mes, payload }) {
       af_multi: null,
       total_ingresos: 0,
     };
-    console.log(`[DJ SinPrevios] Recorte total aplicado ← aplica=${aplica}, mes=${m}`);
+    console.log(`[DJ SinPrevios] Recorte total aplicado ← aplica=${aplica}, mes=${mes}`);
   } else {
-    console.log(`[DJ SinPrevios] Vigente desde mes=${aplica} (m=${m}). Recorte fino lo hará ObtenerIngresosPrevios.`);
+    console.log(`[DJ SinPrevios] Vigente desde mes=${aplica} (mes=${mes}). Recorte fino lo hará ObtenerIngresosPrevios.`);
   }
 
   // === MULTIEMPLEO ===
-  const declaracionJuradaMP = await multiRepo.obtenerPorDniAnio({ dni, anio: Number(anio) || 0 });
+  const declaracionJuradaMP = await multiRepo.obtenerPorDniAnio({ dni, anio });
   const aplicaME = Number(declaracionJuradaMP?.aplica_desde_mes || 0);
   if (declaracionJuradaMP?.id) {
     payload._soporteMultiempleo = {
@@ -67,21 +56,22 @@ async function aplicarSoportesPrevios({ dni, anio, mes, payload }) {
       aplica_desde_mes: aplicaME || null,
       es_secundaria: !!declaracionJuradaMP.es_secundaria,
       principal_ruc: declaracionJuradaMP.principal_ruc || null,
-      principal_nombre: declaracionJuradaMP.principal_nombre || null,
+      principal_razon_social: declaracionJuradaMP.principal_razon_social || null,
       archivo_url: declaracionJuradaMP.archivo_url || null,
       observaciones: declaracionJuradaMP.observaciones || null,
     };
-    if (aplicaME && m >= aplicaME && declaracionJuradaMP.es_secundaria) {
+    if (aplicaME && mes >= aplicaME && declaracionJuradaMP.es_secundaria) {
       payload._saltarRetener = true; // el controller lo aplicará después del cálculo
-      console.log(`[DJ Multiempleo] Somos SECUNDARIA desde m=${aplicaME}. Saltar retención base.`);
+      console.log(`[DJ Multiempleo] Somos SECUNDARIA desde mes=${aplicaME}. Saltar retención base.`);
     }
   }
 
   // === CERTIFICADO (solo meta acá) ===
-  const certificado = await certRepo.obtenerPorDniAnio({ dni, anio: Number(anio) || 0 });
+  const certificado = await certRepo.obtenerPorDniAnio({ dni, anio });
   if (certificado?.id) {
     payload._soporteCertificado = {
       id: certificado.id,
+      aplica_desde_mes: certificado.aplica_desde_mes ? Number(certificado.aplica_desde_mes) : null,
       empresa_ruc: certificado.empresa_ruc || null,
       empresa_nombre: certificado.empresa_nombre || null,
       renta_bruta_total: Number(certificado.renta_bruta_total || 0),
@@ -98,4 +88,6 @@ async function aplicarSoportesPrevios({ dni, anio, mes, payload }) {
   return payload;
 }
 
-module.exports = { aplicarSoportesPrevios };
+module.exports = { 
+  aplicarSoportesPrevios,
+};

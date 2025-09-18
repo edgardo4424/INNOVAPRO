@@ -6,9 +6,6 @@ const {
 } = require('../../shared/utils/tax/calculadorQuinta');
 
 module.exports = class CalcularQuintaProyectada {
-  /**
-   * @param {Object} input – datos del cálculo
-   */
   async execute(input) {
     const {
       dni,
@@ -52,10 +49,6 @@ module.exports = class CalcularQuintaProyectada {
       gratiDiciembreProyectada = 0;
     }
 
-    console.log("Ingresos Previos Acumulados en calcular proyección: ", ingresosPreviosAcumulados)
-    console.log("Gratificación de Julio Proyectada: ", gratiJulioProyectada, "según el mes: ", mes)
-    console.log("Gratificación de Diciembre Proyectada: ", gratiDiciembreProyectada, "según el mes: ", mes)
-
     // Lee uit y deduccion fija 
     const parametros = await getParametrosTributarios();
 
@@ -66,8 +59,6 @@ module.exports = class CalcularQuintaProyectada {
       remu_multi, fuentePrevios, asignacion_familiar_proj_actual: Number(ingresosPrevios.asignacion_familiar_proj || 0),
     });
 
-    console.log("El resultado del cálculo del bruto anual proyectado es: ", brutoAnualProyectado);
-
     // Calculamos la retención base del mes
     const base = calcularRetencionBaseMes({
       anio,
@@ -77,7 +68,6 @@ module.exports = class CalcularQuintaProyectada {
       deduccionAdicionalAnual: deduccionAdicionalAnual,
       parametros
     });
-    console.log("Luego de calcular el descuento base del mes, obtenemos esta data: ", base)
 
     let retencionAdicionalMes = 0;
     if (base.retencionBaseMes !== 0) {
@@ -89,7 +79,6 @@ module.exports = class CalcularQuintaProyectada {
           parametros
       });
     } 
-    console.log("En caso hay retención adicional en el mes, obtenemos esta data: ", retencionAdicionalMes)
 
     // Generación de warnings
     const warnings = [];
