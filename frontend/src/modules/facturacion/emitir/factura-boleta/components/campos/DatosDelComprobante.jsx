@@ -36,7 +36,7 @@ const DatosDelComprobante = () => {
     const { name, value } = e.target;
     setFactura((prevValores) => ({
       ...prevValores,
-      [name]: value,
+      [name]: value.toUpperCase(),
     }));
   };
 

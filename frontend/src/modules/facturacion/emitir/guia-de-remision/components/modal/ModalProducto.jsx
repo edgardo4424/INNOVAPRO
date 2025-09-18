@@ -51,7 +51,7 @@ export default function ModalProducto({ open, setOpen }) {
                 {/* 🧾 Encabezado */}
                 <AlertDialogHeader>
                     <AlertDialogTitle>Datos del Producto</AlertDialogTitle>
-                    <AlertDialogDescription className="text-center">
+                    <AlertDialogDescription className="text-center hidden md:block">
                         Ingresa los datos agregar un nuevo producto a tu detallado
                     </AlertDialogDescription>
                 </AlertDialogHeader>

@@ -64,6 +64,7 @@ export function Calendar24({ tipo, setDato, initialDate }) {
                     <Calendar
                         mode="single"
                         selected={date}
+                        month={date}
                         captionLayout="dropdown"
                         onSelect={handleDateChange}
                         locale={es} // Asegurarse de que el calendario se muestre en español

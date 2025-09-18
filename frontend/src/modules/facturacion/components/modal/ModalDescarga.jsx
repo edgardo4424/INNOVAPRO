@@ -119,6 +119,14 @@ const ModalDescarga = ({
                 return
             }
 
+            
+            if (format === 'cdr') {
+                const response = await factilizaService.consultarCdr(payload);
+                await processResponse(response, `${baseName}-XML`, 'xml');
+                setMsg('XML/CDR descargado exitosamente.');
+                return
+            }
+
             if (format === 'pdf') {
                 const response = await factilizaService.consultarPdf(payload);
                 await processResponse(response, `${baseName}-PDF`, 'pdf');
@@ -210,6 +218,15 @@ const ModalDescarga = ({
                             >
                                 <FileCode size={20} />
                                 {loading ? 'Procesando…' : 'Descargar XML'}
+                            </button>
+
+                            <button
+                                onClick={() => handleDownload('cdr')}
+                                disabled={loading}
+                                className="cursor-pointer flex items-center justify-center gap-2 p-4 bg-gray-100 rounded-lg text-gray-700 font-semibold hover:bg-gray-300/90 transition-colors disabled:opacity-60"
+                            >
+                                <FileCode size={20} />
+                                {loading ? 'Procesando…' : 'Descargar CDR'}
                             </button>
 
                             <button

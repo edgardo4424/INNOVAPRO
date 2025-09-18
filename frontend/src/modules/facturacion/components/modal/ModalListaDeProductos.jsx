@@ -22,7 +22,7 @@ export default function ModalListaDeProductos({ itemActual, setItemActual, formu
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
-                <Button className="bg-innova-orange  hover:bg-innova-orange hover:scale-105 cursor-pointer">
+                <Button className="bg-innova-orange  hover:bg-innova-orange hover:scale-105 md:hover:scale-100 cursor-pointer">
                     <Box />
                     <span className="hidden md:block">Buscar Producto</span>
                 </Button>

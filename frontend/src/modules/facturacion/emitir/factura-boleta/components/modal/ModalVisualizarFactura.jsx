@@ -133,24 +133,24 @@ export default function ModalVisualizarFactura() {
 
             <div className="p-6 md:p-8">
               {/* --- Invoice Detail --- */}
-              <div className="space-y-6">
+              <div className="space-y-4 md:space-y-6">
                 {/* Company and Document Header */}
                 <div className="rounded-xl border border-gray-200 bg-white">
                   <div className="grid grid-cols-1 items-start gap-6 px-6 py-6 md:grid-cols-3 md:py-8">
                     <div className="col-span-2">
-                      <h1 className="text-2xl font-bold text-blue-700 md:text-3xl">
+                      <h1 className="text-md md:text-3xl font-bold text-blue-700 ">
                         {filialActual.razon_social}
                       </h1>
                       <p className="text-sm">{filialActual.ruc}</p>
-                      <p className="text-sm">
+                      <p className="text-xs md:text-sm">
                         DIRECCIÓN: {filialActual.direccion}
                       </p>
                     </div>
                     <div className="md:text-center">
-                      <p className="text-lg font-bold">
+                      <p className="text-sm md:text-lg font-bold">
                         {getTipoDocDescription(factura.tipo_Doc)}
                       </p>
-                      <p className="text-2xl font-extrabold tracking-wide text-gray-700">
+                      <p className="text-sm md:text-2xl font-extrabold tracking-wide text-gray-700">
                         {factura.serie}-{factura.correlativo}
                       </p>
                       <p>
@@ -420,7 +420,7 @@ export default function ModalVisualizarFactura() {
                     <h3 className="text-md mb-2 font-bold text-gray-600">
                       DETRACCION:
                     </h3>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1  md:grid-cols-2 gap-2">
                       <div className="flex justify-between pr-3">
                         <p className="rounded-md bg-white px-2 text-sm font-semibold text-gray-800">
                           Cta. Cte. Banco
@@ -467,13 +467,13 @@ export default function ModalVisualizarFactura() {
                     <h3 className="text-md mb-2 font-bold text-gray-600">
                       RETENCION:
                     </h3>
-                    <div className="grid grid-cols-4 gap-x-10">
+                      <div className="grid grid-cols-1 md:grid-cols-4 space-y-2 gap-x-10">
                       <div className="flex justify-between pr-3">
                         <p className="rounded-md bg-white px-2 text-sm font-semibold text-gray-800">
                           Porcentaje
                         </p>
                         <p className="rounded-md bg-white px-2 text-sm text-gray-800">
-                          {retencion.descuento_factor}%
+                          {retencion.descuento_factor * 100}%
                         </p>
                       </div>
                       <div className="flex justify-between pr-3">
@@ -496,8 +496,8 @@ export default function ModalVisualizarFactura() {
                         <p className="rounded-md bg-white px-2 text-sm font-semibold text-gray-800">
                           Pago Neto
                         </p>
-                        <p className="rounded-md bg-white px-2 text-sm text-gray-800">
-                          PEN {factura.neto_Pagar}
+                        <p className="rounded-md bg-white  text-sm text-gray-800">
+                          {factura.tipo_Moneda} {factura.neto_Pagar}
                         </p>
                       </div>
                     </div>
@@ -522,7 +522,7 @@ export default function ModalVisualizarFactura() {
 
                 {/* Pagos */}
                 {factura.forma_pago && factura.forma_pago.length > 0 ? (
-                  <div className="rounded-md border-gray-200 bg-white">
+                  <div className="rounded-md border-gray-200 bg-white overflow-x-auto">
                     {/* <h3 className="font-bold text-md mb-2 text-gray-600">FORMA DE PAGO:</h3> */}
                     <table className="w-full rounded-md border-2 text-sm text-gray-700">
                       <thead className="bg-gray-200">

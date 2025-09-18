@@ -63,11 +63,15 @@ const DatosDeRetencion = () => {
 
         setFactura({
           ...factura,
-          neto_Pagar: Number((factura.monto_Imp_Venta - montoPorcentaje).toFixed(2)),
+          neto_Pagar: Number(
+            (factura.monto_Imp_Venta - montoPorcentaje).toFixed(2),
+          ),
         });
       } else {
         // Cálculo para moneda extranjera (USD)
-        const montoVentaEnSoles = factura.monto_Imp_Venta * precioDolarActual;
+        const montoVentaEnSoles =
+          (factura.monto_Imp_Venta - factura.monto_Oper_Exoneradas) *
+          precioDolarActual;
         montoBase = montoVentaEnSoles;
         montoPorcentaje = montoBase * porcentaje;
 
@@ -80,7 +84,12 @@ const DatosDeRetencion = () => {
 
         setFactura({
           ...factura,
-          neto_Pagar: Number((factura.monto_Imp_Venta - montoPorcentaje).toFixed(2)),
+          neto_Pagar: Number(
+            (
+              factura.monto_Imp_Venta -
+              montoPorcentaje / precioDolarActual
+            ).toFixed(2),
+          ),
         });
       }
     },
@@ -145,7 +154,7 @@ const DatosDeRetencion = () => {
   return (
     <div className="flex flex-col gap-y-6 overflow-y-auto px-4 pt-4 lg:px-8">
       <div className="flex items-center gap-x-4">
-        <h1 className="text-2xl font-bold">Retención</h1>
+        <h1 className="text-lg font-bold md:text-2xl">Retención</h1>
         <Switch
           checked={retencionActivado}
           onCheckedChange={handleSwitchChange}
@@ -160,7 +169,7 @@ const DatosDeRetencion = () => {
 
       {/* Contenedor del formulario */}
       {retencionActivado && (
-        <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {/* Campo de porcentaje */}
           <div className="flex flex-col space-y-2">
             <Label htmlFor="descuento_factor">Porcentaje de Retención</Label>
@@ -210,7 +219,7 @@ const DatosDeRetencion = () => {
           {/* Importe neto a pagar */}
           <div className="flex flex-col space-y-2">
             <Label htmlFor="neto_pagar">
-              Neto a Pagar {factura.tipo_Moneda === "USD" ? "(PEN)" : ""}
+              Neto a Pagar {factura.tipo_Moneda === "USD" ? "USD" : ""}
             </Label>
             <Input
               type="number"

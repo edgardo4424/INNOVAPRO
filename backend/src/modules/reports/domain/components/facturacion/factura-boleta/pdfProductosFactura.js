@@ -18,7 +18,7 @@ function pdfProductoFactura(
                         { text: 'UNID.', style: 'tableHeaderMain', fillColor: bg_color, alignment: 'center' },
                         { text: 'DESCRIPCION', style: 'tableHeaderMain', fillColor: bg_color, alignment: 'center' },
                         { text: 'V. UNIT.', style: 'tableHeaderMain', fillColor: bg_color, alignment: 'center' },
-                        { text: 'P. UNIT.', style: 'tableHeaderMain', fillColor: bg_color, alignment: 'center' },
+                        { text: 'IGV.', style: 'tableHeaderMain', fillColor: bg_color, alignment: 'center' },
                         { text: 'IMPORTE', style: 'tableHeaderMain', fillColor: bg_color, alignment: 'center' }
                     ],
                     ...(factura.detalle_facturas?.length ? factura.detalle_facturas : []).map(d => [
@@ -27,8 +27,8 @@ function pdfProductoFactura(
                         { text: d.unidad || 'NIU', style: 'tableBody', alignment: 'center' },
                         { text: d.descripcion, style: 'tableBody' },
                         { text: utils.formatCurrency(d.monto_Valor_Unitario), style: 'tableBody', alignment: 'center' },
-                        { text: utils.formatCurrency(d.monto_Precio_Unitario), style: 'tableBody', alignment: 'center' },
-                        { text: utils.formatCurrency(d.monto_Valor_Venta), style: 'tableBody', alignment: 'right' }
+                        { text: utils.formatCurrency(d.total_Impuestos), style: 'tableBody', alignment: 'center' },
+                        { text: utils.formatCurrency(d.monto_Precio_Unitario), style: 'tableBody', alignment: 'right' }
                     ])
                 ],
             },

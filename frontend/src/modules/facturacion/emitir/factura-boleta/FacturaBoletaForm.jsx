@@ -16,7 +16,7 @@ import { useEffect } from "react";
 import factilizaService from "../../service/FactilizaService";
 
 const FacturaBoletaForm = () => {
-    const { factura, setFactura, idBorrador, Limpiar, setPrecioDolarActual } = useFacturaBoleta();
+    const { factura, setFactura, idBorrador, Limpiar, setPrecioDolarActual,detraccion, retencion, retencionActivado } = useFacturaBoleta();
     const navigate = useNavigate();
 
     const [searchParams] = useSearchParams();
@@ -33,7 +33,6 @@ const FacturaBoletaForm = () => {
         const user = localStorage.getItem("user");
         const userData = JSON.parse(user);
 
-        console.log("formatear documento")
         let tipo_borrador = ""
         if (factura.tipo_Doc == "01") {
             tipo_borrador = "factura"
@@ -41,7 +40,14 @@ const FacturaBoletaForm = () => {
         if (factura.tipo_Doc == "03") {
             tipo_borrador = "boleta"
         }
-        const formateado = await formatearBorrador(tipo_borrador, factura, userData.id);
+        let nuevaFactura ={
+            ...factura,
+            valores_Detraccion: detraccion,
+            valores_Retencion: retencion,
+            retencion_activada:retencionActivado,
+        }
+
+        const formateado = await formatearBorrador(tipo_borrador, nuevaFactura, userData.id);
 
         try {
             const { message, status, success } = await facturaService.registrarBorrador(formateado);

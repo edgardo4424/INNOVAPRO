@@ -19,12 +19,12 @@ const DetalleProducto = () => {
   };
 
   return (
-    <div className="flex w-full gap-6">
+    <div className="flex flex-col md:flex-row w-full md:gap-6">
       {/* Sección Izquierda - Observaciones y Detalles Extra */}
-      <div className="flex w-7/12 flex-col items-start py-6">
+      <div className="flex w-full md:w-7/12 flex-col items-start py-6">
         {/* Observaciones */}
         <div className="mb-6 flex w-full flex-col items-start">
-          <h2 className="mb-3 flex items-center text-xl font-semibold text-gray-800">
+          <h2 className="mb-3 flex items-center text-lg md:text-xl font-semibold text-gray-800">
             <span className="mr-3 h-6 w-1 rounded-full bg-blue-500"></span>
             Observación:
           </h2>
@@ -41,7 +41,7 @@ const DetalleProducto = () => {
         {/* Detalles Extra */}
         <div className="w-full">
           <div className="flex items-center gap-x-4 pb-4">
-            <h2 className="flex items-center text-xl font-semibold text-gray-800">
+            <h2 className="flex items-center text-lg md:text-xl font-semibold text-gray-800">
               <span className="mr-3 h-6 w-1 rounded-full bg-green-500"></span>
               Detalles Extra:
             </h2>
@@ -73,11 +73,11 @@ const DetalleProducto = () => {
       </div>
 
       {/* Sección Derecha - Resumen de Totales */}
-      <div className="w-5/12 py-6">
+      <div className="w-full md:w-5/12 py-6">
         <div className="space-y-1 rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-6">
           {/* Encabezado */}
           <div className="mb-4 border-b border-gray-200 pb-3">
-            <h3 className="flex items-center text-lg font-bold text-gray-800">
+            <h3 className="flex items-center text-lg md:text-xl font-bold text-gray-800">
               <span className="mr-3 h-6 w-2 rounded-full bg-gradient-to-b from-blue-500 to-blue-600"></span>
               Resumen Financiero
             </h3>

@@ -39,8 +39,8 @@ function pdfDetallesTotal(
                             { text: `${utils.getFormaPago(factura.detraccion_cod_medio_pago)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
                         ],
                         [
-                            { text: `DETRACCIÓN ${Number(factura.detraccion_percent).toFixed(2)}%:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
-                            { text: `${factura.detraccion_mount}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
+                            { text: `DETRACCIÓN ${Number(factura.detraccion_percent * 100).toFixed(0)}%:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
+                            { text: `${(factura.detraccion_mount)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
                         ],
                         [
                             { text: `NETO A PAGAR:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
@@ -77,8 +77,8 @@ function pdfDetallesTotal(
                             { text: `${factura.descuento_monto_base}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
                         ],
                         [
-                            { text: `DESCUENTO ${Number(factura.descuento_factor).toFixed(2)}%:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
-                            { text: `${factura.descuento_monto}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
+                            { text: `DESCUENTO ${Number(factura.descuento_factor * 100).toFixed(0)}%:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
+                            { text: `${(factura.descuento_monto)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
                         ],
                         [
                             { text: `NETO A PAGAR:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },

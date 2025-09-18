@@ -23,7 +23,7 @@ const codigosMotivoCredito = [
     { value: "07", label: "07 - Devolución por ítem", descripcion: "DEVOLUCION POR ITEM" },
     // { value: "08", label: "08 - Bonificación" },
     // { value: "09", label: "09 - Disminución en el valor" },
-    { value: "10", label: "10 - Otros Conceptos", descripcion: "OTROS CONCEPTOS" },
+    // { value: "10", label: "10 - Otros Conceptos", descripcion: "OTROS CONCEPTOS" },
 ];
 
 const codigosMotivosDebito = [

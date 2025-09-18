@@ -145,7 +145,7 @@ export default function ModalDetalleExtra({ open, setOpen }) {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="col-span-3 flex flex-col gap-2">
+              <div className="col-span-5 md:col-span-3 flex flex-col gap-2">
                 <Label htmlFor={`valor-${i}`}>Valor</Label>
                 <Input
                   id={`valor-${i}`}

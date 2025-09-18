@@ -21,16 +21,16 @@ function pdfCuotasFactura(factura) {
     // Cabecera de tabla
     const headerRow = [
         { text: "N° CUOTA", style: "paymentTableHeader", alignment: "center" },
+        { text: "MONTO", style: "paymentTableHeader", alignment: "center" },
         { text: "FECHA DE VENCIMIENTO", style: "paymentTableHeader", alignment: "center" },
-        { text: "MONTO", style: "paymentTableHeader", alignment: "center" }
     ];
 
     // Filas de cuotas
     const bodyRows = cuotas.length
         ? cuotas.map((pago, idx) => ([
             { text: String(pago.cuota ?? idx + 1), style: "paymentTableBody", alignment: "center" },
+            { text: utils.formatCurrency(pago.monto), style: "paymentTableBody", alignment: "center" },
             { text: utils.formatDateTime(pago.fecha_Pago), style: "paymentTableBody", alignment: "center" },
-            { text: utils.formatCurrency(pago.monto), style: "paymentTableBody", alignment: "right" }
         ]))
         : [[
             { text: "—", colSpan: 3, alignment: "center", style: "paymentTableEmpty" },

@@ -46,7 +46,20 @@ const InfDocumentoForm = () => {
 
   useEffect(() => {
     // Establecer la serie por defecto al cambiar el tipo de documento
-    const nuevaSerie = notaCreditoDebito.tipo_Doc === "07" ? "BC01" : "BD01";
+    let nuevaSerie ;
+    if(notaCreditoDebito.tipo_Doc === "07"){
+      if(notaCreditoDebito.afectado_Tipo_Doc == "01"){
+        nuevaSerie = "FC01";
+      }else{
+        nuevaSerie = "BC01";
+      }
+    }else{
+      if(notaCreditoDebito.afectado_Tipo_Doc == "01"){
+        nuevaSerie = "FD01";
+      }else{
+        nuevaSerie = "BD01";
+      }
+    }
     setNotaCreditoDebito((prev) => ({
       ...prev,
       serie: nuevaSerie,

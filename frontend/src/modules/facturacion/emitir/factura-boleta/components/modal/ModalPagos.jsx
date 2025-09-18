@@ -40,7 +40,7 @@ export default function ModalPagos({ open, setOpen }) {
                     </Button>
                 </AlertDialogTrigger>
 
-                <div className="w-full  flex py-2 justify-start gap-x-3 text-md flex-col md:flex-row px-3 font-semibold ">
+                <div className="w-full hidden md:flex py-2 justify-start gap-x-3 text-md flex-col md:flex-row px-3 font-semibold ">
                     {
                         pagosCompletos ? (
                             <h2 className="text-green-400">✅ LLegaste a el Monto Total de la Factura</h2>
@@ -63,7 +63,7 @@ export default function ModalPagos({ open, setOpen }) {
                 {/* 🧾 Encabezado */}
                 <AlertDialogHeader>
                     <AlertDialogTitle>Datos del Pago</AlertDialogTitle>
-                    <AlertDialogDescription className="text-center">
+                    <AlertDialogDescription className="text-center hidden md:block ">
                         Ingresa los datos correctamente para crear un Pago.
                     </AlertDialogDescription>
                 </AlertDialogHeader>

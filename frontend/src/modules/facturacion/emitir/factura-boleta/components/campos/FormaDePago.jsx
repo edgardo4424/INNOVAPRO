@@ -30,10 +30,10 @@ const FormaDePago = () => {
     return (
         <div className=" overflow-y-auto p-4 sm:p-6 lg:p-8 ">
             <div className='flex justify-between'>
-                <h1 className='text-2xl font-bold'>Forma de Pago</h1>
+                <h1 className='text-lg md:text-2xl font-bold'>Forma de Pago</h1>
                 {factura.forma_pago.length > 0 && <button
                     variant="danger"
-                    className="flex cursor-pointer items-center gap-x-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
+                    className="flex cursor-pointer items-center gap-x-2 bg-red-500 hover:bg-red-600 text-white p-1 md:px-4 md:py-2 rounded-md"
                     onClick={() => {
                         setFactura((prevFactura) => ({
                             ...prevFactura,
