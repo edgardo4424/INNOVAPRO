@@ -127,7 +127,7 @@ const TransportistaPublicoForm = () => {
                             type="button" // Importante: usa type="button" para evitar que el botón envíe el formulario
                             onClick={handleBuscar}
                             disabled={loadingBtn}
-                            className="p-2 bg-blue-500 rounded-md text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 cursor-pointer"
+                            className="p-2 bg-innova-blue rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 cursor-pointer"
                         >
                             <Search className="h-5 w-5" />
                         </button>

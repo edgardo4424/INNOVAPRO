@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import DocumentoSkeleton from "../../bandeja/list-factura-boleta/components/DocumentoSkeleton";
 import facturaService from "../../service/FacturaService";
+import { formatDateTime, getTipoDocCliente, getTipoDocLabel } from "../../emitir/factura-boleta/utils/formateos";
 
 // Códigos y descripciones de motivos de notas de crédito y débito
 // Se movió fuera del componente para evitar re-creaciones en cada render
@@ -25,41 +26,10 @@ const MOTIVOS_NOTA = {
 };
 
 
-const formatDateTime = (dateStr) => {
-    if (!dateStr) return "";
-    const d = new Date(dateStr);
-    return isNaN(d) ? dateStr : d.toLocaleString("es-PE", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-    });
-};
 
 
-const getTipoDocLabel = (code) => {
-    switch (code) {
-        case "07":
-            return "NOTA DE CRÉDITO";
-        case "08":
-            return "NOTA DE DÉBITO";
-        default:
-            return "NOTA ELECTRÓNICA";
-    }
-};
 
 
-const getTipoDocCliente = (code) => {
-    switch (String(code)) {
-        case "6":
-            return "RUC";
-        case "1":
-            return "DNI";
-        case "4":
-            return "CARNET DE EXTRANJERÍA";
-        default:
-            return "OTRO";
-    }
-};
 
 
 const getMotivoLabel = (tipoDoc, motivoCod) => {

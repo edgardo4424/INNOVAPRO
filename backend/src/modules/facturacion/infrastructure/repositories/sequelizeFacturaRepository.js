@@ -11,6 +11,7 @@ const db = require("../../../../database/models"); // Llamamos los modelos seque
 const { Op, fn, col } = require('sequelize');
 
 class SequelizeFacturaRepository {
+    
     static toNumber(value) {
         return value != null ? parseFloat(value) : 0;
     }

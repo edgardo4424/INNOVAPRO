@@ -230,6 +230,7 @@ export default function ModalVisualizarFactura() {
                         </div>
                       </div>
                     </div>
+
                     <div
                       className={` ${factura.relDocs.length > 0 || factura.orden_compra !== "" ? "" : "hidden"} col-span-2 flex flex-col`}
                     >

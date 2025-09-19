@@ -1,9 +1,10 @@
-module.exports = async (body, notaRepository) => {
+module.exports = async (body, notaRepository, borradorRepository) => {
     //* 1. Desestructuración de los datos del body:
     const {
         detalle = [],
         legend = [],
         sunat_respuesta,
+        id_borrador,
         ...factura
     } = body;
 
@@ -33,6 +34,7 @@ module.exports = async (body, notaRepository) => {
             nota: notaData,
             detalle: modifiedDetalle, // Usamos el array modificado
             legend: legend,
+            id_borrador,
             sunat_respuesta,
         });
 
@@ -47,6 +49,11 @@ module.exports = async (body, notaRepository) => {
                     status: 400
                 },
             };
+        }
+
+        // * Despues de haber creado la nota, borramos el borrador si este fue creado por ese medio
+        if (id_borrador) {
+            await borradorRepository.eliminar(id_borrador);
         }
 
         //* 6. Retornar éxito

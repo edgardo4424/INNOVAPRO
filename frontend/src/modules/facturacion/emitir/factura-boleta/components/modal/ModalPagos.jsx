@@ -33,7 +33,7 @@ export default function ModalPagos({ open, setOpen }) {
             <div className="flex md:items-end justify-start items-start">
 
                 <AlertDialogTrigger asChild>
-                    <Button className="bg-blue-500 hover:scale-105 hover:bg-blue-600 cursor-pointer"
+                    <Button className="bg-innova-blue  cursor-pointer"
                         disabled={pagosCompletos}>
                         <ClipboardPlus />
                         <span className="hidden md:block">Nuevo Pago</span>

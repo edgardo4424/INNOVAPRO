@@ -3,7 +3,7 @@ export async function formatearBorrador(tipo, borrador, usuario_id) {
 
     const nuevoBorrador = {}
 
-    if(tipo == 'factura' || tipo == 'boleta') {
+    if(tipo == 'factura' || tipo == 'boleta' || tipo == 'notaCredito' || tipo == 'notaDebito' || tipo == 'guiaRemision') {
         nuevoBorrador.tipo_borrador = tipo
         nuevoBorrador.serie = borrador.serie
         nuevoBorrador.correlativo = borrador.correlativo

@@ -77,7 +77,7 @@ const valorIncialDetracion = {
     detraccion_cod_bien_detraccion: "",
     detraccion_cod_medio_pago: "",
     detraccion_cta_banco: "",
-    detraccion_percent: 4.0,
+    detraccion_percent: 0,
     detraccion_mount: 0,
 }
 

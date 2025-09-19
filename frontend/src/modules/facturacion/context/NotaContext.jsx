@@ -33,6 +33,9 @@ export function NotaProvider({ children }) {
     { value: "BD02", doc: "03" },
   ];
 
+  // ?? BORRADOR
+  const [idBorrador, setIdBorrador] = useState(null);
+
   // ?? DATOS DE LA NOTA
   const [notaCreditoDebito, setNotaCreditoDebito] = useState(notaInical); // ?Datos de guia que abarcan los 3 casos
   // ?? DATOS DEL DOCUMNETO A AFECTAR
@@ -206,7 +209,8 @@ export function NotaProvider({ children }) {
   };
 
   const EmitirNota = async () => {
-    // 1. Iniciar un objeto de resultado para manejar todos los escenarios.
+    const { id: id_logeado } = await JSON.parse(localStorage.getItem("user"));
+    // ? 1. Iniciar un objeto de resultado para manejar todos los escenarios.
     let result = {
       success: false,
       message: "Error desconocido al emitir la nota",
@@ -214,15 +218,15 @@ export function NotaProvider({ children }) {
     };
 
     try {
-      // 2. Intentar enviar la nota a SUNAT
+      // ? 2. Intentar enviar la nota a SUNAT
       const { status, success, message, data } =
         await factilizaService.enviarNota(notaCreditoDebito);
 
-      // 3. Evaluar la respuesta de la API de factilización.
+      // ? 3. Evaluar la respuesta de la API de factilización.
       if (status === 200 && success) {
-        // ÉXITO en SUNAT: La nota fue aceptada.
+        // ? ÉXITO en SUNAT: La nota fue aceptada.
 
-        // a. Formatear la respuesta de SUNAT para el registro en la base de datos.
+        // ? a. Formatear la respuesta de SUNAT para el registro en la base de datos.
         const sunat_respuest = {
           hash: data.hash,
           cdr_zip: data.sunatResponse.cdrZip,
@@ -244,25 +248,27 @@ export function NotaProvider({ children }) {
           ];
         });
 
-        // b. Preparar el objeto final a registrar.
+        // ? b. Preparar el objeto final a registrar.
         const notaEmitida = {
           ...notaCreditoDebito,
+          usuario_id: id_logeado,
           detalle: detalleFormateado,
           sunat_respuesta: sunat_respuest,
           factura_id: documentoAAfectar.factura_id,
           guia_id: documentoAAfectar.guia_id,
+          id_borrador: idBorrador ? idBorrador : null,
         };
 
-        // c. ¡Ahora sí! Intentar registrar la nota en la base de datos.
+        // ? c. ¡Ahora sí! Intentar registrar la nota en la base de datos.
         const {
           status: dbStatus,
           success: dbSuccess,
           message: dbMessage,
         } = await registrarBaseDatos(notaEmitida);
 
-        // d. Evaluar el resultado del registro en la base de datos.
+        // ? d. Evaluar el resultado del registro en la base de datos.
         if (dbStatus) {
-          // ÉXITO TOTAL: Se emitió y se registró correctamente.
+          // ? ÉXITO TOTAL: Se emitió y se registró correctamente.
           result = {
             success: true,
             message: "Nota de crédito/débito emitida y registrada con éxito.",
@@ -279,7 +285,7 @@ export function NotaProvider({ children }) {
           };
         }
       } else if (status === 200 && !success) {
-        // ERROR LÓGICO: La API respondió, pero SUNAT rechazó el documento.
+        // ? ERROR LÓGICO: La API respondió, pero SUNAT rechazó el documento.
         result = {
           success: false,
           message: message,
@@ -289,7 +295,7 @@ export function NotaProvider({ children }) {
           data: data,
         };
       } else {
-        // ERROR DE SERVICIO: La API no pudo procesar la solicitud.
+        // ? ERROR DE SERVICIO: La API no pudo procesar la solicitud.
         result = {
           success: false,
           message: message || "Error desconocido en el servicio de emisión.",
@@ -297,7 +303,7 @@ export function NotaProvider({ children }) {
         };
       }
     } catch (error) {
-      // ERROR DE RED o EXCEPCIÓN: Fallo de conexión o problema inesperado.
+      // ? ERROR DE RED o EXCEPCIÓN: Fallo de conexión o problema inesperado.
       console.error("Error al enviar la nota:", error);
       if (error.response) {
         result = {
@@ -316,7 +322,7 @@ export function NotaProvider({ children }) {
         };
       }
     } finally {
-      // 4. Devolver el resultado final del proceso.
+      // ? 4. Devolver el resultado final del proceso.
       return result;
     }
   };
@@ -340,7 +346,7 @@ export function NotaProvider({ children }) {
 
       return { status, success, message };
     } catch (error) {
-      // En caso de que toast.promise no capture el error, lo manejamos aquí
+      // ? En caso de que toast.promise no capture el error, lo manejamos aquí
       if (error.response) {
         return {
           success: false,
@@ -389,6 +395,8 @@ export function NotaProvider({ children }) {
         itemActual,
         setItemActual,
         validarNota,
+        idBorrador,
+        setIdBorrador,
       }}
     >
       {children}

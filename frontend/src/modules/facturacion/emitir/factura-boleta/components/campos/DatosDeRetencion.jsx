@@ -1,11 +1,8 @@
-// Importaciones necesarias de React y tu contexto personalizado
-import React, { useEffect, useCallback } from "react";
 import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
+import { useCallback, useEffect } from "react";
 
-// Importaciones de los componentes de shadcn/ui
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -25,11 +22,6 @@ const DatosDeRetencion = () => {
     setRetencion,
     precioDolarActual,
   } = useFacturaBoleta();
-
-  // Verificaciones de visibilidad del componente
-  if (factura.monto_Imp_Venta < 699) return null;
-  if (factura.tipo_Doc === "03") return null;
-  if (factura.tipo_Operacion === "1001") return null;
 
   // Función para calcular la retención de forma más robusta
   const calcularRetencion = useCallback(
@@ -151,7 +143,13 @@ const DatosDeRetencion = () => {
     }
   };
 
-  return (
+  const shouldRender = !(
+    factura.monto_Imp_Venta < 699 ||
+    factura.tipo_Doc === "03" ||
+    factura.tipo_Operacion === "1001"
+  );
+
+  return shouldRender ? (
     <div className="flex flex-col gap-y-6 overflow-y-auto px-4 pt-4 lg:px-8">
       <div className="flex items-center gap-x-4">
         <h1 className="text-lg font-bold md:text-2xl">Retención</h1>
@@ -232,7 +230,7 @@ const DatosDeRetencion = () => {
         </div>
       )}
     </div>
-  );
+  ) : null;
 };
 
 export default DatosDeRetencion;
