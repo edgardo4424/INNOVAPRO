@@ -21,7 +21,11 @@ const _leerSoportesEfectivos = require('../../shared/utils/leerSoportesEfectivos
 module.exports = async function _ejecutarCalculoQuinta(req, isRecalculo = false) {
   // Contrato + elegibilidad
   const error = await enriquecerConContratoOFalla(req);
-  if (error) return res.status(error.status).json({ ok: false, message: error.message });
+  if (error) {
+    const err = new Error(error.message || 'Contrato no elegible');
+    err.status = error.status || 400;
+    throw err;
+  }
 
   // Normalizaciones de entrada
   const filialActualId = Number(req.body.__filialId);

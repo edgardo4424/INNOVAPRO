@@ -9,7 +9,6 @@ module.exports = class ObtenerDeclaracionMultiempleo {
         const fila = await this.repo.obtenerPorDniAnio({ dni, anio: Number(anio )});
         if (!fila) return { found: false };
         const filaData = fila.dataValues ? fila.dataValues : fila;
-        const detalles = await this.repo.obtenerDetalles({ multiempleoId: filaData.id });
 
         return {
             found: true,
@@ -26,7 +25,6 @@ module.exports = class ObtenerDeclaracionMultiempleo {
             estado: filaData.estado || 'VIGENTE',
             updateAt: filaData.update_at || filaData.updateAt,
             observaciones: filaData.observaciones || null,
-            detalles: detalles.map(detalle => detalle.toJSON())
         };
     }
 }

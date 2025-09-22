@@ -4,9 +4,28 @@ const sequelize = require('../../../../config/db');
 const CalculoQuintaRepository = require('../../domain/repositories/CalculoQuintaRepository');
 const CalculoQuintaModel = require('../models/CalculoQuintaModel');
 
+const _id = (x) => {
+  if (x == null) return null;
+  if (typeof x === 'object') return Number(x.id ?? x);
+  return Number(x);
+};
+
 class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository {
   // Insertar cálculos en tabla quinta_calculos
   async create(entity) { return await CalculoQuintaModel.create(entity); }
+
+  async updateById(idLike, patch, options = {}) {
+    const id = _id(idLike);
+    if (!id || Number.isNaN(id)) {
+      const e = new Error('ID inválido para updateById');
+      e.status = 400; throw e;
+    }
+    const row = await CalculoQuintaModel.findByPk(id, { transaction: options.transaction });
+    if (!row) return null;
+    await row.update(patch, { transaction: options.transaction });
+    return row;
+  }
+
   // Buscamos por id en quinta_calculos
   async findById(id) { return await CalculoQuintaModel.findByPk(id); }
   // Buscamos todas las filas de un trabajador en un año ordenadas
@@ -28,10 +47,11 @@ class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository 
       const filas = await CalculoQuintaModel
       .unscoped()
       .findAll({
-        where: { dni, anio, es_oficial: true },
+        where: { dni, anio, fuente: 'oficial' },
         attributes: ['mes'],
         order: [['mes', 'DESC']],
         raw: true,
+        transaction: options.transaction,
       })
     return filas ? Number(filas.mes) : 0;
     } catch (e) {
@@ -46,6 +66,15 @@ class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository 
       order: [['createdAt', 'DESC']],     // último creado = vigente del mes
       // attributes opcionales para performance:
       // attributes: ['id','dni','anio','mes','retencion_base_mes','es_recalculo','createdAt'],
+    });
+  }
+
+  // Para upsert idempotente en masivo
+  async findOficialByPeriodo({ dni, anio, mes }, options = {}) {
+    return CalculoQuintaModel.findOne({
+      where: { dni, anio, mes, fuente: 'oficial' },
+      order: [['updated_at', 'DESC'], ['created_at','DESC'], ['id','DESC']],
+      transaction: options.transaction
     });
   }
 

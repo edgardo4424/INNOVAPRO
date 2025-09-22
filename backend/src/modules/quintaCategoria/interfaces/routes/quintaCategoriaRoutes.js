@@ -3,6 +3,7 @@ const router = express.Router();
 const QuintaCategoriaController = require('../controllers/QuintaCategoriaController');
 const MultiempleoController = require("../controllers/MultiempleoController");
 const SoportePreviosController = require("../controllers/SoportePreviosController");
+const QuintaCategoriaMasivoController = require('../controllers/QuintaCategoriaMasivoController');
 const {
    verificarToken,
 } = require("../../../../shared/middlewares/authMiddleware");
@@ -16,6 +17,9 @@ router.get('/', QuintaCategoriaController.list);
 
 // Api de consulta backend-backend
 router.get('/base-mes', QuintaCategoriaController.getRetencionBaseMesPorDni);
+
+// MASIVO POR FILIAL
+router.post('/masivo', QuintaCategoriaMasivoController.crearMasivo);
 
 // Declaración de multiempleo (SUNAT): registro/consulta por DNI/AÑO
 router.get('/multiempleo/declaracion', MultiempleoController.obtenerDeclaracion);

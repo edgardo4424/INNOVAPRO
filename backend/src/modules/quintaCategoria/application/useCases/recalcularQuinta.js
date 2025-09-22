@@ -2,7 +2,7 @@ module.exports = class RecalcularQuinta {
   constructor(repo) {
     this.repo = repo;
   }
-  async execute({ id, overrideInput = {}, creadoPor }) {
+  async execute({ id, overrideInput = {}, creadoPor, transaction }) {
     const prev = await this.repo.findById(id);
     if (!prev) {
       const err = new Error("Cálculo no encontrado");
@@ -77,6 +77,6 @@ module.exports = class RecalcularQuinta {
       tramos_usados: dto.tramos_usados
     };
 
-    return await this.repo.create(dto);
+    return await this.repo.updateById(id, dto, { transaction });
   }
 };
