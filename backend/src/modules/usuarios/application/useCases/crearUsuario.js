@@ -6,6 +6,12 @@ module.exports = async (usuarioData, usuarioRepository) => {
   const error = Usuario.validar(usuarioData, "crear");
   if (error) return { codigo: 400, respuesta: { mensaje: error } }; 
 
+  // Verificar si ya existe un usuario con el mismo trabajdor_id
+  const usuarioExistentePorTrabajadorId = await usuarioRepository.obtenerPorTrabajadorId(usuarioData.trabajador_id);
+  if (usuarioExistentePorTrabajadorId) {
+    return { codigo: 400, respuesta: { mensaje: "Ya existe un usuario para el trabajador" } }
+  }
+
   // Verificar si el correo ya está en uso
   const usuarioExistente = await usuarioRepository.obtenerPorEmail(usuarioData.email);
   if (usuarioExistente) {

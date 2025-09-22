@@ -7,11 +7,10 @@ const bcrypt = require("bcryptjs");
 async function prepararUsuarioParaGuardar(datos) {
   const hashedPassword = await bcrypt.hash(datos.password, 10); // Hashea la contraseña
   return {
-    nombre: datos.nombre,
+
     email: datos.email,
     password: hashedPassword,
-    rol: datos.rol,
-    telefono: datos.telefono
+    trabajador_id: datos.trabajador_id
   };
 }
 

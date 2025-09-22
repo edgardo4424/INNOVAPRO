@@ -16,6 +16,7 @@ const UsuarioController = {
             const nuevoUsuario = await crearUsuario(req.body, usuarioRepository ); // Llamamos al caso de uso para crear un usuario
             res.status(nuevoUsuario.codigo).json(nuevoUsuario.respuesta); // Respondemos con el usuario creado
         } catch (error) {
+            console.log('error', error);
             res.status(500).json({ error: error.message }); // Respondemos con un error
         }
     },

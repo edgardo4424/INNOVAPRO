@@ -115,5 +115,12 @@ Trabajador.associate = (models) => {
       foreignKey: "trabajador_id",
       as: "bajas_trabajadores",
    });
+   
+   // Un trabajador tiene un usuario
+   Trabajador.hasOne(models.usuarios, {
+      foreignKey: "trabajador_id",
+      as: "usuario",  // alias para acceder al usuario desde trabajador
+   });
+
 };
 module.exports = { Trabajador };

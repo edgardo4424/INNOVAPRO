@@ -52,6 +52,8 @@ export default function Login() {
       setLoading(true); // 🔥 Desactiva el botón
 
       const success = await login(email, password, recaptchaToken, navigate);
+
+      console.log('success', success);
       if (success) {
          navigate("/");
       } else {
