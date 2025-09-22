@@ -1,8 +1,9 @@
-import { useState } from "react";
 import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext"; // Import your context
-import { ClipboardPlus, Eye, X } from "lucide-react"; // Still using Lucide icons
-import EnviarFactura from "./EnviarFactura";
+import { Eye, X } from "lucide-react"; // Still using Lucide icons
+import { useState } from "react";
 import { getDescripcion } from "../../utils/codDetraccion";
+import EnviarFactura from "./EnviarFactura";
+import { formatDateTime, getTipoDocCliente, getTipoDocDescription } from "@/modules/facturacion/utils/formateos";
 
 export default function ModalVisualizarFactura() {
   //? Modal Emmitir
@@ -38,73 +39,6 @@ export default function ModalVisualizarFactura() {
     (filial) => filial.ruc === factura.empresa_Ruc,
   );
 
-  // Helper to get document type description
-  const getTipoDocDescription = (typeCode) => {
-    switch (typeCode) {
-      case "01":
-        return "FACTURA ELECTRÓNICA";
-      case "03":
-        return "BOLETA DE VENTA ELECTRÓNICA";
-      case "07":
-        return "NOTA DE CRÉDITO ELECTRÓNICA";
-      case "08":
-        return "NOTA DE DÉBITO ELECTRÓNICA";
-      default:
-        return "DOCUMENTO NO ESPECIFICADO";
-    }
-  };
-
-  const getTipoDocCliente = (typeCode) => {
-    switch (typeCode) {
-      case "0":
-        return "DOC.TRIB.NO.DOM.SIN.RUC";
-      case "1":
-        return "DNI";
-      case "4":
-        return "CARNET DE EXTRANJERIA";
-      case "6":
-        return "RUC";
-      case "7":
-        return "PASAPORTE A CED. DIPLOMATICA DE IDENTIDAD B DOC.IDENT.PAIS.RESIDENCIA-NO.D C";
-      case "D":
-        return "Tax Identification Number - TIN – Doc Trib PP.NN D";
-      case "J":
-        return "Identification Number - IN – Doc Trib PP. JJ";
-      default:
-        return "DOCUMENTO NO ESPECIFICADO";
-    }
-  };
-
-  // Helper to format date
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    try {
-      // "2025-07-14T05:00:00-05:00" -> "14/07/2025"
-      const date = new Date(dateString);
-      return date.toLocaleDateString("es-PE", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      });
-    } catch (e) {
-      console.error("Error formatting date:", e);
-      return dateString.split("T")[0]; // Fallback to YYYY-MM-DD
-    }
-  };
-
-  // Helper to get client document type description
-  const getClientDocTypeDescription = (typeCode) => {
-    switch (typeCode) {
-      case "6":
-        return "RUC";
-      case "1":
-        return "DNI";
-      case "4":
-        return "CARNET DE EXTRANJERÍA";
-      default:
-        return "OTRO";
-    }
-  };
 
   return (
     <div onClick={onBackdropClick}>
@@ -132,9 +66,7 @@ export default function ModalVisualizarFactura() {
             </button>
 
             <div className="p-6 md:p-8">
-              {/* --- Invoice Detail --- */}
               <div className="space-y-4 md:space-y-6">
-                {/* Company and Document Header */}
                 <div className="rounded-xl border border-gray-200 bg-white">
                   <div className="grid grid-cols-1 items-start gap-6 px-6 py-6 md:grid-cols-3 md:py-8">
                     <div className="col-span-2">
@@ -154,7 +86,7 @@ export default function ModalVisualizarFactura() {
                         {factura.serie}-{factura.correlativo}
                       </p>
                       <p>
-                        Fecha de Emisión: {formatDate(factura.fecha_Emision)}
+                        Fecha de Emisión: {formatDateTime(factura.fecha_Emision)}
                       </p>
                     </div>
                   </div>
@@ -353,7 +285,7 @@ export default function ModalVisualizarFactura() {
                         OBSERVACION:
                       </h3>
                       <div className="rounded-md bg-white p-2 text-sm text-gray-800">
-                        {factura.observacion ||
+                        {factura.Observacion ||
                           "No hay observacion registradas."}
                       </div>
                     </div>
@@ -572,7 +504,7 @@ export default function ModalVisualizarFactura() {
                                 </td>
                               )}
                             <td className="px-4 py-2 text-center">
-                              {formatDate(pago.fecha_Pago)}
+                              {formatDateTime(pago.fecha_Pago)}
                             </td>
                           </tr>
                         ))}

@@ -3,6 +3,11 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import facturaService from "../../service/FacturaService";
 import { getDescripcion } from "../../emitir/factura-boleta/utils/codDetraccion";
+import {
+  formatDateTime,
+  getTipoDocCliente,
+  getTipoDocDescription,
+} from "../../utils/formateos";
 
 export default function ModalVisualizarBorrador({
   id_documento,
@@ -16,69 +21,6 @@ export default function ModalVisualizarBorrador({
     setIsOpen(false);
     setIdDocumento("");
     setModalOpen(false);
-  };
-
-  const getTipoDocDescription = (typeCode) => {
-    switch (typeCode) {
-      case "01":
-        return "FACTURA ELECTRÓNICA";
-      case "03":
-        return "BOLETA DE VENTA ELECTRÓNICA";
-      case "07":
-        return "NOTA DE CRÉDITO ELECTRÓNICA";
-      case "08":
-        return "NOTA DE DÉBITO ELECTRÓNICA";
-      default:
-        return "DOCUMENTO NO ESPECIFICADO";
-    }
-  };
-
-  const getTipoDocCliente = (typeCode) => {
-    switch (typeCode) {
-      case "0":
-        return "DOC.TRIB.NO.DOM.SIN.RUC";
-      case "1":
-        return "DNI";
-      case "4":
-        return "CARNET DE EXTRANJERIA";
-      case "6":
-        return "RUC";
-      case "7":
-        return "PASAPORTE A CED. DIPLOMATICA DE IDENTIDAD B DOC.IDENT.PAIS.RESIDENCIA-NO.D C";
-      case "D":
-        return "Tax Identification Number - TIN – Doc Trib PP.NN D";
-      case "J":
-        return "Identification Number - IN – Doc Trib PP. JJ";
-      default:
-        return "DOCUMENTO NO ESPECIFICADO";
-    }
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString("es-PE", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      });
-    } catch {
-      return dateString.split?.("T")?.[0] || dateString;
-    }
-  };
-
-  const getClientDocTypeDescription = (typeCode) => {
-    switch (typeCode) {
-      case "6":
-        return "RUC";
-      case "1":
-        return "DNI";
-      case "4":
-        return "CARNET DE EXTRANJERÍA";
-      default:
-        return "OTRO";
-    }
   };
 
   // Función para formatear números a 2 decimales
@@ -234,7 +176,9 @@ export default function ModalVisualizarBorrador({
                   <p className="text-sm font-extrabold tracking-wide text-gray-700 md:text-2xl">
                     {borrador.serie}-{borrador.correlativo}
                   </p>
-                  <p>Fecha de Emisión: {formatDate(borrador.fecha_emision)}</p>
+                  <p>
+                    Fecha de Emisión: {formatDateTime(borrador.fecha_emision)}
+                  </p>
                 </div>
               </div>
             </div>
@@ -346,7 +290,7 @@ export default function ModalVisualizarBorrador({
                   </>
                 ) : null}
 
-                {borrador.tipo_doc === "07" || borrador.tipo_doc  === "08" ? (
+                {borrador.tipo_doc === "07" || borrador.tipo_doc === "08" ? (
                   <div className={`col-span-2 flex flex-col`}>
                     <h3 className="mb-3 text-sm font-bold text-gray-600">
                       DOCUMENTOS AFECTADO
@@ -609,11 +553,6 @@ export default function ModalVisualizarBorrador({
                   </div>
                 </div>
               )}
-
-            <div className="mt-6 border-t border-gray-200 pt-4 text-center text-xs text-gray-500">
-              <p>Documento Generado por tu Sistema de Facturación.</p>
-              <p>Para consultas, contáctanos al [Tu Teléfono] o [Tu Email]</p>
-            </div>
           </div>
         </div>
       </div>

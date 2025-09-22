@@ -1,6 +1,7 @@
 import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext"; // Importamos el contexto correcto
+import { formatDateTime, getModalidadTrasladoDescription, getMotivoTrasladoDescription, getTipoDocCliente, getTipoDocGuiaDescription } from "@/modules/facturacion/utils/formateos";
 import { Eye, X } from "lucide-react"; // Solo necesitamos Eye y X para previsualizar
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ModalEnviarGuia from "./ModalEnviarGuia";
 
 export default function ModalVisualizarGuiaPrivada() {
@@ -33,84 +34,6 @@ export default function ModalVisualizarGuiaPrivada() {
     setIsOpen(true);
   };
 
-  // ?? --- Funciones de ayuda para obtener descripciones y formatos ---
-
-  // ?? Helper para obtener la descripción del tipo de documento de la guía
-  const getTipoDocGuiaDescription = (typeCode) => {
-    switch (typeCode) {
-      case "09":
-        return "GUÍA DE REMISIÓN ELECTRÓNICA";
-      // ?? Puedes añadir más tipos de documentos de guía si los manejas
-      default:
-        return "DOCUMENTO DE GUÍA NO ESPECIFICADO";
-    }
-  };
-
-  // ?? Helper para obtener la descripción del tipo de documento del cliente/destinatario
-  const getClientDocTypeDescription = (typeCode) => {
-    switch (typeCode) {
-      case "6":
-        return "RUC";
-      case "1":
-        return "DNI";
-      case "4":
-        return "CARNET DE EXTRANJERÍA";
-      default:
-        return "OTRO";
-    }
-  };
-
-  // ?? Helper para obtener la descripción de la modalidad de traslado
-  const getModalidadTrasladoDescription = (code) => {
-    switch (code) {
-      case "01":
-        return "TRANSPORTE PÚBLICO";
-      case "02":
-        return "TRANSPORTE PRIVADO";
-      default:
-        return "NO ESPECIFICADO";
-    }
-  };
-
-  // ?? Helper para obtener la descripción del motivo de traslado
-  const getMotivoTrasladoDescription = (code) => {
-    switch (code) {
-      case "01":
-        return "VENTA";
-      case "02":
-        return "COMPRA";
-      case "04":
-        return "TRASLADO ENTRE ESTABLECIMIENTOS DE LA MISMA EMPRESA";
-      case "08":
-        return "IMPORTACIÓN";
-      case "09":
-        return "EXPORTACIÓN";
-      case "18":
-        return "TRASLADO EMISOR ITINERANTE DE COMPROBANTES DE PAGO";
-      case "19":
-        return "TRASLADO A ZONA PRIMARIA";
-      case "13":
-        return "OTROS";
-      default:
-        return "NO ESPECIFICADO";
-    }
-  };
-
-  // ?? Helper para formatear fechas (asumiendo formato ISO 8601 como "YYYY-MM-DDTHH:mm:ss-ZZ:ZZ")
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString("es-PE", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      });
-    } catch (e) {
-      console.error("Error formatting date:", e);
-      return dateString.split("T")[0]; // ?? Fallback a YYYY-MM-DD si hay error
-    }
-  };
 
   return (
     <>
@@ -163,7 +86,7 @@ export default function ModalVisualizarGuiaPrivada() {
                         </p>
                         <p className="text-xs md:text-sm">
                           Fecha de Emisión:{" "}
-                          {formatDate(guiaTransporte.fecha_Emision)}
+                          {formatDateTime(guiaTransporte.fecha_Emision)}
                         </p>
                       </div>
                     </div>
@@ -198,7 +121,7 @@ export default function ModalVisualizarGuiaPrivada() {
                             Tipo Doc.:
                           </span>
                           <span className="text-xs font-medium md:text-sm">
-                            {getClientDocTypeDescription(
+                            {getTipoDocCliente(
                               guiaTransporte.cliente_Tipo_Doc,
                             )}
                           </span>
@@ -321,7 +244,7 @@ export default function ModalVisualizarGuiaPrivada() {
                             Feca de Traslado:
                           </span>
                           <span className="text-xs font-medium md:text-sm">
-                            {formatDate(guiaTransporte.guia_Envio_Fec_Traslado)}
+                            {formatDateTime(guiaTransporte.guia_Envio_Fec_Traslado)}
                           </span>
                           <span className="text-xs font-semibold text-gray-700 md:text-sm">
                             Peso Total Bruto:
@@ -401,7 +324,7 @@ export default function ModalVisualizarGuiaPrivada() {
                               Tipo Doc.:
                             </span>
                             <span className="text-xs font-medium md:text-sm">
-                              {getClientDocTypeDescription(
+                              {getTipoDocCliente(
                                 guiaDatosPublico.transportista.tipo_doc,
                               )}
                             </span>

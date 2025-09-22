@@ -2,8 +2,8 @@ import { X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import DocumentoSkeleton from "../../bandeja/list-factura-boleta/components/DocumentoSkeleton";
-import facturaService from "../../service/FacturaService";
 import { getDescripcion } from "../../emitir/factura-boleta/utils/codDetraccion";
+import facturaService from "../../service/FacturaService";
 
 export default function ModalVisualizarDocumento({
   setModalOpen,
@@ -406,12 +406,12 @@ export default function ModalVisualizarDocumento({
               </div>
 
               {/* Observacion */}
-              {factura.observacion && (
+              {factura.Observacion && (
                 <div className="mt-4 rounded-md border border-gray-200 p-4 pt-2">
                   <h3 className="text-md mb-2 font-bold text-gray-600">
                     Obesvaciones:
                   </h3>
-                  <p className="text-sm text-gray-800">{factura.observacion}</p>
+                  <p className="text-sm text-gray-800">{factura.Observacion}</p>
                 </div>
               )}
 

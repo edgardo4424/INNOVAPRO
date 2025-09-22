@@ -64,7 +64,7 @@ const TablaDocumentos = ({
               Tipo Doc
             </th>
             <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
-              Serie-Correlativo
+              Nro. Doc
             </th>
             <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
               Fecha Emision
@@ -76,7 +76,7 @@ const TablaDocumentos = ({
               Nro. Doc - Cliente
             </th>
             <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
-              Monto Imp. Venta
+              Monto Total
             </th>
             <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
               Estado
@@ -104,7 +104,7 @@ const TablaDocumentos = ({
                   index % 2 === 0 ? "bg-white" : "bg-gray-50"
                 } border-b border-gray-200 transition-colors hover:bg-gray-100`}
               >
-                <td className="px-2 py-3 text-xs text-gray-700">
+                <td className="px-2 py-3 text-sm text-gray-700">
                   {factura.tipo_doc == "01" ? "Factura" : "Boleta"}
                 </td>
                 <td className="px-2 py-3 text-xs font-medium text-gray-700">
@@ -120,7 +120,7 @@ const TablaDocumentos = ({
                 <td className="px-2 py-3 text-xs text-gray-700">
                   <span>{filialActural(factura.empresa_ruc) || ""}</span>
                 </td>
-                <td className="flex flex-col px-2 py-3 text-xs text-gray-700">
+                <td className="flex px-2 py-3 text-xs text-gray-700">
                   <span>{`${factura.cliente_num_doc || ""} -`}</span>
                   <span>{factura.cliente_razon_social || ""}</span>
                 </td>
@@ -217,12 +217,12 @@ const TablaDocumentos = ({
                       <TooltipContent>
                         {disableAnular ? (
                           diasTranscurridos > 7 ? (
-                            <p>No anulable (más de 7 días)</p>
+                            <p>No Reversible (más de 7 días)</p>
                           ) : (
-                            <p>Documento anulado</p>
+                            <p>No se puede Revertir</p>
                           )
                         ) : (
-                          <p>Anular</p>
+                          <p>Revertir</p>
                         )}
                       </TooltipContent>
                     </Tooltip>

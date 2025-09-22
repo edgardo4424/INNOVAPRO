@@ -86,6 +86,8 @@ const ExcelUploader = ({ onDataLoaded, handleSubirDatos }) => {
         }
     };
 
+
+
     const handleDrop = (event) => {
         event.preventDefault();
         const droppedFile = event.dataTransfer.files[0];
@@ -114,6 +116,13 @@ const ExcelUploader = ({ onDataLoaded, handleSubirDatos }) => {
         if (onDataLoaded) {
             onDataLoaded(null); // Limpiar datos del componente padre
         }
+    };
+
+    const handleSubirClick = () => {
+        if (file) {
+            handleSubirDatos(file);
+        }
+        setTimeout(() => removeFile(), 1000);
     };
 
     const triggerFileInput = () => {
@@ -211,10 +220,10 @@ const ExcelUploader = ({ onDataLoaded, handleSubirDatos }) => {
                     )}
                     <div className="flex gap-x-4">
 
-                        <ModalVistaPrevia items={previewData} handleSubirDatos={handleSubirDatos} />
+                        <ModalVistaPrevia items={previewData} handleSubirDatos={handleSubirClick} />
 
                         <button
-                            onClick={handleSubirDatos}
+                            onClick={handleSubirClick}
                             className="flex items-center text-white bg-blue-500 hover:bg-blue-600 cursor-pointer px-2 rounded-md">
                             <ArrowUpNarrowWideIcon className="size-5" />
                             <span>Subir Datos</span>

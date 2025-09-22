@@ -1,10 +1,10 @@
-import { Download, EyeIcon, FileText } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useBandeja } from "@/modules/facturacion/context/BandejaContext";
+import { Download, EyeIcon, FileText } from "lucide-react";
 
 const codigosMotivoCredito = [
   {
@@ -142,7 +142,7 @@ const TablaNotas = ({
         <thead className="bg-innova-blue text-white">
           <tr>
             <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
-              Tipo Doc
+              Documento
             </th>
             <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
               Serie-Correlativo
@@ -276,32 +276,6 @@ const TablaNotas = ({
                     </TooltipContent>
                   </Tooltip>
 
-                  {/* <Tooltip side="bottom" align="center" className="mr-2">
-                                        <TooltipTrigger asChild>
-                                            <button
-                                                disabled={nota.estado == "ANULADA"}
-                                                onClick={() => {
-                                                    setIdDocumento(nota.id);
-                                                    setModalAnular(true);
-                                                    setDocumentoAAnular({
-                                                        empresa_ruc: nota.empresa_Ruc,
-                                                        tipo_Doc: nota.tipo_Doc,
-                                                        serie: nota.serie,
-                                                        correlativo: nota.correlativo,
-                                                        anulacion_Motivo: "",
-                                                        estado_Documento: "0",
-                                                    })
-                                                }}
-                                                className={`${nota.estado == "ANULADA" || nota.estado == "ANULADA-NOTA" ? "" : "hover:bg-red-100 text-red-500 hover:text-red-700 "}p-1 rounded transition-colors`}
-                                                title="Más opciones"
-                                            >
-                                                <BookX className="h-5 w-5 cursor-pointer" />
-                                            </button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>Ver documento</p>
-                                        </TooltipContent>
-                                    </Tooltip> */}
                 </div>
               </td>
             </tr>

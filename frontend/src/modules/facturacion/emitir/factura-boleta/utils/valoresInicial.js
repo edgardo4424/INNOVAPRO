@@ -36,7 +36,7 @@ const ValorInicialFactura = {
     relDocs: [],
 
     // ?Parametros para innova Pro
-    observacion: "", //? nuevo campo solo para bd
+    Observacion: "", //? nuevo campo solo para bd
     // usuario_id: 1, //* cambiar a el usuario logeado
 
     // ?Lista de Productos

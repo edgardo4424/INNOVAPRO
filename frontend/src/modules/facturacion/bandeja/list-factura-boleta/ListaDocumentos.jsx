@@ -152,8 +152,8 @@ const ListaDocumentos = () => {
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col items-center px-4 py-6 md:px-2">
-      <div className="w-full max-w-6xl">
-        <div className="mb-6 flex items-center justify-between">
+      <div className="w-full ">
+        <div className="mb-3 flex items-center justify-between">
           <h2 className="text-2xl font-bold md:text-3xl">
             Lista de Facturas y Boletas
           </h2>

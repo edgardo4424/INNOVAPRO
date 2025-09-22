@@ -33,8 +33,6 @@ const InfDocumentoForm = () => {
     guiaTransporte;
 
 
-  const rucsFiliales = filiales.map((filial) => ({ ruc: filial.ruc }));
-
   const activarCorrelativo = (e) => {
     e.preventDefault();
     setCorrelativoEstado(!correlativoEstado);

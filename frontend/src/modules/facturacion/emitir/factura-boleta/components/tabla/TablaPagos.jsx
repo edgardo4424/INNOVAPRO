@@ -60,7 +60,7 @@ const TablaPagos = ({ open, setOpen }) => {
                   <TableCell>{cuotas_Real[index]?.monto}</TableCell>
                 )}
                 {retencionActivado && factura.tipo_Operacion !== "1001" && (
-                  <TableCell>{cuotas_Real[index]?.monto}</TableCell>
+                  <TableCell>{cuotas_Real[index]?.monto.toFixed(2)}</TableCell>
                 )}
                 <TableCell>{formatearFecha(item.fecha_Pago)}</TableCell>
               </TableRow>

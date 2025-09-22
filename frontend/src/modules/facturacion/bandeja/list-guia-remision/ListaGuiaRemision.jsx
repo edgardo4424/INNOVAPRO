@@ -1,16 +1,14 @@
-import { LoaderCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import FiltroTabla from "../../components/FiltroTabla";
+import ModalDescarga from "../../components/modal/ModalDescarga";
 import ModalVisualizarGuia from "../../components/modal/ModalVisualizarGuia";
 import Paginacion from "../../components/Paginacion";
-import facturaService from "../../service/FacturaService";
-import ModalDescargaGuia from "./components/ModalDescargaGuia";
-import TablaGuias from "./components/TablaGuias";
-import ModalDescarga from "../../components/modal/ModalDescarga";
-import ModalAnularDocumento from "../list-factura-boleta/components/modal/ModalAnularDocumento";
 import TablaSkeleton from "../../components/TablaSkeleton";
+import facturaService from "../../service/FacturaService";
+import ModalAnularDocumento from "../list-factura-boleta/components/modal/ModalAnularDocumento";
+import TablaGuias from "./components/TablaGuias";
 
 const ListaGuiaRemision = () => {
   const navigate = useNavigate();
@@ -149,8 +147,8 @@ const ListaGuiaRemision = () => {
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col items-center px-4 py-6 md:px-2">
-      <div className="w-full max-w-6xl">
-        <div className="mb-6 flex items-center justify-between">
+      <div className="w-full ">
+        <div className="mb-3 flex items-center justify-between">
           <h2 className="text-2xl font-bold md:text-3xl">
             Lista de Guias de Remision
           </h2>

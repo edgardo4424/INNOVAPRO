@@ -1,8 +1,7 @@
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useNota } from "../context/NotaContext";
 import NotasCreditoForm from "../emitir/notas-de-credito/NotasCreditoForm";
-import { notaInical } from "../emitir/notas-de-credito/utils/valoresInicialNota";
-import { useLocation } from "react-router-dom";
 
 const NotaCredito = () => {
   const { setNotaCreditoDebito, setDocumentoAAfectar, setIdBorrador } =

@@ -10,8 +10,12 @@ module.exports = async (direccion, ubigeoRepo) => {
             return { codigo: 400, respuesta: { message: 'direccion requerida', ubigeo: null } };
         }
 
-        const response = await geocodingClient.get('json', { params: { address: direccion } });
+        const response = await geocodingClient.get('json', { params: { address: direccion,  } });
+
+
+
         const { status, results, error_message } = response.data;
+
 
         if (status === 'OK' && Array.isArray(results) && results.length > 0) {
             const { address_components } = results[0];
@@ -57,7 +61,7 @@ module.exports = async (direccion, ubigeoRepo) => {
         }
 
         if (status === 'ZERO_RESULTS') {
-            return { codigo: 404, respuesta: { message: 'sin resultados', ubigeo: null , results} };
+            return { codigo: 404, respuesta: { message: 'sin resultados', ubigeo: null, results } };
         }
 
         return { codigo: 400, respuesta: { message: `error (${status}) ${error_message || ''}`, ubigeo: null } };
