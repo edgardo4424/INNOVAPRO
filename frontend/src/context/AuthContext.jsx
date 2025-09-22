@@ -40,6 +40,8 @@ export function AuthProvider({ children }) {
         }
       } catch (error) {
         console.error("❌ Error verificando sesión:", error.response?.data || error.message);
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
         logout();  
       } finally {
         setLoading(false);
