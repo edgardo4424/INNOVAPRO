@@ -9,7 +9,20 @@ module.exports = async (
    fecha = "",
    transaction = null
 ) => {
+
    const fecha_anio_mes = fecha.slice(0, -3);
+   const planillaQuincenal=
+      await planillaRepository.obtenerCierrePlanillaQuincenal(
+         fecha_anio_mes,
+         filial_id,
+         transaction
+      )
+   if(!planillaQuincenal){
+      return {
+         codigo: 400,
+         respuesta: { mensaje: "La planilla quincenal no se ha cerrado." },
+      };
+   }
    const planillaMensualCerrada =
       await planillaRepository.obtenerCierrePlanillaMensual(
          fecha_anio_mes,

@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Eye, FileDown } from "lucide-react";
 import ModalInfoDetalle from "./ModalInfoDetalles";
+import { formatearFecha } from "@/utils/formatearFecha";
 
 const RowPlanillaMensual = ({ key, e, index }) => {
    console.log("e", e);
@@ -24,7 +25,7 @@ const RowPlanillaMensual = ({ key, e, index }) => {
          <TableCell className="text-right">{e.nombres_apellidos}</TableCell>
          <TableCell className="text-right">{e.area}</TableCell>
          <TableCell className="text-right">{e.afp}</TableCell>
-         <TableCell className="text-right">{e.fecha_ingreso}</TableCell>
+         <TableCell className="text-right">{formatearFecha(e.fecha_ingreso)}</TableCell>
          <TableCell className="text-right">{e.dias_labor}</TableCell>
 
          <TableCell className="text-right">{e.sueldo_basico}</TableCell>

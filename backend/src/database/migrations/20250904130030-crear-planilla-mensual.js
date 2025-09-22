@@ -113,7 +113,7 @@ module.exports = {
             allowNull:false
          },
          fecha_ingreso: {
-            type: Sequelize.DATE,
+            type: Sequelize.DATEONLY,
             allowNull:false
          },
          dias_labor: {

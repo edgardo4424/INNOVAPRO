@@ -173,8 +173,58 @@ const modulesByRole = {
          ],
       },
    ],
-   Clientes: [],
+   //!Kimberly
+   CONTADORA:[
+      {
+         group: "Facturación",
+         items: [
+            { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
+            { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
+            // { name: "Emitir", path: "/facturacion/emitir" },
+            { name: "Bandeja", path: "/facturacion/bandeja" },
+            { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
+         ],
+      },
+   ],
+   //
+   "ASISTENTE FACTURACION":[
+      {
+         group: "Facturación",
+         items: [
+            { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
+            { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
+            // { name: "Emitir", path: "/facturacion/emitir" },
+            { name: "Bandeja", path: "/facturacion/bandeja" },
+            { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
+         ],
+      },
+   ],
+   "JEFA DE ALMACEN":[
+      {
+         group: "Facturación",
+         items: [
+              { name: "Guía de Remisión", path: "/facturacion/emitir/guia" },
+            { name: "Lista de guías", path: "/facturacion/bandeja/guia-remision?page=1&limit=10" },
+         ],
+      },
+   ],
+   "GERENTE DE ADMINISTRACION":[
+      {
+         group: "Facturación",
+         items: [
+            { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
+            { name: "Guia de Remision", path: "/facturacion/emitir/guia" },
+            { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
+            // { name: "Emitir", path: "/facturacion/emitir" },
+            { name: "Bandeja", path: "/facturacion/bandeja" },
+            { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
+         ],
+      },
+   ],
+
 };
+
+// { name: "Guia de Remision", path: "/facturacion/emitir/guia" },
 
 const isPathActive = (currentPath, itemPath) => {
    const itemUrl = new URL(itemPath, window.location.origin); // para extraer pathname de itemPath
