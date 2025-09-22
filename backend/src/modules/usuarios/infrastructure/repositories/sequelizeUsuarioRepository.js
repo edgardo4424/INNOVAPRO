@@ -1,8 +1,12 @@
 const { Usuario } = require("../models/usuarioModel");
 const UsuarioRepository = require("../../domain/repositories/usuarioRepository"); // Importamos la interfaz del repositorio
-const { Trabajador } = require("../../../trabajadores/infraestructure/models/trabajadorModel");
+const {
+  Trabajador,
+} = require("../../../trabajadores/infraestructure/models/trabajadorModel");
 const db = require("../../../../database/models");
-const { Cargo } = require("../../../trabajadores/infraestructure/models/cargoModel");
+const {
+  Cargo,
+} = require("../../../trabajadores/infraestructure/models/cargoModel");
 
 class SequelizeUsuarioRepository extends UsuarioRepository {
   // La clase SequelizeUsuarioRepository extiende la interfaz UsuarioRepository
@@ -23,21 +27,21 @@ class SequelizeUsuarioRepository extends UsuarioRepository {
           include: [
             {
               model: db.cargos,
-              as: "cargo"
-            }
-          ]
-        }
-      ]
+              as: "cargo",
+            },
+          ],
+        },
+      ],
     });
 
-    console.log('usuarios', usuarios);
+    console.log("usuarios", usuarios);
 
-    const listaUsuarios = usuarios.map( u => (({
+    const listaUsuarios = usuarios.map((u) => ({
       id: u.id,
-      nombre: u.trabajador.nombres+" "+u.trabajador.apellidos,
+      nombre: u.trabajador.nombres + " " + u.trabajador.apellidos,
       email: u.email,
-      rol: u.trabajador?.cargo?.nombre
-    })))
+      rol: u.trabajador?.cargo?.nombre,
+    }));
 
     return listaUsuarios;
   }
@@ -47,16 +51,16 @@ class SequelizeUsuarioRepository extends UsuarioRepository {
   }
 
   async obtenerPorEmail(email) {
-  return await Usuario.findOne({
-    where: { email },
-    include: [
-      {
-        model: db.trabajadores,
-        as: "trabajador",        // <— alias EXACTO de la asociación
-      },
-    ],
-  });
-}
+    return await Usuario.findOne({
+      where: { email },
+      include: [
+        {
+          model: db.trabajadores,
+          as: "trabajador", // <— alias EXACTO de la asociación
+        },
+      ],
+    });
+  }
 
   async actualizarUsuario(id, usuarioData) {
     const usuario = await Usuario.findByPk(id); // Busca el usuario por ID
@@ -77,7 +81,6 @@ class SequelizeUsuarioRepository extends UsuarioRepository {
   }
 
   async actualizarIdChatTelegramUsuario(id, id_chat) {
-   
     const usuario = await Usuario.findByPk(id); // Busca el usuario por ID
     usuario.id_chat = id_chat;
     await usuario.save();
@@ -89,7 +92,28 @@ class SequelizeUsuarioRepository extends UsuarioRepository {
   }
 
   async obtenerPorTrabajadorId(trabajador_id) {
-    return await db.trabajadores.findByPk(trabajador_id);
+    return await db.usuarios.findOne({
+      where: { trabajador_id },
+    });
+  }
+
+  async obtenerTrabajadoresSinUsuario() {
+    const trabajadoresSinUsuario = await Trabajador.findAll({
+      include: [
+        {
+          model: Usuario,
+          as: "usuario", // 👈 alias exacto de tu asociación
+          required: false, // LEFT JOIN (no INNER JOIN)
+        },
+      ],
+      where: {
+        estado: "activo",
+        fecha_baja: null,
+        "$usuario.id$": null, // 👈 solo los que no tienen usuario
+      },
+    });
+
+    return trabajadoresSinUsuario
   }
 }
 
