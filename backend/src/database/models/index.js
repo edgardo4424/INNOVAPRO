@@ -245,6 +245,7 @@ const { BajasTrabajadores } = require("../../modules/dar_baja_trabajadores/infra
 db.bajas_trabajadores = BajasTrabajadores;
 
 // ✅ Solo se asocian los que tienen .associate()
+if(db.usuarios.associate) db.usuarios.associate(db);
 if (db.contactos.associate) db.contactos.associate(db);
 if (db.clientes.associate) db.clientes.associate(db);
 if (db.obras.associate) db.obras.associate(db);

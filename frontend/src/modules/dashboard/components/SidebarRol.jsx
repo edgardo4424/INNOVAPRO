@@ -70,7 +70,7 @@ const iconMap = {
 };
 
 const modulesByRole = {
-   Gerencia: [
+   CEO: [
       {
          group: "Centro de gestión ",
          items: [

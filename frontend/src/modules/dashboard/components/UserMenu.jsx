@@ -11,6 +11,7 @@ import { Bell, LogOut, Settings2, UserCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const UserMenu = ({ names, logout }) => {
+   console.log('names', names);
    const letter = names.charAt(0);
       const navigate = useNavigate();
 

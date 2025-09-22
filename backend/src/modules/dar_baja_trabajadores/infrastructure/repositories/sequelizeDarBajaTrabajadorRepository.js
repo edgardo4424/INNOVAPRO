@@ -1,5 +1,6 @@
-const { BajasTrabajadores } = require("../models/BajasTrabajadoresModel");
 const db = require("../../../../database/models");
+const { BajasTrabajadores } = require("../models/BajasTrabajadoresModel");
+
 const moment = require("moment");
 
 class SequelizeDarBajaTrabajadorRepository {
@@ -26,6 +27,9 @@ class SequelizeDarBajaTrabajadorRepository {
          {
             model: db.contratos_laborales,
             as: "contrato",
+            where: {
+              estado: true,
+            },
          }
       ]
    });
@@ -36,6 +40,7 @@ class SequelizeDarBajaTrabajadorRepository {
       const contratos = await db.contratos_laborales.findAll({
          where: {
             trabajador_id: baja.trabajador_id,
+            estado: true,
          },
          order: [["fecha_inicio", "ASC"]],
       });
@@ -186,6 +191,7 @@ async obtenerInformacionPdfLiquidacion(baja_trabajador_id, transaction = null){
     const respuesta_detalle_liquidacion = {
       id: resto.id,
       contrato_id: resto.contrato_id,
+      fecha_ingreso: resto.fecha_ingreso,
       fecha_baja: resto.fecha_baja,
       motivo: resto.motivo,
       observacion: resto.observacion,
@@ -205,8 +211,8 @@ async obtenerInformacionPdfLiquidacion(baja_trabajador_id, transaction = null){
 
     const respuesta = {
 
-      trabajador: trabajador_dado_de_baja.trabajador,
-
+      trabajador: trabajador_dado_de_baja.trabajador.dataValues,
+      contrato: trabajador_dado_de_baja.contrato.dataValues,
       filial: {
         id: contrato_laboral.empresa_proveedora.id,
         nombre: contrato_laboral.empresa_proveedora.razon_social,
@@ -215,9 +221,9 @@ async obtenerInformacionPdfLiquidacion(baja_trabajador_id, transaction = null){
       },
 
       detalle_liquidacion: respuesta_detalle_liquidacion,
-      gratificacion: gratificacionTrunca,
-      cts: ctsTrunca,
-      planilla_mensual: planillaMensualTrunca
+      gratificacion: gratificacionTrunca.dataValues,
+      cts: ctsTrunca.dataValues,
+      planilla_mensual: planillaMensualTrunca.dataValues
     };
 
     return {

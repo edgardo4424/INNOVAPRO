@@ -25,6 +25,10 @@ const BajasTrabajadores = sequelize.define(
         key: "id",
       },
     },
+     fecha_ingreso: {
+      type: DataTypes.DATEONLY,
+      allowNull: false
+    },
      fecha_baja: {
       type: DataTypes.DATEONLY,
       allowNull: false

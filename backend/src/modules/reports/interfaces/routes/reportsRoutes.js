@@ -14,6 +14,6 @@ router.get("/reportes", (req, res) => {
 });
 router.post("/reporte-factura", reportsController.reporteFactura);
 
-router.post("/liquidacion-pdf", liquidacionReporteController.generarPdfLiquidacion);
+router.get("/liquidacion-pdf/:id", liquidacionReporteController.generarPdfLiquidacion);
 
 module.exports = router;

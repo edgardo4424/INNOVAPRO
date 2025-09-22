@@ -1,4 +1,5 @@
 
+const db = require('../../../../../database/models');
 const { liquidacionTemplate } = require('../../../domain/pdfModels/liquidacion/liquidacionTemplate');
 const { PdfService } = require('../../../infrastructure/pdf/PdfService');
 
@@ -11,12 +12,12 @@ module.exports = async (baja_trabajador_id, darBajaTrabajadoresRepository) => {
 
     console.log('informacionLiquidacion', informacionLiquidacion);
 
-    if (!informacionLiquidacion) {
+    if (!informacionLiquidacion.respuesta.liquidacion) {
         return { codigo: 404, respuesta: { error: 'Liquidacion no encontrada' } };
     }
 
     // 2. Armar modelo PDF
-    const docDefinition = liquidacionTemplate(facturaObtenida);
+    const docDefinition = await liquidacionTemplate(informacionLiquidacion.respuesta.liquidacion);
 
     // 3. Generar PDF con servicio
     const pdfService = new PdfService();

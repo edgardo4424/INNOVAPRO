@@ -10,7 +10,8 @@ function tieneRol(rolesPermitidos = ["Administracion", "Gerencia"]) {
   
   // 🔹 Middleware específico para Gerencia
   function esGerente(req, res, next) {
-    if (!req.usuario || req.usuario.rol !== "Gerencia") {
+    console.log('req.usuario', req.usuario);
+    if (!req.usuario || req.usuario.rol !== "CEO") {
       return res.status(403).json({ mensaje: "Acceso denegado. Se requiere rol de Gerente." });
     }
     next();

@@ -34,7 +34,7 @@ export default function ModuloNavegacion() {
       "Registrar Cotización": FileEdit,
    };
    const modulesByRole = {
-      Gerencia: [
+      CEO: [
          { name: "Gestión de Usuarios", path: "/gestion-usuarios" },
          { name: "Gestión de Filiales de Innova", path: "/gestion-empresas" },
          { name: "Gestión de Clientes", path: "/gestion-clientes" },
