@@ -238,7 +238,7 @@ export default function AppRoutes() {
 
                      {/*    //************************INICIO-FACTURACION************************* */}
 
-                     <Route element={<RoleGuard roles={["CEO", "Ventas"]} />}>
+                     <Route element={<RoleGuard roles={["CEO", "Gerente de administración","Jefa de Almacén","Asistente Facturación","Contadora"]} />}>
 
                         <Route
                            path="facturacion/emitir/*"

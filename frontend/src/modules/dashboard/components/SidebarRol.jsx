@@ -174,7 +174,7 @@ const modulesByRole = {
       },
    ],
    //!Kimberly
-   CONTADORA:[
+   Contadora:[
       {
          group: "Facturación",
          items: [
@@ -187,7 +187,7 @@ const modulesByRole = {
       },
    ],
    //
-   "ASISTENTE FACTURACION":[
+   "Asistente Facturación":[
       {
          group: "Facturación",
          items: [
@@ -199,7 +199,7 @@ const modulesByRole = {
          ],
       },
    ],
-   "JEFA DE ALMACEN":[
+   "Jefa de Almacén":[
       {
          group: "Facturación",
          items: [
@@ -208,7 +208,7 @@ const modulesByRole = {
          ],
       },
    ],
-   "GERENTE DE ADMINISTRACION":[
+   "Gerente de administración":[
       {
          group: "Facturación",
          items: [
