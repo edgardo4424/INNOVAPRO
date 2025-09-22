@@ -17,6 +17,7 @@ import MultiempleoResumen from "../components/MultiempleoResumen";
 import MultiempleoModal from "../components/MultiempleoModal";
 import CertificadoQuintaModal from "../components/CertificadoQuintaModal";
 import SinPreviosModal from "../components/SinPreviosModal";
+import MasivoQuintaModal from "../components/MasivoQuintaModal";
 
 export default function CalculoQuintaCategoria() {
   const {
@@ -30,6 +31,7 @@ export default function CalculoQuintaCategoria() {
   const [openMulti, setOpenMulti] = useState(false);
   const [openCert, setOpenCert] = useState(false);
   const [openSP, setOpenSP] = useState(false);
+  const [openMasivo, setOpenMasivo] = useState(false);
 
   const abrirMulti = () => { setOpenMulti(true); handleChange("fuentePrevios", "AUTO"); };
   const abrirCert  = () => { setOpenCert(true); };
@@ -139,6 +141,10 @@ export default function CalculoQuintaCategoria() {
                   {loadingPreview ? "Calculando..." : "Calcular proyección"}
                 </Button>
 
+                <Button className="h-7 px-2 text-[11px]" variant="outline" onClick={() => setOpenMasivo(true)}>
+                  Cálculo masivo
+                </Button>
+
                 {yaExisteOficialEnMes ? (
                   <Button 
                     className="h-7 px-2 text-[11px]" 
@@ -228,6 +234,17 @@ export default function CalculoQuintaCategoria() {
             prefill={obtenerSinPreviosDelPreview(preview)}
             onSaved={onSoportesGuardado}
           />
+
+          <MasivoQuintaModal
+            open={openMasivo}
+            onClose={() => setOpenMasivo(false)}
+            defaultAnio={form.anio}
+            defaultMes={form.mes}
+            trabajadores={trabajadores}  
+            /* filiales={filialesGlobales}  // opcional; si no las pasas, el modal hace GET /filiales */
+            onDone={() => {/* refrescos si aplica */}}
+          />
+
         </div>
 
         {/* Derecha: flexible con un único scroll interno */}
