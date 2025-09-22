@@ -63,7 +63,7 @@ const PlanillaMensual = sequelize.define(
          allowNull: false,
       },
       fecha_ingreso: {
-         type: DataTypes.DATE,
+         type: DataTypes.DATEONLY,
          allowNull: false,
       },
       dias_labor: {

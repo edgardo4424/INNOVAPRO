@@ -237,6 +237,7 @@ export default function AppRoutes() {
                      </Route>
 
                      {/*    //************************INICIO-FACTURACION************************* */}
+
                      <Route element={<RoleGuard roles={["CEO", "Ventas"]} />}>
 
                         <Route
