@@ -261,6 +261,7 @@ export default function AppRoutes() {
                                  </BandejaProvider>
                                  }
                         />
+                        </Route>
 
                      </Route>
                      {/*    //************************FINAL-FACTURACION************************* */}
