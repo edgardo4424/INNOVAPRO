@@ -99,7 +99,7 @@ export default function TablaTareas({
                sortable: true,
                flex: 2,
                cellRenderer: (params) => {
-                  const valor = params.data?.usuario_solicitante?.nombre || "—";
+                  const valor = params.data?.usuario_solicitante?.trabajador?.nombres || "—";
                   return (
                      <TooltipProvider>
                         <Tooltip>
@@ -147,7 +147,7 @@ export default function TablaTareas({
                field: "tecnico_asignado.nombre",
                flex: 2,
                cellRenderer: (params) => {
-                  const nombre = params.data?.tecnico_asignado?.nombre || "—";
+                  const nombre = params.data?.tecnico_asignado?.trabajador?.nombres || "—";
                   return (
                      <div className="flex items-center gap-2 justify-start">
                         <ShieldUser className="w-4 h-4 text-neutral-700" />

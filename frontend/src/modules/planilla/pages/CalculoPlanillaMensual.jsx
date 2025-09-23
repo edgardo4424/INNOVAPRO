@@ -45,12 +45,40 @@ const CalculoPlanillaMensual = () => {
    // ?? Filtro para la peticion
    const [filtro, setFiltro] = useState({
       anio: new Date().getFullYear() + "",
-      mes: "01",
+      mes: new Date().toLocaleString("es-PE", { month: "2-digit" }),
       filial_id: "1",
    });
 
    const buscarPlanillaMensual = async () => {
       try {
+         const filial_selecionada=filiales.find((f)=>f.id==filtro.filial_id);
+         console.log(filial_selecionada);
+         
+         let sin_valor=false;
+         for (const importe of importes) {
+            if(importe.valor<1){
+               sin_valor=true
+            }
+         }
+         if (sin_valor) {
+            toast.warning(`Complete los importes del trabajador para la empresa:  ${filial_selecionada.razon_social}`);
+            setPlanillaMensualTipoPlanilla(viPlanillaMensual.planilla);
+            setDatosTotalesPlanilla({
+              sumatoria_sueldo_basico: 0,
+              sumatoria_sueldo_mensual: 0,
+              sumatoria_sueldo_bruto: 0,
+              sumatoria_sueldo_neto: 0,
+              sumatoria_saldo_por_pagar: 0,
+              sumatoria_essalud: 0,
+              sumatoria_vida_ley: 0,
+              sumatoria_sctr_salud: 0,
+              sumatoria_sctr_pension: 0,
+            }
+            )
+            setPlanillaMensualTipoRh(viPlanillaMensual.honorarios);
+            setDatosCalculo({});
+               return;
+            }
          const dia_fin_mes = new Date(filtro.anio, filtro.mes, 0).getDate();
          setLoading(true);
          const anio_mes_dia = `${filtro.anio}-${filtro.mes}-${dia_fin_mes}`;
@@ -73,6 +101,22 @@ const CalculoPlanillaMensual = () => {
          setDatosCalculo(res.datosCalculo);
       } catch (error) {
          console.log(error);
+         setPlanillaMensualTipoPlanilla(viPlanillaMensual.planilla);
+         setDatosTotalesPlanilla({
+           sumatoria_sueldo_basico: 0,
+           sumatoria_sueldo_mensual: 0,
+           sumatoria_sueldo_bruto: 0,
+           sumatoria_sueldo_neto: 0,
+           sumatoria_saldo_por_pagar: 0,
+           sumatoria_essalud: 0,
+           sumatoria_vida_ley: 0,
+           sumatoria_sctr_salud: 0,
+           sumatoria_sctr_pension: 0,
+         }
+         )
+         setPlanillaMensualTipoRh(viPlanillaMensual.honorarios);
+         setDatosCalculo({});
+         toast.error('Ocurrio un error al obtener la planilla.')
       } finally {
          setLoading(false);
       }

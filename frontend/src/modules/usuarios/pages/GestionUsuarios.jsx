@@ -22,6 +22,7 @@ export default function GestionUsuarios() {
       eliminarUsuario,
       usuariosPorPagina,
       setUsuariosPorPagina,
+      trabajadores
    } = useUsuarios();
 
    return (
@@ -29,7 +30,7 @@ export default function GestionUsuarios() {
          <ModuloNavegacion />
          {/* 🔍 Buscador + botón */}
          <div className="w-full max-w-7xl flex flex-row-reverse md:flex-row justify-between px-4 my-6 items-center gap-4">
-            <ModalAgregarUsuario onSubmit={agregarUsuario} />
+            <ModalAgregarUsuario onSubmit={agregarUsuario} trabajadores={trabajadores}/>
             <div className="relative flex-1 w-full md:max-w-80 ">
                <Input
                   type="text"
@@ -50,6 +51,7 @@ export default function GestionUsuarios() {
             usuarios={usuariosPaginados}
             onEliminar={eliminarUsuario}
             onSubmit={guardarEdicion}
+
          />
 
          {/* 📌 Paginación */}

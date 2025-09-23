@@ -8,11 +8,14 @@ const unir_planillas_mensuales = (
    PORCENTAJE_DESCUENTO_AFP,
    PORCENTAJE_DESCUENTO_SEGURO,
    totalAdelantosSueldo, 
-   adelantos_ids
+   adelantos_ids,
+   PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT,
+   PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA,
+   PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA,
+   PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO
 ) => {
    const grupo_planilla = trabajador_planilla_model();
    grupo_planilla.info_detalle = planillas_obtenidas;
-   // if(trabajador.id==7)console.log('La edad de valeri es',trabajador);
    
    for (const p of planillas_obtenidas) {
       grupo_planilla.trabajador_id = p.trabajador_id;
@@ -88,6 +91,39 @@ const unir_planillas_mensuales = (
       ).toFixed(2)
    );
 
+   
+   
+   if (trabajador.comision_afp) {
+       switch (trabajador.tipo_afp) {
+         case "HABITAT":
+           grupo_planilla.comision = +(
+             (grupo_planilla.sueldo_bruto * PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT) /
+             100
+           ).toFixed(2);
+           break;
+         case "INTEGRA":
+           grupo_planilla.comision = +(
+             (grupo_planilla.sueldo_bruto * PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA) /
+             100
+           ).toFixed(2);
+           break;
+         case "PRIMA":
+           grupo_planilla.comision = +(
+             (grupo_planilla.sueldo_bruto * PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA) /
+             100
+           ).toFixed(2);
+           break;
+         case "PROFUTURO":
+           grupo_planilla.comision = +(
+             (grupo_planilla.sueldo_bruto * PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO) /
+             100
+           ).toFixed(2);
+           break;
+         default:
+           break;
+       }
+   }
+
    if (trabajador.sistema_pension === "ONP") {
       grupo_planilla.onp = (
          grupo_planilla.sueldo_bruto *
@@ -112,7 +148,8 @@ const unir_planillas_mensuales = (
       Number(grupo_planilla.afp_ap_oblig) +
       Number(grupo_planilla.onp) +
       Number(grupo_planilla.seguro) +
-      Number(grupo_planilla.quinta_categoria)
+      Number(grupo_planilla.quinta_categoria)+
+      Number(grupo_planilla.comision)
    ).toFixed(2);
 
    grupo_planilla.sueldo_neto = (

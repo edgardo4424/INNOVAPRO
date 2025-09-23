@@ -109,7 +109,7 @@ const Factura = sequelize.define(
             ),
             allowNull: true,
         },
-        observacion: {
+        Observacion: {
             type: DataTypes.TEXT,
             allowNull: true,
         },

@@ -72,16 +72,16 @@ const DetalleForm = () => {
             <h1 className='text-2xl font-bold py-3'>Detalle de Producto</h1>
             <ModalProducto open={open} setOpen={setOpen} />
             <TablaDetalles open={open} setOpen={setOpen} />
-            <div className="flex justify-between px-4 gap-4 py-4 items-start">
-                <div className="flex-1">
+            <div className="flex flex-col md:flex-row justify-between px-4 gap-4 py-4 md:items-start">
+                <div className="flex-1 mx-auto md:mx-0">
                     <ExcelUploader onDataLoaded={handleExcelDataLoaded} handleSubirDatos={handleSubirDatos} />
                 </div>
 
                 <div className="flex flex-col gap-x-2 gap-y-4 bg-gray-200 rounded-md p-4">
-                    <h1 className="text-xl font-bold max-w-[350px] py-2">
+                    <h1 className="text-md md:text-xl font-bold max-w-[350px] py-2">
                         Selecciona con que Unidad de Peso se trabajara esta Guia
                     </h1>
-                    <div className="flex gap-x-4">
+                    <div className="flex flex-col md:flex-row gap-x-4">
                         <Label
                             htmlFor="guia_Envio_Und_Peso_Total"
                             className="min-w-[120px] block text-sm font-semibold text-gray-700 text-left mb-1"
@@ -108,7 +108,7 @@ const DetalleForm = () => {
                             </SelectContent>
                         </Select>
                     </div>
-                    <div className="flex gap-x-4">
+                    <div className="flex gap-x-4 flex-col md:flex-row">
                         <Label
                             htmlFor="guia_Envio_Peso_Total"
                             className="min-w-[120px] block text-sm font-semibold text-gray-700 text-left mb-1"

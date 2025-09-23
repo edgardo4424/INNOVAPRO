@@ -8,6 +8,7 @@ import planillaMensualService from "../services/planillaMensualService";
 import { viPlanillaMensual } from "../utils/valorInicial";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import ExportExcel from "@/shared/components/exportarExcel";
 
 const HistoricoPlanillaMensual = () => {
    const [filiales, setFiliales] = useState([]);
@@ -28,7 +29,7 @@ const HistoricoPlanillaMensual = () => {
    // ?? Filtro para la peticion
    const [filtro, setFiltro] = useState({
       anio: new Date().getFullYear() + "",
-      mes: "01",
+      mes:new Date().toLocaleString("es-PE", { month: "2-digit" }),
       filial_id: "1",
    });
 
@@ -57,10 +58,16 @@ const HistoricoPlanillaMensual = () => {
                pl.push(p);
             }
          }
+         
 
          setPlanillaMensualTipoPlanilla(pl);
          setPlanillaMensualTipoRh(rh);
-         toast.success("Historico obtenido.")
+         if(pl.length<1&&rh.length<1){
+            toast.info("Aun no se ha guardado la planilla en este mes.")
+         }
+         else{
+            toast.success("Historico obtenido.")
+         }
       } catch (error) {
         console.log(error);
         
@@ -69,6 +76,7 @@ const HistoricoPlanillaMensual = () => {
          setLoading(false);
       }
    };
+   const [libroExcel,setLibroExcel]=useState(null)
 
    useEffect(() => {
       const obtenerFiliales = async () => {
@@ -88,10 +96,27 @@ const HistoricoPlanillaMensual = () => {
       obtenerFiliales();
    }, []);
 
+   useEffect(()=>{
+      if(planillaMensualTipoPlanilla.length>0){
+         const hojas=[
+            { nombre_libro: "Planilla", 
+               datos: planillaMensualTipoPlanilla,
+               columnas: [{ key: "asig_fam", label: "Asignación" }] ,
+               excluir: ["id","trabajador_id","contrato_id"]},
+            
+         ]
+         if(planillaMensualTipoRh.length>0){
+            hojas.push({ nombre_libro: "Honorarios", datos: planillaMensualTipoRh ,excluir: ["id","trabajador_id"]})
+         }
+         setLibroExcel(hojas)
+      }
+
+   },[planillaMensualTipoPlanilla,planillaMensualTipoRh])
+
    const renderTipoPlanilla = () => {
       if (planillaMensualTipoPlanilla) {
          return (
-            <div className="w-full px-7">
+            <div className="w-full px-7 ">
                <TablePlanillaMensual
                   planillaMensualTipoPlanilla={planillaMensualTipoPlanilla}
                />
@@ -103,7 +128,7 @@ const HistoricoPlanillaMensual = () => {
    const renderTipoRh = () => {
       if (planillaMensualTipoRh) {
          return (
-            <div className="w-full px-7">
+            <div className="w-full px-7 ">
                <TableRHMensual planillaMensualTipoRh={planillaMensualTipoRh} />
             </div>
          );
@@ -111,17 +136,19 @@ const HistoricoPlanillaMensual = () => {
    };
 
    return (
-      <div className="min-h-full flex-1  flex flex-col items-center">
-         <div className="w-full px-4 max-w-7xl py-6 flex justify-between">
-            <div className="flex flex-col w-full">
+      <div className="min-h-full flex-1  flex flex-col items-center space-y-6">
+         <div className="w-full px-7 flex justify-between">
                <Filtro
                   filiales={filiales}
                   filtro={filtro}
                   setFiltro={setFiltro}
                   Buscar={buscarPlanillaMensual}
                />
-            </div>
          </div>
+
+      {libroExcel&&<ExportExcel nombreArchivo={`Planilla_mensual_${filtro.mes||"x"}.xlsx`} hojas={libroExcel}/>}
+         
+
          {loading ? (
             <div className="w-full px-20  max-w-8xl min-h-[50vh] flex items-center">
                <div className="w-full flex flex-col items-center justify-center">
@@ -135,6 +162,7 @@ const HistoricoPlanillaMensual = () => {
                {renderTipoRh()}
             </>
          )}
+         
       </div>
    );
 };

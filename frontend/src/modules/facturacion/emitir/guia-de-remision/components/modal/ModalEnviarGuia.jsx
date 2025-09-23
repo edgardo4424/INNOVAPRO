@@ -152,7 +152,7 @@ const ModalEnviarGuia = ({ open, setOpen, ClosePreviu, guiaTransporteValida }) =
             <AlertDialogTrigger asChild>
                 <Button>
                     <ClipboardPlus />
-                    <span className="hidden md:block">
+                    <span className="">
                         Emitir Guia
                     </span>
                 </Button>

@@ -19,7 +19,7 @@ import { toast } from "sonner";
 export default function ModalImportesTrabajador({
    importes = [],
    setImportes,
-   filiales,
+   filiales=[],
    filial_id,
 }) {
    const [isOpen, setIsOpen] = useState(false);
@@ -30,6 +30,8 @@ export default function ModalImportesTrabajador({
          )
       );
    };
+   
+   
 
    const fetchDataMantenimiento = async (id) => {
       try {

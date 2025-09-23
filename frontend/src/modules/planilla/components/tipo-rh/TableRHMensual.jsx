@@ -30,7 +30,7 @@ const TablePlanillaMensual = ({ planillaMensualTipoRh, total }) => {
 
 
   return (
-    <div className="w-full overflow-x-auto p-5 mb-10 flex flex-col bg-gray-100 border-2 rounded-xl shadow-xl">
+    <div className="w-full overflow-x-auto p-5  flex flex-col bg-gray-100 border-2 rounded-xl shadow-xl">
       <h1 className="text-2xl font-bold pb-6">Recibo por honorarios</h1>
       <div className="relative">
         <Input

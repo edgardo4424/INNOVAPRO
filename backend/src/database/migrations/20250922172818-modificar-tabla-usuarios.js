@@ -6,6 +6,18 @@ module.exports = {
     await queryInterface.removeColumn("usuarios", "nombre");
     await queryInterface.removeColumn("usuarios", "rol");
     await queryInterface.removeColumn("usuarios", "telefono");
+
+    // Añadir columnas
+    await queryInterface.addColumn('usuarios', 'trabajador_id', {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'trabajadores',
+        key: 'id'
+      },
+      onDelete: 'RESTRICT',
+      onUpdate: 'CASCADE'
+    });
   },
 
   async down(queryInterface, Sequelize) {
@@ -29,5 +41,7 @@ module.exports = {
     await queryInterface.addColumn("usuarios", "telefono", {
       type: Sequelize.STRING(10),
     });
+
+    await queryInterface.removeColumn('usuarios', 'trabajador_id');
   },
 };

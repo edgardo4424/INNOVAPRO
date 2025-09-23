@@ -1,4 +1,4 @@
-const { utils } = require("../../utils/utils");
+const { utils } = require('../../../../utils/utils')
 
 function pdfCuotasFactura(factura) {
     // 1. Parsear cuotas_Real si viene como string JSON
@@ -21,16 +21,16 @@ function pdfCuotasFactura(factura) {
     // Cabecera de tabla
     const headerRow = [
         { text: "N° CUOTA", style: "paymentTableHeader", alignment: "center" },
+        { text: "MONTO", style: "paymentTableHeader", alignment: "center" },
         { text: "FECHA DE VENCIMIENTO", style: "paymentTableHeader", alignment: "center" },
-        { text: "MONTO", style: "paymentTableHeader", alignment: "center" }
     ];
 
     // Filas de cuotas
     const bodyRows = cuotas.length
         ? cuotas.map((pago, idx) => ([
             { text: String(pago.cuota ?? idx + 1), style: "paymentTableBody", alignment: "center" },
+            { text: utils.formatCurrency(pago.monto), style: "paymentTableBody", alignment: "center" },
             { text: utils.formatDateTime(pago.fecha_Pago), style: "paymentTableBody", alignment: "center" },
-            { text: utils.formatCurrency(pago.monto), style: "paymentTableBody", alignment: "right" }
         ]))
         : [[
             { text: "—", colSpan: 3, alignment: "center", style: "paymentTableEmpty" },
@@ -43,7 +43,7 @@ function pdfCuotasFactura(factura) {
             {
                 columns: [
                     { text: "PLAN DE PAGO", style: "paymentPlanHeader" },
-                    { text: `TOTAL DE CUOTAS: ${cuotas.length}`, style: "paymentPlanInfo", alignment: "right" }
+                    { text: `${factura.forma_pago_facturas[0].tipo.toUpperCase() === "CREDITO" ? `TOTAL DE CUOTAS: ${cuotas.length}` : ""}`, style: "paymentPlanInfo", alignment: "right" }
                 ],
                 margin: [0, 10, 0, 5]
             },

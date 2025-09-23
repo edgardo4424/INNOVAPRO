@@ -257,7 +257,7 @@ const ChoferPrivadoForm = () => {
                 <button
                     type="button"
                     onClick={addChofer}
-                    className="px-2 flex justify-center items-center gap-x-2 py-2 cursor-pointer bg-green-600 text-white font-medium rounded-md hover:bg-green-700 w-full md:w-auto"
+                    className="px-2 flex justify-center items-center gap-x-2 py-2 cursor-pointer bg-innova-orange text-white font-medium rounded-md  w-full md:w-auto"
                 >
                     <UserRoundPlus className="size-6 md:size-6" />
                     <span className="w-full text-center text-sm">

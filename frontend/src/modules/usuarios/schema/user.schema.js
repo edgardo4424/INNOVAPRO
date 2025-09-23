@@ -3,11 +3,6 @@ import * as yup from "yup";
 
 export const obtenerUsuarioSchema = (esCrear = true) =>
    yup.object({
-      nombre: yup.string().required("El nombre es obligatorio").min(3),
-      telefono: yup
-         .string()
-         .required("El teléfono es obligatorio")
-         .matches(/^[0-9]{9}$/, "Debe tener 9 dígitos"),
       email: yup.string().required("El correo es obligatorio").email(),
       password: esCrear
          ? yup
@@ -19,5 +14,5 @@ export const obtenerUsuarioSchema = (esCrear = true) =>
                  "Debe incluir mayúscula, minúscula y número"
               )
          : yup.string().notRequired(),
-      rol: yup.string().required("Debe seleccionar un rol"),
+      trabajador_id:esCrear? yup.string().required("Debe seleccionar un TRABAJADOR."):yup.string().notRequired(),
    });

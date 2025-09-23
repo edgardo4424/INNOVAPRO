@@ -52,7 +52,7 @@ export default function DetalleTarea({
 
 
    const puedeGenerarDespiece =
-    user?.rol === "Oficina Técnica" &&
+    (user?.rol === "Jefe de OT"|| user?.rol === "OT" ) &&
     tarea.estado === "En proceso" &&
     tarea.tipoTarea === "Apoyo Técnico" &&
     tarea.detalles?.apoyoTecnico?.includes("Despiece");
@@ -305,7 +305,7 @@ export default function DetalleTarea({
             
             {/* Footer - Acciones */}
             <section className="px-6 py-4 bg-gray-50 border-t grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 rounded-b-lg flex-shrink-0">
-               {user.rol === "Oficina Técnica" && (
+               {(user.rol === "Jefe de OT"||user.rol === "OT")  && (
                   <>
                      {tarea.estado === "Pendiente" && !tarea.asignadoA && (
                         <Button

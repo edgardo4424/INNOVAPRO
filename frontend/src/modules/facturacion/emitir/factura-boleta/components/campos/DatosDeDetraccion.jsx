@@ -97,7 +97,7 @@ const DatosDeDetraccion = () => {
     }, [sub_Total, detraccion.detraccion_percent]);
 
     useEffect(() => {
-        if (filiales.length > 0) {
+        if (filiales.length > 0 && factura.empresa_Ruc != "") {
             const filialEncontrada = filiales.find(
                 (filial) => filial.ruc === factura.empresa_Ruc,
             );

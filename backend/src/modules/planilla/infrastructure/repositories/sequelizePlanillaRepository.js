@@ -1174,7 +1174,6 @@ class SequelizePlanillaRepository {
     let MONTO_QUINCENAS = 0;
     if (quincenas.length >= 1) {
       for (const q of quincenas) {
-        console.log("Monto que viene de la peticion", q.total_pagar);
         MONTO_QUINCENAS += Number(q.total_pagar);
       }
     }
@@ -1189,6 +1188,10 @@ class SequelizePlanillaRepository {
       PORCENTAJE_DESCUENTO_AFP,
       PORCENTAJE_DESCUENTO_ONP,
       PORCENTAJE_DESCUENTO_SEGURO,
+      PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT,
+      PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA,
+      PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA,
+      PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO
     } = await datosMantPM();
     //Todo: validamos que el mes que se recibe se integrara la grati o cts
     const { periodocts, periodograti } = calcular_periodo_grati_cts(fin_de_mes);
@@ -1218,8 +1221,7 @@ class SequelizePlanillaRepository {
     if (!response_trabajador) throw new Error("El trabajador no existe.");
     //Se valido que el trabajador exista
     const trabajador = response_trabajador.get({ plain: true });
-    // console.log("Contratos laborales del trabjador.");
-    // console.log(trabajador.contratos_laborales);
+
 
     const contratoInicial = filtrarContratosSinInterrupcion(
       trabajador.contratos_laborales
@@ -1329,13 +1331,6 @@ class SequelizePlanillaRepository {
       // prettier-ignore
       const DESCUENTO_DIAS=(((DIAS_FIJOS-DIAS_NO_CONTRATADOS)-DIAS_VACACIONES)-licencia_con_goce)-faltas_justificadas;
       planilla.sueldo_del_mes = ((c.sueldo / 30) * DESCUENTO_DIAS).toFixed(2);
-      if (trabajador.id == 7) {
-        console.log(
-          "Descuentos valentina y c.sueldo",
-          DIAS_NO_CONTRATADOS,
-          c.sueldo
-        );
-      }
       if (trabajador.asignacion_familiar) {
         planilla.asig_fam = MONTO_ASIGNACION_FAMILIAR;
       }
@@ -1368,10 +1363,6 @@ class SequelizePlanillaRepository {
 
       // prettier-ignore
       planilla.faltas_segunda_quincena = ((c.sueldo / DIAS_LABORALES) * FALTAS_SEGUNDA_Q).toFixed(2);
-      //  console.log(
-      //     "DIAS LABORALES JULIO DEPENDE EL AREA DEL TRABJADOR: ",
-      //     DIAS_LABORALES
-      //  );
 
       const area_id = trabajador.cargo.area.id;
       const determinar_desc_tardanza_area = [6, 2].includes(area_id);
@@ -1418,9 +1409,7 @@ class SequelizePlanillaRepository {
         "simple",
         fin_de_mes
       );
-    if (trabajador.id == 7) {
-      console.log("adelantos valentina", planillas_obtenidas);
-    }
+
     const SUMATORIA_PLANILLA = unir_planillas_mensuales(
       planillas_obtenidas,
       trabajador,
@@ -1428,7 +1417,11 @@ class SequelizePlanillaRepository {
       PORCENTAJE_DESCUENTO_AFP,
       PORCENTAJE_DESCUENTO_SEGURO,
       totalAdelantosSueldo,
-      adelantos_ids
+      adelantos_ids,
+      PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT,
+      PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA,
+      PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA,
+      PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO
     );
 
     return SUMATORIA_PLANILLA;

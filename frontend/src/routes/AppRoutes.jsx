@@ -25,6 +25,7 @@ import RoleGuard from "./rol.guard";
 
 import PlanillaMensual from "@/modules/planilla/pages/CalculoPlanillaMensual";
 import GestionPlanillaMensual from "@/modules/planilla/pages/GestionPlanillaMensual";
+import { BandejaProvider } from "@/modules/facturacion/context/BandejaContext";
 
 // Lazy load components
 const Login = lazy(() => import("@/modules/auth/pages/Login"));
@@ -125,7 +126,7 @@ export default function AppRoutes() {
 
                      <Route index element={<DashboardHome />} />
 
-                     <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                     <Route element={<RoleGuard roles={["CEO"]} />}>
                         <Route
                            path="gestion-usuarios"
                            element={<GestionUsuarios />}
@@ -166,7 +167,7 @@ export default function AppRoutes() {
                      </Route>
 
                      <Route
-                        element={<RoleGuard roles={["Gerencia", "Ventas"]} />}
+                        element={<RoleGuard roles={["CEO", "Técnico Comercial"]} />}
                      >
                         <Route
                            path="gestion-clientes"
@@ -196,11 +197,19 @@ export default function AppRoutes() {
                               </WizardProvider>
                            }
                         />
+                        <Route
+                           path="/cotizaciones/wizard/:id"
+                           element={
+                              <WizardProvider>
+                                 <RegistrarCotizacionWizard />
+                              </WizardProvider>
+                           }
+                        />
                      </Route>
 
                      <Route
                         element={
-                           <RoleGuard roles={["Gerencia", "Administracion", "Ventas"]} />
+                           <RoleGuard roles={["CEO", "Gerente de administración ", "Técnico Comercial"]} />
                         }
                      >
                         <Route
@@ -212,9 +221,9 @@ export default function AppRoutes() {
                            }
                         />
                      </Route>
-
+                     //! -- Rutas asignada para OT 
                      <Route
-                        element={<RoleGuard roles={["Gerencia", "Ventas", "Oficina Técnica"]} />}
+                        element={<RoleGuard roles={["CEO", "Técnico Comercial", "Jefe de OT","OT"]} />}
                      >
                         <Route
                            path="centro-atencion"
@@ -224,20 +233,12 @@ export default function AppRoutes() {
                            path="stock/piezas"
                            element={<GestionStockPiezas />}
                         />
-
-                        <Route
-                           path="/cotizaciones/wizard/:id"
-                           element={
-                              <WizardProvider>
-                                 <RegistrarCotizacionWizard />
-                              </WizardProvider>
-                           }
-                        />
-
                      </Route>
 
                      {/*    //************************INICIO-FACTURACION************************* */}
-                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
+
+
+                     <Route element={<RoleGuard roles={["CEO", "Gerente de administración","Jefa de Almacén","Asistente Facturación","Contadora"]} />}>
 
                         <Route
                            path="facturacion/emitir/*"
@@ -250,17 +251,23 @@ export default function AppRoutes() {
                            path="facturacion/bandeja/*"
                            element={<BandejaRoutes />}
                         />
+                        <Route element={<RoleGuard roles={["CEO", "Gerente de administración","Asistente Facturación","Contadora"]} />}>
 
-                        <Route
+                           <Route
                            path="facturacion/borradores"
-                           element={<Borrador />}
+                           element={
+                                 <BandejaProvider>
+                                    <Borrador />
+                                 </BandejaProvider>
+                                 }
                         />
+                        </Route>
 
                      </Route>
                      {/*    //************************FINAL-FACTURACION************************* */}
 
 
-                     <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                     <Route element={<RoleGuard roles={["CEO"]} />}>
                         <Route
                            path="crear-trabajador"
                            element={<CrearTrabajador />}
@@ -268,7 +275,7 @@ export default function AppRoutes() {
                      </Route>
 
                      <Route
-                        element={<RoleGuard roles={["Gerencia", "Administracion"]} />}
+                        element={<RoleGuard roles={["CEO", "Administracion"]} />}
                      >
                         <Route
                            path="condiciones"
@@ -287,13 +294,13 @@ export default function AppRoutes() {
 
                      <>
                         {/* Rutas para el modulo de aistencia */}
-                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                        <Route element={<RoleGuard roles={["CEO"]} />}>
                            <Route
                               path="asistencia/:tipo"
                               element={<GestionAsistencia />}
                            />
                         </Route>
-                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                        <Route element={<RoleGuard roles={["CEO"]} />}>
                            <Route
                               path="planilla-quincenal"
                               element={<GestionPlanillaQuincenal />}
@@ -303,13 +310,13 @@ export default function AppRoutes() {
                               element={<GestionPlanillaMensual />}
                            />
                         </Route>
-                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                        <Route element={<RoleGuard roles={["CEO"]} />}>
                            <Route
                               path="vacaciones"
                               element={<GestionVacaciones />}
                            />
                         </Route>
-                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                        <Route element={<RoleGuard roles={["CEO"]} />}>
 
                            <Route path="bonos" element={<GestionBonos />} />
                            <Route path="adelanto-sueldo" element={<GestionAdelantoSueldo />} />

@@ -38,8 +38,7 @@ const OPCIONES_DETALLE = [
 ];
 
 export default function ModalDetalleExtra({ open, setOpen }) {
-  const { setDetallesExtra } = useFacturaBoleta();
-  const [listaDetalles, setListaDetalles] = useState([]);
+  const { detallesExtra, setDetallesExtra } = useFacturaBoleta();
   const [showError, setShowError] = useState(false); // Nuevo estado para controlar el mensaje de error
 
   const closeModal = () => {
@@ -47,41 +46,41 @@ export default function ModalDetalleExtra({ open, setOpen }) {
   };
 
   const addDetalle = () => {
-    setListaDetalles([...listaDetalles, { detalle: "", valor: "" }]);
+    setDetallesExtra([...detallesExtra, { detalle: "", valor: "" }]);
     setShowError(false); // Ocultar el error al agregar un nuevo campo
   };
 
   const removeDetalle = (index) => {
-    const nuevaLista = listaDetalles.filter((_, i) => i !== index);
-    setListaDetalles(nuevaLista);
+    const nuevaLista = detallesExtra.filter((_, i) => i !== index);
+    setDetallesExtra(nuevaLista);
     setShowError(false); // Ocultar el error al eliminar un campo
   };
 
   const handleInputChange = (e, index) => {
     const { name, value } = e.target;
-    const nuevaLista = listaDetalles.map((item, i) =>
+    const nuevaLista = detallesExtra.map((item, i) =>
       i === index ? { ...item, [name]: value.toUpperCase() } : item,
     );
-    setListaDetalles(nuevaLista);
+    setDetallesExtra(nuevaLista);
     setShowError(false); // Ocultar el error al editar un campo
   };
 
   const handleSelectChange = (value, index) => {
-    const nuevaLista = listaDetalles.map((item, i) =>
+    const nuevaLista = detallesExtra.map((item, i) =>
       i === index ? { ...item, detalle: value } : item,
     );
-    setListaDetalles(nuevaLista);
+    setDetallesExtra(nuevaLista);
     setShowError(false); // Ocultar el error al cambiar la opción del select
   };
 
   const saveChanges = () => {
     // Filtrar los detalles incompletos antes de guardar
-    const detallesCompletos = listaDetalles.filter(
+    const detallesCompletos = detallesExtra.filter(
       (item) => item.detalle.trim() !== "" && item.valor.trim() !== "",
     );
 
     // Opcional: mostrar un mensaje de error si hay campos vacíos
-    const hayCamposVacios = listaDetalles.some(
+    const hayCamposVacios = detallesExtra.some(
       (item) => item.detalle.trim() === "" || item.valor.trim() === "",
     );
 
@@ -105,7 +104,7 @@ export default function ModalDetalleExtra({ open, setOpen }) {
       <AlertDialogContent className="flex flex-col gap-4 p-6 md:min-w-3xl">
         <button
           className="absolute top-4 right-4 cursor-pointer text-gray-500 hover:text-red-600"
-          onClick={closeModal}
+          onClick={saveChanges}
           aria-label="Cerrar"
         >
           <X />
@@ -124,7 +123,7 @@ export default function ModalDetalleExtra({ open, setOpen }) {
         )}
 
         <div className="flex max-h-96 flex-col gap-4 overflow-y-auto pr-2">
-          {listaDetalles.map((detalle, i) => (
+          {detallesExtra.map((detalle, i) => (
             <div key={i} className="grid grid-cols-7 items-end gap-4 py-2">
               <div className="col-span-full flex flex-col gap-1 sm:col-span-3">
                 <Label htmlFor={`detalle-${i}`}>Nombre</Label>
@@ -145,7 +144,7 @@ export default function ModalDetalleExtra({ open, setOpen }) {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="col-span-3 flex flex-col gap-2">
+              <div className="col-span-5 md:col-span-3 flex flex-col gap-2">
                 <Label htmlFor={`valor-${i}`}>Valor</Label>
                 <Input
                   id={`valor-${i}`}

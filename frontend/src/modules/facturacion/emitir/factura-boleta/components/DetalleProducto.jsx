@@ -1,5 +1,5 @@
 import ModalDetalleExtra from "@/modules/facturacion/components/modal/ModalDetallesExtra";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFacturaBoleta } from "../../../context/FacturaBoletaContext";
 
 const DetalleProducto = () => {
@@ -11,20 +11,48 @@ const DetalleProducto = () => {
 
   let subTotalConIgv = factura.total_Impuestos + factura.monto_Oper_Gravadas;
 
-  const handleObservacion = (e) => {
-    setFactura((prevFactura) => ({
-      ...prevFactura,
-      observacion: e.target.value.toUpperCase(),
-    }));
-  };
+    const handleInputChange = useRef(
+      (e) => {
+        const { name, value } = e.target;
+        setFactura((prevValores) => ({
+          ...prevValores,
+          Observacion: value.toUpperCase(),
+        }));
+      }
+    ).current;
+  
+    useEffect(() => {
+      const handleInput = (e) => {
+        handleInputChange(e);
+      };
+      const debouncedHandleInput = debounce(handleInput, 500);
+      const inputElement = document.querySelector("input");
+      inputElement.addEventListener("input", debouncedHandleInput);
+      return () => {
+        inputElement.removeEventListener("input", debouncedHandleInput);
+      };
+    }, []);
+  
+    const debounce = (fn, delay) => {
+      let timerId = null;
+      return function (...args) {
+        if (timerId) {
+          clearTimeout(timerId);
+        }
+        timerId = setTimeout(() => {
+          fn(...args);
+          timerId = null;
+        }, delay);
+      };
+    };
 
   return (
-    <div className="flex w-full gap-6">
+    <div className="flex w-full flex-col md:flex-row md:gap-6 lg:px-8">
       {/* Sección Izquierda - Observaciones y Detalles Extra */}
-      <div className="flex w-7/12 flex-col items-start py-6">
+      <div className="flex w-full flex-col items-start py-6 md:w-7/12">
         {/* Observaciones */}
         <div className="mb-6 flex w-full flex-col items-start">
-          <h2 className="mb-3 flex items-center text-xl font-semibold text-gray-800">
+          <h2 className="mb-3 flex items-center text-lg font-semibold text-gray-800 md:text-xl">
             <span className="mr-3 h-6 w-1 rounded-full bg-blue-500"></span>
             Observación:
           </h2>
@@ -33,15 +61,15 @@ const DetalleProducto = () => {
             id=""
             className="h-32 w-full resize-none rounded-lg border border-gray-300 bg-white p-4 placeholder-gray-400 transition-all duration-200"
             placeholder="Ingrese observación adicional para el documento..."
-            onChange={handleObservacion}
-            value={factura.observacion}
+            onChange={handleInputChange}
+            value={factura.Observacion}
           ></textarea>
         </div>
 
         {/* Detalles Extra */}
         <div className="w-full">
           <div className="flex items-center gap-x-4 pb-4">
-            <h2 className="flex items-center text-xl font-semibold text-gray-800">
+            <h2 className="flex items-center text-lg font-semibold text-gray-800 md:text-xl">
               <span className="mr-3 h-6 w-1 rounded-full bg-green-500"></span>
               Detalles Extra:
             </h2>
@@ -73,11 +101,11 @@ const DetalleProducto = () => {
       </div>
 
       {/* Sección Derecha - Resumen de Totales */}
-      <div className="w-5/12 py-6">
-        <div className="space-y-1 rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-6">
+      <div className="w-full pt-6 md:w-5/12">
+        <div className="space-y-1 rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 px-5 py-3">
           {/* Encabezado */}
           <div className="mb-4 border-b border-gray-200 pb-3">
-            <h3 className="flex items-center text-lg font-bold text-gray-800">
+            <h3 className="flex items-center text-lg font-bold text-gray-800 md:text-xl">
               <span className="mr-3 h-6 w-2 rounded-full bg-gradient-to-b from-blue-500 to-blue-600"></span>
               Resumen Financiero
             </h3>
@@ -150,11 +178,11 @@ const DetalleProducto = () => {
           </div>
 
           {/* Footer con gradiente sutil */}
-          <div className="mt-4 border-t border-gray-200 pt-3">
+          {/* <div className="mt-4 border-t border-gray-200 pt-3">
             <div className="text-center text-xs text-gray-500">
               Montos calculados automáticamente
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

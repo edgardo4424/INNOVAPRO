@@ -3,6 +3,7 @@ import { Building2, Eye, FileText, ReceiptText, Tag, X } from "lucide-react";
 import { useState } from "react";
 import { formatearFecha } from "../../../../utils/formatearFecha";
 import EnviarNota from "../EnviarNota";
+import { getTipoDocCliente } from "@/modules/facturacion/utils/formateos";
 
 const codigosMotivoCredito = [
   {
@@ -67,13 +68,6 @@ const codigosMotivosDebito = [
   },
 ];
 
-const tipoDocumentoCliente = {
-  1: "DNI",
-  6: "RUC",
-  7: "Pasaporte",
-  A: "Cédula diplomática de identidad",
-  // Puedes agregar más códigos si los necesitas
-};
 
 const tipoOperacion = {
   "0101": "Venta Interna",
@@ -115,9 +109,6 @@ export default function ModalEmitirNota() {
     }
   };
 
-  const getTipoDocClienteLabel = (codigo) => {
-    return tipoDocumentoCliente[codigo] || "Desconocido";
-  };
 
   const getTipoOperacionLabel = (codigo) => {
     return tipoOperacion[codigo] || "Desconocido";
@@ -241,7 +232,7 @@ export default function ModalEmitirNota() {
                     </div>
                     <div>
                       <p className="font-semibold text-gray-600">Cliente:</p>
-                      <p className="text-gray-800">{`${getTipoDocClienteLabel(notaCreditoDebito.cliente_Tipo_Doc)} - ${notaCreditoDebito.cliente_Num_Doc}`}</p>
+                      <p className="text-gray-800">{`${getTipoDocCliente(notaCreditoDebito.cliente_Tipo_Doc)} - ${notaCreditoDebito.cliente_Num_Doc}`}</p>
                     </div>
                     <div>
                       <p className="font-semibold text-gray-600">

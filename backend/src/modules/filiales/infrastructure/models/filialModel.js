@@ -27,8 +27,12 @@ const Filial = sequelize.define(
          type: DataTypes.STRING,
          allowNull: false,
       },
+      tipo_documento: {
+         type: DataTypes.ENUM("DNI", "CE", "Pasaporte"),
+         allowNull: false,
+      },
       dni_representante: {
-         type: DataTypes.STRING(8),
+         type: DataTypes.STRING(40),
          allowNull: false,
       },
       cargo_representante: {

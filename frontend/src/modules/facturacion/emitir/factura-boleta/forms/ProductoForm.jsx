@@ -144,7 +144,7 @@ const ProductoForm = ({ closeModal }) => {
   }, []);
 
   return (
-    <div className="col-span-4 max-h-[60vh] min-h-[40dvh] w-full">
+    <div className="md:max-h-[unset] max-h-[45dvh]  min-h-[40dvh] w-full overflow-y-scroll md:overflow-y-hidden">
       <div className="flex w-full justify-end">
         <ModalListaDeProductos
           itemActual={productoActual}
@@ -431,7 +431,7 @@ const ProductoForm = ({ closeModal }) => {
         </div>
       </form>
       {/* 🔘 Botones de acción */}
-      <div className="mt-4 flex flex-wrap justify-end gap-3 border-t pt-4">
+      <div className="mt-4 flex flex-wrap justify-end gap-3 border-t pt-4 pr-2">
         {edicionProducto?.edicion == true && (
           <Button
             variant="outline"

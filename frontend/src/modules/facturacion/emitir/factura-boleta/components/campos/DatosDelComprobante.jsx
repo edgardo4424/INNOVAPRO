@@ -36,7 +36,7 @@ const DatosDelComprobante = () => {
     const { name, value } = e.target;
     setFactura((prevValores) => ({
       ...prevValores,
-      [name]: value,
+      [name]: value.toUpperCase(),
     }));
   };
 
@@ -105,10 +105,11 @@ const DatosDelComprobante = () => {
           <Label htmlFor="tipo_operacion">Tipo de Venta</Label>
           <Select
             name="tipo_operacion"
-            value={factura.tipo_Operacion}
-            onValueChange={(value) =>
+            value={factura.tipo_Operacion+""}
+            onValueChange={(value) =>{
+              console.log('first');
               handleSelectChange(value, "tipo_Operacion")
-            }
+            }}
           >
             <SelectTrigger className="w-full rounded-md border border-gray-300 shadow-sm">
               <SelectValue placeholder="Selecciona un tipo de operación" />
