@@ -7,6 +7,7 @@ import ListaNotas from "../bandeja/list-nota/ListaNotas";
 import BandejaLayout from "../layout/BandejaLayout";
 import Bandeja from "../pages/Bandeja";
 import RoleGuard from "@/routes/rol.guard";
+import { BandejaProvider } from "../context/BandejaContext";
 
 const BandejaRoutes = () => {
   return (
@@ -17,21 +18,41 @@ const BandejaRoutes = () => {
         <Route
           element={
             <RoleGuard
-              roles={["CEO", "Gerente de administración","Asistente Facturación","Contadora"]}
+              roles={[
+                "CEO",
+                "Gerente de administración",
+                "Asistente Facturación",
+                "Contadora",
+              ]}
             />
           }
         >
-          <Route path="factura-boleta" element={<ListaDocumentos />} />
+          <Route
+            path="factura-boleta"
+            element={<BandejaProvider></BandejaProvider>}
+          />
         </Route>
 
         <Route
           element={
             <RoleGuard
-              roles={["CEO", "Gerente de administración","Asistente Facturación","Contadora"]}
+              roles={[
+                "CEO",
+                "Gerente de administración",
+                "Asistente Facturación",
+                "Contadora",
+              ]}
             />
           }
         >
-          <Route path="nota-credito-debito" element={<ListaNotas />} />
+          <Route
+            path="nota-credito-debito"
+            element={
+              <BandejaProvider>
+                <ListaNotas />
+              </BandejaProvider>
+            }
+          />
         </Route>
         <Route
           element={
@@ -40,7 +61,14 @@ const BandejaRoutes = () => {
             />
           }
         >
-          <Route path="guia-remision" element={<ListaGuiaRemision />} />
+          <Route
+            path="guia-remision"
+            element={
+              <BandejaProvider>
+                <ListaGuiaRemision />
+              </BandejaProvider>
+            }
+          />
         </Route>
       </Route>
     </Routes>
