@@ -3,10 +3,6 @@ import * as yup from "yup";
 
 export const obtenerUsuarioSchema = (esCrear = true) =>
    yup.object({
-      telefono: yup
-         .string()
-         .required("El teléfono es obligatorio")
-         .matches(/^[0-9]{9}$/, "Debe tener 9 dígitos"),
       email: yup.string().required("El correo es obligatorio").email(),
       password: esCrear
          ? yup

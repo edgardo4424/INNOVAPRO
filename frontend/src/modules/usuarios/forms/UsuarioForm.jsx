@@ -22,7 +22,6 @@ export default function UsuarioForm({
   trabajadores = [],
 }) {
   const esCrear = modo === "crear";
-
   const [usuario, setUsuarioInterno] = useState(usuarioInicial);
   const [errores, setErrores] = useState({});
 
@@ -39,9 +38,11 @@ export default function UsuarioForm({
         abortEarly: false,
       });
       setErrores({});
+      console.log(datosValidados);
+      
       onSubmit(datosValidados);
       closeModal();
-    } catch (err) {      
+    } catch (err) {
       const nuevosErrores = {};
       err.inner.forEach((e) => {
         nuevosErrores[e.path] = e.message;
@@ -59,40 +60,35 @@ export default function UsuarioForm({
           autoComplete="off"
           onSubmit={handleSubmit}
         >
-          <div className="form-group">
-            <Label>Seleccione un trabajador</Label>
-            <Select
-              value={usuario.trabajador_id ?? ""}
-              onValueChange={(value) => handleChange("trabajador_id", value)}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Seleccione un trabajador" />
-              </SelectTrigger>
-              <SelectContent>
-                {trabajadores &&
-                  trabajadores.map((t, i) => (
-                    <SelectItem value={t.id.toString()} key={i}>
-                      {t.nombres}
-                    </SelectItem>
-                  ))}
-              </SelectContent>
-            </Select>
-            {errores.trabajador_id && <p className="error-message">{errores.rol}</p>}
-          </div>
-
-          <div className="form-group">
-            <Label htmlFor="telefono">Teléfono Celular *</Label>
-            <Input
-              id="telefono"
-              type="text"
-              value={usuario.telefono ?? ""}
-              onChange={(e) => handleChange("telefono", e.target.value)}
-            />
-            {errores.telefono && (
-              <p className="error-message">{errores.telefono}</p>
-            )}
-          </div>
-
+          {usuario?.nombre&&
+          <span>
+            <h2 className="text-xl text-neutral-700">{usuario.nombre}</h2>
+          </span>
+          }
+          {esCrear && (
+            <div className="form-group">
+              <Label>Seleccione un trabajador</Label>
+              <Select
+                value={usuario.trabajador_id ?? ""}
+                onValueChange={(value) => handleChange("trabajador_id", value)}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Seleccione un trabajador" />
+                </SelectTrigger>
+                <SelectContent>
+                  {trabajadores &&
+                    trabajadores.map((t, i) => (
+                      <SelectItem value={t.id.toString()} key={i}>
+                        {t.nombres}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+              {errores.trabajador_id && (
+                <p className="error-message">{errores.rol}</p>
+              )}
+            </div>
+          )}
           <div className="form-group">
             <Label htmlFor="email">Correo *</Label>
             <Input

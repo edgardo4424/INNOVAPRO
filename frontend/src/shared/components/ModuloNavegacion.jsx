@@ -54,7 +54,7 @@ export default function ModuloNavegacion() {
          { name: "Cotizaciones", path: "/cotizaciones" },
          { name: "Registrar Cotización", path: "/cotizaciones/registrar" },
       ],
-      "Oficina Técnica": [
+      "Jefe de OT": [
          { name: "Centro de Atención", path: "/centro-atencion" },
       ],
       // Agrega otros roles si aplica

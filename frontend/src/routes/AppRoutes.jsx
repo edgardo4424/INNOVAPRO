@@ -166,7 +166,7 @@ export default function AppRoutes() {
                      </Route>
 
                      <Route
-                        element={<RoleGuard roles={["CEO", "Ventas"]} />}
+                        element={<RoleGuard roles={["CEO", "Técnico Comercial"]} />}
                      >
                         <Route
                            path="gestion-clientes"
@@ -196,11 +196,19 @@ export default function AppRoutes() {
                               </WizardProvider>
                            }
                         />
+                        <Route
+                           path="/cotizaciones/wizard/:id"
+                           element={
+                              <WizardProvider>
+                                 <RegistrarCotizacionWizard />
+                              </WizardProvider>
+                           }
+                        />
                      </Route>
 
                      <Route
                         element={
-                           <RoleGuard roles={["CEO", "Administracion", "Ventas"]} />
+                           <RoleGuard roles={["CEO", "Gerente de administración ", "Técnico Comercial"]} />
                         }
                      >
                         <Route
@@ -212,9 +220,9 @@ export default function AppRoutes() {
                            }
                         />
                      </Route>
-
+                     //! -- Rutas asignada para OT 
                      <Route
-                        element={<RoleGuard roles={["CEO", "Ventas", "Oficina Técnica"]} />}
+                        element={<RoleGuard roles={["CEO", "Técnico Comercial", "Jefe de OT","OT"]} />}
                      >
                         <Route
                            path="centro-atencion"
@@ -224,16 +232,6 @@ export default function AppRoutes() {
                            path="stock/piezas"
                            element={<GestionStockPiezas />}
                         />
-
-                        <Route
-                           path="/cotizaciones/wizard/:id"
-                           element={
-                              <WizardProvider>
-                                 <RegistrarCotizacionWizard />
-                              </WizardProvider>
-                           }
-                        />
-
                      </Route>
 
                      {/*    //************************INICIO-FACTURACION************************* */}

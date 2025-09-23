@@ -149,7 +149,7 @@ const modulesByRole = {
       { name: "Datos de mantenimiento", path: "/data-mantenimiento" },
 
    ],
-   Ventas: [
+   "Técnico Comercial": [
       { name: "Gestión de Clientes", path: "/gestion-clientes" },
       { name: "Gestión de Contactos", path: "/gestion-contactos" },
       { name: "Gestión de Obras", path: "/gestion-obras" },
@@ -159,11 +159,14 @@ const modulesByRole = {
       { name: "Registrar Cotización", path: "/cotizaciones/registrar" },
       { name: "Stock de Piezas", path: "/stock/piezas" },
    ],
-   "Oficina Técnica": [
+   "Jefe de OT": [
       { name: "Centro de Atención", path: "/centro-atencion" },
       { name: "Stock de Piezas", path: "/stock/piezas" },
    ],
-   Almacén: [],
+   "OT": [
+      { name: "Centro de Atención", path: "/centro-atencion" },
+      { name: "Stock de Piezas", path: "/stock/piezas" },
+   ],
    Administración: [
       { name: "Gestión de condiciones", path: "/condiciones" },
       {

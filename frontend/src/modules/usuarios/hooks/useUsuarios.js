@@ -32,18 +32,8 @@ export default function useUsuarios() {
 
   const agregarUsuario = async (user) => {
     try {
-      const responseUsuarioCreado = await usuariosService.crearUsuario(user);
-      const payload = {
-        email: "",
-        id: "",
-        nombre: "",
-        rol: "",
-      };
-      console.log('response recibido: ',responseUsuarioCreado);
-      
-      setUsuarios((prev) => [...prev, responseUsuarioCreado]);
+      await usuariosService.crearUsuario(user);
       await cargarUsuarios()
-
       toast.success("Usuario registrado");
     } catch (error) {
       console.error("❌ Error al crear usuario:", error);
@@ -55,13 +45,12 @@ export default function useUsuarios() {
 
   const guardarEdicion = async (user) => {
     try {
-      const actualizado = await usuariosService.actualizarUsuario(
+      await usuariosService.actualizarUsuario(
         user.id,
         user,
       );
-      setUsuarios((prev) =>
-        prev.map((u) => (u.id === user.id ? actualizado : u)),
-      );
+      await cargarUsuarios()
+
       toast.success("Usuario actualizado");
     } catch (error) {
       console.error("❌ Error al actualizar usuario:", error);
