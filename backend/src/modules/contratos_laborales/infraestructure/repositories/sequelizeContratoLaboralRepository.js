@@ -1,6 +1,5 @@
-const { Sequelize, Op } = require("sequelize");
-const { ContratoLaboral } = require("../models/contratoLaboralModel");
 const { Op } = require("sequelize");
+const { ContratoLaboral } = require("../models/contratoLaboralModel");
 const { Trabajador } = require("../../../trabajadores/infraestructure/models/trabajadorModel");
 
 // Helper

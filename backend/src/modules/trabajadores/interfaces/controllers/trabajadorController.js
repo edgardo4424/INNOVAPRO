@@ -139,7 +139,7 @@ const TrabajadorController = {
          console.error(err);
          return res.status(500).json({ ok:false, error:"Error interno" });
       }
-   }
+   },
    async obtenerTrabajadoresYcontratos(req, res) {            
       try {
          const response = await obtenerTrabajadoresYcontratos(

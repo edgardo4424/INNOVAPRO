@@ -13,12 +13,6 @@ module.exports = {
     }, {
       after: 'ingresos_previos_internos' // solo funciona en MySQL/MariaDB
     });
-
-    // 3. Eliminar deduccion_adicional_anual
-    await queryInterface.removeColumn('quinta_calculos', 'deduccion_adicional_anual');
-
-    // 4. Eliminar agregado_todas_filiales
-    await queryInterface.removeColumn('quinta_calculos', 'agregado_todas_filiales');
   },
 
   async down(queryInterface, Sequelize) {
@@ -28,18 +22,6 @@ module.exports = {
       type: Sequelize.DECIMAL(15, 2),
       allowNull: true,
       defaultValue: 0
-    });
-
-    await queryInterface.addColumn('quinta_calculos', 'deduccion_adicional_anual', {
-      type: Sequelize.DECIMAL(15, 2),
-      allowNull: true,
-      defaultValue: 0
-    });
-
-    await queryInterface.addColumn('quinta_calculos', 'agregado_todas_filiales', {
-      type: Sequelize.BOOLEAN,
-      allowNull: true,
-      defaultValue: false
     });
   }
 };
