@@ -16,7 +16,7 @@ import {
    PopoverContent,
    PopoverTrigger,
 } from "@/components/ui/popover";
-import { CalendarIcon, Plus } from "lucide-react";
+import { CalendarDays, CalendarIcon, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import beneficiosService from "../services/beneficiosService";
@@ -30,6 +30,17 @@ import {
 import { dia_mes_anho } from "@/utils/formatos_de_fecha";
 import { generarFechasDesdeRango } from "../utils/genrar_arreglo_fechas";
 import clsx from "clsx";
+import { calcularDiasGenerados } from "../utils/calcularVacacionesGeneradas";
+import {
+   Card,
+   CardContent,
+   CardDescription,
+   CardHeader,
+   CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import ResumenVacacionesDialog from "./ModalResumenVacaciones";
 
 export function VacationModal({ empleados, fetchEmployees }) {
    const [modalAbierto, setModalAbierto] = useState(false);
@@ -50,7 +61,7 @@ export function VacationModal({ empleados, fetchEmployees }) {
       vendida: 0,
       gozada: 0,
       sin_utilizar: 0,
-      total:0
+      total: 0,
    });
 
    const empleado = useMemo(
@@ -66,8 +77,57 @@ export function VacationModal({ empleados, fetchEmployees }) {
    }, [empleado]);
 
    const regimenVigente = contratoVigente?.regimen || "";
+   const {
+      dias_disponibles,
+      dias_vender,
+      dias_tomar,
+      total_generado,
+      total_tomado,
+      total_vendido,
+   } = useMemo(() => {
+      if (empleado?.contratos_laborales && empleado?.vacaciones) {
+         const diasTomados = empleado.vacaciones.reduce(
+            (sum, v) => sum + (v.dias_tomados || 0),
+            0
+         );
+         const diasVendidos = empleado.vacaciones.reduce(
+            (sum, v) => sum + (v.dias_vendidos || 0),
+            0
+         );
 
-   const vacacionesPrevias = empleado?.vacaciones || [];
+         const { total_gozadas, total_vendibles,maximo_disponible } = calcularDiasGenerados(
+            empleado.contratos_laborales
+         );
+
+     // el verdadero tope global
+         //Mi maximo disponible---> maximo diponible menos dias tomados y dias ya vendidos y tomados 
+         const dias_disponibles = (maximo_disponible - diasTomados) - diasVendidos;
+         //El maximo que tengo para tomar es los dias disponibles menos los los dias ya tomados 
+         const dias_tomar = dias_disponibles;
+         //El maximo que tengo para vender es los dias disponibles menos los los dias ya vendidos 
+         const dias_vender =(dias_disponibles/2)
+         
+         return {
+            dias_disponibles,
+            dias_vender,
+            dias_tomar,
+            total_generado: maximo_disponible,
+            total_tomado: diasTomados,
+            total_vendido: diasVendidos,
+         };
+      }
+
+      return {
+         dias_disponibles: 0,
+         dias_vender: 0,
+         dias_tomar: 0,
+         total_generado: 0,
+         total_tomado: 0,
+         total_vendido: 0,
+      };
+   }, [empleado]);
+
+   console.log(dias_disponibles, dias_vender, dias_tomar);
 
    const manejarCambio = (campo) => (e) => {
       const valor = e?.target?.value ?? e;
@@ -97,7 +157,11 @@ export function VacationModal({ empleados, fetchEmployees }) {
    const manejarEnvio = async (e) => {
       e.preventDefault();
 
-      if (!empleado || !formulario.fechaInicio || !formulario.fechaFin) {
+      if (
+         !empleado ||
+         !formulario.rango_fechas.from ||
+         !formulario.rango_fechas.to
+      ) {
          toast.error("Por favor completa todos los campos requeridos");
          return;
       }
@@ -107,21 +171,10 @@ export function VacationModal({ empleados, fetchEmployees }) {
 
       const datosVacaciones = {
          trabajador_id: Number(formulario.empleadoSeleccionado),
-         fecha_inicio: format(formulario.fechaInicio, "yyyy-MM-dd"),
-         fecha_termino: format(formulario.fechaFin, "yyyy-MM-dd"),
-         dias_tomados: tomados,
-         dias_vendidos: vendidos,
+         fecha_inicio: format(formulario.rango_fechas.from, "yyyy-MM-dd"),
+         fecha_termino: format(formulario.rango_fechas.to, "yyyy-MM-dd"),
          observaciones: formulario.observaciones,
-         dias_usados_tomados: vacacionesPrevias.reduce(
-            (acc, v) => acc + v.dias_tomados,
-            0
-         ),
-         dias_usados_vendidos: vacacionesPrevias.reduce(
-            (acc, v) => acc + v.dias_vendidos,
-            0
-         ),
-         contratos_laborales: empleado?.contratos_laborales || [],
-         asignacion_familiar: empleado?.asignacion_familiar || null,
+         vacacionesXasistencias: arregloDias || [],
       };
 
       try {
@@ -132,8 +185,10 @@ export function VacationModal({ empleados, fetchEmployees }) {
          toast.success("Las vacaciones fueron registradas con éxito.");
          cerrarModal();
       } catch (error) {
-         console.log(error);
-
+         if(error?.response?.data?.error){
+            toast.error(error.response.data.error)
+            return
+         }
          const errores = error.response?.data?.mensaje || [
             "Error al registrar vacaciones",
          ];
@@ -180,7 +235,7 @@ export function VacationModal({ empleados, fetchEmployees }) {
 
    useEffect(() => {
       if (arregloDias?.length > 0) {
-         const data = { vendida: 0, gozada: 0, sin_utilizar: 0,total:0 };
+         const data = { vendida: 0, gozada: 0, sin_utilizar: 0, total: 0 };
          for (const d of arregloDias) {
             if (d.tipo === "gozada") {
                data.gozada++;
@@ -190,7 +245,7 @@ export function VacationModal({ empleados, fetchEmployees }) {
                data.sin_utilizar++;
             }
          }
-         data.total=arregloDias.length
+         data.total = arregloDias.length;
          setContadorTipos(data);
       }
    }, [arregloDias]);
@@ -322,29 +377,19 @@ export function VacationModal({ empleados, fetchEmployees }) {
                      </Popover>
                   </div>
 
-                  {/* <div className="grid grid-cols-2 gap-4">
-                     <div>
-                        <Label>Días Tomados</Label>
-                        <Input
-                           type="number"
-                           min="0"
-                           value={formulario.diasTomados}
-                           onChange={manejarCambio("diasTomados")}
-                        />
-                     </div>
-                     <div>
-                        <Label>Días Vendidos</Label>
-                        <Input
-                           type="number"
-                           min="0"
-                           value={formulario.diasVendidos}
-                           onChange={manejarCambio("diasVendidos")}
-                        />
-                     </div>
-                  </div> */}
+                  <ResumenVacacionesDialog
+                     total_generado={total_generado}
+                     total_tomado={total_tomado}
+                     total_vendido={total_vendido}
+                     dias_disponibles={dias_disponibles}
+                     dias_tomar={dias_tomar}
+                     dias_vender={dias_vender}
+                  />
 
                   <article className="flex flex-col w-full space-y-3.5">
-                     <Label className="text-sm">Selecione los dias a gozar y vender</Label>
+                     <Label className="text-sm">
+                        Selecione los dias a gozar y vender
+                     </Label>
                      <section className="grid grid-cols-4 gap-4 text-xs text-neutral-600 pt-1">
                         <div className="flex items-center gap-1">
                            <span className="w-4 h-4 rounded bg-innova-blue"></span>
@@ -361,9 +406,7 @@ export function VacationModal({ empleados, fetchEmployees }) {
                            </span>
                         </div>
                         <div className="flex items-center gap-1">
-                           <span>
-                              Total: {contadorTipos.total}
-                           </span>
+                           <span>Total: {contadorTipos.total}</span>
                         </div>
                      </section>
                      <section className="flex flex-wrap space-x-2.5 space-y-2 w-full">

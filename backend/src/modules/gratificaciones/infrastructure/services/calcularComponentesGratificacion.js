@@ -157,7 +157,7 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
                   "gratificacion",
                   /* fechaInicioCalculo,
                   fechaFinCalculo, */
-                  null
+                  null // fecha_anio_mes_dia
                 );
 
                 console.log('totalAdelantosSueldo', totalAdelantosSueldo);

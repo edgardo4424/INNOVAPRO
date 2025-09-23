@@ -108,7 +108,7 @@ const PlanillaController = {
             fecha,
             transaction
          );
-
+          await transaction.commit();
          res.status(cierrePM.codigo).json(cierrePM.respuesta);
       } catch (error) {
          console.log(error);

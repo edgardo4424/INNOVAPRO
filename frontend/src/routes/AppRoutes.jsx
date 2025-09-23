@@ -126,7 +126,7 @@ export default function AppRoutes() {
 
                      <Route index element={<DashboardHome />} />
 
-                     <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                     <Route element={<RoleGuard roles={["CEO"]} />}>
                         <Route
                            path="gestion-usuarios"
                            element={<GestionUsuarios />}
@@ -167,7 +167,7 @@ export default function AppRoutes() {
                      </Route>
 
                      <Route
-                        element={<RoleGuard roles={["Gerencia", "Ventas"]} />}
+                        element={<RoleGuard roles={["CEO", "Ventas"]} />}
                      >
                         <Route
                            path="gestion-clientes"
@@ -201,7 +201,7 @@ export default function AppRoutes() {
 
                      <Route
                         element={
-                           <RoleGuard roles={["Gerencia", "Administracion", "Ventas"]} />
+                           <RoleGuard roles={["CEO", "Administracion", "Ventas"]} />
                         }
                      >
                         <Route
@@ -215,7 +215,7 @@ export default function AppRoutes() {
                      </Route>
 
                      <Route
-                        element={<RoleGuard roles={["Gerencia", "Ventas", "Oficina Técnica"]} />}
+                        element={<RoleGuard roles={["CEO", "Ventas", "Oficina Técnica"]} />}
                      >
                         <Route
                            path="centro-atencion"
@@ -238,7 +238,9 @@ export default function AppRoutes() {
                      </Route>
 
                      {/*    //************************INICIO-FACTURACION************************* */}
-                     <Route element={<RoleGuard roles={["Gerencia", "Administracion"]} />}>
+
+
+                     <Route element={<RoleGuard roles={["CEO", "Gerente de administración","Jefa de Almacén","Asistente Facturación","Contadora"]} />}>
 
                         <Route
                            path="facturacion/emitir/*"
@@ -265,7 +267,7 @@ export default function AppRoutes() {
                      {/*    //************************FINAL-FACTURACION************************* */}
 
 
-                     <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                     <Route element={<RoleGuard roles={["CEO"]} />}>
                         <Route
                            path="crear-trabajador"
                            element={<CrearTrabajador />}
@@ -273,7 +275,7 @@ export default function AppRoutes() {
                      </Route>
 
                      <Route
-                        element={<RoleGuard roles={["Gerencia", "Administracion"]} />}
+                        element={<RoleGuard roles={["CEO", "Administracion"]} />}
                      >
                         <Route
                            path="condiciones"
@@ -292,13 +294,13 @@ export default function AppRoutes() {
 
                      <>
                         {/* Rutas para el modulo de aistencia */}
-                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                        <Route element={<RoleGuard roles={["CEO"]} />}>
                            <Route
                               path="asistencia/:tipo"
                               element={<GestionAsistencia />}
                            />
                         </Route>
-                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                        <Route element={<RoleGuard roles={["CEO"]} />}>
                            <Route
                               path="planilla-quincenal"
                               element={<GestionPlanillaQuincenal />}
@@ -308,13 +310,13 @@ export default function AppRoutes() {
                               element={<GestionPlanillaMensual />}
                            />
                         </Route>
-                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                        <Route element={<RoleGuard roles={["CEO"]} />}>
                            <Route
                               path="vacaciones"
                               element={<GestionVacaciones />}
                            />
                         </Route>
-                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                        <Route element={<RoleGuard roles={["CEO"]} />}>
 
                            <Route path="bonos" element={<GestionBonos />} />
                            <Route path="adelanto-sueldo" element={<GestionAdelantoSueldo />} />

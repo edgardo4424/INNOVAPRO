@@ -47,21 +47,27 @@ class SequelizeContratoLaboralRepository {
     await ContratoLaboral.update({ estado: 0 }, options);
   }
 
-  async obtenerUltimoContratoVigentePorTrabajadorId(id, transaction = null) {
-    const options = {
-      where: {
-        trabajador_id: id,
-        estado: 1,
-      },
-      order: [["fecha_inicio", "DESC"]],
-    };
-    if (transaction) {
-      options.transaction = transaction;
-    }
-    const contrato = await ContratoLaboral.findOne(options);
-    console.log("contrato", contrato);
-    return contrato;
+ async obtenerUltimoContratoVigentePorTrabajadorId(id, transaction = null) {
+  const hoy = new Date().toISOString().split("T")[0];
+
+  const options = {
+    where: {
+      trabajador_id: id,
+      estado: 1,
+      fecha_inicio: { [Op.lte]: hoy },
+      fecha_fin: { [Op.gte]: hoy }
+    },
+    order: [["fecha_inicio", "DESC"]],
+  };
+
+  if (transaction) {
+    options.transaction = transaction;
   }
+
+  const contrato = await ContratoLaboral.findOne(options);
+  return contrato.get({plain:true});
+}
+
 
 async obtenerHistoricoContratosDesdeUltimaAlta(trabajador_id, transaction = null) {
   const options = {

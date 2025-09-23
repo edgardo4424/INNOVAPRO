@@ -6,11 +6,16 @@ const unir_planillas_mensuales = (
    trabajador,
    PORCENTAJE_DESCUENTO_ONP,
    PORCENTAJE_DESCUENTO_AFP,
-   PORCENTAJE_DESCUENTO_SEGURO
+   PORCENTAJE_DESCUENTO_SEGURO,
+   totalAdelantosSueldo, 
+   adelantos_ids,
+   PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT,
+   PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA,
+   PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA,
+   PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO
 ) => {
    const grupo_planilla = trabajador_planilla_model();
    grupo_planilla.info_detalle = planillas_obtenidas;
-   if(trabajador.id==7)console.log('La edad de valeri es',trabajador);
    
    for (const p of planillas_obtenidas) {
       grupo_planilla.trabajador_id = p.trabajador_id;
@@ -36,6 +41,7 @@ const unir_planillas_mensuales = (
          p.licencia_sin_goce_de_haber
       );
       grupo_planilla.vacaciones += Number(p.vacaciones);
+      grupo_planilla.vacaciones_vendidas += Number(p.vacaciones_vendidas);
       grupo_planilla.gratificacion = Number(p.gratificacion);
       grupo_planilla.cts = Number(p.cts);
       grupo_planilla.h_extras_primera_quincena += Number(
@@ -61,7 +67,6 @@ const unir_planillas_mensuales = (
       // grupo_planilla.sueldos_brutos_obtenidos.push(Number(p.sueldo_bruto));
       grupo_planilla.quinta_categoria = Number(p.quinta_categoria);
       grupo_planilla.sueldo_quincenal = Number(p.sueldo_quincenal);
-      grupo_planilla.adelanto_prestamo += Number(p.adelanto_prestamo);
 
       grupo_planilla.filial_id = p.filial_id;
       grupo_planilla.banco = p.banco;
@@ -76,6 +81,7 @@ const unir_planillas_mensuales = (
          Number(grupo_planilla.licencia_con_goce_de_haber) +
          Number(grupo_planilla.licencia_sin_goce_de_haber) * -1 +
          Number(grupo_planilla.vacaciones) +
+         Number(grupo_planilla.vacaciones_vendidas) +
          Number(grupo_planilla.h_extras_primera_quincena) +
          Number(grupo_planilla.h_extras_segunda_quincena) +
          Number(grupo_planilla.faltas_primera_quincena) * -1 +
@@ -84,6 +90,39 @@ const unir_planillas_mensuales = (
          Number(grupo_planilla.bono_segunda_quincena)
       ).toFixed(2)
    );
+
+   
+   
+   if (trabajador.comision_afp) {
+       switch (trabajador.tipo_afp) {
+         case "HABITAT":
+           grupo_planilla.comision = +(
+             (grupo_planilla.sueldo_bruto * PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT) /
+             100
+           ).toFixed(2);
+           break;
+         case "INTEGRA":
+           grupo_planilla.comision = +(
+             (grupo_planilla.sueldo_bruto * PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA) /
+             100
+           ).toFixed(2);
+           break;
+         case "PRIMA":
+           grupo_planilla.comision = +(
+             (grupo_planilla.sueldo_bruto * PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA) /
+             100
+           ).toFixed(2);
+           break;
+         case "PROFUTURO":
+           grupo_planilla.comision = +(
+             (grupo_planilla.sueldo_bruto * PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO) /
+             100
+           ).toFixed(2);
+           break;
+         default:
+           break;
+       }
+   }
 
    if (trabajador.sistema_pension === "ONP") {
       grupo_planilla.onp = (
@@ -109,14 +148,16 @@ const unir_planillas_mensuales = (
       Number(grupo_planilla.afp_ap_oblig) +
       Number(grupo_planilla.onp) +
       Number(grupo_planilla.seguro) +
-      Number(grupo_planilla.quinta_categoria)
+      Number(grupo_planilla.quinta_categoria)+
+      Number(grupo_planilla.comision)
    ).toFixed(2);
 
    grupo_planilla.sueldo_neto = (
       Number(grupo_planilla.sueldo_bruto) -
       Number(grupo_planilla.total_descuentos)
    ).toFixed(2);
-
+   grupo_planilla.adelanto_prestamo=totalAdelantosSueldo;
+   grupo_planilla.adelantos_ids=adelantos_ids||[];
    grupo_planilla.saldo_por_pagar = (
       grupo_planilla.sueldo_neto -
       grupo_planilla.sueldo_quincenal -

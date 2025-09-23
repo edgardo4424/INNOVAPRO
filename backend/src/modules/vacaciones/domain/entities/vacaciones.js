@@ -34,7 +34,9 @@ class Vacaciones {
       dias_usados_vendidos,
       observaciones,
       contratos_laborales,
-      asignacion_familiar
+      asignacion_familiar,
+      asistenciasXvacaciones,
+      estado,
    }) {
       this.#trabajador_id = trabajador_id;
       this.#fecha_inicio = fecha_inicio;
@@ -45,13 +47,23 @@ class Vacaciones {
       this.#dias_usados_vendidos = dias_usados_vendidos;
       this.#observaciones = observaciones;
       this.#contratos_laborales = contratos_laborales;
-      this.asignacion_familiar=asignacion_familiar
+      this.asignacion_familiar = asignacion_familiar;
+      this.asistenciasXvacaciones = asistenciasXvacaciones;
+      this.estado = estado;
    }
 
    validarCampos() {
       const errores = [];
-
+      this.asistenciasXvacaciones.sort(
+         (a, b) => new Date(a.fecha) - new Date(b.fecha)
+      );
       if (!this.#trabajador_id) errores.push("No existe el trabajador.");
+      const estadosPermitidos = ["pendiente", "aprobada", "rechazada"];
+      if (!estadosPermitidos.includes(this.estado)) {
+         errores.push(
+            `El estado "${this.estado}" no es válido. Debe ser 'gozada' o 'vendida'.`
+         );
+      }
       if (
          !Array.isArray(this.#contratos_laborales) ||
          this.#contratos_laborales.length === 0
@@ -59,6 +71,22 @@ class Vacaciones {
          errores.push("No se han proporcionado contratos laborales.");
          return errores;
       }
+      if (this.asistenciasXvacaciones[0].fecha != this.#fecha_inicio) {
+         errores.push(
+            "La fecha de incio no coindide con la primera fecha de vacaciones."
+         );
+         return errores;
+      }
+      if (
+         this.asistenciasXvacaciones[this.asistenciasXvacaciones.length - 1]
+            .fecha != this.#fecha_termino
+      ) {
+         errores.push(
+            "La fecha de termino no coindide con la ultima fecha de vacaciones."
+         );
+         return errores;
+      }
+
       const fechaVacInicio = parseISO(this.#fecha_inicio);
       const fechaVacFin = endOfDay(parseISO(this.#fecha_termino));
       const hoy = startOfDay(new Date());
@@ -70,18 +98,19 @@ class Vacaciones {
          errores.push(
             "La fecha de término no puede ser anterior a la fecha de inicio."
          );
+         return errores;
       }
 
       const diffEnDias =
          differenceInCalendarDays(fechaVacFin, fechaVacInicio) + 1;
-      console.log("Dias de vaciones segun el rango de fechas:", diffEnDias);
-
-      if (diffEnDias !== this.#dias_tomados + this.#dias_vendidos) {
+      //Aca se ests cambiando la validadcion de esto--v
+      // diffEnDias !== this.#dias_tomados + this.#dias_vendidos
+      // A esto---v
+      if (diffEnDias < this.#dias_tomados + this.#dias_vendidos) {
          errores.push(
-            `El rango de fechas indica ${diffEnDias} días, pero se reportaron ${
-               this.#dias_tomados
-            } días tomados.`
+            `El rango de fechas indica ${diffEnDias} días, pero se reportaron mas días `
          );
+         return errores;
       }
 
       const diasUsadosTomados = Number(this.#dias_usados_tomados) || 0;
@@ -91,7 +120,6 @@ class Vacaciones {
 
       let maxTomadosTotal = 0;
       let maxVendidosTotal = 0;
-      let maxTotalGlobal = 0;
 
       for (const contrato of this.#contratos_laborales) {
          if (!["GENERAL", "MYPE"].includes(contrato.regimen)) {
@@ -116,7 +144,7 @@ class Vacaciones {
             const mes = inicioMes.getMonth();
             const finMes = new Date(anio, mes + 1, 0);
             const diasLaborablesTotales = contarDiasLaborablesDelMes(anio, mes);
-
+            //Cambiar los dias a laborlaes a los dias dele mes 
             const inicioReal = inicioMes < inicio ? inicio : inicioMes;
             const finReal = finMes > fechaFin ? fechaFin : finMes;
             const diasTrabajados = contarDiasLaborables(inicioReal, finReal);
@@ -124,7 +152,15 @@ class Vacaciones {
             // Tasa por régimen
             const tasaVacaciones = contrato.regimen === "MYPE" ? 1.25 : 2.5;
             const tasaVendibles = contrato.regimen === "MYPE" ? 8 / 12 : 1.25;
-
+            //La proporcion obtenie los dias que lobaroraste enre los dias del mes laborales
+            //Esto se hace porque recuerda que los contratos no siempre inicia los 01
+            //o temrian exacto el ultimo dia del mes
+            // ejemplo el mes tiene 22 dias laborales
+            //  iniciaste un 15, y hast fin de mes tienes 11 dias laborales
+            //  11/22--->  0.5*1.25 ---> 0.625
+            //  ese mes solo obtuviste 0.625  del 1.25 de dia que te da tu regimen por mes
+            //  solo para comprobar multiplicamos --> 0.625 *2 ---> 1.25
+            //  verificar los dias labroales en el area de almacen y montadores
             const proporcionVacaciones =
                (diasTrabajados / diasLaborablesTotales) * tasaVacaciones;
             const proporcionVendibles =
@@ -134,8 +170,6 @@ class Vacaciones {
          }
          maxTomadosTotal += totalContratoTomados;
          maxVendidosTotal += totalContratoVendibles;
-         maxTotalGlobal += totalContratoTomados + totalContratoVendibles;
-
          console.log(
             `→ Contrato ${contrato.fecha_inicio} a ${contrato.fecha_fin}`
          );
@@ -147,8 +181,12 @@ class Vacaciones {
             `  Generado para vender: ${totalContratoVendibles.toFixed(2)} días`
          );
       }
-
+      console.log("MAX TOMADO TOTAL: ", maxTomadosTotal);
+      console.log("MAX VENDIDOS TOTAL: ", maxVendidosTotal);
       // Suma total de días usados y actuales
+      console.log("Dias del usario quiere tomar", this.#dias_tomados);
+      console.log("Dias del usario que quiere vender", this.#dias_vendidos);
+
       const totalTomados = diasUsadosTomados + this.#dias_tomados;
       const totalVendidos = diasUsadosVendidos + this.#dias_vendidos;
       const totalGeneral = totalTomados + totalVendidos;
@@ -156,7 +194,7 @@ class Vacaciones {
       // Comparación con redondeo a 2 decimales
       const maxT = parseFloat(maxTomadosTotal.toFixed(2));
       const maxV = parseFloat(maxVendidosTotal.toFixed(2));
-      const maxG = parseFloat(maxTotalGlobal.toFixed(2));
+      const maxDisponible = parseFloat(maxTomadosTotal.toFixed(2));
 
       if (totalTomados > maxT) {
          errores.push(
@@ -170,9 +208,9 @@ class Vacaciones {
          );
       }
 
-      if (totalGeneral > maxG) {
+      if (totalGeneral > maxDisponible) {
          errores.push(
-            `La suma total de días tomados y vendidos (${totalGeneral}) excede el permitido (${maxG}).`
+            `La suma total de días tomados y vendidos (${totalGeneral}) excede el permitido (${maxDisponible}).`
          );
       }
       return errores;
@@ -183,14 +221,12 @@ class Vacaciones {
          trabajador_id: this.#trabajador_id,
          fecha_inicio: this.#fecha_inicio,
          fecha_termino: this.#fecha_termino,
-         dias_tomados: this.#dias_tomados,
-         dias_vendidos: this.#dias_vendidos,
-         dias_usados_tomados: this.#dias_usados_tomados,
-         dias_usados_vendidos: this.#dias_usados_vendidos,
          observaciones: this.#observaciones,
-         contratos_laborales: this.#contratos_laborales,
-         asignacion_familiar:this.#asignacion_familiar
+         estado: this.estado,
       };
+   }
+   getAsistenciasOrdenadas() {
+      return this.asistenciasXvacaciones;
    }
 }
 

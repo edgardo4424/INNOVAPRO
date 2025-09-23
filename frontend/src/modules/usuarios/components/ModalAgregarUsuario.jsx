@@ -14,6 +14,7 @@ import { useState } from "react";
 
 export default function ModalAgregarUsuario({
    onSubmit,
+   trabajadores
 }) {
    const [open, setOpen] = useState(false);
 
@@ -44,6 +45,7 @@ export default function ModalAgregarUsuario({
                   onSubmit={onSubmit}
                   closeModal={handleClose}
                   handleCancel={handleCancel}
+                  trabajadores={trabajadores}
                />
 
          </AlertDialogContent>

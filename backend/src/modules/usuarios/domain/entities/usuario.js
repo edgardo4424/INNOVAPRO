@@ -1,15 +1,15 @@
 class Usuario { 
-    constructor(nombre, email, password, rol, telefono, id_chat) {
-        this.nombre = nombre;
+    constructor(email, password, id_chat, trabajador_id) {
+     
         this.email = email;
         this.password = password;
-        this.rol = rol;
-        this.telefono = telefono;
+    
         this.id_chat = id_chat
+        this.trabajador_id = trabajador_id
     }
 
     static validar(datos, modo = "crear") {
-        const { nombre, email, rol, password } = datos;
+        const { email, password } = datos;
 
         if (modo === "crear") {
             if (!password) return "Ingresar password";
@@ -20,24 +20,10 @@ class Usuario {
             }
         }
 
-        if (!nombre || !email || !rol) return "Todos los campos son obligatorios";   
-
-        const regexNombre = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/;
-        if (!regexNombre.test(nombre)) return "Nombre solo debe contener letras";
+        if (!email) return "Todos los campos son obligatorios";   
 
         const regexEmail = /\S+@\S+\.\S+/;
         if (!regexEmail.test(email)) return "Formato de correo inválido";
-
-        const rolesPermitidos = [
-            "Gerencia",
-            "Ventas",
-            "Oficina Técnica",
-            "Almacén",
-            "Administración",
-            "Clientes",
-        ];
-
-        if (!rolesPermitidos.includes(rol)) return "Rol no permitido";
 
         return null; // Todo bien
     }

@@ -31,6 +31,10 @@ module.exports = {
           onUpdate: "CASCADE",
           onDelete: "RESTRICT",
         },
+        fecha_ingreso: {
+          type: Sequelize.DATEONLY,
+          allowNull: false,
+        },
         fecha_baja: {
           type: Sequelize.DATEONLY,
           allowNull: false,
@@ -63,6 +67,109 @@ module.exports = {
           allowNull: false,
           defaultValue: "CALCULADA",
         },
+        tiempo_laborado_anios: {
+          type: Sequelize.INTEGER,
+          defaultValue: 0,
+        },
+        tiempo_laborado_meses: {
+          type: Sequelize.INTEGER,
+          defaultValue: 0,
+        },
+        tiempo_laborado_dias: {
+          type: Sequelize.INTEGER,
+          defaultValue: 0,
+        },
+        tiempo_computado_anios: {
+          type: Sequelize.INTEGER,
+          defaultValue: 0,
+        },
+        tiempo_computado_meses: {
+          type: Sequelize.INTEGER,
+          defaultValue: 0,
+        },
+        tiempo_computado_dias: {
+          type: Sequelize.INTEGER,
+          defaultValue: 0,
+        },
+        gratificacion_trunca_id: {
+          type: Sequelize.INTEGER,
+          allowNull: true,
+          references: {
+            model: "gratificaciones",
+            key: "id",
+          },
+          onUpdate: "CASCADE",
+          onDelete: "RESTRICT",
+        },
+         cts_trunca_id: {
+          type: Sequelize.INTEGER,
+          allowNull: true,
+          references: {
+            model: "cts",
+            key: "id",
+          },
+          onUpdate: "CASCADE",
+          onDelete: "RESTRICT",
+        },
+        planilla_mensual_trunca_id: {
+          type: Sequelize.INTEGER,
+          allowNull: true,
+          references: {
+            model: "planilla_mensual",
+            key: "id",
+          },
+          onUpdate: "CASCADE",
+          onDelete: "RESTRICT",
+        },
+
+        cts_trunca_monto: {
+          type: Sequelize.DECIMAL(10, 2),
+          allowNull: true,
+          defaultValue: 0.00,
+        },
+        vacaciones_truncas_monto: {
+          type: Sequelize.DECIMAL(10, 2),
+          allowNull: true,
+          defaultValue: 0.00,
+        },
+        gratificacion_trunca_monto: {
+          type: Sequelize.DECIMAL(10, 2),
+          allowNull: true,
+          defaultValue: 0.00,
+        },
+        remuneracion_trunca_monto: {
+          type: Sequelize.DECIMAL(10, 2),
+          allowNull: true,
+          defaultValue: 0.00,
+        },
+
+        afp_descuento: {
+          type: Sequelize.DECIMAL(10, 2),
+          allowNull: true,
+          defaultValue: 0.00,
+        },
+        adelanto_descuento: {
+          type: Sequelize.DECIMAL(10, 2),
+          allowNull: true,
+          defaultValue: 0.00,
+        },
+        otros_descuentos: {
+          type: Sequelize.DECIMAL(10, 2),
+          allowNull: true,
+          defaultValue: 0.00,
+        },
+        total_liquidacion: {
+          type: Sequelize.DECIMAL(10, 2),
+          allowNull: true,
+          defaultValue: 0.00,
+        },
+
+        detalle_remuneracion_computable: {
+          type: Sequelize.JSON,
+          allowNull: true,
+          // Ejemplo: { sueldo: 1800, asignacion_familiar: 113, promedio_gratificacion: 91.88 }
+        },
+
         createdAt: {
           type: Sequelize.DATE,
           allowNull: false,
@@ -87,6 +194,5 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     // Eliminar ENUMs antes de eliminar la tabla para evitar errores en algunos motores
     await queryInterface.dropTable("bajas_trabajadores");
-   
   },
 };

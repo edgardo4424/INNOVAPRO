@@ -9,10 +9,6 @@ const Usuario = sequelize.define(
       autoIncrement: true,
       primaryKey: true,
     },
-    nombre: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -22,24 +18,18 @@ const Usuario = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    rol: {
-      type: DataTypes.ENUM(
-        "Gerencia",
-        "Ventas",
-        "Oficina Técnica",
-        "Almacén",
-        "Administración",
-        "Clientes"
-      ),
-      allowNull: false,
-    },
-    telefono: {
-      type: DataTypes.STRING(10),
-    },
     id_chat: {
       type: DataTypes.STRING,
       allowNull: true
-    }
+    },
+    trabajador_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: "trabajadores",
+        key: "id",
+      },
+    },
   },
   {
     timestamps: false,
@@ -76,6 +66,13 @@ Usuario.associate = (models) => {
   Usuario.hasMany(models.bajas_trabajadores, {
     foreignKey: "usuario_registro_id",
   })
+
+   // Un usuario pertenece a un trabajador
+  Usuario.belongsTo(models.trabajadores, {
+    foreignKey: "trabajador_id",
+    as: "trabajador", // alias para acceder al trabajador desde usuario
+  });
+  
 };
 
 module.exports = { Usuario }; // Exporta el modelo para que pueda ser utilizado en otros módulos

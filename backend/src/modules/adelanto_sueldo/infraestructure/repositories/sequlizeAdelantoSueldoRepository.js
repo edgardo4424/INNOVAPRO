@@ -15,6 +15,13 @@ class SequelizeAdelantoSueldoRepository {
 
     await AdelantoSueldo.update(adelantoSueldoData, options);
   }
+  async aumnetarCuotaPagada(adelanto_id, transaction = null) {
+    const options = {
+      where: { id:adelanto_id },
+    };
+    if (transaction) options.transaction = transaction;
+    await AdelantoSueldo.update({cuotas_pagadas:Sequelize.literal('cuotas_pagadas + 1')}, options);
+  }
   async eliminarAdelantoSueldoPorId(id, transaction = null) {
     const options = {
       where: { id },
@@ -72,7 +79,8 @@ class SequelizeAdelantoSueldoRepository {
     tipo, // tipo: 'simple' , 'gratificacion' o 'cts'
    /*  fechaInicio,
     fechaFin, */
-    fecha_anio_mes_dia// 2025-09-31
+    fecha_anio_mes_dia,// 2025-09-31
+    transaction = null
   ) {
 
 
@@ -87,7 +95,7 @@ class SequelizeAdelantoSueldoRepository {
    } */
     const adelantos = await AdelantoSueldo.findAll({
       where: optionsWhere,
-    });
+    }, transaction);
 
     let adelantosQueAplican = [];
 
@@ -148,6 +156,7 @@ class SequelizeAdelantoSueldoRepository {
       adelantos_ids: adelantos_ids,
     };
   }
+  
 }
 
 module.exports = SequelizeAdelantoSueldoRepository;

@@ -30,6 +30,10 @@ const PlanillaMensual = sequelize.define(
          type: DataTypes.STRING,
          allowNull: false,
       },
+      regimen: {
+         type: DataTypes.STRING,
+         allowNull: false,
+      },
       periodo: {
          type: DataTypes.STRING,
          allowNull: false,
@@ -40,114 +44,146 @@ const PlanillaMensual = sequelize.define(
       },
       tipo_documento: {
          type: DataTypes.STRING,
+         allowNull: false,
       },
       numero_documento: {
          type: DataTypes.STRING,
+         allowNull: false,
       },
       nombres_apellidos: {
          type: DataTypes.STRING,
+         allowNull: false,
       },
       area: {
          type: DataTypes.STRING,
+         allowNull: false,
       },
       afp: {
          type: DataTypes.STRING,
+         allowNull: false,
       },
       fecha_ingreso: {
-         type: DataTypes.DATE,
+         type: DataTypes.DATEONLY,
+         allowNull: false,
       },
       dias_labor: {
          type: DataTypes.INTEGER,
+         allowNull: false,
       },
       sueldo_basico: {
          type: DataTypes.FLOAT,
+         allowNull: false,
       },
       sueldo_del_mes: {
          type: DataTypes.FLOAT,
+         allowNull: false,
       },
       asig_fam: {
          type: DataTypes.FLOAT,
+         defaultValue: 0,
       },
       descanso_medico: {
          type: DataTypes.FLOAT,
+         defaultValue: 0,
       },
       licencia_con_goce_de_haber: {
          type: DataTypes.FLOAT,
+         defaultValue: 0,
       },
       licencia_sin_goce_de_haber: {
          type: DataTypes.FLOAT,
+         defaultValue: 0,
       },
       vacaciones: {
          type: DataTypes.FLOAT,
+         defaultValue: 0,
+      },
+      vacaciones_vendidas: {
+         type: DataTypes.FLOAT,
+         defaultValue: 0,
       },
       gratificacion: {
          type: DataTypes.FLOAT,
+         defaultValue: 0,
       },
       cts: {
          type: DataTypes.FLOAT,
+         defaultValue: 0,
       },
       h_extras_primera_quincena: {
          type: DataTypes.FLOAT,
+         defaultValue: 0,
       },
       h_extras_segunda_quincena: {
          type: DataTypes.FLOAT,
+         defaultValue: 0,
       },
       faltas_primera_quincena: {
          type: DataTypes.FLOAT,
+         defaultValue: 0,
       },
       faltas_segunda_quincena: {
          type: DataTypes.FLOAT,
+         defaultValue: 0,
       },
       tardanza_primera_quincena: {
          type: DataTypes.FLOAT,
+         defaultValue: 0,
       },
       tardanza_segunda_quincena: {
          type: DataTypes.FLOAT,
+         defaultValue: 0,
       },
       bono_primera_quincena: {
          type: DataTypes.FLOAT,
+         defaultValue: 0,
       },
       bono_segunda_quincena: {
          type: DataTypes.FLOAT,
+         defaultValue: 0,
       },
       sueldo_bruto: {
          type: DataTypes.FLOAT,
+         allowNull:false
       },
       onp: {
          type: DataTypes.FLOAT,
-      },
-      eps_primera_quincena: {
-         type: DataTypes.FLOAT,
-      },
-      eps_segunda_quincena: {
-         type: DataTypes.FLOAT,
+         defaultValue: 0,
       },
       afp_ap_oblig: {
          type: DataTypes.FLOAT,
+         defaultValue: 0,
       },
       seguro: {
          type: DataTypes.FLOAT,
+         defaultValue: 0,
       },
       comision: {
          type: DataTypes.FLOAT,
       },
       quinta_categoria: {
          type: DataTypes.FLOAT,
+         defaultValue: 0,
       },
       total_descuentos: {
          type: DataTypes.FLOAT,
+         defaultValue: 0,
       },
       sueldo_neto: {
          type: DataTypes.FLOAT,
+         allowNull:false
       },
       sueldo_quincenal: {
          type: DataTypes.FLOAT,
+         defaultValue: 0,
       },
       adelanto_prestamo: {
          type: DataTypes.FLOAT,
+         defaultValue: 0,
       },
       saldo_por_pagar: {
          type: DataTypes.FLOAT,
+         allowNull:false
       },
       filial_id: {
          type: DataTypes.INTEGER,
@@ -165,9 +201,29 @@ const PlanillaMensual = sequelize.define(
          type: DataTypes.STRING,
          allowNull: false,
       },
+      essalud: {
+         type: DataTypes.FLOAT,
+         defaultValue: 0,
+      },
+      seguro_vida_ley: {
+         type: DataTypes.FLOAT,
+         defaultValue: 0,
+      },
+      sctr_salud: {
+         type: DataTypes.FLOAT,
+         defaultValue: 0,
+      },
+      sctr_pension: {
+         type: DataTypes.FLOAT,
+         defaultValue: 0,
+      },
       info_detalle: {
          type: DataTypes.JSON,
          allowNull: true,
+      },
+      locked_at: {
+         type: DataTypes.DATE,
+         allowNull: false,
       },
       usuario_cierre_id: {
          type: DataTypes.INTEGER,
@@ -192,27 +248,27 @@ const PlanillaMensual = sequelize.define(
    }
 );
 
-PlanillaMensual.associate=(models)=>{
-    PlanillaMensual.belongsTo(models.contratos_laborales, {
-    foreignKey: "contrato_id",
-    as: "contrato",
-  });
-  PlanillaMensual.belongsTo(models.trabajadores, {
-    foreignKey: "trabajador_id",
-    as: "trabajador",
-  });
-  PlanillaMensual.belongsTo(models.usuarios, {
-    foreignKey: "usuario_cierre_id",
-    as: "usuarioCierre",
-  });
-  PlanillaMensual.belongsTo(models.empresas_proveedoras, {
-    foreignKey: "filial_id",
-    as: "filial",
-  });
-  PlanillaMensual.belongsTo(models.cierres_planilla_mensual, {
-    foreignKey: "cierre_planilla_mensual_id",
-    as: "cierrePlanillaMensual",
-  });
-}
+PlanillaMensual.associate = (models) => {
+   PlanillaMensual.belongsTo(models.contratos_laborales, {
+      foreignKey: "contrato_id",
+      as: "contrato",
+   });
+   PlanillaMensual.belongsTo(models.trabajadores, {
+      foreignKey: "trabajador_id",
+      as: "trabajador",
+   });
+   PlanillaMensual.belongsTo(models.usuarios, {
+      foreignKey: "usuario_cierre_id",
+      as: "usuarioCierre",
+   });
+   PlanillaMensual.belongsTo(models.empresas_proveedoras, {
+      foreignKey: "filial_id",
+      as: "filial",
+   });
+   PlanillaMensual.belongsTo(models.cierres_planilla_mensual, {
+      foreignKey: "cierre_planilla_mensual_id",
+      as: "cierrePlanillaMensual",
+   });
+};
 
-module.exports={PlanillaMensual}
+module.exports = { PlanillaMensual };

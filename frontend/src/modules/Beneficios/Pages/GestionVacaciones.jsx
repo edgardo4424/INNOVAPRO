@@ -15,14 +15,13 @@ export default function GestionVacaciones() {
    const [loading, setLoading] = useState(true);
    const [searchTerm, setSearchTerm] = useState("");
    const [activeTab, setActiveTab] = useState("trabajadores");
-
    const fetchEmployees = async () => {
       setLoading(true);
       // Simula una llamada a API
       try {
          const res = await beneficiosService.getTrabajadoresVacaciones();
          console.log(res.data.trabajadoresXvacaciones);
-
+         
          setEmployees(res.data.trabajadoresXvacaciones.reverse()); // mockData.json debe exportar el array
          setLoading(false);
       } catch (error) {
@@ -48,7 +47,7 @@ export default function GestionVacaciones() {
       const totalDays = employees.reduce(
          (sum, emp) =>
             sum +
-            (emp.vacaciones?.reduce((acc, vac) => acc + vac.dias_tomados, 0) ||
+            (emp.vacaciones?.reduce((acc, vac) => acc + (vac.dias_tomados||0), 0) ||
                0),
          0
       );

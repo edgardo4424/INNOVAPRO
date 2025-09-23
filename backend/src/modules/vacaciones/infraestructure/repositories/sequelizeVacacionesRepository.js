@@ -5,14 +5,37 @@ const {
 const { Vacaciones } = require("../models/vacacionesModel");
 const SequelizeDataMantenimientoRepository = require("../../../data_mantenimiento/infrastructure/repositories/sequelizeDataMantenimientoRepository");
 const { Op } = require("sequelize");
+const filtrarContratosSinInterrupcion = require("../../../../services/filtrarContratosSinInterrupcion");
+const {
+   AsistenciaVacaciones,
+} = require("../models/asistenciasVacacionesModel");
 
 const dataMantenimientoRepository = new SequelizeDataMantenimientoRepository();
 
 class SequelizeVacacionesRepository {
-   async crear(vacacionesData, importe_dias_vendidos) {      
-      vacacionesData.importe_dias_vendidos = importe_dias_vendidos;
-      const vacaciones = await Vacaciones.create(vacacionesData);
-      return true;
+   async crear(vacacionesData, transaction = null) {
+      const options = {};
+      if (transaction) {
+         options.transaction = transaction;
+      }
+      const vacaciones = await Vacaciones.create(vacacionesData, options);
+      return vacaciones.get({ plain: true });
+   }
+
+   async crearVacacionesXasitencias(
+      asistencias_vacaciones,
+      transaction = null
+   ) {
+      const options = {};
+      if (transaction) {
+         options.transaction = transaction;
+      }
+      const vacacionesXasistencias = await AsistenciaVacaciones.create(
+         asistencias_vacaciones,
+         options
+      );
+
+      return vacacionesXasistencias.get({ plain: true });
    }
 
    async obtenerVacacionesTrabajadores() {
@@ -44,8 +67,56 @@ class SequelizeVacacionesRepository {
             },
          ],
       });
+      const trabajadoreslimpios = trabajadoresXvacaciones.map((t) =>
+         t.get({ plain: true })
+      );
 
-      return trabajadoresXvacaciones;
+      const dataValidada = await Promise.all(
+         trabajadoreslimpios.map(async (t) => {
+            const data = { ...t };
+            const { vacaciones, contratos_laborales } = data;
+            const contratos_limpios =
+               filtrarContratosSinInterrupcion(contratos_laborales);
+            // !Rangos para filtrar las vacaciones
+            const fecha_inicio = contratos_limpios[0].fecha_inicio;
+            const fecha_fin =
+               contratos_limpios[contratos_limpios.length - 1].fecha_fin;
+            const vacaciones_limpias = vacaciones.filter((v) => {
+               return (
+                  v.fecha_inicio >= fecha_inicio &&
+                  v.fecha_inicio <= fecha_fin &&
+                  v.estado === "aprobada"
+               );
+            });
+            data.vacaciones = vacaciones_limpias;
+            data.contratos_laborales = contratos_limpios;
+            data.vacaciones = await Promise.all(
+               data.vacaciones.map(async (v) => {
+                  let datos = { ...v };
+                  datos.dias_tomados = 0;
+                  datos.dias_vendidos = 0;
+                  const responseAsistencia = await AsistenciaVacaciones.findAll(
+                     {
+                        where: { vacaciones_id: v.id },
+                     }
+                  );
+                  const limpiar_response = responseAsistencia.map((r) => {
+                     if (r.tipo == "gozada") {
+                        datos.dias_tomados++;
+                     }
+                     if (r.tipo == "vendida") {
+                        datos.dias_vendidos++;
+                     }
+                     return r.get({ plain: true });
+                  });
+                  datos.asitencias = limpiar_response;
+                  return datos;
+               })
+            );
+            return data;
+         })
+      );
+      return dataValidada.reverse();
    }
    async obtenerVacacionesPorTrabajadorId(
       inicio,

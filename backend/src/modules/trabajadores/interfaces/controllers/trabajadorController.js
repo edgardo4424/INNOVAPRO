@@ -19,6 +19,7 @@ const TrabajadorController = {
          );
          res.status(nuevoTrabajador.codigo).json(nuevoTrabajador.respuesta);
       } catch (error) {
+         console.log('error', error);
          res.status(500).json({ error: error.message });
       }
    },
@@ -43,9 +44,11 @@ const TrabajadorController = {
    },
    async editarTrabajadorConContrato(req, res) {
       try {
+         console.log('entre');
          const usuarioEditado = await editarTrabajadorConContrato(req.body);
          res.status(usuarioEditado.codigo).json(usuarioEditado.respuesta);
       } catch (error) {
+         console.log('error', error);
          res.status(500).json({ error: error.message });
       }
    },

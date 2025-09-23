@@ -18,7 +18,6 @@ const TableTrabajadoresVacaciones = ({ filteredEmployees }) => {
       );
       return ordenados[0].fecha_inicio;
    };
-   console.log(filteredEmployees);
 
    return (
       <div className="overflow-x-auto">
@@ -44,11 +43,11 @@ const TableTrabajadoresVacaciones = ({ filteredEmployees }) => {
             <tbody>
                {filteredEmployees.map((employee) => {
                   const totalTomado = employee.vacaciones.reduce(
-                     (sum, vac) => sum + vac.dias_tomados,
+                     (sum, vac) => sum + (vac.dias_tomados||0),
                      0
                   );
                   const totalVendido = employee.vacaciones.reduce(
-                     (sum, vac) => sum + vac.dias_vendidos,
+                     (sum, vac) => sum + (vac.dias_vendidos||0),
                      0
                   );
                   const filialActual = obtenerContratoActual(

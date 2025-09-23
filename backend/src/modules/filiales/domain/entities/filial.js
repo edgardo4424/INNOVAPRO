@@ -3,6 +3,7 @@ const camposValidos = [
     "ruc",
     "direccion",
     "representante_legal",
+    "tipo_documento",
     "dni_representante",
     "cargo_representante",
     "telefono_representante",
@@ -16,6 +17,7 @@ class Filial {
         ruc,
         direccion,
         representante_legal, 
+        tipo_documento,
         dni_representante, 
         cargo_representante, 
         telefono_representante, 
@@ -26,6 +28,7 @@ class Filial {
         this.ruc = ruc;
         this.direccion = direccion;
         this.representante_legal = representante_legal;
+        this.tipo_documento = tipo_documento;
         this.dni_representante = dni_representante;
         this.cargo_representante = cargo_representante;
         this.telefono_representante = telefono_representante;
@@ -35,8 +38,8 @@ class Filial {
 
     static validarCamposObligatorios(datos, modo = "crear") {
         if (modo === "crear") {
-            if (!datos.razon_social || !datos.ruc || !datos.representante_legal || !datos.dni_representante) {
-                return "Faltan campos obligatorios: razón social, ruc, representante legal y dni del representante.";
+            if (!datos.razon_social || !datos.ruc || !datos.representante_legal || !datos.tipo_documento || !datos.dni_representante) {
+                return "Faltan campos obligatorios: razón social, ruc, representante legal, tipo de documento y/o número de documento representante.";
             }
     
             if (!datos.creado_por) {
