@@ -39,7 +39,7 @@ const TablePlanillaMensual = ({
       );
 
    return (
-      <div className="w-full overflow-x-auto p-5 mb-10 flex flex-col bg-gray-100 border-2 rounded-xl shadow-xl">
+      <div className="w-full overflow-x-auto p-5  flex flex-col bg-gray-100 border-2 rounded-xl shadow-xl">
          <h1 className="text-2xl font-bold pb-6">Planilla</h1>
          <section className="grid grid-cols-4 space-x-3">
             <div className="relative col-span-3">

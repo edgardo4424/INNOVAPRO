@@ -249,11 +249,15 @@ export default function AppRoutes() {
                            path="facturacion/bandeja/*"
                            element={<BandejaRoutes />}
                         />
+                        <Route element={<RoleGuard roles={["CEO", "Gerente de administración","Asistente Facturación","Contadora"]} />}>
 
-                        <Route
+                           <Route
                            path="facturacion/borradores"
-                           element={<Borrador />}
-                        />
+                           element={
+                               <Borrador />
+                           }
+                           />
+                        </Route>
 
                      </Route>
                      {/*    //************************FINAL-FACTURACION************************* */}
