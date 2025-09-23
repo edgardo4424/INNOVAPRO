@@ -47,7 +47,6 @@ const DatosDeClienteForm = () => {
                 }
             );
             const { data, status, success } = await promise;
-            console.log("data", data);
 
             if (status === 200 && success) {
                 let razonSocial = "";

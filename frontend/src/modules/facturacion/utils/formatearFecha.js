@@ -3,7 +3,7 @@ const formatearFecha = (fecha) => {
     const dia = fechaDate.getDate().toString().padStart(2, "0");
     const mes = (fechaDate.getMonth() + 1).toString().padStart(2, "0");
     const anio = fechaDate.getFullYear();
-    return `${anio}/${mes}/${dia}`;
+    return `${dia}/${mes}/${anio}`;
 };
 
 export { formatearFecha };

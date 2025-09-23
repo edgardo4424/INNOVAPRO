@@ -23,11 +23,11 @@ const codigosMotivoCredito = [
     { value: "07", label: "07 - Devolución por ítem", descripcion: "DEVOLUCION POR ITEM" },
     // { value: "08", label: "08 - Bonificación" },
     // { value: "09", label: "09 - Disminución en el valor" },
-    { value: "10", label: "10 - Otros Conceptos", descripcion: "OTROS CONCEPTOS" },
+    // { value: "10", label: "10 - Otros Conceptos", descripcion: "OTROS CONCEPTOS" },
 ];
 
 const codigosMotivosDebito = [
-    { value: "01", label: "01 - Intereses por mora", descripcion: "INTERESES POR MORAS" },
+    { value: "01", label: "01 - Intereses por mora", descripcion: "INTERESES POR MORA" },
     { value: "02", label: "02 - Aumento en el valor", descripcion: "AUMENTO EN EL VALOR" },
     { value: "03", label: "03 - Penalidades/ otros conceptos", descripcion: "PENALIDADES/ OTROS CONCEPTOS" },
 ]
@@ -48,7 +48,7 @@ const DocumentoAfectadoForm = () => {
         const { name, value } = e.target;
         setNotaCreditoDebito((prevValores) => ({
             ...prevValores,
-            [name]: value,
+            [name]: value.toUpperCase(),
         }));
     };
 

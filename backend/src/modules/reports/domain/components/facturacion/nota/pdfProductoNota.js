@@ -1,12 +1,15 @@
-const { utils } = require('../../utils/utils')
+const { utils } = require('../../../../utils/utils')
 
-function pdfProductoFactura(
-    factura,
+function pdfProductoNota(
+    nota,
     innova_gray = '#616161',
     bg_color = "#DCDBDB",
     innova_border = "#DCDBDB",
     margin_content = [0, 0, 0, 0]
 ) {
+    // Determinar la fuente de datos, priorizando 'detalle_nota_cre_debs' si existe
+    const detalles = nota.detalle_nota_cre_debs?.length > 0 ? nota.detalle_nota_cre_debs : nota.detalle_facturas;
+
     return (
         {
             table: {
@@ -17,34 +20,33 @@ function pdfProductoFactura(
                         { text: 'CANT.', style: 'tableHeaderMain', fillColor: bg_color, alignment: 'center' },
                         { text: 'UNID.', style: 'tableHeaderMain', fillColor: bg_color, alignment: 'center' },
                         { text: 'DESCRIPCION', style: 'tableHeaderMain', fillColor: bg_color, alignment: 'center' },
-                        { text: 'V. UNIT.', style: 'tableHeaderMain', fillColor: bg_color, alignment: 'center' },
-                        { text: 'P. UNIT.', style: 'tableHeaderMain', fillColor: bg_color, alignment: 'center' },
+                        { text: 'MONT. BASE', style: 'tableHeaderMain', fillColor: bg_color, alignment: 'center' },
+                        { text: 'DSCTO.', style: 'tableHeaderMain', fillColor: bg_color, alignment: 'center' },
                         { text: 'IMPORTE', style: 'tableHeaderMain', fillColor: bg_color, alignment: 'center' }
                     ],
-                    ...(factura.detalle_facturas?.length ? factura.detalle_facturas : []).map(d => [
+                    ...(detalles?.length ? detalles : []).map(d => [
                         { text: d.cod_Producto || "—", style: 'tableBody', alignment: 'center' },
                         { text: `${Number(d.cantidad ?? 0).toFixed(2)}`, style: 'tableBody', alignment: 'center' },
                         { text: d.unidad || 'NIU', style: 'tableBody', alignment: 'center' },
                         { text: d.descripcion, style: 'tableBody' },
-                        { text: utils.formatCurrency(d.monto_Valor_Unitario), style: 'tableBody', alignment: 'center' },
-                        { text: utils.formatCurrency(d.monto_Precio_Unitario), style: 'tableBody', alignment: 'center' },
-                        { text: utils.formatCurrency(d.monto_Valor_Venta), style: 'tableBody', alignment: 'right' }
+                        { text: d.Descuentos ? JSON.parse(d.Descuentos)[0].montoBase.toFixed(2) : "-", style: 'tableBody', alignment: 'center' },
+                        { text: d.Descuentos ? JSON.parse(d.Descuentos)[0].Monto.toFixed(2) : "-", style: 'tableBody', alignment: 'center' },
+                        { text: utils.formatMoney(d.monto_Valor_Venta), style: 'tableBody', alignment: 'right' }
                     ])
                 ],
             },
             layout: {
                 hLineWidth: function (i, node) {
-                    return i === 0 || i === node.table.body.length || i === node.table.body.length + 6 ? 1 : 0;
+                    return i === 0 || i === node.table.body.length ? 1 : 0;
                 },
                 hLineColor: function (i, node) {
-                    return i % 2 === 0 ? innova_border : innova_border;
+                    return i === 0 || i === node.table.body.length ? innova_border : innova_border;
                 },
-                vLineColor: function (i, node) {
-                    return i % 2 === 0 ? innova_border : innova_border;
+                vLineWidth: function (i, node) {
+                    return 0; // Se eliminan las líneas verticales para un aspecto más limpio
                 }
             },
-
         });
 }
 
-module.exports = { pdfProductoFactura }
+module.exports = { pdfProductoNota }

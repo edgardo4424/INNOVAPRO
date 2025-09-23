@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext"; // Importamos el contexto correcto
 import { Eye, X } from "lucide-react"; // Solo necesitamos Eye y X para previsualizar
 import ModalEnviarGuia from "./ModalEnviarGuia";
+import { formatDateTime, getModalidadTrasladoDescription, getMotivoTrasladoDescription, getTipoDocCliente, getTipoDocGuiaDescription } from "@/modules/facturacion/utils/formateos";
 
 export default function ModalVisualizarGuiaPublico() {
     // ?? Obtenemos el objeto 'guiaTransporte' de nuestro contexto
@@ -21,66 +22,7 @@ export default function ModalVisualizarGuiaPublico() {
         setIsOpen(true);
     };
 
-    // ?? --- Funciones de ayuda para obtener descripciones y formatos ---
 
-    // ?? Helper para obtener la descripción del tipo de documento de la guía
-    const getTipoDocGuiaDescription = (typeCode) => {
-        switch (typeCode) {
-            case "09": return "GUÍA DE REMISIÓN ELECTRÓNICA";
-            // ?? Puedes añadir más tipos de documentos de guía si los manejas
-            default: return "DOCUMENTO DE GUÍA NO ESPECIFICADO";
-        }
-    };
-
-    // ?? Helper para obtener la descripción del tipo de documento del cliente/destinatario
-    const getClientDocTypeDescription = (typeCode) => {
-        switch (typeCode) {
-            case "6": return "RUC";
-            case "1": return "DNI";
-            case "4": return "CARNET DE EXTRANJERÍA";
-            default: return "OTRO";
-        }
-    };
-
-    // ?? Helper para obtener la descripción de la modalidad de traslado
-    const getModalidadTrasladoDescription = (code) => {
-        switch (code) {
-            case "01": return "TRANSPORTE PÚBLICO";
-            case "02": return "TRANSPORTE PRIVADO";
-            default: return "NO ESPECIFICADO";
-        }
-    };
-
-    // ?? Helper para obtener la descripción del motivo de traslado
-    const getMotivoTrasladoDescription = (code) => {
-        // ?? Se utiliza guia_Envio_Des_Traslado si está disponible, de lo contrario se usa el código
-        if (guiaTransporte.guia_Envio_Des_Traslado) {
-            return guiaTransporte.guia_Envio_Des_Traslado;
-        }
-        switch (code) {
-            case "01": return "VENTA";
-            case "02": return "COMPRA";
-            case "04": return "TRASLADO ENTRE ESTABLECIMIENTOS DE LA MISMA EMPRESA";
-            case "08": return "IMPORTACIÓN";
-            case "09": return "EXPORTACIÓN";
-            case "18": return "TRASLADO EMISOR ITINERANTE DE COMPROBANTES DE PAGO";
-            case "19": return "TRASLADO A ZONA PRIMARIA";
-            case "13": return "OTROS";
-            default: return "NO ESPECIFICADO";
-        }
-    };
-
-    // ?? Helper para formatear fechas (asumiendo formato ISO 8601 como "YYYY-MM-DDTHH:mm:ss-ZZ:ZZ")
-    const formatDate = (dateString) => {
-        if (!dateString) return '';
-        try {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
-        } catch (e) {
-            console.error("Error formatting date:", e);
-            return dateString.split('T')[0]; // ?? Fallback a YYYY-MM-DD si hay error
-        }
-    };
 
     return (
         <>
@@ -139,11 +81,11 @@ export default function ModalVisualizarGuiaPublico() {
                             <div className="mb-6 p-4 border border-gray-200 rounded-md bg-white">
                                 <h3 className="font-bold text-md mb-2 text-gray-600 border-b pb-1">DATOS DEL DESTINATARIO:</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                                    <p><strong>Tipo Doc.:</strong> {getClientDocTypeDescription(guiaTransporte.cliente_Tipo_Doc)}</p>
+                                    <p><strong>Tipo Doc.:</strong> {getTipoDocCliente(guiaTransporte.cliente_Tipo_Doc)}</p>
                                     <p><strong>Nro. Doc.:</strong> {guiaTransporte.cliente_Num_Doc || 'N/A'}</p>
                                     <p className="col-span-full"><strong>Razón Social/Nombre:</strong> {guiaTransporte.cliente_Razon_Social || 'N/A'}</p>
                                     <p className="col-span-full"><strong>Dirección:</strong> {guiaTransporte.cliente_Direccion || 'N/A'}</p>
-                                    <p className="col-span-full"><strong>Fecha de Emisión:</strong> {formatDate(guiaTransporte.fecha_Emision)}</p>
+                                    <p className="col-span-full"><strong>Fecha de Emisión:</strong> {formatDateTime(guiaTransporte.fecha_Emision)}</p>
                                 </div>
                             </div>
 
@@ -153,7 +95,7 @@ export default function ModalVisualizarGuiaPublico() {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                                     <p><strong>Modalidad de Traslado:</strong> {getModalidadTrasladoDescription(guiaTransporte.guia_Envio_Mod_Traslado)}</p>
                                     <p><strong>Motivo de Traslado:</strong> {getMotivoTrasladoDescription(guiaTransporte.guia_Envio_Cod_Traslado)}</p>
-                                    <p><strong>Fecha de Traslado:</strong> {formatDate(guiaTransporte.guia_Envio_Fec_Traslado)}</p>
+                                    <p><strong>Fecha de Traslado:</strong> {formatDateTime(guiaTransporte.guia_Envio_Fec_Traslado)}</p>
                                     <p><strong>Peso Total Bruto:</strong> {guiaTransporte.guia_Envio_Peso_Total || '0'} {guiaTransporte.guia_Envio_Und_Peso_Total || 'N/A'}</p>
                                     <p className="col-span-full"><strong>Placa del Vehículo:</strong> {guiaTransporte.guia_Envio_Vehiculo_Placa || 'N/A'}</p>
                                 </div>
@@ -185,7 +127,7 @@ export default function ModalVisualizarGuiaPublico() {
                                         {guiaTransporte.chofer.map((chofer, idx) => (
                                             <div key={idx} className="p-3 border border-gray-200 rounded-md bg-white text-sm">
                                                 <p><strong>Tipo:</strong> {chofer.tipo || 'N/A'}</p> {/* 'tipo' puede no estar en guiaPublica, se maneja con N/A */}
-                                                <p><strong>Tipo Doc.:</strong> {getClientDocTypeDescription(chofer.tipo_doc)}</p>
+                                                <p><strong>Tipo Doc.:</strong> {getTipoDocCliente(chofer.tipo_doc)}</p>
                                                 <p><strong>Nro. Doc.:</strong> {chofer.nro_doc || 'N/A'}</p>
                                                 <p><strong>Licencia:</strong> {chofer.licencia || 'N/A'}</p>
                                                 <p><strong>Nombres:</strong> {chofer.nombres || 'N/A'}</p>

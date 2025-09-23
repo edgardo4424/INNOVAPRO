@@ -20,6 +20,7 @@ import {
    LogOut,
    ShieldCheck,
    ScrollText,
+   Receipt,
 } from "lucide-react";
 import {
    Sidebar,
@@ -65,7 +66,7 @@ const iconMap = {
    "Registrar Cotización": FileEdit,
    "Stock de Piezas": Boxes,
    Trabajadores: Users,
-   "Facturación": ScrollText,
+   "Facturación": Receipt,
    "Gestión de Condiciones": ShieldCheck,
 };
 
@@ -130,9 +131,8 @@ const modulesByRole = {
          group: "Facturación",
          items: [
             { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
-            { name: "Guia de Remision", path: "/facturacion/emitir/guia" },
             { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
-            // { name: "Emitir", path: "/facturacion/emitir" },
+            { name: "Guia de Remision", path: "/facturacion/emitir/guia" },
             { name: "Bandeja", path: "/facturacion/bandeja" },
             { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
          ],

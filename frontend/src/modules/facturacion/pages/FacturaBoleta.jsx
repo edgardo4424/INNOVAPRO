@@ -1,43 +1,62 @@
-import { useLocation } from 'react-router-dom';
-import FacturaBoletaForm from '../emitir/factura-boleta/FacturaBoletaForm'
-import { useEffect } from 'react';
-import { useFacturaBoleta } from '../context/FacturaBoletaContext';
+import { useLocation } from "react-router-dom";
+import FacturaBoletaForm from "../emitir/factura-boleta/FacturaBoletaForm";
+import { useEffect } from "react";
+import { useFacturaBoleta } from "../context/FacturaBoletaContext";
+import { ValorInicialFactura } from "../emitir/factura-boleta/utils/valoresInicial";
 
 const FacturaBoleta = () => {
+  const {
+    factura,
+    setFactura,
+    setIdBorrador,
+    setRetencionActivado,
+    setDetraccion,
+    setRetencion,
+    setDetallesExtra,
+  } = useFacturaBoleta();
+  const location = useLocation();
+  const documento = location.state || {};
 
-    const { factura, setFactura, setIdBorrador, setDetraccionActivado, setDetraccion } = useFacturaBoleta();
-    const location = useLocation();
-    const documento = location.state || {};
+  useEffect(() => {
+    const PlasmarBorrador = async () => {
+      if (documento.length > 0) {
+        let {
+          valores_Detraccion,
+          valores_Retencion,
+          retencion_activada,
+          valores_Detalles_Extra,
+          ...facturaObtenida
+        } = documento[0];
+        setFactura(facturaObtenida);
+        setIdBorrador(documento[1].borr_id_delete);
+        setDetraccion(valores_Detraccion);
+        setRetencion(valores_Retencion);
+        setRetencionActivado(retencion_activada);
+        setDetallesExtra(valores_Detalles_Extra);
+      } else {
+        setFactura({
+          tipo_Operacion: "0101",
+          tipo_Doc: "01",
+          serie: "F001",
+          ...ValorInicialFactura,
+        });
+      }
+    };
+    PlasmarBorrador();
+  }, []);
 
-
-    useEffect(() => {
-        console.log("documento", documento);
-        const PlasmarBorrador = async () => {
-            if (documento.length > 0) {
-                setFactura(documento[0]);
-                setIdBorrador(documento[1].borr_id_delete);
-                // if (documento[0].detraccion) {
-                //     setDetraccionActivado(true);
-                //     setDetraccion(documento[0].detraccion);
-                // }
-            }
-        }
-        PlasmarBorrador();
-    }, []);
-
-    return (
-        <div className=" w-full flex flex-col items-center px-4 md:px-8 py-6 bg-gray-100">
-            <div className="w-full max-w-6xl ">
-                <div className="flex items-center justify-between mb-6 ">
-                    <h2 className="text-2xl md:text-3xl font-bold text-blue-600">
-                        Generar Factura / Boleta
-                    </h2>
-                </div>
-
-                <FacturaBoletaForm />
-            </div>
+  return (
+    <div className="flex w-full flex-col items-center bg-gray-100 py-6 md:px-8">
+      <div className="w-full max-w-6xl">
+        <div className="mb-6 flex items-center justify-between">
+          <h2 className="text-2xl font-bold  md:text-3xl">
+            Generar Factura / Boleta
+          </h2>
         </div>
-    )
-}
+        <FacturaBoletaForm />
+      </div>
+    </div>
+  );
+};
 
-export default FacturaBoleta
+export default FacturaBoleta;

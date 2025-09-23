@@ -41,7 +41,7 @@ const NotasCreditoDebito = sequelize.define(
             type: DataTypes.TEXT,
             allowNull: true,
         },
-        manual: {
+        Manual: {
             type: DataTypes.BOOLEAN,
             allowNull: true,
         },

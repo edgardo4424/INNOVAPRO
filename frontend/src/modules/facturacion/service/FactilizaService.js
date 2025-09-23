@@ -44,7 +44,7 @@ const factilizaService = {
         return res.data;
     },
 
-    
+
     // ?? ============ CONSULTAS DOCUMENTOS ============
     consultarDocumentoJson: async (documento) => {
         const res = await apiFactilizaConsultasDocumentos.post(
@@ -59,6 +59,17 @@ const factilizaService = {
         // forzamos texto para evitar que Axios intente parsear JSON
         const res = await apiFactilizaConsultasDocumentos.post(
             `/invoice/xml`,
+            documento,
+            { responseType: "text", transformResponse: [(d) => d] }
+        );
+        return res.data; // string (XML) o string base64, según tu API
+    },
+
+    // CDR: puede venir como texto (<?cdr...) o como base64/zip. Devuelve tal cual.
+    consultarCdr: async (documento) => {
+        // forzamos texto para evitar que Axios intente parsear JSON
+        const res = await apiFactilizaConsultasDocumentos.post(
+            `/invoice/cdr`,
             documento,
             { responseType: "text", transformResponse: [(d) => d] }
         );
@@ -85,7 +96,7 @@ const factilizaService = {
     },
 
     // !! ANULACION FACTURA - BOLETA
-    anularDocumento: async (url,doc) => {
+    anularDocumento: async (url, doc) => {
         const res = await apiFactilizaFacturacion.post(
             `/${url}/cancel`,
             doc

@@ -21,12 +21,12 @@ const TablaDetalles = ({ open, setOpen }) => {
 
     const { detalle } = guiaTransporte;
     return (
-        <div className="w-full overflow-x-auto mt-6">
+        <div className="w-full overflow-y-auto mt-6">
             <Table className={"border-2 border-gray-200"}>
 
                 <TableHeader className="bg-gray-100 border-b-2 border-gray-400">
                     <TableRow>
-                        <TableHead className={"max-w-[50px]"}>Cod. de Producto</TableHead>
+                        <TableHead className={"max-w-[50px]"}>Codigo</TableHead>
                         <TableHead>Descipción</TableHead>
                         <TableHead>Unidad</TableHead>
                         <TableHead>Cantidad</TableHead>

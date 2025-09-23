@@ -92,7 +92,7 @@ const DatosDelCliente = () => {
     return (
         <div className="overflow-y-auto p-4 sm:p-6 lg:px-8 lg:py-4">
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold py-3  text-gray-800">
+                <h1 className="text-lg md:text-2xl font-bold py-3  text-gray-800">
                     Datos del Cliente
                 </h1>
                 <ModalListaDeClientes setContext={setFactura} />

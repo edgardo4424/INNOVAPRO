@@ -47,7 +47,7 @@ const ValorInicialDetalleNota = {
     guia_id: "",
 
     // ?Fecha emision
-    fecha_Emision: "",
+    // fecha_Emision: "",
 
     // ?Montos
     monto_Igv: 0,
