@@ -9,6 +9,7 @@ module.exports = async (
    
    const trabajador = new Trabajador(trabajadorData);
    const errores = trabajador.validarCamposObligatorios(true);
+   console.log('errores: ', errores);
    if (errores.length > 0) {
       return { codigo: 400, respuesta: { mensaje: errores } };
    }

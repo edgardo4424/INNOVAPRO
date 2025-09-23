@@ -75,6 +75,7 @@ class Trabajador {
       const c_a = this.contratos_laborales.find(
          (c) => c.fecha_inicio <= hoy && hoy <= c.fecha_fin
       );
+      console.log('c_a', c_a);
       if(!c_a){
          errores.push("No se encontró un contrato laboral vigente para la fecha actual.");
          return errores;
