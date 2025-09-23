@@ -15,6 +15,10 @@ const CalculoQuintaModel = sequelize.define('CalculoQuinta', {
     type: DataTypes.INTEGER.UNSIGNED, 
     allowNull: true 
   },
+  filial_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
   dni: { 
     type: DataTypes.STRING(15), 
     allowNull: false,
@@ -98,11 +102,6 @@ const CalculoQuintaModel = sequelize.define('CalculoQuinta', {
     type: DataTypes.JSON, 
     allowNull: false 
   },
-  deduccion_adicional_anual: { 
-    type: DataTypes.DECIMAL(12,2), 
-    allowNull: false, 
-    defaultValue: 0 
-  },
   fuente: { 
     type: DataTypes.ENUM('informativo', 'oficial'), 
     allowNull: false, 
@@ -113,13 +112,53 @@ const CalculoQuintaModel = sequelize.define('CalculoQuinta', {
     allowNull: false, 
     defaultValue: false 
   },
-  agregado_todas_filiales: { 
+  creado_por: { 
+    type: DataTypes.INTEGER.UNSIGNED, 
+    allowNull: true 
+  },
+  filial_retiene_id: { 
+    type: DataTypes.INTEGER, 
+    allowNull: true 
+  },
+  origen_retencion: { 
+    type: DataTypes.STRING(32), 
+    allowNull: false, 
+    defaultValue: "NINGUNO" 
+  },
+  es_secundaria:   { 
     type: DataTypes.BOOLEAN, 
     allowNull: false, 
     defaultValue: false 
+  }, // mapea a TINYINT
+  ingresos_previos_internos:  { 
+    type: DataTypes.DECIMAL(12,2), 
+    allowNull: false, 
+    defaultValue: 0 
   },
-  creado_por: { 
-    type: DataTypes.INTEGER.UNSIGNED, 
+  ingresos_previos_externos:  { 
+    type: DataTypes.DECIMAL(12,2), 
+    allowNull: false, 
+    defaultValue: 0 
+  },
+  retenciones_previas_externas:{ 
+    type: DataTypes.DECIMAL(12,2), 
+    allowNull: false, 
+    defaultValue: 0 
+  },
+  soporte_multiempleo_id: { 
+    type: DataTypes.INTEGER, 
+    allowNull: true 
+  },
+  soporte_certificado_id: { 
+    type: DataTypes.INTEGER, 
+    allowNull: true 
+  },
+  soporte_sin_previos_id: { 
+    type: DataTypes.INTEGER, 
+    allowNull: true 
+  },
+  soportes_json: { 
+    type: DataTypes.JSON, 
     allowNull: true 
   },
 }, {

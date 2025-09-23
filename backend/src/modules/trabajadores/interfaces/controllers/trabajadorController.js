@@ -5,8 +5,17 @@ const SequelizeTrabajadorRepository = require("../../infraestructure/repositorie
 const crearTrabajadorConContrato = require("../../../../application/services/crearTrabajadorConContrato");
 const obtenerTrabajadorpoId = require("../../application/useCases/obtenerTrabajadorpoId");
 const editarTrabajadorConContrato = require("../../../../application/services/editarTrabajadorConContrato");
+
+const { Op } = require("sequelize");
+const { Trabajador } = require("../../infraestructure/models/trabajadorModel");
+const { ContratoLaboral } = require("../../../contratos_laborales/infraestructure/models/contratoLaboralModel");
+const { Filial } = require("../../../filiales/infrastructure/models/filialModel");
+
+function ymd(d){ const p=n=>String(n).padStart(2,"0"); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`; }
+
 const obtenerTrabajadoresYcontratos = require("../../application/useCases/obtenerTrabajadoresYcontratos");
 const obtenerTrabajadoresConContratosVigentes = require("../../application/useCases/obtenerTrabajadoresConContratosVigentes");
+
 
 const trabajadorRepository = new SequelizeTrabajadorRepository();
 
@@ -76,6 +85,61 @@ const TrabajadorController = {
          res.status(500).json({ error: error.message });
       }
    },
+   async listarFilialesVigentes(req, res) {
+      try {
+         const { dni } = req.params;
+         const anio = Number(req.query.anio);
+         const mes  = Number(req.query.mes);
+         if (!dni || !anio || !mes) return res.status(400).json({ ok:false, error:"dni, anio y mes son obligatorios" });
+
+         const trabajador = await Trabajador.findOne({ where: { numero_documento: dni } });
+         if (!trabajador) return res.status(404).json({ ok:false, error:"Trabajador no encontrado" });
+
+         const desde = new Date(anio, mes-1, 1);
+         const hasta = new Date(anio, mes, 0);
+
+         const contratos = await ContratoLaboral.findAll({
+            where: {
+            trabajador_id: trabajador.id,
+            estado: 1,
+            [Op.and]: [
+               { fecha_inicio: { [Op.lte]: hasta } },
+               { [Op.or]: [{ fecha_fin: { [Op.gte]: desde } }, { fecha_fin: null }] }
+            ]
+            },
+            include: [{ model: Filial, as: "empresa_proveedora", attributes: ["id","razon_social"] }]
+         });
+
+         const vistos = new Set();
+         const filiales = [];
+         for (const c of contratos) {
+            const fid = Number(c.filial_id);
+            if (!vistos.has(fid)) {
+            vistos.add(fid);
+            filiales.push({
+               filial_id: fid,
+               filial_razon_social: c.empresa_proveedora?.razon_social || `Filial ${fid}`,
+               contrato_id: c.id,
+               sueldo: Number(c.sueldo || 0),
+               regimen: c.regimen || null,
+               tipo_contrato: c.tipo_contrato || null
+            });
+            }
+         }
+         console.log("ESTAS SON LAS FILIALES: ", filiales)
+         return res.json({
+            ok: true,
+            data: {
+            trabajador_id: trabajador.id,
+            periodo: { anio, mes, desde: ymd(desde), hasta: ymd(hasta) },
+            filiales
+            }
+         });
+      } catch (err) {
+         console.error(err);
+         return res.status(500).json({ ok:false, error:"Error interno" });
+      }
+   }
    async obtenerTrabajadoresYcontratos(req, res) {            
       try {
          const response = await obtenerTrabajadoresYcontratos(

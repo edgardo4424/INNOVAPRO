@@ -15,5 +15,5 @@ router.put("/", TrabajadorController.editarTrabajadorConContrato);
 router.get("/trabajadores-contratos", TrabajadorController.obtenerTrabajadoresYcontratos);
 router.post("/contratos-vigentes", TrabajadorController.obtenerTrabajadoresConContratosVigentes);
 router.get("/:id", TrabajadorController.obtenerTrabajadorPorId);
-
+router.get("/:dni/filiales-vigentes", TrabajadorController.listarFilialesVigentes);
 module.exports = router;

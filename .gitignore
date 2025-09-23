@@ -47,6 +47,7 @@ dist-ssr
 
 # Ignorar la carpeta de datos grandes
 backend/data/
+backend/uploads
 backend/data/sunat/padron_reducido_ruc.zip
 backend/data/sunat/padron_reducido_ruc.txt
 backend/.idea/

@@ -6,28 +6,30 @@ const {
 } = require('../../shared/utils/tax/calculadorQuinta');
 
 module.exports = class CalcularQuintaProyectada {
-  /**
-   * @param {Object} input – datos del cálculo
-   */
   async execute(input) {
-    console.log("Input recibido para calcular: ", input)
     const {
-      anio, mes, dni, trabajadorId,
+      dni,
+      trabajadorId,
+      anio, 
+      mes, 
+      contratoId, 
       remuneracionMensualActual,
+      ingresos_previos_internos,
+      retenciones_previas_internas,
       ingresosPrevios,
-      otrosIngresosProyectados = 0,
-      retencionesPrevias = 0,
+      retencionesPrevias,
+      esProyeccion,
+      fuentePrevios,
+      otrosIngresosProyectados,
       deduccionAdicionalAnual = 0,
-      /* extraGravadoMes = 0, */
       agregadoTodasFiliales = false,
       creadoPor,
-      esProyeccion = false,
-      fuentePrevios = 'AUTO'
     } = input;
-
-    const { total_ingresos, gratiJulioProj, gratiJulioTrabajador, gratiDiciembreTrabajador, gratiDiciembreProj, bonos, asignacion_familiar, extraGravadoMes} = ingresosPrevios;
+    
+    const { total_ingresos, gratiJulioProj, gratiJulioTrabajador, gratiDiciembreTrabajador, gratiDiciembreProj, bonos, asignacion_familiar, extraGravadoMes, grati_multi, af_multi, remu_multi} = ingresosPrevios;
 
     const ingresosPreviosAcumulados = total_ingresos;
+
     let gratiJulioProyectada = gratiJulioProj;
     let gratiDiciembreProyectada = gratiDiciembreProj; 
     let gratiJulioPagada = gratiJulioTrabajador;
@@ -47,21 +49,15 @@ module.exports = class CalcularQuintaProyectada {
       gratiDiciembreProyectada = 0;
     }
 
-    console.log("Ingresos Previos Acumulados en calcular proyección: ", ingresosPreviosAcumulados)
-    console.log("Gratificación de Julio Proyectada: ", gratiJulioProyectada, "según el mes: ", mes)
-    console.log("Gratificación de Diciembre Proyectada: ", gratiDiciembreProyectada, "según el mes: ", mes)
-
     // Lee uit y deduccion fija 
     const parametros = await getParametrosTributarios();
 
     // Proyectamos el ingreso bruto anual = sueldo x meses faltantes + gratificaciones + otros ingresos.
     const brutoAnualProyectado = proyectarIngresosAnuales({
-      mes, remuneracionMensualActual, ingresosPreviosAcumulados,
-      gratiJulioProyectada, gratiDiciembreProyectada, otrosIngresosProyectados,
-      fuentePrevios
+      mes, remuneracionMensualActual, ingresosPreviosAcumulados, ingresos_previos_internos,
+      gratiJulioProyectada, gratiDiciembreProyectada, otrosIngresosProyectados, grati_multi, af_multi,
+      remu_multi, fuentePrevios, asignacion_familiar_proj_actual: Number(ingresosPrevios.asignacion_familiar_proj || 0),
     });
-
-    console.log("El resultado del cálculo del bruto anual proyectado es: ", brutoAnualProyectado);
 
     // Calculamos la retención base del mes
     const base = calcularRetencionBaseMes({
@@ -72,29 +68,31 @@ module.exports = class CalcularQuintaProyectada {
       deduccionAdicionalAnual: deduccionAdicionalAnual,
       parametros
     });
-    console.log("Luego de calcular el descuento base del mes, obtenemos esta data: ", base)
 
-    // Calculamos la retención adicional del mes en caso de ingresos extraordinarios(bonos, horas extras, etc)
-    const retencionAdicionalMes = calcularRetencionAdicionalMes({
-      anio,
-      rentaNetaAnual: base.rentaNetaAnual,
-      montoExtraGravadoMes: extraGravadoMes,
-      parametros
-    });
+    let retencionAdicionalMes = 0;
+    if (base.retencionBaseMes !== 0) {
+        // Calculamos la retención adicional del mes en caso de ingresos extraordinarios(bonos, horas extras, etc)
+        retencionAdicionalMes = calcularRetencionAdicionalMes({
+          anio,
+          rentaNetaAnual: base.rentaNetaAnual,
+          montoExtraGravadoMes: extraGravadoMes,
+          parametros
+      });
+    } 
 
     // Generación de warnings
     const warnings = [];
 
     // Caso 1: es una proyección
-    if (esProyeccion) {
+    if (esProyeccion && mes > 1) {
       warnings.push("No existen ingresos previos reales, se está usando una proyección.");
     } else {
       // SEñales según la fuente elegida
-      if (fuentePrevios === 'AUTO') {
+      if (fuentePrevios === 'AUTO' && mes > 1) {
         warnings.push("Ingresos previos estimados automáticamente (proyección).");
-      } else if (fuentePrevios === 'SIN_PREVIOS') {
+      } else if (fuentePrevios === 'SIN_PREVIOS' && mes > 1) {
         warnings.push("Se consideraron ingresos previos = 0 por declaración jurada.");
-      } else if (fuentePrevios === 'CERTIFICADO') {
+      } else if (fuentePrevios === 'CERTIFICADO' && mes > 1) {
         warnings.push("Ingresos previos declarados vía Certificado de 5ta.");
       } else if (!esProyeccion) {
         // Caso 2: renta neta anual menor a 7 UIT
@@ -106,7 +104,7 @@ module.exports = class CalcularQuintaProyectada {
     }
 
     // Caso 3: retenciones previas vacías
-    if (!retencionesPrevias || retencionesPrevias === 0) {
+    if (mes > 1 && (!retencionesPrevias || retencionesPrevias === 0)) {
       warnings.push("No se encontraron retenciones previas registradas, se considera 0.");
     }
     
@@ -147,10 +145,8 @@ module.exports = class CalcularQuintaProyectada {
       // Parámetros tributarios aplicados
       uit_valor: parametros.uit,
       deduccion_fija_uit: parametros.deduccionFijaUit,
-      deduccion_adicional_anual: deduccionAdicionalAnual,
 
       // Metadata
-      agregado_todas_filiales: !!agregadoTodasFiliales,
       es_recalculo: false,
       fuente: 'informativo',
       creado_por: creadoPor || null,

@@ -3,10 +3,65 @@ const sequelize = require('../../../../config/db');
 
 const CalculoQuintaRepository = require('../../domain/repositories/CalculoQuintaRepository');
 const CalculoQuintaModel = require('../models/CalculoQuintaModel');
+const CierreQuintaModel = require('../models/CierreQuintaModel');
+
+const { num, _periodo } = require('../../shared/utils/helpers');
+
+const _id = (x) => {
+  if (x == null) return null;
+  if (typeof x === 'object') return Number(x.id ?? x);
+  return Number(x);
+};
 
 class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository {
+  // CIERRES DE QUINTA
+  async obtenerCierreQuinta(periodo, filial_id, transaction = null) {
+    return CierreQuintaModel.findOne({ where: { periodo, filial_id }, transaction });
+  }
+
+  async insertarCierreQuinta(data, transaction = null) {
+    return CierreQuintaModel.create(data, { transaction });
+  }
+
+  async actualizarCierreQuinta(id, patch, transaction = null) {
+    const cierre = await CierreQuintaModel.findByPk(id, { transaction });
+    if (!cierre) return null;
+    await cierre.update(patch, { transaction });
+    return cierre;
+  }
+
+  async listarCierres({ filialId, anio }) {
+    const where = {};
+    if (filialId) where.filial_id = filialId;
+    if (anio) where.periodo = { [sequelize.Op.like]: `${anio}-%` };
+    return CierreQuintaModel.findAll({ where, order: [['periodo', 'DESC']] });
+  }
+
+  // PARA VALIDAR
+  async estaCerrado({ filialId, anio, mes, periodo }, options = {}) {
+    const per = _periodo({ anio, mes, periodo });
+    const where = { filial_id: num(filialId), periodo: per };
+    const row = await CierreQuintaModel.findOne({
+      where, attributes: ['id'], raw: true, transaction: options.transaction
+    });
+    return !!row;
+  }
+
   // Insertar cálculos en tabla quinta_calculos
   async create(entity) { return await CalculoQuintaModel.create(entity); }
+
+  async updateById(idLike, patch, options = {}) {
+    const id = _id(idLike);
+    if (!id || Number.isNaN(id)) {
+      const e = new Error('ID inválido para updateById');
+      e.status = 400; throw e;
+    }
+    const row = await CalculoQuintaModel.findByPk(id, { transaction: options.transaction });
+    if (!row) return null;
+    await row.update(patch, { transaction: options.transaction });
+    return row;
+  }
+
   // Buscamos por id en quinta_calculos
   async findById(id) { return await CalculoQuintaModel.findByPk(id); }
   // Buscamos todas las filas de un trabajador en un año ordenadas
@@ -22,6 +77,24 @@ class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository 
     });
   }
 
+  // Validador de bloqueo por mes (cierre)
+  async ultimoMesCerradoPorDniAnio({ dni, anio }) {
+    try {
+      const filas = await CalculoQuintaModel
+      .unscoped()
+      .findAll({
+        where: { dni, anio, fuente: 'oficial' },
+        attributes: ['mes'],
+        order: [['mes', 'DESC']],
+        raw: true,
+        transaction: options.transaction,
+      })
+    return filas ? Number(filas.mes) : 0;
+    } catch (e) {
+      return 0;
+    }
+  }
+
   // Método para ser usado por otros módulos
   async findUltimoVigentePorDniMes({ dni, anio, mes }) {
       return CalculoQuintaModel.findOne({
@@ -29,6 +102,15 @@ class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository 
       order: [['createdAt', 'DESC']],     // último creado = vigente del mes
       // attributes opcionales para performance:
       // attributes: ['id','dni','anio','mes','retencion_base_mes','es_recalculo','createdAt'],
+    });
+  }
+
+  // Para upsert idempotente en masivo
+  async findOficialByPeriodo({ dni, anio, mes }, options = {}) {
+    return CalculoQuintaModel.findOne({
+      where: { dni, anio, mes, fuente: 'oficial' },
+      order: [['updated_at', 'DESC'], ['created_at','DESC'], ['id','DESC']],
+      transaction: options.transaction
     });
   }
 

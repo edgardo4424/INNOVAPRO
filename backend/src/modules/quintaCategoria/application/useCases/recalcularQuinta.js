@@ -1,90 +1,80 @@
-const { empresas_proveedoras } = require('../../../../database/models');
-const CalcularQuintaProyectada = require('./calcularQuintaProyectada');
-const ObtenerIngresosPrevios = require('./obtenerIngresosPrevios');
-
 module.exports = class RecalcularQuinta {
   constructor(repo) {
     this.repo = repo;
-    this.calcular = new CalcularQuintaProyectada();
-    this.obtenerPrevios = new ObtenerIngresosPrevios();
   }
-
-  /**
-   * @param {Object} p
-   * @param {number} p.id
-   * @param {Object} [p.overrideInput]
-   * @param {number} [p.creadoPor]
-   */
-  async execute({ id, overrideInput, creadoPor }) {
-    // Buscamos el cálculo anterior en la base de datos
+  async execute({ id, overrideInput = {}, creadoPor, transaction }) {
     const prev = await this.repo.findById(id);
-    // En caso no exista, devolvemos el error
     if (!prev) {
-        const err = new Error("Cálculo no encontrado");
-        err.status = 404;
-        throw err;
+      const err = new Error("Cálculo no encontrado");
+      err.status = 404;
+      throw err;
     }
 
-    // Remuneración vigente (override > previo)
-    const remuneracionMensualActual = Number(
-      overrideInput.remuneracionMensualActual ?? prev.remuneracion_mensual
-    );
+    const dto = {
+      // Identificación
+      trabajador_id: overrideInput.trabajador_id ?? overrideInput.trabajadorId ?? prev.trabajador_id ?? null,
+      contrato_id:  overrideInput.contrato_id  ?? overrideInput.contratoId  ?? prev.contrato_id  ?? null,
+      filial_id:    overrideInput.filial_id    ?? prev.filial_id ?? null,
+      dni:          overrideInput.dni          ?? prev.dni,
+      anio: Number(overrideInput.anio ?? prev.anio),
+      mes:  Number(overrideInput.mes  ?? prev.mes),
 
-    // Fuente de previos y certificado (si llega)
-    const fuentePrevios = overrideInput.fuentePrevios || 'AUTO';
-    const certificadoQuinta = overrideInput.certificadoQuinta || null;
+      // Entradas visibles
+      remuneracion_mensual: Number(
+        overrideInput.remuneracion_mensual ??
+        overrideInput.remuneracionMensualActual ??
+        prev.remuneracion_mensual ?? 0
+      ),
+      ingresos_previos_acum: Number(
+        overrideInput.ingresos_previos_acum ??
+        overrideInput.ingresosPrevios?.total_ingresos ??
+        prev.ingresos_previos_acum ?? 0
+      ),
+      grati_julio_proj:      Number(overrideInput.grati_julio_proj      ?? prev.grati_julio_proj      ?? 0),
+      grati_diciembre_proj:  Number(overrideInput.grati_diciembre_proj  ?? prev.grati_diciembre_proj  ?? 0),
+      otros_ingresos_proj:   Number(overrideInput.otros_ingresos_proj   ?? overrideInput.otrosIngresosProyectados ?? prev.otros_ingresos_proj ?? 0),
+      extra_gravado_mes:     Number(overrideInput.extra_gravado_mes     ?? overrideInput.extraGravadoMes ?? prev.extra_gravado_mes ?? 0),
 
-    // Reconstruimos ingresos previos para el mismo mes/año
-    const ingresosPrevios = await this.obtenerPrevios.execute({
-      trabajadorId: prev.trabajador_id,
-      anio: prev.anio,
-      mes: prev.mes,
-      remuneracionMensualActual,
-      fuentePrevios,
-      certificadoQuinta
-    })
+      // Cálculos
+      bruto_anual_proyectado: Number(overrideInput.bruto_anual_proyectado ?? prev.bruto_anual_proyectado ?? 0),
+      renta_neta_anual:       Number(overrideInput.renta_neta_anual       ?? prev.renta_neta_anual       ?? 0),
+      impuesto_anual:         Number(overrideInput.impuesto_anual         ?? prev.impuesto_anual         ?? 0),
+      divisor_calculo:        Number(overrideInput.divisor_calculo        ?? prev.divisor_calculo        ?? 0),
+      tramos_usados:                overrideInput.tramos_usados           ?? prev.tramos_usados          ?? [],
 
-    // Retenciones previas (override > cálculo actual en BD)
-    let retencionesPrevias = Number(overrideInput.retencionesPrevias);
-    if (!Number.isFinite(retencionesPrevias)) {
-      retencionesPrevias = await this.obtenerPrevios._getRetencionesPrevias({
-        trabajadorId: prev.trabajador_id,
-        anio: prev.anio,
-        mes: prev.mes,
-      });
-    }
+      // Resultados del mes
+      retenciones_previas:    Number(overrideInput.retenciones_previas    ?? overrideInput.retencionesPrevias ?? prev.retenciones_previas ?? 0),
+      retencion_base_mes:     Number(overrideInput.retencion_base_mes     ?? prev.retencion_base_mes     ?? 0),
+      retencion_adicional_mes:Number(overrideInput.retencion_adicional_mes?? prev.retencion_adicional_mes?? 0),
 
-    // Ejecutamos el cálculo con el INPUT esperado por el UC de cálculo
-    const dto = await this.calcular.execute({
-      anio: prev.anio,
-      mes: prev.mes,
-      dni: prev.dni,
-      trabajadorId: prev.trabajador_id,
+      // Parámetros
+      uit_valor:              Number(overrideInput.uit_valor              ?? prev.uit_valor              ?? 0),
+      deduccion_fija_uit:     Number(overrideInput.deduccion_fija_uit     ?? prev.deduccion_fija_uit     ?? 0),
 
-      remuneracionMensualActual,
-      ingresosPrevios,
+      // Meta/soportes
+      origen_retencion:             overrideInput.origen_retencion             ?? prev.origen_retencion ?? 'NINGUNO',
+      es_secundaria:          Number(overrideInput.es_secundaria               ?? prev.es_secundaria    ?? 0),
+      filial_retiene_id:      Number(overrideInput.filial_retiene_id           ?? prev.filial_retiene_id ?? null),
+      ingresos_previos_internos: Number(overrideInput.ingresos_previos_internos ?? prev.ingresos_previos_internos ?? 0),
+      ingresos_previos_externos: Number(overrideInput.ingresos_previos_externos ?? prev.ingresos_previos_externos ?? 0),
+      retenciones_previas_externas: Number(overrideInput.retenciones_previas_externas ?? prev.retenciones_previas_externas ?? 0),
+      soporte_multiempleo_id: overrideInput.soporte_multiempleo_id ?? prev.soporte_multiempleo_id ?? null,
+      soporte_certificado_id: overrideInput.soporte_certificado_id ?? prev.soporte_certificado_id ?? null,
+      soporte_sin_previos_id: overrideInput.soporte_sin_previos_id ?? prev.soporte_sin_previos_id ?? null,
+      soportes_json:          overrideInput.soportes_json ?? prev.soportes_json ?? null,
 
-      otrosIngresosProyectados: Number(overrideInput.otrosIngresosProyectados ?? prev.otros_ingresos_proj ?? 0),
-      retencionesPrevias: Number(retencionesPrevias || 0),
-      deduccionAdicionalAnual: Number(overrideInput.deduccionAdicionalAnual ?? prev.deduccion_adicional_anual ?? 0),
+      // Flags
+      es_recalculo: true,
+      fuente: 'oficial',
+      creado_por: creadoPor ?? prev.creado_por ?? null,
+    };
 
-      extraGravadoMes: Number(overrideInput.extraGravadoMes ?? prev.extra_gravado_mes ?? 0),
-      agregadoTodasFiliales: overrideInput.agregadoTodasFiliales ?? prev.agregado_todas_filiales,
+    // Snapshot de tramos para auditoría (igual que GuardarCalculoQuinta)
+    dto.tramos_usados_json = overrideInput.tramos_usados_json ?? {
+      impuestoTotal: dto.impuesto_anual,
+      tramos_usados: dto.tramos_usados
+    };
 
-      creadoPor: creadoPor || prev.creado_por,
-      esProyeccion: ingresosPrevios.es_proyeccion,
-      fuentePrevios,
-      
-    })
-
-    // Marcamos que es recalculo
-    dto.es_recalculo = true;
-    dto.fuente = 'oficial';
-    dto.tramos_usados_json = {
-        impuestoTotal: prev.impuesto_anual,
-        tramos_usados: prev.tramos_usados
-    }
-    // Guardamos el nuevo registro
-    return await this.repo.create(dto);
+    return await this.repo.updateById(id, dto, { transaction });
   }
 };

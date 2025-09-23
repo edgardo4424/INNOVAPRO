@@ -38,6 +38,8 @@ class SequelizeGratificacionRepository {
         return [];
     }
 
+    if (!cierreGratificacion) return [];
+    
     const gratificacionesCerradas = await Gratificacion.findAll({
       where: { cierre_id: cierreGratificacion.id },
       include: [
@@ -69,7 +71,6 @@ class SequelizeGratificacionRepository {
       (await dataMantenimientoRepository.obtenerPorCodigo("valor_hora_extra"))
         .valor
     );
-
 
     const MONTO_NO_COMPUTABLE = Number(
       (
@@ -244,7 +245,6 @@ class SequelizeGratificacionRepository {
   }
 
   async calcularGratificacionTruncaPorTrabajador(periodo, anio, filial_id, trabajador_id, transaction = null) {
-   
 
     const MONTO_ASIGNACION_FAMILIAR = Number(
       (
@@ -254,17 +254,14 @@ class SequelizeGratificacionRepository {
       ).valor
     );
 
-
     const MONTO_FALTA_POR_DIA = Number(
       (await dataMantenimientoRepository.obtenerPorCodigo("valor_falta")).valor
     );
-   
 
     const MONTO_POR_HORA_EXTRA = Number(
       (await dataMantenimientoRepository.obtenerPorCodigo("valor_hora_extra"))
         .valor
     );
-    
 
     const MONTO_NO_COMPUTABLE = Number(
       (
@@ -273,7 +270,6 @@ class SequelizeGratificacionRepository {
         )
       ).valor
     );
-   
 
     const PORCENTAJE_BONIFICACION_ESSALUD = Number(
       (
@@ -291,7 +287,6 @@ class SequelizeGratificacionRepository {
       ).valor
     );
 
-  
     const dataMantenimiento = {
       MONTO_ASIGNACION_FAMILIAR,
       MONTO_FALTA_POR_DIA,

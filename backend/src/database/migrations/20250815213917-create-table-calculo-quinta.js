@@ -100,22 +100,12 @@ module.exports = {
         type: Sequelize.JSON, 
         allowNull: false 
       },
-      deduccion_adicional_anual: { 
-        type: Sequelize.DECIMAL(12,2), 
-        allowNull: false, 
-        defaultValue: 0 
-      },
       fuente: { 
         type: Sequelize.ENUM('informativo', 'oficial'), 
         allowNull: false, 
         defaultValue: 'informativo' 
       },
       es_recalculo: { 
-        type: Sequelize.BOOLEAN, 
-        allowNull: false, 
-        defaultValue: false 
-      },
-      agregado_todas_filiales: { 
         type: Sequelize.BOOLEAN, 
         allowNull: false, 
         defaultValue: false 

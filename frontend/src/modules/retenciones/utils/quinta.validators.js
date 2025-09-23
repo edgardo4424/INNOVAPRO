@@ -14,10 +14,6 @@ export function validarFormularioQuinta(form) {
 
   if (!form.trabajadorId) errs.trabajadorId = "Selecciona un trabajador.";
 
-  if (form.remuneracionMensualActual === "" || Number(form.remuneracionMensualActual) <= 0) {
-    errs.remuneracionMensualActual = "La remuneración mensual es obligatoria.";
-  }
-
   if (form.fuentePrevios === FUENTE_PREVIOS.CERTIFICADO) {
     const c = form.certificadoQuinta || {};
     if (c.renta_bruta_total === "" || isNaN(Number(c.renta_bruta_total))) {
