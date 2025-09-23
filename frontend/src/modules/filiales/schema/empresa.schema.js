@@ -29,10 +29,10 @@ export const obtenerEmpresaSchema = () =>
       dni_representante: yup
          .string()
          .required("El DNI del representante es obligatorio")
-         .matches(
+         /* .matches(
             /^\d{8}$/,
             "El DNI del representante debe tener exactamente 8 dígitos"
-         ),
+         ), */,
 
       cargo_representante: yup
          .string()
