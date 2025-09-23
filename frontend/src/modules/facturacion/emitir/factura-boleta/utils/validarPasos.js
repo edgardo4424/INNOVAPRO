@@ -3,7 +3,7 @@ function isNullOrEmpty(value) {
     return value === undefined || value === null || (typeof value === 'string' && value.trim() === '');
 }
 
-export async function validarFacturaCompleta(Factura, Detraccion, retencionActivado, Retencion) {
+export async function validarFacturaCompleta(Factura, Detraccion, retencionActivado, Retencion,detallesExtra) {
     if (!Factura) {
         return {
             errores: null,
@@ -65,6 +65,11 @@ export async function validarFacturaCompleta(Factura, Detraccion, retencionActiv
         { key: "descuento_factor", name: "Factor de Retención" },
         { key: "descuento_monto_base", name: "Monto Base de Retención" },
         { key: "descuento_monto", name: "Monto de Retención" }
+    ];
+
+    const camposDetallesExtra = [
+        { key: "detalle", name: "Campo Nombre de Detalle extra Incompleto" },
+        { key: "valor", name: "Campo Valor de Detalle extra Incompleto" }
     ];
 
     // 1. Validar campos globales
@@ -152,6 +157,17 @@ export async function validarFacturaCompleta(Factura, Detraccion, retencionActiv
             errores.forma_pago_fecha = "Los pagos a crédito no pueden ser iguales o anteriores a la fecha de emisión.";
             validos = false;
         }
+    }
+
+    if(detallesExtra && detallesExtra.length>0){
+        detallesExtra.forEach((detalle, index) => {
+            camposDetallesExtra.forEach(campo => {
+                if (detalle[campo.key] === "") {
+                    errores[`${campo.key}[${index}]`] = `El campo '${campo.name}' no puede estar vacío.`;
+                    validos = false;
+                }
+            });
+        });
     }
 
     // 4. Devolver el resultado

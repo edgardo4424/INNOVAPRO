@@ -94,7 +94,7 @@ const ModalDocumentos = ({ open, setOpen }) => {
                         </Select>
                     </div>
 
-                    <div>
+                    <div className="flex flex-col gap-1 col-span-full sm:col-span-1">
                         {/* Fecha de vencimiento */}
                         <div className="flex flex-col gap-1 col-span-full sm:col-span-1">
                             <Label htmlFor="nroDoc">Numero de Documento</Label>
@@ -105,7 +105,7 @@ const ModalDocumentos = ({ open, setOpen }) => {
                                 placeholder="Orden de compra"
                                 className="border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
                                 value={documentos.nroDoc}
-                                onChange={(e) => setDocumentos({ ...documentos, nroDoc: e.target.value })}
+                                onChange={(e) => setDocumentos({ ...documentos, nroDoc: e.target.value.toUpperCase() })}
                             />
                         </div>
                     </div>

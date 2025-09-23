@@ -3,11 +3,10 @@ import { Label } from "@/components/ui/label";
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
-    TableRow,
+    TableRow
 } from "@/components/ui/table";
 import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
 import facturaService from "@/modules/facturacion/service/FacturaService";

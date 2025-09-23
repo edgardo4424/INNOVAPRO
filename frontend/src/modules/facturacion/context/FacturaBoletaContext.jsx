@@ -205,8 +205,8 @@ export function FacturaBoletaProvider({ children }) {
 
       setTotalProducto(gravadas);
 
-      setFactura((prev) => ({
-        ...prev,
+      setFactura({
+        ...factura,
         monto_Oper_Gravadas: parseFloat(gravadas.toFixed(2)),
         monto_Oper_Exoneradas: parseFloat(exoneradas.toFixed(2)),
         monto_Igv: parseFloat(igvTotal.toFixed(2)),
@@ -214,7 +214,7 @@ export function FacturaBoletaProvider({ children }) {
         valor_Venta: parseFloat((gravadas + exoneradas).toFixed(2)),
         sub_Total: parseFloat(subTotal.toFixed(2)),
         monto_Imp_Venta: parseFloat(subTotal.toFixed(2)),
-      }));
+      });
     };
 
     if (factura.detalle?.length > 0) {
@@ -257,7 +257,7 @@ export function FacturaBoletaProvider({ children }) {
     let montoPendiente = montoBase;
 
     const pagosRealizados = factura.forma_pago.reduce((total, item) => {
-      const monto = parseFloat(item.monto || 0); // ✅ Aquí corregimos para evitar NaN
+      const monto = parseFloat(item.monto || 0);
       return total + (isNaN(monto) ? 0 : monto);
     }, 0);
 
@@ -502,6 +502,8 @@ export function FacturaBoletaProvider({ children }) {
     setIdBorrador(null);
     setDetallesExtra([]);
     buscarCorrelativo();
+    setDetallesExtra([]);
+    setIdBorrador(null);
   };
 
   return (

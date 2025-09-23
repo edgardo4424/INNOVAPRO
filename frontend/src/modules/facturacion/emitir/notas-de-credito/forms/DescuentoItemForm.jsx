@@ -16,6 +16,9 @@ import { Textarea } from '@/components/ui/textarea';
 
 const DescuentoItemForm = ({ closeModal }) => {
     const { notaCreditoDebito, setNotaCreditoDebito, itemActual, setItemActual } = useNota();
+    const [textoCorregido, setTextoCorregido] = useState(valorIncialDescuentoItem.descripcion);
+
+
     const { detalle } = notaCreditoDebito;
 
     const [itemDescuentoForm, setItemDescuentoForm] = useState(valorIncialDescuentoItem);
@@ -73,7 +76,7 @@ const DescuentoItemForm = ({ closeModal }) => {
             id: itemActual.id,
             cantidad,
             unidad: itemActual.unidad ?? prev.unidad,
-            descripcion: `${itemActual.descripcion}*****DESCUENTO*****` ?? prev.descripcion,
+            descripcion: `${itemActual.descripcion.includes("*****DESCUENTO*****") ? itemActual.descripcion: itemActual.descripcion+"*****DESCUENTO*****"}` ?? prev.descripcion+"*****DESCUENTO*****",
             monto_Valor_Unitario: valorUnitarioConDesc,
             porcentaje_Igv: porcentajeIgv,
             tip_Afe_Igv: itemActual.tip_Afe_Igv,

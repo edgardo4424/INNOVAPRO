@@ -1,11 +1,8 @@
-// Importaciones necesarias de React y tu contexto personalizado
-import React, { useEffect, useCallback } from "react";
 import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
+import { useCallback, useEffect } from "react";
 
-// Importaciones de los componentes de shadcn/ui
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -25,11 +22,6 @@ const DatosDeRetencion = () => {
     setRetencion,
     precioDolarActual,
   } = useFacturaBoleta();
-
-  // Verificaciones de visibilidad del componente
-  if (factura.monto_Imp_Venta < 699) return null;
-  if (factura.tipo_Doc === "03") return null;
-  if (factura.tipo_Operacion === "1001") return null;
 
   // Función para calcular la retención de forma más robusta
   const calcularRetencion = useCallback(
@@ -63,11 +55,15 @@ const DatosDeRetencion = () => {
 
         setFactura({
           ...factura,
-          neto_Pagar: Number((factura.monto_Imp_Venta - montoPorcentaje).toFixed(2)),
+          neto_Pagar: Number(
+            (factura.monto_Imp_Venta - montoPorcentaje).toFixed(2),
+          ),
         });
       } else {
         // Cálculo para moneda extranjera (USD)
-        const montoVentaEnSoles = factura.monto_Imp_Venta * precioDolarActual;
+        const montoVentaEnSoles =
+          (factura.monto_Imp_Venta - factura.monto_Oper_Exoneradas) *
+          precioDolarActual;
         montoBase = montoVentaEnSoles;
         montoPorcentaje = montoBase * porcentaje;
 
@@ -80,7 +76,12 @@ const DatosDeRetencion = () => {
 
         setFactura({
           ...factura,
-          neto_Pagar: Number((factura.monto_Imp_Venta - montoPorcentaje).toFixed(2)),
+          neto_Pagar: Number(
+            (
+              factura.monto_Imp_Venta -
+              montoPorcentaje / precioDolarActual
+            ).toFixed(2),
+          ),
         });
       }
     },
@@ -142,10 +143,16 @@ const DatosDeRetencion = () => {
     }
   };
 
-  return (
+  const shouldRender = !(
+    factura.monto_Imp_Venta < 699 ||
+    factura.tipo_Doc === "03" ||
+    factura.tipo_Operacion === "1001"
+  );
+
+  return shouldRender ? (
     <div className="flex flex-col gap-y-6 overflow-y-auto px-4 pt-4 lg:px-8">
       <div className="flex items-center gap-x-4">
-        <h1 className="text-2xl font-bold">Retención</h1>
+        <h1 className="text-lg font-bold md:text-2xl">Retención</h1>
         <Switch
           checked={retencionActivado}
           onCheckedChange={handleSwitchChange}
@@ -160,7 +167,7 @@ const DatosDeRetencion = () => {
 
       {/* Contenedor del formulario */}
       {retencionActivado && (
-        <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {/* Campo de porcentaje */}
           <div className="flex flex-col space-y-2">
             <Label htmlFor="descuento_factor">Porcentaje de Retención</Label>
@@ -210,7 +217,7 @@ const DatosDeRetencion = () => {
           {/* Importe neto a pagar */}
           <div className="flex flex-col space-y-2">
             <Label htmlFor="neto_pagar">
-              Neto a Pagar {factura.tipo_Moneda === "USD" ? "(PEN)" : ""}
+              Neto a Pagar {factura.tipo_Moneda === "USD" ? "USD" : ""}
             </Label>
             <Input
               type="number"
@@ -223,7 +230,7 @@ const DatosDeRetencion = () => {
         </div>
       )}
     </div>
-  );
+  ) : null;
 };
 
 export default DatosDeRetencion;

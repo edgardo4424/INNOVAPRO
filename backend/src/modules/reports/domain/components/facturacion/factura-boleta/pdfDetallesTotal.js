@@ -1,4 +1,4 @@
-const { utils } = require("../../utils/utils");
+const { utils } = require('../../../../utils/utils')
 
 function pdfDetallesTotal(
     factura,
@@ -39,8 +39,8 @@ function pdfDetallesTotal(
                             { text: `${utils.getFormaPago(factura.detraccion_cod_medio_pago)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
                         ],
                         [
-                            { text: `DETRACCIÓN ${Number(factura.detraccion_percent).toFixed(2)}%:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
-                            { text: `${factura.detraccion_mount}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
+                            { text: `DETRACCIÓN ${Number(factura.detraccion_percent * 100).toFixed(0)}%:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
+                            { text: `${(factura.detraccion_mount)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
                         ],
                         [
                             { text: `NETO A PAGAR:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
@@ -77,8 +77,8 @@ function pdfDetallesTotal(
                             { text: `${factura.descuento_monto_base}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
                         ],
                         [
-                            { text: `DESCUENTO ${Number(factura.descuento_factor).toFixed(2)}%:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
-                            { text: `${factura.descuento_monto}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
+                            { text: `DESCUENTO ${Number(factura.descuento_factor * 100).toFixed(0)}%:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
+                            { text: `${(factura.descuento_monto)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
                         ],
                         [
                             { text: `NETO A PAGAR:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
@@ -111,7 +111,7 @@ function pdfDetallesTotal(
                     body: [
                         [
                             { text: 'GRAVADA (S/)', style: 'totalLabel', border: [true, true, true, true] },
-                            { text: utils.formatCurrency(factura.monto_Oper_Gravadas), style: 'totalValue', alignment: 'right', border: [true, true, true, true] }
+                            { text: utils.formatMoney(factura.monto_Oper_Gravadas), style: 'totalValue', alignment: 'right', border: [true, true, true, true] }
                         ],
                         [
                             { text: 'OP. INAFECTA (S/)', style: 'totalLabel', border: [true, true, true, true] },
@@ -123,11 +123,11 @@ function pdfDetallesTotal(
                         ],
                         [
                             { text: 'IGV 18.00% (S/)', style: 'totalLabel', border: [true, true, true, true] },
-                            { text: utils.formatCurrency(factura.total_Impuestos), style: 'totalValue', alignment: 'right', border: [true, true, true, true] }
+                            { text: utils.formatMoney(factura.total_Impuestos), style: 'totalValue', alignment: 'right', border: [true, true, true, true] }
                         ],
                         [
                             { text: 'TOTAL (S/)', style: 'totalFinalLabel', border: [true, true, true, true] },
-                            { text: utils.formatCurrency(factura.sub_Total), style: 'totalFinalValue', alignment: 'right', border: [true, true, true, true] }
+                            { text: utils.formatMoney(factura.sub_Total), style: 'totalFinalValue', alignment: 'right', border: [true, true, true, true] }
                         ]
                     ]
                 },

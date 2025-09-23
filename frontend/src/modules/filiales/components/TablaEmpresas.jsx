@@ -29,11 +29,11 @@ export default function TablaEmpresas({ empresas, onEditar, onEliminar }) {
    const columnOptions = [
       { id: "razon_social", label: "Razón social" },
       { id: "ruc", label: "Ruc" },
-      { id: "direccion_fiscal", label: "Dirección fiscal" },
+      /* { id: "direccion_fiscal", label: "Dirección fiscal" }, */
       { id: "representante_legal", label: "Representante" },
       { id: "tipo_documento", label: "Tipo de documento" },
       { id: "cargo_representante", label: "Cargo" },
-      { id: "telefono", label: "Teléfono" },
+     /*  { id: "telefono", label: "Teléfono" }, */
       { id: "acciones", label: "Acciones" },
    ];
 
@@ -60,13 +60,13 @@ export default function TablaEmpresas({ empresas, onEditar, onEliminar }) {
          grow: 1,
          omit: !visibleColumns.ruc,
       },
-      {
+ /*      {
          name: "Dirección Fiscal",
          selector: (row) => row.direccion_fiscal || "-",
          sortable: true,
          grow: 1,
          omit: !visibleColumns.direccion_fiscal,
-      },
+      }, */
       {
          name: "Representante",
          sortable: true,
@@ -85,7 +85,7 @@ export default function TablaEmpresas({ empresas, onEditar, onEliminar }) {
       {
          name: "Documento",
          selector: (row) =>
-            `${row.tipo_documento || "—"} ${row.numero_documento || "—"}`,
+            `${row.tipo_documento || "—"} - ${row.dni_representante || "—"}`,
          sortable: true,
          grow: 1,
          omit: !visibleColumns.tipo_documento,
@@ -105,7 +105,7 @@ export default function TablaEmpresas({ empresas, onEditar, onEliminar }) {
          ),
          omit: !visibleColumns.cargo_representante,
       },
-      {
+      /* {
          name: "Teléfono",
          sortable: true,
          grow: 1,
@@ -117,7 +117,7 @@ export default function TablaEmpresas({ empresas, onEditar, onEliminar }) {
             </p>
          ),
          omit: !visibleColumns.telefono,
-      },
+      }, */
       {
          name: "Acciones",
          cell: (row) => (

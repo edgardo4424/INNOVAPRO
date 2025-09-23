@@ -13,7 +13,7 @@ import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteC
 import { useState } from "react";
 import { detalleInicial } from "../utils/valoresIncialGuia";
 
-const DetalleProductoForm = ({ closeModal }) => {
+const  DetalleProductoForm = ({ closeModal }) => {
   const {
     productoActual,
     setProductoActual,

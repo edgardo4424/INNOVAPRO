@@ -1,6 +1,8 @@
 
 const crearNotaCreditoDebito = require('../../application/useCases/nota-debito-credito/crearNotaCreditoDebito');
 
+const SequelizeBorradorRepository = require('../../infrastructure/repositories/sequelizeBorradorRespository')
+
 const obtenerNotaDetallada = require('../../application/useCases/nota-debito-credito/obtenerNotaDetallada');
 
 const obtenerNotasFiltrada = require('../../application/useCases/nota-debito-credito/obtenerNotasFiltrada');
@@ -11,11 +13,14 @@ const SequelizeNotaCreditoDebitoRepository = require('../../infrastructure/repos
 
 const notaRepository = new SequelizeNotaCreditoDebitoRepository();
 
+const borradorRepository = new SequelizeBorradorRepository()
+
+
 const notaController = {
     async crearNota(req, res) {
         try {
             console.log(req.body)
-            const { codigo, respuesta } = await crearNotaCreditoDebito(req.body, notaRepository);
+            const { codigo, respuesta } = await crearNotaCreditoDebito(req.body, notaRepository, borradorRepository);
             res.status(codigo).json(respuesta);
         } catch (error) {
             res.status(500).json({ error: error.message });

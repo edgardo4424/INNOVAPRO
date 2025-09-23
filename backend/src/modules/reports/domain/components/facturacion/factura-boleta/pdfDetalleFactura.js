@@ -1,4 +1,4 @@
-const { utils } = require('../../utils/utils')
+const { utils } = require('../../../../utils/utils')
 
 function pdfDetalleFactura(
     factura,
@@ -54,28 +54,24 @@ function pdfDetalleFactura(
                                         style: 'detalles_pre_cliente',
                                         alignment: 'center',
                                         border: [false, false, false, false],
-                                        fillColor: bg_content
                                     },
                                     {
                                         text: `${factura.forma_pago_facturas[0]?.tipo?.toUpperCase()}`,
                                         style: 'detalles_pre_cliente',
                                         alignment: 'center',
                                         border: [false, false, false, false],
-                                        fillColor: bg_content
                                     },
                                     {
                                         text: `${factura?.orden_compra || "—"}`,
                                         style: 'detalles_pre_cliente',
                                         alignment: 'center',
                                         border: [false, false, false, false],
-                                        fillColor: bg_content
                                     },
                                     {
                                         text: `${utils.formatDateTime(factura.fecha_vencimiento) || "—"}`,
                                         style: 'detalles_pre_cliente',
                                         alignment: 'center',
                                         border: [false, false, false, false],
-                                        fillColor: bg_content
                                     }
                                 ]
                             ]

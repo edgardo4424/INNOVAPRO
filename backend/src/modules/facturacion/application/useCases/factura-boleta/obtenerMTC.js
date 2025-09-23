@@ -83,7 +83,7 @@ module.exports = async (ruc) => {
         console.error('❌ Error al consultar MTC:', err);
         return {
             codigo: 500, respuesta: {
-                mensaje: "Error al consultar MTC",
+                mensaje: "No cuenta con Nro. MTC",
                 estado: false,
                 data: null
             }

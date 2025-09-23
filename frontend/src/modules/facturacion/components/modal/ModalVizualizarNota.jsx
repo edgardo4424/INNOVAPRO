@@ -3,87 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import DocumentoSkeleton from "../../bandeja/list-factura-boleta/components/DocumentoSkeleton";
 import facturaService from "../../service/FacturaService";
-
-// Códigos y descripciones de motivos de notas de crédito y débito
-// Se movió fuera del componente para evitar re-creaciones en cada render
-const MOTIVOS_NOTA = {
-    CREDITO: [
-        { value: "01", label: "01 - Anulación de la operación", descripcion: "ANULACION DE OPERACION" },
-        { value: "02", label: "02 - Anulación por error en el RUC", descripcion: "ANULACION POR ERROR EN EL RUC" },
-        { value: "03", label: "03 - Corrección por error en la descripción", descripcion: "CORRECCION POR ERROR EN LA DESCRIPCION" },
-        { value: "04", label: "04 - Descuento global", descripcion: "DESCUENTO GLOBAL" },
-        { value: "05", label: "05 - Descuento por ítem", descripcion: "DESCUENTO POR ITEM" },
-        { value: "06", label: "06 - Devolución total", descripcion: "DEVOLUCION TOTAL" },
-        { value: "07", label: "07 - Devolución por ítem", descripcion: "DEVOLUCION POR ITEM" },
-        { value: "10", label: "10 - Otros Conceptos", descripcion: "OTROS CONCEPTOS" },
-    ],
-    DEBITO: [
-        { value: "01", label: "01 - Intereses por mora", descripcion: "INTERESES POR MORAS" },
-        { value: "02", label: "02 - Aumento en el valor", descripcion: "AUMENTO EN EL VALOR" },
-        { value: "03", label: "03 - Penalidades/ otros conceptos", descripcion: "PENALIDADES/ OTROS CONCEPTOS" },
-    ],
-};
-
-
-const formatDateTime = (dateStr) => {
-    if (!dateStr) return "";
-    const d = new Date(dateStr);
-    return isNaN(d) ? dateStr : d.toLocaleString("es-PE", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-    });
-};
-
-
-const getTipoDocLabel = (code) => {
-    switch (code) {
-        case "07":
-            return "NOTA DE CRÉDITO";
-        case "08":
-            return "NOTA DE DÉBITO";
-        default:
-            return "NOTA ELECTRÓNICA";
-    }
-};
-
-
-const getTipoDocCliente = (code) => {
-    switch (String(code)) {
-        case "6":
-            return "RUC";
-        case "1":
-            return "DNI";
-        case "4":
-            return "CARNET DE EXTRANJERÍA";
-        default:
-            return "OTRO";
-    }
-};
-
-
-const getMotivoLabel = (tipoDoc, motivoCod) => {
-    if (!motivoCod) return "—";
-    const motivos = tipoDoc === "07" ? MOTIVOS_NOTA.CREDITO : MOTIVOS_NOTA.DEBITO;
-    const motivo = motivos.find((m) => m.value === motivoCod);
-    return motivo?.descripcion || motivoCod;
-};
-
-
-const parseDescuentos = (descuentos) => {
-    try {
-        if (typeof descuentos === 'string') {
-            const parsed = JSON.parse(descuentos);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-                const { Monto, codTipo } = parsed[0];
-                return `Descuento: ${Monto} (cod: ${codTipo})`;
-            }
-        }
-    } catch (e) {
-        console.error("Error al parsear descuentos:", e);
-    }
-    return null;
-};
+import { formatDateTime, getMotivoLabel, getTipoDocCliente, getTipoDocLabel } from "../../utils/formateos";
 
 export default function ModalVizualizarNota({
     setModalOpen,
@@ -156,6 +76,7 @@ export default function ModalVizualizarNota({
         cliente_Tipo_Doc,
         cliente_Num_Doc,
         afectado_Num_Doc,
+        fecha_Emision_Afectado,
         motivo_Cod,
         motivo_Des,
         detalle_nota_cre_debs,
@@ -241,6 +162,10 @@ export default function ModalVizualizarNota({
                                 <div className="grid grid-cols-[140px_1fr] gap-x-2">
                                     <span className="text-gray-700 font-semibold">Doc. afectado:</span>
                                     <span className="font-medium">{afectado_Num_Doc || "—"}</span>
+                                </div>
+                                <div className="grid grid-cols-[140px_1fr] gap-x-2">
+                                    <span className="text-gray-700 font-semibold">Fecha emisión:</span>
+                                    <span className="font-medium">{formatDateTime(fecha_Emision_Afectado) || "—"}</span>
                                 </div>
                                 <div className="grid grid-cols-[140px_1fr] gap-x-2">
                                     <span className="text-gray-700 font-semibold">Motivo:</span>

@@ -146,6 +146,14 @@ const ListaBorradores = () => {
       name: "Boleta",
       value: "boleta",
     },
+    {
+      name: "Nota de Credito",
+      value: "notaCredito",
+    },
+    {
+      name: "Nota de Debito",
+      value: "notaDebito",
+    },
   ];
 
   return (

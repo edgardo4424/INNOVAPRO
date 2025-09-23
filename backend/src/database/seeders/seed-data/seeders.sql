@@ -86,11 +86,7 @@ UNLOCK TABLES;
 --
 -- ORDER BY:  `id`
 
-LOCK TABLES `empresas_proveedoras` WRITE;
-/*!40000 ALTER TABLE `empresas_proveedoras` DISABLE KEYS */;
-INSERT INTO `empresas_proveedoras` VALUES (1,'ENCOFRADOS INNOVA S.A.C.','20562974998','AV. ALFREDO BENAVIDES NRO. 1579 INT. 602 URB. SAN JORGE','GARCIA DE LA CRUZ GENARO ALONSO','47176659','GERENTE GENERAL','',1,'(01) 747 5109','00-098-183132','Info@grupoinnova.pe','https://grupoinnova.pe','150122'),(2,'ANDAMIOS ELECTRICOS INNOVA S.A.C.','20602696643','AV. ALFREDO BENAVIDES NRO. 1579 INT. 602 URB. SAN JORGE','GARCIA DE LA CRUZ GENARO ALONSO','47176659','GERENTE GENERAL','',2,'(01) 747 5109','00-048-059414','Info@grupoinnova.pe','hhttps://grupoinnova.pe','150122'),(3,'INDEK ANDINA E.I.R.L','20555389052','AV. ALFREDO BENAVIDES NRO. 1579 INT. 602 URB. SAN JORGE','ROMERO SANCHEZ LUCAS RAMON','00918141','TITULAR GERENTE','',1,'(01) 747 5109','00-046-138929','Info@grupoinnova.pe','https://grupoinnova.pe','150122'),(4,'INNOVA RENTAL MAQUINARIA SAC','20603021933','AV. ALFREDO BENAVIDES NRO. 1579 INT. 602 URB. SAN JORGE','ROMERO SANCHEZ LUCAS RAMON','00918141','GERENTE GENERAL','',2,'(01) 747 5109','00-021-098418','Info@grupoinnova.pe','https://grupoinnova.pe','150122'),(15,'RUC PRUEBA FACTALIZA','10749283781','AV. ALFREDO BENAVIDES NRO. 1579 INT. 602 URB. SAN JORGE','DESARROLLO','00021242','GERENTE GENERAL','222222213',1,'(01) 747 5109','99-999-999999','Info@grupoinnova.pe','https://grupoinnova.pe','150122');
-/*!40000 ALTER TABLE `empresas_proveedoras` ENABLE KEYS */;
-UNLOCK TABLES;
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 --
@@ -196,15 +192,6 @@ UNLOCK TABLES;
 --
 -- ORDER BY:  `id`
 
-/* insert into `trabajadores` (id, nombres, apellidos, tipo_documento, numero_documento, sueldo_base, asignacion_familiar, sistema_pension, estado, cargo_id, domiciliado, tipo_afp, comision_afp, fecha_nacimiento, fecha_baja) values 
-(1, 'Lucas', 'Romero', 'DNI', '12345678', 3000, '2025-08-26', 'AFP', 'activo', 14, 1, 'HABITAT', 0, '1977-10-28', null);
- */
-/* LOCK TABLES `usuarios` WRITE;
-/*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'lucas@grupoinnova.pe','$2b$10$pAHKnnkWbj2xOSX/bb0BlO4Y.LaOakLN8wsXf8Ncp4QBwq00h39YS','2025-02-17 23:38:48','2025-02-17 23:38:48','8050626436', 1);
-/*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
-UNLOCK TABLES; */
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

@@ -2,8 +2,8 @@ import { X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import DocumentoSkeleton from "../../bandeja/list-factura-boleta/components/DocumentoSkeleton";
-import facturaService from "../../service/FacturaService";
 import { getDescripcion } from "../../emitir/factura-boleta/utils/codDetraccion";
+import facturaService from "../../service/FacturaService";
 
 export default function ModalVisualizarDocumento({
   setModalOpen,
@@ -308,10 +308,10 @@ export default function ModalVisualizarDocumento({
               <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
                 <div className="grid grid-cols-12 bg-gray-100 px-6 py-3 text-xs font-semibold tracking-wide text-gray-600 uppercase">
                   <div className="col-span-2">Código</div>
-                  <div className="col-span-5">Producto</div>
-                  <div className="col-span-2 text-right">Precio unitario</div>
-                  <div className="col-span-1 text-right">Cantidad</div>
-                  <div className="col-span-2 text-right">Total</div>
+                  <div className="col-span-4">Producto</div>
+                  <div className="col-span-2 text-center">Precio unitario</div>
+                  <div className="col-span-2 text-center">Cantidad</div>
+                  <div className="col-span-2 text-center">Total</div>
                 </div>
 
                 <div className="divide-y divide-gray-200">
@@ -343,14 +343,14 @@ export default function ModalVisualizarDocumento({
                         className="grid grid-cols-12 px-6 py-3 text-sm text-gray-800"
                       >
                         <div className="col-span-2">{cod_Producto || "—"}</div>
-                        <div className="col-span-5">{descripcion}</div>
-                        <div className="col-span-2 text-right">
+                        <div className="col-span-4">{descripcion}</div>
+                        <div className="col-span-2 text-center">
                           {currency(monto_Valor_Unitario, factura.tipo_moneda)}
                         </div>
-                        <div className="col-span-1 text-right">
+                        <div className="col-span-2 text-center">
                           {Number(cantidad ?? 0).toFixed(2) + " " + unidad}
                         </div>
-                        <div className="col-span-2 text-right font-medium">
+                        <div className="col-span-2 text-center font-medium">
                           {currency(monto_Precio_Unitario, factura.tipo_moneda)}
                         </div>
                       </div>
@@ -406,12 +406,12 @@ export default function ModalVisualizarDocumento({
               </div>
 
               {/* Observacion */}
-              {factura.observacion && (
+              {factura.Observacion && (
                 <div className="mt-4 rounded-md border border-gray-200 p-4 pt-2">
                   <h3 className="text-md mb-2 font-bold text-gray-600">
                     Obesvaciones:
                   </h3>
-                  <p className="text-sm text-gray-800">{factura.observacion}</p>
+                  <p className="text-sm text-gray-800">{factura.Observacion}</p>
                 </div>
               )}
 

@@ -10,8 +10,8 @@ import factilizaService from "@/modules/facturacion/service/FactilizaService";
 import facturaService from "@/modules/facturacion/service/FacturaService";
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import filialesService from "../service/FilialesService";
 import useProducto from "../hooks/useProducto";
+import filialesService from "../service/FilialesService";
 
 const GuiaTransporteContext = createContext();
 
@@ -19,6 +19,20 @@ export function GuiaTransporteProvider({ children }) {
   const [guiaTransporte, setGuiaTransporte] = useState(guiaInical); // ?Datos de guia que abarcan los 3 casos
 
   const [pesoTotalCalculado, setPesoTotalCalculado] = useState(0);
+
+  // ?? CORRELATIVOS
+
+  const serieGuia = [
+    { value: "T001" },
+    { value: "T002" },
+    { value: "T003" },
+    { value: "T004" },
+    { value: "T005" },
+  ];
+
+  const [correlativos, setCorrelativos] = useState([]);
+  const [correlativoEstado, setCorrelativoEstado] = useState(false);
+  const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
 
   const [guiaDatosPrivado, setGuiaDatosPrivado] = useState(ValoresPrivado);
   const [guiaDatosPublico, setGuiaDatosPublico] = useState(ValoresPublico);
@@ -32,9 +46,32 @@ export function GuiaTransporteProvider({ children }) {
 
   const [productoActual, setProductoActual] = useState(detalleInicial);
 
-  const [tipoGuia, setTipoGuia] = useState("transporte-privado");
+  const [tipoGuia, setTipoGuia] = useState("transporte-publico");
 
   const [filiales, setFiliales] = useState([]);
+
+  // ?? OBTENER CORRELATIVOS
+  const buscarCorrelativo = async (e) => {
+    if (loadingCorrelativo) return;
+    if (e) {
+      e.preventDefault();
+    }
+    try {
+      setLoadingCorrelativo(true);
+      const rucsAndSeries = filiales.map((filial) => ({
+        ruc: filial.ruc,
+        serie: serieGuia,
+      }));
+
+      const { data } =
+        await facturaService.obtenerCorrelativoGuia(rucsAndSeries);
+      setCorrelativos(data);
+    } catch (error) {
+      console.error("Error al obtener correlativos:", error);
+    } finally {
+      setLoadingCorrelativo(false);
+    }
+  };
 
   // ?? OBTENER TODAS LAS FILIALES
 
@@ -164,6 +201,12 @@ export function GuiaTransporteProvider({ children }) {
   };
 
   const EmitirGuia = async () => {
+    const { id: id_logeado } = await JSON.parse(localStorage.getItem("user"));
+    let result = {
+      success: false,
+      message: "Error desconocido al emitir la nota",
+      data: null,
+    };
     try {
       let guiaAEmitir = guiaTransporte;
       switch (tipoGuia) {
@@ -229,37 +272,62 @@ export function GuiaTransporteProvider({ children }) {
         }
         let guiaCopia = {
           ...guiaEstructurada,
+          usuario_id: id_logeado,
           sunat_respuesta: sunat_respuest,
         };
 
         const { status, success, message } =
           await RegistrarBaseDatos(guiaCopia);
 
-        if (success && status == 201) {
-          return {
+        if (success) {
+          result = {
             success: true,
             message:
               message || "Guía de remisión emitida y registrada con éxito.",
             status: 200,
           };
         } else {
-          return {
+          result = {
             success: false,
-            message: message,
+            message:
+              message ||
+              "Guia emitida, pero no se pudo registrar en la base de datos.",
             data: guiaTransporte,
             status: 400,
           };
         }
-      } else {
-        return {
+      } else if (status_factiliza === 200 && !succes_factiliza) {
+        result = {
           success: false,
           message: message_factiliza,
+          detailed_message:
+            `${data.error.code} - ${data.error.message}` ||
+            "Error desconocido al enviar la factura.",
           data: data_factiliza,
+          status: status_factiliza,
+        };
+      } else {
+        result = {
+          success: false,
+          message: message_factiliza,
+          detailed_message:
+            `${data.error.code} - ${data.error.message}` ||
+            "Error desconocido al enviar la guia.",
+          data: null,
           status: status_factiliza,
         };
       }
     } catch (error) {
       if (error.response) {
+        result = {
+          success: false,
+          message:
+            error.response.data?.message ||
+            error.response.data?.error ||
+            "Error al comunicarse con la API.",
+          data: error.response.data,
+          status: error.response.status,
+        };
         return {
           success: false,
           message:
@@ -277,6 +345,8 @@ export function GuiaTransporteProvider({ children }) {
           status: 500,
         };
       }
+    } finally {
+      return result;
     }
   };
 
@@ -291,7 +361,7 @@ export function GuiaTransporteProvider({ children }) {
         },
       );
       if (status === 201) {
-        setGuiaTransporte(guiaInical);
+        Limpiar();
         if (tipoGuia == "transporte-privado") {
           setGuiaDatosPrivado(ValoresPrivado);
         } else if (tipoGuia == "transporte-publico") {
@@ -313,9 +383,22 @@ export function GuiaTransporteProvider({ children }) {
     }
   };
 
+  const Limpiar = () => {
+    setGuiaTransporte(guiaInical);
+    setGuiaDatosPublico(ValoresPublico);
+    setGuiaDatosInternos(ValoresInterno);
+    buscarCorrelativo();
+  };
+
+
   return (
     <GuiaTransporteContext.Provider
       value={{
+        serieGuia,
+        buscarCorrelativo,
+        correlativos, setCorrelativos,
+        correlativoEstado, setCorrelativoEstado,
+        loadingCorrelativo, setLoadingCorrelativo,
         filiales,
         productoActual,
         setProductoActual,

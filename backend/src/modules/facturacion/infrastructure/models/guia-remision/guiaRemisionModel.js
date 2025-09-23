@@ -89,7 +89,7 @@ const GuiaRemision = sequelize.define(
             type: DataTypes.STRING,
             allowNull: true,
         },
-        manual: {
+        Manual: {
             type: DataTypes.BOOLEAN,
             allowNull: true,
         },

@@ -11,6 +11,7 @@ const db = require("../../../../database/models"); // Llamamos los modelos seque
 const { Op, fn, col } = require('sequelize');
 
 class SequelizeFacturaRepository {
+    
     static toNumber(value) {
         return value != null ? parseFloat(value) : 0;
     }
@@ -113,50 +114,10 @@ class SequelizeFacturaRepository {
                 order: [["id", "DESC"]],
             });
 
-            // Buscar información de la empresa solo si tenemos un RUC específico
-            let empresa = null;
-            if (nEmpresaRuc) {
-                // Si hay un filtro de empresa, usar ese RUC exacto
-                empresa = await Filial.findOne({
-                    where: { ruc: nEmpresaRuc },
-                    attributes: [
-                        "ruc",
-                        "razon_social",
-                        "direccion",
-                        "telefono_oficina",
-                        "cuenta_banco",
-                        "link_website",
-                        "codigo_ubigeo"],
-                });
-            } else if (rows.length > 0 && rows[0].empresa_ruc) {
-                // Si no hay filtro de empresa pero hay resultados, usar el RUC del primer registro
-                empresa = await Filial.findOne({
-                    where: { ruc: rows[0].empresa_ruc },
-                    attributes: [
-                        "ruc",
-                        "razon_social",
-                        "direccion",
-                        "telefono_oficina",
-                        "cuenta_banco",
-                        "link_website",
-                        "codigo_ubigeo"],
-                });
-            }
-
-
-            const documentos = rows.map(f => ({
-                ...f.dataValues,
-                empresa_nombre: empresa?.razon_social || null,
-                empresa_direccion: empresa?.direccion || null,
-                empresa_telefono: empresa?.telefono_oficina || null,
-                empresa_cuenta_banco: empresa?.cuenta_banco || null,
-                empresa_link_website: empresa?.link_website || null,
-            }));
-
             return {
                 success: true,
                 message: "Documentos listados correctamente.",
-                data: documentos,
+                data: rows,
                 metadata: {
                     totalRecords: count,
                     currentPage: pageNumber,
@@ -177,7 +138,11 @@ class SequelizeFacturaRepository {
         const { ruc, tipo_Doc } = body
 
         const facturas = await Factura.findAll({
-            where: { empresa_ruc: ruc, tipo_Doc: tipo_Doc, estado: 'EMITIDA' },
+            where: { empresa_ruc: ruc, tipo_Doc: tipo_Doc, 
+                estado: {
+                    [Op.notIn]: ['ANULADA', 'ANULADA-NOTA']
+                }
+             },
             include: [
                 {
                     model: DetalleFactura,
@@ -304,7 +269,7 @@ class SequelizeFacturaRepository {
     }
 
     async buscarExistencia(serie, correlativo, estado) {
-        console.log("🚚 Atributos para buscar existencia:", serie, correlativo, estado);
+        
         const where = {
             serie: serie,
             correlativo: correlativo,
