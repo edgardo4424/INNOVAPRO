@@ -14,6 +14,7 @@ import MontoyProductos from "./components/campos/MontoyProductos";
 import RelacionDocs from "./components/campos/RelacionDocs";
 import ModalVisualizarFactura from "./components/modal/ModalVisualizarFactura";
 import { ValorInicialFactura } from "./utils/valoresInicial";
+import DetalleProducto from "./components/DetalleProducto";
 
 const FacturaBoletaForm = () => {
   const {
@@ -127,6 +128,9 @@ const FacturaBoletaForm = () => {
 
       {/* Montos y productos */}
       <MontoyProductos />
+
+      {/* Detalles adicionales */}
+      <DetalleProducto />
 
       {/* Datos de retencion */}
       <DatosDeRetencion />

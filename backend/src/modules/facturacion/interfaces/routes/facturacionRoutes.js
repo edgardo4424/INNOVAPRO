@@ -8,7 +8,7 @@ const notaController = require("../controllers/notaController");
 const { verificarToken } = require("../../../../shared/middlewares/authMiddleware");
 
 
-router.use(verificarToken); // Verificamos el token y el rol de Gerente para as las rutas
+// router.use(verificarToken); // Verificamos el token y el rol de Gerente para as las rutas
 
 
 // * BORRADOR

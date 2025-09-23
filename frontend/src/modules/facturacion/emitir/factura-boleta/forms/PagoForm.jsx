@@ -145,7 +145,7 @@ const PagoForm = ({ closeModal }) => {
   // Manejar cambio en número de cuotas
   const handleCuotasChange = (e) => {
     const value = e.target.value;
-    const numCuotas = parseInt(value);
+    const numCuotas = parseInt(value.substring(0, Math.min(2, value.length)));
 
     if (value === "" || isNaN(numCuotas) || numCuotas < 1) {
       setNumeroCuotas("");
@@ -423,6 +423,7 @@ const PagoForm = ({ closeModal }) => {
               value={numeroCuotas}
               onChange={handleCuotasChange}
               min="1"
+              maxLength="2"
             />
           </div>
         )}

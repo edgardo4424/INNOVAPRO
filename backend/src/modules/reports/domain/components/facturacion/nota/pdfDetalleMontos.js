@@ -41,7 +41,7 @@ function pdfDetallesMontos(
                         ],
                         [
                             { text: 'TOTAL (S/)', style: 'totalFinalLabel', border: [true, true, true, true] },
-                            { text: utils.formatMoney(nota.sub_Total), style: 'totalFinalValue', alignment: 'right', border: [true, true, true, true] }
+                            { text: utils.formatMoney(nota.monto_Imp_Venta), style: 'totalFinalValue', alignment: 'right', border: [true, true, true, true] }
                         ]
                     ]
                 },

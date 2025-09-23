@@ -79,7 +79,7 @@ const TransportistaPublicoForm = () => {
       toast.promise(mtcPromise, {
         pending: "Buscando MTC",
         success: "Información encontrada",
-        error: "Ocurrió un error al buscar la información del transportista",
+        warning: "No se encontró información en MTC",
       });
 
       const mtcResp = await mtcPromise;

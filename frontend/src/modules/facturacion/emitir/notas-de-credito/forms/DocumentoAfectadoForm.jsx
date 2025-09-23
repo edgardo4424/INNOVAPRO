@@ -48,7 +48,7 @@ const DocumentoAfectadoForm = () => {
         const { name, value } = e.target;
         setNotaCreditoDebito((prevValores) => ({
             ...prevValores,
-            [name]: value,
+            [name]: value.toUpperCase(),
         }));
     };
 

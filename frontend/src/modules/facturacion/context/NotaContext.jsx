@@ -129,10 +129,7 @@ export function NotaProvider({ children }) {
         }
       });
 
-      // Corrected calculations
-      const valorVentaTotal = gravadas + exoneradas; // Base amount before taxes
-      const subTotal = valorVentaTotal; // Subtotal should be the total base amount
-      const montoImpVenta = subTotal + igvTotal; // Final amount including taxes
+      const subTotal = gravadas + igvTotal + exoneradas;
 
       setNotaCreditoDebito((prev) => ({
         ...prev,
@@ -140,9 +137,9 @@ export function NotaProvider({ children }) {
         monto_Oper_Exoneradas: parseFloat(exoneradas.toFixed(2)),
         monto_Igv: parseFloat(igvTotal.toFixed(2)),
         total_Impuestos: parseFloat(igvTotal.toFixed(2)),
-        valor_Venta: parseFloat(valorVentaTotal.toFixed(2)),
+        valor_Venta: parseFloat((gravadas + exoneradas).toFixed(2)),
         sub_Total: parseFloat(subTotal.toFixed(2)),
-        monto_Imp_Venta: parseFloat(montoImpVenta.toFixed(2)),
+        monto_Imp_Venta: parseFloat(subTotal.toFixed(2)),
       }));
     };
 

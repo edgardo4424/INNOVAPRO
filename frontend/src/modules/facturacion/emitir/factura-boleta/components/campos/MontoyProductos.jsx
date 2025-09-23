@@ -1,7 +1,6 @@
 import { useState } from "react";
 import ModalProducto from "../modal/ModalProducto";
 import TablaProductos from "../tabla/TablaProductos";
-import DetalleProducto from "../DetalleProducto";
 
 const MontoyProductos = () => {
   const [open, setOpen] = useState(false);
@@ -11,7 +10,6 @@ const MontoyProductos = () => {
       <h1 className="py-4 text-lg md:text-2xl font-bold">Productos</h1>
       <ModalProducto open={open} setOpen={setOpen} />
       <TablaProductos setOpen={setOpen} />
-      <DetalleProducto />
     </div>
   );
 };
