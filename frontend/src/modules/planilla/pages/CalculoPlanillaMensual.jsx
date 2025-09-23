@@ -45,7 +45,7 @@ const CalculoPlanillaMensual = () => {
    // ?? Filtro para la peticion
    const [filtro, setFiltro] = useState({
       anio: new Date().getFullYear() + "",
-      mes: "01",
+      mes: new Date().toLocaleString("es-PE", { month: "2-digit" }),
       filial_id: "1",
    });
 

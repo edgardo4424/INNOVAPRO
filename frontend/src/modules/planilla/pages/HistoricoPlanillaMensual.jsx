@@ -28,7 +28,7 @@ const HistoricoPlanillaMensual = () => {
    // ?? Filtro para la peticion
    const [filtro, setFiltro] = useState({
       anio: new Date().getFullYear() + "",
-      mes: "01",
+      mes:new Date().toLocaleString("es-PE", { month: "2-digit" }),
       filial_id: "1",
    });
 
@@ -57,10 +57,16 @@ const HistoricoPlanillaMensual = () => {
                pl.push(p);
             }
          }
+         
 
          setPlanillaMensualTipoPlanilla(pl);
          setPlanillaMensualTipoRh(rh);
-         toast.success("Historico obtenido.")
+         if(pl.length<1&&rh.length<1){
+            toast.info("Aun no se ha guardado la planilla en este mes.")
+         }
+         else{
+            toast.success("Historico obtenido.")
+         }
       } catch (error) {
         console.log(error);
         

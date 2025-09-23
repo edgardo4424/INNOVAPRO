@@ -20,11 +20,46 @@ const datosMantPM = async () => {
          )
       ).valor
    );
+   
+   const PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT = Number(
+      (
+        await dataMantenimientoRepository.obtenerPorCodigo(
+          "valor_comision_afp_habitat"
+        )
+      ).valor
+    );
+    const PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA = Number(
+      (
+        await dataMantenimientoRepository.obtenerPorCodigo(
+          "valor_comision_afp_integra"
+        )
+      ).valor
+    );
+
+    const PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA = Number(
+      (
+        await dataMantenimientoRepository.obtenerPorCodigo(
+          "valor_comision_afp_prima"
+        )
+      ).valor
+    );
+
+    const PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO = Number(
+      (
+        await dataMantenimientoRepository.obtenerPorCodigo(
+          "valor_comision_afp_profuturo"
+        )
+      ).valor
+    );
    return {
       PORCENTAJE_DESCUENTO_AFP,
       PORCENTAJE_DESCUENTO_ONP,
       PORCENTAJE_DESCUENTO_SEGURO,
-      MONTO_ASIGNACION_FAMILIAR
+      MONTO_ASIGNACION_FAMILIAR,
+      PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT,
+      PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA,
+      PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA,
+      PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO
    };
 };
 

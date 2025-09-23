@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as yup from "yup";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +19,7 @@ export default function UsuarioForm({
   onSubmit,
   closeModal,
   handleCancel,
+  trabajadores = [],
 }) {
   const esCrear = modo === "crear";
 
@@ -38,10 +39,9 @@ export default function UsuarioForm({
         abortEarly: false,
       });
       setErrores({});
-
       onSubmit(datosValidados);
       closeModal();
-    } catch (err) {
+    } catch (err) {      
       const nuevosErrores = {};
       err.inner.forEach((e) => {
         nuevosErrores[e.path] = e.message;
@@ -60,24 +60,24 @@ export default function UsuarioForm({
           onSubmit={handleSubmit}
         >
           <div className="form-group">
-            <Label>Seleccio un trabajador</Label>
+            <Label>Seleccione un trabajador</Label>
             <Select
-              value={usuario.rol ?? ""}
-              onValueChange={(value) => handleChange("rol", value)}
+              value={usuario.trabajador_id ?? ""}
+              onValueChange={(value) => handleChange("trabajador_id", value)}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Seleccione un trabajador" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Clientes">Clientes</SelectItem>
-                <SelectItem value="Gerencia">Gerencia</SelectItem>
-                <SelectItem value="Ventas">Ventas</SelectItem>
-                <SelectItem value="Oficina Técnica">Oficina Técnica</SelectItem>
-                <SelectItem value="Almacén">Almacén</SelectItem>
-                <SelectItem value="Administración">Administración</SelectItem>
+                {trabajadores &&
+                  trabajadores.map((t, i) => (
+                    <SelectItem value={t.id.toString()} key={i}>
+                      {t.nombres}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
-            {errores.rol && <p className="error-message">{errores.rol}</p>}
+            {errores.trabajador_id && <p className="error-message">{errores.rol}</p>}
           </div>
 
           <div className="form-group">
