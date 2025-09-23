@@ -19,6 +19,8 @@ export default function useCentroAtencion() {
          try {
             let url = "/tareas";
             const res = await api.get(url);
+            console.log(res);
+            
             setTareas(res.data);
          } catch (error) {
             console.error("❌ Error al obtener tareas:", error);
@@ -34,12 +36,13 @@ export default function useCentroAtencion() {
    };
 
    const filtrarTareas = (tarea) => {
+      console.log(tarea);
       const b = busqueda.toLowerCase();
       const coincideTexto =
          tarea.cliente?.razon_social?.toLowerCase().includes(b) ||
          tarea.obra?.nombre?.toLowerCase().includes(b) ||
          tarea.tipoTarea?.toLowerCase().includes(b) ||
-         tarea.usuario_solicitante?.nombre?.toLowerCase().includes(b) ||
+         tarea.usuario_solicitante?.trabajador?.nombres||
          tarea.tecnico_asignado?.nombre?.toLowerCase().includes(b);
       const coincideID = tarea.id?.toString()===busqueda.trim();
       if (!tarea.fecha_creacion) return coincideTexto || coincideID;
