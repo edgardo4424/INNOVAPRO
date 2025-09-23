@@ -50,7 +50,6 @@ module.exports = class RecalcularQuinta {
       // Parámetros
       uit_valor:              Number(overrideInput.uit_valor              ?? prev.uit_valor              ?? 0),
       deduccion_fija_uit:     Number(overrideInput.deduccion_fija_uit     ?? prev.deduccion_fija_uit     ?? 0),
-      deduccion_adicional_anual: Number(overrideInput.deduccion_adicional_anual ?? prev.deduccion_adicional_anual ?? 0),
 
       // Meta/soportes
       origen_retencion:             overrideInput.origen_retencion             ?? prev.origen_retencion ?? 'NINGUNO',
@@ -65,7 +64,6 @@ module.exports = class RecalcularQuinta {
       soportes_json:          overrideInput.soportes_json ?? prev.soportes_json ?? null,
 
       // Flags
-      agregado_todas_filiales: !!(overrideInput.agregado_todas_filiales ?? overrideInput.agregadoTodasFiliales ?? prev.agregado_todas_filiales),
       es_recalculo: true,
       fuente: 'oficial',
       creado_por: creadoPor ?? prev.creado_por ?? null,

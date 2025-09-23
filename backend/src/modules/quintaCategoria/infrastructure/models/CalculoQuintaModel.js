@@ -102,22 +102,12 @@ const CalculoQuintaModel = sequelize.define('CalculoQuinta', {
     type: DataTypes.JSON, 
     allowNull: false 
   },
-  deduccion_adicional_anual: { 
-    type: DataTypes.DECIMAL(12,2), 
-    allowNull: false, 
-    defaultValue: 0 
-  },
   fuente: { 
     type: DataTypes.ENUM('informativo', 'oficial'), 
     allowNull: false, 
     defaultValue: 'informativo' 
   },
   es_recalculo: { 
-    type: DataTypes.BOOLEAN, 
-    allowNull: false, 
-    defaultValue: false 
-  },
-  agregado_todas_filiales: { 
     type: DataTypes.BOOLEAN, 
     allowNull: false, 
     defaultValue: false 

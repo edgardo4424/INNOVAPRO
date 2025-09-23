@@ -30,10 +30,8 @@ module.exports.mapCalculoQuintaToResponse = (dto) => ({
   parametros: {
     uit_valor: dto.uit_valor,
     deduccion_fija_uit: dto.deduccion_fija_uit,
-    deduccion_adicional_anual: dto.deduccion_adicional_anual
   },
   metadata: {
-    agregado_todas_filiales: dto.agregado_todas_filiales,
     es_recalculo: dto.es_recalculo,
     fuente: dto.fuente,
     creado_por: dto.creado_por

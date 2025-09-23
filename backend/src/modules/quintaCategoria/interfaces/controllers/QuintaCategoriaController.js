@@ -69,7 +69,7 @@ module.exports = {
   async crear(req, res) {
     try {
       const { dto, ctx } = await _ejecutarCalculoQuinta(req);
-
+      console.log("req del usuario que llega para guardar: ", req.usuario.id)
       // Entradas visibles (en dto)
       dto.entradas = {
         ...(dto.entradas || {}),
@@ -96,7 +96,8 @@ module.exports = {
         soporte_multiempleo_id: ctx.soportes.meta.soporte_multiempleo_id,
         soporte_certificado_id: ctx.soportes.meta.soporte_certificado_id,
         soporte_sin_previos_id: ctx.soportes.meta.soporte_sin_previos_id,
-        soportes_json: ctx.soportes.meta.soportes_json
+        soportes_json: ctx.soportes.meta.soportes_json,
+        creado_por: req.usuario.id,
       };
 
       const saved = await guardarUC.execute(paraGuardar, {

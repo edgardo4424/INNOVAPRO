@@ -111,6 +111,10 @@ const intOrNull = (v) => {
   return Number.isNaN(n) ? null : n;
 };
 
+const _periodo = ({ anio, mes, periodo }) =>
+  periodo || `${String(anio).padStart(4, '0')}-${String(mes).padStart(2, '0')}`;
+
+
 module.exports = {
   pad2,
   ymd,
@@ -124,4 +128,5 @@ module.exports = {
   num,
   noCache,
   intOrNull,
+  _periodo,
 };

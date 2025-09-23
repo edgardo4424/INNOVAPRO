@@ -3,9 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "react-toastify";
 
 import { currency } from "../utils/ui";
 import { useQuintaCategoria } from "../hooks/useQuintaCategoria";
+import { useCierreQuinta } from '../hooks/useCierreQuinta';
 
 import TrabajadorCombobox from "../components/TrabajadorCombobox";
 import HistorialTabla from "../components/HistorialTabla";
@@ -18,6 +20,8 @@ import MultiempleoModal from "../components/MultiempleoModal";
 import CertificadoQuintaModal from "../components/CertificadoQuintaModal";
 import SinPreviosModal from "../components/SinPreviosModal";
 import MasivoQuintaModal from "../components/MasivoQuintaModal";
+import CierreQuintaBanner from '../components/CierreQuintaBanner';
+
 
 export default function CalculoQuintaCategoria() {
   const {
@@ -27,6 +31,32 @@ export default function CalculoQuintaCategoria() {
     canCalcular, handlePreview, handleGuardar, handleRecalcular,
     loadingPreview, saving, errors, onSoportesGuardado,
   } = useQuintaCategoria();
+  console.log("FORMULARIO: ", form)
+  const filialId = Number(form.filial_id);
+  const anio = form.anio;
+  const mes = form.mes;
+  const { cerrado, loading: closing, cerrar, periodo } = useCierreQuinta({ filialId, anio, mes });
+
+  const onCerrarPeriodo = async () => {
+    try {
+      const ok = await cerrar();   
+      if (ok) {
+        toast.success(`Se cerró ${periodo} para la filial seleccionada.`);
+        return true;
+      }
+      toast.error("No se pudo cerrar el período.");
+      return false;
+    } catch (e) {
+      const msg =
+        e?.response?.data?.message ||
+        e?.response?.data?.mensaje ||
+        e?.message ||
+        "No se pudo cerrar el período.";
+      toast.error(msg);
+      return false;
+    }
+  };
+
 
   const [openMulti, setOpenMulti] = useState(false);
   const [openCert, setOpenCert] = useState(false);
@@ -66,6 +96,12 @@ export default function CalculoQuintaCategoria() {
 
   return (
     <div className="p-2 sm:p-3 xl:p-4 min-h-[calc(100vh-70px)] overflow-auto">
+      <CierreQuintaBanner
+        cerrado={cerrado}
+        periodo={periodo}
+        loading={closing}
+        onCloseClick={onCerrarPeriodo}
+      />
       <div className="flex flex-col xl:flex-row gap-3 h-full">
         {/* Izquierda: fija */}
         <div className="w-full xl:w-[605px] shrink-0 flex flex-col gap-2 min-h-0">
@@ -148,7 +184,8 @@ export default function CalculoQuintaCategoria() {
                 {yaExisteOficialEnMes ? (
                   <Button 
                     className="h-7 px-2 text-[11px]" 
-                    onClick={() => vigenteDelMes && handleRecalcular(vigenteDelMes)} 
+                    onClick={() => vigenteDelMes && handleRecalcular(vigenteDelMes)}
+                    disabled={cerrado}
                     variant="secondary"
                   >
                     Recalcular vigente
@@ -158,7 +195,7 @@ export default function CalculoQuintaCategoria() {
                     className="h-7 px-2 text-[11px]" 
                     onClick={handleGuardar} 
                     variant="secondary" 
-                    disabled={!preview || saving}
+                    disabled={cerrado || !preview || saving}
                   >
                     {saving ? "Guardando..." : "Guardar como oficial"}
                   </Button>

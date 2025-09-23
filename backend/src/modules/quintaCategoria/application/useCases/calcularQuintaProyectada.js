@@ -145,10 +145,8 @@ module.exports = class CalcularQuintaProyectada {
       // Parámetros tributarios aplicados
       uit_valor: parametros.uit,
       deduccion_fija_uit: parametros.deduccionFijaUit,
-      deduccion_adicional_anual: deduccionAdicionalAnual,
 
       // Metadata
-      agregado_todas_filiales: !!agregadoTodasFiliales,
       es_recalculo: false,
       fuente: 'informativo',
       creado_por: creadoPor || null,

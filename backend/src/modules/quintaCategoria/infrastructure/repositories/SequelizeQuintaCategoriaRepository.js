@@ -3,6 +3,9 @@ const sequelize = require('../../../../config/db');
 
 const CalculoQuintaRepository = require('../../domain/repositories/CalculoQuintaRepository');
 const CalculoQuintaModel = require('../models/CalculoQuintaModel');
+const CierreQuintaModel = require('../models/CierreQuintaModel');
+
+const { num, _periodo } = require('../../shared/utils/helpers');
 
 const _id = (x) => {
   if (x == null) return null;
@@ -11,6 +14,39 @@ const _id = (x) => {
 };
 
 class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository {
+  // CIERRES DE QUINTA
+  async obtenerCierreQuinta(periodo, filial_id, transaction = null) {
+    return CierreQuintaModel.findOne({ where: { periodo, filial_id }, transaction });
+  }
+
+  async insertarCierreQuinta(data, transaction = null) {
+    return CierreQuintaModel.create(data, { transaction });
+  }
+
+  async actualizarCierreQuinta(id, patch, transaction = null) {
+    const cierre = await CierreQuintaModel.findByPk(id, { transaction });
+    if (!cierre) return null;
+    await cierre.update(patch, { transaction });
+    return cierre;
+  }
+
+  async listarCierres({ filialId, anio }) {
+    const where = {};
+    if (filialId) where.filial_id = filialId;
+    if (anio) where.periodo = { [sequelize.Op.like]: `${anio}-%` };
+    return CierreQuintaModel.findAll({ where, order: [['periodo', 'DESC']] });
+  }
+
+  // PARA VALIDAR
+  async estaCerrado({ filialId, anio, mes, periodo }, options = {}) {
+    const per = _periodo({ anio, mes, periodo });
+    const where = { filial_id: num(filialId), periodo: per };
+    const row = await CierreQuintaModel.findOne({
+      where, attributes: ['id'], raw: true, transaction: options.transaction
+    });
+    return !!row;
+  }
+
   // Insertar cálculos en tabla quinta_calculos
   async create(entity) { return await CalculoQuintaModel.create(entity); }
 

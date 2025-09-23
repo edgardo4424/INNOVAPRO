@@ -15,7 +15,6 @@ export async function uploadQuintaArchivo(categoria, dni, anio, archivo) {
   const MAX_MB = Number(import.meta.env.VITE_UPLOAD_MAX_MB || 20);
   const MAX_BYTES = MAX_MB * 1024 * 1024;
 
-  // 1) Prevalidación en cliente (evita 413 del servidor)
   if (archivo.size > MAX_BYTES) {
     toast.error(`El archivo supera el límite de ${MAX_MB} MB.`);
     throw new Error(`El archivo supera el límite de ${MAX_MB} MB.`);
@@ -39,7 +38,6 @@ export async function uploadQuintaArchivo(categoria, dni, anio, archivo) {
 
     return url || null;
   } catch (e) {
-    // 2) Mensajes claros según status
     const status = e?.response?.status;
     const backendMsg = e?.response?.data?.message;
     if (status === 413) {
