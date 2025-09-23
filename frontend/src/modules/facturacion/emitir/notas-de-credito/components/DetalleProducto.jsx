@@ -3,17 +3,6 @@ import React from 'react'
 const DetalleProducto = () => {
     return (
         <div className='flex py-4 sm:px-6 lg:px-8'>
-            {/* <div className='flex flex-col items-start py-2 px-6 w-7/12'>
-                <h2 className='text-xl font-semibold'>Observaciones (interno):</h2>
-                <textarea
-                    name=""
-                    id=""
-                    className="border border-gray-300 rounded-md p-2 w-full resize-none h-35"
-                    placeholder="Ingrese observaciones..."
-                // onChange={handleObservacion}
-                // value={factura.observaciones}
-                ></textarea>
-            </div> */}
             <div className='w-7/12'></div>
             <div className='w-5/12 p-6 '>
                 <div className="flex flex-col items-end gap-y-2 p-4 bg-gray-100 rounded-2xl"> {/* Contenedor principal para los totales */}

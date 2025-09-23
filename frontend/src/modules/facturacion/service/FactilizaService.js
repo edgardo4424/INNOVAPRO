@@ -29,6 +29,13 @@ const factilizaService = {
         return res.data;
     },
 
+    // !!! NOTA DE CREDITO o DEBITO
+    enviarNota: async (nota) => {
+        const res = await apiFactilizaFacturacion.post("/note/send", nota);
+        return res.data;
+    },
+
+
     // !!! Guia de Remision
 
     // ?? CONSULTA DE DOCUMENTOS FACTILIZA
@@ -36,6 +43,7 @@ const factilizaService = {
         const res = await apiFactilizaFacturacion.post("/despatch/send", guia);
         return res.data;
     },
+
 
     // ?? ============ CONSULTAS DOCUMENTOS ============
     consultarDocumentoJson: async (documento) => {
@@ -51,6 +59,17 @@ const factilizaService = {
         // forzamos texto para evitar que Axios intente parsear JSON
         const res = await apiFactilizaConsultasDocumentos.post(
             `/invoice/xml`,
+            documento,
+            { responseType: "text", transformResponse: [(d) => d] }
+        );
+        return res.data; // string (XML) o string base64, según tu API
+    },
+
+    // CDR: puede venir como texto (<?cdr...) o como base64/zip. Devuelve tal cual.
+    consultarCdr: async (documento) => {
+        // forzamos texto para evitar que Axios intente parsear JSON
+        const res = await apiFactilizaConsultasDocumentos.post(
+            `/invoice/cdr`,
             documento,
             { responseType: "text", transformResponse: [(d) => d] }
         );
@@ -76,7 +95,17 @@ const factilizaService = {
         };
     },
 
+    // !! ANULACION FACTURA - BOLETA
+    anularDocumento: async (url, doc) => {
+        const res = await apiFactilizaFacturacion.post(
+            `/${url}/cancel`,
+            doc
+        );
+        return res.data;
+    },
 
+    // ?? TIPO DE CAMBIO
+    obtenerTipoCambio: (fecha) => getRequest(apiFactilizaConsultas, `/tipocambio/info/dia?fecha=${fecha}`),
 
     // !!! CONSULTAS
     obtenerPersonaPorDni: (dni) => getRequest(apiFactilizaConsultas, `/dni/info/${dni}`),

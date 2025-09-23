@@ -1,10 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-   Dialog,
-   DialogContent,
-   DialogHeader,
-   DialogTitle,
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,11 +16,31 @@ import {
    PopoverContent,
    PopoverTrigger,
 } from "@/components/ui/popover";
-import { CalendarIcon, Plus } from "lucide-react";
+import { CalendarDays, CalendarIcon, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import beneficiosService from "../services/beneficiosService";
 import { toast } from "react-toastify";
+import {
+   AlertDialog,
+   AlertDialogContent,
+   AlertDialogHeader,
+   AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { dia_mes_anho } from "@/utils/formatos_de_fecha";
+import { generarFechasDesdeRango } from "../utils/genrar_arreglo_fechas";
+import clsx from "clsx";
+import { calcularDiasGenerados } from "../utils/calcularVacacionesGeneradas";
+import {
+   Card,
+   CardContent,
+   CardDescription,
+   CardHeader,
+   CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import ResumenVacacionesDialog from "./ModalResumenVacaciones";
 
 export function VacationModal({ empleados, fetchEmployees }) {
    const [modalAbierto, setModalAbierto] = useState(false);
@@ -37,6 +51,17 @@ export function VacationModal({ empleados, fetchEmployees }) {
       diasTomados: "0",
       diasVendidos: "0",
       observaciones: "",
+      rango_fechas: {
+         from: "",
+         to: "",
+      },
+   });
+   const [arregloDias, setArregloDias] = useState([]);
+   const [contadorTipos, setContadorTipos] = useState({
+      vendida: 0,
+      gozada: 0,
+      sin_utilizar: 0,
+      total: 0,
    });
 
    const empleado = useMemo(
@@ -45,17 +70,64 @@ export function VacationModal({ empleados, fetchEmployees }) {
    );
 
    const contratoVigente = useMemo(() => {
-      const hoy = new Date();
-      return empleado?.contratos_laborales?.find((c) => {
-         const inicio = new Date(c.fecha_inicio);
-         const fin = new Date(c.fecha_fin);
-         return inicio <= hoy && hoy <= fin;
-      });
+      const hoy = new Date().toISOString().split("T")[0];
+      return empleado?.contratos_laborales?.find(
+         (c) => c.fecha_inicio <= hoy && hoy <= c.fecha_fin
+      );
    }, [empleado]);
 
    const regimenVigente = contratoVigente?.regimen || "";
+   const {
+      dias_disponibles,
+      dias_vender,
+      dias_tomar,
+      total_generado,
+      total_tomado,
+      total_vendido,
+   } = useMemo(() => {
+      if (empleado?.contratos_laborales && empleado?.vacaciones) {
+         const diasTomados = empleado.vacaciones.reduce(
+            (sum, v) => sum + (v.dias_tomados || 0),
+            0
+         );
+         const diasVendidos = empleado.vacaciones.reduce(
+            (sum, v) => sum + (v.dias_vendidos || 0),
+            0
+         );
 
-   const vacacionesPrevias = empleado?.vacaciones || [];
+         const { total_gozadas, total_vendibles,maximo_disponible } = calcularDiasGenerados(
+            empleado.contratos_laborales
+         );
+
+     // el verdadero tope global
+         //Mi maximo disponible---> maximo diponible menos dias tomados y dias ya vendidos y tomados 
+         const dias_disponibles = (maximo_disponible - diasTomados) - diasVendidos;
+         //El maximo que tengo para tomar es los dias disponibles menos los los dias ya tomados 
+         const dias_tomar = dias_disponibles;
+         //El maximo que tengo para vender es los dias disponibles menos los los dias ya vendidos 
+         const dias_vender =(dias_disponibles/2)
+         
+         return {
+            dias_disponibles,
+            dias_vender,
+            dias_tomar,
+            total_generado: maximo_disponible,
+            total_tomado: diasTomados,
+            total_vendido: diasVendidos,
+         };
+      }
+
+      return {
+         dias_disponibles: 0,
+         dias_vender: 0,
+         dias_tomar: 0,
+         total_generado: 0,
+         total_tomado: 0,
+         total_vendido: 0,
+      };
+   }, [empleado]);
+
+   console.log(dias_disponibles, dias_vender, dias_tomar);
 
    const manejarCambio = (campo) => (e) => {
       const valor = e?.target?.value ?? e;
@@ -70,6 +142,10 @@ export function VacationModal({ empleados, fetchEmployees }) {
          diasTomados: "0",
          diasVendidos: "0",
          observaciones: "",
+         rango_fechas: {
+            from: "",
+            to: "",
+         },
       });
    };
 
@@ -81,7 +157,11 @@ export function VacationModal({ empleados, fetchEmployees }) {
    const manejarEnvio = async (e) => {
       e.preventDefault();
 
-      if (!empleado || !formulario.fechaInicio || !formulario.fechaFin) {
+      if (
+         !empleado ||
+         !formulario.rango_fechas.from ||
+         !formulario.rango_fechas.to
+      ) {
          toast.error("Por favor completa todos los campos requeridos");
          return;
       }
@@ -91,33 +171,24 @@ export function VacationModal({ empleados, fetchEmployees }) {
 
       const datosVacaciones = {
          trabajador_id: Number(formulario.empleadoSeleccionado),
-         fecha_inicio: format(formulario.fechaInicio, "yyyy-MM-dd"),
-         fecha_termino: format(formulario.fechaFin, "yyyy-MM-dd"),
-         dias_tomados: tomados,
-         dias_vendidos: vendidos,
+         fecha_inicio: format(formulario.rango_fechas.from, "yyyy-MM-dd"),
+         fecha_termino: format(formulario.rango_fechas.to, "yyyy-MM-dd"),
          observaciones: formulario.observaciones,
-         dias_usados_tomados: vacacionesPrevias.reduce(
-            (acc, v) => acc + v.dias_tomados,
-            0
-         ),
-         dias_usados_vendidos: vacacionesPrevias.reduce(
-            (acc, v) => acc + v.dias_vendidos,
-            0
-         ),
-         contratos_laborales: empleado?.contratos_laborales || [],
-         asignacion_familiar:empleado?.asignacion_familiar||null
+         vacacionesXasistencias: arregloDias || [],
       };
 
       try {
          console.log(datosVacaciones);
-         
+
          await beneficiosService.crear(datosVacaciones);
          await fetchEmployees();
          toast.success("Las vacaciones fueron registradas con éxito.");
          cerrarModal();
       } catch (error) {
-         console.log(error);
-         
+         if(error?.response?.data?.error){
+            toast.error(error.response.data.error)
+            return
+         }
          const errores = error.response?.data?.mensaje || [
             "Error al registrar vacaciones",
          ];
@@ -125,6 +196,59 @@ export function VacationModal({ empleados, fetchEmployees }) {
       }
    };
 
+   useEffect(() => {
+      if (formulario.rango_fechas.from && formulario.rango_fechas.to) {
+         const fechas = generarFechasDesdeRango(formulario.rango_fechas);
+         setArregloDias(fechas);
+         console.log("Arreglo de fechas en rango: ", fechas);
+      }
+   }, [formulario.rango_fechas]);
+
+   const camtioTipoVacacion = (d) => {
+      setArregloDias((prev) =>
+         prev.map((dia) => {
+            if (dia.fecha === d.fecha) {
+               let datos = { ...dia };
+               datos.clicks++;
+               if (datos.clicks >= 3) {
+                  datos.clicks = 0;
+                  datos.tipo = "";
+               } else {
+                  if (datos.clicks == 1) {
+                     console.log("entro al else 1");
+                     datos.tipo = "gozada";
+                     console.log(datos);
+                  }
+                  if (datos.clicks == 2) {
+                     console.log("entro al else 2");
+                     datos.tipo = "vendida";
+                     console.log(datos);
+                  }
+               }
+               return datos;
+            } else {
+               return dia;
+            }
+         })
+      );
+   };
+
+   useEffect(() => {
+      if (arregloDias?.length > 0) {
+         const data = { vendida: 0, gozada: 0, sin_utilizar: 0, total: 0 };
+         for (const d of arregloDias) {
+            if (d.tipo === "gozada") {
+               data.gozada++;
+            } else if (d.tipo === "vendida") {
+               data.vendida++;
+            } else {
+               data.sin_utilizar++;
+            }
+         }
+         data.total = arregloDias.length;
+         setContadorTipos(data);
+      }
+   }, [arregloDias]);
    return (
       <>
          <Button
@@ -134,14 +258,16 @@ export function VacationModal({ empleados, fetchEmployees }) {
             <Plus className="w-4 h-4 mr-2" /> Nueva Solicitud
          </Button>
 
-         <Dialog open={modalAbierto} onOpenChange={setModalAbierto}>
-            <DialogContent className="sm:max-w-[500px]">
-               <DialogHeader>
-                  <DialogTitle>Nueva Solicitud de Vacaciones</DialogTitle>
+         <AlertDialog open={modalAbierto} onOpenChange={setModalAbierto}>
+            <AlertDialogContent className="sm:max-w-[500px]">
+               <AlertDialogHeader>
+                  <AlertDialogTitle>
+                     Nueva Solicitud de Vacaciones
+                  </AlertDialogTitle>
                   <p className="text-sm text-muted-foreground">
                      Completa los datos para crear una nueva solicitud.
                   </p>
-               </DialogHeader>
+               </AlertDialogHeader>
 
                <form onSubmit={manejarEnvio} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -166,73 +292,144 @@ export function VacationModal({ empleados, fetchEmployees }) {
                            </SelectContent>
                         </Select>
                      </div>
-                     <div>
-                        <Label>Régimen vigente</Label>
-                        <Input value={`${regimenVigente}`} disabled />
+                     <div className="">
+                        <Label>Régimen actual</Label>
+                        <Input
+                           defaultValue={`${regimenVigente}`}
+                           className="w-24  !outline-0 !border-0 shadow-0"
+                        />
                      </div>
                   </div>
+                  <div className="grid grid-cols-1 ">
+                     <Label>Rango de fecha de las vacaciones</Label>
+                     <Popover>
+                        <PopoverTrigger asChild>
+                           <Button
+                              variant="outline"
+                              className="w-full justify-start text-left font-normal"
+                           >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {formulario.rango_fechas.from &&
+                              formulario.rango_fechas.to ? (
+                                 <>
+                                    <span className="text-neutral-800 px-1 rounded">
+                                       Del
+                                    </span>
+                                    <span className="text-neutral-600 px-1 rounded">
+                                       {dia_mes_anho(
+                                          formulario.rango_fechas.from
+                                       )}
+                                    </span>
+                                    <span className="text-neutral-800 px-1 rounded">
+                                       al
+                                    </span>
+                                    <span className="text-neutral-600 px-1 rounded">
+                                       {dia_mes_anho(
+                                          formulario.rango_fechas.to
+                                       )}
+                                    </span>
+                                 </>
+                              ) : formulario.rango_fechas.from ? (
+                                 <>
+                                    <span className="text-neutral-800 px-1 rounded">
+                                       Inicio:
+                                    </span>
+                                    <span className="text-neutral-600 px-1 rounded">
+                                       {dia_mes_anho(
+                                          formulario.rango_fechas.from
+                                       )}
+                                    </span>
+                                 </>
+                              ) : (
+                                 <span className="text-neutral-800 px-1 rounded">
+                                    Selecciona un rango de fechas
+                                 </span>
+                              )}
+                           </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0">
+                           <Calendar
+                              mode="range"
+                              selected={
+                                 formulario.rango_fechas &&
+                                 (formulario.rango_fechas.from ||
+                                    formulario.rango_fechas.to)
+                                    ? formulario.rango_fechas
+                                    : undefined
+                              }
+                              defaultMonth={
+                                 formulario.rango_fechas?.from || new Date()
+                              }
+                              onSelect={(range) => {
+                                 // range puede ser undefined cuando se limpia la selección
+                                 const normalizado = range ?? {
+                                    from: undefined,
+                                    to: undefined,
+                                 };
+                                 setFormulario((prev) => ({
+                                    ...prev,
+                                    rango_fechas: normalizado,
+                                 }));
+                              }}
+                              className="rounded-lg border shadow-sm"
+                           />
+                        </PopoverContent>
+                     </Popover>
+                  </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                     {["fechaInicio", "fechaFin"].map((campo) => (
-                        <div key={campo} className="space-y-2">
-                           <Label>
-                              {campo === "fechaInicio"
-                                 ? "Fecha de Inicio"
-                                 : "Fecha de Término"}
-                           </Label>
-                           <Popover>
-                              <PopoverTrigger asChild>
-                                 <Button
-                                    variant="outline"
-                                    className="w-full justify-start text-left font-normal"
-                                 >
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {formulario[campo]
-                                       ? format(
-                                            formulario[campo],
-                                            "dd/MM/yyyy",
-                                            { locale: es }
-                                         )
-                                       : "Seleccionar fecha"}
-                                 </Button>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-auto p-0">
-                                 <Calendar
-                                    mode="single"
-                                    selected={formulario[campo]}
-                                    onSelect={(date) =>
-                                       manejarCambio(campo)({
-                                          target: { value: date },
-                                       })
-                                    }
-                                    initialFocus
-                                 />
-                              </PopoverContent>
-                           </Popover>
+                  <ResumenVacacionesDialog
+                     total_generado={total_generado}
+                     total_tomado={total_tomado}
+                     total_vendido={total_vendido}
+                     dias_disponibles={dias_disponibles}
+                     dias_tomar={dias_tomar}
+                     dias_vender={dias_vender}
+                  />
+
+                  <article className="flex flex-col w-full space-y-3.5">
+                     <Label className="text-sm">
+                        Selecione los dias a gozar y vender
+                     </Label>
+                     <section className="grid grid-cols-4 gap-4 text-xs text-neutral-600 pt-1">
+                        <div className="flex items-center gap-1">
+                           <span className="w-4 h-4 rounded bg-innova-blue"></span>
+                           <span>Gozada {contadorTipos.gozada}</span>
                         </div>
-                     ))}
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                     <div>
-                        <Label>Días Tomados</Label>
-                        <Input
-                           type="number"
-                           min="0"
-                           value={formulario.diasTomados}
-                           onChange={manejarCambio("diasTomados")}
-                        />
-                     </div>
-                     <div>
-                        <Label>Días Vendidos</Label>
-                        <Input
-                           type="number"
-                           min="0"
-                           value={formulario.diasVendidos}
-                           onChange={manejarCambio("diasVendidos")}
-                        />
-                     </div>
-                  </div>
+                        <div className="flex items-center gap-1">
+                           <span className="w-4 h-4 rounded bg-green-700"></span>
+                           <span>Vendida {contadorTipos.vendida}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                           <span className="w-4 h-4 rounded bg-neutral-100 border shadow-sm"></span>
+                           <span>
+                              Sin utilizar {contadorTipos.sin_utilizar}
+                           </span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                           <span>Total: {contadorTipos.total}</span>
+                        </div>
+                     </section>
+                     <section className="flex flex-wrap space-x-2.5 space-y-2 w-full">
+                        {arregloDias.map((d, i) => (
+                           <Button
+                              size="icon"
+                              className={clsx(
+                                 "size-7 text-xs text-neutral-700 shadow-md bg-neutral-100",
+                                 d.tipo === "gozada" &&
+                                    "bg-innova-blue text-white hover:bg-innova-blue-hover hover:text-white",
+                                 d.tipo === "vendida" &&
+                                    "bg-green-700 text-white hover:bg-green-600 hover:text-white"
+                              )}
+                              variant={"ghost"}
+                              key={i}
+                              type="button"
+                              onClick={() => camtioTipoVacacion(d)}
+                           >
+                              {d.fecha.slice(-2)}
+                           </Button>
+                        ))}
+                     </section>
+                  </article>
 
                   <div>
                      <Label>Observaciones</Label>
@@ -260,8 +457,8 @@ export function VacationModal({ empleados, fetchEmployees }) {
                      </Button>
                   </div>
                </form>
-            </DialogContent>
-         </Dialog>
+            </AlertDialogContent>
+         </AlertDialog>
       </>
    );
 }

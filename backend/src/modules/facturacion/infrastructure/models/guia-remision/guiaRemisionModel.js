@@ -89,7 +89,7 @@ const GuiaRemision = sequelize.define(
             type: DataTypes.STRING,
             allowNull: true,
         },
-        manual: {
+        Manual: {
             type: DataTypes.BOOLEAN,
             allowNull: true,
         },
@@ -130,9 +130,22 @@ const GuiaRemision = sequelize.define(
             allowNull: true,
         },
         estado: {
-            type: DataTypes.STRING,
+            type: DataTypes.ENUM(
+                "EMITIDA",
+                "RECHAZADA",
+                "ANULADA-NOTA",
+                "MODIFICADA-NOTA",
+                "ANULADA",
+                "OBSERVADA",
+                "PENDIENTE",
+            ),
             allowNull: true,
         },
+        //! -- Campo de anulacion
+        anulacion_Motivo: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        }
     },
     {
         timestamps: false,
@@ -150,6 +163,9 @@ GuiaRemision.associate = (models) => {
     GuiaRemision.hasMany(models.sunat_respuesta, {
         foreignKey: "guia_id",
     })
+    // GuiaRemision.hasMany(models.notas_credito_debito, {
+    //     foreignKey: "guia_id",
+    // });
 }
 
 module.exports = { GuiaRemision };

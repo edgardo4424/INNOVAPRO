@@ -8,6 +8,7 @@ const usuariosService = {
 
   crearUsuario: async (data) => {
     const res = await api.post("/usuarios", data);
+    console.log('data sin parsear: ',res.data.usuario);
     return res.data.usuario;
   },
 
@@ -24,6 +25,7 @@ const usuariosService = {
     const res = await api.get(`/usuarios/${id}`);
     return res.data.usuario;
   },
+  obtenerTrabajadoresSinUsuario:async()=>api.get("/usuarios/trabajadores-sin-usuario")
 };
 
 export default usuariosService;

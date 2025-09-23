@@ -52,7 +52,7 @@ export default function ModalEditarEmpresa({ onSubmit, empresa }) {
          </AlertDialogTrigger>
          <AlertDialogContent>
             <AlertDialogHeader>
-               <AlertDialogTitle>Editar usuario</AlertDialogTitle>
+               <AlertDialogTitle>Editar Filial</AlertDialogTitle>
             </AlertDialogHeader>
             <EmpresaForm
                data={empresa}

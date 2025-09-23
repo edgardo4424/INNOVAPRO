@@ -1,9 +1,12 @@
 const { GuiaRemision } = require("../models/guia-remision/guiaRemisionModel");
 const { GuiaDetalles } = require("../models/guia-remision/guiaDetallesModel");
 const { GuiaChoferes } = require("../models/guia-remision/guiaChoferesModel");
+const { Filial } = require("../../../filiales/infrastructure/models/filialModel");
+const { Ubigeo } = require("../../../ubigeo/infrastructure/models/ubigeoModel");
+const { Pieza } = require("../../../piezas/infrastructure/models/piezaModel");
 const { SunatRespuesta } = require("../models/sunatRespuestaModel");
 const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
-const { Op } = require("sequelize");
+const { Op, fn, col } = require('sequelize');
 
 
 class SequelizeGuiaRemisionRepository {
@@ -25,6 +28,21 @@ class SequelizeGuiaRemisionRepository {
         return guia;
     }
 
+    async relacionRemision(body) {
+        const { ruc } = body
+        const guias = await GuiaRemision.findAll({
+            where: { empresa_ruc: ruc },
+            include: [
+                { model: GuiaDetalles },
+                { model: GuiaChoferes },
+                // { model: SunatRespuesta },
+            ],
+            oder: [["id", "DESC"]],
+        })
+
+        return guias
+    }
+
     async crear(data) {
         const transaction = await db.sequelize.transaction();
         let createdGuia = {};
@@ -36,44 +54,44 @@ class SequelizeGuiaRemisionRepository {
                 throw new Error("No se pudo crear la Guia de Remision.");
             }
             createdGuia.guia = guia;
+            console.log("GUIA CREADA", guia);
+            // * 2. Crear los Detalles de la Guia
+            const createdDetalles = [];
+            for (const detalleData of data.detalle) {
+                const detalle = await GuiaDetalles.create(
+                    {
+                        guia_id: guia.id,
+                        ...detalleData,
+                    },
+                    { transaction }
+                );
+                if (!detalle) {
+                    throw new Error(
+                        `No se pudo crear un detalle para el producto ${detalleData.cod_producto || "desconocido"}`
+                    );
+                }
+                createdDetalles.push(detalle);
+            }
+            createdGuia.detalles = createdDetalles;
 
-            // // * 2. Crear los Detalles de la Guia
-            // const createdDetalles = [];
-            // for (const detalleData of data.detalle) {
-            //     const detalle = await GuiaDetalles.create(
-            //         {
-            //             guia_id: guia.id,
-            //             ...detalleData,
-            //         },
-            //         { transaction }
-            //     );
-            //     if (!detalle) {
-            //         throw new Error(
-            //             `No se pudo crear un detalle para el producto ${detalleData.cod_producto || "desconocido"}`
-            //         );
-            //     }
-            //     createdDetalles.push(detalle);
-            // }
-            // createdGuia.detalles = createdDetalles;
-
-            // // * 3. Crear los Choferes de la Guia
-            // const createdChoferes = [];
-            // for (const choferData of data.chofer) {
-            //     const chofer = await GuiaChoferes.create(
-            //         {
-            //             guia_id: guia.id,
-            //             ...choferData,
-            //         },
-            //         { transaction }
-            //     );
-            //     if (!chofer) {
-            //         throw new Error(
-            //             `No se pudo crear un chofer para el producto ${choferData.cod_producto || "desconocido"}`
-            //         );
-            //     }
-            //     createdChoferes.push(chofer);
-            // }
-            // createdGuia.choferes = createdChoferes;
+            // * 3. Crear los Choferes de la Guia, solo si se proporcionaron choferes
+            const createdChoferes = [];
+            for (const choferData of data.chofer) {
+                const chofer = await GuiaChoferes.create(
+                    {
+                        guia_id: guia.id,
+                        ...choferData,
+                    },
+                    { transaction }
+                );
+                if (!chofer) {
+                    throw new Error(
+                        `No se pudo crear un chofer para el producto ${choferData.cod_producto || "desconocido"}`
+                    );
+                }
+                createdChoferes.push(chofer);
+            }
+            createdGuia.choferes = createdChoferes;
 
             // * 4. Crear la SunatRespuesta
             const sunat = await SunatRespuesta.create(
@@ -189,6 +207,7 @@ class SequelizeGuiaRemisionRepository {
                 where,
                 offset,
                 limit: limitNumber,
+                order: [["id", "DESC"]],
             })
 
             return {
@@ -211,15 +230,173 @@ class SequelizeGuiaRemisionRepository {
         }
     }
 
-    async correlativo() {
-        const [lastGuiaRemision] = await GuiaRemision.findAll({
-            order: [['id', 'DESC']],
-            limit: 1,
-            attributes: ['correlativo']
+    async correlativo(body) {
+        const resultados = [];
+        const rucsAndSeries = [];
+
+        for (const data of body) {
+            if (data.serie) {
+                for (const serie of data.serie) {
+                    rucsAndSeries.push({ ruc: data.ruc, serie: serie.value });
+                }
+            }
+        }
+
+        const correlativosPorSerie = await GuiaRemision.findAll({
+            attributes: [
+                'empresa_Ruc',
+                'serie',
+                // Aplica CAST para convertir el string 'correlativo' a un número antes de obtener el máximo
+                [db.sequelize.literal('MAX(CAST(correlativo AS UNSIGNED))'), 'ultimo_correlativo']
+            ],
+            where: {
+                [Op.or]: rucsAndSeries.map(item => ({
+                    empresa_Ruc: item.ruc,
+                    serie: item.serie
+                }))
+            },
+            group: ['empresa_Ruc', 'serie'],
+            raw: true
         });
-        const correlativoGuia = lastGuiaRemision ? parseInt(lastGuiaRemision.correlativo) + 1 : 1;
-        return {
-            correlativo_guia: correlativoGuia.toString()
+
+        const correlativosMap = new Map();
+        for (const result of correlativosPorSerie) {
+            const key = `${result.empresa_Ruc}-${result.serie}`;
+            correlativosMap.set(key, Number(result.ultimo_correlativo));
+        }
+
+        for (const item of rucsAndSeries) {
+            const key = `${item.ruc}-${item.serie}`;
+            const ultimoCorrelativo = correlativosMap.get(key) || 0;
+            const siguienteCorrelativo = String(ultimoCorrelativo + 1).padStart(5, '0');
+
+            resultados.push({
+                ruc: item.ruc,
+                serie: item.serie,
+                siguienteCorrelativo: siguienteCorrelativo
+            });
+        }
+
+        return resultados;
+    }
+
+    async obtenerGuiaPorInformacion(correlativo, serie, empresa_ruc, tipo_doc) {
+
+        const guias = await GuiaRemision.findAll({
+            where: {
+                correlativo: correlativo,
+                serie: serie,
+                empresa_ruc: empresa_ruc,
+                tipo_doc: tipo_doc
+            },
+            include: [
+                { model: GuiaDetalles },
+                { model: GuiaChoferes },
+            ],
+        });
+
+        const empresa = await Filial.findOne({
+            where: { ruc: empresa_ruc },
+            attributes: [
+                "ruc",
+                "razon_social",
+                "direccion",
+                "telefono_oficina",
+                "correo",
+                "cuenta_banco",
+                "link_website",
+                "codigo_ubigeo"],
+        });
+
+        const ubigeo = await Ubigeo.findOne({ where: { Codigo: empresa?.codigo_ubigeo } });
+        const ubigeoPartida = await Ubigeo.findOne({ where: { Codigo: guias[0]?.guia_Envio_Partida_Ubigeo } });
+        const ubigeoDestino = await Ubigeo.findOne({ where: { Codigo: guias[0]?.guia_Envio_Llegada_Ubigeo } });
+
+        //? Procesar cada guía para calcular el peso
+        const guiasConPeso = await Promise.all(guias.map(async (guia) => {
+            let pesoTotalGuia = 0;
+
+            //? Procesar cada detalle de la guía
+            const detallesConPeso = await Promise.all(
+                guia.dataValues.guia_detalles?.map(async (detalle) => {
+                    const pesoItem = await this.obtenerPeso(detalle.dataValues);
+
+                    //? Calcular peso para este item
+                    let pesoCalculado = 0;
+                    let pesoUnitario = 0;
+
+                    if (pesoItem && pesoItem.length > 0) {
+                        //? Intentar diferentes nombres de campos para peso
+                        pesoUnitario = pesoItem[0].peso_kg || pesoItem[0].peso || pesoItem[0].weight || 0;
+
+                        // console.log(`Producto: ${detalle.dataValues.cod_Producto}, Peso unitario: ${pesoUnitario}, Cantidad: ${detalle.dataValues.cantidad}, Unidad: ${detalle.dataValues.unidad}`);
+
+                        //? Solo multiplicar por cantidad si la unidad es NIU
+                        if (detalle.dataValues.unidad === 'NIU') {
+                            pesoCalculado = pesoUnitario * parseFloat(detalle.dataValues.cantidad || 1);
+                        } else {
+                            pesoCalculado = pesoUnitario;
+                        }
+
+                        // console.log(`Peso calculado: ${pesoCalculado}`);
+                    } else {
+                        console.log(`No se encontró pieza para código: ${detalle.dataValues.cod_Producto}`);
+                    }
+
+                    //? Sumar al peso total de la guía
+                    pesoTotalGuia += pesoCalculado;
+
+                    //? Retornar el detalle con el peso calculado
+                    return {
+                        ...detalle.dataValues,
+                        peso_kg: pesoCalculado,
+                        peso_unitario: pesoUnitario
+                    };
+                }) || []
+            );
+
+            //? Retornar la guía con los detalles actualizados y peso total
+            return {
+                ...guia.dataValues,
+                guia_detalles: detallesConPeso,
+                peso_total_kg: pesoTotalGuia
+            };
+        }));
+
+        //? Mapear el resultado final con la información adicional
+        return guiasConPeso.map(guia => ({
+            ...guia,
+            empresa_nombre: empresa?.razon_social,
+            empresa_direccion: empresa?.direccion,
+            empresa_telefono: empresa?.telefono_oficina || null,
+            empresa_correo: empresa?.correo || null,
+            empresa_cuenta_banco: empresa?.cuenta_banco || null,
+            empresa_link_website: empresa?.link_website || null,
+            departamento: ubigeo?.departamento || null,
+            provincia: ubigeo?.provincia || null,
+            distrito: ubigeo?.distrito || null,
+            partidaUbigeo: `(${ubigeoPartida?.codigo}) ${ubigeoPartida?.departamento} - ${ubigeoPartida?.provincia} - ${ubigeoPartida?.distrito}` || null,
+            llegadaUbigeo: `(${ubigeoDestino?.codigo}) ${ubigeoDestino?.departamento} - ${ubigeoDestino?.provincia} - ${ubigeoDestino?.distrito}` || null
+        }));
+    }
+
+    async obtenerPeso(items) {
+        const { id, guia_id, unidad, cantidad, cod_Producto, descripcion } = items;
+
+        try {
+            let piezas = await Pieza.findAll({
+                where: {
+                    item: cod_Producto
+                }
+            });
+            // console.log(`Piezas encontradas para ${cod_Producto}:`, piezas.length);
+            // if (piezas.length > 0) {
+            //     console.log(`Peso encontrado:`, piezas[0].peso_kg || piezas[0].peso);
+            // }
+            return piezas;
+        } catch (error) {
+            console.error(`Error al obtener peso para ${cod_Producto}:`, error);
+            return [];
         }
     }
 }

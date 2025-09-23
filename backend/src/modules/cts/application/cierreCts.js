@@ -9,7 +9,7 @@ module.exports = async (
    let periodoObtenido;
    switch (periodo) {
       case "MAYO":
-         periodoObtenido = `${anio}-04`;
+         periodoObtenido = `${anio}-05`;
          break;
       case "NOVIEMBRE":
          periodoObtenido = `${anio}-11`;

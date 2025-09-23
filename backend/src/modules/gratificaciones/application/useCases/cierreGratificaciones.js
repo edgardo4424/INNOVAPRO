@@ -1,3 +1,4 @@
+const { actualizarCuotasPagadas } = require("../../../../application/services/actualizarCuotasPagadas");
 const db = require("../../../../database/models");
 const {
   mapearParaRegistrarTablaGratificaciones,
@@ -26,8 +27,6 @@ module.exports = async (
         filial_id
       );
 
-    console.log("gratificacionCerrada", gratificacionCerrada);
-
     if (gratificacionCerrada && gratificacionCerrada?.locked_at) {
       return {
         codigo: 400,
@@ -42,6 +41,8 @@ module.exports = async (
         anio,
         filial_id
       );
+
+      console.log('graaaaaaaaaatiiiiiii', gratificaciones);
 
     // Verificar si hay gratificaciones para registrar
     if (gratificaciones.planilla.trabajadores.length === 0) {
@@ -62,6 +63,7 @@ module.exports = async (
         {
           locked_at: new Date(),
           usuario_cierre_id,
+          data_mantenimiento_detalle: gratificaciones.data_mantenimiento_detalle
         },
         transaction
       );
@@ -74,6 +76,7 @@ module.exports = async (
         periodo: `${anio}-${periodo === "JULIO" ? "07" : "12"}`, // ejemplo de mapeo
         locked_at: new Date(),
         usuario_cierre_id,
+        data_mantenimiento_detalle: gratificaciones.data_mantenimiento_detalle
       };
 
       const cierre = await gratificacionRepository.insertarCierreGratificacion(
@@ -93,10 +96,14 @@ module.exports = async (
         filial_id
       );
 
-      console.log('trabajadoresConGratificacionCerrada', trabajadoresConGratificacionCerrada);
-
-    const trabajadoresConGratificacionCerradaIds = trabajadoresConGratificacionCerrada.map(
-      (gratificacion) => gratificacion.trabajador_id
+    const trabajadoresConGratificacionCerradas = trabajadoresConGratificacionCerrada.map(
+      (gratificacion) => {
+        return {
+          trabajador_id: gratificacion.trabajador_id,
+          fecha_ingreso: gratificacion.fecha_ingreso,
+          fecha_fin: gratificacion.fecha_fin,
+        }
+      }
     );
 
     // Mapear y registrar gratificaciones
@@ -110,15 +117,37 @@ module.exports = async (
     );
 
     const dataGratificacionesSinCerrar = dataGratificaciones.filter((gratificacion) => {
-      return !trabajadoresConGratificacionCerradaIds.includes(gratificacion.trabajador_id);
+      return !trabajadoresConGratificacionCerradas.some((gratificacionCerrada) => {
+        return (
+          gratificacionCerrada.trabajador_id === gratificacion.trabajador_id &&
+          gratificacionCerrada.fecha_ingreso === gratificacion.fecha_ingreso &&
+          gratificacionCerrada.fecha_fin === gratificacion.fecha_fin
+        );
+      });
     });
 
-    console.log('dataGratificacionesSinCerrar', dataGratificacionesSinCerrar);
 
     await gratificacionRepository.insertarVariasGratificaciones(
       dataGratificacionesSinCerrar,
       transaction
     );
+
+    console.log('dataGratificacionesSinCerrar', dataGratificacionesSinCerrar);
+
+    // Actualizar la tabla adelanto_sueldo si en caso en dataPlanillaQuincenalSinCerrar existen adelantos de sueldo
+    if (dataGratificacionesSinCerrar.length > 0) {
+
+       const dataGratificacionesSinCerrarConAdelantoSueldo = dataGratificacionesSinCerrar.filter((grati) => {
+          return grati.adelanto_sueldo > 0
+       })
+
+       const adelantos_ids = dataGratificacionesSinCerrarConAdelantoSueldo.map((grati) => {
+          return grati.adelantos_ids
+       })
+
+      
+       await actualizarCuotasPagadas(adelantos_ids.flat(), transaction)
+      }
 
     await transaction.commit(); // ✔ Confirmar transacción
 

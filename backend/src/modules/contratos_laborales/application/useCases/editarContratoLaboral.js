@@ -5,8 +5,12 @@ module.exports = async function name(
    contratoLaboralRepository,
    transaction = null
 ) {
+
+   
    const contrato_laboral = new ContratoLaboral(contratoLaboralData);
+
    const errores = contrato_laboral.validar(true);
+
    if (errores.length > 0) {
       return {
          codigo: 400,
@@ -15,11 +19,13 @@ module.exports = async function name(
          },
       };
    }
+
    const contratoLaboralActualizado =
       await contratoLaboralRepository.editarContratoLaboral(
          contrato_laboral.get(true),
          transaction
       );
+
 
    return {
       codigo: 200,

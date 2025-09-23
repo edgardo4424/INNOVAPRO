@@ -5,9 +5,10 @@ import {
 
 const RowTotalGratificacion = ({ gratificacion }) => {
     console.log(gratificacion)
+    if(!gratificacion) return null;
     return (
         <TableRow className={"bg-blue-300 text-xs"} key={gratificacion}>
-            <TableCell className="text-right" colSpan={6} >Total</TableCell>
+            <TableCell className="text-right" colSpan={7} >Total</TableCell>
             <TableCell className="text-right bg-orange-300">{gratificacion.total_sueldo}</TableCell>
             <TableCell className="text-right bg-orange-300">{gratificacion.total_asig_familiar}</TableCell>
             <TableCell className="text-right bg-orange-300">{gratificacion.total_horas_extras}</TableCell>

@@ -9,23 +9,21 @@ import {
 import { Button } from "@/components/ui/button";
 import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
 import { ClipboardPlus, X } from "lucide-react";
-import { useState } from "react";
 import PagoForm from "../../forms/PagoForm";
 
-export default function ModalPagos() {
+export default function ModalPagos({ open, setOpen }) {
 
-    const { factura } = useFacturaBoleta();
+    const { factura, retencionActivado, retencion, detraccion } = useFacturaBoleta();
 
     const montoTotalPagos = factura.forma_pago.reduce(
         (total, pago) => total + (parseFloat(pago.monto) || 0),
         0
     );
 
-    const montoTotalFactura = parseFloat(factura.monto_Imp_Venta || 0);
+    let montoTotalFactura = factura.monto_Imp_Venta;
+    
     const pagosCompletos = montoTotalPagos.toFixed(2) >= montoTotalFactura;
 
-
-    const [open, setOpen] = useState(false);
     const closeModal = () => {
         setOpen(false);
     };
@@ -35,14 +33,14 @@ export default function ModalPagos() {
             <div className="flex md:items-end justify-start items-start">
 
                 <AlertDialogTrigger asChild>
-                    <Button className="bg-blue-500 hover:scale-105 hover:bg-blue-600 cursor-pointer"
+                    <Button className="bg-innova-blue  cursor-pointer"
                         disabled={pagosCompletos}>
                         <ClipboardPlus />
                         <span className="hidden md:block">Nuevo Pago</span>
                     </Button>
                 </AlertDialogTrigger>
 
-                <div className="w-full  flex py-2 justify-start gap-x-3 text-md flex-col md:flex-row px-3 font-semibold ">
+                <div className="w-full hidden md:flex py-2 justify-start gap-x-3 text-md flex-col md:flex-row px-3 font-semibold ">
                     {
                         pagosCompletos ? (
                             <h2 className="text-green-400">✅ LLegaste a el Monto Total de la Factura</h2>
@@ -65,7 +63,7 @@ export default function ModalPagos() {
                 {/* 🧾 Encabezado */}
                 <AlertDialogHeader>
                     <AlertDialogTitle>Datos del Pago</AlertDialogTitle>
-                    <AlertDialogDescription className="text-center">
+                    <AlertDialogDescription className="text-center hidden md:block ">
                         Ingresa los datos correctamente para crear un Pago.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
@@ -78,6 +76,3 @@ export default function ModalPagos() {
         </AlertDialog>
     );
 }
-
-
-{/* <h2>{montoTotalFactura.toFixed(2)} / {montoTotalPagos.toFixed(2)}</h2> */ }

@@ -25,9 +25,9 @@ import ImportadorDespiece from "./despiece-ot/ImportadorDespiece";
 import DespieceOT from "./despiece-ot/DespieceOT";
 import DespieceAdicional from "./despiece-ot/DespieceAdicional";
 import ResumenDespiece from "@/modules/cotizaciones/components/pasos/paso-confirmacion/ResumenDespiece";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { toast } from "react-toastify";
 import { crearDespieceOT } from "../services/centroAtencionService";
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 
 export default function DetalleTarea({
@@ -52,7 +52,7 @@ export default function DetalleTarea({
 
 
    const puedeGenerarDespiece =
-    user?.rol === "Oficina Técnica" &&
+    (user?.rol === "Jefe de OT"|| user?.rol === "OT" ) &&
     tarea.estado === "En proceso" &&
     tarea.tipoTarea === "Apoyo Técnico" &&
     tarea.detalles?.apoyoTecnico?.includes("Despiece");
@@ -258,12 +258,12 @@ export default function DetalleTarea({
                   {console.log("Piezas: ", formData.despiece)}
 
                {mostrarConfirmacion && (
-               <Dialog open={true} onOpenChange={setMostrarConfirmacion}>
-                  <DialogContent>
-                     <DialogHeader>
-                     <DialogTitle>¿Guardar despiece?</DialogTitle>
-                     <DialogDescription>Confirma que los datos son correctos antes de enviar el despiece al sistema.</DialogDescription>
-                     </DialogHeader>
+               <AlertDialog open={true} onOpenChange={setMostrarConfirmacion}>
+                  <AlertDialogContent>
+                     <AlertDialogHeader>
+                     <AlertDialogTitle>¿Guardar despiece?</AlertDialogTitle>
+                     <AlertDialogDescription>Confirma que los datos son correctos antes de enviar el despiece al sistema.</AlertDialogDescription>
+                     </AlertDialogHeader>
                      <div className="flex justify-end gap-2 mt-4">
                      <Button variant="outline" onClick={() => setMostrarConfirmacion(false)}>
                         Cancelar
@@ -297,15 +297,15 @@ export default function DetalleTarea({
                         Confirmar y guardar
                      </Button>
                      </div>
-                  </DialogContent>
-               </Dialog>
+                  </AlertDialogContent>
+               </AlertDialog>
                )}
 
             </div>
             
             {/* Footer - Acciones */}
             <section className="px-6 py-4 bg-gray-50 border-t grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 rounded-b-lg flex-shrink-0">
-               {user.rol === "Oficina Técnica" && (
+               {(user.rol === "Jefe de OT"||user.rol === "OT")  && (
                   <>
                      {tarea.estado === "Pendiente" && !tarea.asignadoA && (
                         <Button

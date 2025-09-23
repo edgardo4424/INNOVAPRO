@@ -1,5 +1,4 @@
 module.exports = async (id, adelantoSueldoRepository, transaction = null) => {
-   console.log('El id es',id);
    
     if (!id) {
       return {

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import asistenciaService from "../services/asistenciaService";
 import AsistenciaHeader from "../components/AsistenciaHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,6 +6,7 @@ import JornadaCard from "../components/JornadaCard";
 import BadgeEstadoAsistencia from "../components/BadgeEstadoAsistencia";
 import { useParams, useSearchParams } from "react-router-dom";
 import AsistenciaSimple from "../components/AsistenciaSimple";
+import InputTest from "../components/InputTest";
 
 const GestionAsistencia = () => {
    const { tipo } = useParams();
@@ -18,6 +19,7 @@ const GestionAsistencia = () => {
    const [trabajadores, setTrabajadores] = useState([]);
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState(null);
+   const [trabajadoresFiltrados,setTrabajadoresFiltrados]=useState([])
 
    const obtenerTrabajadores = async () => {
       if (!area_id) {
@@ -30,8 +32,7 @@ const GestionAsistencia = () => {
             area_id,
             fechaSeleccionada
          );
-         console.log(response.data.trabajadores);
-         
+         setTrabajadoresFiltrados([...response.data.trabajadores] || [])
          setTrabajadores([...response.data.trabajadores] || []);
       } catch (err) {
          setError("Error al cargar los trabajadores.");
@@ -100,18 +101,21 @@ const GestionAsistencia = () => {
                setFechaSeleccionada={setFechaSeleccionada}
                title={tipo}
             />
+            <div className="grid grid-cols-1 md:grid-cols-3">
+               <InputTest trabajadores={trabajadores} setTrabajadoresFiltrados={setTrabajadoresFiltrados}/> 
+            </div>
             {loading ? (
                <div className="text-center py-6 text-gray-500">
                   Cargando trabajadores...
                </div>
             ) : (
                <div className="space-y-4">
-                  {trabajadores.length === 0 ? (
+                  {trabajadoresFiltrados.length === 0 ? (
                      <div className="text-center text-gray-400">
                         No hay trabajadores disponibles para esta área.
                      </div>
                   ) : area_id == 6 || area_id == 2 ? (
-                     trabajadores.map((trabajador) => (
+                     trabajadoresFiltrados.map((trabajador) => (
                         <Card key={trabajador.id} className={"py-3 gap-2"}>
                            <CardHeader className={""}>
                               <CardTitle className="flex items-center justify-start gap-8 ">
@@ -120,10 +124,15 @@ const GestionAsistencia = () => {
                                        {trabajador.nombres}{" "}
                                        {trabajador.apellidos}
                                     </h3>
-                                    <p className="text-sm text-gray-600">
-                                       {trabajador.tipo_documento}:{" "}
-                                       {trabajador.numero_documento}
-                                    </p>
+                                    <div>
+                                       <p className="text-[9px] text-neutral-500">
+                                          {trabajador.tipo_documento}:{" "}
+                                          {trabajador.numero_documento}
+                                       </p>
+                                       <p className="text-xs lowercase text-neutral-500">
+                                          {trabajador.filial}
+                                       </p>
+                                    </div>
                                  </div>
                                  <div className="">
                                     <BadgeEstadoAsistencia
@@ -144,7 +153,7 @@ const GestionAsistencia = () => {
                         </Card>
                      ))
                   ) : (
-                     trabajadores.map((trabajador) => (
+                     trabajadoresFiltrados.map((trabajador) => (
                         <AsistenciaSimple
                            key={trabajador.id}
                            trabajador={trabajador}

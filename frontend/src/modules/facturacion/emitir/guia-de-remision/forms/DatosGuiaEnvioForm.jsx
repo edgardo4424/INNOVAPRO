@@ -1,0 +1,640 @@
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Calendar22 } from "../../factura-boleta/components/Calendar22";
+import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext";
+import { Ubigeos } from "../utils/ubigeo";
+import { useEffect, useMemo, useState } from "react";
+import { Search } from "lucide-react";
+import facturaService from "@/modules/facturacion/service/FacturaService";
+
+const DatosGuiaEnvioForm = () => {
+  const {
+    guiaDatosPrivado,
+    setGuiaDatosPrivado,
+    guiaDatosPublico,
+    setGuiaDatosPublico,
+    guiaDatosInternos,
+    setGuiaDatosInternos,
+    guiaTransporte,
+    setGuiaTransporte,
+    tipoGuia,
+  } = useGuiaTransporte();
+
+  // ?? Estados locales para los inputs de ubigeo y su visibilidad de sugerencias
+  const [partidaUbigeoInput, setPartidaUbigeoInput] = useState("");
+  const [showPartidaSuggestions, setShowPartidaSuggestions] = useState(false);
+
+  const [llegadaUbigeoInput, setLlegadaUbigeoInput] = useState("");
+  const [showLlegadaSuggestions, setShowLlegadaSuggestions] = useState(false);
+
+  const {
+    guia_Envio_Fec_Traslado,
+
+    guia_Envio_Partida_Ubigeo,
+    guia_Envio_Partida_Direccion,
+    guia_Envio_Llegada_Ubigeo,
+    guia_Envio_Llegada_Direccion,
+
+    guia_Envio_Vehiculo_Placa,
+  } = guiaTransporte;
+
+  useEffect(() => {
+    // Inicializar Ubigeo de Partida
+    if (guia_Envio_Partida_Ubigeo) {
+      const foundUbigeo = Ubigeos.find(
+        (u) => u.IDDIST === guia_Envio_Partida_Ubigeo,
+      );
+      if (foundUbigeo) {
+        setPartidaUbigeoInput(
+          `${foundUbigeo.DISTRITO}, ${foundUbigeo.PROVINCIA}, ${foundUbigeo.DEPARTAMENTO}`,
+        );
+      }
+    } else {
+      setPartidaUbigeoInput(""); // Limpiar si no hay IDDIST
+    }
+
+    // Inicializar Ubigeo de Llegada
+    if (guia_Envio_Llegada_Ubigeo) {
+      const foundUbigeo = Ubigeos.find(
+        (u) => u.IDDIST === guia_Envio_Llegada_Ubigeo,
+      );
+      if (foundUbigeo) {
+        setLlegadaUbigeoInput(
+          `${foundUbigeo.DISTRITO}, ${foundUbigeo.PROVINCIA}, ${foundUbigeo.DEPARTAMENTO}`,
+        );
+      }
+    } else {
+      setLlegadaUbigeoInput(""); // Limpiar si no hay IDDIST
+    }
+  }, [guia_Envio_Partida_Ubigeo, guia_Envio_Llegada_Ubigeo]);
+
+  //!! --- Lógica para Ubigeo de Partida ---
+  const handlePartidaInputChange = (e) => {
+    const value = e.target.value;
+    setPartidaUbigeoInput(value);
+    // Si el usuario borra el texto, también limpia el IDDIST en el contexto
+    if (value === "") {
+      setGuiaTransporte((prevGuiaTransporte) => ({
+        ...prevGuiaTransporte,
+        guia_Envio_Partida_Ubigeo: "",
+      }));
+    }
+    setShowPartidaSuggestions(value.length > 0);
+  };
+
+  const filteredPartidaUbigeos = useMemo(() => {
+    if (!partidaUbigeoInput) {
+      return [];
+    }
+    const lowerCaseInput = partidaUbigeoInput.toLowerCase();
+    return Ubigeos.filter(
+      (ubigeo) =>
+        ubigeo.DEPARTAMENTO.toLowerCase().includes(lowerCaseInput) ||
+        ubigeo.PROVINCIA.toLowerCase().includes(lowerCaseInput) ||
+        ubigeo.DISTRITO.toLowerCase().includes(lowerCaseInput) ||
+        ubigeo.IDDIST.includes(lowerCaseInput),
+    ).slice(0, 10); // Limita el número de sugerencias
+  }, [partidaUbigeoInput]);
+
+  const handleSelectPartidaUbigeo = (ubigeo) => {
+    setPartidaUbigeoInput(
+      `${ubigeo.DISTRITO}, ${ubigeo.PROVINCIA}, ${ubigeo.DEPARTAMENTO}`,
+    );
+    setGuiaTransporte((prevGuiaTransporte) => ({
+      ...prevGuiaTransporte,
+      guia_Envio_Partida_Ubigeo: ubigeo.IDDIST, // Setea solo el IDDIST
+    }));
+    setShowPartidaSuggestions(false);
+  };
+
+  const handlePartidaFocus = () => {
+    if (partidaUbigeoInput.length > 0) {
+      setShowPartidaSuggestions(true);
+    }
+  };
+
+  //!! --- Lógica para Ubigeo de Llegada ---
+  const handleLlegadaInputChange = (e) => {
+    const value = e.target.value;
+    setLlegadaUbigeoInput(value);
+    // Si el usuario borra el texto, también limpia el IDDIST en el contexto
+    if (value === "") {
+      setGuiaTransporte((prevGuiaTransporte) => ({
+        ...prevGuiaTransporte,
+        guia_Envio_Llegada_Ubigeo: "",
+      }));
+    }
+    setShowLlegadaSuggestions(value.length > 0);
+  };
+
+  const filteredLlegadaUbigeos = useMemo(() => {
+    if (!llegadaUbigeoInput) {
+      return [];
+    }
+    const lowerCaseInput = llegadaUbigeoInput.toLowerCase();
+    return Ubigeos.filter(
+      (ubigeo) =>
+        ubigeo.DEPARTAMENTO.toLowerCase().includes(lowerCaseInput) ||
+        ubigeo.PROVINCIA.toLowerCase().includes(lowerCaseInput) ||
+        ubigeo.DISTRITO.toLowerCase().includes(lowerCaseInput) ||
+        ubigeo.IDDIST.includes(lowerCaseInput),
+    ).slice(0, 10); //!! Limita el número de sugerencias
+  }, [llegadaUbigeoInput]);
+
+  const handleSelectLlegadaUbigeo = (ubigeo) => {
+    setLlegadaUbigeoInput(
+      `${ubigeo.DISTRITO}, ${ubigeo.PROVINCIA}, ${ubigeo.DEPARTAMENTO}`,
+    );
+    setGuiaTransporte((prevGuiaTransporte) => ({
+      ...prevGuiaTransporte,
+      guia_Envio_Llegada_Ubigeo: ubigeo.IDDIST, //!! Setea solo el IDDIST
+    }));
+    setShowLlegadaSuggestions(false);
+  };
+
+  const handleLlegadaFocus = () => {
+    if (llegadaUbigeoInput.length > 0) {
+      setShowLlegadaSuggestions(true);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "guia_Envio_Peso_Total") {
+      const parsedValue = parseFloat(value);
+      if (isNaN(parsedValue)) {
+        return; // Si no es un número, no hace nada
+      }
+      setGuiaTransporte((prevGuiaTransporte) => ({
+        ...prevGuiaTransporte,
+        [name]: parsedValue,
+      }));
+    } else {
+      setGuiaTransporte((prevGuiaTransporte) => ({
+        ...prevGuiaTransporte,
+        [name]: value.toUpperCase(),
+      }));
+    }
+  };
+
+  
+
+  const handleChangePublico = (e) => {
+    const { name, value } = e.target;
+    setGuiaDatosPublico((prevGuiaTransporte) => ({
+        ...prevGuiaTransporte,
+        [name]: value.toUpperCase(),
+      }));
+  };
+
+  const handleSelectChangePrv = (value, name) => {
+    setGuiaDatosPrivado((prevValores) => ({
+      ...prevValores,
+      [name]: value,
+    }));
+  };
+
+  const handleBuscarPartida = async () => {
+    // guia_Envio_Llegada_Direccion
+    const { message, ubigeo, distrito, provincia, departamento } =
+      await facturaService.obtenerUbigeoDireccion({
+        direccion: guia_Envio_Partida_Direccion,
+      });
+    if (message == "ok") {
+      let newObj = {
+        IDDIST: ubigeo,
+        DISTRITO: distrito,
+        PROVINCIA: provincia,
+        DEPARTAMENTO: departamento,
+      };
+      handleSelectPartidaUbigeo(newObj);
+    }
+  };
+
+  const handleBuscarLlegada = async () => {
+    // guia_Envio_Llegada_Direccion
+    const { message, ubigeo, distrito, provincia, departamento } =
+      await facturaService.obtenerUbigeoDireccion({
+        direccion: guia_Envio_Llegada_Direccion,
+      });
+    if (message == "ok") {
+      let newObj = {
+        IDDIST: ubigeo,
+        DISTRITO: distrito,
+        PROVINCIA: provincia,
+        DEPARTAMENTO: departamento,
+      };
+      handleSelectLlegadaUbigeo(newObj);
+    }
+  };
+
+  const opcionesCodigos = [
+    { value: "01", descripcion: "VENTA", descripcionmi: "Venta" },
+    {
+      value: "02",
+      descripcion: "VENTA SUJETA A CONFIRMACION DEL COMPRADOR",
+      descripcionmi: "Venta sujeta a confirmación del comprador",
+    },
+    {
+      value: "04",
+      descripcion: "TRASLADO ENTRE ESTABLECIMIENTOS DE LA MISMA EMPRESA",
+      descripcionmi: "Traslado entre establecimientos de la misma empresa",
+    },
+    { value: "08", descripcion: "IMPORTACION", descripcionmi: "Importación" },
+    { value: "09", descripcion: "EXPORTACION", descripcionmi: "Exportación" },
+    { value: "13", descripcion: "OTROS", descripcionmi: "Otros - Alquiler" },
+    {
+      value: "14",
+      descripcion: "VENTA CON ENTREGA A TERCEROS",
+      descripcionmi: "Venta con entrega a terceros",
+    },
+    {
+      value: "18",
+      descripcion: "TRASLADO EMISOR ITINERANTE DE COMPROBANTES DE PAGO",
+      descripcionmi: "Traslado emisor itinerante de comprobantes de pago",
+    },
+    {
+      value: "19",
+      descripcion: "TRASLADO A ZONA PRIMARIA",
+      descripcionmi: "Traslado a zona primaria",
+    },
+    {
+      value: "20",
+      descripcion: "TRASLADO POR EMISOR ITINERANTE (COMPROBANTE DE PAGO)",
+      descripcionmi: "Traslado por emisor itinerante (comprobante de pago)",
+    },
+  ];
+
+  const hadleSelectPub = (value, name) => {
+    setGuiaDatosPublico((prevValores) => ({
+      ...prevValores,
+      [name]: value,
+      guia_Envio_Des_Traslado: opcionesCodigos.find(
+        (opcion) => opcion.value === value,
+      )?.descripcion,
+    }));
+  };
+
+  const hadleSelectInt = (value, name) => {
+    setGuiaDatosInternos((prevValores) => ({
+      ...prevValores,
+      guia_Envio_Cod_Traslado: opcionesCodigos.find(
+        (opcion) => opcion.value === value,
+      )?.descripcion,
+    }));
+  };
+
+  return (
+    <div className="overflow-y-auto p-4 sm:p-6 lg:px-8 lg:py-4">
+      <h2 className="mb-2 flex pb-2 text-2xl font-semibold">
+        Datos de la Guía de Envío
+      </h2>
+      <div className="mb-8 grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2 lg:grid-cols-3">
+        <div>
+          <Label
+            htmlFor="guia_Envio_Cod_Traslado"
+            className="mb-1 block text-left text-sm font-semibold text-gray-700"
+          >
+            Código de Traslado
+          </Label>
+          {tipoGuia == "transporte-privado" && (
+            <Select
+              name="guia_Envio_Cod_Traslado"
+              value={guiaDatosPrivado.guia_Envio_Cod_Traslado}
+              onValueChange={(e) => {
+                handleSelectChangePrv(e, "guia_Envio_Cod_Traslado");
+              }}
+            >
+              <SelectTrigger className="w-full rounded-md border border-gray-300 shadow-sm">
+                {" "}
+                {/* Estilo de borde mejorado */}
+                <SelectValue placeholder="Selecciona un codigo" />
+              </SelectTrigger>
+              <SelectContent>
+                {opcionesCodigos.map((opcion) => (
+                  <SelectItem
+                    key={opcion.value}
+                    value={opcion.value}
+                    descripcion={opcion.descripcion}
+                  >
+                    {opcion.value} - {opcion.descripcionmi}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          {tipoGuia == "transporte-publico" && (
+            <Select
+              name="guia_Envio_Cod_Traslado"
+              value={guiaDatosPublico.guia_Envio_Cod_Traslado}
+              onValueChange={(e) => {
+                hadleSelectPub(e, "guia_Envio_Cod_Traslado");
+              }}
+            >
+              <SelectTrigger className="w-full rounded-md border border-gray-300 shadow-sm">
+                {" "}
+                {/* Estilo de borde mejorado */}
+                <SelectValue placeholder="Selecciona un codigo" />
+              </SelectTrigger>
+              <SelectContent>
+                {opcionesCodigos.map((opcion) => (
+                  <SelectItem
+                    key={opcion.value}
+                    value={opcion.value}
+                    descripcion={opcion.descripcion}
+                  >
+                    {opcion.value} - {opcion.descripcionmi}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          {tipoGuia == "traslado-misma-empresa" && (
+            <Select
+              name="guia_Envio_Cod_Traslado"
+              value={guiaDatosInternos.guia_Envio_Cod_Traslado}
+              onValueChange={(e) => {
+                hadleSelectInt(e, "guia_Envio_Cod_Traslado");
+              }}
+            >
+              <SelectTrigger className="w-full rounded-md border border-gray-300 shadow-sm">
+                {" "}
+                {/* Estilo de borde mejorado */}
+                <SelectValue placeholder="Selecciona un codigo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="04">
+                  04 - Traslado entre establecimientos de la misma empresa
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+        </div>
+        {tipoGuia == "transporte-privado" && (
+          <div>
+            <Label
+              htmlFor="guia_Envio_Mod_Traslado"
+              className="mb-1 block text-left text-sm font-semibold text-gray-700"
+            >
+              Modalidad de Traslado
+            </Label>
+            <Select
+              name="guia_Envio_Mod_Traslado"
+              value={guiaDatosPrivado.guia_Envio_Mod_Traslado}
+              disabled
+            >
+              <SelectTrigger className="w-full rounded-md border border-gray-300 shadow-sm">
+                {" "}
+                {/* Estilo de borde mejorado */}
+                <SelectValue placeholder="Selecciona un codigo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="01">01 - Transporte público</SelectItem>
+                <SelectItem value="02">02 - Transporte privado</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+        {tipoGuia == "traslado-misma-empresa" && (
+          <div>
+            <Label
+              htmlFor="guia_Envio_Mod_Traslado"
+              className="mb-1 block text-left text-sm font-semibold text-gray-700"
+            >
+              Modalidad de Traslado
+            </Label>
+            <Select
+              name="guia_Envio_Mod_Traslado"
+              value={guiaDatosInternos.guia_Envio_Mod_Traslado}
+              disabled
+            >
+              <SelectTrigger className="w-full rounded-md border border-gray-300 shadow-sm">
+                {" "}
+                {/* Estilo de borde mejorado */}
+                <SelectValue placeholder="Selecciona un codigo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="01">01 - Transporte público</SelectItem>
+                <SelectItem value="02">02 - Transporte privado</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
+        {tipoGuia == "transporte-publico" && (
+          <div>
+            <Label
+              htmlFor="guia_Envio_Mod_Traslado"
+              className="mb-1 block text-left text-sm font-semibold text-gray-700"
+            >
+              Modalidad de Traslado
+            </Label>
+            <Select
+              name="guia_Envio_Mod_Traslado"
+              value={guiaDatosPublico.guia_Envio_Mod_Traslado}
+              disabled
+            >
+              <SelectTrigger className="w-full rounded-md border border-gray-300 shadow-sm">
+                {" "}
+                {/* Estilo de borde mejorado */}
+                <SelectValue placeholder="Selecciona un codigo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="01">01 - Transporte público</SelectItem>
+                <SelectItem value="02">02 - Transporte privado</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
+        <div>
+          <Label
+            htmlFor="guia_Envio_Fec_Traslado"
+            className="mb-1 block text-left text-sm font-semibold text-gray-700"
+          >
+            Fecha de Traslado
+          </Label>
+          <Calendar22
+            tipo={"guia_Envio_Fec_Traslado"}
+            Dato={guiaDatosPrivado}
+            setDato={setGuiaTransporte}
+            type="datetime-local"
+            id="guia_Envio_Fec_Traslado"
+            name="guia_Envio_Fec_Traslado"
+            value={guia_Envio_Fec_Traslado}
+            // onChange={handleChange}
+            className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
+
+        <div className="col-span-1 md:col-span-2 lg:col-span-2">
+          {/* Made address span full width on small screens too */}
+          <Label
+            htmlFor="guia_Envio_Partida_Direccion"
+            className="mb-1 block text-left text-sm font-semibold text-gray-700"
+          >
+            Dirección de Partida
+          </Label>
+          <div className="flex gap-x-2">
+            <Input
+              type="text"
+              id="guia_Envio_Partida_Direccion"
+              name="guia_Envio_Partida_Direccion"
+              value={guia_Envio_Partida_Direccion}
+              onChange={handleChange}
+              className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+            />
+            <button
+              onClick={handleBuscarPartida}
+              className="bg-innova-blue hover:bg-innova-blue-hover focus:ring-innova-blue cursor-pointer rounded-md p-2 text-white transition-colors duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none"
+            >
+              <Search className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+        {/* --- Ubigeo de Partida --- */}
+        <div className="relative">
+          <Label
+            htmlFor="guia_Envio_Partida_Ubigeo"
+            className="mb-1 block text-left text-sm font-semibold text-gray-700"
+          >
+            Ubigeo de Partida
+          </Label>
+          <Input
+            type="text"
+            id="guia_Envio_Partida_Ubigeo"
+            name="guia_Envio_Partida_Ubigeo"
+            value={partidaUbigeoInput}
+            onChange={handlePartidaInputChange}
+            onFocus={handlePartidaFocus}
+            // onBlur={handlePartidaBlur}
+            className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+            autoComplete="off"
+          />
+          {showPartidaSuggestions && filteredPartidaUbigeos.length > 0 && (
+            <ul className="absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-md border border-gray-300 bg-white shadow-lg">
+              {filteredPartidaUbigeos.map((ubigeo) => (
+                <li
+                  key={ubigeo.IDDIST}
+                  className="cursor-pointer bg-white px-3 py-2 text-sm text-gray-800 hover:bg-gray-100"
+                  onClick={() => handleSelectPartidaUbigeo(ubigeo)}
+                >
+                  {ubigeo.DISTRITO}, {ubigeo.PROVINCIA}, {ubigeo.DEPARTAMENTO} (
+                  {ubigeo.IDDIST})
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className="col-span-1 md:col-span-2 lg:col-span-2">
+          {/* Made address span full width on small screens too */}
+          <Label
+            htmlFor="guia_Envio_Llegada_Direccion"
+            className="mb-1 block text-left text-sm font-semibold text-gray-700"
+          >
+            Dirección de Llegada
+          </Label>
+          <div className="flex gap-x-2">
+            <Input
+              type="text"
+              id="guia_Envio_Llegada_Direccion"
+              name="guia_Envio_Llegada_Direccion"
+              value={guia_Envio_Llegada_Direccion}
+              onChange={handleChange}
+              className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+            />
+            <button
+              onClick={handleBuscarLlegada}
+              className="bg-innova-blue hover:bg-innova-blue-hover focus:ring-innova-blue cursor-pointer rounded-md p-2 text-white transition-colors duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none"
+            >
+              <Search className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+        {/* --- Ubigeo de Llegada --- */}
+        <div className="relative">
+          <Label
+            htmlFor="guia_Envio_Llegada_Ubigeo"
+            className="mb-1 block text-left text-sm font-semibold text-gray-700"
+          >
+            Ubigeo de Llegada
+          </Label>
+          <Input
+            type="text"
+            id="guia_Envio_Llegada_Ubigeo"
+            name="guia_Envio_Llegada_Ubigeo"
+            value={llegadaUbigeoInput}
+            onChange={handleLlegadaInputChange}
+            onFocus={handleLlegadaFocus}
+            // onBlur={handleLlegadaBlur}
+            className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+            autoComplete="off"
+          />
+          {showLlegadaSuggestions && filteredLlegadaUbigeos.length > 0 && (
+            <ul className="absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-md border border-gray-300 bg-white shadow-lg">
+              {filteredLlegadaUbigeos.map((ubigeo) => (
+                <li
+                  key={ubigeo.IDDIST}
+                  className="cursor-pointer px-3 py-2 text-sm hover:bg-gray-100"
+                  onClick={() => handleSelectLlegadaUbigeo(ubigeo)}
+                >
+                  {ubigeo.DISTRITO}, {ubigeo.PROVINCIA}, {ubigeo.DEPARTAMENTO} (
+                  {ubigeo.IDDIST})
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className="col-span-1 md:col-span-2 lg:col-span-1">
+          {" "}
+          {/* Made address span full width on small screens too */}
+          <Label
+            htmlFor="guia_Envio_Llegada_Direccion"
+            className="mb-1 block text-left text-sm font-semibold text-gray-700"
+          >
+            Placa del Vehiculo
+          </Label>
+          <Input
+            type="text"
+            id="guia_Envio_Vehiculo_Placa"
+            name="guia_Envio_Vehiculo_Placa"
+            value={guia_Envio_Vehiculo_Placa}
+            onChange={handleChange}
+            className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
+
+        {tipoGuia == "transporte-publico" && (
+          <div>
+            <Label
+              htmlFor="guia_Envio_Cod_Traslado"
+              className="mb-1 block text-left text-sm font-semibold text-gray-700"
+            >
+              Descripción de Traslado
+            </Label>
+            <Input
+              type="text"
+              id="guia_Envio_Des_Traslado"
+              name="guia_Envio_Des_Traslado"
+              value={guiaDatosPublico.guia_Envio_Des_Traslado}
+              onChange={handleChangePublico}
+              // disabled
+              className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default DatosGuiaEnvioForm;

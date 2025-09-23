@@ -23,7 +23,7 @@ export function ModalCts({ guardarCts }) {
 
    const handleSave = () => {
       guardarCts();
-      // handleClose();
+      handleClose();
    };
 
    return (

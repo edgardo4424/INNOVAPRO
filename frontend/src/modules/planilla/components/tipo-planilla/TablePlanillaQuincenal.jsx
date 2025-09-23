@@ -52,9 +52,12 @@ const TablePlanillaQuincenal = ({ planillaQuincenalTipoPlanilla, total }) => {
           <TableHeader>
             <TableRow className={"bg-gray-800 text-xs "}>
               {/* Estas celdas abarcan 2 filas porque no tienen sub-encabezados */}
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black"></TableHead>
                <TableHead rowSpan={2} className="text-center border-r text-white border-black">Tipo Doc</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">N° Doc</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Nombres y Apellidos</TableHead>
+             {/*  <TableHead rowSpan={2} className="text-center border-r text-white border-black">AFP</TableHead> */}
+                <TableHead rowSpan={2} className="text-center border-r text-white border-black">Fecha Ingreso</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Dias Laborados</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Base</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Quincenal</TableHead>
@@ -64,10 +67,13 @@ const TablePlanillaQuincenal = ({ planillaQuincenalTipoPlanilla, total }) => {
               {/* Grupo DESCUENTOS AL TRABAJADOR ocupa 6 columnas */}
               <TableHead colSpan={5} className="text-center border-r h-5 text-white border-black">DESCUENTOS AL TRABAJADOR</TableHead>
 
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Adelantos</TableHead>
               
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Total Descuentos</TableHead>
          
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Total a Pagar</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Banco</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">N° Cuenta</TableHead>
             </TableRow>
 
             {/* Sub-encabezados del grupo FALTAS */}

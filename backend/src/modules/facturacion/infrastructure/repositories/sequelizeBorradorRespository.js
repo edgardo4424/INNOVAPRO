@@ -1,4 +1,5 @@
 const { Borrador } = require("../models/borrador/borradorModel");
+const { Filial } = require("../../../filiales/infrastructure/models/filialModel");
 const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 const { Op } = require("sequelize");
 
@@ -130,7 +131,7 @@ class SequelizeBorradorRepository {
                 id,
             },
         });
-        console.log(result);
+
         if (!result) {
             return {
                 success: false,
@@ -138,10 +139,38 @@ class SequelizeBorradorRepository {
                 data: null,
             };
         }
+
+        const empresa = await Filial.findOne({
+            where: { ruc: result.empresa_ruc },
+            attributes: [
+                "ruc",
+                "razon_social",
+                "direccion",
+                "telefono_oficina",
+                "correo",
+                "cuenta_banco",
+                "link_website",
+                "codigo_ubigeo"],
+        });
+
+
+
+        const borradorMapeado = {
+            ...result.dataValues,
+            empresa_ruc: empresa?.ruc,
+            empresa_razon_social: empresa?.razon_social,
+            empresa_direccion: empresa?.direccion,
+            empresa_telefono_oficina: empresa?.telefono_oficina,
+            empresa_correo: empresa?.correo,
+            empresa_cuenta_banco: empresa?.cuenta_banco,
+            empresa_link_website: empresa?.link_website,
+            empresa_codigo_ubigeo: empresa?.codigo_ubigeo,
+        };
+
         return {
             success: true,
             message: "El borrador ha sido obtenido con éxito.",
-            data: result,
+            data: borradorMapeado,
         };
     }
     async eliminar(id) {

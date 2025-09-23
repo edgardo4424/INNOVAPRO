@@ -168,7 +168,7 @@ const DatosGuiaEnvioMismaEmpresaForm = () => {
     };
 
     const handleSelectChange = (value, name) => {
-        if(name == "guia_Envio_Cod_Traslado"){
+        if (name == "guia_Envio_Cod_Traslado") {
             setGuiaDatosInternos((prevValores) => ({
                 ...prevValores,
                 guia_Envio_Cod_Traslado: opcionesCodigos.find((opcion) => opcion.value === value)?.descripcion,
@@ -181,7 +181,7 @@ const DatosGuiaEnvioMismaEmpresaForm = () => {
     };
 
     return (
-        <div>
+        <div className="overflow-y-auto p-4 sm:p-6 lg:px-8 lg:py-4">
             <h2 className="text-2xl font-semibold mb-2 flex pb-2">
                 Datos de la Guía de Envío
             </h2>

@@ -20,7 +20,7 @@ const RowTotalPlanillaQuincenal = ({ gratificacion }) => {
             <TableCell className="text-right">{gratificacion.total_gratificacion_despues_descuento}</TableCell>
             <TableCell className="text-right">{gratificacion.total_bonificacion_essalud}</TableCell>
             <TableCell className="text-right">{gratificacion.total_rent_quint_cat_no_domiciliado}</TableCell>
-            <TableCell className="text-right">{gratificacion.total_mont_adelanto}</TableCell>
+            <TableCell className="text-right">{gratificacion.adelanto_sueldo}</TableCell>
             <TableCell className="text-right bg-yellow-300">{gratificacion.total_total_a_pagar}</TableCell>
         </TableRow>
     )

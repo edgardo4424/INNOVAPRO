@@ -12,6 +12,8 @@ router.get("/filial/:id/:fecha", TrabajadorController.obtenerTrabajadoresPorArea
 router.get("/", TrabajadorController.obtenerTrabajadores);
 router.post("/", TrabajadorController.crearTrabajadorConContrato);
 router.put("/", TrabajadorController.editarTrabajadorConContrato);
+router.get("/trabajadores-contratos", TrabajadorController.obtenerTrabajadoresYcontratos);
+router.post("/contratos-vigentes", TrabajadorController.obtenerTrabajadoresConContratosVigentes);
 router.get("/:id", TrabajadorController.obtenerTrabajadorPorId);
 router.get("/:dni/filiales-vigentes", TrabajadorController.listarFilialesVigentes);
 module.exports = router;

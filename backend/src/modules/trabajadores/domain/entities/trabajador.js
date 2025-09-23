@@ -1,4 +1,3 @@
-
 class Trabajador {
    constructor({
       id,
@@ -11,7 +10,11 @@ class Trabajador {
       tipo_documento,
       cargo_id,
       domiciliado,
-      tipo_afp
+      tipo_afp,
+      comision_afp,
+      fecha_baja,
+      contratos_laborales,
+      fecha_nacimiento
    }) {
       (this.id = id),
          (this.nombres = nombres),
@@ -24,10 +27,15 @@ class Trabajador {
          (this.cargo_id = cargo_id);
       this.domiciliado = domiciliado;
       this.tipo_afp = tipo_afp;
+      this.comision_afp = comision_afp;
+      this.fecha_baja = fecha_baja;
+      this.contratos_laborales = contratos_laborales;
+      this.fecha_nacimiento = fecha_nacimiento;
    }
 
    validarCamposObligatorios(editar = false) {
       const errores = [];
+
       if (editar) {
          if (!this.id) {
             errores.push("El id es inválido");
@@ -51,33 +59,68 @@ class Trabajador {
       if (this.asignacion_familiar === undefined) {
          errores.push("Asignacion familiar inválida");
       }
-      if (this.sistema_pension !== "AFP" && this.sistema_pension !== "ONP") {
-         console.log(this.sistema_pension);
-
-         errores.push("El sistema de pension es inválido.");
+      if (
+         !this.fecha_nacimiento ||
+         new Date(this.fecha_nacimiento) > new Date()
+      ) {
+         errores.push("Fecha de nacimiento inválida");
       }
+
       if (this.cargo_id === null) {
          errores.push("El cargo no se a enviado");
       }
-     if(["HABITAT", "INTEGRA", "PRIMA", "PROFUTURO"].includes(this.tipo_afp) === false){
-        errores.push("El tipo de AFP es inválido");
-     }
+      
+      const hoy = new Date().toISOString().split("T")[0];
+      console.log('this.contratos_laborales', this.contratos_laborales);
+      const c_a = this.contratos_laborales.find(
+         (c) => c.fecha_inicio <= hoy && hoy <= c.fecha_fin
+      );
+      console.log('c_a', c_a);
+      if(!c_a){
+         errores.push("No se encontró un contrato laboral vigente para la fecha actual.");
+         return errores;
+      }
+
+      if (c_a.tipo_contrato == "PLANILLA") {
+         if (this.sistema_pension !== "AFP" && this.sistema_pension !== "ONP") {
+            errores.push("El sistema de pension es inválido.");
+         }
+         if (this.sistema_pension === "AFP") {
+            if (
+               ["HABITAT", "INTEGRA", "PRIMA", "PROFUTURO"].includes(
+                  this.tipo_afp
+               ) === false
+            ) {
+               errores.push("El tipo de AFP es inválido");
+            }
+         }
+         if (this.sistema_pension === "ONP") {
+            this.comision_afp = false;
+         }
+      } else {
+         this.sistema_pension = null;
+         this.tipo_afp = null;
+         this.comision_afp = false;
+      }
+
       return errores;
    }
 
    get(editar = false) {
-      
       const datos = {
          nombres: this.nombres,
          apellidos: this.apellidos,
          tipo_documento: this.tipo_documento,
          numero_documento: this.numero_documento,
          sueldo_base: this.sueldo_base,
-         asignacion_familiar:this.asignacion_familiar,
-         sistema_pension: this.sistema_pension,
+         asignacion_familiar: this.asignacion_familiar,
+         sistema_pension: this.sistema_pension || null,
          cargo_id: this.cargo_id,
-         domiciliado:this.domiciliado,
-         tipo_afp: this.tipo_afp
+         domiciliado: this.domiciliado,
+         tipo_afp: this.tipo_afp,
+         comision_afp: this.comision_afp,
+         fecha_baja: this.fecha_baja,
+         fecha_nacimiento:this.fecha_nacimiento
       };
       if (editar) {
          datos.trabajador_id = this.id;

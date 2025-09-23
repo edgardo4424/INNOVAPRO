@@ -14,11 +14,11 @@ import factilizaService from "../../../service/FactilizaService";
 import { toast } from "react-toastify";
 
 const ChoferPrivadoForm = () => {
-    const { guiaDatosPrivado, setGuiaDatosPrivado } = useGuiaTransporte();
+    const { guiaTransporte, setGuiaTransporte } = useGuiaTransporte();
 
     // Función unificada para manejar cambios en inputs y selects
     const handleChange = (value, name, index) => {
-        setGuiaDatosPrivado(prev => ({
+        setGuiaTransporte(prev => ({
             ...prev,
             chofer: prev.chofer.map((chofer, i) =>
                 i === index ? { ...chofer, [name]: value } : chofer
@@ -28,7 +28,7 @@ const ChoferPrivadoForm = () => {
 
     // Función para agregar un nuevo chofer
     const addChofer = () => {
-        setGuiaDatosPrivado(prev => ({
+        setGuiaTransporte(prev => ({
             ...prev,
             chofer: [
                 ...prev.chofer,
@@ -39,7 +39,7 @@ const ChoferPrivadoForm = () => {
 
     // Función para eliminar un chofer
     const removeChofer = (index) => {
-        setGuiaDatosPrivado(prev => ({
+        setGuiaTransporte(prev => ({
             ...prev,
             chofer: prev.chofer.filter((_, i) => i !== index),
         }));
@@ -49,7 +49,7 @@ const ChoferPrivadoForm = () => {
     const handleBuscar = async (e, index) => {
         e.preventDefault();
 
-        const chofer = guiaDatosPrivado.chofer[index];
+        const chofer = guiaTransporte.chofer[index];
 
         if (!chofer.nro_doc) {
             toast.error("Por favor, ingresa el número de documento del chofer.");
@@ -59,16 +59,27 @@ const ChoferPrivadoForm = () => {
         try {
             const { data: data_inf, status: status_inf, success: suscces_inf } = await factilizaService.obtenerPersonaPorDni(chofer.nro_doc);
 
-            const { data: data_lic, status: status_lic, success: suscces_lic } = await factilizaService.obtenerLicenciaPorDni(chofer.nro_doc);
+            let data_lic = {};
+            let status_lic = 0;
+            let suscces_lic = false;
+            try {
+                const res = await factilizaService.obtenerLicenciaPorDni(chofer.nro_doc);
+                data_lic = res.data;
+                status_lic = res.status;
+                suscces_lic = res.success;
+            } catch (error) {
+                console.error("Error al buscar la licencia del chofer:", error);
+            }
 
-            if (status_inf == 200 && status_lic == 200) {
-                toast.success('Chofer Encontrado')
+            console.log("nollego");
+            if (status_inf == 200) {
+                toast.success('Persona Encontrada')
                 // ?? Asegúrate de que los nombres de las propiedades coincidan con la respuesta de tu API
                 const nombres = data_inf.nombres || '';
                 const apellidos = `${data_inf.apellido_paterno || ''} ${data_inf.apellido_materno || ''}`.trim();
                 const licencia = data_lic.licencia?.numero || '';
 
-                setGuiaDatosPrivado((prev) => ({
+                setGuiaTransporte((prev) => ({
                     ...prev,
                     chofer: prev.chofer.map((c, i) => {
                         if (i === index) {
@@ -92,17 +103,17 @@ const ChoferPrivadoForm = () => {
     };
 
     return (
-        <div className="mb-8">
-            <h2 className="text-2xl  font-semibold mb-6 text-blue-800 border-b pb-2">
+        <div className="overflow-y-auto p-4 sm:p-6 lg:px-8 lg:py-4">
+            <h1 className="text-2xl text-left   font-semibold mb-6  pb-2">
                 Datos del Chofer
-            </h2>
-            {guiaDatosPrivado.chofer.map((chofer, index) => (
+            </h1>
+            {guiaTransporte.chofer.map((chofer, index) => (
                 <div
                     key={index}
                     className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-6 mb-6 p-6 border border-gray-400  rounded-md"
                 >
                     {/* Botón para eliminar chofer (visible si hay más de uno) */}
-                    {index > 0 && (
+                    {(
                         <div className="flex items-center justify-center absolute top-2 right-2">
                             <button
                                 type="button"
@@ -180,7 +191,7 @@ const ChoferPrivadoForm = () => {
                             <button
                                 type="button" // Importante: usa type="button" para evitar que el botón envíe el formulario
                                 onClick={(e) => handleBuscar(e, index)}
-                                className="p-2 bg-blue-500 rounded-md text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 cursor-pointer"
+                                className="p-2 bg-innova-blue rounded-md text-white hover:bg-innova-blue-hover focus:outline-none focus:ring-2 focus:ring-innova-blue focus:ring-offset-2 transition-colors duration-200 cursor-pointer"
                             >
                                 <Search className="h-5 w-5" />
                             </button>
@@ -246,10 +257,10 @@ const ChoferPrivadoForm = () => {
                 <button
                     type="button"
                     onClick={addChofer}
-                    className="px-5 flex justify-center items-center gap-x-2 py-2 cursor-pointer bg-green-600 text-white font-medium rounded-md hover:bg-green-700 w-full md:w-auto"
+                    className="px-2 flex justify-center items-center gap-x-2 py-2 cursor-pointer bg-innova-orange text-white font-medium rounded-md  w-full md:w-auto"
                 >
-                    <UserRoundPlus className="size-6 md:size-7" />
-                    <span className="w-full text-center">
+                    <UserRoundPlus className="size-6 md:size-6" />
+                    <span className="w-full text-center text-sm">
                         Agregar Chofer</span>
                 </button>
             </div>

@@ -84,25 +84,28 @@ export const useAsistencia = (trabajador, obtenerTrabajadores, date) => {
 
    const guardarAsistencia = async () => {
       try {
-
         await asistenciaService.crearAsistenia(asistencia);
          obtenerTrabajadores();
          toast.success("Asistencia guardada corrrectamente");
       } catch (error) {
-         toast.error("Hubo un error al guardar la asistencia");
+         if(error?.response?.data?.error){
+            toast.error(error.response.data.error);
+            return;
+         }
+         toast.error("Hubo un error descocnocido");
       }
    };
 
-   // const actualizarEstadoAsistencia = async () => {
-   //    console.log(asistencia);
-   // };
    const actualizarEstadoAsistencia = async () => {
       try {
          await asistenciaService.actualizarAsistencia(asistencia);
          obtenerTrabajadores();
          toast.success("Asistencia Actualizada corrrectamente");
       } catch (error) {
-         console.error(error)
+          if(error?.response?.data?.error){
+            toast.error(error.response.data.error);
+            return;
+         }
          toast.error("Hubo un error ala actualizar la asistencia");
       }
    };

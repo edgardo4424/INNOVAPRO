@@ -1,6 +1,8 @@
 const calcularcts = require("../../application/calcularcts");
 const calcularCtsIndividual = require("../../application/calcularCtsIndividual");
+const calcularCtsTrunca = require("../../application/calcularCtsTrunca");
 const cierreCts = require("../../application/cierreCts");
+const obtenerCtsPorTrabajador = require("../../application/obtenerCtsPorTrabajador");
 const obtenerHistoricocts = require("../../application/obtenerHistoricocts");
 
 const SequelizeCtsRopository = require("../../infraestructure/repositories/sequelizeCtsRepository");
@@ -21,6 +23,22 @@ const ctsController = {
       try {
          const { periodo, anio, filial_id, trabajador_id } = req.body;
          const cts = await calcularCtsIndividual(
+            periodo,
+            anio,
+            filial_id,
+            ctsRepository,
+            trabajador_id
+         );
+         res.status(200).json(cts.respuesta);
+      } catch (error) {
+         console.log("error", error);
+         res.status(500).json({ error: error.message });
+      }
+   },
+   async calcularCtsTrunca(req, res) {
+      try {
+         const { periodo, anio, filial_id, trabajador_id } = req.body;
+         const cts = await calcularCtsTrunca(
             periodo,
             anio,
             filial_id,
@@ -54,7 +72,7 @@ const ctsController = {
       }
    },
    async obtenerHistoricocts(req, res) {
-      const { periodo, anio, filial_id } = req.body;      
+      const { periodo, anio, filial_id } = req.body;
       try {
          const response = await obtenerHistoricocts(
             periodo,
@@ -65,7 +83,24 @@ const ctsController = {
          res.status(response.codigo).json(response.respuesta);
       } catch (error) {
          console.log(error);
+
+         res.status(500).json({ error: error.message });
+      }
+   },
+   async obtenerCtsPorTrabajador(req, res) {
+      const { periodo, anio, filial_id, trabajador_id } = req.body;
+      try {
+         const response = await obtenerCtsPorTrabajador(
+            ctsRepository,
+            periodo,
+            anio,
+            filial_id,
+            trabajador_id
+         );
+         console.log('La respuesta es: ',response);
          
+         res.status(response.codigo).json(response.respuesta);
+      } catch (error) {
          res.status(500).json({ error: error.message });
       }
    },

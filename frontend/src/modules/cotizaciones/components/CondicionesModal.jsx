@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import CondicionesCard from "./CondicionesCard";
 import { ShieldCheck  } from "lucide-react";
@@ -9,20 +8,21 @@ import {
    TooltipContent,
    TooltipProvider,
 } from "@/components/ui/tooltip";
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 export default function CondicionesModal({ cotizacionId, onActualizarCotizaciones }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <AlertDialog open={open} onOpenChange={setOpen}>
       <TooltipProvider>
         <Tooltip>
             <TooltipTrigger asChild>
-                <DialogTrigger asChild>
+                <AlertDialogTrigger asChild>
                     <Button variant="outline" size="icon">
                         <ShieldCheck className="w-4 h-4" />
                     </Button>
-                </DialogTrigger>
+                </AlertDialogTrigger>
             </TooltipTrigger>
             <TooltipContent>
                 <p>Valida Las Condiciones de Alquiler</p>
@@ -30,21 +30,21 @@ export default function CondicionesModal({ cotizacionId, onActualizarCotizacione
         </Tooltip>
       </TooltipProvider>
 
-      <DialogContent className="max-w-xl">
-        <DialogHeader>
-          <DialogHeader>
-            <DialogTitle> Validar condiciones de alquiler</DialogTitle>
-                <DialogDescription>
-                </DialogDescription>
-            </DialogHeader>
-        </DialogHeader>
+      <AlertDialogContent className="max-w-xl">
+        <AlertDialogHeader>
+          <AlertDialogHeader>
+            <AlertDialogTitle> Validar condiciones de alquiler</AlertDialogTitle>
+                <AlertDialogDescription>
+                </AlertDialogDescription>
+            </AlertDialogHeader>
+        </AlertDialogHeader>
         
         <CondicionesCard 
             cotizacionId={cotizacionId} 
             onClose={() => setOpen(false)} 
             onActualizarCotizaciones={onActualizarCotizaciones}
         />
-      </DialogContent>
-    </Dialog>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

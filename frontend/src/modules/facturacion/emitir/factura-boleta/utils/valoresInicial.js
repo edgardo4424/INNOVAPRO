@@ -2,16 +2,19 @@
 
 const ValorInicialFactura = {
     // ?Datos del comprobante
-    tipo_Operacion: "",
+    tipo_Operacion: "0101",
     tipo_Doc: "01",
     serie: "F001",
     correlativo: "",
     tipo_Moneda: "PEN",
     fecha_Emision: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
+    fecha_vencimiento: null,
     empresa_Ruc: "10749283781",//?? nuevo ruc de prueba
+    dias_pagar: "",
+    orden_compra: "",
 
     // ?Datos del cliente
-    cliente_Tipo_Doc: "",
+    cliente_Tipo_Doc: "6",
     cliente_Num_Doc: "",
     cliente_Razon_Social: "",
     cliente_Direccion: "",
@@ -28,14 +31,20 @@ const ValorInicialFactura = {
     // ?Base de datos
     estado_Documento: "0",
     manual: false,
-    id_Base_Dato: "15265",
+
+    // ?Documentos relacionados
+    relDocs: [],
 
     // ?Parametros para innova Pro
-    observaciones: "", //? nuevo campo solo para bd
-    usuario_id: 1, //* cambiar a el usuario logeado
+    Observacion: "", //? nuevo campo solo para bd
+    // usuario_id: 1, //* cambiar a el usuario logeado
 
     // ?Lista de Productos
     detalle: [],
+
+    // ?Pagos Maquillados
+    neto_Pagar: 0,
+    cuotas_Real: [],
 
     // ?Lista Forma de Pagos
     forma_pago: [],
@@ -49,7 +58,22 @@ const ValorInicialFactura = {
     ],
 };
 
-const camposDetraccion = {
+const valorIncialPago = [{
+    tipo: "",
+    monto: 0,
+    cuota: 0,
+    fecha_Pago: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
+}];
+
+
+const valorIncialRetencion = {
+    descuento_cod_tipo: "62",
+    descuento_factor: 0.03,
+    descuento_monto_base: 0,
+    descuento_monto: 0,
+}
+
+const valorIncialDetracion = {
     detraccion_cod_bien_detraccion: "",
     detraccion_cod_medio_pago: "",
     detraccion_cta_banco: "",
@@ -57,43 +81,23 @@ const camposDetraccion = {
     detraccion_mount: 0,
 }
 
-const camposDescuento = {
-    descuento_cod_tipo: "",
-    descuento_monto_base: 0,
-    descuento_factor: 0,
-    descuento_monto: 0,
-}
-
 const valorInicialProducto = {
-    unidad: "",
-    cantidad: null,
+    unidad: "NIU",
+    cantidad: 1,
     cod_Producto: "",
     descripcion: "",
     monto_Valor_Unitario: null,
     monto_Base_Igv: 0,
     porcentaje_Igv: 18.0,
     igv: 0,
-    tip_Afe_Igv: "",
+    tip_Afe_Igv: "10",
     total_Impuestos: 0,
     monto_Precio_Unitario: 0,
     monto_Valor_Venta: 0,
     factor_Icbper: 0,
 };
 
-const valorIncialPago = {
-    tipo: "",
-    monto: 0,
-    cuota: 0,
-    fecha_Pago: "",
-};
 
-const valorIncialDetracion = {
-    detraccion_cod_bien_detraccion: "014",
-    detraccion_cod_medio_pago: "001",
-    detraccion_cta_banco: "0004-3342343243",
-    detraccion_percent: 4.00,
-    detraccion_mount: 37.76,
-}
 
 // ?? VALORES INICIALES ---- FIN
 
@@ -140,6 +144,7 @@ const PagoValidarEstados = {
 
 export {
     ValorInicialFactura,
+    valorIncialRetencion,
     valorIncialDetracion,
     FacturaValidarEstados,
     valorInicialProducto,

@@ -41,6 +41,14 @@ const Factura = sequelize.define(
                 key: "ruc",
             }
         },
+        relDocs: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        },
+        extraDetails: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        },
         cliente_Tipo_Doc: {
             type: DataTypes.STRING,
             allowNull: true,
@@ -93,12 +101,15 @@ const Factura = sequelize.define(
             type: DataTypes.ENUM(
                 "EMITIDA",
                 "RECHAZADA",
+                "ANULADA-NOTA",
+                "MODIFICADA-NOTA",
                 "ANULADA",
-                "OBSERVADA"
+                "OBSERVADA",
+                "PENDIENTE",
             ),
             allowNull: true,
         },
-        observaciones: {
+        Observacion: {
             type: DataTypes.TEXT,
             allowNull: true,
         },
@@ -139,7 +150,7 @@ const Factura = sequelize.define(
             type: DataTypes.DECIMAL(12, 2),
             allowNull: true,
         },
-        //! -- Campos para descuento
+        //! -- Campos para retenciones (Descuentos)
         descuento_cod_tipo: {
             type: DataTypes.STRING,
             allowNull: true,
@@ -154,6 +165,31 @@ const Factura = sequelize.define(
         },
         descuento_monto: {
             type: DataTypes.DECIMAL(12, 2),
+            allowNull: true,
+        },
+        //! -- Campo de anulacion
+        anulacion_Motivo: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        orden_compra: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        dias_pagar: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        fecha_vencimiento: {
+            type: DataTypes.DATE,
+            allowNull: true,
+        },
+        neto_Pagar: {
+            type: DataTypes.DECIMAL,
+            allowNull: true,
+        },
+        cuotas_Real: {
+            type: DataTypes.TEXT,
             allowNull: true,
         },
     },
@@ -179,6 +215,9 @@ Factura.associate = (models) => {
     Factura.hasMany(models.sunat_respuesta, {
         foreignKey: "factura_id",
     })
+    Factura.hasMany(models.notas_credito_debito, {
+        foreignKey: "factura_id",
+    });
 }
 
 module.exports = { Factura };

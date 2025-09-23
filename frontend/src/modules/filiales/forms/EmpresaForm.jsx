@@ -159,7 +159,7 @@ export default function EmpresaForm({
                      <Input
                         type="text"
                         value={empresa.dni_representante || ""}
-                        maxLength={8}
+                        maxLength={12}
                         onChange={(e) =>
                            handleChange("dni_representante", e.target.value)
                         }

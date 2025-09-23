@@ -6,7 +6,9 @@ module.exports = async function name(
     transaction = null
 ) {
    const contrato_laboral = new ContratoLaboral(contratoLaboralData);
+
    const errores = contrato_laboral.validar();
+
    if (errores.length > 0) {
       return {
          codigo: 400,
@@ -15,7 +17,7 @@ module.exports = async function name(
          },
       };
    }
-   console.log(errores);
+   
    
    const nuevoContratoLaboral = await contratoLaboralRepository.crear(
       contrato_laboral.get(),

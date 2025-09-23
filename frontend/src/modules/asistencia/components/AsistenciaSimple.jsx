@@ -13,19 +13,23 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Save, RefreshCw, FileText } from "lucide-react";
 import asistenciaService from "../services/asistenciaService";
+import { toast } from "react-toastify";
 
 export const estadosAsistencia = [
    { value: "presente", label: "Presente", color: "bg-green-500" },
    { value: "falto", label: "Falto", color: "bg-red-500" },
    { value: "tardanza", label: "Tardanza", color: "bg-yellow-500" },
    { value: "permiso", label: "Permiso", color: "bg-blue-500" },
-   { value: "licencia", label: "Licencia", color: "bg-purple-500" },
-   { value: "vacaciones", label: "Vacaciones", color: "bg-indigo-500" },
+   { value: "licencia_con_goce", label: "Licencia con goce", color: "bg-pink-500" },
+   { value: "licencia_sin_goce", label: "Licencia sin goce", color: "bg-purple-500" },
    {
       value: "falta-justificada",
       label: "Falta Justificada",
       color: "bg-orange-500",
    },
+      { value: "vacacion-vendida", label: "Vacación vendida", color: "bg-indigo-500" },
+   { value: "vacacion-gozada", label: "Vacación gozada", color: "bg-indigo-500" },
+
 ];
 
 export default function AsistenciaSimple({
@@ -57,8 +61,13 @@ export default function AsistenciaSimple({
          };
          await asistenciaService.crearAsistenciaSimple(nuevaAsistencia);
          await obtenerTrabajadores();
+         toast.success("Asistencia guardada corrrectamente");
       } catch (error) {
-         console.error("Error al guardar asistencia:", error);
+          if(error?.response?.data?.error){
+            toast.error(error.response.data.error);
+            return;
+         }
+         toast.error("Hubo un error descocnocido");
       } finally {
          setIsLoading(false);
       }
@@ -77,8 +86,13 @@ export default function AsistenciaSimple({
             asistenciaActualizada
          );
          await obtenerTrabajadores();
+         toast.success("Asistencia Actualizada corrrectamente");
       } catch (error) {
-         console.error("Error al actualizar asistencia:", error);
+          if(error?.response?.data?.error){
+            toast.error(error.response.data.error);
+                     return;
+            }
+            toast.error("Hubo un error ala actualizar la asistencia");
       } finally {
          setIsLoading(false);
       }

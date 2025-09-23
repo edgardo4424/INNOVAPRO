@@ -25,7 +25,15 @@ class SequelizeDataRepository {
         await mantenimiento.update(dataMantenimiento); 
         return mantenimiento; 
       }
-
+    
+    async obtenerDataMantenimientoPorCodigoImporte(cod) {
+        const d_m = await DataMantenimiento.findAll();
+        const d_m_limpio=d_m.map((d)=>d.get({plain:true}));
+        const filtro=d_m_limpio.filter((d)=>{
+            return d.codigo?.includes(cod);
+        })
+        return(filtro)
+    }
 }
 
 module.exports = SequelizeDataRepository; 

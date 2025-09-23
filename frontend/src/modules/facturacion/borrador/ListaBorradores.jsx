@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import ModalVisualizarBorrador from "../components/modal/ModalVisualizarBorrador";
 import facturaService from "../service/FacturaService";
 import FiltroTabla from "../components/FiltroTabla";
-import PaginacionBorradores from "./components/PaginacionBorradores";
+import Paginacion from "../components/Paginacion";
 import TablaBorradores from "./components/TablaBorradores";
 import ModalEliminarBorrador from "./modal/ModalEliminarBorrador";
 
@@ -105,6 +105,17 @@ const ListaBorradores = () => {
     navigate(`/facturacion/borradores/?${query.join("&")}&page=1`);
   };
 
+  const handleLimpiarFiltros = () => {
+    setFiltro({
+      page: 1,
+      limit: 10,
+      cliente_num_doc: "",
+      tip_doc: "",
+      fec_des: "",
+      fec_ast: "",
+    });
+    navigate(`/facturacion/borradores/?limit=10&page=1`);
+  }
   const handlePageChange = (newPage) => {
     // Evita navegaciones inválidas
     if (newPage < 1 || newPage > totalPages) return;
@@ -135,6 +146,14 @@ const ListaBorradores = () => {
       name: "Boleta",
       value: "boleta",
     },
+    {
+      name: "Nota de Credito",
+      value: "notaCredito",
+    },
+    {
+      name: "Nota de Debito",
+      value: "notaDebito",
+    },
   ];
 
   return (
@@ -153,6 +172,7 @@ const ListaBorradores = () => {
         setFiltro={setFiltro}
         documentTypes={documentTypes}
         handleAplicarFiltros={handleAplicarFiltros}
+        handleLimpiarFiltros={handleLimpiarFiltros}
       />
 
       <div className="w-full">
@@ -198,7 +218,7 @@ const ListaBorradores = () => {
             )}
           </div>
         )}
-        <PaginacionBorradores
+        <Paginacion
           currentPage={currentPage}
           totalPages={totalPages}
           totalRecords={totalRecords}

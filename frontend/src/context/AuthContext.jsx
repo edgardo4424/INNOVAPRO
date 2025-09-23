@@ -40,6 +40,8 @@ export function AuthProvider({ children }) {
         }
       } catch (error) {
         console.error("❌ Error verificando sesión:", error.response?.data || error.message);
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
         logout();  
       } finally {
         setLoading(false);
@@ -53,6 +55,8 @@ export function AuthProvider({ children }) {
   const login = async (email, password, recaptchaToken, navigate) => {
     
     const data = await loginService(email, password, recaptchaToken); 
+
+    console.log('data', data);
   
     if (data?.error) {
       alert(`❌ ${data.mensaje}`);

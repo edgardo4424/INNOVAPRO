@@ -28,18 +28,19 @@ import { toast } from "sonner";
 import { default as SelectMultiple } from "react-select";
 
 const dataInicial = {
-
   filial_id: "",
   nombres: "",
   apellidos: "",
   tipo_documento: "",
   numero_documento: "",
+  fecha_nacimiento: "",
   asignacion_familiar: false,
   asignacion_familiar_fecha: null,
-  domiciliado: false,
+  domiciliado: true,
   sistema_pension: "",
   tipo_afp: null,
   cargo_id: "",
+  comision_afp: false,
   contratos_laborales: [
     {
       id: Math.floor(Date.now() / 1000),
@@ -48,12 +49,13 @@ const dataInicial = {
       sueldo: "",
       regimen: "",
       tipo_contrato: "",
+      banco: "",
+      numero_cuenta: "",
     },
   ],
 };
 
 export default function TrabajadorForm() {
-
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const trabajador_id = searchParams.get("id");
@@ -98,10 +100,8 @@ export default function TrabajadorForm() {
       setIsLoading(true);
       setFetchError("");
       try {
-        const res = await trabajadoresService.obtenerTrabajadorPorId(
-          trabajador_id
-        );
-        console.log(res);
+        const res =
+          await trabajadoresService.obtenerTrabajadorPorId(trabajador_id);
 
         if (ignore) return;
 
@@ -111,6 +111,8 @@ export default function TrabajadorForm() {
               id: c?.id ?? idx + 1,
               fecha_inicio: c?.fecha_inicio ?? "",
               fecha_fin: c?.fecha_fin ?? "",
+              banco: c?.banco ?? "",
+              numero_cuenta: c?.numero_cuenta ?? "",
               sueldo: c?.sueldo ?? "",
               regimen: c?.regimen ?? "",
               tipo_contrato: c?.tipo_contrato ?? "",
@@ -125,11 +127,13 @@ export default function TrabajadorForm() {
           apellidos: t.apellidos ?? "",
           tipo_documento: t.tipo_documento ?? "",
           numero_documento: t.numero_documento ?? "",
+          fecha_nacimiento: t.fecha_nacimiento ?? "",
           asignacion_familiar: t.asignacion_familiar ? true : false, // checkbox
           asignacion_familiar_fecha: t.asignacion_familiar ?? null, // guardamos la fecha real
           domiciliado: !!t.domiciliado,
           sistema_pension: t.sistema_pension ?? "",
           tipo_afp: t.tipo_afp ?? null,
+          comision_afp: !!t.comision_afp,
           cargo_id: (t.cargo_id ?? "").toString(),
           contratos_laborales: contratos.length
             ? contratos
@@ -138,7 +142,8 @@ export default function TrabajadorForm() {
       } catch (e) {
         console.error(e);
         setFetchError(
-          (e && e.message) || "No se pudo cargar la información del trabajador."
+          (e && e.message) ||
+            "No se pudo cargar la información del trabajador.",
         );
       } finally {
         if (!ignore) setIsLoading(false);
@@ -173,10 +178,12 @@ export default function TrabajadorForm() {
       apellidos: formData.apellidos.trim(),
       tipo_documento: formData.tipo_documento,
       numero_documento: formData.numero_documento.trim(),
+      fecha_nacimiento: formData.fecha_nacimiento,
       asignacion_familiar: formData.asignacion_familiar_fecha,
       domiciliado: formData.domiciliado,
       sistema_pension: formData.sistema_pension,
       tipo_afp: formData.tipo_afp,
+      comision_afp: formData.comision_afp,
       cargo_id: formData.cargo_id,
       contratos_laborales: formData.contratos_laborales,
       sueldo_base: ultimoContrato ? ultimoContrato.sueldo : "",
@@ -186,22 +193,18 @@ export default function TrabajadorForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!valorUit) return;
-    const isGerente = ["1", "14"].includes(formData.cargo_id);
+
     try {
       setIsSubmitting(true);
 
       const dataToSubmit = buildPayload();
-
       if (isEditMode) {
         dataToSubmit.id = trabajador_id;
         await trabajadorSchema(isEditMode).validate(dataToSubmit, {
           abortEarly: false,
         });
-        console.log("ediar", dataToSubmit);
-
-        const response = await trabajadoresService.editarTrabajador(
-          dataToSubmit
-        );
+        const response =
+          await trabajadoresService.editarTrabajador(dataToSubmit);
         toast.success("Trabajador actualizado con éxito");
       } else {
         await trabajadorSchema(isEditMode).validate(dataToSubmit, {
@@ -213,26 +216,37 @@ export default function TrabajadorForm() {
       }
       navigate("/tabla-trabajadores");
     } catch (error) {
-      console.log(error);
-
       if (error && error.name === "ValidationError") {
         const newErrors =
           error.inner?.reduce((acc, curr) => {
             acc[curr.path] = curr.message;
             return acc;
           }, {}) || {};
-          console.log('newErrors', newErrors);
+        console.log("newErrors", newErrors);
         setErrors(newErrors);
       } else {
-        console.error(error);
+        console.error("El error emcmtradoe es: ", error);
+        if (error?.response?.data?.mensaje) {
+          console.log("tipo de datos: ", typeof error?.response?.data?.mensaje);
+
+          if (typeof error?.response?.data?.mensaje == "string") {
+            toast.error(error?.response?.data?.mensaje);
+          } else {
+            for (const e of error.response.data.mensaje) {
+              toast.error(e);
+            }
+          }
+
+          return;
+        }
         toast.error(
-          (error &&
-            error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-            (isEditMode
-              ? "Error al actualizar el trabajador"
-              : "Error al crear el trabajador")
+           (error &&
+              error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+              (isEditMode
+                 ? "Error al actualizar el trabajador"
+                 : "Error al crear el trabajador")
         );
       }
     } finally {
@@ -241,7 +255,7 @@ export default function TrabajadorForm() {
   };
 
   return (
-    <div className="w-full max-w-[52rem] p-6 ">
+    <div className="w-full max-w-[52rem] p-6">
       <Card className="shadow-none">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-[#1b274a]">
@@ -284,7 +298,7 @@ export default function TrabajadorForm() {
                   Información Personal
                 </section>
 
-                <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="nombres">Nombres *</Label>
                     <Input
@@ -316,7 +330,7 @@ export default function TrabajadorForm() {
                   </div>
                 </section>
 
-                <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="tipo_documento">Tipo de Documento *</Label>
                     <Select
@@ -359,7 +373,26 @@ export default function TrabajadorForm() {
                     )}
                   </div>
                 </section>
-                <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="fecha_nacimiento">
+                      Fecha de nacimiento *
+                    </Label>
+                    <Input
+                      id="fecha_nacimiento"
+                      type={"date"}
+                      value={formData.fecha_nacimiento}
+                      onChange={(e) =>
+                        handleInputChange("fecha_nacimiento", e.target.value)
+                      }
+                      placeholder="Ingresa la fecha de nac."
+                    />
+                    {errors.fecha_nacimiento && (
+                      <p className="text-sm text-red-500">
+                        {errors.fecha_nacimiento}
+                      </p>
+                    )}
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="cargo_id">Cargo *</Label>
                     <Select
@@ -386,11 +419,13 @@ export default function TrabajadorForm() {
                       <p className="text-sm text-red-500">{errors.cargo_id}</p>
                     )}
                   </div>
-                  <div className="flex items-center space-x-2 pl-4 ">
+                </section>
+                <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div className="flex items-center space-x-2 pl-4">
                     <Checkbox
                       id="domiciliado"
                       checked={formData.domiciliado}
-                      className="data-[state=checked]:bg-[#1b274a] border-[#1b274a]/50 data-[state=checked]:border-[#1b274a]/80"
+                      className="border-[#1b274a]/50 data-[state=checked]:border-[#1b274a]/80 data-[state=checked]:bg-[#1b274a]"
                       onCheckedChange={(checked) =>
                         handleInputChange("domiciliado", !!checked)
                       }
@@ -414,12 +449,12 @@ export default function TrabajadorForm() {
                   Beneficios y Sistema de Pensión
                 </div>
 
-                <div className="grid space-y-4 w-full  grid-cols-1 md:grid-cols-2">
+                <div className="grid w-full grid-cols-1 space-y-4 md:grid-cols-2">
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="asignacion_familiar"
                       checked={formData.asignacion_familiar}
-                      className="data-[state=checked]:bg-[#1b274a] border-[#1b274a]/50 data-[state=checked]:border-[#1b274a]/80"
+                      className="border-[#1b274a]/50 data-[state=checked]:border-[#1b274a]/80 data-[state=checked]:bg-[#1b274a]"
                       onCheckedChange={(checked) => {
                         handleInputChange("asignacion_familiar", !!checked);
                         handleInputChange("asignacion_familiar", !!checked);
@@ -427,7 +462,7 @@ export default function TrabajadorForm() {
                           "asignacion_familiar_fecha",
                           checked
                             ? new Date().toISOString().split("T")[0]
-                            : null
+                            : null,
                         );
                       }}
                     />
@@ -437,17 +472,19 @@ export default function TrabajadorForm() {
                     </Label>
                   </div>
 
-                  <div className="space-y-2 ">
+                  <div className="space-y-2">
                     <Label htmlFor="sistema_pension">
                       Sistema de Pensión *
                     </Label>
                     <Select
                       value={formData.sistema_pension}
                       onValueChange={(value) => {
-                        handleInputChange("sistema_pension", value)
-                        setFormData((prev) => ({ ...prev, tipo_afp: null }))
-                      }
-                     }
+                        handleInputChange("sistema_pension", value);
+                        setFormData((prev) => ({
+                          ...prev,
+                          tipo_afp: null,
+                        }));
+                      }}
                     >
                       <SelectTrigger className={"w-full"}>
                         <SelectValue placeholder="Seleccione sistema de pensión" />
@@ -465,30 +502,46 @@ export default function TrabajadorForm() {
                   </div>
 
                   {formData.sistema_pension === "AFP" && (
-                    <div className="space-y-2 ">
-                      <Label htmlFor="tipo_afp">Tipo de AFP *</Label>
-                      <Select
-                        value={formData.tipo_afp || ""}
-                        onValueChange={(value) =>
-                          handleInputChange("tipo_afp", value)
-                        }
-                      >
-                        <SelectTrigger className={"w-full"}>
-                          <SelectValue placeholder="Seleccione el tipo de AFP" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="HABITAT">HABITAT</SelectItem>
-                          <SelectItem value="INTEGRA">INTEGRA</SelectItem>
-                          <SelectItem value="PRIMA">PRIMA</SelectItem>
-                          <SelectItem value="PROFUTURO">PROFUTURO</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      {errors.tipo_afp && (
-                        <p className="text-sm text-red-500">
-                          {errors.tipo_afp}
-                        </p>
-                      )}
-                    </div>
+                    <>
+                      <div className="space-y-2">
+                        <Label htmlFor="tipo_afp">Tipo de AFP *</Label>
+                        <Select
+                          value={formData.tipo_afp || ""}
+                          onValueChange={(value) =>
+                            handleInputChange("tipo_afp", value)
+                          }
+                        >
+                          <SelectTrigger className={"w-full"}>
+                            <SelectValue placeholder="Seleccione el tipo de AFP" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="HABITAT">HABITAT</SelectItem>
+                            <SelectItem value="INTEGRA">INTEGRA</SelectItem>
+                            <SelectItem value="PRIMA">PRIMA</SelectItem>
+                            <SelectItem value="PROFUTURO">PROFUTURO</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        {errors.tipo_afp && (
+                          <p className="text-sm text-red-500">
+                            {errors.tipo_afp}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="flex items-center space-x-2 pl-4">
+                        <Checkbox
+                          id="comision_afp"
+                          checked={formData.comision_afp}
+                          className="border-[#1b274a]/50 data-[state=checked]:border-[#1b274a]/80 data-[state=checked]:bg-[#1b274a]"
+                          onCheckedChange={(checked) =>
+                            handleInputChange("comision_afp", !!checked)
+                          }
+                        />
+                        <Label htmlFor="comision_afp">
+                          ¿Aplica comisión AFP?
+                        </Label>
+                      </div>
+                    </>
                   )}
                 </div>
               </div>
@@ -514,8 +567,8 @@ export default function TrabajadorForm() {
                       ? "Guardando..."
                       : "Registrando..."
                     : isEditMode
-                    ? "Guardar cambios"
-                    : "Registrar Trabajador"}
+                      ? "Guardar cambios"
+                      : "Registrar Trabajador"}
                 </Button>
               </div>
             </form>

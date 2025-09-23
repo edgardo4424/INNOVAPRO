@@ -20,6 +20,7 @@ import {
    LogOut,
    ShieldCheck,
    ScrollText,
+   Receipt,
 } from "lucide-react";
 import {
    Sidebar,
@@ -65,12 +66,12 @@ const iconMap = {
    "Registrar Cotización": FileEdit,
    "Stock de Piezas": Boxes,
    Trabajadores: Users,
-   "Facturación":ScrollText,
+   "Facturación": Receipt,
    "Gestión de Condiciones": ShieldCheck,
 };
 
 const modulesByRole = {
-   Gerencia: [
+   CEO: [
       {
          group: "Centro de gestión ",
          items: [
@@ -95,6 +96,7 @@ const modulesByRole = {
          items: [
             { name: "Crear Trabajador", path: "/crear-trabajador" },
             { name: "Tabla de Trabajadores", path: "/tabla-trabajadores" },
+            { name: "Dar de Baja", path: "/trabajadores-dados-de-baja" },
          ],
       },
       {
@@ -128,13 +130,11 @@ const modulesByRole = {
       {
          group: "Facturación",
          items: [
-            { name: "Factura y Boleta", path: "/facturacion/factura-boleta" },
-            { name: "Guia de Remision", path: "/facturacion/guia-remision/transporte-privado" },
-            { name: "Nota de Credito y Debito", path: "/facturacion/nota-credito" },
-            { name: "Emitir", path: "/facturacion/emitir" },
+            { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
+            { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
+            { name: "Guia de Remision", path: "/facturacion/emitir/guia" },
             { name: "Bandeja", path: "/facturacion/bandeja" },
             { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
-            { name: "Anulados", path: "/facturacion/anuladas" },
          ],
       },
 
@@ -143,13 +143,13 @@ const modulesByRole = {
          items: [
             { name: "Planilla quincenal", path: "/planilla-quincenal" },
             { name: "Planilla mensual", path: "/planilla-mensual" },
-        
+
          ],
       },
       { name: "Datos de mantenimiento", path: "/data-mantenimiento" },
 
    ],
-   Ventas: [
+   "Técnico Comercial": [
       { name: "Gestión de Clientes", path: "/gestion-clientes" },
       { name: "Gestión de Contactos", path: "/gestion-contactos" },
       { name: "Gestión de Obras", path: "/gestion-obras" },
@@ -159,13 +159,16 @@ const modulesByRole = {
       { name: "Registrar Cotización", path: "/cotizaciones/registrar" },
       { name: "Stock de Piezas", path: "/stock/piezas" },
    ],
-   "Oficina Técnica": [
+   "Jefe de OT": [
       { name: "Centro de Atención", path: "/centro-atencion" },
       { name: "Stock de Piezas", path: "/stock/piezas" },
    ],
-   Almacén: [],
+   "OT": [
+      { name: "Centro de Atención", path: "/centro-atencion" },
+      { name: "Stock de Piezas", path: "/stock/piezas" },
+   ],
    Administración: [
-      { name: "Gestión de condiciones", path: "/condiciones"},
+      { name: "Gestión de condiciones", path: "/condiciones" },
       {
          group: "Retenciones",
          items: [
@@ -173,8 +176,58 @@ const modulesByRole = {
          ],
       },
    ],
-   Clientes: [],
+   //!Kimberly
+   Contadora:[
+      {
+         group: "Facturación",
+         items: [
+            { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
+            { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
+            // { name: "Emitir", path: "/facturacion/emitir" },
+            { name: "Bandeja", path: "/facturacion/bandeja" },
+            { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
+         ],
+      },
+   ],
+   //
+   "Asistente Facturación":[
+      {
+         group: "Facturación",
+         items: [
+            { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
+            { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
+            // { name: "Emitir", path: "/facturacion/emitir" },
+            { name: "Bandeja", path: "/facturacion/bandeja" },
+            { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
+         ],
+      },
+   ],
+   "Jefa de Almacén":[
+      {
+         group: "Facturación",
+         items: [
+              { name: "Guía de Remisión", path: "/facturacion/emitir/guia" },
+            { name: "Lista de guías", path: "/facturacion/bandeja/guia-remision?page=1&limit=10" },
+         ],
+      },
+   ],
+   "Gerente de administración":[
+      {
+         group: "Facturación",
+         items: [
+            { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
+            { name: "Guia de Remision", path: "/facturacion/emitir/guia" },
+            { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
+            // { name: "Emitir", path: "/facturacion/emitir" },
+            { name: "Bandeja", path: "/facturacion/bandeja" },
+            { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
+         ],
+      },
+   ],
+
 };
+
+// { name: "Guia de Remision", path: "/facturacion/emitir/guia" },
 
 const isPathActive = (currentPath, itemPath) => {
    const itemUrl = new URL(itemPath, window.location.origin); // para extraer pathname de itemPath

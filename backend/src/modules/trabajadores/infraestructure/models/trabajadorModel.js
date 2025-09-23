@@ -38,7 +38,7 @@ const Trabajador = sequelize.define(
       },
       sistema_pension: {
          type: DataTypes.ENUM("AFP", "ONP"),
-         allowNull: false,
+         allowNull: true,
       },
       estado: {
          type: DataTypes.ENUM("activo", "inactivo"),
@@ -53,7 +53,20 @@ const Trabajador = sequelize.define(
       tipo_afp: {
          type: DataTypes.ENUM("HABITAT", "INTEGRA", "PRIMA", "PROFUTURO"),
          allowNull: true,
-      }
+      },
+      comision_afp: {
+         type: DataTypes.BOOLEAN,
+         allowNull: false,
+         defaultValue: false,
+      },
+      fecha_nacimiento: {
+         type: DataTypes.DATEONLY,
+         allowNull: true,
+      },
+      fecha_baja: {
+         type: DataTypes.DATEONLY,
+         allowNull: true,
+      },
    },
    {
       tableName: "trabajadores",
@@ -90,5 +103,24 @@ Trabajador.associate = (models) => {
       foreignKey: "trabajador_id",
       as: "cts",
    });
+   Trabajador.hasMany(models.gratificaciones, {
+      foreignKey: "trabajador_id",
+      as: "gratificaciones",
+   });
+   Trabajador.hasMany(models.planilla_quincenal, {
+      foreignKey: "trabajador_id",
+      as: "planilla_quincenal",
+   });
+   Trabajador.hasMany(models.bajas_trabajadores, {
+      foreignKey: "trabajador_id",
+      as: "bajas_trabajadores",
+   });
+   
+   // Un trabajador tiene un usuario
+   Trabajador.hasOne(models.usuarios, {
+      foreignKey: "trabajador_id",
+      as: "usuario",  // alias para acceder al usuario desde trabajador
+   });
+
 };
 module.exports = { Trabajador };

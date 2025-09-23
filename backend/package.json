@@ -60,6 +60,7 @@
         "node-fetch": "^2.7.0",
         "node-telegram-bot-api": "^0.66.0",
         "normalize-package-data": "^7.0.0",
+        "pdfmake": "^0.2.9",
         "playwright": "^1.54.2",
         "rimraf": "^4.4.1",
         "semver": "^7.7.1",

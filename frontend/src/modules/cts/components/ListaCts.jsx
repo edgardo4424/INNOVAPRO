@@ -101,7 +101,7 @@ const ListaCts = ({ cts }) => {
                      rowSpan={2}
                      className="text-center border-r text-white border-black"
                   >
-                     Gratif. Percib. Dic. 2024
+                   Ultima Gratif. Percib
                   </TableHead>
                   <TableHead
                      rowSpan={2}
@@ -152,6 +152,18 @@ const ListaCts = ({ cts }) => {
                      className="text-center border-r text-white border-black"
                   >
                      CTS a Depositar
+                  </TableHead>
+                  <TableHead
+                     rowSpan={2}
+                     className="text-center border-r text-white border-black"
+                  >
+                     Banco
+                  </TableHead>
+                  <TableHead
+                     rowSpan={2}
+                     className="text-center border-r text-white border-black"
+                  >
+                     N° cuenta
                   </TableHead>
                </TableRow>
 

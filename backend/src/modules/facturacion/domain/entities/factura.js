@@ -32,6 +32,7 @@ class Factura {
         descuento_monto_base,
         descuento_factor,
         descuento_monto,
+        relDocs,
     }) {
         this.tipo_Operacion = tipo_Operacion;
         this.tipo_Doc = tipo_Doc;
@@ -65,6 +66,7 @@ class Factura {
         this.descuento_monto_base = descuento_monto_base;
         this.descuento_factor = descuento_factor;
         this.descuento_monto = descuento_monto;
+        this.relDocs = relDocs;
     }
 
     static crear(props) {

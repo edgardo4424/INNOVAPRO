@@ -22,14 +22,14 @@ const NotasCreditoDebito = sequelize.define(
             allowNull: true,
         },
         correlativo: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING,
             allowNull: true,
         },
         tipo_Moneda: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        tipo_Documento: {
+        estado_Documento: {
             type: DataTypes.STRING,
             allowNull: true,
         },
@@ -37,11 +37,11 @@ const NotasCreditoDebito = sequelize.define(
             type: DataTypes.DATE,
             allowNull: true,
         },
-        observacion: {
+        Observacion: {
             type: DataTypes.TEXT,
             allowNull: true,
         },
-        manual: {
+        Manual: {
             type: DataTypes.BOOLEAN,
             allowNull: true,
         },
@@ -89,7 +89,7 @@ const NotasCreditoDebito = sequelize.define(
             type: DataTypes.DECIMAL(12, 2),
             allowNull: true,
         },
-        monto_Tmp_Venta: {
+        monto_Imp_Venta: {
             type: DataTypes.DECIMAL(12, 2),
             allowNull: true,
         },
@@ -109,10 +109,47 @@ const NotasCreditoDebito = sequelize.define(
             type: DataTypes.STRING,
             allowNull: true,
         },
+        estado: {
+            type: DataTypes.ENUM(
+                "EMITIDA",
+                "RECHAZADA",
+                "ANULADA-NOTA",
+                "MODIFICADA-NOTA",
+                "ANULADA",
+                "OBSERVADA",
+                "PENDIENTE",
+            ),
+            allowNull: true,
+        },
         usuario_id: {
             type: DataTypes.INTEGER,
             allowNull: true,
         },
+        factura_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+                model: "factura",
+                key: "id",
+            },
+        },
+        nota_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+                model: "notas_credito_debito",
+                key: "id",
+            },
+        },
+        fecha_Emision_Afectado: {
+            type: DataTypes.DATE,
+            allowNull: true,
+        }
+        //! -- Campo de anulacion
+        // anulacion_Motivo: {
+        //     type: DataTypes.STRING,
+        //     allowNull: true,
+        // }
     },
     {
         timestamps: false,
@@ -128,6 +165,12 @@ NotasCreditoDebito.associate = (models) => {
         foreignKey: "nota_id",
     })
     NotasCreditoDebito.hasMany(models.sunat_respuesta, {
+        foreignKey: "nota_id",
+    })
+    NotasCreditoDebito.belongsTo(models.factura, {
+        foreignKey: "factura_id",
+    })
+    NotasCreditoDebito.belongsTo(models.notas_credito_debito, {
         foreignKey: "nota_id",
     })
 }

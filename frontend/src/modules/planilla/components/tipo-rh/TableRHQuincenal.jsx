@@ -17,7 +17,7 @@ import RowRHQuincenal from "./RowRHQuincenal";
 /* import RowGratificacion from "@/modules/gratificacion/components/RowGratificacion";
 import RowTotalGratificacion from "@/modules/gratificacion/components/RowTotalGratificacion"; */
 
-const TablePlanillaQuincenal = ({ planillaQuincenalTipoRh, total }) => {
+const TableRHQuincenal = ({ planillaQuincenalTipoRh, total }) => {
 
 console.log('planillaQuincenalTipoRh', planillaQuincenalTipoRh);
   const [filtro, setFiltro] = useState("");
@@ -44,19 +44,24 @@ console.log('planillaQuincenalTipoRh', planillaQuincenalTipoRh);
         <Search className="absolute right-3 top-1 text-gray-400" />
       </div>
 
-      <div className="py-4 xl:w-3/4">
+      <div className="py-4">
         <Table>
           {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
           <TableHeader>
             <TableRow className={"bg-gray-800 text-xs "}>
               {/* Estas celdas abarcan 2 filas porque no tienen sub-encabezados */}
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black"></TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Tipo Doc</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">N° Doc</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Nombres y Apellidos</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Fecha Ingreso</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Dias Laborados</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Base</TableHead>
-              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Quincenal</TableHead>
-              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Banco</TableHead>
+                            <TableHead rowSpan={2} className="text-center border-r text-white border-black">Adelantos</TableHead>
+              
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Total a Pagar</TableHead>
+               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Banco</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">N° Cuenta</TableHead>
 
             </TableRow>
           </TableHeader>
@@ -81,4 +86,4 @@ console.log('planillaQuincenalTipoRh', planillaQuincenalTipoRh);
   );
 };
 
-export default TablePlanillaQuincenal;
+export default TableRHQuincenal;

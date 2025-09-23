@@ -32,11 +32,11 @@ const TableGratificacion = ({ gratificacion }) => {
 
   return (
     <div className="w-full overflow-x-auto p-5 mb-10 flex flex-col bg-gray-100 border-2 rounded-xl shadow-xl">
-      <h1 className="text-2xl font-bold pb-6">Trabajadores</h1>
-      <div className="relative">
+     
+      <div className="relative xl:w-1/2  xl:mx-auto">
         <Input
           type="search"
-          className="block w-full appearance-none px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          className="block appearance-none px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           placeholder="Buscar por nombres"
           value={filtro}
           onChange={(e) => setFiltro(e.target.value)}
@@ -50,7 +50,8 @@ const TableGratificacion = ({ gratificacion }) => {
           <TableHeader>
             <TableRow className={"bg-gray-800 text-xs "}>
               {/* Estas celdas abarcan 2 filas porque no tienen sub-encabezados */}
-              <TableHead rowSpan={2} className="text-center border-r text-white border-black">DNI</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Tipo Doc</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">N° Doc</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Nombres y Apellidos</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Régimen</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Fecha Ingreso</TableHead>
@@ -73,7 +74,10 @@ const TableGratificacion = ({ gratificacion }) => {
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Renta 5ta / No dom.</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Adelanto</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Total a Pagar</TableHead>
-              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Acciones</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Banco</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">N° Cuenta</TableHead>
+
+              {/* <TableHead rowSpan={2} className="text-center border-r text-white border-black">Acciones</TableHead> */}
             </TableRow>
 
             {/* Sub-encabezados del grupo FALTAS */}
@@ -87,14 +91,7 @@ const TableGratificacion = ({ gratificacion }) => {
             {/* Render Trabajadores Planilla */}
             {planilla.trabajadores.length > 0 && (
               <>
-                <TableRow>
-                  <TableCell
-                    colSpan={20}
-                    className="text-center bg-gray-200 text-black font-semibold"
-                  >
-                    Planilla
-                  </TableCell>
-                </TableRow>
+                
                  {filtrarTrabajadores(planilla.trabajadores).map((e, index) => (
                   <RowGratificacion key={index} e={e} index={index} />
                 ))}

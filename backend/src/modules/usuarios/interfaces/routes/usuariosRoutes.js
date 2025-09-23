@@ -8,8 +8,10 @@ router.use(verificarToken); // Verificamos el token y el rol de Gerente para tod
 
 // 📌 Rutas protegidas solo para Gerencia
 router.get("/", esGerente, usuarioController.obtenerUsuarios);
-router.get("/:id", esGerente, usuarioController.obtenerUsuarioPorId);
+router.get("/trabajadores-sin-usuario", esGerente, usuarioController.obtenerTrabajadoresSinUsuario)
+
 router.post("/", esGerente, usuarioController.crearUsuario);
+router.get("/:id", esGerente, usuarioController.obtenerUsuarioPorId);
 router.put("/:id", esGerente, usuarioController.actualizarUsuario);
 router.delete("/:id", esGerente, usuarioController.eliminarUsuario);
 

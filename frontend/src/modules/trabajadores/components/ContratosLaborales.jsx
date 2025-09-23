@@ -65,7 +65,7 @@ const ContratosLaborales = ({ formData, setFormData, errors, filiales }) => {
    };
 
    console.log(formData.contratos_laborales);
-   
+
    // Captura el sueldo previo al empezar a editar
    const handleSueldoFocus = (index, value) => {
       setEditIndex(index);
@@ -112,15 +112,6 @@ const ContratosLaborales = ({ formData, setFormData, errors, filiales }) => {
                <CalendarIcon className="h-5 w-5 text-[#1b274a]" />
                Información Contractual
             </div>
-
-            <Button
-               type="button"
-               onClick={handleAddContrato}
-               className="gap-2 bg-innova-blue hover:bg-innova-blue"
-            >
-               <Plus className="h-4 w-4" />
-               Agregar contrato
-            </Button>
          </div>
 
          <div className="mt-4 space-y-5">
@@ -247,11 +238,11 @@ const ContratosLaborales = ({ formData, setFormData, errors, filiales }) => {
                         <Select
                            value={c.filial_id}
                            onValueChange={(value) =>
-                              handleInputChange(i,"filial_id", value)
+                              handleInputChange(i, "filial_id", value)
                            }
                         >
                            <SelectTrigger className={"w-full"}>
-                              <SelectValue placeholder="Seleccione una filial" />
+                              <SelectValue placeholder="Seleccione una empresa" />
                            </SelectTrigger>
                            <SelectContent>
                               {filiales.map((filial) => (
@@ -302,9 +293,69 @@ const ContratosLaborales = ({ formData, setFormData, errors, filiales }) => {
                            </p>
                         )}
                      </div>
+
+                     {/* Banco */}
+                     <div className="space-y-2">
+                        <Label htmlFor={`banco_${i}`}>Banco</Label>
+                        <Input
+                           id={`banco_${i}`}
+                           type="text"
+                           value={c.banco || ""}
+                           onChange={(e) =>
+                              handleInputChange(i, "banco", e.target.value)
+                           }
+                           placeholder="Nombre del banco"
+                        />
+                        {errors?.[`contratos_laborales[${i}].banco`] && (
+                           <p className="text-xs text-red-500">
+                              {errors[`contratos_laborales[${i}].banco`]}
+                           </p>
+                        )}
+                     </div>
+
+                     {/* Número de cuenta */}
+                     <div className="space-y-2">
+                        <Label htmlFor={`numero_cuenta_${i}`}>
+                           Número de cuenta
+                        </Label>
+                        <Input
+                           id={`numero_cuenta_${i}`}
+                           type="text"
+                           value={c.numero_cuenta || ""}
+                           onChange={(e) =>
+                              handleInputChange(
+                                 i,
+                                 "numero_cuenta",
+                                 e.target.value
+                              )
+                           }
+                           placeholder="Ej. 1234567890"
+                        />
+                        {errors?.[
+                           `contratos_laborales[${i}].numero_cuenta`
+                        ] && (
+                           <p className="text-xs text-red-500">
+                              {
+                                 errors[
+                                    `contratos_laborales[${i}].numero_cuenta`
+                                 ]
+                              }
+                           </p>
+                        )}
+                     </div>
                   </div>
                </div>
             ))}
+         </div>
+         <div className="flex items-center justify-end">
+            <Button
+               type="button"
+               onClick={handleAddContrato}
+               className="gap-2 bg-innova-blue hover:bg-innova-blue"
+            >
+               <Plus className="h-4 w-4" />
+               Nuevo contrato
+            </Button>
          </div>
 
          {/* Diálogo de confirmación de sueldo */}

@@ -30,6 +30,18 @@ module.exports = {
             type: Sequelize.ENUM("GENERAL", "MYPE"),
             allowNull: false,
          },
+         fecha_ingreso: {
+            type: Sequelize.DATEONLY,
+            allowNull: false,
+         },
+         inicio_periodo: {
+            type: Sequelize.DATEONLY,
+            allowNull: false,
+         },
+         fin_periodo: {
+            type: Sequelize.DATEONLY,
+            allowNull: false,
+         },
          sueldo_base: {
             type: Sequelize.DECIMAL(10, 2),
             allowNull: false,
@@ -87,6 +99,10 @@ module.exports = {
             allowNull: false,
          },
          no_computable: {
+            type: Sequelize.DECIMAL(10, 2),
+            allowNull: false,
+         },
+         no_domiciliado: {
             type: Sequelize.DECIMAL(10, 2),
             allowNull: false,
          },

@@ -50,6 +50,14 @@ const ContratoLaboral = sequelize.define(
             key: "id",
          },
       },
+      numero_cuenta: {
+         type: DataTypes.STRING,
+         allowNull: true,
+      },
+      banco: {
+         type: DataTypes.STRING,
+         allowNull: true,
+      },
    },
    {
       tableName: "contratos_laborales",
@@ -65,6 +73,17 @@ ContratoLaboral.associate = (models) => {
       foreignKey: "filial_id",
       as: "empresa_proveedora",
    });
+
+   ContratoLaboral.hasOne(models.planilla_quincenal, {
+      foreignKey: "contrato_id",
+      as: "planilla_quincenal",
+   })
+
+   ContratoLaboral.hasOne(models.bajas_trabajadores, {
+      foreignKey: "contrato_id",
+      as: "bajas_trabajadores",
+   })
+
 };
 
 module.exports = { ContratoLaboral };

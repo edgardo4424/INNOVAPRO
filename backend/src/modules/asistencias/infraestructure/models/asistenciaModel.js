@@ -25,12 +25,21 @@ const Asistencia = sequelize.define(
          type: DataTypes.INTEGER,
          allowNull: true,
       },
-       horas_extras: {
+      horas_extras: {
          type: DataTypes.INTEGER,
          allowNull: true,
       },
       estado_asistencia: {
-         type: DataTypes.ENUM("presente", "falto", "tardanza","permiso","licencia_sin_goce","licencia_con_goce","vacaciones","falta-justificada"),
+         type: DataTypes.ENUM(
+            "presente",
+            "falto",
+            "tardanza",
+            "permiso",
+            "licencia_sin_goce",
+            "licencia_con_goce",
+            "vacaciones",
+            "falta-justificada"
+         ),
          allowNull: false,
       },
    },
@@ -53,6 +62,10 @@ Asistencia.associate = (models) => {
    Asistencia.belongsTo(models.trabajadores, {
       foreignKey: "trabajador_id",
       as: "trabajador",
+   });
+   Asistencia.hasOne(models.asistencias_vacaciones, {
+      foreignKey: "asistencia_id",
+      as: "asistencias_vacaciones",
    });
 };
 module.exports = { Asistencia };

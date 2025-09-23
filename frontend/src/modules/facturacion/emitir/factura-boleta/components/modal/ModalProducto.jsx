@@ -7,12 +7,13 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { ClipboardPlus, X } from "lucide-react";
-import { useEffect, useState } from "react";
-import ProductoForm from "../../forms/ProductoForm";
 import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
+import { ClipboardPlus, X } from "lucide-react";
+import { useEffect } from "react";
+import ProductoForm from "../../forms/ProductoForm";
+import { valorInicialProducto } from "../../utils/valoresInicial";
 
-export default function ModalProducto({open, setOpen}) {
+export default function ModalProducto({ open, setOpen }) {
 
     const { setProductoActual, setEdicionProducto } = useFacturaBoleta();
 
@@ -22,24 +23,7 @@ export default function ModalProducto({open, setOpen}) {
             index: null
         })
         setOpen(false);
-        setProductoActual(
-            {
-                unidad: "",
-                cantidad: 0,
-                cod_Producto: "",
-                descripcion: "",
-                monto_Valor_Unitario: 0,
-                monto_Base_Igv: 0,
-                porcentaje_Igv: 18.0,
-                igv: 0,
-                tip_Afe_Igv: "",
-                total_Impuestos: 0,
-                monto_Precio_Unitario: 0,
-                monto_Valor_Venta: 0,
-                factor_Icbper: 0,
-                edicion: false
-            }
-        )
+        setProductoActual(valorInicialProducto)
     };
 
     useEffect(() => {
@@ -56,8 +40,8 @@ export default function ModalProducto({open, setOpen}) {
     return (
         <AlertDialog open={open} onOpenChange={setOpen} >
             <AlertDialogTrigger asChild>
-            <Button className="bg-blue-500 hover:scale-105 hover:bg-blue-600 cursor-pointer">
-            <ClipboardPlus />
+                <Button className="hover:scale-105 bg-innova-blue hover:bg-innova-blue-hover cursor-pointer">
+                    <ClipboardPlus />
                     <span className="hidden md:block">Nuevo Producto</span>
                 </Button>
             </AlertDialogTrigger>
@@ -79,10 +63,10 @@ export default function ModalProducto({open, setOpen}) {
                     </AlertDialogDescription>
                 </AlertDialogHeader>
 
-                
+
 
                 {/* 📦 Formulario */}
-                <ProductoForm closeModal={closeModal}  />
+                <ProductoForm closeModal={closeModal} />
 
 
             </AlertDialogContent>

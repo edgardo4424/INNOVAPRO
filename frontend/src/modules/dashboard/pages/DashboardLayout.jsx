@@ -9,6 +9,7 @@ import { SidebarInset, SidebarTrigger } from "../../../components/ui/sidebar";
 
 export default function DashboardLayout() {
    const { user, logout } = useAuth();
+   console.log('user', user);
    const [sidebarOpen, setSidebarOpen] = useState(false);
 
    if (!user) return <p className="error">Error: Usuario no autenticado.</p>;

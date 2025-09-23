@@ -29,6 +29,18 @@ const Cts = sequelize.define(
          type: DataTypes.ENUM("GENERAL", "MYPE"),
          allowNull: false,
       },
+      fecha_ingreso: {
+         type: DataTypes.DATEONLY,
+         allowNull: false,
+      },
+      inicio_periodo: {
+         type: DataTypes.DATEONLY,
+         allowNull: false,
+      },
+      fin_periodo: {
+         type: DataTypes.DATEONLY,
+         allowNull: false,
+      },
       sueldo_base: {
          type: DataTypes.DECIMAL(10, 2),
          allowNull: false,
@@ -86,6 +98,10 @@ const Cts = sequelize.define(
          allowNull: false,
       },
       no_computable: {
+         type: DataTypes.DECIMAL(10, 2),
+         allowNull: false,
+      },
+      no_domiciliado: {
          type: DataTypes.DECIMAL(10, 2),
          allowNull: false,
       },

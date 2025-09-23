@@ -7,8 +7,6 @@ import GestionAdelantoSueldo from "@/modules/Beneficios/Pages/GestionAdelantosSu
 import GestionBonos from "@/modules/Beneficios/Pages/GestionBonos";
 import GestionVacaciones from "@/modules/Beneficios/Pages/GestionVacaciones";
 import { WizardProvider } from "@/modules/cotizaciones/context/WizardCotizacionContext";
-import { FacturaBoletaProvider } from "@/modules/facturacion/context/FacturaBoletaContext";
-import { GuiaTransporteProvider } from "@/modules/facturacion/context/GuiaTransporteContext";
 import PlanillaEnConstruccion from "@/modules/planilla/pages/planilla";
 import EditarTrabajador from "@/modules/trabajadores/pages/EditarTrabajador";
 import GestionTrabajadores from "@/modules/trabajadores/pages/GestionTrabajadores";
@@ -24,7 +22,10 @@ import {
 import ProtectedRoute from "./ProtectedRoute";
 import RoleGuard from "./rol.guard";
 
-import PlanillaQuincenal from "@/modules/planilla/pages/PlanillaQuincenal";
+
+import PlanillaMensual from "@/modules/planilla/pages/CalculoPlanillaMensual";
+import GestionPlanillaMensual from "@/modules/planilla/pages/GestionPlanillaMensual";
+import { BandejaProvider } from "@/modules/facturacion/context/BandejaContext";
 
 // Lazy load components
 const Login = lazy(() => import("@/modules/auth/pages/Login"));
@@ -74,24 +75,8 @@ const GestionCts = lazy(() =>
 
 //* Facturacion
 
-const FacturaBoleta = lazy(() =>
-   import("../modules/facturacion/pages/FacturaBoleta")
-);
-
-const GuiaRemision = lazy(() =>
-   import("../modules/facturacion/pages/GuiaRemision")
-);
-
-const NotaCredito = lazy(() =>
-   import("../modules/facturacion/pages/NotaCredito")
-);
-
 const EmitirRoutes = lazy(() =>
    import("../modules/facturacion/routes/EmitirRoutes")
-);
-
-const FacturasAnuladas = lazy(() =>
-   import("../modules/facturacion/pages/FacturasAnuladas")
 );
 
 const BandejaRoutes = lazy(() =>
@@ -106,6 +91,9 @@ const GestionGratificacion = lazy(() =>
    import("../modules/gratificacion/pages/GestionGratificacion")
 );
 
+const GestionPlanillaQuincenal = lazy(() =>
+   import("../modules/planilla/pages/GestionPlanillaQuincenal")
+);
 
 //* Facturacion
 const CalculoQuintaCategoria = lazy(() =>
@@ -114,6 +102,8 @@ const CalculoQuintaCategoria = lazy(() =>
 const GestionDataMantenimiento = lazy(() =>
    import("../modules/dataMantenimiento/pages/GestionDataMantenimiento")
 );
+
+const GestionTrabajadoresDadosDeBaja = lazy(() => import("../modules/trabajadoresDadosDeBaja/pages/GestionTrabajadoresDadosDeBaja"));
 
 
 export default function AppRoutes() {
@@ -136,7 +126,7 @@ export default function AppRoutes() {
 
                      <Route index element={<DashboardHome />} />
 
-                     <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                     <Route element={<RoleGuard roles={["CEO"]} />}>
                         <Route
                            path="gestion-usuarios"
                            element={<GestionUsuarios />}
@@ -177,7 +167,7 @@ export default function AppRoutes() {
                      </Route>
 
                      <Route
-                        element={<RoleGuard roles={["Gerencia", "Ventas"]} />}
+                        element={<RoleGuard roles={["CEO", "Técnico Comercial"]} />}
                      >
                         <Route
                            path="gestion-clientes"
@@ -207,11 +197,19 @@ export default function AppRoutes() {
                               </WizardProvider>
                            }
                         />
+                        <Route
+                           path="/cotizaciones/wizard/:id"
+                           element={
+                              <WizardProvider>
+                                 <RegistrarCotizacionWizard />
+                              </WizardProvider>
+                           }
+                        />
                      </Route>
 
                      <Route
                         element={
-                           <RoleGuard roles={["Gerencia", "Administracion", "Ventas"]} />
+                           <RoleGuard roles={["CEO", "Gerente de administración ", "Técnico Comercial"]} />
                         }
                      >
                         <Route
@@ -223,9 +221,9 @@ export default function AppRoutes() {
                            }
                         />
                      </Route>
-
+                     //! -- Rutas asignada para OT 
                      <Route
-                        element={<RoleGuard roles={["Gerencia", "Ventas", "Oficina Técnica"]} />}
+                        element={<RoleGuard roles={["CEO", "Técnico Comercial", "Jefe de OT","OT"]} />}
                      >
                         <Route
                            path="centro-atencion"
@@ -235,44 +233,12 @@ export default function AppRoutes() {
                            path="stock/piezas"
                            element={<GestionStockPiezas />}
                         />
-
-                        <Route
-                           path="/cotizaciones/wizard/:id"
-                           element={
-                              <WizardProvider>
-                                 <RegistrarCotizacionWizard />
-                              </WizardProvider>
-                           }
-                        />
-
                      </Route>
 
                      {/*    //************************INICIO-FACTURACION************************* */}
-                     <Route element={<RoleGuard roles={["Gerencia", "Ventas"]} />}>
-                        <Route
-                           path="facturacion/factura-boleta"
-                           element={
-                              <FacturaBoletaProvider>
-                                 <FacturaBoleta />
-                              </FacturaBoletaProvider>
-                           }
-                        />
 
-                        <Route
-                           path="facturacion/guia-remision/:tipoGuia"
-                           element={
-                              <GuiaTransporteProvider>
-                                 <GuiaRemision />
-                              </GuiaTransporteProvider>
-                           }
-                        />
 
-                        <Route
-                           path="facturacion/nota-credito"
-                           element={
-                              <NotaCredito />
-                           }
-                        />
+                     <Route element={<RoleGuard roles={["CEO", "Gerente de administración","Jefa de Almacén","Asistente Facturación","Contadora"]} />}>
 
                         <Route
                            path="facturacion/emitir/*"
@@ -285,22 +251,23 @@ export default function AppRoutes() {
                            path="facturacion/bandeja/*"
                            element={<BandejaRoutes />}
                         />
+                        <Route element={<RoleGuard roles={["CEO", "Gerente de administración","Asistente Facturación","Contadora"]} />}>
 
-                        <Route
-                           path="facturacion/anuladas"
-                           element={<FacturasAnuladas />}
-                        />
-
-                        <Route
+                           <Route
                            path="facturacion/borradores"
-                           element={<Borrador />}
+                           element={
+                                 <BandejaProvider>
+                                    <Borrador />
+                                 </BandejaProvider>
+                                 }
                         />
+                        </Route>
 
                      </Route>
                      {/*    //************************FINAL-FACTURACION************************* */}
 
 
-                     <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                     <Route element={<RoleGuard roles={["CEO"]} />}>
                         <Route
                            path="crear-trabajador"
                            element={<CrearTrabajador />}
@@ -308,7 +275,7 @@ export default function AppRoutes() {
                      </Route>
 
                      <Route
-                        element={<RoleGuard roles={["Gerencia", "Administracion"]} />}
+                        element={<RoleGuard roles={["CEO", "Administracion"]} />}
                      >
                         <Route
                            path="condiciones"
@@ -318,7 +285,7 @@ export default function AppRoutes() {
                               </WizardProvider>
                            }
                         />
-                        
+
                         <Route
                            path="retenciones/calculoQuintaCategoria"
                            element={<CalculoQuintaCategoria />}
@@ -327,33 +294,42 @@ export default function AppRoutes() {
 
                      <>
                         {/* Rutas para el modulo de aistencia */}
-                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                        <Route element={<RoleGuard roles={["CEO"]} />}>
                            <Route
                               path="asistencia/:tipo"
                               element={<GestionAsistencia />}
                            />
                         </Route>
-                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                        <Route element={<RoleGuard roles={["CEO"]} />}>
                            <Route
                               path="planilla-quincenal"
-                              element={<PlanillaQuincenal />}
+                              element={<GestionPlanillaQuincenal />}
+                           />
+                           <Route
+                              path="planilla-mensual"
+                              element={<GestionPlanillaMensual />}
                            />
                         </Route>
-                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                        <Route element={<RoleGuard roles={["CEO"]} />}>
                            <Route
                               path="vacaciones"
                               element={<GestionVacaciones />}
                            />
                         </Route>
-                        <Route element={<RoleGuard roles={["Gerencia"]} />}>
+                        <Route element={<RoleGuard roles={["CEO"]} />}>
 
                            <Route path="bonos" element={<GestionBonos />} />
                            <Route path="adelanto-sueldo" element={<GestionAdelantoSueldo />} />
-                           <Route path="gestion-cts" element={<GestionCts/>}/>
+                           <Route path="gestion-cts" element={<GestionCts />} />
 
                            <Route
                               path="gratificacion"
                               element={<GestionGratificacion />}
+                           />
+
+                           <Route
+                              path="trabajadores-dados-de-baja"
+                              element={<GestionTrabajadoresDadosDeBaja />}
                            />
 
                         </Route>

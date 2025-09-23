@@ -21,10 +21,25 @@ const CalculoCts = () => {
 
    const fetchCts = async () => {
       try {
+         if (!filtro.filial_id) {
+            toast.error("Seleccione una filial");
+            return;
+         }
          setIsLoad(false);
+         const hoy = new Date().toISOString().slice(0, 10);
          const response = await ctsService.obtenerTrabajadores();
+         const trabajadores = response.data.trabajadores.filter((t) => {
+            let filial_id = 0;
+            const contratoActual = t.contratos_laborales.find((c) => {
+               return hoy >= c.fecha_inicio && hoy <= c.fecha_fin;
+            });
+            if (!contratoActual) return false;
+            filial_id = contratoActual.filial_id;
+            return filial_id == filtro.filial_id;
+         });
+
          const cts_obtenidas = [];
-         for (const t of response.data) {
+         for (const t of trabajadores) {
             const payload = {
                anio: filtro.anio,
                filial_id: filtro.filial_id,
@@ -32,15 +47,13 @@ const CalculoCts = () => {
                trabajador_id: t.id,
             };
             const response_cts = await ctsService.obtenerCts(payload);
-
             response_cts.data.map((c) => cts_obtenidas.push(c));
          }
-         console.log("cts obetenidas: ", cts_obtenidas);
+         console.log(cts_obtenidas);
 
          setCts(cts_obtenidas);
       } catch (error) {
          toast.error("Error al obtener el calculo de cts");
-         console.error(error);
       } finally {
          setIsLoad(false);
       }
@@ -64,8 +77,6 @@ const CalculoCts = () => {
             data.remuneracion_computable = data.remuneracion_comp;
             data.meses_computables = data.meses_comp;
             data.dias_computables = data.dias_comp;
-            data.numero_cuenta = "POR DEFINIR";
-            data.banco = "POR DEFINIR";
             // Eliminación de las claves originales
             delete data.ids_agrupacion;
             delete data.contrato_id;

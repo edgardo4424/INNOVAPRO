@@ -5,12 +5,17 @@ const SequelizeTrabajadorRepository = require("../../infraestructure/repositorie
 const crearTrabajadorConContrato = require("../../../../application/services/crearTrabajadorConContrato");
 const obtenerTrabajadorpoId = require("../../application/useCases/obtenerTrabajadorpoId");
 const editarTrabajadorConContrato = require("../../../../application/services/editarTrabajadorConContrato");
+
 const { Op } = require("sequelize");
 const { Trabajador } = require("../../infraestructure/models/trabajadorModel");
 const { ContratoLaboral } = require("../../../contratos_laborales/infraestructure/models/contratoLaboralModel");
 const { Filial } = require("../../../filiales/infrastructure/models/filialModel");
 
 function ymd(d){ const p=n=>String(n).padStart(2,"0"); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`; }
+
+const obtenerTrabajadoresYcontratos = require("../../application/useCases/obtenerTrabajadoresYcontratos");
+const obtenerTrabajadoresConContratosVigentes = require("../../application/useCases/obtenerTrabajadoresConContratosVigentes");
+
 
 const trabajadorRepository = new SequelizeTrabajadorRepository();
 
@@ -23,17 +28,16 @@ const TrabajadorController = {
          );
          res.status(nuevoTrabajador.codigo).json(nuevoTrabajador.respuesta);
       } catch (error) {
+         console.log('error', error);
          res.status(500).json({ error: error.message });
       }
    },
-   async obtenerTrabajadorPorId(req, res) {
+   async obtenerTrabajadorPorId(req, res) {      
       try {
          const trabajador = await obtenerTrabajadorpoId(
             req.params.id,
             trabajadorRepository
          );
-         console.log("Controlador:  ", trabajador.respuesta);
-
          res.status(trabajador.codigo).json(trabajador.respuesta);
       } catch (error) {
          res.status(500).json({ error: error.message });
@@ -49,10 +53,11 @@ const TrabajadorController = {
    },
    async editarTrabajadorConContrato(req, res) {
       try {
-         console.log('req.body', req.body);
+         console.log('entre');
          const usuarioEditado = await editarTrabajadorConContrato(req.body);
          res.status(usuarioEditado.codigo).json(usuarioEditado.respuesta);
       } catch (error) {
+         console.log('error', error);
          res.status(500).json({ error: error.message });
       }
    },
@@ -76,7 +81,7 @@ const TrabajadorController = {
          );
       } catch (error) {
          console.log(error);
-         
+
          res.status(500).json({ error: error.message });
       }
    },
@@ -135,6 +140,30 @@ const TrabajadorController = {
          return res.status(500).json({ ok:false, error:"Error interno" });
       }
    }
+   async obtenerTrabajadoresYcontratos(req, res) {            
+      try {
+         const response = await obtenerTrabajadoresYcontratos(
+            trabajadorRepository
+         );
+         res.status(response.codigo).json(response.respuesta);
+      } catch (error) {
+         res.status(502).json({ error: error.message });
+      }
+   },
+
+   async obtenerTrabajadoresConContratosVigentes(req, res) {            
+      try {
+
+         const { filial_id } = req.body;
+         const response = await obtenerTrabajadoresConContratosVigentes(
+            filial_id,
+            trabajadorRepository
+         );
+         res.status(response.codigo).json(response.respuesta);
+      } catch (error) {
+         res.status(502).json({ error: error.message });
+      }
+   },
 };
 
 module.exports = TrabajadorController;
