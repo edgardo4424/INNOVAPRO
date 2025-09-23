@@ -29,7 +29,11 @@ const BandejaRoutes = () => {
         >
           <Route
             path="factura-boleta"
-            element={<BandejaProvider></BandejaProvider>}
+            element={
+              <BandejaProvider>
+                <ListaDocumentos />
+              </BandejaProvider>
+            }
           />
         </Route>
 
