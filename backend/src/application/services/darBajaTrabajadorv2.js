@@ -22,6 +22,11 @@ const SequelizeTrabajadorRepository = require("../../modules/trabajadores/infrae
 
 const trabajadorRepository = new SequelizeTrabajadorRepository();
 
+
+const SequelizeDataMantenimientoRepository = require("../../modules/data_mantenimiento/infrastructure/repositories/sequelizeDataMantenimientoRepository");
+
+const dataMantenimientoRepository = new SequelizeDataMantenimientoRepository();
+
 const SequelizeContratoLaboralRepository = require("../../modules/contratos_laborales/infraestructure/repositories/sequelizeContratoLaboralRepository");
 const contratoLaboralRepository = new SequelizeContratoLaboralRepository();
 
@@ -44,6 +49,7 @@ const { calcularTiempoLaborado } = require("../utils/calcularTiempoEnEmpresa");
 const {
   calcularPeriodoComputableDelContrato,
 } = require("../utils/calcularPeriodoComputableDelContrato");
+const calcularPromedioHorasExtras = require("../../services/calculoHorasEsxtras");
 
 module.exports = async function darBajaTrabajador(dataBody) {
   const transaction = await sequelize.transaction();
@@ -61,6 +67,19 @@ module.exports = async function darBajaTrabajador(dataBody) {
   // console.log("dataBody", dataBody);
 
   try {
+    //! Buscar al trabajador
+    const trabajadorEncontrado = await db.trabajadores.findByPk(trabajador_id, {
+      transaction,
+    });
+
+    if (!trabajadorEncontrado) {
+      await transaction.rollback();
+      return {
+        codigo: 404,
+        respuesta: { mensaje: "Trabajador no encontrado" },
+      };
+    }
+
     //! Buscar el contrato laboral del trabajador asignando la fecha_baja
     const contratoLaboralEncontrado = await db.contratos_laborales.findByPk(
       contrato_id,
@@ -84,8 +103,6 @@ module.exports = async function darBajaTrabajador(dataBody) {
     const contratosDelTrabajador = contratos.map((contrato) =>
       contrato.get({ plain: true })
     );
-
-    console.log("contratosDelTrabajador", contratosDelTrabajador);
 
     //console.log('contratosDelTrabajador',contratosDelTrabajador);
 
@@ -129,30 +146,16 @@ module.exports = async function darBajaTrabajador(dataBody) {
       }
     );
 
-    console.log(
-      "contratosParaCalcularTiempoLaborado",
-      contratosParaCalcularTiempoLaborado
-    );
-
     //! Calcular el tiempo en la empresa
     const { tiempoLaborado } = calcularTiempoLaborado(
       contratosParaCalcularTiempoLaborado
     );
-
-    console.log("tiempoLaborado", tiempoLaborado);
 
     //! Calcular el tiempo del ultimo contrato
 
     const fechaInicioDelMes = fechaTerminacionAnticipada
       .clone()
       .startOf("month");
-
-    console.log({
-      trabajador_id,
-      fecha_inicio: fechaInicioDelMes.format("YYYY-MM-DD"),
-      fecha_terminacion_anticipada:
-        fechaTerminacionAnticipada.format("YYYY-MM-DD"),
-    });
 
     const cantidadFaltas =
       await asistenciaRepository.obtenerCantidadFaltasPorRangoFecha(
@@ -161,15 +164,14 @@ module.exports = async function darBajaTrabajador(dataBody) {
         fechaTerminacionAnticipada
       );
 
-    console.log("cantidadFaltas", cantidadFaltas);
-    console.log("contratoLaboralEncontrado", contratoLaboralEncontrado);
-
     const { periodoComputable } = calcularPeriodoComputableDelContrato(
       contratoLaboralEncontrado,
       cantidadFaltas
     );
 
-    console.log("periodoComputable", periodoComputable);
+    //! Remuneracion computable
+
+    console.log("contratosDelTrabajador", contratosDelTrabajador);
 
     //! inicializar los beneficios en 0
     let montoGratificacionTrunca = 0;
@@ -179,172 +181,64 @@ module.exports = async function darBajaTrabajador(dataBody) {
     let ctsTruncaId = null;
 
     if (tiempoLaborado.meses >= 1) {
+      console.log("CUMPLIO CON LOS BENEFICIOS");
+      //! Calculando la remuneracion computable
+      const ultimoSueldo = contratosDelTrabajador.sueldo;
 
-      console.log('CUMPLIO CON LOS BENEFICIOS');
-      //! Cerrar gratificacion trunca
-      const gratificacionTrunca = await cierreGratificacionTruncaPorTrabajador(
-        usuario_cierre_id,
-        filial_id,
+       const MONTO_ASIGNACION_FAMILIAR = Number(
+      (
+        await dataMantenimientoRepository.obtenerPorCodigo(
+          "valor_asignacion_familiar"
+        )
+      ).valor
+    );
+
+    const MONTO_POR_HORA_EXTRA = Number(
+      (await dataMantenimientoRepository.obtenerPorCodigo("valor_hora_extra"))
+        .valor
+    );
+
+      const asignacionFamiliar =
+        trabajadorEncontrado.asignacion_familiar &&
+        new Date(trabajadorEncontrado.asignacion_familiar) <=
+          new Date(fechaBaja)
+          ? MONTO_ASIGNACION_FAMILIAR
+          : 0;
+
+      //*Obteniendo el promedio horas extras en base a las asistencias
+
+      const fechaFinCalculo = moment(fechaBaja);
+      const fechaInicioCalculo = moment(fechaBaja).subtract(6, "months").add(1, "days");
+
+      console.log({
         trabajador_id,
-        fechaTerminacionAnticipada,
-        gratificacionRepository,
-        transaction
-      );
+        fechaInicioCalculo,
+        fechaFinCalculo
+      });
 
-      const { gratificacion_trunca } = gratificacionTrunca.respuesta;
-      gratificacionTruncaId = gratificacion_trunca
-        ? gratificacion_trunca.id
-        : null;
-      montoGratificacionTrunca = gratificacion_trunca
-        ? Number(gratificacion_trunca.total_pagar)
-        : 0;
-
-      //! Cerrar cts trunca
-      const ctsTrunca = await cierreCtsTruncaPorTrabajador(
-        usuario_cierre_id,
-        filial_id,
-        trabajador_id,
-        fechaTerminacionAnticipada,
-        ctsRepository,
-        transaction
-      );
-
-      console.log("ctsTrunca", ctsTrunca);
-
-      const { cts_trunca } = ctsTrunca.respuesta;
-      ctsTruncaId = cts_trunca ? cts_trunca.id : null;
-      montoCtsTrunca = cts_trunca ? Number(cts_trunca.cts_depositar) : 0;
-    }else{
-      console.log('NO CUMPLIO CON LOS BENEFICIOS');
-    }
-
-    // Crear una fecha que represente el día 15 de ese mes/año
-    const dia15 = moment({
-      year: fechaTerminacionAnticipada.year(),
-      month: fechaTerminacionAnticipada.month(), // month() es 0-based
-      day: 15,
-    });
-
-    // Si fechaTerminacionAnticipada es posterior al dia 15, cerrar planilla quincenal
-    // Si no cerrar solamente la planilla mensual trunca
-    if (fechaTerminacionAnticipada.isAfter(dia15, "day")) {
-      // Cerrar planilla quincenal trunca
-      const fecha_anio_mes = fechaTerminacionAnticipada.format("YYYY-MM");
-
-      const planillaQuincenalTrunca =
-        await cierrePlanillaQuincenalTruncaPorTrabajador(
-          usuario_cierre_id,
-          filial_id,
+      const asistencias =
+        await asistenciaRepository.obtenerAsistenciasPorRangoFecha(
           trabajador_id,
-          fecha_anio_mes,
-          planillaRepository,
-          transaction
+          fechaInicioCalculo,
+          fechaFinCalculo
         );
-    }
-    // Sino cerrar planilla
 
-    const anioMesDia = fechaTerminacionAnticipada
-      .clone()
-      .endOf("month")
-      .format("YYYY-MM-DD");
+      const asistenciasDelTrabajador = asistencias.map((b) => b.dataValues);
 
-    const planillaMensualTrunca =
-      await calcularPlanillaMensualTruncaPorTrabajador(
-        anioMesDia,
-        filial_id,
-        planillaRepository,
-        trabajadorRepository,
-        trabajador_id,
-        usuario_cierre_id,
-        transaction
+     
+
+      const promedioHorasExtras = calcularPromedioHorasExtras(
+        asistenciasDelTrabajador,
+        MONTO_POR_HORA_EXTRA,
+        6
       );
 
-    const { planillas_creadas } = planillaMensualTrunca.respuesta;
+      console.log('promedioHorasExtras', promedioHorasExtras);
 
-    const planilla_mensual_trunca =
-      planillas_creadas[planillas_creadas.length - 1];
-    console.log("planilla_mensual_trunca", planilla_mensual_trunca);
-    const montoPlanillaMensualTrunca = planilla_mensual_trunca
-      ? Number(planilla_mensual_trunca.saldo_por_pagar)
-      : 0;
+      //! Calcular gratificcion trunca
 
-    const total_liquidacion =
-      montoCtsTrunca +
-      0 +
-      montoGratificacionTrunca +
-      montoPlanillaMensualTrunca;
-
-    const fecha_ingreso_trabajador =
-      contratosParaCalcularTiempoLaborado.reverse()[0].fecha_inicio;
-
-    const darBajaTrabajador = {
-      trabajador_id: trabajador_id,
-      contrato_id: contrato_id,
-      fecha_ingreso: fecha_ingreso_trabajador,
-      fecha_baja: fechaTerminacionAnticipada.format("YYYY-MM-DD"),
-      motivo: motivo,
-      observacion: observacion,
-      usuario_registro_id: usuario_cierre_id,
-      estado_liquidacion: "CALCULADA",
-
-      tiempo_laborado_anios: tiempoLaborado.anios,
-      tiempo_laborado_meses: tiempoLaborado.meses,
-      tiempo_laborado_dias: tiempoLaborado.dias,
-
-      tiempo_computado_anios: periodoComputable.anios,
-      tiempo_computado_meses: periodoComputable.meses,
-      tiempo_computado_dias: periodoComputable.dias,
-
-      gratificacion_trunca_id: gratificacionTruncaId,
-      cts_trunca_id: ctsTruncaId,
-      planilla_mensual_trunca_id: planilla_mensual_trunca.id,
-
-      //Montos truncos
-      cts_trunca_monto: montoCtsTrunca,
-      vacaciones_truncas_monto: 0,
-      gratificacion_trunca_monto: montoGratificacionTrunca,
-      remuneracion_trunca_monto: montoPlanillaMensualTrunca,
-
-      // otros descuentos
-      afp_descuento: 0,
-      adelanto_descuento: 0,
-      otros_descuentos: 0,
-
-      total_liquidacion: total_liquidacion,
-      detalle_remuneracion_computable: {},
-    };
-
-    console.log("darBajaTrabajador", darBajaTrabajador);
-
-    console.log(
-      "contratosParaCalcularTiempoLaborado",
-      contratosParaCalcularTiempoLaborado
-    );
-
-    // Insertar en la tabla bajas_trabajadores
-    const registroBajaTrabajador = await InsertarRegistroBajaTrabajador(
-      darBajaTrabajador,
-      transaction,
-      darBajaTrabajadorRepository
-    );
-
-    if (registroBajaTrabajador.codigo != 201) {
-      await transaction.rollback();
-      return {
-        codigo: registroBajaTrabajador.codigo,
-        respuesta: registroBajaTrabajador.respuesta,
-      };
+      //! Calcular cts trunca
     }
-
-    const trabajadorActualizado = await db.trabajadores.findByPk(
-      trabajador_id,
-      {
-        transaction,
-      }
-    );
-
-    trabajadorActualizado.fecha_baja = fecha_baja;
-    await trabajadorActualizado.save({ transaction });
     asd;
     await transaction.commit();
     return {

@@ -19,7 +19,7 @@ INSERT INTO `cotizaciones_transporte` VALUES (1,5,3,15,'Camión','Tramo',11.00,5
 INSERT INTO `distritos_transporte` VALUES (1,'CALLAO',60.00,100.00),(2,'ATE',60.00,100.00),(3,'SANTA ANITA',60.00,100.00),(4,'LOS OLIVOS',60.00,100.00),(5,'SAN BARTOLO',60.00,100.00),(6,'RIMAC',60.00,100.00),(7,'PUNTA NEGRA',60.00,100.00),(8,'PUNTA HERMOSA',60.00,100.00),(9,'LURIN',60.00,100.00),(10,'SAN MARTIN DE PORRES',60.00,100.00),(11,'PUENTE PIEDRA',100.00,200.00),(12,'ANCON',100.00,200.00),(13,'VENTANILLA',100.00,200.00),(14,'CIENEGUILLA',100.00,200.00),(15,'CHOSICA',100.00,200.00),(16,'HUACHIPA',100.00,200.00),(17,'PUCUSANA',100.00,200.00),(18,'NAPLO',100.00,200.00),(19,'CHACLACAYO',100.00,200.00);
 
 
-INSERT INTO `estados_cotizacion` VALUES (1,'En proceso',1),(2,'Despiece generado',2),(3,'Por Aprobar',3),(4,'Aprobado',4),(5,'Rechazado',5),(6,'Actualizado',6),(7,'Condiciones Solicitadas',7),(8,'Validar Condiciones',8),(9,'Condiciones Cumplidas',9),;
+INSERT INTO `estados_cotizacion` VALUES (1,'En proceso',1),(2,'Despiece generado',2),(3,'Por Aprobar',3),(4,'Aprobado',4),(5,'Rechazado',5),(6,'Actualizado',6),(7,'Condiciones Solicitadas',7),(8,'Validar Condiciones',8),(9,'Condiciones Cumplidas',9);
 
 
 INSERT INTO `familias_piezas` VALUES (1,'AM','ANDAMIO MULTIDIRECCIONAL'),(2,'EA','ESCALERA ACCESO'),(3,'EC','EQUIPO COLECTIVO'),(4,'AA','ANDAMIO AMERICANO'),(5,'CON','CONSUMIBLE'),(6,'PU','PUNTALES'),(7,'AE','ANDAMIO COLGANTE ELECTRICO'),(8,'EN','ENCOFRADO'),(9,'RE','RECICLAJE'),(10,'EV','ELEVADOR'),(11,'MA','MADERA');

@@ -22,7 +22,7 @@ class SequelizeDarBajaTrabajadorRepository {
          {
             model: db.usuarios,
             as: "registrado_por",
-            attributes: ["id", "nombre"],
+            attributes: ["id"],
          },
          {
             model: db.contratos_laborales,
