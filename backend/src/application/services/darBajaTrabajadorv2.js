@@ -33,6 +33,9 @@ const contratoLaboralRepository = new SequelizeContratoLaboralRepository();
 const SequelizeAsistenciaRepository = require("../../modules/asistencias/infraestructure/repositories/sequelizeAsistenciaRepository");
 const asistenciaRepository = new SequelizeAsistenciaRepository();
 
+const SequelizeBonoRepository = require("../../modules/bonos/infraestructure/repositories/sequelizeBonoRepository");
+const bonoRepository = new SequelizeBonoRepository();
+
 const db = require("../../database/models");
 const sequelize = require("../../database/sequelize");
 const InsertarRegistroBajaTrabajador = require("../../modules/dar_baja_trabajadores/application/useCases/InsertarRegistroBajaTrabajador");
@@ -50,6 +53,7 @@ const {
   calcularPeriodoComputableDelContrato,
 } = require("../utils/calcularPeriodoComputableDelContrato");
 const calcularPromedioHorasExtras = require("../../services/calculoHorasEsxtras");
+const calculaPromedioBonos = require("../../services/calculoBonos");
 
 module.exports = async function darBajaTrabajador(dataBody) {
   const transaction = await sequelize.transaction();
@@ -104,7 +108,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
       contrato.get({ plain: true })
     );
 
-    //console.log('contratosDelTrabajador',contratosDelTrabajador);
+    console.log('contratosDelTrabajador', contratosDelTrabajador);
 
     //! Comparar si la fecha de baja es menor a la fecha de fin contrato, tomar la fecha de baja como fecha_terminacion_anticipada
     // !sino tomar la fecha fin contrato como fecha_terminacion_anticipada
@@ -183,24 +187,33 @@ module.exports = async function darBajaTrabajador(dataBody) {
     if (tiempoLaborado.meses >= 1) {
       console.log("CUMPLIO CON LOS BENEFICIOS");
       //! Calculando la remuneracion computable
-      const ultimoSueldo = contratosDelTrabajador.sueldo;
+      const ultimoSueldo = contratoLaboralEncontrado.sueldo;
 
-       const MONTO_ASIGNACION_FAMILIAR = Number(
-      (
-        await dataMantenimientoRepository.obtenerPorCodigo(
-          "valor_asignacion_familiar"
-        )
-      ).valor
-    );
+      const MONTO_ASIGNACION_FAMILIAR = Number(
+        (
+          await dataMantenimientoRepository.obtenerPorCodigo(
+            "valor_asignacion_familiar"
+          )
+        ).valor
+      );
 
-    const MONTO_POR_HORA_EXTRA = Number(
-      (await dataMantenimientoRepository.obtenerPorCodigo("valor_hora_extra"))
-        .valor
-    );
+      const MONTO_POR_HORA_EXTRA = Number(
+        (await dataMantenimientoRepository.obtenerPorCodigo("valor_hora_extra"))
+          .valor
+      );
+
+
+      const PORCENTAJE_BONIFICACION_ESSALUD = Number(
+        (
+          await dataMantenimientoRepository.obtenerPorCodigo(
+            "valor_bonificacion_essalud"
+          )
+        ).valor
+      );
 
       const asignacionFamiliar =
         trabajadorEncontrado.asignacion_familiar &&
-        new Date(trabajadorEncontrado.asignacion_familiar) <=
+          new Date(trabajadorEncontrado.asignacion_familiar) <=
           new Date(fechaBaja)
           ? MONTO_ASIGNACION_FAMILIAR
           : 0;
@@ -208,7 +221,10 @@ module.exports = async function darBajaTrabajador(dataBody) {
       //*Obteniendo el promedio horas extras en base a las asistencias
 
       const fechaFinCalculo = moment(fechaBaja);
-      const fechaInicioCalculo = moment(fechaBaja).subtract(6, "months").add(1, "days");
+      const fechaInicioCalculo = moment(fechaBaja)
+        .subtract(5, "months") // restamos 5, porque septiembre cuenta como un mes
+        .startOf("month");     // inicio del mes (abril)
+
 
       console.log({
         trabajador_id,
@@ -225,19 +241,99 @@ module.exports = async function darBajaTrabajador(dataBody) {
 
       const asistenciasDelTrabajador = asistencias.map((b) => b.dataValues);
 
-     
+
 
       const promedioHorasExtras = calcularPromedioHorasExtras(
         asistenciasDelTrabajador,
         MONTO_POR_HORA_EXTRA,
         6
-      );
+      ) || 0;
 
       console.log('promedioHorasExtras', promedioHorasExtras);
 
+      //! Cacular bonos
+      const bonosDelTrabajadorPorFecha =
+        await bonoRepository.obtenerBonosDelTrabajadorEnRango(
+          trabajador_id,
+          fechaInicioCalculo,
+          fechaFinCalculo
+        );
+
+      const bonosDelTrabajador = bonosDelTrabajadorPorFecha.map(
+        (b) => b.dataValues
+      );
+
+      const promedioBonoObra = calculaPromedioBonos(
+        bonosDelTrabajador,
+        6
+      ) || 0;
+
+      console.log({
+        ultimoSueldo,
+        asignacionFamiliar,
+        promedioHorasExtras,
+        promedioBonoObra
+      })
+
+      const remuneracionComputable = ultimoSueldo + asignacionFamiliar + promedioHorasExtras + promedioBonoObra;
+
+      const regimenLaboral = contratoLaboralEncontrado.regimen; // MYPE , GENERAL
+
+      let factorRegimen = 0;
+
+      switch (regimenLaboral) {
+        case "MYPE":
+          factorRegimen = 0.5;
+          break;
+        case "GENERAL":
+          factorRegimen = 1;
+          break;
+        default:
+          break;
+      }
+
+      console.log('remuneracionComputable', remuneracionComputable);
       //! Calcular gratificcion trunca
 
+      console.log('tiempoLaborado', tiempoLaborado);
+
+      const calculoGratificacionTruncaMeses = ((remuneracionComputable * factorRegimen) / 6) * tiempoLaborado.meses || 0;
+      const calculoGratificacionTruncaDias = (((remuneracionComputable * factorRegimen) / 6) / 30) * tiempoLaborado.dias || 0;
+      const calculoGratificacionNetoTrunca = calculoGratificacionTruncaMeses + calculoGratificacionTruncaDias;
+      const calculoBonificacionEssalud = calculoGratificacionNetoTrunca * (PORCENTAJE_BONIFICACION_ESSALUD / 100);
+
+      const gratificacionTrunca = {
+        gratificacion_meses: calculoGratificacionTruncaMeses,
+        gratificacion_dias: calculoGratificacionTruncaDias,
+        grati_neta: calculoGratificacionNetoTrunca,
+        bonificacion_essalud: calculoBonificacionEssalud,
+        total: calculoGratificacionNetoTrunca + calculoBonificacionEssalud,
+      }
+
+      console.log('gratificacionTrunca', gratificacionTrunca);
+
       //! Calcular cts trunca
+
+      const mes = fechaBaja.month() + 1; // moment cuenta meses desde 0
+      const año = fechaBaja.year();
+
+      let ultimaGratiPeriodo;
+
+      if (mes >= 7) {
+        // De julio a diciembre → última grati fue en julio del mismo año
+        ultimaGratiPeriodo = moment(`${año}-07`, "YYYY-MM");
+      } else {
+        // De enero a junio → última grati fue en diciembre del año anterior
+        ultimaGratiPeriodo = moment(`${año - 1}-12`, "YYYY-MM");
+      }
+
+      console.log('ultimaGratiPeriodo', ultimaGratiPeriodo.format('YYYY-MM'));
+      const gratificacionPorTrabajador = await db.gratificaciones.findOne({
+        where: { trabajador_id, periodo: ultimaGratiPeriodo.format("YYYY-MM"), filial_id },
+        transaction,
+      });
+      console.log('gratificacionPorTrabajador', gratificacionPorTrabajador);
+
     }
     asd;
     await transaction.commit();
@@ -245,6 +341,9 @@ module.exports = async function darBajaTrabajador(dataBody) {
       codigo: 201,
       respuesta: {
         mensaje: "Trabajador dada de baja exitosamente",
+        data: {
+          remuneracionComputable: remuneracionComputable
+        }
       },
     };
   } catch (error) {
