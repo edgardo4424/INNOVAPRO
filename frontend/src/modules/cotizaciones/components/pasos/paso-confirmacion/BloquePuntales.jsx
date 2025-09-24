@@ -15,7 +15,6 @@ export default function BloquePuntales({ formData, setFormData }) {
   const initialPrecios = {};
   for (const p of puntales) {
     let base;
-    console.log("Tipo de cotizacion en bloque puntales:", tipo)
     if (tipo === "Alquiler") {
       base = p.precio_diario_manual ?? p.precio_u_alquiler_soles / 30;
     } else {
@@ -55,7 +54,6 @@ export default function BloquePuntales({ formData, setFormData }) {
 
     const despieceActualizado = formData.uso.despiece.map(p => {
       if (p.pieza_id === pieza.pieza_id) {     
-        console.log("Tipo dentro del handleBlur:", tipo)
         if (tipo === "Alquiler") {
           const subtotal = parseFloat((valor * dias * p.total).toFixed(2));
           return {
@@ -77,7 +75,6 @@ export default function BloquePuntales({ formData, setFormData }) {
       return p;
     });
 
-    console.log("Despiece actualizado: ", despieceActualizado)
     const nuevoResumen = calcularResumen(despieceActualizado);
 
     setFormData(prev => ({

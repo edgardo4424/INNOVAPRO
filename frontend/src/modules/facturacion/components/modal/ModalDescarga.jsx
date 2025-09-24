@@ -4,6 +4,7 @@ import { useState } from 'react';
 // npm install file-saver
 import { saveAs } from 'file-saver';
 import facturaService from '../../service/FacturaService';
+import { toast } from 'react-toastify';
 
 /* ================== helpers simplificados ================== */
 const toDocumentoPayload = (doc = {}) => {
@@ -137,7 +138,6 @@ const ModalDescarga = ({
             if (format === 'pdf-innova') {
                 let response;
             
-                console.log(documentoADescargar);
                 if (tipoDoc === "01" || tipoDoc === "03") {
                     response = await facturaService.reporteFactura(documentoADescargar);
                 }else if(tipoDoc === "07" || tipoDoc === "08") {
@@ -169,8 +169,7 @@ const ModalDescarga = ({
                 setMsg('XML/CDR y PDF descargados exitosamente.');
             }
         } catch (err) {
-            console.error('Error en descarga:', err);
-            setMsg(err?.message || 'Error al descargar el archivo');
+            toast.error('Error al tratar de descargar el archivo')
         } finally {
             setLoading(false);
         }
@@ -203,11 +202,7 @@ const ModalDescarga = ({
                             <p className="text-sm text-gray-500 mt-1">
                                 Se consultará a /sunat/pdf y /sunat/xml con el body del documento.
                             </p>
-                            {!!msg && (
-                                <p className={`text-xs mt-2 ${msg.toLowerCase().includes('error') ? 'text-red-600' : 'text-green-600'}`}>
-                                    {msg}
-                                </p>
-                            )}
+                          
                         </div>
 
                         <div className="grid grid-cols-1 gap-3">

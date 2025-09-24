@@ -31,7 +31,6 @@ export default function CalculoQuintaCategoria() {
     canCalcular, handlePreview, handleGuardar, handleRecalcular,
     loadingPreview, saving, errors, onSoportesGuardado,
   } = useQuintaCategoria();
-  console.log("FORMULARIO: ", form)
   const filialId = Number(form.filial_id);
   const anio = form.anio;
   const mes = form.mes;

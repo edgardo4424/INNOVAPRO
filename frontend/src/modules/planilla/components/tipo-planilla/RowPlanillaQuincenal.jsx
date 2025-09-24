@@ -4,7 +4,6 @@ import { formatearFecha } from "../../utils/formatearFecha";
 import ModalInfoDetallesQuincenal from "./ModalInfoDetallesQuincenal";
 
 const RowPlanillaQuincenal = ({ key, e, index }) => {
-  console.log('e', e);
   return (
     <TableRow key={key} className={"text-xs"}>
       <TableCell className="text-center">

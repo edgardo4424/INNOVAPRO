@@ -441,14 +441,12 @@ export default function ModalVisualizarFactura() {
                 {factura.legend && factura.legend.length > 0 && (
                   <div className="mt-4 rounded-md border-2 border-gray-200 p-4 pt-2">
                     {factura.legend.map((legend, index) => (
-                      <>
                         <p
                           key={index}
                           className="text-innova-blue py-1 text-sm font-semibold"
                         >
                           {legend.legend_Value}
                         </p>
-                      </>
                     ))}
                   </div>
                 )}

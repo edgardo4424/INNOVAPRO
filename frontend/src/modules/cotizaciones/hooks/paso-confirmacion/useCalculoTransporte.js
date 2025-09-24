@@ -61,7 +61,7 @@ const obtenerParametrosExtra = {
 // Función principal para el cálculo del transporte
 // Recibe el formData y el setter como parámetros.
 export function useCalculoTransporte(formData, setFormData) {
-  console.log(formData)
+
   useEffect(() => {
     const calcular = async () => {
       // Validamos que no se ejecute si no se ha pedido el cálculo
@@ -97,9 +97,9 @@ export function useCalculoTransporte(formData, setFormData) {
         if (formData.uso.id in obtenerParametrosExtra && !extras) return;
         
         const payload = { ...basePayload, ...extras }; 
-        console.log(payload)
+        
         const { costosTransporte = {}, tipo_transporte = ""} = await calcularCostoTransporte(payload);
-        console.log(await calcularCostoTransporte(payload))
+     
         setFormData((prev) => ({
           ...prev,
           atributos_opcionales: {

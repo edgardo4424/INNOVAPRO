@@ -137,7 +137,6 @@ export default function PasoFinal() {
       </div>
 
       {/* Total referencial incluyendo servicios */}
-      {console.log("Form Data:", formData)}
       {(
         atributos_opcionales.instalacion.tiene_instalacion || 
         atributos_opcionales.transporte.tiene_transporte != false) &&

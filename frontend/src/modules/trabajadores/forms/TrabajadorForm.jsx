@@ -33,6 +33,7 @@ const dataInicial = {
   apellidos: "",
   tipo_documento: "",
   numero_documento: "",
+  telefono: "",
   fecha_nacimiento: "",
   asignacion_familiar: false,
   asignacion_familiar_fecha: null,
@@ -79,7 +80,6 @@ export default function TrabajadorForm() {
     try {
       const res = await trabajadoresService.dataMantenimiento();
       const res_ = await trabajadoresService.getFiliales();
-      console.log(res_.data);
 
       setFiliales(res_.data);
       setValorUit(res.data.valor);
@@ -127,6 +127,7 @@ export default function TrabajadorForm() {
           apellidos: t.apellidos ?? "",
           tipo_documento: t.tipo_documento ?? "",
           numero_documento: t.numero_documento ?? "",
+          telefono: t.telefono ?? "",
           fecha_nacimiento: t.fecha_nacimiento ?? "",
           asignacion_familiar: t.asignacion_familiar ? true : false, // checkbox
           asignacion_familiar_fecha: t.asignacion_familiar ?? null, // guardamos la fecha real
@@ -178,6 +179,7 @@ export default function TrabajadorForm() {
       apellidos: formData.apellidos.trim(),
       tipo_documento: formData.tipo_documento,
       numero_documento: formData.numero_documento.trim(),
+      telefono: formData.telefono.trim(),
       fecha_nacimiento: formData.fecha_nacimiento,
       asignacion_familiar: formData.asignacion_familiar_fecha,
       domiciliado: formData.domiciliado,
@@ -222,12 +224,10 @@ export default function TrabajadorForm() {
             acc[curr.path] = curr.message;
             return acc;
           }, {}) || {};
-        console.log("newErrors", newErrors);
         setErrors(newErrors);
       } else {
-        console.error("El error emcmtradoe es: ", error);
+        console.error("El error encontrado es: ", error);
         if (error?.response?.data?.mensaje) {
-          console.log("tipo de datos: ", typeof error?.response?.data?.mensaje);
 
           if (typeof error?.response?.data?.mensaje == "string") {
             toast.error(error?.response?.data?.mensaje);
@@ -369,6 +369,25 @@ export default function TrabajadorForm() {
                     {errors.numero_documento && (
                       <p className="text-sm text-red-500">
                         {errors.numero_documento}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="telefono">
+                      Teléfono
+                    </Label>
+                    <Input
+                      id="telefono"
+                      value={formData.telefono}
+                      onChange={(e) =>
+                        handleInputChange("telefono", e.target.value)
+                      }
+                      placeholder="Ingrese el número de teléfono"
+                    />
+                    {errors.telefono && (
+                      <p className="text-sm text-red-500">
+                        {errors.telefono}
                       </p>
                     )}
                   </div>

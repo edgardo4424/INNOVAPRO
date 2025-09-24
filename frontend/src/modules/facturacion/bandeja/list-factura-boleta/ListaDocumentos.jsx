@@ -55,10 +55,10 @@ const ListaDocumentos = () => {
       let query = "?";
 
       if (tipo_doc) {
-        query += `tipo_doc=${tipo_doc}`;
+        query += `&tipo_doc=${tipo_doc}`;
       }
       if (empresa_ruc) {
-        query += `empresa_ruc=${empresa_ruc}`;
+        query += `&empresa_ruc=${empresa_ruc}`;
       }
       if (page) {
         query += `&page=${page}`;
@@ -176,7 +176,7 @@ const ListaDocumentos = () => {
           <div className="w-full max-w-6xl">
             <div className="mb-6 flex items-center justify-between"></div>
             <h2 className="text-2xl font-bold text-blue-600 md:text-3xl">
-              No hay facturas
+              No se encuentra el documento
             </h2>
           </div>
         ) : (
@@ -217,7 +217,7 @@ const ListaDocumentos = () => {
                 setModalOpen={setModalAnular}
                 documentoAAnular={documentoAAnular}
                 setDocumentoAAnular={setDocumentoAAnular}
-                refetchTableData={handleAplicarFiltros}
+                refetchTableData={obtenerDocumentos}
               />
             )}
           </div>

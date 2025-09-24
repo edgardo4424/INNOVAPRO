@@ -8,13 +8,13 @@ router.use(verificarToken); // Verifica sesión en todas
 
 router.get(
   "/pendientes",
-  tieneRol(["Gerencia", "Administracion"]),
+  tieneRol(["Gerente de administración", "CEO"]),
   condicionController.obtenerPendientes
 );
 
 router.put(
   "/:id",
-  tieneRol(["Gerencia", "Administracion"]),
+  tieneRol(["Gerente de administración", "CEO"]),
   condicionController.responderCondicion
 );
 

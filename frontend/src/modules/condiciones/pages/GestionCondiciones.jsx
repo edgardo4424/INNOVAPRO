@@ -19,6 +19,7 @@ export default function GestionCondiciones() {
                 const cliente = cot.cliente || {};
                 const obra = cot.obra || {};
                 const usuario = cot.usuario || {};
+                const usuarioNombre = usuario.trabajador.nombres + " " + usuario.trabajador.apellidos;
                 const fecha = new Date(c.created_at).toLocaleDateString("es-PE", {
                     year: "numeric", month: "short", day: "numeric"
                 });
@@ -37,7 +38,7 @@ export default function GestionCondiciones() {
                                 <p>RUC: {cliente.ruc || "—"}</p>
                                 <p>Obra: {obra.nombre || "—"}</p>
                                 <p>Dirección: {obra.direccion || "—"}</p>
-                                <p>Solicitado por: {usuario.nombre || "—"}</p>
+                                <p>Solicitado por: {usuarioNombre || "—"}</p>
                                 <p className="text-xs mt-1 text-gray-400">📅 {fecha}</p>
                             </div>
 

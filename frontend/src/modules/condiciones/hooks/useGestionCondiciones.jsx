@@ -19,7 +19,6 @@ export default function useGestionCondiciones() {
   };
 
   const guardarCondicion = async (id, texto) => {
-    console.log("Envio al backend:", id, texto)
     try {
       await responderCondicion(id, texto);
       toast.success("Condiciones registradas");

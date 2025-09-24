@@ -36,7 +36,7 @@ module.exports = async (idTarea, idUsuario, motivo, tareaRepository) => {
 
   const notificacionParaElCreador = {
     usuarioId: tarea.usuarioId, // id del creador de tarea
-    mensaje: `El técnico ${tarea.tecnico_asignado.nombre} ha devuelto la tarea #${tarea.id}.`,
+    mensaje: `El técnico ${tarea.tecnico_asignado.trabajador?.nombres} ha devuelto la tarea #${tarea.id}.`,
     tipo: "info",
   };
 

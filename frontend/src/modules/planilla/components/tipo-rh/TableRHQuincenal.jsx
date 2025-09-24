@@ -19,7 +19,6 @@ import RowTotalGratificacion from "@/modules/gratificacion/components/RowTotalGr
 
 const TableRHQuincenal = ({ planillaQuincenalTipoRh, total }) => {
 
-console.log('planillaQuincenalTipoRh', planillaQuincenalTipoRh);
   const [filtro, setFiltro] = useState("");
  
   // Filtrar por nombres y apellidos (case-insensitive)

@@ -143,7 +143,6 @@ export function NotaProvider({ children }) {
       }));
     };
 
-    console.log(notaCreditoDebito.detalle);
     if (notaCreditoDebito.detalle?.length > 0) {
       actualizarFacturaMontos();
     }

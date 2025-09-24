@@ -6,12 +6,12 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
-const RowGratificacion = ({ key, e, index }) => {
+
+const RowGratificacion = ({ e }) => {
   
   return (
     <>
-      <TableRow key={key} className={"text-xs"}>
+      <TableRow className={"text-xs"}>
         <TableCell className="text-right">{e.tipo_documento}</TableCell>
         <TableCell className="text-right">{e.numero_documento}</TableCell>
         <TableCell className="text-right">

@@ -5,7 +5,7 @@
 
 export default function BloqueInstalacion({ formData, setFormData, errores }) {
   // Almacenamos el tipo de cotización que puede ser Completa o Parcial
-  const tipo = formData.atributos_opcionales.instalacion.tipo_instalacion || "";
+  const tipo = formData.atributos_opcionales.instalacion?.tipo_instalacion || "";
 
   const limpiarInstalacion = () => {
     setFormData((prev) => ({

@@ -4,7 +4,6 @@ import {
 } from "@/components/ui/table"
 
 const RowTotalGratificacion = ({ gratificacion }) => {
-    console.log(gratificacion)
     if(!gratificacion) return null;
     return (
         <TableRow className={"bg-blue-300 text-xs"} key={gratificacion}>

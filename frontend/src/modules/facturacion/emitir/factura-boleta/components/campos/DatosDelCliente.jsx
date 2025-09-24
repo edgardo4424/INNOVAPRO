@@ -52,7 +52,6 @@ const DatosDelCliente = () => {
                 }
             );
             const { data, status, success } = await promise;
-            console.log("data", data);
 
             if (status === 200 && success) {
                 let razonSocial = "";
@@ -75,7 +74,6 @@ const DatosDelCliente = () => {
                 }));
             }
         } catch (error) {
-            console.error("Error al buscar:", error);
             toast.error("Ocurrió un error al buscar la información del cliente.");
         }
     };
@@ -157,7 +155,7 @@ const DatosDelCliente = () => {
                         placeholder="Razón Social"
                         className="border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500" // Estilos mejorados
                         value={cliente_Razon_Social || ""}
-                        // onChange={handleInputChange}
+                        readOnly
                     />
                 </div>
 
@@ -171,7 +169,7 @@ const DatosDelCliente = () => {
                         placeholder="Dirección"
                         className="border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
                         value={cliente_Direccion || ""}
-                        // onChange={handleInputChange}
+                        readOnly
                     />
                 </div>
             </form>

@@ -52,7 +52,6 @@ const CalculoPlanillaMensual = () => {
    const buscarPlanillaMensual = async () => {
       try {
          const filial_selecionada=filiales.find((f)=>f.id==filtro.filial_id);
-         console.log(filial_selecionada);
          
          let sin_valor=false;
          for (const importe of importes) {
@@ -100,7 +99,6 @@ const CalculoPlanillaMensual = () => {
          setPlanillaMensualTipoRh(res.payload.honorarios.trabajadores);
          setDatosCalculo(res.datosCalculo);
       } catch (error) {
-         console.log(error);
          setPlanillaMensualTipoPlanilla(viPlanillaMensual.planilla);
          setDatosTotalesPlanilla({
            sumatoria_sueldo_basico: 0,
@@ -131,7 +129,6 @@ const CalculoPlanillaMensual = () => {
             setFiliales(res);
             setFiltro({ ...filtro, filial_id: res?.[0]?.id });
          } catch (error) {
-            //console.log(error);
             toast.error("Error al guardar la planilla");
          } finally {
             setLoading(false);

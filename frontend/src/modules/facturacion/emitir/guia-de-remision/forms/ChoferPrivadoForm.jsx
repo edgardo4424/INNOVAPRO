@@ -57,8 +57,7 @@ const ChoferPrivadoForm = () => {
         }
 
         try {
-            const { data: data_inf, status: status_inf, success: suscces_inf } = await factilizaService.obtenerPersonaPorDni(chofer.nro_doc);
-
+            const { data: data_inf, status: status_inf, success: suscces_inf } = await factilizaService.metodoOpcional(chofer.tipo_doc, chofer.nro_doc );
             let data_lic = {};
             let status_lic = 0;
             let suscces_lic = false;
@@ -68,12 +67,10 @@ const ChoferPrivadoForm = () => {
                 status_lic = res.status;
                 suscces_lic = res.success;
             } catch (error) {
-                console.error("Error al buscar la licencia del chofer:", error);
+                toast.error(error.response.data.message);
             }
 
-            console.log("nollego");
             if (status_inf == 200) {
-                toast.success('Persona Encontrada')
                 // ?? Asegúrate de que los nombres de las propiedades coincidan con la respuesta de tu API
                 const nombres = data_inf.nombres || '';
                 const apellidos = `${data_inf.apellido_paterno || ''} ${data_inf.apellido_materno || ''}`.trim();
@@ -166,6 +163,7 @@ const ChoferPrivadoForm = () => {
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="1">DNI - Documento Nacional de Identidad</SelectItem>
+                                <SelectItem value="4">CE - Carnet de extranjería</SelectItem>
                                 {/* Puedes añadir más tipos de documento aquí */}
                             </SelectContent>
                         </Select>

@@ -63,7 +63,6 @@ export function useRegistrarCotizacion(pasosLength) {
       extras.detalles_escuadras = formData.uso.detalles_escuadras;
     }
     
-    console.log("Parametros extras para el payload :", extras)
     return extras;
   }
 
@@ -203,7 +202,6 @@ export function useRegistrarCotizacion(pasosLength) {
         },
         despiece: formDataAjustado.uso.despiece,
       };
-      console.log("Payload enviado por wizard:", payload)
       await crearCotizacion(payload);
       setPasoActual(pasosLength);
     } catch (error) {

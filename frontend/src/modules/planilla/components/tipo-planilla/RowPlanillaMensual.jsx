@@ -9,11 +9,10 @@ import { Eye, FileDown } from "lucide-react";
 import ModalInfoDetalle from "./ModalInfoDetalles";
 import { formatearFecha } from "@/utils/formatearFecha";
 
-const RowPlanillaMensual = ({ key, e, index }) => {
-   console.log("e", e);
+const RowPlanillaMensual = ({ e }) => {
 
    return (
-      <TableRow key={key} className={"text-xs"}>
+      <TableRow className={"text-xs"}>
          <TableCell className="text-center">
             {e.info_detalle.length > 1 && (
                <ModalInfoDetalle data={e.info_detalle} />

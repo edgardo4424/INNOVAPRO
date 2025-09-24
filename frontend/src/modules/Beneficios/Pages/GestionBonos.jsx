@@ -77,7 +77,6 @@ const GestionBonos = () => {
          const raw = res?.data?.bonos ?? res?.data ?? [];
          const list = Array.isArray(raw) ? raw : [raw];
          setBonos(list);
-         console.log(list);
 
          setTrabajadores(trab.data);
       } catch (e) {
@@ -457,6 +456,9 @@ const GestionBonos = () => {
                         <Label>Tipo de bono</Label>
                         <Select
                            value={form.tipo}
+                           disabled={
+                              viewMode === "ver"
+                           }
                            onValueChange={(val) =>
                               setForm((prevForm) => ({
                                  ...prevForm,

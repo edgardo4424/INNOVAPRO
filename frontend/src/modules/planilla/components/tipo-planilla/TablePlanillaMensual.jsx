@@ -391,7 +391,6 @@ const TablePlanillaMensual = ({
                               <RowPlanillaMensual
                                  key={index}
                                  e={e}
-                                 index={index}
                               />
                            )
                         )}

@@ -86,7 +86,7 @@ export default function ResumenDespiece({ formData }) {
               {formatear(
                 resumen.total_piezas !== undefined
                   ? resumen.total_piezas
-                  : despiece.reduce((acc, pieza) => acc + (pieza.incluido === false ? 0 : parseFloat(pieza.total || 0)), 0)
+                  : uso.despiece.reduce((acc, pieza) => acc + (pieza.incluido === false ? 0 : parseFloat(pieza.total || 0)), 0)
               )}
             </div>
             <div className="wizard-key-value"><strong>⚖️ Peso total (kg):</strong> {formatear(resumen.peso_total_kg)}</div>

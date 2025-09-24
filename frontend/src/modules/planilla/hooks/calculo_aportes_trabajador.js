@@ -54,8 +54,6 @@ export const calculo_aportes_trabajador = (planillas = [], importes) => {
       sumatoria_sctr_salud += Number(p.sctr_salud);
       sumatoria_sctr_pension += Number(p.sctr_pension);
    }
-   //    console.log('Suma porcentaje: ',SUM_PORC);
-   console.log("Sumatoria del sueldo basico: ", sumatoria_sueldo_basico);
 
    return {
       recalculo_planillas,

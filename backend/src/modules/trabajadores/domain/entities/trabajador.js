@@ -4,6 +4,7 @@ class Trabajador {
       nombres,
       apellidos,
       numero_documento,
+      telefono,
       sueldo_base,
       asignacion_familiar,
       sistema_pension,
@@ -21,6 +22,7 @@ class Trabajador {
          (this.apellidos = apellidos),
          (this.tipo_documento = tipo_documento),
          (this.numero_documento = numero_documento),
+         (this.telefono = telefono),
          (this.sueldo_base = sueldo_base),
          (this.asignacion_familiar = asignacion_familiar),
          (this.sistema_pension = sistema_pension),
@@ -50,6 +52,9 @@ class Trabajador {
       if (!this.numero_documento || !this.numero_documento.trim()) {
          errores.push("Número de documento inválido");
       }
+      if (!this.telefono || !this.telefono.trim()) {
+         errores.push("Número de teléfono inválido");
+      }
       if (this.sueldo_base < 1130) {
          errores.push("El sueldo base es invalido");
       }
@@ -71,11 +76,9 @@ class Trabajador {
       }
       
       const hoy = new Date().toISOString().split("T")[0];
-      console.log('this.contratos_laborales', this.contratos_laborales);
       const c_a = this.contratos_laborales.find(
          (c) => c.fecha_inicio <= hoy && hoy <= c.fecha_fin
       );
-      console.log('c_a', c_a);
       if(!c_a){
          errores.push("No se encontró un contrato laboral vigente para la fecha actual.");
          return errores;
@@ -112,6 +115,7 @@ class Trabajador {
          apellidos: this.apellidos,
          tipo_documento: this.tipo_documento,
          numero_documento: this.numero_documento,
+         telefono: this.telefono,
          sueldo_base: this.sueldo_base,
          asignacion_familiar: this.asignacion_familiar,
          sistema_pension: this.sistema_pension || null,

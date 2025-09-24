@@ -91,11 +91,10 @@ const TableGratificacion = ({ gratificacion }) => {
             {/* Render Trabajadores Planilla */}
             {planilla.trabajadores.length > 0 && (
               <>
-                
                  {filtrarTrabajadores(planilla.trabajadores).map((e, index) => (
-                  <RowGratificacion key={index} e={e} index={index} />
-                ))}
-                <RowTotalGratificacion gratificacion={totalP} />
+                    <RowGratificacion e={e} key={index} />
+                  ))}
+                  <RowTotalGratificacion gratificacion={totalP} />
               </>
             )}
 

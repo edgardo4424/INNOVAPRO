@@ -10,5 +10,3 @@ const apiFactilizaFacturacion = axios.create({
 });
 
 export default apiFactilizaFacturacion
-
-

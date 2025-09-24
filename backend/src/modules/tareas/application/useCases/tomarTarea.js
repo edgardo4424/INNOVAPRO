@@ -64,7 +64,7 @@ module.exports = async (idTarea, idUsuario, tareaRepository) => {
     if (tarea.usuario_solicitante) {
       const notificacionParaElCreador = {
         usuarioId: tarea.usuario_solicitante.id,
-        mensaje: `El técnico ${notiTecnico.usuario.nombre} ha tomado tu tarea #${tarea.id}.`,
+        mensaje: `El técnico ${notiTecnico.usuario.trabajador?.nombres} ha tomado tu tarea #${tarea.id}.`,
         tipo: "tarea",
       };
       const notiCreador = await notificacionRepository.crear(

@@ -11,8 +11,6 @@ import { ModalCerrarPlanillaQuincenal } from "../components/ModalCerrarPlanillaQ
 
 const CalculoPlanillaQuincenal = ({setDataMantenimiento, setEsCalculo}) => {
 
-  setEsCalculo(true);
-
   const [filiales, setFiliales] = useState([]);
 
   // ?? loading
@@ -46,52 +44,7 @@ const CalculoPlanillaQuincenal = ({setDataMantenimiento, setEsCalculo}) => {
         filial_id: filtro.filial_id,
       }
 
-      console.log('dataPOST', dataPOST);
       const res = await planillaQuincenalService.obtenerPlanillaQuincenal(dataPOST);
-      console.log('res', res);
-
-     /*  const formatearPlanillaQuincenalTipoPlanilla = res.planilla.trabajadores.reduce((acc, item) => {
-        const exist = acc.find((i) => i.trabajador_id == item.trabajador_id);
-        if (exist) {
-
-          exist.dias_laborados += item.dias_laborados;
-          exist.sueldo_quincenal += item.sueldo_quincenal;
-          exist.sueldo_bruto += item.sueldo_bruto;
-        
-          exist.onp += item.onp;
-          exist.afp += item.afp;
-          exist.seguro += item.seguro;
-          exist.comision += item.comision;
-          exist.quinta_categoria += item.quinta_categoria;
-          exist.total_descuentos += item.total_descuentos;
-          exist.total_a_pagar += item.total_a_pagar;
-
-      
-         
-        } else {
-          acc.push(item);
-        }
-        return acc;
-      }, []);
-
-      const formatearPlanillaQuincenalTipoHonorarios = res.honorarios.trabajadores.reduce((acc, item) => {
-
-        const exist = acc.find((i) => i.trabajador_id == item.trabajador_id);
-        if (exist) {
-
-          exist.dias_laborados += item.dias_laborados;
-          exist.sueldo_quincenal += item.sueldo_quincenal;
-          exist.sueldo_base += item.sueldo_base;
-          exist.total_a_pagar += item.total_a_pagar;
-           // ✅ Guardar siempre el último número de cuenta
-      exist.numero_cuenta = item.numero_cuenta;
-         
-        } else {
-         // Clonamos para evitar mutaciones inesperadas
-      acc.push({ ...item });
-        }
-        return acc;
-      }, []); */
 
       setDataMantenimiento(res.data_mantenimiento_detalle)
       setPlanillaQuincenalTipoPlanilla(res.planilla.trabajadores); // res.planilla.trabajadores
@@ -106,11 +59,10 @@ const CalculoPlanillaQuincenal = ({setDataMantenimiento, setEsCalculo}) => {
     const obtenerFiliales = async () => {
       try {
         const res = await planillaQuincenalService.obtenerFiliales();
-        console.log("res", res);
+
         setFiliales(res);
         setFiltro({ ...filtro, filial_id: res?.[0]?.id });
       } catch (error) {
-        console.log(error);
       }
     };
     obtenerFiliales();
@@ -118,7 +70,6 @@ const CalculoPlanillaQuincenal = ({setDataMantenimiento, setEsCalculo}) => {
 
   const renderTipoPlanilla = () => {
 
-    console.log('planillaQuincenalTipoPlanilla', planillaQuincenalTipoPlanilla);
     if (planillaQuincenalTipoPlanilla) {
       return (
      

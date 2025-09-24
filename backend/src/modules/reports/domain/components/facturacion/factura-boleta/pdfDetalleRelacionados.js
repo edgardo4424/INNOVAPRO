@@ -19,8 +19,9 @@ function pdfDetalleRelacionados(
                         [
                             {
                                 stack: [
-                                    { text: 'OBSERVACIONES:', fontSize: 6, margin: [0, 0, 0, 5], color: text_color },
-                                    { text: `${factura.observacion}`, fontSize: 6, color: text_color },
+                                    
+                                    { text: `${factura.Observacion ? "OBSERVACIONES:" : ""}`, fontSize: 6, margin: [0, 0, 0, 5], color: text_color },
+                                    { text: `${factura.Observacion || ""}`, fontSize: 6, color: text_color },
 
                                     // Condicional para "DOCUMENTOS RELACIONADOS"
                                     ...(documentosRelacionados && documentosRelacionados.length > 0 ? [

@@ -38,7 +38,6 @@ const ModalEnviarGuia = ({ open, setOpen, ClosePreviu, guiaTransporteValida }) =
             // Esperamos el resultado de la emisión
             const {success,message, status, data,} = await EmitirGuia();
 
-            console.log("el resultado de la emision es: ", message);
             // Lógica unificada para manejar la respuesta
             if (success && status === 200 || status === 201) {
                 // Caso de éxito

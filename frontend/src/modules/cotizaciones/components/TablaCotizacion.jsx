@@ -152,7 +152,8 @@ export default function TablaCotizacion({
                   return (
                      <div className="flex gap-1 justify-start">
                         {/* Descarga y previsualización de PDF */}
-                        {row.estado_nombre === "Por Aprobar" && (
+                        {row.estado_nombre === "Por Aprobar" ||
+                        row.estado_nombre === "Condiciones Cumplidas" && (
                            <>
                               <Tooltip>
                                  <TooltipTrigger asChild>

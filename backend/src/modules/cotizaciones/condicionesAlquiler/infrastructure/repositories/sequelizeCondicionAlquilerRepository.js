@@ -65,7 +65,11 @@ class SequelizeCondicionAlquilerRepository {
             },
             {
               model: db.usuarios,
-              attributes: ["nombre"]
+              attributes: ["id"],
+              include: [{
+                model: db.trabajadores,
+                as: "trabajador",
+              }]
             }
           ]
         }

@@ -64,7 +64,6 @@ const ContratosLaborales = ({ formData, setFormData, errors, filiales }) => {
       }));
    };
 
-   console.log(formData.contratos_laborales);
 
    // Captura el sueldo previo al empezar a editar
    const handleSueldoFocus = (index, value) => {

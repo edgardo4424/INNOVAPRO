@@ -21,14 +21,11 @@ export default function ModalVisualizarDocumento({
       try {
         const { succes, status, message, data } =
           await facturaService.obtenerFacturaDetallada(documentoAVisualizar);
-        console.log(data);
         if (succes && status === 200) {
-          console.log("data", data[0]);
           setFactura(data[0]);
           return;
         }
       } catch (e) {
-        console.log(e);
         toast.error(e.response.data.message || "Error al obtener el documento");
         closeModal();
       }

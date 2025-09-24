@@ -28,6 +28,10 @@ const Trabajador = sequelize.define(
          type: DataTypes.STRING,
          allowNull: false,
       },
+      telefono: {
+         type: DataTypes.STRING,
+         allowNull: true,
+      },
       sueldo_base: {
          type: DataTypes.INTEGER,
          allowNull: false,

@@ -159,9 +159,6 @@ async function generarPdfPuntales({ idDespiece, tipo_cotizacion, porcentajeDescu
         },
       });
 
-      //console.log(`✅ (${i}) IDs buscados: pin=${piezaPinPresion.id}, argolla=${piezaArgolla.id}`);
-      //console.log(`✅ (${i}) Encontrado: pin=${!!pinPresion}, argolla=${!!argolla}`);
-
       const ventaPin = pinPresion
         ? (pinPresion.precio_venta_soles / pinPresion.cantidad).toFixed(2)
         : null;

@@ -269,19 +269,6 @@ const DatosDelComprobante = () => {
             onChange={handleInputChange}
           />
         </div>
-
-        {/* Fecha de vencimiento */}
-        {/* <div className="flex flex-col gap-1 col-span-full sm:col-span-1">
-                    <Label htmlFor="correlativo">Orden de compra</Label>
-                    <Input
-                        type="date"
-                        name="fecha_vencimiento"
-                        id="fecha_vencimiento"
-                        className="border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-                        value={factura.fecha_vencimiento}
-                        disabled
-                    />
-                </div> */}
       </form>
     </div>
   );

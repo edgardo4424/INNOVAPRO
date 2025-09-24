@@ -38,7 +38,11 @@ class SequelizeCotizacionRepository {
         {
           model: db.usuarios,
           as: "usuario",
-          attributes: ["id", "nombre"],
+          attributes: ["id"],
+          include: [{
+            model: db.trabajadores,
+            as: "trabajador",
+          }],
         },
         {
           model: db.estados_cotizacion,

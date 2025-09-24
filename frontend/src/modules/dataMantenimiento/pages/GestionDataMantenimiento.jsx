@@ -42,7 +42,6 @@ const GestionDataMantenimiento = () => {
       setErrorMsg(null);
      
       const res = await dataMantenimientoService.getDataMantenimiento();
-      console.log('res', res);
       setDataMantenimiento(res?.data || []);
     } catch (e) {
       console.log('error', e);

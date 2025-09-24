@@ -52,9 +52,7 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       zonas,
     });
 
-    
-    console.log('holi');
-    // 2. Insertar Despiece
+        // 2. Insertar Despiece
 
     let dataParaDespiece = {
       ...resultados.dataParaGuardarDespiece,
@@ -93,13 +91,10 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
    
     const despiece_id = nuevoDespiece.id;
 
-    console.log('DESPEIEEEEEEEEECEEEEEE', despiece);
-
     // 3. Insertar Detalles del Despiece
 
     const detalles = mapearDetallesDespiece({ despiece, despiece_id });
 
-    console.log('detalles', detalles);
     // Validación de todos los registros de despiece
     for (const data of detalles) {
       const errorCampos = DespieceDetalle.validarCamposObligatorios(
@@ -107,7 +102,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
         "crear"
       );
       if (errorCampos) {
-        console.log("Registro inválido", data, "->", errorCampos);
         return {
           codigo: 400,
           respuesta: { mensaje: `Error en un registro: ${errorCampos}` },
@@ -151,14 +145,17 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       cotizacionFinal.filial_id
     );
     const usuarioEncontrado = await db.usuarios.findByPk(
-      cotizacionFinal.usuario_id
+      cotizacionFinal.usuario_id,
+      {
+        include: [{ model: db.trabajadores, as: "trabajador" }],
+      }
     );
-
+    
     const datosParaGenerarCodigoDocumento = {
       uso_id_para_registrar: uso_id,
       filial_razon_social: filialEncontrado.razon_social,
       usuario_rol: usuarioEncontrado.rol,
-      usuario_nombre: usuarioEncontrado.nombre,
+      usuario_nombre: usuarioEncontrado.trabajador.nombres + " " + usuarioEncontrado.trabajador.apellidos,
       //anio_cotizacion: new Date().getFullYear(),
       estado_cotizacion: cotizacionFinal.estados_cotizacion_id,
 
@@ -251,7 +248,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
           break;
       }
 
-      console.log('datosParaCalcularCostoTransporte', datosParaCalcularCostoTransporte);
       const datosParaGuardarCotizacionesTransporte = (
         await calcularCostoTransporte(datosParaCalcularCostoTransporte)
       ).respuesta;

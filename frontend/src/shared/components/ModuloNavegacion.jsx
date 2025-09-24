@@ -57,6 +57,9 @@ export default function ModuloNavegacion() {
       "Jefe de OT": [
          { name: "Centro de Atención", path: "/centro-atencion" },
       ],
+      "OT": [
+         { name: "Centro de Atención", path: "/centro-atencion" },
+      ],
       // Agrega otros roles si aplica
    };
 

@@ -88,7 +88,7 @@ export default function ModalImportesTrabajador({
             <article className="grid grid-cols-2 gap-4">
                {importes?.length > 0 &&
                   importes.map((importe, i) => (
-                     <div>
+                     <div key={i}>
                         <Label htmlFor="seguroVida">{importe.nombre}</Label>
                         <Input
                            value={importe.valor}

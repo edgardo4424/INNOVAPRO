@@ -6,7 +6,6 @@ const gratificacionService = {
         return res.data;
     },
     cerrarGratificaciones: async (data) => {
-        console.log('data', data);
         const res = await api.post("/gratificaciones/cierre",data);
         return res.data;
     },

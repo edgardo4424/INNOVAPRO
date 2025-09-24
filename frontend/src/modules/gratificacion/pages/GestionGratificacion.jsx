@@ -22,8 +22,6 @@ const GestionGratificacion = () => {
    const [dataMantenimiento, setDataMantenimiento] = useState(null)
    const [esCalculo, setEsCalculo] = useState(true)
 
-   console.log('dataMantenimiento', dataMantenimiento);
-
    useEffect(() => {
       const getDataMantenimiento = async () => {
 
@@ -47,22 +45,6 @@ const GestionGratificacion = () => {
       }
       getDataMantenimiento()
    }, [esCalculo])
-   
-    useEffect(() => {
-    
-    const obtenerFiliales = async () => {
-      try {
-        const res = await gratificacionService.obtenerFiliales();
-        console.log("res", res);
-        setFiliales(res);
-        setFiltro({ ...filtro, filial_id: res?.[0]?.id });
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    obtenerFiliales();
-  }, []);
-
 
   return (
     <div className="min-h-full px-6 flex-1 flex flex-col items-center">

@@ -37,7 +37,6 @@ export const calcularDiasGenerados = (contratos) => {
          total_vendibles += proporcionVendibles;
       }
    }
-   console.log(total_vendibles);
    
    return{
     total_gozadas,

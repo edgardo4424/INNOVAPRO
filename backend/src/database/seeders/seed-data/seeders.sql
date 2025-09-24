@@ -96,7 +96,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `estados_cotizacion` WRITE;
 /*!40000 ALTER TABLE `estados_cotizacion` DISABLE KEYS */;
-INSERT INTO `estados_cotizacion` VALUES (1,'En proceso',1),(2,'Despiece generado',2),(3,'Por Aprobar',3),(4,'Aprobado',4),(5,'Rechazado',5),(6,'Actualizado',6),(7,'Condiciones Solicitadas',7),(8,'Validar Condiciones',8);
+INSERT INTO `estados_cotizacion` VALUES (1,'En proceso',1),(2,'Despiece generado',2),(3,'Por Aprobar',3),(4,'Aprobado',4),(5,'Rechazado',5),(6,'Actualizado',6),(7,'Condiciones Solicitadas',7),(8,'Validar Condiciones',8),(9,'Condiciones Cumplidas',9),;
 /*!40000 ALTER TABLE `estados_cotizacion` ENABLE KEYS */;
 UNLOCK TABLES;
 

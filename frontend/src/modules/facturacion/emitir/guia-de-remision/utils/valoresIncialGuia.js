@@ -50,9 +50,9 @@ const ValoresPublico = {
     transportista:
     {
         tipo_doc: "6",
-        nro_doc: "20607663549",
-        razon_Social: "TRANSPORTES VILCHEZ CARGO EXPRES S.A.C.",
-        nro_mtc: "15145209CNG",
+        nro_doc: "",
+        razon_Social: "",
+        nro_mtc: "",
     },
 
 };

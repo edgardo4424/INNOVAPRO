@@ -99,7 +99,11 @@ class SequelizeTareaRepository {
         {
           model: db.usuarios,
           as: "tecnico_asignado", // este alias debe coincidir con tu asociación
-          attributes: ["id", "nombre"]
+          attributes: ["id"],
+          include:[{
+            model:db.trabajadores,
+            as:"trabajador"
+          }]
         }
       ]
     });
@@ -121,7 +125,11 @@ class SequelizeTareaRepository {
         {
           model: db.usuarios,
           as: "tecnico_asignado", // este alias debe coincidir con tu asociación
-          attributes: ["id", "nombre"]
+          attributes: ["id"],
+          include:[{
+            model:db.trabajadores,
+            as:"trabajador"
+          }]
         }
       ]
     });
@@ -141,7 +149,11 @@ class SequelizeTareaRepository {
         {
           model: db.usuarios,
           as: "tecnico_asignado", // este alias debe coincidir con tu asociación
-          attributes: ["id", "nombre"]
+          attributes: ["id"],
+          include:[{
+            model:db.trabajadores,
+            as:"trabajador"
+          }]
         }
       ]
     });
@@ -161,7 +173,11 @@ class SequelizeTareaRepository {
         {
           model: db.usuarios,
           as: "tecnico_asignado", // este alias debe coincidir con tu asociación
-          attributes: ["id", "nombre"]
+          attributes: ["id"],
+          include:[{
+            model:db.trabajadores,
+            as:"trabajador"
+          }]
         }
       ]
     });
@@ -181,12 +197,20 @@ class SequelizeTareaRepository {
         {
           model: db.usuarios,
           as: "tecnico_asignado", // este alias debe coincidir con tu asociación
-          attributes: ["id", "nombre"]
+          attributes: ["id"],
+          include:[{
+            model:db.trabajadores,
+            as:"trabajador"
+          }]
         },
         {
           model: db.usuarios,
           as: "usuario_solicitante", // este alias debe coincidir con tu asociación
-          attributes: ["id", "nombre"]
+          attributes: ["id"],
+          include:[{
+            model:db.trabajadores,
+            as:"trabajador"
+          }]
         }
       ]
     });

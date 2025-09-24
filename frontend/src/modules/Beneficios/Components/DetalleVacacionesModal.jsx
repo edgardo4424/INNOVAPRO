@@ -149,8 +149,7 @@ export default function DetalleVacacionesModal({ datosEmpleado }) {
                </AlertDialogTitle>
                <AlertDialogDescription>
                   {datosEmpleado.cargo.nombre} (
-                  {datosEmpleado.cargo.area.nombre}) -{" "}
-                  {/* {datosEmpleado.empresa_proveedora.razon_social} */}
+                  {datosEmpleado.cargo.area.nombre})
                </AlertDialogDescription>
             </AlertDialogHeader>
 
@@ -297,15 +296,11 @@ export default function DetalleVacacionesModal({ datosEmpleado }) {
                                  )}
                                  {vacacion.asitencias?.length > 0 &&
                                     (() => {
-                                       console.log(vacacion.fecha_inicio);
-                                       console.log(vacacion.fecha_termino);
-
                                        const fechasGeneradas =
                                           generarFechasDesdeRango({
                                              from: vacacion.fecha_inicio,
                                              to: vacacion.fecha_termino,
                                           });
-                                       console.log(fechasGeneradas);
 
                                        const fechasConTipo = mergeTipoByFecha(
                                           fechasGeneradas,
@@ -349,7 +344,6 @@ export default function DetalleVacacionesModal({ datosEmpleado }) {
                                                       variant={"ghost"}
                                                       key={i}
                                                       type="button"
-                                                      onClick={console.log("s")}
                                                    >
                                                       {d.fecha.slice(-2)}
                                                    </Button>

@@ -28,9 +28,9 @@ export default function BloqueTransporte({ formData, setFormData, errores }) {
 
       <select
         value={
-            transporte.tiene_transporte === true
+            transporte?.tiene_transporte === true
             ? "TRUE"
-            : transporte.tiene_transporte === false
+            : transporte?.tiene_transporte === false
             ? "FALSE"
             : ""
         }
@@ -55,11 +55,11 @@ export default function BloqueTransporte({ formData, setFormData, errores }) {
         {errores?.tiene_transporte && <p className="error-text">{errores.tiene_transporte}</p>}
       </div>
 
-      {transporte.tiene_transporte && (
+      {transporte?.tiene_transporte && (
         <div style={{ marginTop: "1rem" }}>
           <label>🛻 Tipo de transporte</label>
           <select
-            value={transporte.tipo_transporte || ""}
+            value={transporte?.tipo_transporte || ""}
             onChange={(e) =>
               setFormData((prev) => ({
                 ...prev,

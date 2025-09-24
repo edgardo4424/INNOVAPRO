@@ -62,7 +62,7 @@ const TablaProductos = ({ setOpen }) => {
               >
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{producto.cod_Producto || ""}</TableCell>
-                <TableCell class="min-w-[200px]">
+                <TableCell className="min-w-[200px]">
                   {producto.descripcion || ""}
                 </TableCell>
                 <TableCell>{producto.unidad || ""}</TableCell>

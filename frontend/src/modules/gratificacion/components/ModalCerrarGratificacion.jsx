@@ -27,7 +27,6 @@ export function ModalCerrarGratificacion({ filtro, gratificacion }) {
       toast.success("Gratificación cerrada con éxito");
       setIsOpen(false);
     } catch (error) {
-      console.log(error);
       if (error.response?.data?.mensaje) {
         toast.error(error.response?.data?.mensaje);
         setIsOpen(false);

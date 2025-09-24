@@ -133,7 +133,6 @@ export function FacturaBoletaProvider({ children }) {
       const { data } = await facturaService.obtenerCorrelativo(rucsAndSeries);
       setCorrelativos(data);
     } catch (error) {
-      console.error("Error al obtener correlativos:", error);
     } finally {
       setLoadingCorrelativo(false);
     }
@@ -438,7 +437,6 @@ export function FacturaBoletaProvider({ children }) {
         };
       }
     } catch (error) {
-      console.error("Error al enviar factura:", error);
       if (error.response) {
         result = {
           success: false,

@@ -49,7 +49,6 @@ const CalculoCts = () => {
             const response_cts = await ctsService.obtenerCts(payload);
             response_cts.data.map((c) => cts_obtenidas.push(c));
          }
-         console.log(cts_obtenidas);
 
          setCts(cts_obtenidas);
       } catch (error) {
@@ -95,9 +94,7 @@ const CalculoCts = () => {
             filial_id: filtro.filial_id,
             array_cts: transformar_data,
          };
-         console.log(payload);
          const response = await ctsService.generarCts(payload);
-         console.log("Respuesta obtenida: ", response);
          toast.success("Registros guardados exitosamente");
       } catch (error) {
          console.log(error);

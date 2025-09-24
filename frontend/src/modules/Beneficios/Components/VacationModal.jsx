@@ -127,7 +127,6 @@ export function VacationModal({ empleados, fetchEmployees }) {
       };
    }, [empleado]);
 
-   console.log(dias_disponibles, dias_vender, dias_tomar);
 
    const manejarCambio = (campo) => (e) => {
       const valor = e?.target?.value ?? e;
@@ -178,7 +177,6 @@ export function VacationModal({ empleados, fetchEmployees }) {
       };
 
       try {
-         console.log(datosVacaciones);
 
          await beneficiosService.crear(datosVacaciones);
          await fetchEmployees();
@@ -200,7 +198,6 @@ export function VacationModal({ empleados, fetchEmployees }) {
       if (formulario.rango_fechas.from && formulario.rango_fechas.to) {
          const fechas = generarFechasDesdeRango(formulario.rango_fechas);
          setArregloDias(fechas);
-         console.log("Arreglo de fechas en rango: ", fechas);
       }
    }, [formulario.rango_fechas]);
 
@@ -215,14 +212,10 @@ export function VacationModal({ empleados, fetchEmployees }) {
                   datos.tipo = "";
                } else {
                   if (datos.clicks == 1) {
-                     console.log("entro al else 1");
                      datos.tipo = "gozada";
-                     console.log(datos);
                   }
                   if (datos.clicks == 2) {
-                     console.log("entro al else 2");
                      datos.tipo = "vendida";
-                     console.log(datos);
                   }
                }
                return datos;
@@ -277,7 +270,7 @@ export function VacationModal({ empleados, fetchEmployees }) {
                            value={formulario.empleadoSeleccionado}
                            onValueChange={manejarCambio("empleadoSeleccionado")}
                         >
-                           <SelectTrigger>
+                           <SelectTrigger className="w-full truncate">
                               <SelectValue placeholder="Selecciona un trabajador" />
                            </SelectTrigger>
                            <SelectContent>

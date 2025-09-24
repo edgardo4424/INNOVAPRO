@@ -19,9 +19,7 @@ export default function GestionVacaciones() {
       setLoading(true);
       // Simula una llamada a API
       try {
-         const res = await beneficiosService.getTrabajadoresVacaciones();
-         console.log(res.data.trabajadoresXvacaciones);
-         
+         const res = await beneficiosService.getTrabajadoresVacaciones();         
          setEmployees(res.data.trabajadoresXvacaciones.reverse()); // mockData.json debe exportar el array
          setLoading(false);
       } catch (error) {

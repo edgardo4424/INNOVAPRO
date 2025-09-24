@@ -79,7 +79,6 @@ const GestionAdelantoSueldo = () => {
       setTrabajadores(trab.data);
       setAdelantoSueldos(list);
     } catch (e) {
-      console.log(e);
     } finally {
       setLoading(false);
     }
@@ -167,7 +166,6 @@ const GestionAdelantoSueldo = () => {
         primera_cuota: form.primera_cuota,
         cuotas: form.cuotas,
       };
-      console.log('payload', payload);
       if (viewMode === "crear") {
         await beneficiosService.crearAdelantoSaldo(payload);
         toast.success("Adelanto de sueldo agregado.");
@@ -180,7 +178,6 @@ const GestionAdelantoSueldo = () => {
       await fetchAdelantoSueldos();
     } catch (e) {
 
-      console.log('error', e);
       if (e?.response?.data?.mensaje && e?.response?.data?.mensaje.length > 0) {
         const err = e?.response?.data?.mensaje;
         for (const er of err) {
@@ -199,12 +196,8 @@ const GestionAdelantoSueldo = () => {
       await fetchAdelantoSueldos();
       toast.success("Adelanto de sueldo eliminado.");
     } catch (e) {
-      console.log(e);
     }
   };
-
-  console.log("form.cuotas_pagadas", form.cuotas_pagadas)
- console.log("viewMode", viewMode)
   
   return (
     <div className="min-h-screen bg-gray-50 p-6">

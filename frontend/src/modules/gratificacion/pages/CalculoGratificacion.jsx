@@ -9,8 +9,6 @@ import { ModalCerrarGratificacion } from "../components/ModalCerrarGratificacion
 
 const CalculoGratificacion = ({setDataMantenimiento, setEsCalculo}) => {
 
-
-  setEsCalculo(true)
   const [filiales, setFiliales] = useState([]);
 
   // ?? loading
