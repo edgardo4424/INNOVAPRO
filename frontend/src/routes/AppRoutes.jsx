@@ -119,7 +119,7 @@ export default function AppRoutes() {
          <Suspense fallback={<LoaderInnova />}>
             <Routes>
                {/* Ruta pública */}
-               <Route path={LOGIN_PATH} element={<Login />} />
+               <Route path="/login" element={<Login />} />
                {/* Rutas protegidas */}
                <Route path="/" element={<ProtectedRoute />}> {/* TODO EL DASHBOARD PROTEGIDO */}
                   <Route element={<DashboardLayout />}>

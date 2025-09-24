@@ -9,7 +9,7 @@ const notaInical = {
     fecha_Emision: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
     tipo_Moneda: "PEN",
     estado_Documento: "0",
-    empresa_Ruc: "10749283781",
+    empresa_Ruc: "20562974998",
     Manual: false,
     Observacion: "",
     estado: "EMITIDA",

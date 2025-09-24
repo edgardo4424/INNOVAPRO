@@ -9,7 +9,7 @@ const ValorInicialFactura = {
     tipo_Moneda: "PEN",
     fecha_Emision: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
     fecha_vencimiento: null,
-    empresa_Ruc: "10749283781",//?? nuevo ruc de prueba
+    empresa_Ruc: "20562974998",//?? nuevo ruc de prueba
     dias_pagar: "",
     orden_compra: "",
 

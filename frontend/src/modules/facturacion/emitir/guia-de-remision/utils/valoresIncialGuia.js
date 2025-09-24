@@ -7,7 +7,7 @@ const guiaInical = {
     fecha_Emision: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
 
     estado_Documento: "0",
-    empresa_Ruc: "10749283781",
+    empresa_Ruc: "20562974998",
 
     cliente_Tipo_Doc: "6",
     cliente_Num_Doc: "",
@@ -62,9 +62,9 @@ const ValoresPublico = {
 const ValoresInterno = {
     guia_Envio_Cod_Traslado: "04",
     guia_Envio_Mod_Traslado: "02",
-    guia_Envio_Partida_Ruc: "10749283781",
+    guia_Envio_Partida_Ruc: "",
     guia_Envio_Partida_Cod_Local: "00001",
-    guia_Envio_Llegada_Ruc: "10749283781",
+    guia_Envio_Llegada_Ruc: "",
     guia_Envio_Llegada_Cod_Local: "00002",
 }
 
