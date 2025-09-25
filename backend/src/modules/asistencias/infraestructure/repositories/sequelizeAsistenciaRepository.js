@@ -42,7 +42,10 @@ class SequelizeAsistenciaRepository {
         }
       }
       if (asistenciaData.jornadas && asistenciaData.jornadas.length > 0) {
-        for (const jornada of [...asistenciaData.jornadas].reverse()) {
+        for (const jornada of [...asistenciaData.jornadas]) {
+          if(!jornada.turno||!jornada.lugar||!jornada.tipo_trabajo_id){
+              throw new Error("Complete los datos correctamente")
+          }
           await Jornada.create(
             {
               asistencia_id: asistencia.id,
@@ -177,7 +180,10 @@ class SequelizeAsistenciaRepository {
         }
       }
       if (asistenciaData.jornadas && asistenciaData.jornadas.length > 0) {
-        for (const jornada of [...asistenciaData.jornadas].reverse()) {
+        for (const jornada of [...asistenciaData.jornadas]) {
+          if(!jornada.turno||!jornada.lugar||!jornada.tipo_trabajo_id){
+              throw new Error("Complete los datos correctamente")
+          }
           await Jornada.create(
             {
               asistencia_id: asistenciaData.id,

@@ -614,6 +614,10 @@ label {
 .css-26l3qy-menu {
    border-radius: var(--border-radius);
 }
+.custom-tooltip-red svg {
+  background-color: #ef4444 !important;
+  fill: #ef4444 !important;
+}
 
 @media (max-width: 480px) {
    /* === GLOBALIZACIÓN Y OPTIMIZACIÓN DE ESTILOS MOVILES === */

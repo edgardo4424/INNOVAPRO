@@ -50,8 +50,6 @@ class SequelizeTrabajadorRepository {
    }
 
    async obtenerTrabajadoresPorArea(areaId, fecha) {
-      console.log('El area id es:',areaId);
-      console.log('La fecha es:',fecha);
       const area=await Area.findByPk(areaId)
       if(!area){
          throw new Error("El area no existe")

@@ -26,7 +26,7 @@ const obtenerCargosArea = (rol) => {
       obj.cargos_id = [];
       break;
     default:
-      return null; // o puedes retornar obj si prefieres un objeto vacío
+      return null;
   }
 // Marketing , TI Gerencia,Legal
   return obj;
