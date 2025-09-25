@@ -72,6 +72,16 @@ const DatosDelComprobante = () => {
     setRetencionActivado(false);
   }, [factura.tipo_Moneda]);
 
+    useEffect(() => {
+    setFactura((prev) => ({
+      ...prev,
+      forma_pago: [],
+      cuotas_Real: [],
+      neto_Pagar: 0,
+    }));
+    setRetencionActivado(false);
+  }, [factura.empresa_Ruc]);
+
   useEffect(() => {
     // Buscar y establecer el correlativo basándose en la serie y el RUC actual
     if (correlativos.length > 0 && factura.empresa_Ruc && factura.serie) {
@@ -168,6 +178,7 @@ const DatosDelComprobante = () => {
                 value={factura.correlativo}
                 onChange={handleInputChange}
                 disabled={!correlativoEstado}
+                maxLength={8}
               />
               <button
                 onClick={activarCorrelativo}

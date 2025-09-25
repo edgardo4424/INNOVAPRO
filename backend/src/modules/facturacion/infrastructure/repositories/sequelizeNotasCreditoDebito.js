@@ -269,7 +269,7 @@ class SequelizeNotasCreditoDebitoRepository {
                 tipo_doc: tipo_doc,
             },
             include: [
-                { model: LegendNotaCreditoDebito},
+                { model: LegendNotaCreditoDebito },
                 { model: DetalleNotaCreditoDebito },
             ],
         });
@@ -373,7 +373,8 @@ class SequelizeNotasCreditoDebitoRepository {
         for (const item of rucsAndSeries) {
             const key = `${item.ruc}-${item.serie}`;
             const ultimoCorrelativo = correlativosMap.get(key) || 0;
-            const siguienteCorrelativo = String(ultimoCorrelativo + 1).padStart(5, '0');
+            // ? LA CANTIDAD DE DIGITOS EN EL CORRELATIVO ES DE 8
+            const siguienteCorrelativo = String(ultimoCorrelativo + 1).padStart(8, '0');
 
             resultados.push({
                 ruc: item.ruc,

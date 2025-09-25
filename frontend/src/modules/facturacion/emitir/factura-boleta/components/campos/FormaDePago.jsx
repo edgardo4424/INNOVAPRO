@@ -46,6 +46,7 @@ const FormaDePago = () => {
                 ...prevFactura,
                 forma_pago: [],
                 cuotas_Real: [],
+                neto_Pagar: 0,
               }));
             }}
           >

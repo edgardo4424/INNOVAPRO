@@ -144,7 +144,7 @@ const ProductoForm = ({ closeModal }) => {
   }, []);
 
   return (
-    <div className="md:max-h-[unset] max-h-[45dvh]  min-h-[40dvh] w-full overflow-y-scroll md:overflow-y-hidden">
+    <div className="max-h-[45dvh] min-h-[40dvh] w-full overflow-y-scroll md:max-h-[unset] md:overflow-y-hidden">
       <div className="flex w-full justify-end">
         <ModalListaDeProductos
           itemActual={productoActual}
@@ -407,6 +407,7 @@ const ProductoForm = ({ closeModal }) => {
             value={productoActual.factor_Icbper}
             step="0.01"
             onChange={handleInputChange}
+            disabled
             className="border-1 border-gray-400"
           />
         </div>
@@ -414,13 +415,19 @@ const ProductoForm = ({ closeModal }) => {
         {/* Descripción */}
         <div className="col-span-full flex flex-col gap-1 md:col-span-3">
           <Label>Descripción</Label>
-          <textarea
-            type="text"
-            name="descripcion"
-            value={productoActual.descripcion}
-            onChange={handleInputChange}
-            className="h-40 resize-none rounded-xl border-1 border-gray-400 p-2"
-          />
+          <div className="relative w-full">
+            <textarea
+              type="text"
+              name="descripcion"
+              value={productoActual.descripcion}
+              onChange={handleInputChange}
+              maxLength={250}
+              className="h-40 w-full resize-none rounded-xl border-1 border-gray-400 p-2"
+            />
+            <p className="absolute right-4 bottom-2 mt-2 text-right text-sm text-gray-500">
+              {productoActual.descripcion.length}/250
+            </p>
+          </div>
           <span
             className={`text-sm text-red-500 ${
               productoValida.descripcion ? "block" : "hidden"

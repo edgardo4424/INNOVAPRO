@@ -29,7 +29,7 @@ function pdfProductoNota(
                         { text: `${Number(d.cantidad ?? 0).toFixed(2)}`, style: 'tableBody', alignment: 'center' },
                         { text: d.unidad || 'NIU', style: 'tableBody', alignment: 'center' },
                         { text: d.descripcion, style: 'tableBody' },
-                        { text: d.Descuentos ? JSON.parse(d.Descuentos)[0].montoBase.toFixed(2) : "-", style: 'tableBody', alignment: 'center' },
+                        { text: d.Descuentos ? JSON.parse(d.Descuentos)[0].montoBase.toFixed(2) : `${d.monto_Valor_Unitario ? d.monto_Valor_Unitario : "-"}`, style: 'tableBody', alignment: 'center' },
                         { text: d.Descuentos ? JSON.parse(d.Descuentos)[0].Monto.toFixed(2) : "-", style: 'tableBody', alignment: 'center' },
                         { text: utils.formatMoney(d.monto_Valor_Venta), style: 'tableBody', alignment: 'right' }
                     ])

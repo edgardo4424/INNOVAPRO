@@ -42,7 +42,7 @@ const PenalidadInteresForm = ({ closeModal }) => {
             ...penalidadInteres,
             cantidad: 1,
             unidad: "NIU",
-            descripcion: notaCreditoDebito.motivo_Cod === "01" ? "INTERES" : "PENALIDAD",
+            descripcion: notaCreditoDebito.motivo_Des || "", // siempre igual a motivo_Des
             tip_Afe_Igv: "20",
             porcentaje_Igv: 0,
             igv: 0,
@@ -63,23 +63,14 @@ const PenalidadInteresForm = ({ closeModal }) => {
 
 
 
-    useEffect(() => {
-        if (notaCreditoDebito.motivo_Cod == "01") {
-            setPenalidadInteres({
-                ...penalidadInteres,
-                cantidad: 1,
-                descripcion: "INTERES",
-                unidad: "NIU"
-            })
-        } else {
-            setPenalidadInteres({
-                ...penalidadInteres,
-                cantidad: 1,
-                descripcion: "PENALIDAD",
-                unidad: "NIU"
-            })
-        }
-    }, [notaCreditoDebito.motivo_Cod])
+useEffect(() => {
+    setPenalidadInteres((prev) => ({
+        ...prev,
+        cantidad: 1,
+        descripcion: notaCreditoDebito.motivo_Des || "", // siempre igual a motivo_Des
+        unidad: "NIU"
+    }));
+}, [notaCreditoDebito.motivo_Des]);
 
     return (
         <div>
@@ -114,7 +105,7 @@ const PenalidadInteresForm = ({ closeModal }) => {
                         type="text"
                         name="descripcion"
                         value={penalidadInteres.descripcion}
-                        disabled
+                        readOnly  
                         className="border-1 border-gray-400"
                     />
                 </div>

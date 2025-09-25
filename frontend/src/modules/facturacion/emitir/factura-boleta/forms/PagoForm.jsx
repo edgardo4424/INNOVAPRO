@@ -302,7 +302,7 @@ const PagoForm = ({ closeModal }) => {
       // Generar cuota real con montoNeto para contado
       const cuotaReal = {
         ...pagoActual[0],
-        monto: montoNeto,
+        monto: Number(montoNeto.toFixed(2)),
       };
 
       // Agregar el pago de contado
@@ -310,6 +310,7 @@ const PagoForm = ({ closeModal }) => {
         ...prevFactura,
         forma_pago: [...pagoActual],
         cuotas_Real: [cuotaReal],
+        neto_Pagar:  Number(montoNeto.toFixed(2)),
       }));
     } else if (pagoActual[0].tipo === "Credito") {
       // Para crédito, validar que hay cuotas generadas
@@ -349,6 +350,7 @@ const PagoForm = ({ closeModal }) => {
         ...prevFactura,
         forma_pago: [...pagoActual],
         cuotas_Real: [...cuotasReales],
+        neto_Pagar:  Number(montoNeto.toFixed(2)) ,
       }));
 
       setNumeroCuotas(1);
@@ -479,7 +481,7 @@ const PagoForm = ({ closeModal }) => {
       {pagoActual[0]?.tipo === "Credito" &&
         pagoActual.length > 0 &&
         numeroCuotas !== "" && (
-          <div className=" max-h-[400px] overflow-y-auto rounded-lg border p-2 md:p-4">
+          <div className="max-h-[400px] overflow-y-auto rounded-lg border p-2 md:p-4">
             <h3 className="mb-3 text-lg font-semibold">Cuotas Generadas:</h3>
 
             {/* Información de montos */}
@@ -507,7 +509,7 @@ const PagoForm = ({ closeModal }) => {
               </div>
             )}
 
-            <div className="md:max-h-[300px] space-y-3 ">
+            <div className="space-y-3">
               {pagoActual.map((cuota, index) => {
                 // Calcular el monto real para mostrar
                 const montoReal = parseFloat(
@@ -526,7 +528,7 @@ const PagoForm = ({ closeModal }) => {
                 return (
                   <div
                     key={index}
-                    className="grid md:grid-cols-3 gap-3 rounded border-l-4 border-blue-400 bg-gray-50 p-2 md:p-3"
+                    className="grid gap-3 rounded border-l-4 border-blue-400 bg-gray-50 p-2 md:grid-cols-3 md:p-3"
                   >
                     <div>
                       <Label className="text-sm font-medium">

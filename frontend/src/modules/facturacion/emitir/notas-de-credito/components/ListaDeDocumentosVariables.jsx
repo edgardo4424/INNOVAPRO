@@ -128,7 +128,7 @@ const ListaDeDocumentosVariables = ({ closeModal }) => {
       guia_id: doc.tipo_Doc === "09" ? doc.id : null,
 
       // ?Fecha emision
-      fecha_Emision: doc.fecha_Emision,
+      // fecha_Emision: doc.fecha_Emision,
       // ?Montos
       monto_Igv: Number(doc.monto_Igv),
       total_Impuestos: Number(doc.total_Impuestos),

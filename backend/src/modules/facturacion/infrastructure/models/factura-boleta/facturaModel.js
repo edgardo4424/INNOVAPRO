@@ -185,7 +185,7 @@ const Factura = sequelize.define(
             allowNull: true,
         },
         neto_Pagar: {
-            type: DataTypes.DECIMAL,
+            type: DataTypes.DECIMAL(12, 2),
             allowNull: true,
         },
         cuotas_Real: {

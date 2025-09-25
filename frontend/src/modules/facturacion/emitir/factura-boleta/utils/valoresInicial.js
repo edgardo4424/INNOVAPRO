@@ -7,7 +7,7 @@ const ValorInicialFactura = {
     serie: "F001",
     correlativo: "",
     tipo_Moneda: "PEN",
-    fecha_Emision: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
+    fecha_Emision: new Date().toISOString().split("T")[0] + "T" + new Date().toTimeString().split(" ")[0] + "-05:00",
     fecha_vencimiento: null,
     empresa_Ruc: "20562974998",//?? nuevo ruc de prueba
     dias_pagar: "",
@@ -74,7 +74,7 @@ const valorIncialRetencion = {
 }
 
 const valorIncialDetracion = {
-    detraccion_cod_bien_detraccion: "",
+    detraccion_cod_bien_detraccion: "001", //? valor por defecto deposito en cuenta.
     detraccion_cod_medio_pago: "",
     detraccion_cta_banco: "",
     detraccion_percent: 0,

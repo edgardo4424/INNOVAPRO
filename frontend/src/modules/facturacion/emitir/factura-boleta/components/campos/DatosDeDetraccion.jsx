@@ -113,7 +113,7 @@ const DatosDeDetraccion = () => {
             ...prev,
             forma_pago: []
         }))
-    }, [detraccion]);
+    }, [detraccion.detraccion_mount, detraccion.detraccion_percent]);
 
     if (factura.tipo_Doc == "03") return null;
 

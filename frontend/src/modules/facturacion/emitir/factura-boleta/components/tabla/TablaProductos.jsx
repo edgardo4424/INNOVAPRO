@@ -24,7 +24,7 @@ const TablaProductos = ({ setOpen }) => {
           <TableRow>
             <TableHead className="w-[120px]">Item</TableHead>
             <TableHead className="">Código</TableHead>
-            <TableHead>Descripción</TableHead>
+            <TableHead >Descripción</TableHead>
             <TableHead>Unidad</TableHead>
             <TableHead>Cantidad</TableHead>
             <TableHead>Valor Unitario</TableHead>
@@ -62,7 +62,7 @@ const TablaProductos = ({ setOpen }) => {
               >
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{producto.cod_Producto || ""}</TableCell>
-                <TableCell className="min-w-[200px]">
+                <TableCell className="min-w-[200px] max-w-sm whitespace-normal">
                   {producto.descripcion || ""}
                 </TableCell>
                 <TableCell>{producto.unidad || ""}</TableCell>

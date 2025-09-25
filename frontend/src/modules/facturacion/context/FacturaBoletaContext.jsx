@@ -81,6 +81,7 @@ export function FacturaBoletaProvider({ children }) {
         detraccion,
         retencionActivado,
         retencion,
+        detallesExtra,
       );
       if (!validos) {
         // *Encuentra el primer error y lo muestra en un toast
@@ -344,11 +345,7 @@ export function FacturaBoletaProvider({ children }) {
     try {
       let facturaAEmitir;
 
-      if (
-        retencionActivado &&
-        factura.tipo_Doc !== "03" &&
-        factura.monto_Imp_Venta > 699
-      ) {
+      if (retencionActivado && factura.tipo_Doc !== "03") {
         facturaAEmitir = {
           ...factura,
           ...retencion,
@@ -488,7 +485,11 @@ export function FacturaBoletaProvider({ children }) {
   };
 
   const Limpiar = () => {
-    setFactura(ValorInicialFactura);
+    setFactura({
+      ...ValorInicialFactura,
+      empresa_Ruc: factura.empresa_Ruc,
+      serie: factura.serie,
+    });
     setProductoActual(valorInicialProducto);
     setEdicionProducto({ edicion: false, index: null });
     setPagoActual(valorIncialPago);

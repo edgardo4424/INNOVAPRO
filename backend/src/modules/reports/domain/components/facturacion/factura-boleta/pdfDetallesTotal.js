@@ -28,23 +28,23 @@ function pdfDetallesTotal(
                     body: [
                         [
                             { text: `CUENTA:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
-                            { text: `${factura.detraccion_cta_banco}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
+                            { text: `${factura?.detraccion_cta_banco}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
                         ],
                         [
                             { text: `TIPO DE DETRACCIÓN:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
-                            { text: `${utils.getDescripcion(factura.detraccion_cod_bien_detraccion)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
+                            { text: `${utils.getDescripcion(factura?.detraccion_cod_bien_detraccion)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
                         ],
                         [
                             { text: `MEDIO DE PAGO:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
-                            { text: `${utils.getFormaPago(factura.detraccion_cod_medio_pago)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
+                            { text: `${utils.getFormaPago(factura?.detraccion_cod_medio_pago)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
                         ],
                         [
-                            { text: `DETRACCIÓN ${Number(factura.detraccion_percent * 100).toFixed(0)}%:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
-                            { text: `${(factura.detraccion_mount)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
+                            { text: `DETRACCIÓN ${Number(factura?.detraccion_percent).toFixed(0)}%:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
+                            { text: `${(factura?.detraccion_mount)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
                         ],
                         [
                             { text: `NETO A PAGAR:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
-                            { text: `${factura.monto_Imp_Venta - factura.detraccion_mount}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
+                            { text: `${(factura?.monto_Imp_Venta - factura?.detraccion_mount).toFixed(2)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
                         ],
                     ]
                 },
@@ -74,15 +74,15 @@ function pdfDetallesTotal(
                     body: [
                         [
                             { text: `BASE DEL DESCUENTO:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
-                            { text: `${factura.descuento_monto_base}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
+                            { text: `${factura?.descuento_monto_base}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
                         ],
                         [
-                            { text: `DESCUENTO ${Number(factura.descuento_factor * 100).toFixed(0)}%:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
-                            { text: `${(factura.descuento_monto)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
+                            { text: `DESCUENTO ${Number(factura?.descuento_factor * 100).toFixed(0)}%:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
+                            { text: `${(factura?.descuento_monto)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
                         ],
                         [
                             { text: `NETO A PAGAR:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
-                            { text: `${factura.neto_Pagar}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
+                            { text: `${factura?.neto_Pagar}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
                         ],
                     ]
                 },
@@ -92,9 +92,9 @@ function pdfDetallesTotal(
     };
 
     const render = () => {
-        if (factura.tipo_Operacion == '1001') {
+        if (factura?.tipo_Operacion == '1001') {
             return detraccionModelo;
-        } else if (factura.tipo_Operacion !== '1001' && factura.descuento_cod_tipo == "62") {
+        } else if (factura?.tipo_Operacion !== '1001' && factura?.descuento_cod_tipo == "62") {
             return retencionModelo;
         } else {
             return { width: "70%", stack: [] };
@@ -111,7 +111,7 @@ function pdfDetallesTotal(
                     body: [
                         [
                             { text: 'GRAVADA (S/)', style: 'totalLabel', border: [true, true, true, true] },
-                            { text: utils.formatMoney(factura.monto_Oper_Gravadas), style: 'totalValue', alignment: 'right', border: [true, true, true, true] }
+                            { text: utils.formatMoney(factura?.monto_Oper_Gravadas), style: 'totalValue', alignment: 'right', border: [true, true, true, true] }
                         ],
                         [
                             { text: 'OP. INAFECTA (S/)', style: 'totalLabel', border: [true, true, true, true] },
@@ -123,11 +123,11 @@ function pdfDetallesTotal(
                         ],
                         [
                             { text: 'IGV 18.00% (S/)', style: 'totalLabel', border: [true, true, true, true] },
-                            { text: utils.formatMoney(factura.total_Impuestos), style: 'totalValue', alignment: 'right', border: [true, true, true, true] }
+                            { text: utils.formatMoney(factura?.total_Impuestos), style: 'totalValue', alignment: 'right', border: [true, true, true, true] }
                         ],
                         [
                             { text: 'TOTAL (S/)', style: 'totalFinalLabel', border: [true, true, true, true] },
-                            { text: utils.formatMoney(factura.sub_Total), style: 'totalFinalValue', alignment: 'right', border: [true, true, true, true] }
+                            { text: utils.formatMoney(factura?.sub_Total), style: 'totalFinalValue', alignment: 'right', border: [true, true, true, true] }
                         ]
                     ]
                 },

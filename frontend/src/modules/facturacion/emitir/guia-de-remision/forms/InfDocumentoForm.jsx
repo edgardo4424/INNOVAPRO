@@ -40,10 +40,9 @@ const InfDocumentoForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const newValue = typeof value === "string" ? value.toUpperCase() : value;
     setGuiaTransporte((prevGuiaTransporte) => ({
       ...prevGuiaTransporte,
-      [name]: newValue,
+      [name]: value.toUpperCase(),
     }));
   };
 
@@ -222,6 +221,7 @@ const InfDocumentoForm = () => {
                 value={correlativo}
                 onChange={handleChange}
                 disabled={!correlativoEstado}
+                maxLength={8}
                 className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:outline-none"
               />
               <button

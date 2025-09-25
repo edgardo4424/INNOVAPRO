@@ -23,6 +23,9 @@ const DatosDeRetencion = () => {
     precioDolarActual,
   } = useFacturaBoleta();
 
+  let montoBase;
+  let montoPorcentaje;
+
   // Función para calcular la retención de forma más robusta
   const calcularRetencion = useCallback(
     (porcentaje) => {
@@ -37,9 +40,6 @@ const DatosDeRetencion = () => {
         setFactura({ ...factura, neto_Pagar: 0 });
         return;
       }
-
-      let montoBase;
-      let montoPorcentaje;
 
       if (factura.tipo_Moneda === "PEN") {
         // Cálculo para moneda nacional (PEN)
@@ -144,9 +144,7 @@ const DatosDeRetencion = () => {
   };
 
   const shouldRender = !(
-    factura.monto_Imp_Venta < 699 ||
-    factura.tipo_Doc === "03" ||
-    factura.tipo_Operacion === "1001"
+    factura.tipo_Doc === "03" || factura.tipo_Operacion === "1001"
   );
 
   return shouldRender ? (
@@ -222,7 +220,7 @@ const DatosDeRetencion = () => {
             <Input
               type="number"
               id="neto_pagar"
-              value={factura.neto_Pagar}
+              value={(factura.monto_Imp_Venta - retencion.descuento_monto ).toFixed(2) || 0}
               disabled
               className="bg-gray-50 font-semibold"
             />
