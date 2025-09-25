@@ -424,7 +424,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
 
       console.log({
         fechaBaja: fechaBaja.format("YYYY-MM-DD"),
-        fecha_ingreso_trabajador
+        fecha_ingreso_trabajador,
       });
       const fechaInicioCts = obtenerFechaInicioCts(
         fechaBaja.format("YYYY-MM-DD"),
@@ -471,6 +471,47 @@ module.exports = async function darBajaTrabajador(dataBody) {
       console.log("CTS TRUNCA", ctsTrunca);
     }
 
+    //! 13. Calcular vacaciones truncas
+
+    const calculoVacacionesTruncaAnios =
+      redondear2(
+        remuneracionComputable * factorRegimen * tiempoLaborado.anios
+      ) || 0;
+
+    const calculoVacacionesTruncaMeses =
+      redondear2(
+        ((remuneracionComputable * factorRegimen) / 12) * tiempoLaborado.meses
+      ) || 0;
+
+    const calculoVacacionesTruncaDias =
+      redondear2(
+        ((remuneracionComputable * factorRegimen) / 12 / 30) *
+          tiempoLaborado.dias
+      ) || 0;
+
+    // obtener descuentos vacaciones gozadas
+    const descuentos_vacaciones_gozadas = 0;
+
+    const total_vacaciones_truncas = redondear2(
+      calculoVacacionesTruncaAnios +
+        calculoVacacionesTruncaMeses +
+        calculoVacacionesTruncaDias -
+        descuentos_vacaciones_gozadas
+    );
+
+    const vacacionesTrunca = {
+      anios_computados: periodoComputable.anios,
+      meses_computados: periodoComputable.meses,
+      dias_computados: periodoComputable.dias,
+      sueldo: remuneracionComputable,
+      calculoVacacionesTruncaAnios,
+      calculoVacacionesTruncaMeses,
+      calculoVacacionesTruncaDias,
+      descuentos_vacaciones_gozadas,
+      total: total_vacaciones_truncas,
+    }
+    
+
     const informacionLiquidacion = {
       trabajador_id: trabajador_id,
       fecha_ingreso_trabajador: fecha_ingreso_trabajador,
@@ -488,6 +529,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
       informacionLiquidacion,
       gratificacionTrunca,
       ctsTrunca,
+      vacacionesTrunca
     };
 
     console.log("respuesta", respuesta);
