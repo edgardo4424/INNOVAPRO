@@ -345,7 +345,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
 
     trabajadorActualizado.fecha_baja = fecha_baja;
     await trabajadorActualizado.save({ transaction });
-    asd;
+
     await transaction.commit();
     return {
       codigo: 201,

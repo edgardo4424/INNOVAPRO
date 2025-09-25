@@ -22,7 +22,6 @@ const SequelizeTrabajadorRepository = require("../../modules/trabajadores/infrae
 
 const trabajadorRepository = new SequelizeTrabajadorRepository();
 
-
 const SequelizeDataMantenimientoRepository = require("../../modules/data_mantenimiento/infrastructure/repositories/sequelizeDataMantenimientoRepository");
 
 const dataMantenimientoRepository = new SequelizeDataMantenimientoRepository();
@@ -54,6 +53,19 @@ const {
 } = require("../utils/calcularPeriodoComputableDelContrato");
 const calcularPromedioHorasExtras = require("../../services/calculoHorasEsxtras");
 const calculaPromedioBonos = require("../../services/calculoBonos");
+const { restarDias } = require("../utils/restarDias");
+const { obtenerFechaInicioGrati } = require("../utils/obtenerFechaInicioGrati");
+const {
+  calcularMesesComputadosGratificacion,
+} = require("../utils/calcularPeriodoGratiTrunca");
+const { ajustarMesesPorFaltas } = require("../utils/ajustarMesesPorFaltas");
+const { redondear2 } = require("../../shared/utils/redondear2");
+const { correspondeGratiTrunca } = require("../utils/correspondeGratiTrunca");
+const { obtenerFechaInicioCts } = require("../utils/obtenerFechaInicioCts");
+const { calcularMesesDiasCTS } = require("../utils/calcularMesesDiasCts");
+const {
+  ajustarMesesDiasPorFaltasCTS,
+} = require("../utils/ajustarMesesDiasPorFaltasCts");
 
 module.exports = async function darBajaTrabajador(dataBody) {
   const transaction = await sequelize.transaction();
@@ -71,7 +83,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
   // console.log("dataBody", dataBody);
 
   try {
-    //! Buscar al trabajador
+    //! 1. Buscar al trabajador
     const trabajadorEncontrado = await db.trabajadores.findByPk(trabajador_id, {
       transaction,
     });
@@ -84,7 +96,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
       };
     }
 
-    //! Buscar el contrato laboral del trabajador asignando la fecha_baja
+    //! 2. Buscar el contrato laboral del trabajador asignando la fecha_baja
     const contratoLaboralEncontrado = await db.contratos_laborales.findByPk(
       contrato_id,
       { transaction }
@@ -94,8 +106,6 @@ module.exports = async function darBajaTrabajador(dataBody) {
       await transaction.rollback();
       return { codigo: 404, respuesta: { mensaje: "Contrato no encontrado" } };
     }
-
-    //! Calcular beneficios. (Para que tenga beneficios, minimo tiene que cumplir un mes en la empresa)
 
     //* Obtener primero los contratos del trabajador
     const contratos =
@@ -108,10 +118,8 @@ module.exports = async function darBajaTrabajador(dataBody) {
       contrato.get({ plain: true })
     );
 
-    console.log('contratosDelTrabajador', contratosDelTrabajador);
-
-    //! Comparar si la fecha de baja es menor a la fecha de fin contrato, tomar la fecha de baja como fecha_terminacion_anticipada
-    // !sino tomar la fecha fin contrato como fecha_terminacion_anticipada
+    //* Comparar si la fecha de baja es menor a la fecha de fin contrato, tomar la fecha de baja como fecha_terminacion_anticipada
+    //* sino tomar la fecha fin contrato como fecha_terminacion_anticipada
 
     const fechaBaja = moment(fecha_baja, "YYYY-MM-DD");
     const fechaFinContrato = moment(
@@ -124,15 +132,17 @@ module.exports = async function darBajaTrabajador(dataBody) {
       //! Si fechaBaja es menor o igual a la fechaFinContrato
       fechaTerminacionAnticipada = fechaBaja.clone();
     } else {
-      //! Si fechaBaja es mayor a la fechaFinContrato
+      //* Si fechaBaja es mayor a la fechaFinContrato
       fechaTerminacionAnticipada = fechaFinContrato.clone();
     }
 
-    //! Actualizar el contrato laboral con la fecha_terminacion_anticipada
+    //* Actualizar el contrato laboral con la fecha_terminacion_anticipada
     contratoLaboralEncontrado.fecha_terminacion_anticipada =
       fechaTerminacionAnticipada.format("YYYY-MM-DD");
 
     await contratoLaboralEncontrado.save({ transaction });
+
+    //! 3. Calcular el tiempo total de servicio. (Para que tenga beneficios, minimo tiene que cumplir un mes en la empresa)
 
     const contratosParaCalcularTiempoLaborado = contratosDelTrabajador.map(
       (contrato) => {
@@ -150,45 +160,65 @@ module.exports = async function darBajaTrabajador(dataBody) {
       }
     );
 
-    //! Calcular el tiempo en la empresa
+    //* Calculando tiempo laborado
     const { tiempoLaborado } = calcularTiempoLaborado(
       contratosParaCalcularTiempoLaborado
     );
 
-    //! Calcular el tiempo del ultimo contrato
+    //! 4. Calcular la cantidad total de faltas injustificadas de TODO el tiempo de servicio
 
-    const fechaInicioDelMes = fechaTerminacionAnticipada
-      .clone()
-      .startOf("month");
+    const fecha_ingreso_trabajador =
+      contratosParaCalcularTiempoLaborado.reverse()[0].fecha_inicio;
 
-    const cantidadFaltas =
+    const cantidadFaltasInjustificadasDeTodoElTiempoDeServicio =
       await asistenciaRepository.obtenerCantidadFaltasPorRangoFecha(
         trabajador_id,
-        fechaInicioDelMes,
-        fechaTerminacionAnticipada
+        fecha_ingreso_trabajador,
+        fechaBaja.format("YYYY-MM-DD")
       );
 
-    const { periodoComputable } = calcularPeriodoComputableDelContrato(
-      contratoLaboralEncontrado,
-      cantidadFaltas
+    console.log(
+      "cantidadFaltasInjustificadasDeTodoElTiempoDeServicio",
+      cantidadFaltasInjustificadasDeTodoElTiempoDeServicio
     );
 
-    //! Remuneracion computable
+    //! 5. Calcular el PERIODO COMPUTABLE
+    const periodoComputable = restarDias(
+      tiempoLaborado,
+      cantidadFaltasInjustificadasDeTodoElTiempoDeServicio
+    );
 
-    console.log("contratosDelTrabajador", contratosDelTrabajador);
+    console.log("periodoComputable", periodoComputable);
 
-    //! inicializar los beneficios en 0
-    let montoGratificacionTrunca = 0;
-    let montoCtsTrunca = 0;
+    //! inicializar los beneficios
+    let gratificacionTrunca = null;
+    let ctsTrunca = null;
 
-    let gratificacionTruncaId = null;
-    let ctsTruncaId = null;
+    let remuneracionComputable = 0;
 
-    if (tiempoLaborado.meses >= 1) {
+    const regimenLaboral = contratoLaboralEncontrado.regimen; // MYPE , GENERAL
+
+    let factorRegimen = 0;
+
+    switch (regimenLaboral) {
+      case "MYPE":
+        factorRegimen = 0.5;
+        break;
+      case "GENERAL":
+        factorRegimen = 1;
+        break;
+      default:
+        break;
+    }
+
+    //! 6. Verificar si el trabajador cumple con los beneficios (minimo 1 mes en la empresa)
+
+    if (tiempoLaborado.anios >= 1 || tiempoLaborado.meses >= 1) {
       console.log("CUMPLIO CON LOS BENEFICIOS");
       //! Calculando la remuneracion computable
       const ultimoSueldo = contratoLaboralEncontrado.sueldo;
 
+      //! 7. Obteniendo los datos de mantenimiento
       const MONTO_ASIGNACION_FAMILIAR = Number(
         (
           await dataMantenimientoRepository.obtenerPorCodigo(
@@ -202,7 +232,6 @@ module.exports = async function darBajaTrabajador(dataBody) {
           .valor
       );
 
-
       const PORCENTAJE_BONIFICACION_ESSALUD = Number(
         (
           await dataMantenimientoRepository.obtenerPorCodigo(
@@ -213,24 +242,17 @@ module.exports = async function darBajaTrabajador(dataBody) {
 
       const asignacionFamiliar =
         trabajadorEncontrado.asignacion_familiar &&
-          new Date(trabajadorEncontrado.asignacion_familiar) <=
+        new Date(trabajadorEncontrado.asignacion_familiar) <=
           new Date(fechaBaja)
           ? MONTO_ASIGNACION_FAMILIAR
           : 0;
 
-      //*Obteniendo el promedio horas extras en base a las asistencias
+      //! 8. Obteniendo el promedio horas extras en base a las asistencias
 
       const fechaFinCalculo = moment(fechaBaja);
       const fechaInicioCalculo = moment(fechaBaja)
         .subtract(5, "months") // restamos 5, porque septiembre cuenta como un mes
-        .startOf("month");     // inicio del mes (abril)
-
-
-      console.log({
-        trabajador_id,
-        fechaInicioCalculo,
-        fechaFinCalculo
-      });
+        .startOf("month"); // inicio del mes (abril)
 
       const asistencias =
         await asistenciaRepository.obtenerAsistenciasPorRangoFecha(
@@ -241,17 +263,14 @@ module.exports = async function darBajaTrabajador(dataBody) {
 
       const asistenciasDelTrabajador = asistencias.map((b) => b.dataValues);
 
+      const promedioHorasExtras =
+        calcularPromedioHorasExtras(
+          asistenciasDelTrabajador,
+          MONTO_POR_HORA_EXTRA,
+          6
+        ) || 0;
 
-
-      const promedioHorasExtras = calcularPromedioHorasExtras(
-        asistenciasDelTrabajador,
-        MONTO_POR_HORA_EXTRA,
-        6
-      ) || 0;
-
-      console.log('promedioHorasExtras', promedioHorasExtras);
-
-      //! Cacular bonos
+      //! 9. Cacular bonos
       const bonosDelTrabajadorPorFecha =
         await bonoRepository.obtenerBonosDelTrabajadorEnRango(
           trabajador_id,
@@ -263,56 +282,112 @@ module.exports = async function darBajaTrabajador(dataBody) {
         (b) => b.dataValues
       );
 
-      const promedioBonoObra = calculaPromedioBonos(
-        bonosDelTrabajador,
-        6
-      ) || 0;
+      const promedioBonoObra = calculaPromedioBonos(bonosDelTrabajador, 6) || 0;
 
-      console.log({
-        ultimoSueldo,
-        asignacionFamiliar,
-        promedioHorasExtras,
-        promedioBonoObra
-      })
+      //! 10. Calcular la remuneracion computable
+      remuneracionComputable =
+        ultimoSueldo +
+        asignacionFamiliar +
+        promedioHorasExtras +
+        promedioBonoObra;
 
-      const remuneracionComputable = ultimoSueldo + asignacionFamiliar + promedioHorasExtras + promedioBonoObra;
+      //! 11.Calcular gratificcion trunca
 
-      const regimenLaboral = contratoLaboralEncontrado.regimen; // MYPE , GENERAL
+      //* Verificar si ya fue cerrado la gratificacion
+      let anio_gratificacion = moment(fecha_baja).format("YYYY");
+      let mes_gratificacion = moment(fecha_baja).format("MM");
 
-      let factorRegimen = 0;
+      // Si fecha terminacion anticipada esta dentro de la grati de julio, poner periodo = "JULIO"
 
-      switch (regimenLaboral) {
-        case "MYPE":
-          factorRegimen = 0.5;
-          break;
-        case "GENERAL":
-          factorRegimen = 1;
-          break;
-        default:
-          break;
+      let periodo = mes_gratificacion <= 6 ? "JULIO" : "DICIEMBRE";
+
+      // Verificar si ya hay un registro en cierres_Gratificaciones
+      const cierreGratificacion =
+        await gratificacionRepository.obtenerCierreGratificacion(
+          periodo,
+          anio_gratificacion,
+          filial_id,
+          transaction
+        );
+
+      if (!cierreGratificacion) {
+        const corresponde = correspondeGratiTrunca(
+          fechaBaja,
+          trabajador_id,
+          filial_id,
+          transaction
+        );
+
+        if (corresponde) {
+          console.log("contratosDelTrabajador", contratosDelTrabajador);
+          // 👉 aquí haces el cálculo de la gratificación trunca
+          const fechaInicioGrati = obtenerFechaInicioGrati(
+            fechaBaja,
+            fecha_ingreso_trabajador
+          );
+
+          console.log("fechaInicioGrati", fechaInicioGrati);
+          const { mesesComputados } = calcularMesesComputadosGratificacion(
+            fechaInicioGrati,
+            fechaBaja.format("YYYY-MM-DD")
+          );
+
+          console.log("mesesComputados", mesesComputados);
+
+          const cantidadFaltasEnLaGrati =
+            await asistenciaRepository.obtenerCantidadFaltasPorRangoFecha(
+              trabajador_id,
+              fechaInicioGrati,
+              fechaBaja
+            );
+
+          const { meses: mesesGrati, dias: diasGrati } = ajustarMesesPorFaltas(
+            mesesComputados,
+            cantidadFaltasEnLaGrati
+          );
+
+          console.log({
+            mesesGrati,
+            diasGrati,
+          });
+
+          const calculoGratificacionTruncaMeses = redondear2(
+            ((remuneracionComputable * factorRegimen) / 6) * mesesGrati || 0
+          );
+          const calculoGratificacionTruncaDias = redondear2(
+            ((remuneracionComputable * factorRegimen) / 6 / 30) * diasGrati || 0
+          );
+          const calculoGratificacionNetoTrunca = redondear2(
+            calculoGratificacionTruncaMeses + calculoGratificacionTruncaDias
+          );
+          const calculoBonificacionEssalud = redondear2(
+            calculoGratificacionNetoTrunca *
+              (PORCENTAJE_BONIFICACION_ESSALUD / 100)
+          );
+
+          gratificacionTrunca = {
+            meses_computados: mesesGrati,
+            dias_computados: diasGrati,
+            gratificacion_meses: calculoGratificacionTruncaMeses,
+            gratificacion_dias: calculoGratificacionTruncaDias,
+            grati_neta: calculoGratificacionNetoTrunca,
+            bonificacion_essalud: calculoBonificacionEssalud,
+            total: redondear2(
+              calculoGratificacionNetoTrunca + calculoBonificacionEssalud
+            ),
+          };
+        } else {
+          console.log(
+            "No corresponde gratificación trunca (ya se pagó en diciembre o se dio de baja después del 15)."
+          );
+        }
+      } else {
+        console.log("ya fue cerrada la grati");
       }
 
-      console.log('remuneracionComputable', remuneracionComputable);
-      //! Calcular gratificcion trunca
+      console.log("GRATIFICACION TRUNCA", gratificacionTrunca);
 
-      console.log('tiempoLaborado', tiempoLaborado);
-
-      const calculoGratificacionTruncaMeses = ((remuneracionComputable * factorRegimen) / 6) * tiempoLaborado.meses || 0;
-      const calculoGratificacionTruncaDias = (((remuneracionComputable * factorRegimen) / 6) / 30) * tiempoLaborado.dias || 0;
-      const calculoGratificacionNetoTrunca = calculoGratificacionTruncaMeses + calculoGratificacionTruncaDias;
-      const calculoBonificacionEssalud = calculoGratificacionNetoTrunca * (PORCENTAJE_BONIFICACION_ESSALUD / 100);
-
-      const gratificacionTrunca = {
-        gratificacion_meses: calculoGratificacionTruncaMeses,
-        gratificacion_dias: calculoGratificacionTruncaDias,
-        grati_neta: calculoGratificacionNetoTrunca,
-        bonificacion_essalud: calculoBonificacionEssalud,
-        total: calculoGratificacionNetoTrunca + calculoBonificacionEssalud,
-      }
-
-      console.log('gratificacionTrunca', gratificacionTrunca);
-
-      //! Calcular cts trunca
+      //! 12. Calcular cts trunca
 
       const mes = fechaBaja.month() + 1; // moment cuenta meses desde 0
       const año = fechaBaja.year();
@@ -327,23 +402,102 @@ module.exports = async function darBajaTrabajador(dataBody) {
         ultimaGratiPeriodo = moment(`${año - 1}-12`, "YYYY-MM");
       }
 
-      console.log('ultimaGratiPeriodo', ultimaGratiPeriodo.format('YYYY-MM'));
+      //console.log("ultimaGratiPeriodo", ultimaGratiPeriodo.format("YYYY-MM"));
       const gratificacionPorTrabajador = await db.gratificaciones.findOne({
-        where: { trabajador_id, periodo: ultimaGratiPeriodo.format("YYYY-MM"), filial_id },
+        where: {
+          trabajador_id,
+          periodo: ultimaGratiPeriodo.format("YYYY-MM"),
+          filial_id,
+        },
         transaction,
       });
-      console.log('gratificacionPorTrabajador', gratificacionPorTrabajador);
 
+      const gratificacion_neta = Number(
+        gratificacionPorTrabajador?.gratificacion_neta || 0
+      ); // Se utiliza la gratificacion sin bonificacion essalud para calcular cts trunca
+
+      const promedio_gratificacion = redondear2(gratificacion_neta / 6);
+
+      const remuneracionComputableParaCts = redondear2(
+        remuneracionComputable + promedio_gratificacion
+      );
+
+      console.log({
+        fechaBaja: fechaBaja.format("YYYY-MM-DD"),
+        fecha_ingreso_trabajador
+      });
+      const fechaInicioCts = obtenerFechaInicioCts(
+        fechaBaja.format("YYYY-MM-DD"),
+        fecha_ingreso_trabajador
+      );
+
+      const cantidadFaltasEnLaCts =
+        await asistenciaRepository.obtenerCantidadFaltasPorRangoFecha(
+          trabajador_id,
+          fechaInicioCts,
+          fechaBaja
+        );
+
+      const { meses: mesesComputadosCts, dias: diasComputadosCts } =
+        calcularMesesDiasCTS(fechaInicioCts, fechaBaja);
+
+      const { meses: mesesCts, dias: diasCts } = ajustarMesesDiasPorFaltasCTS(
+        mesesComputadosCts,
+        diasComputadosCts,
+        cantidadFaltasEnLaCts
+      );
+
+      const calculoCtsTruncaMeses = redondear2(
+        ((remuneracionComputableParaCts * factorRegimen) / 12) * mesesCts || 0
+      );
+      const calculoCtsTruncaDias = redondear2(
+        ((remuneracionComputable * factorRegimen) / 12 / 30) * diasCts || 0
+      );
+      const calculoCtsNetoTrunca = redondear2(
+        calculoCtsTruncaMeses + calculoCtsTruncaDias
+      );
+
+      ctsTrunca = {
+        meses_computados: mesesCts,
+        dias_computados: diasCts,
+        sueldo: remuneracionComputable,
+        promedio_gratificacion,
+        remuneracionComputableParaCts: remuneracionComputableParaCts,
+        calculoCtsTruncaMeses: calculoCtsTruncaMeses,
+        calculoCtsTruncaDias: calculoCtsTruncaDias,
+        total: calculoCtsNetoTrunca,
+      };
+
+      console.log("CTS TRUNCA", ctsTrunca);
     }
+
+    const informacionLiquidacion = {
+      trabajador_id: trabajador_id,
+      fecha_ingreso_trabajador: fecha_ingreso_trabajador,
+      fecha_cese: fechaBaja.format("YYYY-MM-DD"),
+      motivo_cese: motivo,
+      tiempo_servicio: tiempoLaborado,
+      faltas_injustificadas:
+        cantidadFaltasInjustificadasDeTodoElTiempoDeServicio,
+      periodo_computable: periodoComputable,
+      remuneracion_computable: remuneracionComputable,
+      regimen_laboral: regimenLaboral,
+    };
+
+    const respuesta = {
+      informacionLiquidacion,
+      gratificacionTrunca,
+      ctsTrunca,
+    };
+
+    console.log("respuesta", respuesta);
     asd;
     await transaction.commit();
     return {
       codigo: 201,
       respuesta: {
         mensaje: "Trabajador dada de baja exitosamente",
-        data: {
-          remuneracionComputable: remuneracionComputable
-        }
+        data: respuesta,
       },
     };
   } catch (error) {
