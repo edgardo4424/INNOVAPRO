@@ -21,6 +21,7 @@ import {
    ShieldCheck,
    ScrollText,
    Receipt,
+   Truck,
 } from "lucide-react";
 import {
    Sidebar,
@@ -68,6 +69,7 @@ const iconMap = {
    Trabajadores: Users,
    "Facturación": Receipt,
    "Gestión de Condiciones": ShieldCheck,
+   "Gestión de Transporte": Truck,
 };
 
 const modulesByRole = {
@@ -97,6 +99,14 @@ const modulesByRole = {
             { name: "Crear Trabajador", path: "/crear-trabajador" },
             { name: "Tabla de Trabajadores", path: "/tabla-trabajadores" },
             { name: "Dar de Baja", path: "/trabajadores-dados-de-baja" },
+         ],
+      },
+      {
+         group: "Gestión de Transporte",
+         items: [
+            { name: "Vehículos", path: "/transporte/vehiculos" },
+            { name: "Choferes", path: "/transporte/choferes" },
+            { name: "Transportistas", path: "/transporte/transportistas" },
          ],
       },
       {
@@ -137,7 +147,6 @@ const modulesByRole = {
             { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
          ],
       },
-
       {
          group: "Planilla",
          items: [
@@ -203,6 +212,14 @@ const modulesByRole = {
       },
    ],
    "Jefa de Almacén":[
+      {
+         group: "Gestión de Transporte",
+         items: [
+            { name: "Vehículos", path: "/transporte/vehiculos" },
+            { name: "Choferes", path: "/transporte/choferes" },
+            { name: "Transportistas", path: "/transporte/transportistas" },
+         ],
+      },
       {
          group: "Facturación",
          items: [

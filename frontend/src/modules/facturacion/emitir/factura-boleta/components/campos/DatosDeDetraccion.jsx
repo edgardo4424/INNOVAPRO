@@ -47,10 +47,10 @@ const DatosDeDetraccion = () => {
   const handleInputChange = (field, value) => {
     setDetraccion((prev) => ({
       ...prev,
-      [field]: value,
+      [field]: Number(value),
     }));
 
-    // Limpiar error del campo cuando el usuario empiece a escribir
+    //* Limpiar error del campo cuando el usuario empiece a escribir
     if (errors[field]) {
       setErrors((prev) => ({
         ...prev,
@@ -58,6 +58,14 @@ const DatosDeDetraccion = () => {
       }));
     }
   };
+
+  const handleSelect = (field, value) => {
+    setDetraccion((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
 
   const activar = () => {
     setActivarMonto(!activarMonto);
@@ -232,20 +240,20 @@ const DatosDeDetraccion = () => {
                   {tipo_Moneda == "PEN" ? "(S/)" : "(SOLES)"}
                   <span className="text-red-500">*</span>
                 </Label>
-                <div className="justi flex items-center">
+                <div className="justi flex items-center gap-x-1">
                   <div className="relative">
                     <Input
-                      type="text"
+                      type="number"
                       id="detraccion_mount"
                       placeholder="Ej: 120.00"
                       step="0.01"
                       min="0"
-                      value={detraccion.detraccion_mount}
+                      value={detraccion.detraccion_mount || ""}
                       disabled={!activarMonto}
                       onChange={(e) =>
                         handleInputChange("detraccion_mount", e.target.value)
                       }
-                      className="appearance-none"
+                      className=" no-spinners"
                     />
                     <button
                       onClick={activar}
@@ -274,7 +282,7 @@ const DatosDeDetraccion = () => {
                 name="detraccion_cod_bien_detraccion"
                 value={detraccion.detraccion_cod_bien_detraccion}
                 onValueChange={(value) =>
-                  handleInputChange("detraccion_cod_bien_detraccion", value)
+                  handleSelect("detraccion_cod_bien_detraccion", value)
                 }
               >
                 <SelectTrigger className="w-full">
@@ -305,7 +313,7 @@ const DatosDeDetraccion = () => {
                 name="detraccion_cod_medio_pago"
                 value={detraccion.detraccion_cod_medio_pago}
                 onValueChange={(value) =>
-                  handleInputChange("detraccion_cod_medio_pago", value)
+                  handleSelect("detraccion_cod_medio_pago", value)
                 }
               >
                 <SelectTrigger className="w-full">

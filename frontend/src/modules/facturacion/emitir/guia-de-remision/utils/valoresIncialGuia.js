@@ -70,7 +70,7 @@ const ValoresInterno = {
 
 
 const choferInicialPrivado = {
-    tipo: "",
+    tipo: "Principal",
     tipo_doc: "1",
     nro_doc: "",
     licencia: "",

@@ -37,6 +37,7 @@ const TransportistaPublicoForm = () => {
 
     if (transportista.nro_doc.length !== 11) {
       toast.error("El número de documento del chofer debe tener 11 dígitos.");
+      setLoadingBtn(false);
       return;
     }
 
@@ -50,7 +51,13 @@ const TransportistaPublicoForm = () => {
       }
 
       // ? ========= 1) RUC -> Razón Social (consulta “ligera”) =========
-      const rucResp = await factilizaService.obtenerEmpresaPorRuc(ruc);
+      const rucPromise = factilizaService.obtenerEmpresaPorRuc(ruc);
+      toast.promise(rucPromise, {
+        pending: "Buscando información de la empresa",
+        success: "Empreza encontrada",
+        error: "No se encontraron resultados",
+      });
+      const rucResp = await rucPromise;
       const rucStatus = rucResp?.status ?? 200;
       const rucOk =
         (rucResp?.success ?? rucResp?.succes ?? rucResp?.estado ?? true) &&

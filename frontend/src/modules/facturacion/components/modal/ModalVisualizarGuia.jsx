@@ -103,7 +103,7 @@ export default function ModalVisualizarGuia({
         return "Traslado emisor itinerante de comprobantes de pago";
       case "19":
         return "Traslado a zona primaria";
-      case "18":
+      case "20":
         return "Traslado por emisor itinerante (comprobante de pago)";
       default:
         return code;

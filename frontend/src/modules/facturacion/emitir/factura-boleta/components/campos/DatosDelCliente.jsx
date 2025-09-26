@@ -48,7 +48,7 @@ const DatosDelCliente = () => {
                 {
                     pending: "Buscando información del cliente",
                     success: "Información encontrada",
-                    error: "Ocurrió un error al buscar la información del cliente",
+                    error: "No se encontraron resultados",
                 }
             );
             const { data, status, success } = await promise;
@@ -74,7 +74,6 @@ const DatosDelCliente = () => {
                 }));
             }
         } catch (error) {
-            toast.error("Ocurrió un error al buscar la información del cliente.");
         }
     };
 
@@ -135,7 +134,9 @@ const DatosDelCliente = () => {
                             className="border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500 flex-grow"
                             value={cliente_Num_Doc || ""}
                             onChange={handleInputChange}
+                            inputMode="numeric"
                             maxLength={11}
+                            pattern="[0-9]{1,11}"
                         />
                         <button
                             type="submit"

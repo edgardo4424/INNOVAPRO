@@ -158,7 +158,7 @@ const DatosDeClienteForm = () => {
                         id="cliente_Razon_Social"
                         name="cliente_Razon_Social"
                         value={cliente_Razon_Social}
-                        onChange={handleChange}
+                        readOnly
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                     />
                 </div>
@@ -174,7 +174,7 @@ const DatosDeClienteForm = () => {
                         id="cliente_Direccion"
                         name="cliente_Direccion"
                         value={cliente_Direccion}
-                        onChange={handleChange}
+                        readOnly
                         className="px-3 py-2 block w-full rounded-md border text-gray-800 border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                     />
                 </div>

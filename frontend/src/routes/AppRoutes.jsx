@@ -74,7 +74,6 @@ const GestionCts = lazy(() =>
 );
 
 //* Facturacion
-
 const EmitirRoutes = lazy(() =>
    import("../modules/facturacion/routes/EmitirRoutes")
 );
@@ -85,6 +84,10 @@ const BandejaRoutes = lazy(() =>
 
 const Borrador = lazy(() =>
    import("../modules/facturacion/pages/Borrador")
+);
+
+const TransporteRoutes = lazy(() =>
+   import("../modules/transporte/routes/TransporteRoutes")
 );
 
 const GestionGratificacion = lazy(() =>
@@ -265,6 +268,17 @@ export default function AppRoutes() {
 
                      </Route>
                      {/*    //************************FINAL-FACTURACION************************* */}
+
+                     {/* // ! RUTAS DE TRANSPORTE */}
+                     <Route element={<RoleGuard roles={["CEO","Jefa de Almacén",]} />}>
+                        <Route
+                           path="transporte/*"
+                           element={
+                              <TransporteRoutes />
+                           }
+                        />
+                     </Route>
+                     {/* // ! RUTAS DE TRANSPORTE FIN */}
 
 
                      <Route element={<RoleGuard roles={["CEO"]} />}>
