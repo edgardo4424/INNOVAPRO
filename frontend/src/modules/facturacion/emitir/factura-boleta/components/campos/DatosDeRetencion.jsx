@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { valorIncialRetencion } from "../../utils/valoresInicial";
 
 const DatosDeRetencion = () => {
   const {
@@ -18,6 +19,7 @@ const DatosDeRetencion = () => {
     setFactura,
     retencionActivado,
     setRetencionActivado,
+    setDetraccionActivado,
     retencion,
     setRetencion,
     precioDolarActual,
@@ -37,7 +39,7 @@ const DatosDeRetencion = () => {
           descuento_monto_base: 0,
           descuento_monto: 0,
         });
-        setFactura({ ...factura, neto_Pagar: 0 });
+        // todo setFactura({ ...factura, neto_Pagar: 0 });
         return;
       }
 
@@ -106,46 +108,31 @@ const DatosDeRetencion = () => {
     retencionActivado,
   ]);
 
-  // Efecto para resetear cuando se desactiva la retención
-  useEffect(() => {
-    setFactura({
-      ...factura,
-      forma_pago: [],
-      cuotas_Real: [],
-    });
-    if (!retencionActivado) {
-      setRetencion({
-        ...retencion,
-        descuento_factor: 0,
-        descuento_monto_base: 0,
-        descuento_monto: 0,
-      });
-      setFactura({
-        ...factura,
-        forma_pago: [],
-        cuotas_Real: [],
-        neto_Pagar: 0,
-      });
-    }
-  }, [retencionActivado, retencion.descuento_factor]);
 
-  // Manejo del cambio de estado del switch
+
+  //? Manejo del cambio de estado del switch
   const handleSwitchChange = (checked) => {
     setRetencionActivado(checked);
+    setFactura({
+      ...factura,
+      tipo_Operacion: "0101",
+    });
     if (!checked) {
-      // Resetear valores cuando se desactiva
       setRetencion({
+        ...valorIncialRetencion,
         ...retencion,
-        descuento_factor: 0,
-        descuento_monto_base: 0,
-        descuento_monto: 0,
       });
     }
+    setDetraccionActivado(false);
   };
 
-  const shouldRender = !(
-    factura.tipo_Doc === "03" || factura.tipo_Operacion === "1001"
-  );
+    useEffect(() => {
+    if (factura.tipo_Operacion === "1001") {
+      setRetencionActivado(false);
+    }
+  }, [factura.tipo_Operacion]);
+
+  const shouldRender = !(factura.tipo_Doc !== "01");
 
   return shouldRender ? (
     <div className="flex flex-col gap-y-6 overflow-y-auto px-4 pt-4 lg:px-8">
@@ -158,13 +145,10 @@ const DatosDeRetencion = () => {
           aria-label="Activar retención"
           className={retencionActivado ? "!bg-blue-500" : "bg-gray-200"}
         />
-        <Label htmlFor="retencion-switch" className="text-gray-700">
-          {retencionActivado ? "Activado" : "Desactivado"}
-        </Label>
       </div>
 
       {/* Contenedor del formulario */}
-      {retencionActivado && (
+      {retencionActivado && factura.tipo_Operacion !== "1001" && (
         <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {/* Campo de porcentaje */}
           <div className="flex flex-col space-y-2">
@@ -220,7 +204,14 @@ const DatosDeRetencion = () => {
             <Input
               type="number"
               id="neto_pagar"
-              value={(factura.monto_Imp_Venta - retencion.descuento_monto ).toFixed(2) || 0}
+              value={
+                (
+                  factura.monto_Imp_Venta -
+                  (factura.tipo_Moneda === "USD"
+                    ? retencion.descuento_monto / precioDolarActual
+                    : retencion.descuento_monto)
+                ).toFixed(2) || 0
+              }
               disabled
               className="bg-gray-50 font-semibold"
             />

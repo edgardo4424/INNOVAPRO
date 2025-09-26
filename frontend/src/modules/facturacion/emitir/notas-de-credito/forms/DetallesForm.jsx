@@ -6,7 +6,7 @@ import TablaProductos from "../components/tabla/TablaProductos";
 const DetallesForm = () => {
   const { notaCreditoDebito, setNotaCreditoDebito } = useNota();
 
-  const { motivo_Cod, motivo_Des, detalle } = notaCreditoDebito;
+  const { motivo_Cod, motivo_Des } = notaCreditoDebito;
 
   const [open, setOpen] = useState(false);
 
@@ -15,22 +15,37 @@ const DetallesForm = () => {
   };
 
   useEffect(() => {
-    // Solo actualiza si motivo_Cod es "01" o "03" y tipo_Doc es "08"
-    if (
-      (motivo_Cod === "01" || motivo_Cod === "03") &&
-      notaCreditoDebito.tipo_Doc === "08"
-    ) {
-      if (notaCreditoDebito.detalle && notaCreditoDebito.detalle.length > 0) {
-        setNotaCreditoDebito((prev) => {
-          const newDetalle = [...prev.detalle];
-          newDetalle[0] = {
-            ...newDetalle[0],
+    const motivosValidos = ["01", "03"];
+
+    setNotaCreditoDebito((prev) => {
+      // 🔹 Si motivo_Cod cambia, vaciar detalle
+      if (prev.motivo_Cod !== motivo_Cod) {
+        return {
+          ...prev,
+          motivo_Cod,
+          detalle: [],
+        };
+      }
+
+      // 🔹 Si está en motivos válidos y hay detalle → actualizar solo descripción
+      if (
+        motivosValidos.includes(motivo_Cod) &&
+        prev.tipo_Doc === "08" &&
+        Array.isArray(prev.detalle) &&
+        prev.detalle.length > 0
+      ) {
+        const nuevoDetalle = [...prev.detalle];
+        if (nuevoDetalle[0]?.descripcion !== (prev.motivo_Des || "")) {
+          nuevoDetalle[0] = {
+            ...nuevoDetalle[0],
             descripcion: prev.motivo_Des || "",
           };
-          return { ...prev, detalle: newDetalle };
-        });
+          return { ...prev, detalle: nuevoDetalle };
+        }
       }
-    }
+
+      return prev; // 🔹 Sin cambios
+    });
   }, [
     motivo_Des,
     motivo_Cod,

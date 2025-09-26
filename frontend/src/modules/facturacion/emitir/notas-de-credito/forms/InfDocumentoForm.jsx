@@ -92,6 +92,7 @@ const InfDocumentoForm = () => {
       ...prev,
       serie: nuevaSerie,
       correlativo: "", // Limpiar el correlativo para que se recalcule
+      detalle: [],
     }));
   }, [notaCreditoDebito.tipo_Doc]);
 

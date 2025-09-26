@@ -469,9 +469,7 @@ export default function ModalVisualizarDocumento({
                           Monto Neto a Pagar
                         </p>
                         <p className="text-sm text-gray-800">
-                          {(factura?.monto_Imp_Venta - factura?.descuento_monto).toFixed(
-                            2,
-                          )}
+                          {factura?.neto_Pagar || "0.00"}
                         </p>
                       </div>
                     </div>
@@ -524,9 +522,7 @@ export default function ModalVisualizarDocumento({
                         Neto a Pagar
                       </p>
                       <p className="text-sm text-gray-800">
-                        {(
-                          factura.monto_Imp_Venta - factura.detraccion_mount
-                        ).toFixed(2)}
+                        {factura?.neto_Pagar || "0.00"}
                       </p>
                     </div>
                   </div>

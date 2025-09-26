@@ -40,11 +40,11 @@ function pdfDetallesTotal(
                         ],
                         [
                             { text: `DETRACCIÓN ${Number(factura?.detraccion_percent).toFixed(0)}%:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
-                            { text: `${(factura?.detraccion_mount)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
+                            { text: `${utils.formatMoney(factura?.detraccion_mount)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
                         ],
                         [
                             { text: `NETO A PAGAR:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
-                            { text: `${(factura?.monto_Imp_Venta - factura?.detraccion_mount).toFixed(2)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
+                            { text: `${utils.formatMoney(factura?.neto_Pagar) || '0.00'}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
                         ],
                     ]
                 },

@@ -385,10 +385,7 @@ export default function ModalVisualizarFactura() {
                           Neto a Pagar
                         </p>
                         <p className="rounded-md bg-white px-2 text-sm text-gray-800">
-                          {(
-                            factura.monto_Imp_Venta -
-                            detraccion.detraccion_mount
-                          ).toFixed(2)}
+                          {factura?.neto_Pagar || "0.00"}
                         </p>
                       </div>
                     </div>

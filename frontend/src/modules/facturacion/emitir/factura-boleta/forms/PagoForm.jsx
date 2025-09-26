@@ -27,41 +27,56 @@ const PagoForm = ({ closeModal }) => {
     retencionActivado,
     retencion,
     detraccion,
+    detraccionActivado,
   } = useFacturaBoleta();
 
+  // ? LISTA DE LOS PAGOS
   const { forma_pago: ListaDePago } = factura;
 
+  //  ? MONTO TOAL PAGOS REGISTRADOS
   const montoTotalPagos = ListaDePago.reduce(
     (total, pago) => total + (parseFloat(pago.monto) || 0),
     0,
   );
 
+  // ? MONTO RESTANTE
   let montoRestante = factura.monto_Imp_Venta;
 
-  let montoNeto = parseFloat(
-    retencionActivado
-      ? factura.tipo_Moneda === "USD"
-        ? (
-            factura.monto_Imp_Venta -
-            retencion.descuento_monto / precioDolarActual
-          ).toFixed(2)
-        : factura.monto_Imp_Venta - retencion.descuento_monto
-      : factura.tipo_Operacion == "1001" && !retencionActivado
-        ? factura.monto_Imp_Venta - detraccion.detraccion_mount
-        : factura.monto_Imp_Venta,
-  );
+  // TODO: SI SE APLICA RETENCION O DETRACCION, VALIDADO SI EL TIPO DE MONEDA ES USD O PEN
+  let montoNeto = factura.monto_Imp_Venta;
+  // * CONDICIONAL PARA CALCULAR EL MONTO NETO SEGUN EL TIPO DE MONEDA
+  if (retencionActivado) {
+    if (factura.tipo_Moneda === "USD") {
+      montoNeto =
+        factura.monto_Imp_Venta - retencion.descuento_monto / precioDolarActual;
+      montoNeto = parseFloat(montoNeto.toFixed(2));
+    } else {
+      montoNeto = factura.monto_Imp_Venta - retencion.descuento_monto;
+    }
+  } else if (factura.tipo_Operacion == "1001" && !retencionActivado) {
+    if (factura.tipo_Moneda === "USD") {
+      montoNeto =
+        factura.monto_Imp_Venta -
+        detraccion.detraccion_mount / precioDolarActual;
+      montoNeto = parseFloat(montoNeto.toFixed(2));
+    } else {
+      montoNeto = factura.monto_Imp_Venta - detraccion.detraccion_mount;
+    }
+  } else {
+    montoNeto = factura.monto_Imp_Venta;
+  }
+  // * CONDICIONAL PARA REDONDEAR EL MONTO NETO
+  montoNeto = parseFloat(montoNeto);
 
   const [activeButton, setActiveButton] = useState(false);
   const [numeroCuotas, setNumeroCuotas] = useState(1);
 
   // ?? Datos para calculadora
-  const [showCalculadora, setShowCalculadora] = useState(false);
   const [daysToAdd, setDaysToAdd] = useState("");
 
   const montoTotalFactura = parseFloat(montoRestante || 0);
-  const pagosCompletos = montoTotalPagos >= montoTotalFactura;
 
-  // Función para generar fecha de fin de mes
+  // * FUNCION PARA OBTENER LA FECHA DEL ULTIMO DIA DEL MES
   const getEndOfMonth = (monthsToAdd) => {
     const now = new Date();
     const target = new Date(
@@ -80,7 +95,7 @@ const PagoForm = ({ closeModal }) => {
     return `${ymdPeru}T00:00:00-05:00`;
   };
 
-  // Función para generar las cuotas automáticamente en pagoActual (para forma_pago)
+  // * FUNCION PARA GENERAR CUOTAS EN PAGO ACTUAL
   const generarCuotasEnPagoActual = (numCuotas) => {
     if (numCuotas <= 0 || !factura.monto_Imp_Venta) return;
 
@@ -91,7 +106,7 @@ const PagoForm = ({ closeModal }) => {
     for (let i = 0; i < numCuotas; i++) {
       let monto = parseFloat(montoPorCuota);
 
-      // Ajustar la última cuota para compensar redondeos
+      //? Ajustar la última cuota para compensar redondeos
       if (i === numCuotas - 1) {
         const sumaAnteriores = nuevasCuotas.reduce(
           (sum, c) => sum + parseFloat(c.monto),
@@ -111,7 +126,7 @@ const PagoForm = ({ closeModal }) => {
     setPagoActual(nuevasCuotas);
   };
 
-  // Función para generar las cuotas reales basadas en montoNeto
+  //* Función para generar las cuotas reales basadas en montoNeto
   const generarCuotasReales = (cuotasFormaPago) => {
     if (!cuotasFormaPago || cuotasFormaPago.length === 0) return [];
 
@@ -142,7 +157,7 @@ const PagoForm = ({ closeModal }) => {
     return cuotasReales;
   };
 
-  // Manejar cambio en número de cuotas
+  //* Manejar cambio en número de cuotas
   const handleCuotasChange = (e) => {
     const value = e.target.value;
     const numCuotas = parseInt(value.substring(0, Math.min(2, value.length)));
@@ -164,7 +179,7 @@ const PagoForm = ({ closeModal }) => {
     }
   };
 
-  // Actualizar fecha de una cuota específica
+  //? Actualizar fecha de una cuota específica
   const actualizarFechaCuota = (index, nuevaFecha) => {
     const cuotasActualizadas = [...pagoActual];
     cuotasActualizadas[index] = {
@@ -174,42 +189,11 @@ const PagoForm = ({ closeModal }) => {
     setPagoActual(cuotasActualizadas);
   };
 
-  // Función para calcular la nueva fecha al añadir días (para contado)
-  const handleCalculateDate = () => {
-    const days = parseInt(daysToAdd, 10);
-    if (isNaN(days)) {
-      toast.error("Por favor, ingresa un número válido de días.", {
-        position: "top-right",
-      });
-      return;
-    }
-
-    const now = new Date();
-    const target = new Date(now);
-    target.setDate(now.getDate() + (days - 1));
-
-    const ymdPeru = new Intl.DateTimeFormat("en-CA", {
-      timeZone: "America/Lima",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    }).format(target);
-
-    const fechaPagoISO = `${ymdPeru}T00:00:00-05:00`;
-
-    setPagoActual((prev) => {
-      const newPago = { ...prev[0], fecha_Pago: fechaPagoISO };
-      return [newPago];
-    });
-
-    setShowCalculadora(false);
-    setDaysToAdd("");
-  };
-
+  // * MANEJO DEL CAMBIO EN TIPO
   const handleSelectChange = (value, name) => {
     if (name === "tipo") {
       if (value === "Contado") {
-        // Para contado: un solo objeto con cuota = 0
+        //? Para contado: un solo objeto con cuota = 0
         setPagoActual([
           {
             tipo: "Contado",
@@ -310,7 +294,7 @@ const PagoForm = ({ closeModal }) => {
         ...prevFactura,
         forma_pago: [...pagoActual],
         cuotas_Real: [cuotaReal],
-        neto_Pagar:  Number(montoNeto.toFixed(2)),
+        neto_Pagar: Number(montoNeto.toFixed(2)),
       }));
     } else if (pagoActual[0].tipo === "Credito") {
       // Para crédito, validar que hay cuotas generadas
@@ -350,7 +334,7 @@ const PagoForm = ({ closeModal }) => {
         ...prevFactura,
         forma_pago: [...pagoActual],
         cuotas_Real: [...cuotasReales],
-        neto_Pagar:  Number(montoNeto.toFixed(2)) ,
+        neto_Pagar: Number(montoNeto.toFixed(2)),
       }));
 
       setNumeroCuotas(1);
@@ -385,6 +369,8 @@ const PagoForm = ({ closeModal }) => {
       ]);
     }
   }, [pagoActual[0]?.tipo]);
+
+  
 
   return (
     <div className="col-span-4 w-full overflow-y-auto">

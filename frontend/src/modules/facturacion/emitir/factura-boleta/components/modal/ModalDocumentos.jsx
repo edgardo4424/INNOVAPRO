@@ -43,7 +43,7 @@ const ModalDocumentos = ({ open, setOpen }) => {
     );
 
     if (existe) {
-      toast.warn("⚠️ Este número de documento ya fue agregado.");
+      toast.warn("Este número de documento ya fue agregado.");
       return;
     }
 
@@ -128,6 +128,11 @@ const ModalDocumentos = ({ open, setOpen }) => {
                     nroDoc: e.target.value.toUpperCase(),
                   })
                 }
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                  }
+                }}
               />
             </div>
           </div>

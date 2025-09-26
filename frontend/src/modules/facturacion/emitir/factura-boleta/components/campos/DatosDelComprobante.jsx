@@ -55,32 +55,21 @@ const DatosDelComprobante = () => {
       ...prev,
       serie: nuevaSerie,
       correlativo: "",
-      relDocs: [],
-      forma_pago: [],
-      cuotas_Real: [],
+      // forma_pago: [],
+      // cuotas_Real: [],
       neto_Pagar: 0,
     }));
   }, [factura.tipo_Doc]);
 
-  useEffect(() => {
-    setFactura((prev) => ({
-      ...prev,
-      forma_pago: [],
-      cuotas_Real: [],
-      neto_Pagar: 0,
-    }));
-    setRetencionActivado(false);
-  }, [factura.tipo_Moneda]);
+  // useEffect(() => {
+  //   setFactura((prev) => ({
+  //     ...prev,
+  //     forma_pago: [],
+  //     cuotas_Real: [],
+  //     neto_Pagar: 0,
+  //   }));
+  // }, [factura.tipo_Moneda]);
 
-    useEffect(() => {
-    setFactura((prev) => ({
-      ...prev,
-      forma_pago: [],
-      cuotas_Real: [],
-      neto_Pagar: 0,
-    }));
-    setRetencionActivado(false);
-  }, [factura.empresa_Ruc]);
 
   useEffect(() => {
     // Buscar y establecer el correlativo basándose en la serie y el RUC actual
@@ -115,11 +104,12 @@ const DatosDelComprobante = () => {
           <Label htmlFor="tipo_operacion">Tipo de Venta</Label>
           <Select
             name="tipo_operacion"
-            value={factura.tipo_Operacion+""}
-            onValueChange={(value) =>{
-              console.log('first');
-              handleSelectChange(value, "tipo_Operacion")
-            }}
+            value={factura.tipo_Operacion}
+            readOnly
+            // onValueChange={(value) =>{
+            //   console.log('first');
+            //   handleSelectChange(value, "tipo_Operacion")
+            // }}
           >
             <SelectTrigger className="w-full rounded-md border border-gray-300 shadow-sm">
               <SelectValue placeholder="Selecciona un tipo de operación" />

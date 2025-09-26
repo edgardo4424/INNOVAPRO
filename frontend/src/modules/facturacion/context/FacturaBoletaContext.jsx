@@ -328,11 +328,11 @@ export function FacturaBoletaProvider({ children }) {
         (_, i) => i !== edicionProducto.index,
       ),
     }));
-    setFactura((prevFactura) => ({
-      ...prevFactura,
-      forma_pago: [],
-      cuotas_Real: [],
-    }));
+    // setFactura((prevFactura) => ({
+    //   ...prevFactura,
+    //   forma_pago: [],
+    //   cuotas_Real: [],
+    // }));
   };
 
   const emitirFactura = async () => {
@@ -345,13 +345,20 @@ export function FacturaBoletaProvider({ children }) {
     try {
       let facturaAEmitir;
 
-      if (retencionActivado && factura.tipo_Doc !== "03") {
+      if (
+        retencionActivado &&
+        !detraccionActivado &&
+        factura.tipo_Doc !== "03" &&
+        factura.tipo_Operacion !== "1001"
+      ) {
         facturaAEmitir = {
           ...factura,
           ...retencion,
         };
       } else if (
         factura.tipo_Operacion === "1001" &&
+        detraccionActivado &&
+        !retencionActivado &&
         factura.tipo_Doc !== "03"
       ) {
         facturaAEmitir = {

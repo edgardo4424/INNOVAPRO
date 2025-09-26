@@ -72,7 +72,7 @@ function numeroALeyenda(nro, moneda = "PEN") {
 
     const textoDecimal = parteDecimal.toString().padStart(2, '0');
 
-    return `SON ${textoEntero} CON ${textoDecimal}/100 ${moneda === 'PEN' ? 'SOLES' : 'DOLARES'}`.replace(/\s+/g, ' ').trim();
+    return `SON: ${textoEntero} CON ${textoDecimal}/100 ${moneda === 'PEN' ? 'SOLES' : 'DOLARES'}`.replace(/\s+/g, ' ').trim();
 }
 
 // Ejemplo de uso:

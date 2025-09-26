@@ -68,14 +68,14 @@ const valorIncialPago = [{
 
 const valorIncialRetencion = {
     descuento_cod_tipo: "62",
-    descuento_factor: 0.03,
+    descuento_factor: 0,
     descuento_monto_base: 0,
     descuento_monto: 0,
 }
 
 const valorIncialDetracion = {
-    detraccion_cod_bien_detraccion: "001", //? valor por defecto deposito en cuenta.
-    detraccion_cod_medio_pago: "",
+    detraccion_cod_bien_detraccion: "", 
+    detraccion_cod_medio_pago: "001",//? valor por defecto deposito en cuenta.
     detraccion_cta_banco: "",
     detraccion_percent: 0,
     detraccion_mount: 0,

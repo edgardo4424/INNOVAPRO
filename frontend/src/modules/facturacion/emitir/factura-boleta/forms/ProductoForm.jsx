@@ -129,7 +129,6 @@ const ProductoForm = ({ closeModal }) => {
     }
     setActiveButton(false);
     agregarProducto();
-    setFactura((prev) => ({ ...prev, forma_pago: [], cuotas_Real: [] }));
     closeModal();
   };
 

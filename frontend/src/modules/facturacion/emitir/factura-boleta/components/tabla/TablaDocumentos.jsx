@@ -43,7 +43,6 @@ const TablaDocumentos = ({ open, setOpen }) => {
                     <TableBody className={"bg-gray-100"}>
                         {listaDeDocumentos.map((item, index) => (
                             <TableRow key={index}
-                                onClick={() => seleccionarPago(item)}
                             >
                                 <TableCell>{item.tipoDoc == "09" ? "Guia de Remision" : "-"}</TableCell>
                                 <TableCell>{item.nroDoc}</TableCell>

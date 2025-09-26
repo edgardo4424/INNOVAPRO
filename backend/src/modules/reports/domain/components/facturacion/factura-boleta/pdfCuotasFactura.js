@@ -29,7 +29,7 @@ function pdfCuotasFactura(factura) {
     const bodyRows = cuotas.length
         ? cuotas.map((pago, idx) => ([
             { text: String(pago.cuota ?? idx + 1), style: "paymentTableBody", alignment: "center" },
-            { text: utils.formatCurrency(pago.monto), style: "paymentTableBody", alignment: "center" },
+            { text: utils.formatMoney(pago.monto), style: "paymentTableBody", alignment: "center" },
             { text: utils.formatDateTime(pago.fecha_Pago), style: "paymentTableBody", alignment: "center" },
         ]))
         : [[
