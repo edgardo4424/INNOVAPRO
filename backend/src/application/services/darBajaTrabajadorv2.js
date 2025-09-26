@@ -35,6 +35,9 @@ const asistenciaRepository = new SequelizeAsistenciaRepository();
 const SequelizeBonoRepository = require("../../modules/bonos/infraestructure/repositories/sequelizeBonoRepository");
 const bonoRepository = new SequelizeBonoRepository();
 
+const SequelizeVacacionesRepository = require("../../modules/vacaciones/infraestructure/repositories/sequelizeVacacionesRepository");
+const vacacionesRepository = new SequelizeVacacionesRepository();
+
 const db = require("../../database/models");
 const sequelize = require("../../database/sequelize");
 const InsertarRegistroBajaTrabajador = require("../../modules/dar_baja_trabajadores/application/useCases/InsertarRegistroBajaTrabajador");
@@ -475,29 +478,54 @@ module.exports = async function darBajaTrabajador(dataBody) {
 
     const calculoVacacionesTruncaAnios =
       redondear2(
-        remuneracionComputable * factorRegimen * tiempoLaborado.anios
+        remuneracionComputable * factorRegimen * periodoComputable.anios
       ) || 0;
 
     const calculoVacacionesTruncaMeses =
       redondear2(
-        ((remuneracionComputable * factorRegimen) / 12) * tiempoLaborado.meses
+        ((remuneracionComputable * factorRegimen) / 12) * periodoComputable.meses
       ) || 0;
+
+      console.log('tiempoLaborado', tiempoLaborado);
+      console.log('tiempoLaborado.dias', tiempoLaborado.dias);
 
     const calculoVacacionesTruncaDias =
       redondear2(
         ((remuneracionComputable * factorRegimen) / 12 / 30) *
-          tiempoLaborado.dias
+          periodoComputable.dias
       ) || 0;
 
-    // obtener descuentos vacaciones gozadas
-    const descuentos_vacaciones_gozadas = 0;
+    console.log('calculoVacacionesTruncaDias', calculoVacacionesTruncaDias);
+    //* Obtener descuentos vacaciones gozadas
 
-    const total_vacaciones_truncas = redondear2(
+    const cantidadDiasVacacionesGozadas = await vacacionesRepository.obtenerCantidadDiasVacacionesGozadas(trabajador_id, fecha_ingreso_trabajador, fecha_baja, transaction);
+
+    const montoPorDiaVacacionesGozadas = redondear2(contratoLaboralEncontrado.sueldo / 30);
+
+    console.log('cantidadDiasVacacionesGozadas', cantidadDiasVacacionesGozadas);
+
+    const descuentos_vacaciones_gozadas = redondear2(montoPorDiaVacacionesGozadas * cantidadDiasVacacionesGozadas);;
+
+    const subtotal_vacaciones_truncas = redondear2(
       calculoVacacionesTruncaAnios +
         calculoVacacionesTruncaMeses +
         calculoVacacionesTruncaDias -
         descuentos_vacaciones_gozadas
     );
+
+      const PORCENTAJE_DESCUENTO_AFP = Number(
+      (await dataMantenimientoRepository.obtenerPorCodigo("valor_afp")).valor
+    );
+
+    const PORCENTAJE_DESCUENTO_SEGURO = Number(
+      (await dataMantenimientoRepository.obtenerPorCodigo("valor_seguro")).valor
+    );
+
+    const PORCENTAJE_DESCUENTO_AFP_Y_SEGURO = redondear2(
+      PORCENTAJE_DESCUENTO_AFP + PORCENTAJE_DESCUENTO_SEGURO
+    )
+
+    const descuento_afp_y_seguro = redondear2(subtotal_vacaciones_truncas*PORCENTAJE_DESCUENTO_AFP_Y_SEGURO /100)
 
     const vacacionesTrunca = {
       anios_computados: periodoComputable.anios,
@@ -508,9 +536,21 @@ module.exports = async function darBajaTrabajador(dataBody) {
       calculoVacacionesTruncaMeses,
       calculoVacacionesTruncaDias,
       descuentos_vacaciones_gozadas,
-      total: total_vacaciones_truncas,
+      subtotal_vacaciones_truncas: subtotal_vacaciones_truncas,
+      descuento_afp_y_seguro: descuento_afp_y_seguro,
+      total: redondear2(subtotal_vacaciones_truncas - descuento_afp_y_seguro),
     }
-    
+
+    //! 14. Calcular Remuneracion
+
+    const fecha_inicio_remuneracion = moment(fecha_baja).startOf('month').format("YYYY-MM-DD");
+    const fecha_fin_remuneracion = fecha_baja;
+
+    const cantidadDiasRemuneracion = moment(fecha_fin_remuneracion).diff(moment(fecha_inicio_remuneracion), 'days') + 1;
+
+    console.log('cantidadDiasRemuneracion', cantidadDiasRemuneracion);
+
+    const sueldo_base_mes = contratoLaboralEncontrado.sueldo;
 
     const informacionLiquidacion = {
       trabajador_id: trabajador_id,
