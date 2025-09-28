@@ -1,6 +1,7 @@
 import { SquarePen } from "lucide-react";
 
-const TablaChoferes = ({ choferes }) => {
+const TablaTransportistas = ({ transportistas }) => {
+  console.log(transportistas);
   return (
     <div className="w-full rounded-xl border-1 border-gray-200">
       <table className="min-w-full overflow-hidden rounded-xl bg-white shadow-md">
@@ -10,16 +11,16 @@ const TablaChoferes = ({ choferes }) => {
               #
             </th>
             <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
-              Nombres
-            </th>
-            <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
-              Apellidos
-            </th>
-            <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
-              Nro. Licencia
-            </th>
-            <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
               Nro. Documento
+            </th>
+            <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
+              Razon Social
+            </th>
+            <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
+              Mtc
+            </th>
+            <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
+              Vehiculos
             </th>
             <th className="px-3 py-3 text-center text-xs font-semibold tracking-wider uppercase">
               Acciones
@@ -27,24 +28,35 @@ const TablaChoferes = ({ choferes }) => {
           </tr>
         </thead>
         <tbody>
-          {choferes.length > 0 ? (
-            choferes.map((chofer, index) => (
-              <tr key={index}>
+          {transportistas.length > 0 ? (
+            transportistas.map((transporte, index) => (
+              <tr key={index} className="hover:bg-gray-100">
                 <td className="px-3 py-2 text-sm whitespace-nowrap text-gray-500">
                   {index + 1}
                 </td>
                 <td className="px-3 py-2 text-sm whitespace-nowrap text-gray-500">
-                  {chofer?.nombres || "N/A"}
+                  {transporte?.nro_doc || "N/A"}
                 </td>
                 <td className="px-3 py-2 text-sm whitespace-nowrap text-gray-500">
-                  {chofer?.apellidos || "N/A"}
+                  {transporte?.razon_social || "N/A"}
                 </td>
                 <td className="px-3 py-2 text-sm whitespace-nowrap text-gray-500">
-                  {chofer?.nro_licencia || "N/A"}
+                  {transporte?.nro_mtc || "N/A"}
                 </td>
-                <td className="px-3 py-2 text-sm whitespace-nowrap text-gray-500">
-                  {chofer?.tipo_documento || "N/A"} -{" "}
-                  {chofer?.nro_documento || "N/A"}
+                <td className="space-y-1 px-3 py-2 text-sm whitespace-nowrap text-gray-500">
+                  {transporte?.vehiculos.length > 0 ? (
+                    transporte.vehiculos.map((vehiculo, index) => {
+                      return (
+                        <span key={index} className={`block ${index > 0 && "border-t border-gray-500"}`}>
+                          {vehiculo?.marca || "N/A"}{" "}
+                          {vehiculo?.color ? `(${vehiculo?.color})` : "N/A"} -{" "}
+                          {vehiculo?.nro_placa || "N/A"}
+                        </span>
+                      );
+                    })
+                  ) : (
+                    <span> - </span>
+                  )}
                 </td>
                 <td className="flex justify-center px-3 py-2 text-sm text-gray-500">
                   <button className="text-innova-blue hover:text-innova-blue-hover cursor-pointer">
@@ -59,7 +71,7 @@ const TablaChoferes = ({ choferes }) => {
                 colSpan={6}
                 className="px-3 py-2 text-center text-sm whitespace-nowrap text-gray-500"
               >
-                No se encontraron choferes
+                No se encontraron transportistas
               </td>
             </tr>
           )}
@@ -69,4 +81,4 @@ const TablaChoferes = ({ choferes }) => {
   );
 };
 
-export default TablaChoferes;
+export default TablaTransportistas;

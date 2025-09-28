@@ -33,7 +33,7 @@ const TablaVehiculos = ({ vehiculos }) => {
             <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
               Transportista
             </th>
-            <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
+            <th className="px-3 py-3 text-center text-xs font-semibold tracking-wider uppercase">
               Acciones
             </th>
           </tr>

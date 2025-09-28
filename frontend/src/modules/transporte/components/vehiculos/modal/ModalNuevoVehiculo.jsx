@@ -33,9 +33,9 @@ export default function ModalNuevoVehiculo({ open, setOpen }) {
 
         {/* 🧾 Encabezado */}
         <AlertDialogHeader>
-          <AlertDialogTitle>Datos del Producto</AlertDialogTitle>
+          <AlertDialogTitle>Datos del Vehiculo</AlertDialogTitle>
           <AlertDialogDescription className="text-center">
-            Ingresa los datos correctamente para crear o editar un producto.
+            Ingresa los datos correctamente para crear o editar un Vehiculo.
           </AlertDialogDescription>
         </AlertDialogHeader>
 

@@ -46,12 +46,6 @@ let listaVehiculos = [
     capacidad: 35,
     unidad: "TNE",
     certificado_vehicular: "CV-112233",
-    transportista: {
-      id: 1,
-      ruc: "20123456789",
-      razon_social: "Transportes Rápidos S.A.C.",
-      nro_mtc: "MTC-0001",
-    },
   },
   {
     nro_placa: "FGH890",
@@ -62,12 +56,6 @@ let listaVehiculos = [
     capacidad: 28,
     unidad: "TNE",
     certificado_vehicular: "CV-445566",
-    transportista: {
-      id: 3,
-      ruc: "10112233445",
-      razon_social: "Distribuidora Andina E.I.R.L.",
-      nro_mtc: "MTC-0003",
-    },
   },
   {
     nro_placa: "IJK123",
@@ -78,12 +66,6 @@ let listaVehiculos = [
     capacidad: 22,
     unidad: "TNE",
     certificado_vehicular: "CV-778899",
-    transportista: {
-      id: 2,
-      ruc: "20987654321",
-      razon_social: "Logística Segura E.I.R.L.",
-      nro_mtc: "MTC-0002",
-    },
   },
 ];
 
