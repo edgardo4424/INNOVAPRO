@@ -61,11 +61,11 @@ module.exports = {
         type: Sequelize.STRING(50),
         allowNull: false,
       },
-      nro_documento: {
+      nro_doc: {
         type: Sequelize.STRING(12),
         allowNull: false,
       },
-      tipo_documento: {
+      tipo_doc: {
         type: Sequelize.STRING(3),
         allowNull: false,
       },
@@ -101,7 +101,7 @@ module.exports = {
         type: Sequelize.STRING(50),
         allowNull: true,
       },
-      certificado_vehicular: {
+      tuce_certificado: {
         type: Sequelize.STRING(40),
         allowNull: true,
       },
@@ -121,9 +121,8 @@ module.exports = {
         defaultValue: Sequelize.fn("NOW"),
       },
       updatedAt: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.fn("NOW"),
       },
     });
   },

@@ -1,25 +1,37 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../../../config/db");
 
-const Transportistas = sequelize.define(
-    "transportistas",
+const Vehiculos = sequelize.define(
+    "vehiculos",
     {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
         },
-        nro_doc: {
-            type: DataTypes.STRING(12),
-            allowNull: false,
-        },
-        razon_social: {
-            type: DataTypes.STRING(250),
-            allowNull: false,
-        },
-        nro_mtc: {
+        nro_placa: {
             type: DataTypes.STRING(50),
             allowNull: false,
+        },
+        marca: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+        },
+        color: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+        },
+        tuce_certificado: {
+            type: DataTypes.STRING(40),
+            allowNull: false,
+        },
+        id_transportista: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: "transportistas",
+                key: "id",
+            },
         },
         createdAt: {
             allowNull: false,
@@ -34,12 +46,13 @@ const Transportistas = sequelize.define(
     },
     {
         timestamps: false,
-        tableName: "transportistas",
+        tableName: "vehiculos",
     }
 );
 
-Transportistas.associate = (models) => {
-    Transportistas.hasMany(models.vehiculos, { foreignKey: "id_transportista" });
+Vehiculos.associate = (models) => {
+    Vehiculos.belongsTo(models.transportistas, { foreignKey: "id_transportista" });
 }
 
-module.exports = { Transportistas };
+
+module.exports = { Vehiculos }

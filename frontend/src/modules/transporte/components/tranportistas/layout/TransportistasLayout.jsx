@@ -1,145 +1,65 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import ModalNuevoTransporte from "../modal/ModalNuevoTransporte";
+import transportistaService from "@/modules/transporte/service/TransportistaService";
+import { useCallback, useEffect, useState } from "react";
+import ModalNuevoTransportista from "../modal/ModalNuevoTransportista";
 import TablaTransportistas from "../tabla/TablaTransportistas";
-
-const listTransportistas = [
-  {
-    nro_doc: "20123456789", // RUC
-    razon_social: "Transportes Globales S.A.C.",
-    nro_mtc: "MTC-0003",
-    vehiculos: [
-      {
-        nro_placa: "CDE567",
-        marca: "Kenworth",
-        modelo: "T680",
-        color: "azul",
-        anio: 2023,
-        capacidad: 35,
-        unidad: "TNE",
-        certificado_vehicular: "CV-112233",
-      },
-      {
-        nro_placa: "FGH890",
-        marca: "Scania",
-        modelo: "R450",
-        color: "azul",
-        anio: 2020,
-        capacidad: 28,
-        unidad: "TNE",
-        certificado_vehicular: "CV-445566",
-      },
-      {
-        nro_placa: "IJK123",
-        marca: "Mercedes-Benz",
-        modelo: "Actros",
-        color: "azul",
-        anio: 2024,
-        capacidad: 22,
-        unidad: "TNE",
-        certificado_vehicular: "CV-778899",
-      },
-      {
-        nro_placa: "FGH890",
-        marca: "Scania",
-        modelo: "R450",
-        color: "azul",
-        anio: 2020,
-        capacidad: 28,
-        unidad: "TNE",
-        certificado_vehicular: "CV-445566",
-      },
-      {
-        nro_placa: "IJK123",
-        marca: "Mercedes-Benz",
-        modelo: "Actros",
-        color: "azul",
-        anio: 2024,
-        capacidad: 22,
-        unidad: "TNE",
-        certificado_vehicular: "CV-778899",
-      },
-    ],
-  },
-  {
-    nro_doc: "20987654321", // RUC
-    razon_social: "Logística Andina Express E.I.R.L.",
-    nro_mtc: "MTC-0003",
-    vehiculos: [
-      {
-        nro_placa: "CDE567",
-        marca: "Kenworth",
-        modelo: "T680",
-        color: "azul",
-        anio: 2023,
-        capacidad: 35,
-        unidad: "TNE",
-        certificado_vehicular: "CV-112233",
-      },
-      {
-        nro_placa: "FGH890",
-        marca: "Scania",
-        modelo: "R450",
-        color: "azul",
-        anio: 2020,
-        capacidad: 28,
-        unidad: "TNE",
-        certificado_vehicular: "CV-445566",
-      },
-      {
-        nro_placa: "IJK123",
-        marca: "Mercedes-Benz",
-        modelo: "Actros",
-        color: "azul",
-        anio: 2024,
-        capacidad: 22,
-        unidad: "TNE",
-        certificado_vehicular: "CV-778899",
-      },
-    ],
-  },
-  {
-    nro_doc: "20555444333", // RUC
-    razon_social: "Distribuidora del Sur S.R.L.",
-    nro_mtc: "MTC-0003",
-    vehiculos: [
-      {
-        nro_placa: "CDE567",
-        marca: "Kenworth",
-        modelo: "T680",
-        color: "azul",
-        anio: 2023,
-        capacidad: 35,
-        unidad: "TNE",
-        certificado_vehicular: "CV-112233",
-      },
-      {
-        nro_placa: "FGH890",
-        marca: "Scania",
-        modelo: "R450",
-        color: "azul",
-        anio: 2020,
-        capacidad: 28,
-        unidad: "TNE",
-        certificado_vehicular: "CV-445566",
-      },
-      {
-        nro_placa: "IJK123",
-        marca: "Mercedes-Benz",
-        modelo: "Actros",
-        color: "azul",
-        anio: 2024,
-        capacidad: 22,
-        unidad: "TNE",
-        certificado_vehicular: "CV-778899",
-      },
-    ],
-  },
-];
+import ModalEliminarTransportista from "../modal/ModalEliminarTransportista";
+import { valorIncialTransporte } from "@/modules/transporte/utils/valoresInicial";
 
 const TransportistasLayout = () => {
+  const [listaTransportistas, setListaTransportistas] = useState([]);
+  const [listaFiltrada, setListaFiltrada] = useState([]);
+  const [filtro, setFiltro] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // ?MODAL AGREGAR ACTUALIZAR
   const [open, setOpen] = useState(false);
+
+  // *ACTUALIZAR CHOFER
+  const [Form, setForm] = useState(valorIncialTransporte);
+
+  // !MODAL ELIMINAR TRANSPORTISTA
+  const [openEliminar, setOpenEliminar] = useState(false);
+  const [transportistaEliminar, setTransportistaEliminar] = useState(null);
+
+  const buscarTransportistas = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data, success, message } = await transportistaService.listar();
+      if (success) {
+        setListaTransportistas(data);
+      } else {
+        toast.error(message || "No se pudieron cargar los Transportistas.");
+      }
+    } catch (error) {
+      toast.error("Error al cargar Transportistas.");
+      // console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    buscarTransportistas();
+  }, [buscarTransportistas]);
+
+  // 🔎 Aplicar filtro cada vez que cambian listaChoferes o filtro
+  useEffect(() => {
+    const texto = filtro.toLowerCase().trim();
+    if (!texto) {
+      setListaFiltrada(listaTransportistas);
+    } else {
+      setListaFiltrada(
+        listaTransportistas.filter((transporte) => {
+          return (
+            transporte.nro_doc?.toLowerCase().includes(texto) ||
+            transporte.razon_social?.toLowerCase().includes(texto)
+          );
+        }),
+      );
+    }
+  }, [filtro, listaTransportistas]);
 
   return (
     <div className="flex w-full flex-col">
@@ -148,14 +68,40 @@ const TransportistasLayout = () => {
         {/* //? BUSCADOR */}
         <div className="flex w-1/3 flex-col">
           <Label className="text-sm font-semibold text-gray-700">Buscar</Label>
-          <Input placeholder="Buscar..." className="bg-white" />
+          <Input
+            placeholder="Buscar por razon social, documento..."
+            value={filtro}
+            onChange={(e) => setFiltro(e.target.value)}
+            className="bg-white"
+          />{" "}
         </div>
         {/* //? BOTONES */}
-        <ModalNuevoTransporte open={open} setOpen={setOpen} />
+        <ModalNuevoTransportista
+          open={open}
+          setOpen={setOpen}
+          Form={Form}
+          setForm={setForm}
+       W />
       </div>
 
       {/* // ? TABLA */}
-      <TablaTransportistas transportistas={listTransportistas} />
+      <TablaTransportistas
+        transportistas={listaFiltrada}
+        setOpenEliminar={setOpenEliminar}
+        setTransportistaEliminar={setTransportistaEliminar}
+        setOpen={setOpen}
+        setForm={setForm}
+        loading={loading}
+      />
+
+      {/* // ? MODAL */}
+      <ModalEliminarTransportista
+        open={openEliminar}
+        setOpen={setOpenEliminar}
+        transportistaEliminar={transportistaEliminar}
+        setTransportistaEliminar={setTransportistaEliminar}
+        refresh={buscarTransportistas}
+      />
     </div>
   );
 };

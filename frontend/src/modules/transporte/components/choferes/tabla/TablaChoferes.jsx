@@ -1,6 +1,14 @@
-import { SquarePen } from "lucide-react";
+import { getTipoDocCliente } from "@/modules/facturacion/utils/formateos";
+import { SquarePen, UserX } from "lucide-react";
 
-const TablaChoferes = ({ choferes }) => {
+const TablaChoferes = ({
+  choferes,
+  setOpenEliminar,
+  setChoferEliminar,
+  setOpen,
+  setForm,
+  loading,
+}) => {
   return (
     <div className="w-full rounded-xl border-1 border-gray-200">
       <table className="min-w-full overflow-hidden rounded-xl bg-white shadow-md">
@@ -29,7 +37,7 @@ const TablaChoferes = ({ choferes }) => {
         <tbody>
           {choferes.length > 0 ? (
             choferes.map((chofer, index) => (
-              <tr key={index}>
+              <tr key={index} className="hover:bg-gray-50 transition-all">
                 <td className="px-3 py-2 text-sm whitespace-nowrap text-gray-500">
                   {index + 1}
                 </td>
@@ -43,12 +51,27 @@ const TablaChoferes = ({ choferes }) => {
                   {chofer?.nro_licencia || "N/A"}
                 </td>
                 <td className="px-3 py-2 text-sm whitespace-nowrap text-gray-500">
-                  {chofer?.tipo_documento || "N/A"} -{" "}
-                  {chofer?.nro_documento || "N/A"}
+                  {getTipoDocCliente(chofer?.tipo_doc) || "N/A"} -{" "}
+                  {chofer?.nro_doc || "N/A"}
                 </td>
-                <td className="flex justify-center px-3 py-2 text-sm text-gray-500">
-                  <button className="text-innova-blue hover:text-innova-blue-hover cursor-pointer">
+                <td className="flex justify-center gap-x-3 px-3 py-2 text-sm text-gray-500">
+                  <button
+                    onClick={() => {
+                      setOpen(true);
+                      setForm(chofer);
+                    }}
+                    className="text-innova-blue cursor-pointer transition-all hover:text-blue-500"
+                  >
                     <SquarePen className="size-6" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setOpenEliminar(true);
+                      setChoferEliminar(chofer);
+                    }}
+                    className="text-innova-blue cursor-pointer transition-all hover:text-red-500"
+                  >
+                    <UserX className="size-6" />
                   </button>
                 </td>
               </tr>
@@ -59,7 +82,7 @@ const TablaChoferes = ({ choferes }) => {
                 colSpan={6}
                 className="px-3 py-2 text-center text-sm whitespace-nowrap text-gray-500"
               >
-                No se encontraron choferes
+                {loading ? "Cargando..." : "No se encontraron choferes"}
               </td>
             </tr>
           )}

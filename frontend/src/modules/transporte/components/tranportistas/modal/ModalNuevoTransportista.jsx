@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { ClipboardPlus, X } from "lucide-react";
 import TransporteForm from "../form/TransporteForm";
   
-  export default function ModalNuevoTransporte({ open, setOpen }) {
+  export default function ModalNuevoTransportista({ open, setOpen,Form, setForm, refresh }) {
     const closeModal = () => setOpen(false);
   
     return (
@@ -40,7 +40,7 @@ import TransporteForm from "../form/TransporteForm";
           </AlertDialogHeader>
   
           {/* 📦 Formulario */}
-          <TransporteForm/>
+          <TransporteForm closeModal={closeModal} refresh={refresh} Form={Form}  setForm={setForm}/>
         </AlertDialogContent>
       </AlertDialog>
     );

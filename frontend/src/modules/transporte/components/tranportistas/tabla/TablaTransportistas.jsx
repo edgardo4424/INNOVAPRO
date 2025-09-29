@@ -1,7 +1,13 @@
-import { SquarePen } from "lucide-react";
+import { CircleX, SquarePen, UserX } from "lucide-react";
 
-const TablaTransportistas = ({ transportistas }) => {
-  console.log(transportistas);
+const TablaTransportistas = ({
+  transportistas,
+  setOpenEliminar,
+  setTransportistaEliminar,
+  setOpen,
+  setForm,
+  loading,
+}) => {
   return (
     <div className="w-full rounded-xl border-1 border-gray-200">
       <table className="min-w-full overflow-hidden rounded-xl bg-white shadow-md">
@@ -30,7 +36,7 @@ const TablaTransportistas = ({ transportistas }) => {
         <tbody>
           {transportistas.length > 0 ? (
             transportistas.map((transporte, index) => (
-              <tr key={index} className="hover:bg-gray-100">
+              <tr key={index} className="transition-all hover:bg-gray-50">
                 <td className="px-3 py-2 text-sm whitespace-nowrap text-gray-500">
                   {index + 1}
                 </td>
@@ -47,7 +53,10 @@ const TablaTransportistas = ({ transportistas }) => {
                   {transporte?.vehiculos.length > 0 ? (
                     transporte.vehiculos.map((vehiculo, index) => {
                       return (
-                        <span key={index} className={`block ${index > 0 && "border-t border-gray-500"}`}>
+                        <span
+                          key={index}
+                          className={`block ${index > 0 && "border-t border-gray-500"}`}
+                        >
                           {vehiculo?.marca || "N/A"}{" "}
                           {vehiculo?.color ? `(${vehiculo?.color})` : "N/A"} -{" "}
                           {vehiculo?.nro_placa || "N/A"}
@@ -58,10 +67,21 @@ const TablaTransportistas = ({ transportistas }) => {
                     <span> - </span>
                   )}
                 </td>
-                <td className="flex justify-center px-3 py-2 text-sm text-gray-500">
-                  <button className="text-innova-blue hover:text-innova-blue-hover cursor-pointer">
-                    <SquarePen className="size-6" />
-                  </button>
+                <td className="">
+                  <div className="flex items-center justify-center gap-x-3 px-3 py-2 text-sm text-gray-500">
+                    <button className="text-innova-blue cursor-pointer transition-all hover:text-blue-500">
+                      <SquarePen className="size-6" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setOpenEliminar(true);
+                        setTransportistaEliminar(transporte);
+                      }}
+                      className="text-innova-blue cursor-pointer transition-all hover:text-red-500"
+                    >
+                      <CircleX className="size-6" />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))
@@ -71,7 +91,7 @@ const TablaTransportistas = ({ transportistas }) => {
                 colSpan={6}
                 className="px-3 py-2 text-center text-sm whitespace-nowrap text-gray-500"
               >
-                No se encontraron transportistas
+                {loading ? "Cargando..." : "No se encontraron transportistas"}
               </td>
             </tr>
           )}

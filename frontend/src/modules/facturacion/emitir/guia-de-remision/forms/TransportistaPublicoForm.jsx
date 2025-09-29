@@ -204,7 +204,7 @@ const TransportistaPublicoForm = () => {
               rel="noopener noreferrer"
               className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-blue-700"
             >
-              Ir al sitio
+              consultar
             </a>
           </Label>
           <Input

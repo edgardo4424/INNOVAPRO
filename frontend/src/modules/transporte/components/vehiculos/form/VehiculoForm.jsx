@@ -1,56 +1,127 @@
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Trash } from "lucide-react";
+import { useState } from "react";
 
-const VehiculoForm = () => {
+const VehiculoForm = ({ vehiculo, index, handleChange, handleDelete }) => {
+  const [open, setOpen] = useState(false);
+
+  const handleClickDelete = () => {
+    if (!vehiculo?.id) {
+      handleDelete(index);
+    } else {
+      setOpen(true);
+    }
+  };
+
+  const confirmDelete = async () => {
+
+    handleDelete(index); // quita de la lista local
+    setOpen(false);
+  };
+
   return (
-    <div className="">
+    <div className="rounded-xl bg-gray-100 px-3 py-3 relative">
+      {/* Botón de eliminar */}
+      <button
+        type="button"
+        onClick={handleClickDelete}
+        className="absolute top-2 right-3 cursor-pointer text-gray-500 hover:text-red-600"
+      >
+        <Trash />
+      </button>
+
+      {/* Modal de confirmación SOLO si el vehiculo tiene id */}
+      {vehiculo?.id && (
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>¿Eliminar vehículo?</DialogTitle>
+              <DialogDescription>
+                Esta acción eliminará el vehículo de forma permanente.  
+                ¿Estás seguro de continuar?
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setOpen(false)}>
+                Cancelar
+              </Button>
+              <Button variant="destructive" onClick={confirmDelete}>
+                Eliminar
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+
       {/* Contenedor principal con grid para disposición de campos */}
-      <div className="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-4">
+      <div className="grid grid-cols-1 gap-x-2 gap-y-4 md:grid-cols-4">
         {/* //* Campo: Nro Placa */}
-        <div className="">
-          <Label htmlFor="nro_placa">Nro Placa</Label>
-          <Input id="nro_placa" maxLength={6} placeholder="Ej: A1B234" required />
+        <div>
+          <Label htmlFor={`nro_placa_${index}`}>Nro Placa</Label>
+          <Input
+            id={`nro_placa_${index}`}
+            maxLength={6}
+            placeholder="Ej: A1B234"
+            type="string"
+            value={vehiculo?.nro_placa || ""}
+            onChange={(e) => handleChange(index, "nro_placa", e.target.value)}
+            className="bg-white"
+          />
         </div>
 
         {/* //* Campo: Marca */}
-        <div className="">
-          <Label htmlFor="marca">Marca</Label>
-          <Input id="marca" placeholder="Ej: Volvo" required />
+        <div>
+          <Label htmlFor={`marca_${index}`}>Marca</Label>
+          <Input
+            id={`marca_${index}`}
+            placeholder="Ej: Volvo"
+            type="string"
+            value={vehiculo?.marca || ""}
+            onChange={(e) => handleChange(index, "marca", e.target.value)}
+            className="bg-white"
+          />
         </div>
 
         {/* //* Campo: Color */}
-        <div className="">
-          <Label htmlFor="modelo">Color</Label>
-          <Input id="color" placeholder="Ej: Rojo" required />
+        <div>
+          <Label htmlFor={`color_${index}`}>Color</Label>
+          <Input
+            id={`color_${index}`}
+            placeholder="Ej: Rojo"
+            type="string"
+            value={vehiculo?.color || ""}
+            onChange={(e) => handleChange(index, "color", e.target.value)}
+            className="bg-white"
+          />
         </div>
 
         {/* //* Campo: Certificado Vehicular */}
-        <div className="">
-          <div className="flex justify-between">
-            <Label htmlFor="certificado_vehicular">Certificado</Label>
-            <a
-              href="https://rec.mtc.gob.pe/Citv/ArConsultaCitv"
-              target="_blank"
-              className="text-xs text-blue-600 underline my-auto"
-            >
-              consultar
-            </a>
-          </div>
+        <div>
+          <Label htmlFor={`tuce_certificado_${index}`}>
+            Certificado o tuce
+          </Label>
           <Input
-            id="certificado_vehicular"
+            id={`tuce_certificado_${index}`}
             type="string"
+            value={vehiculo?.tuce_certificado || ""}
+            onChange={(e) =>
+              handleChange(index, "tuce_certificado", e.target.value)
+            }
             placeholder="Ej: C-2024-167-433-001368"
-            required
+            className="bg-white"
           />
         </div>
       </div>
-
-      {/* Botón de envío */}
-      {/* <div className="mt-6 flex justify-end">
-        <Button type="submit">Guardar Vehículo</Button>
-      </div> */}
-
-      {/* </Form> */}
     </div>
   );
 };

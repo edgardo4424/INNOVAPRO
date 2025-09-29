@@ -104,7 +104,6 @@ const modulesByRole = {
       {
          group: "Gestión de Transporte",
          items: [
-            { name: "Vehículos", path: "/transporte/vehiculos" },
             { name: "Choferes", path: "/transporte/choferes" },
             { name: "Transportistas", path: "/transporte/transportistas" },
          ],
@@ -215,7 +214,6 @@ const modulesByRole = {
       {
          group: "Gestión de Transporte",
          items: [
-            { name: "Vehículos", path: "/transporte/vehiculos" },
             { name: "Choferes", path: "/transporte/choferes" },
             { name: "Transportistas", path: "/transporte/transportistas" },
          ],

@@ -21,30 +21,32 @@ const Choferes = sequelize.define(
             type: DataTypes.STRING(50),
             allowNull: false,
         },
-        nro_documento: {
+        nro_doc: {
             type: DataTypes.STRING(12),
             allowNull: false,
         },
-        tipo_documento: {
+        tipo_doc: {
             type: DataTypes.STRING(3),
             allowNull: false,
         },
         createdAt: {
             allowNull: false,
             type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,        },
+            defaultValue: DataTypes.NOW,
+        },
         updatedAt: {
             allowNull: true,
             type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,        },
+        },
     },
     {
-        timestamps: false,
+        timestamps: true,
         tableName: "choferes",
     }
 );
 
 Choferes.associate = (models) => {
+    
 }
 
 module.exports = { Choferes };
