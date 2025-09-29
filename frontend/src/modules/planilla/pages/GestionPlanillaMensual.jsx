@@ -1,18 +1,4 @@
-import { useEffect, useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-
-import CalculoPlanillaQuincenal from "./CalculoPlanillaQuincenal";
-import HistoricoPlanillaQuincenal from "./HistoricoPlanillaQuincenal";
-
-import {
-   DropdownMenu,
-   DropdownMenuContent,
-   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { MonitorCog } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import dataMantenimientoService from "@/modules/dataMantenimiento/services/dataMantenimientoService";
 import CalculoPlanillaMensual from "./CalculoPlanillaMensual";
 import HistoricoPlanillaMensual from "./HistoricoPlanillaMensual";
 

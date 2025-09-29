@@ -18,11 +18,9 @@ import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function ModalImportesTrabajador({
-   importes = [],
-   setImportes,
-   filiales=[],
    filial_id,
 }) {
+   const [importes,setImportes]=useState([])
    const [isOpen, setIsOpen] = useState(false);
    const [validacionImportes,setValidacionImportes]=useState(false)
    const handleInputChange = (index, field, value) => {

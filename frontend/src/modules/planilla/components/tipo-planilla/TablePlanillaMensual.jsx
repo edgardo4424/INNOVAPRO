@@ -23,9 +23,7 @@ const TablePlanillaMensual = ({
    planillaMensualTipoPlanilla,
    filiales,
    filial_id,
-   importes,
-   setImportes,
-   datosTotalesPlanilla
+   datosTotalesPlanilla,
 }) => {
    const [filtro, setFiltro] = useState("");
 
@@ -55,10 +53,7 @@ const TablePlanillaMensual = ({
             <div className="col-span-1 flex justify-center">
                {filiales?.length > 0 && filial_id && (
                   <ModalImportesTrabajador
-                     importes={importes}
-                     setImportes={setImportes}
                      filial_id={filial_id}
-                     filiales={filiales}
                   />
                )}
             </div>
@@ -66,11 +61,9 @@ const TablePlanillaMensual = ({
 
          <div className="py-4">
             <Table>
-               {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
 
-               <TableHeader>
+               <TableHeader className={""}>
                   <TableRow className={"bg-gray-800 text-xs "}>
-                     {/* Estas celdas abarcan 2 filas porque no tienen sub-encabezados */}
                      <TableHead
                         rowSpan={2}
                         className="text-center border-r text-white border-black"
@@ -288,10 +281,6 @@ const TablePlanillaMensual = ({
                      >
                         2da Quincena
                      </TableHead>
-
-                     {/* <TableHead rowSpan={2} className="text-center border-r text-white border-black">1era Quincena</TableHead>
-              <TableHead rowSpan={2} className="text-center border-r text-white border-black">2da Quincena</TableHead> */}
-
                      <TableHead
                         rowSpan={2}
                         className="text-center border-r text-white border-black"

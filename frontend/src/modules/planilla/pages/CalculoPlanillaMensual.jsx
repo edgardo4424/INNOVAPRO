@@ -13,8 +13,6 @@ import { calculo_aportes_trabajador } from "../hooks/calculo_aportes_trabajador"
 
 const CalculoPlanillaMensual = () => {
    const [filiales, setFiliales] = useState([]);
-   const [importes, setImportes] = useState([]);
-
    // ?? loading
    const [loading, setLoading] = useState(false);
 
@@ -40,7 +38,6 @@ const CalculoPlanillaMensual = () => {
       viPlanillaMensual.honorarios
    );
 
-   const [datosCalculo, setDatosCalculo] = useState({});
 
    // ?? Filtro para la peticion
    const [filtro, setFiltro] = useState({
@@ -49,56 +46,26 @@ const CalculoPlanillaMensual = () => {
       filial_id: "1",
    });
 
-   const buscarPlanillaMensual = async () => {
-      try {
-         const filial_selecionada=filiales.find((f)=>f.id==filtro.filial_id);
-         
-         let sin_valor=false;
-         for (const importe of importes) {
-            if(importe.valor<1){
-               sin_valor=true
-            }
-         }
-         if (sin_valor) {
-            toast.warning(`Complete los importes del trabajador para la empresa:  ${filial_selecionada.razon_social}`);
-            setPlanillaMensualTipoPlanilla(viPlanillaMensual.planilla);
-            setDatosTotalesPlanilla({
-              sumatoria_sueldo_basico: 0,
-              sumatoria_sueldo_mensual: 0,
-              sumatoria_sueldo_bruto: 0,
-              sumatoria_sueldo_neto: 0,
-              sumatoria_saldo_por_pagar: 0,
-              sumatoria_essalud: 0,
-              sumatoria_vida_ley: 0,
-              sumatoria_sctr_salud: 0,
-              sumatoria_sctr_pension: 0,
-            }
-            )
-            setPlanillaMensualTipoRh(viPlanillaMensual.honorarios);
-            setDatosCalculo({});
-               return;
-            }
-         const dia_fin_mes = new Date(filtro.anio, filtro.mes, 0).getDate();
+   const buscarPlanillaMensual = async (importesObtenidos=null) => {
+      try {         
          setLoading(true);
+         const dia_fin_mes = new Date(filtro.anio, filtro.mes, 0).getDate();
          const anio_mes_dia = `${filtro.anio}-${filtro.mes}-${dia_fin_mes}`;
-         const dataPOST = {
+         const payload = {
             anio_mes_dia,
             filial_id: filtro.filial_id,
          };
-
          const res = await planillaMensualService.obtenerPlanillaMensual(
-            dataPOST
-         );
-         const { datos_totales, recalculo_planillas } =
-            calculo_aportes_trabajador(
-               res.payload.planilla.trabajadores,
-               importes
-            );
-         setPlanillaMensualTipoPlanilla(recalculo_planillas);
-         setDatosTotalesPlanilla(datos_totales)
+            payload
+         );         
+         setPlanillaMensualTipoPlanilla(res.payload.planilla.trabajadores);
+         setDatosTotalesPlanilla(res.payload.planilla.datos_totales)
          setPlanillaMensualTipoRh(res.payload.honorarios.trabajadores);
-         setDatosCalculo(res.datosCalculo);
       } catch (error) {
+         if(error?.response?.data?.error){
+            toast.error(error.response.data.error);
+            return;
+         }
          setPlanillaMensualTipoPlanilla(viPlanillaMensual.planilla);
          setDatosTotalesPlanilla({
            sumatoria_sueldo_basico: 0,
@@ -113,7 +80,6 @@ const CalculoPlanillaMensual = () => {
          }
          )
          setPlanillaMensualTipoRh(viPlanillaMensual.honorarios);
-         setDatosCalculo({});
          toast.error('Ocurrio un error al obtener la planilla.')
       } finally {
          setLoading(false);
@@ -137,6 +103,7 @@ const CalculoPlanillaMensual = () => {
       obtenerFiliales();
    }, []);
 
+
    const renderTipoPlanilla = () => {
       if (planillaMensualTipoPlanilla) {
          return (
@@ -145,8 +112,6 @@ const CalculoPlanillaMensual = () => {
                   planillaMensualTipoPlanilla={planillaMensualTipoPlanilla}
                   filial_id={filtro.filial_id}
                   filiales={filiales}
-                  importes={importes}
-                  setImportes={setImportes}
                   datosTotalesPlanilla={datosTotalesPlanilla}
                />
             </div>
@@ -213,9 +178,6 @@ const CalculoPlanillaMensual = () => {
             </div>
          ) : (
             <>
-               {/* <pre className="whitespace-pre-wrap break-words bg-gray-100 p-4 rounded-lg text-xs">
-            {JSON.stringify(datosCalculo, null, 2)}
-          </pre> */}
                {renderTipoPlanilla()}
                {renderTipoRh()}
             </>
