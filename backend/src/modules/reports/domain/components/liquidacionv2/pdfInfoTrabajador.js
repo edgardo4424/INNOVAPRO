@@ -35,13 +35,12 @@ async function pdfInfoTrabajador({
     informacionLiquidacion.periodo_computable
   );
 
-  //! Calcular faltas injustificadas
+  //! Calcular faltas injustificadas y dias no computados para la remuneracion
 
   //* Calcular la fecha del primer dia en base a la fecha_baja
     const primerDia = moment(fecha_baja).startOf('month').format('YYYY-MM-DD');
   
-  const faltas_injustificadas = await asistenciaRepository.obtenerCantidadFaltasPorRangoFecha( trabajador.id ,primerDia, fecha_baja) ?? 0;
-
+ 
   return {
     columns: [
       {
@@ -67,7 +66,8 @@ async function pdfInfoTrabajador({
                 /* ["BANCO", contrato.banco],
                 ["NÚMERO DE CUENTA", contrato.numero_cuenta], */
                 ["TIEMPO DE SERVICIO", mensaje_tiempo_laborado],
-                ["FALTAS INJUSTIFICADAS", faltas_injustificadas],
+                ["FALTAS INJUSTIFICADAS", informacionLiquidacion?.faltas_injustificadas],
+                ["DIAS NO COMPUTADOS", informacionLiquidacion?.dias_no_computados],
                 ["PERIODO COMPUTABLE", mensaje_tiempo_computado],
                 ["REMUNERACIÓN COMPUTABLE", Number(total_remuneracion_computable).toFixed(2)],
                 ["REGIMEN LABORAL", contrato.regimen],

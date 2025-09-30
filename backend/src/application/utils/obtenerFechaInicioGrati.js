@@ -8,7 +8,7 @@ const moment = require("moment");
  * @returns {moment} fechaInicioGrati
  */
 function obtenerFechaInicioGrati(fechaBaja, fechaIngresoStr) {
-  console.log('fechaBaja', fechaBaja, 'fechaIngresoStr', fechaIngresoStr);
+  
   const mes = fechaBaja.month() + 1; // moment meses van de 0 a 11
   const anio = fechaBaja.year();
 

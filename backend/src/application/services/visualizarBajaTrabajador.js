@@ -23,7 +23,6 @@ module.exports = async function darBajaTrabajador(baja_trabajador_id) {
 
   try {
     //! Obtener la informacion del trabajador que se dio de baja
-    console.log("baja_trabajador_id", baja_trabajador_id);
 
     const trabajador_dado_de_baja = await db.bajas_trabajadores.findByPk(
       baja_trabajador_id,

@@ -20,7 +20,6 @@ const calcularPromedioHorasExtras = (
    for (const a of asistencias) {
       const calculo_monto = Number(a.horas_extras) * valor_hora_extra;
       4;
-      console.log("caculo del monto: ", calculo_monto);
 
       sumatoriaHE += Number(calculo_monto);
    }

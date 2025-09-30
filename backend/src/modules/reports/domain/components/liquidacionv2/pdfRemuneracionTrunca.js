@@ -17,7 +17,7 @@ function pdfRemuneracionTrunca({ detalles_liquidacion, trabajador, contrato }) {
     informacionLiquidacion.asignacion_familiar
   );
 
-  const montoFaltas = redondear2(remuneracion_trunca?.monto_dias_faltas);
+  const montoFaltas = redondear2(remuneracion_trunca?.monto_dias_faltas_y_no_computados);
 
   
   const descuento_planilla_quincenal = redondear2(
@@ -132,7 +132,7 @@ function pdfRemuneracionTrunca({ detalles_liquidacion, trabajador, contrato }) {
                       ? []
                       : [
                           [
-                            { text: "ASIGNACIÓN FAMILIAR" },
+                            { text: "ASIGNACIÓN FAMILIAR", colSpan: 2 },
                             {},
                             {
                               text: asignacion_familiar.toFixed(2),
@@ -148,7 +148,7 @@ function pdfRemuneracionTrunca({ detalles_liquidacion, trabajador, contrato }) {
                       ? []
                       : [
                           [
-                            { text: "DESCUENTO PLANILLA QUINCENAL" },
+                            { text: "DESCUENTO PLANILLA QUINCENAL", colSpan: 2 },
                             {},
                             {
                               text: `-${descuento_planilla_quincenal.toFixed(2)}`,
@@ -166,7 +166,7 @@ function pdfRemuneracionTrunca({ detalles_liquidacion, trabajador, contrato }) {
                       : [
                           [
                             {
-                              text: `FALTA ${remuneracion_trunca.dias_faltas} días`,
+                              text: `FALTA ${remuneracion_trunca.dias_faltas_y_no_computados} días`,
                             },
                             {},
                             {
