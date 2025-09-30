@@ -21,8 +21,8 @@ class SequelizeTransporteRepository {
             for (const vehiculo of data.vehiculos) {
                 const createdVehiculo = await Vehiculos.create(
                     {
+                        ...vehiculo,
                         id_transportista: transportista.id,
-                        ...vehiculo
                     }, { transaction: transacción });
                 if (!createdVehiculo) {
                     throw new Error("No se pudo crear el vehiculo.");
@@ -48,7 +48,7 @@ class SequelizeTransporteRepository {
             );
             return {
                 success: false,
-                message: "El transportista no se creo correctamente.",
+                message: "El transportista no se creo.",
                 data: null
             };
         }
@@ -140,8 +140,10 @@ class SequelizeTransporteRepository {
 
     async listar() {
         const transportistas = await Transportistas.findAll({
+            attributes: ['id', 'nro_doc', 'razon_social', 'nro_mtc'],
             include: {
                 model: Vehiculos,
+                attributes: ['id', 'nro_placa', 'marca', 'color', 'tuce_certificado','id_transportista'],
             },
         });
         if (!transportistas) {

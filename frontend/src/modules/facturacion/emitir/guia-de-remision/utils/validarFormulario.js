@@ -2,7 +2,7 @@ const camposRequeridosGlobal = [
     { key: "tipo_Doc", name: "Tipo de Documento" },
     { key: "serie", name: "Serie" },
     { key: "correlativo", name: "Correlativo" },
-    { key: "observacion", name: "Observacion" },
+    // { key: "observacion", name: "Observacion" },
     { key: "fecha_Emision", name: "Fecha de Emision" },
     { key: "empresa_Ruc", name: "RUC Empresa" },
     { key: "cliente_Tipo_Doc", name: "Tipo de Documento del Cliente" },
@@ -23,7 +23,7 @@ const camposRequeridosGlobal = [
         camposRequeridos: [
             { key: "unidad", name: "Unidad" },
             { key: "cantidad", name: "Cantidad" },
-            { key: "cod_Producto", name: "Código de Producto" },
+            // { key: "cod_Producto", name: "Código de Producto" },
             { key: "descripcion", name: "Descripción" },
         ]
     },
@@ -37,23 +37,23 @@ export async function validarFormulario(tipo, Guia) {
 
     let camposRequeridosEspecificos = [];
 
-    if (tipo == "PRIVADO") {
+    if (tipo == "transporte-privado") {
         camposRequeridosEspecificos = [
             { key: "guia_Envio_Mod_Traslado", name: "Modalidad de Traslado" },
-            // {
-            //     key: "chofer",
-            //     name: "Chofer", // Agregado el nombre para el objeto chofer
-            //     camposRequeridos: [
-            //         { key: "tipo", name: "Tipo de Chofer" },
-            //         { key: "tipo_doc", name: "Tipo de Documento del Chofer" },
-            //         { key: "nro_doc", name: "N° Documento del Chofer" },
-            //         { key: "licencia", name: "Licencia del Chofer" },
-            //         { key: "nombres", name: "Nombres del Chofer" },
-            //         { key: "apellidos", name: "Apellidos del Chofer" },
-            //     ]
-            // },
+            {
+                key: "chofer",
+                name: "Chofer", // Agregado el nombre para el objeto chofer
+                camposRequeridos: [
+                    { key: "tipo", name: "Tipo de Chofer" },
+                    { key: "tipo_doc", name: "Tipo de Documento del Chofer" },
+                    { key: "nro_doc", name: "N° Documento del Chofer" },
+                    { key: "licencia", name: "Licencia del Chofer" },
+                    { key: "nombres", name: "Nombres del Chofer" },
+                    { key: "apellidos", name: "Apellidos del Chofer" },
+                ]
+            },
         ];
-    } else if (tipo == "PUBLICO") {
+    } else if (tipo == "transporte-publico") {
         camposRequeridosEspecificos = [
             { key: "guia_Envio_Des_Traslado", name: "Descripción de Traslado" },
             { key: "guia_Envio_Mod_Traslado", name: "Modalidad de Traslado" },
@@ -64,11 +64,23 @@ export async function validarFormulario(tipo, Guia) {
                     { key: "tipo_doc", name: "Tipo de Documento del Transportista" },
                     { key: "nro_doc", name: "N° Documento del Transportista" },
                     { key: "razon_Social", name: "Nombres del Transportista" },
-                    { key: "nro_mtc", name: "N° MTC del Transportista" },
+                    // { key: "nro_mtc", name: "N° MTC del Transportista" },
+                ]
+            },
+            {
+                key: "chofer",
+                name: "Chofer", // Agregado el nombre para el objeto chofer
+                camposRequeridos: [
+                    { key: "tipo", name: "Tipo de Chofer" },
+                    { key: "tipo_doc", name: "Tipo de Documento del Chofer" },
+                    { key: "nro_doc", name: "N° Documento del Chofer" },
+                    { key: "licencia", name: "Licencia del Chofer" },
+                    { key: "nombres", name: "Nombres del Chofer" },
+                    { key: "apellidos", name: "Apellidos del Chofer" },
                 ]
             },
         ];
-    } else if (tipo == "MISMA_EMPRESA") {
+    } else if (tipo == "traslado-misma-empresa") {
         camposRequeridosEspecificos = [
             { key: "guia_Envio_Mod_Traslado", name: "Modalidad de Traslado" },
             { key: "guia_Envio_Partida_Ruc", name: "Partida Ruc" },

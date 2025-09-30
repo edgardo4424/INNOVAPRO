@@ -317,7 +317,7 @@ const InfDocumentoForm = () => {
             htmlFor="cliente_Razon_Social"
             className="mb-1 block text-left text-sm font-semibold text-gray-700"
           >
-            Contrato
+            Codigo Contrato
           </Label>
           <Input
             type="text"

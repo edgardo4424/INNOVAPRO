@@ -10,13 +10,15 @@ import {
 } from "@/components/ui/select";
 import factilizaService from "@/modules/facturacion/service/FactilizaService";
 import choferService from "@/modules/transporte/service/ChoferService";
+import vehiculoService from "@/modules/transporte/service/VehiculosService";
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const ChoferForm = ({ closeModal, refresh, Form, setForm }) => {
   const [loadingSave, setLoadingSave] = useState(false);
   const [loadingSearch, setLoadingSearch] = useState(false);
+  const [listaVehiculos, setListaVehiculos] = useState([]);
 
   const handleChange = (e) => {
     if (e.target.name === "nro_doc") {
@@ -25,6 +27,10 @@ const ChoferForm = ({ closeModal, refresh, Form, setForm }) => {
     } else {
       setForm({ ...Form, [e.target.name]: e.target.value.toUpperCase() });
     }
+  };
+
+  const handleVehiculo = (e) => {
+    setForm({ ...Form, [e.target.name]: e.target.value });
   };
 
   const handleLicencia = async () => {
@@ -159,6 +165,23 @@ const ChoferForm = ({ closeModal, refresh, Form, setForm }) => {
     }
   };
 
+  const buscarVehiculos = useCallback(async () => {
+    try {
+      const { data, success, message } = await vehiculoService.listar();
+      if (success) {
+        setListaVehiculos(
+          data.filter((v) => v.id_chofer === null || v.id_chofer === Form.id),
+        );
+      }
+    } catch (error) {
+      toast.error("Error al cargar vehículos");
+    }
+  }, []);
+
+  useEffect(() => {
+    buscarVehiculos();
+  }, []);
+
   return (
     <div>
       {/* Contenedor principal con grid para disposición de campos */}
@@ -248,6 +271,32 @@ const ChoferForm = ({ closeModal, refresh, Form, setForm }) => {
             onChange={handleChange}
           />
         </div>
+
+        {/* Vehiculo */}
+        <div className="space-y-2">
+          <Label htmlFor="id_vehiculo">Vehiculo</Label>
+          <Select
+            required
+            id="id_vehiculo"
+            name="id_vehiculo"
+            value={Form.id_vehiculo?.toString() || ""}
+            onValueChange={(value) =>
+              handleVehiculo({ target: { name: "id_vehiculo", value } })
+            }
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Seleccione tipo" />
+            </SelectTrigger>
+            <SelectContent>
+              {listaVehiculos.map((v) => (
+                <SelectItem key={v.id} value={v.id.toString()}>
+                  {v.nro_placa} - {v?.transportista?.razon_social || ""}
+                </SelectItem>
+              ))}
+              <SelectItem value={null}>Ninguno</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* Botón de envío */}
@@ -260,7 +309,7 @@ const ChoferForm = ({ closeModal, refresh, Form, setForm }) => {
           disabled={loadingSave}
           onClick={handleGuardar}
         >
-          Guardar Chofer
+          {loadingSave ? "Guardando..." : "Guardar"}
         </Button>
       </div>
     </div>

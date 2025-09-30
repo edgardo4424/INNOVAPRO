@@ -7,12 +7,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar22 } from "../../factura-boleta/components/Calendar22";
 import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext";
-import { Ubigeos } from "../utils/ubigeo";
-import { useEffect, useMemo, useState } from "react";
-import { Search } from "lucide-react";
 import facturaService from "@/modules/facturacion/service/FacturaService";
+import {
+  opcionesCodigos,
+  opcionesOtros,
+} from "@/modules/facturacion/utils/formateos";
+import { MapPinHouse, Search } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Calendar22 } from "../../factura-boleta/components/Calendar22";
+import { Ubigeos } from "../utils/ubigeo";
+import ModalPlacas from "../components/modal/ModalPlacas";
 
 const DatosGuiaEnvioForm = () => {
   const {
@@ -26,6 +31,8 @@ const DatosGuiaEnvioForm = () => {
     setGuiaTransporte,
     tipoGuia,
   } = useGuiaTransporte();
+
+  const [open, setOpen] = useState(false);
 
   // ?? Estados locales para los inputs de ubigeo y su visibilidad de sugerencias
   const [partidaUbigeoInput, setPartidaUbigeoInput] = useState("");
@@ -184,14 +191,12 @@ const DatosGuiaEnvioForm = () => {
     }
   };
 
-  
-
   const handleChangePublico = (e) => {
     const { name, value } = e.target;
     setGuiaDatosPublico((prevGuiaTransporte) => ({
-        ...prevGuiaTransporte,
-        [name]: value.toUpperCase(),
-      }));
+      ...prevGuiaTransporte,
+      [name]: value.toUpperCase(),
+    }));
   };
 
   const handleSelectChangePrv = (value, name) => {
@@ -235,43 +240,6 @@ const DatosGuiaEnvioForm = () => {
     }
   };
 
-  const opcionesCodigos = [
-    { value: "01", descripcion: "VENTA", descripcionmi: "Venta" },
-    {
-      value: "02",
-      descripcion: "VENTA SUJETA A CONFIRMACION DEL COMPRADOR",
-      descripcionmi: "Venta sujeta a confirmación del comprador",
-    },
-    {
-      value: "04",
-      descripcion: "TRASLADO ENTRE ESTABLECIMIENTOS DE LA MISMA EMPRESA",
-      descripcionmi: "Traslado entre establecimientos de la misma empresa",
-    },
-    { value: "08", descripcion: "IMPORTACION", descripcionmi: "Importación" },
-    { value: "09", descripcion: "EXPORTACION", descripcionmi: "Exportación" },
-    { value: "13", descripcion: "OTROS", descripcionmi: "Otros - Alquiler" },
-    {
-      value: "14",
-      descripcion: "VENTA CON ENTREGA A TERCEROS",
-      descripcionmi: "Venta con entrega a terceros",
-    },
-    {
-      value: "18",
-      descripcion: "TRASLADO EMISOR ITINERANTE DE COMPROBANTES DE PAGO",
-      descripcionmi: "Traslado emisor itinerante de comprobantes de pago",
-    },
-    {
-      value: "19",
-      descripcion: "TRASLADO A ZONA PRIMARIA",
-      descripcionmi: "Traslado a zona primaria",
-    },
-    {
-      value: "20",
-      descripcion: "TRASLADO POR EMISOR ITINERANTE (COMPROBANTE DE PAGO)",
-      descripcionmi: "Traslado por emisor itinerante (comprobante de pago)",
-    },
-  ];
-
   const hadleSelectPub = (value, name) => {
     setGuiaDatosPublico((prevValores) => ({
       ...prevValores,
@@ -291,8 +259,24 @@ const DatosGuiaEnvioForm = () => {
     }));
   };
 
+  const plasmarPartida = () => {
+    setGuiaTransporte((prevValores) => ({
+      ...prevValores,
+      guia_Envio_Partida_Direccion: "CAL. CAMINO B LOTE. 17A URB. VILLA BAJA",
+      guia_Envio_Partida_Ubigeo: "150108",
+    }));
+  };
+
+  const plasmarLlegada = () => {
+    setGuiaTransporte((prevValores) => ({
+      ...prevValores,
+      guia_Envio_Llegada_Direccion: "CAL. CAMINO B LOTE. 17A URB. VILLA BAJA",
+      guia_Envio_Llegada_Ubigeo: "150108",
+    }));
+  };
+
   return (
-    <div className=" p-4 sm:p-6 lg:px-8 lg:py-4">
+    <div className="p-4 sm:p-6 lg:px-8 lg:py-4">
       <h2 className="mb-2 flex pb-2 text-2xl font-semibold">
         Datos de la Guía de Envío
       </h2>
@@ -476,12 +460,20 @@ const DatosGuiaEnvioForm = () => {
 
         <div className="col-span-1 md:col-span-2 lg:col-span-2">
           {/* Made address span full width on small screens too */}
-          <Label
-            htmlFor="guia_Envio_Partida_Direccion"
-            className="mb-1 block text-left text-sm font-semibold text-gray-700"
-          >
-            Dirección de Partida
-          </Label>
+          <div className="flex gap-x-4">
+            <Label
+              htmlFor="guia_Envio_Partida_Direccion"
+              className="mb-1 block text-left text-sm font-semibold text-gray-700"
+            >
+              Dirección de Partida
+            </Label>
+            <button
+              onClick={plasmarPartida}
+              className="text-innova-blue cursor-pointer transition-all hover:text-green-500"
+            >
+              <MapPinHouse className="size-5" />
+            </button>
+          </div>
           <div className="flex gap-x-2">
             <Input
               type="text"
@@ -536,12 +528,20 @@ const DatosGuiaEnvioForm = () => {
 
         <div className="col-span-1 md:col-span-2 lg:col-span-2">
           {/* Made address span full width on small screens too */}
-          <Label
-            htmlFor="guia_Envio_Llegada_Direccion"
-            className="mb-1 block text-left text-sm font-semibold text-gray-700"
-          >
-            Dirección de Llegada
-          </Label>
+          <div className="flex gap-x-4">
+            <Label
+              htmlFor="guia_Envio_Llegada_Direccion"
+              className="mb-1 block text-left text-sm font-semibold text-gray-700"
+            >
+              Dirección de Llegada
+            </Label>
+            <button
+              onClick={plasmarLlegada}
+              className="text-innova-blue cursor-pointer transition-all hover:text-green-500"
+            >
+              <MapPinHouse className="size-5" />
+            </button>
+          </div>
           <div className="flex gap-x-2">
             <Input
               type="text"
@@ -595,20 +595,22 @@ const DatosGuiaEnvioForm = () => {
         </div>
 
         <div className="col-span-1 md:col-span-2 lg:col-span-1">
-          {" "}
-          {/* Made address span full width on small screens too */}
-          <Label
-            htmlFor="guia_Envio_Llegada_Direccion"
-            className="mb-1 block text-left text-sm font-semibold text-gray-700"
-          >
-            Placa del Vehiculo
-          </Label>
+          <div className="flex gap-x-4 items-center">
+            <Label
+              htmlFor="guia_Envio_Llegada_Direccion"
+              className="mb-1 block text-left text-sm font-semibold text-gray-700"
+            >
+              Placa del Vehiculo
+            </Label>
+            <ModalPlacas open={open} setOpen={setOpen} />
+          </div>
           <Input
             type="text"
             id="guia_Envio_Vehiculo_Placa"
             name="guia_Envio_Vehiculo_Placa"
             value={guia_Envio_Vehiculo_Placa}
             onChange={handleChange}
+            maxLength={6}
             className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
           />
         </div>
@@ -621,15 +623,36 @@ const DatosGuiaEnvioForm = () => {
             >
               Descripción de Traslado
             </Label>
-            <Input
-              type="text"
-              id="guia_Envio_Des_Traslado"
-              name="guia_Envio_Des_Traslado"
-              value={guiaDatosPublico.guia_Envio_Des_Traslado}
-              onChange={handleChangePublico}
-              // disabled
-              className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
-            />
+            <div className="flex gap-x-2">
+              <Input
+                type="text"
+                id="guia_Envio_Des_Traslado"
+                name="guia_Envio_Des_Traslado"
+                value={guiaDatosPublico.guia_Envio_Des_Traslado}
+                onChange={handleChangePublico}
+                // disabled
+                className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+              />
+              {guiaDatosPublico.guia_Envio_Cod_Traslado == "13" && (
+                <Select
+                  onValueChange={(value) =>
+                    handleChangePublico({
+                      target: { name: "guia_Envio_Des_Traslado", value },
+                    })
+                  }
+                >
+                  <SelectTrigger className="w-10 shrink-0 rounded-md border border-gray-300 shadow-sm"></SelectTrigger>
+
+                  <SelectContent>
+                    {opcionesOtros.map((opcion, index) => (
+                      <SelectItem key={index} value={opcion}>
+                        {opcion}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
           </div>
         )}
       </div>

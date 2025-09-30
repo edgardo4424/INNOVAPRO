@@ -114,7 +114,7 @@ const ChoferPrivadoForm = () => {
       <h1 className="mb-6 pb-2 text-left text-2xl font-semibold">
         Datos del Chofer
       </h1>
-      {guiaTransporte.chofer.map((chofer, index) => (
+      {guiaTransporte?.chofer.length > 0 && guiaTransporte.chofer.map((chofer, index) => (
         <div
           key={index}
           className="relative mb-6 grid grid-cols-1 gap-x-6 gap-y-4 rounded-md border border-gray-400 p-6 md:grid-cols-2 lg:grid-cols-3"

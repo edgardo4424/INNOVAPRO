@@ -15,9 +15,6 @@ const TablaChoferes = ({
         <thead className="bg-innova-blue text-white">
           <tr>
             <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
-              #
-            </th>
-            <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
               Nombres
             </th>
             <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
@@ -29,6 +26,9 @@ const TablaChoferes = ({
             <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
               Nro. Documento
             </th>
+            <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
+              Vehiculo
+            </th>
             <th className="px-3 py-3 text-center text-xs font-semibold tracking-wider uppercase">
               Acciones
             </th>
@@ -37,10 +37,7 @@ const TablaChoferes = ({
         <tbody>
           {choferes.length > 0 ? (
             choferes.map((chofer, index) => (
-              <tr key={index} className="hover:bg-gray-50 transition-all">
-                <td className="px-3 py-2 text-sm whitespace-nowrap text-gray-500">
-                  {index + 1}
-                </td>
+              <tr key={index} className="transition-all hover:bg-gray-50">
                 <td className="px-3 py-2 text-sm whitespace-nowrap text-gray-500">
                   {chofer?.nombres || "N/A"}
                 </td>
@@ -54,11 +51,15 @@ const TablaChoferes = ({
                   {getTipoDocCliente(chofer?.tipo_doc) || "N/A"} -{" "}
                   {chofer?.nro_doc || "N/A"}
                 </td>
+                <td className="px-3 py-2 text-sm whitespace-nowrap text-gray-500">
+                  {chofer?.vehiculo?.nro_placa || "N/A"}
+                </td>
                 <td className="flex justify-center gap-x-3 px-3 py-2 text-sm text-gray-500">
                   <button
                     onClick={() => {
+                      const { vehiculo, ...rest } = chofer;
                       setOpen(true);
-                      setForm(chofer);
+                      setForm({ ...rest, id_vehiculo: vehiculo?.id || null });
                     }}
                     className="text-innova-blue cursor-pointer transition-all hover:text-blue-500"
                   >

@@ -14,9 +14,6 @@ const TablaTransportistas = ({
         <thead className="bg-innova-blue text-white">
           <tr>
             <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
-              #
-            </th>
-            <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
               Nro. Documento
             </th>
             <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
@@ -38,9 +35,6 @@ const TablaTransportistas = ({
             transportistas.map((transporte, index) => (
               <tr key={index} className="transition-all hover:bg-gray-50">
                 <td className="px-3 py-2 text-sm whitespace-nowrap text-gray-500">
-                  {index + 1}
-                </td>
-                <td className="px-3 py-2 text-sm whitespace-nowrap text-gray-500">
                   {transporte?.nro_doc || "N/A"}
                 </td>
                 <td className="px-3 py-2 text-sm whitespace-nowrap text-gray-500">
@@ -49,7 +43,7 @@ const TablaTransportistas = ({
                 <td className="px-3 py-2 text-sm whitespace-nowrap text-gray-500">
                   {transporte?.nro_mtc || "N/A"}
                 </td>
-                <td className="space-y-1 px-3 py-2 text-sm whitespace-nowrap text-gray-500">
+                <td className="max-w-sm min-w-[200px] space-y-1 px-3 py-2 text-sm whitespace-normal text-gray-500">
                   {transporte?.vehiculos.length > 0 ? (
                     transporte.vehiculos.map((vehiculo, index) => {
                       return (
@@ -57,8 +51,8 @@ const TablaTransportistas = ({
                           key={index}
                           className={`block ${index > 0 && "border-t border-gray-500"}`}
                         >
-                          {vehiculo?.marca || "N/A"}{" "}
-                          {vehiculo?.color ? `(${vehiculo?.color})` : "N/A"} -{" "}
+                          {vehiculo?.marca || "N/A"}{" - "}
+                          {/* {vehiculo?.color ? `(${vehiculo?.color})` : "N/A"} -{" "} */}
                           {vehiculo?.nro_placa || "N/A"}
                         </span>
                       );
@@ -69,7 +63,13 @@ const TablaTransportistas = ({
                 </td>
                 <td className="">
                   <div className="flex items-center justify-center gap-x-3 px-3 py-2 text-sm text-gray-500">
-                    <button className="text-innova-blue cursor-pointer transition-all hover:text-blue-500">
+                    <button
+                      onClick={() => {
+                        setOpen(true);
+                        setForm(transporte);
+                      }}
+                      className="text-innova-blue cursor-pointer transition-all hover:text-blue-500"
+                    >
                       <SquarePen className="size-6" />
                     </button>
                     <button

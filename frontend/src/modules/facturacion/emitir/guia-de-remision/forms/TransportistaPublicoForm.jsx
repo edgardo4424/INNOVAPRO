@@ -54,7 +54,7 @@ const TransportistaPublicoForm = () => {
       const rucPromise = factilizaService.obtenerEmpresaPorRuc(ruc);
       toast.promise(rucPromise, {
         pending: "Buscando información de la empresa",
-        success: "Empreza encontrada",
+        success: "Empresa encontrada",
         error: "No se encontraron resultados",
       });
       const rucResp = await rucPromise;
@@ -81,36 +81,34 @@ const TransportistaPublicoForm = () => {
       }));
 
       //? ========= 2) MTC (con toast.promise) =========
-      const mtcPromise = facturaService.obtenerMtc(ruc);
+      // const mtcPromise = facturaService.obtenerMtc(ruc);
 
-      toast.promise(mtcPromise, {
-        pending: "Buscando MTC",
-        success: "Información encontrada",
-        warning: "No se encontró información en MTC",
-      });
+      // toast.promise(mtcPromise, {
+      //   pending: "Buscando MTC",
+      //   success: "Información encontrada",
+      //   warning: "No se encontró información en MTC",
+      // });
 
-      const mtcResp = await mtcPromise;
+      // const mtcResp = await mtcPromise;
 
-      //? Algunas APIs devuelven { status, estado, data:{ status, ... } }
-      const mtcTopStatus = mtcResp?.status; // a veces existe
-      const mtcDataStatus = mtcResp?.data?.status; // a veces está dentro de data
-      const mtcOkFlag = (mtcResp?.estado ?? mtcResp?.success ?? true) === true;
-      const mtcOk =
-        (mtcTopStatus === 200 || mtcDataStatus === 200) && mtcOkFlag;
+      // //? Algunas APIs devuelven { status, estado, data:{ status, ... } }
+      // const mtcTopStatus = mtcResp?.status; // a veces existe
+      // const mtcDataStatus = mtcResp?.data?.status; // a veces está dentro de data
+      // const mtcOkFlag = (mtcResp?.estado ?? mtcResp?.success ?? true) === true;
+      // const mtcOk =
+      //   (mtcTopStatus === 200 || mtcDataStatus === 200) && mtcOkFlag;
 
-      const nombresAlt =
-        mtcResp?.razon_social || mtcResp?.data?.razon_social || "";
-      const nro_mtc = mtcOk
-        ? mtcResp?.data?.codigo_mtc || mtcResp?.codigo_mtc || ""
-        : "";
+      // const nombresAlt =
+      //   mtcResp?.razon_social || mtcResp?.data?.razon_social || "";
+      // const nro_mtc = mtcOk
+      //   ? mtcResp?.data?.codigo_mtc || mtcResp?.codigo_mtc || ""
+      //   : "";
 
       setGuiaDatosPublico((prev) => ({
         ...prev,
         transportista: {
           ...prev.transportista,
-          //? Si no vino de Sunat, puedes usar el de MTC como fallback (descomenta si lo quieres):
-          //? razon_Social: prev.transportista?.razon_Social || razonSocial || nombresAlt || "",
-          nro_mtc,
+          // nro_mtc,
         },
       }));
     } catch (error) {

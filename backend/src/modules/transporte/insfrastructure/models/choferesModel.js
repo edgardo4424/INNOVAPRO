@@ -46,7 +46,7 @@ const Choferes = sequelize.define(
 );
 
 Choferes.associate = (models) => {
-    // Choferes.belongsTo(models.vehiculos, { foreignKey: "id_chofer", onDelete: 'CASCADE' });
+    Choferes.hasOne(models.vehiculos, { foreignKey: "id_chofer" });
 }
 
 module.exports = { Choferes };

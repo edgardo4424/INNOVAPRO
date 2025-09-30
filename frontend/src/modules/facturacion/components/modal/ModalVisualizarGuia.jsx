@@ -3,6 +3,13 @@ import { Fragment, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import DocumentoSkeleton from "../../bandeja/list-factura-boleta/components/DocumentoSkeleton";
 import facturaService from "../../service/FacturaService";
+import {
+  formatDateTime,
+  getCodigoTraslado,
+  getModalidadTrasladoLabel,
+  getTipoDocCliente,
+  getTipoDocDescription,
+} from "../../utils/formateos";
 
 export default function ModalVisualizarGuia({
   setModalOpen,
@@ -21,104 +28,6 @@ export default function ModalVisualizarGuia({
 
   const onBackdropClick = (e) => {
     if (e.target === e.currentTarget) closeModal();
-  };
-
-  const formatDateTime = (dateStr) => {
-    if (!dateStr) return "";
-    const d = new Date(dateStr);
-    if (isNaN(d)) return dateStr;
-    return d.toLocaleString("es-PE", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-  };
-
-  const tipoDocLabel = (code) => {
-    switch (code) {
-      case "09":
-        return "GUÍA DE REMISIÓN REMITENTE";
-      default:
-        return "DOCUMENTO ELECTRÓNICO";
-    }
-  };
-
-  const tipoDocCliente = (code) => {
-    switch (String(code)) {
-      case "6":
-        return "RUC";
-      case "1":
-        return "DNI";
-      case "4":
-        return "CARNET DE EXTRANJERÍA";
-      default:
-        return "OTRO";
-    }
-  };
-
-  const tipoTrasladoLabel = (code) => {
-    switch (code) {
-      case "01":
-        return "VENTA";
-      case "02":
-        return "VENTA SUJETA A CONFIRMACIÓN DEL COMPRADOR";
-      case "03":
-        return "COMPRA";
-      case "04":
-        return "TRASLADO ENTRE ESTABLECIMIENTOS DE LA MISMA EMPRESA";
-      case "05":
-        return "TRASLADO POR EMISIÓN DE COMPROBANTE DE PAGO";
-      case "06":
-        return "TRASLADO DE BIENES PARA TRANSFORMACIÓN";
-      case "07":
-        return "RECOJO DE BIENES";
-      case "08":
-        return "TRASLADO POR VENTA CON ENTREGA EN VÍA PÚBLICA";
-      case "09":
-        return "TRASLADO DE BIENES INTERNA";
-      case "10":
-        return "EXPORTACIÓN";
-      default:
-        return code;
-    }
-  };
-
-  const codigoTraslado = (code) => {
-    switch (code) {
-      case "01":
-        return "Venta";
-      case "02":
-        return "Venta sujeta a confirmación del comprador";
-      case "04":
-        return "Traslado entre establecimientos de la misma empresa";
-      case "08":
-        return "Importación";
-      case "09":
-        return "Exportación";
-      case "13":
-        return "Otros - Alquiler";
-      case "14":
-        return "Venta con entrega a terceros";
-      case "18":
-        return "Traslado emisor itinerante de comprobantes de pago";
-      case "19":
-        return "Traslado a zona primaria";
-      case "20":
-        return "Traslado por emisor itinerante (comprobante de pago)";
-      default:
-        return code;
-    }
-  };
-
-  const modalidadTrasladoLabel = (code) => {
-    switch (code) {
-      case "01":
-        return "PÚBLICO";
-      case "02":
-        return "PRIVADO";
-      default:
-        return code;
-    }
   };
 
   // ** METODO VISUALIZAR DOCUMENTO CON ENDPOINT DE INNOVA
@@ -192,7 +101,7 @@ export default function ModalVisualizarGuia({
                   </div>
                   <div className="md:text-center">
                     <p className="text-lg font-semibold text-gray-700">
-                      {tipoDocLabel(guia.tipo_Doc)}
+                      {getTipoDocDescription(guia.tipo_Doc)}
                     </p>
                     <p className="text-2xl font-extrabold tracking-wide text-gray-700">
                       {numeroDoc}
@@ -210,8 +119,8 @@ export default function ModalVisualizarGuia({
                 <h3 className="mb-3 text-sm font-bold text-gray-600">
                   DATOS DEL CLIENTE
                 </h3>
-                <div className="space-y-1 text-sm text-gray-800">
-                  <div className="grid grid-cols-[110px_1fr] gap-x-2">
+                <div className="grid grid-cols-1 space-y-1 text-sm text-gray-800 md:grid-cols-2">
+                  <div className="grid grid-cols-[120px_1fr] gap-x-2">
                     <span className="font-semibold text-gray-700">
                       Razón social:
                     </span>
@@ -224,18 +133,32 @@ export default function ModalVisualizarGuia({
                     <span className="font-medium">
                       {guia.cliente_Direccion || "—"}
                     </span>
-                    <span className="font-semibold text-gray-700">
-                      Tipo doc.:
-                    </span>
-                    <span className="font-medium">
-                      {tipoDocCliente(guia.cliente_Tipo_Doc)}
-                    </span>
-                    <span className="font-semibold text-gray-700">
-                      Número doc.:
-                    </span>
-                    <span className="font-medium">
-                      {guia.cliente_Num_Doc || "—"}
-                    </span>
+                  </div>
+                  <div className="flex flex-col md:flex-row justify-around">
+                    <div className="grid grid-cols-2 gap-x-2">
+                      <span className="font-semibold text-gray-700">
+                        Tipo doc.:
+                      </span>
+                      <span className="font-medium">
+                        {getTipoDocCliente(guia.cliente_Tipo_Doc)}
+                      </span>
+                      <span className="font-semibold text-gray-700">
+                        Número doc.:
+                      </span>
+                      <span className="font-medium">
+                        {guia.cliente_Num_Doc || "—"}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-x-2">
+                      <span className="font-semibold text-gray-700">Obra:</span>
+                      <span className="font-medium">{guia.obra || "—"}</span>
+                      <span className="font-semibold text-gray-700">
+                        Contrato:
+                      </span>
+                      <span className="font-medium">
+                        {guia.nro_contrato || "—"}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -260,7 +183,9 @@ export default function ModalVisualizarGuia({
                         Modalidad de traslado:
                       </span>
                       <span className="font-medium">
-                        {modalidadTrasladoLabel(guia.guia_Envio_Mod_Traslado)}
+                        {getModalidadTrasladoLabel(
+                          guia.guia_Envio_Mod_Traslado,
+                        )}
                       </span>
                     </div>
                     <div className="grid grid-cols-[140px_1fr] gap-x-2">
@@ -268,7 +193,7 @@ export default function ModalVisualizarGuia({
                         Motivo de traslado:
                       </span>
                       <span className="font-medium">
-                        {codigoTraslado(guia.guia_Envio_Cod_Traslado)}
+                        {getCodigoTraslado(guia.guia_Envio_Cod_Traslado)}
                       </span>
                     </div>
                     <div className="grid grid-cols-[140px_1fr] gap-x-2">

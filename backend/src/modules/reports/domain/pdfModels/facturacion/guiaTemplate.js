@@ -51,11 +51,14 @@ function guiaTemplate(data) {
             innova_black,
         ),
         { text: '\n' },
-        pdfDatosGuia(
-            guia,
-            choferes,
-            transportistas
-        ),
+        {
+            unbreakable: true,
+            stack: [pdfDatosGuia(
+                guia,
+                choferes,
+                transportistas
+            )]
+        },
         { text: '\n' },
         // ! seccion de observaciones
         {

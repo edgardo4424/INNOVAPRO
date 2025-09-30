@@ -22,6 +22,7 @@ const valorIncialChofer = {
     nombres: "",
     apellidos: "",
     nro_licencia: "",
+    id_vehiculo: null,
 }
 
 export { valorIncialChofer, valorIncialTransporte, valorInicialVehicular };

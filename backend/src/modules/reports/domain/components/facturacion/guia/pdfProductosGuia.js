@@ -5,7 +5,12 @@ function pdfProductosGuia(
     innova_border = "#DCDBDB",
     margin_content = [0, 0, 0, 0]
 ) {
-    const cantidad_total = guia.guia_detalles?.reduce((acc, d) => acc + Number(d.cantidad ?? 0), 0);
+    const cantidad_total = guia.guia_detalles?.reduce((acc, d) => {
+        if (d.unidad === 'NIU') {
+            return acc + Number(d.cantidad ?? 0);
+        }
+        return acc;
+    }, 1);
     const peso_total = guia.guia_detalles?.reduce((acc, d) => acc + Number(d.peso_kg ?? 0), 0);
     return (
         {

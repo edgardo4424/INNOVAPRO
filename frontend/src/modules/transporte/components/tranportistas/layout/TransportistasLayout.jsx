@@ -16,7 +16,7 @@ const TransportistasLayout = () => {
   // ?MODAL AGREGAR ACTUALIZAR
   const [open, setOpen] = useState(false);
 
-  // *ACTUALIZAR CHOFER
+  // *ACTUALIZAR TRANSPORTISTA
   const [Form, setForm] = useState(valorIncialTransporte);
 
   // !MODAL ELIMINAR TRANSPORTISTA
@@ -61,6 +61,12 @@ const TransportistasLayout = () => {
     }
   }, [filtro, listaTransportistas]);
 
+  useEffect(() => {
+    if (!open) {
+      setForm(valorIncialTransporte);
+    }
+  }, [open]);
+
   return (
     <div className="flex w-full flex-col">
       {/* // ? HEADER */}
@@ -81,7 +87,8 @@ const TransportistasLayout = () => {
           setOpen={setOpen}
           Form={Form}
           setForm={setForm}
-       W />
+          refresh={buscarTransportistas}
+        />
       </div>
 
       {/* // ? TABLA */}

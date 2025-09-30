@@ -13,7 +13,7 @@ import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteC
 import { useState } from "react";
 import { detalleInicial } from "../utils/valoresIncialGuia";
 
-const  DetalleProductoForm = ({ closeModal }) => {
+const DetalleProductoForm = ({ closeModal }) => {
   const {
     productoActual,
     setProductoActual,
@@ -35,18 +35,20 @@ const  DetalleProductoForm = ({ closeModal }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (name == "cantidad") {
+
+    if (name === "cantidad") {
+      // Permitir dejar vacío para que el usuario pueda editar
       if (value === "") {
-        setPagoActual({
-          ...pagoActual,
-          [name]: value,
+        setProductoActual({
+          ...productoActual,
+          [name]: "",
         });
         return;
       }
 
       const valorNumerico = parseFloat(value);
 
-      // Validación: No permitir negativos ni NaN
+      // Validación: solo números >= 0
       if (isNaN(valorNumerico) || valorNumerico < 0) {
         return;
       }
@@ -55,48 +57,73 @@ const  DetalleProductoForm = ({ closeModal }) => {
         ...productoActual,
         [name]: valorNumerico,
       });
+    } else {
+      // Para el resto de inputs
+      setProductoActual({
+        ...productoActual,
+        [name]: typeof value === "string" ? value.toUpperCase() : value,
+      });
     }
-    setProductoActual({
-      ...productoActual,
-      [name]: typeof value === "string" ? value.toUpperCase() : value,
-    });
   };
 
   const handleAgregar = async () => {
     if (productoActual.index !== null) {
+      // Editar un item existente
       setGuiaTransporte((prevGuiaTransporte) => ({
         ...prevGuiaTransporte,
         detalle: prevGuiaTransporte.detalle.map((item, index) => {
           if (index === productoActual.index) {
             return {
               ...item,
-              unidad: unidad,
-              cantidad: cantidad,
-              cod_Producto: cod_Producto,
-              descripcion: descripcion,
+              unidad,
+              cantidad,
+              cod_Producto,
+              descripcion,
             };
           }
           return item;
         }),
       }));
-      setProductoActual(detalleInicial);
-      closeModal();
     } else {
-      setGuiaTransporte((prevGuiaTransporte) => ({
-        ...prevGuiaTransporte,
-        detalle: [
-          ...prevGuiaTransporte.detalle,
-          {
-            unidad: unidad,
-            cantidad: cantidad,
-            cod_Producto: cod_Producto,
-            descripcion: descripcion,
-          },
-        ],
-      }));
-      setProductoActual(detalleInicial);
-      closeModal();
+      // Agregar un nuevo item (o sumar si ya existe)
+      setGuiaTransporte((prevGuiaTransporte) => {
+        const existeIndex = prevGuiaTransporte.detalle.findIndex(
+          (item) => item.cod_Producto === cod_Producto,
+        );
+
+        if (existeIndex !== -1) {
+          // Si ya existe → sumar cantidad
+          const nuevoDetalle = [...prevGuiaTransporte.detalle];
+          nuevoDetalle[existeIndex] = {
+            ...nuevoDetalle[existeIndex],
+            cantidad:
+              parseFloat(nuevoDetalle[existeIndex].cantidad || 0) +
+              parseFloat(cantidad || 0),
+          };
+          return {
+            ...prevGuiaTransporte,
+            detalle: nuevoDetalle,
+          };
+        } else {
+          // Si no existe → agregar nuevo
+          return {
+            ...prevGuiaTransporte,
+            detalle: [
+              ...prevGuiaTransporte.detalle,
+              {
+                unidad,
+                cantidad,
+                cod_Producto,
+                descripcion,
+              },
+            ],
+          };
+        }
+      });
     }
+
+    setProductoActual(detalleInicial);
+    closeModal();
   };
 
   const handleCancelar = () => {
@@ -151,24 +178,17 @@ const  DetalleProductoForm = ({ closeModal }) => {
               <SelectItem value="ONZ">ONZ - Onzas </SelectItem>
             </SelectContent>
           </Select>
-          {/* {
-                        pagoValida.tipo && (
-                            <span className="text-red-500 text-sm">
-                                Debes seleccionar un metodo de pago
-                            </span>
-                        )
-                    } */}
         </div>
 
         {/* Cantidad */}
         <div className="flex flex-col gap-1 md:col-span-1">
           <Label>Cantidad</Label>
           <Input
-            type="number"
+            type="String"
             name="cantidad"
             placeholder="Peso"
             className={"border-1 border-gray-400"}
-            onwheel={(e) => e.target.blur()}
+            // onwheel={(e) => e.target.blur()}
             value={cantidad || ""}
             onChange={handleInputChange}
           />

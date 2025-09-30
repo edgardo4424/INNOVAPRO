@@ -1,6 +1,8 @@
 module.exports = async (transporte, transporteRepository) => {
   let result;
 
+  console.log("transporte", transporte);
+
   // ? Si viene transportista con ID -> actualizar, si no -> crear
   if (
     transporte.transportista &&

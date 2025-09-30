@@ -20,7 +20,6 @@ module.exports = {
       nro_doc: {
         type: Sequelize.STRING(12),
         allowNull: false,
-        unique: true,
       },
       razon_social: {
         type: Sequelize.STRING(250),
@@ -91,7 +90,6 @@ module.exports = {
       nro_placa: {
         type: Sequelize.STRING(10),
         allowNull: false,
-        unique: true,
       },
       marca: {
         type: Sequelize.STRING(50),
