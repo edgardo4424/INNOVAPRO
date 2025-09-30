@@ -3,11 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Calculator } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { currency } from "../utils/ui";
 import { useQuintaCategoria } from "../hooks/useQuintaCategoria";
 import { useCierreQuinta } from '../hooks/useCierreQuinta';
+import { cerrarPeriodoQuinta, getEstadoCierre } from "../service/cierreQuintaService";
 
 import TrabajadorCombobox from "../components/TrabajadorCombobox";
 import HistorialTabla from "../components/HistorialTabla";
@@ -29,33 +31,17 @@ export default function CalculoQuintaCategoria() {
     historialVigente, vigenteDelMes, yaExisteOficialEnMes,
     trabajadores, handleTrabajadorSelect, filiales, handleFilialSelect,
     canCalcular, handlePreview, handleGuardar, handleRecalcular,
-    loadingPreview, saving, errors, onSoportesGuardado,
+    loadingPreview, saving, errors, onSoportesGuardado, filialesGenerales,
   } = useQuintaCategoria();
+
   const filialId = Number(form.filial_id);
   const anio = form.anio;
   const mes = form.mes;
+
   const { cerrado, loading: closing, cerrar, periodo } = useCierreQuinta({ filialId, anio, mes });
 
-  const onCerrarPeriodo = async () => {
-    try {
-      const ok = await cerrar();   
-      if (ok) {
-        toast.success(`Se cerró ${periodo} para la filial seleccionada.`);
-        return true;
-      }
-      toast.error("No se pudo cerrar el período.");
-      return false;
-    } catch (e) {
-      const msg =
-        e?.response?.data?.message ||
-        e?.response?.data?.mensaje ||
-        e?.message ||
-        "No se pudo cerrar el período.";
-      toast.error(msg);
-      return false;
-    }
-  };
-
+  const [loadingClose, setLoadingClose] = useState(false);
+  const [cerradoOV, setCerradoOV] = useState(false);
 
   const [openMulti, setOpenMulti] = useState(false);
   const [openCert, setOpenCert] = useState(false);
@@ -96,11 +82,37 @@ export default function CalculoQuintaCategoria() {
   return (
     <div className="p-2 sm:p-3 xl:p-4 min-h-[calc(100vh-70px)] overflow-auto">
       <CierreQuintaBanner
-        cerrado={cerrado}
+        cerrado={cerrado || cerradoOV}          
         periodo={periodo}
-        loading={closing}
-        onCloseClick={onCerrarPeriodo}
+        loading={loadingClose}
+        filialesGenerales={filialesGenerales}   
+        filialId={form.filial_id}             
+        onSelectFilial={(v, obj) => handleFilialSelect(v, obj)}
+        onCloseClick={async ({ periodo, filial_id }) => {
+          try {
+            setLoadingClose(true);
+            const r = await cerrarPeriodoQuinta({ periodo, filial_id });
+            const ok = (r.status >= 200 && r.status < 300) || r?.data?.ok;
+            if (ok) {
+              // Forzamos naranja inmediato
+              setCerradoOV(true);
+              // Opcional: validar estado real
+              const estado = await getEstadoCierre({ filialId: filial_id, periodo });
+              if (!estado) console.warn("Cierre aparentemente OK pero el estado devolvió abierto");
+              toast.success(`Se cerró ${periodo} para la filial ${filial_id}.`);
+              return true;
+            }
+            toast.error(r?.data?.message || "No se pudo cerrar el período.");
+            return false;
+          } catch (e) {
+            toast.error(e?.response?.data?.message || "No se pudo cerrar el período.");
+            return false;
+          } finally {
+            setLoadingClose(false);
+          }
+        }}
       />
+      
       <div className="flex flex-col xl:flex-row gap-3 h-full">
         {/* Izquierda: fija */}
         <div className="w-full xl:w-[605px] shrink-0 flex flex-col gap-2 min-h-0">
@@ -176,9 +188,21 @@ export default function CalculoQuintaCategoria() {
                   {loadingPreview ? "Calculando..." : "Calcular proyección"}
                 </Button>
 
-                <Button className="h-7 px-2 text-[11px]" variant="outline" onClick={() => setOpenMasivo(true)}>
+                <Button
+                  onClick={() => setOpenMasivo(true)}
+                  className="
+                    h-7 px-3 text-[11px]
+                    bg-gradient-to-r from-innova-blue to-black text-white
+                    border-0 rounded-sm shadow-sm 
+                    hover:shadow-lg hover:opacity-95
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-innova-orange/60
+                    transition-transform duration-200 active:translate-y-[1px]
+                  "
+                >
+                  <Calculator className="w-4 h-4 mr-1.5" />
                   Cálculo masivo
                 </Button>
+
 
                 {yaExisteOficialEnMes ? (
                   <Button 

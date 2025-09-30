@@ -2,8 +2,11 @@ import api from "@/shared/services/api";
 
 // Estado: ¿cerrado?
 export async function getEstadoCierre({ filialId, periodo }) {
-  const res = await api.get('/quintaCategoria/cierres/estado', { params: { filialId, periodo } });
-  return res?.data.cerrado === true;
+  const res = await api.get('/quintaCategoria/cierres/estado', {
+    params: { filial_id: filialId, filialId, periodo }
+  });
+  const d = res?.data;
+  return d?.cerrado === true || d?.data?.cerrado === true;
 }
 
 // Cerrar período
@@ -14,6 +17,6 @@ export async function cerrarPeriodoQuinta({ filial_id, periodo }) {
 
 // Listar cierres por año
 export async function listarCierres({ filialId, anio }) {
-  const res = await api.get('/quintaCategoria/cierres', { params: { filialId, anio } });
+  const res = await api.get('/quintaCategoria/cierres', { params: { filial_id: filialId, filialId, anio } });
   return res?.data?.data ?? [];
 }
