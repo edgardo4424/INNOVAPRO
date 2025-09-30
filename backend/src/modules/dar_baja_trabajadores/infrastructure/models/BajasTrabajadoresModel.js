@@ -2,17 +2,17 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../../../../config/db"); // Asegúrate de importar correctamente tu instancia de Sequelize
 
 const BajasTrabajadores = sequelize.define(
-   "bajas_trabajadores",
-   {
-       id: {
+  "bajas_trabajadores",
+  {
+    id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
-      primaryKey: true
+      primaryKey: true,
     },
     trabajador_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-       references: {
+      references: {
         model: "trabajadores",
         key: "id",
       },
@@ -20,72 +20,92 @@ const BajasTrabajadores = sequelize.define(
     contrato_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-       references: {
+      references: {
         model: "contratos_laborales",
         key: "id",
       },
     },
-     fecha_ingreso: {
+    fecha_ingreso: {
       type: DataTypes.DATEONLY,
-      allowNull: false
+      allowNull: false,
     },
-     fecha_baja: {
+    fecha_baja: {
       type: DataTypes.DATEONLY,
-      allowNull: false
+      allowNull: false,
     },
     motivo: {
-      type: DataTypes.ENUM('RENUNCIA', 'DESPIDO', 'FIN CONTRATO', 'MUTUO ACUERDO'),
+      type: DataTypes.ENUM(
+        "RENUNCIA",
+        "DESPIDO",
+        "FIN CONTRATO",
+        "MUTUO ACUERDO"
+      ),
       allowNull: false,
-      defaultValue: 'FIN CONTRATO'
+      defaultValue: "FIN CONTRATO",
     },
     observacion: {
       type: DataTypes.TEXT,
     },
-   
+
     usuario_registro_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-       references: {
+      references: {
         model: "usuarios",
         key: "id",
       },
     },
     estado_liquidacion: {
-      type: DataTypes.ENUM('CALCULADA', 'PAGADA'),
+      type: DataTypes.ENUM("CALCULADA", "PAGADA"),
       allowNull: false,
-      defaultValue: 'CALCULADA'
+      defaultValue: "CALCULADA",
     },
 
     // 💰 Total a pagar (neto)
-    total_liquidacion: { type: DataTypes.DECIMAL(10, 2), allowNull: true, defaultValue: 0.00  },
+    total_liquidacion: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+      defaultValue: 0.0,
+    },
 
     detalles_liquidacion: {
       type: DataTypes.JSON,
-      allowNull: true
+      allowNull: true,
     },
 
+    filial_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      // Si quieres relación explícita con filiales:
+      references: {
+        model: "empresas_proveedoras",
+        key: "id",
+      },
+      onUpdate: "CASCADE",
+      onDelete: "RESTRICT",
+    },
   },
-   {
-      timestamps: true,
-      tableName: "bajas_trabajadores",
-   }
+  {
+    timestamps: true,
+    tableName: "bajas_trabajadores",
+  }
 );
 
 BajasTrabajadores.associate = (models) => {
-    BajasTrabajadores.belongsTo(models.trabajadores, {
-        foreignKey: 'trabajador_id',
-        as: 'trabajador'
-      });
+  BajasTrabajadores.belongsTo(models.trabajadores, {
+    foreignKey: "trabajador_id",
+    as: "trabajador",
+  });
 
-      BajasTrabajadores.belongsTo(models.contratos_laborales, {
-        foreignKey: 'contrato_id',
-        as: 'contrato'
-      });
+  BajasTrabajadores.belongsTo(models.contratos_laborales, {
+    foreignKey: "contrato_id",
+    as: "contrato",
+  });
 
-      BajasTrabajadores.belongsTo(models.usuarios, {
-        foreignKey: 'usuario_registro_id',
-        as: 'registrado_por'
-      });
+  BajasTrabajadores.belongsTo(models.usuarios, {
+    foreignKey: "usuario_registro_id",
+    as: "registrado_por",
+  });
 };
 
 module.exports = { BajasTrabajadores }; // Exporta el modelo para que pueda ser utilizado en otros módulos

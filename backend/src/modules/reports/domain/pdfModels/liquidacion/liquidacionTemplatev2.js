@@ -28,9 +28,9 @@ async function liquidacionTemplatev2(data) {
     contrato,
     detalles_liquidacion,
     fecha_ingreso,
-     fecha_baja,
-  motivo,
-  total_liquidacion
+    fecha_baja,
+    motivo,
+    filial_id
   } = data;
 
   return {
@@ -54,8 +54,8 @@ async function liquidacionTemplatev2(data) {
       pdfSeccionVacaciones({contrato, detalles_liquidacion, trabajador}),
       pdfSeccionGratificacionTrunca({ contrato, detalles_liquidacion }),
       pdfRemuneracionTrunca({ detalles_liquidacion, trabajador, contrato }),
-      await pdfTotalAPagar({ trabajador, detalles_liquidacion }), 
-      await pdfFooter({ contrato_id: contrato.id, trabajador, detalles_liquidacion }),
+      pdfTotalAPagar({ detalles_liquidacion }), 
+      await pdfFooter({ filial_id, trabajador, detalles_liquidacion }),
     ],
     styles: {
       docTypeHeaderCenter: {
@@ -73,6 +73,10 @@ async function liquidacionTemplatev2(data) {
       infoTable: {
         fontSize: 7,
       },
+       parrafo: {
+      margin: [0, 10, 0, 10], // margen superior e inferior para todos los textos
+      alignment: 'justify',
+    },
     },
     defaultStyle: {
       font: "Helvetica",

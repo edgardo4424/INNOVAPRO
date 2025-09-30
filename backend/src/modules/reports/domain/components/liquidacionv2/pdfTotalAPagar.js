@@ -1,51 +1,18 @@
 const { redondear2 } = require("../../../../../shared/utils/redondear2");
-const SequelizeAdelantoSueldoRepository = require("../../../../adelanto_sueldo/infraestructure/repositories/sequlizeAdelantoSueldoRepository");
 
-const adelantoSueldoRepository = new SequelizeAdelantoSueldoRepository();
-
-async function pdfTotalAPagar({ trabajador, detalles_liquidacion }) {
-  const { informacionLiquidacion, ctsTrunca, vacacionesTrunca, gratificacionTrunca, remuneracion_trunca } = detalles_liquidacion;
+function pdfTotalAPagar({  detalles_liquidacion }) {
+  const { ctsTrunca, vacacionesTrunca, gratificacionTrunca, remuneracion_trunca, descuentos_adicionales } = detalles_liquidacion;
 
   const totalCtsTrunca = ctsTrunca?.total || 0;
   const totalVacacionesTrunca = vacacionesTrunca?.total || 0;
   const totalGratificacionTrunca = gratificacionTrunca?.total || 0;
   const totalRemuneracionTrunca = remuneracion_trunca?.total || 0;
+  const totalAdelantosSimple = descuentos_adicionales?.totalAdelantosSimple || 0
+  const totalAdelantosGratificacion = descuentos_adicionales?.totalAdelantosGratificacion || 0
+  const totalAdelantosCts = descuentos_adicionales?.totalAdelantosCts || 0
 
   const subtotalAPagar = redondear2(totalCtsTrunca + totalVacacionesTrunca + totalGratificacionTrunca + totalRemuneracionTrunca);
 
-
-  //* Calcular si tiene adelantos por pagar
-  const adelantosPagar = await adelantoSueldoRepository.obtenerAdelantosPorTrabajadorId(trabajador.id)
-
-  const adelantosPagarFormateado = adelantosPagar.map(adelanto => adelanto.get({ plain: true }));
-
-  const adelantosSimple = adelantosPagarFormateado.filter(adelanto => adelanto.tipo === 'simple') || [];
-  const adelantosGratificacion = adelantosPagarFormateado.filter(adelanto => adelanto.tipo === 'gratificacion') || [];
-  const adelantosCts = adelantosPagarFormateado.filter(adelanto => adelanto.tipo === 'cts') || [];
-
-  const calcularTotalAdelantosSimples = (adelantos) => {
-    return adelantos.reduce(
-      (total, adelanto) =>
-        total +
-        ((Number.parseFloat(adelanto.monto) || 0) /
-          (Number(adelanto.cuotas)) * (Number(adelanto.cuotas) - Number(adelanto.cuotas_pagadas))),
-      0
-    ) || 0;
-  };
-
-  const totalAdelantosSimp = calcularTotalAdelantosSimples(adelantosSimple);
-  const totalAdelantosGrati = calcularTotalAdelantosSimples(adelantosGratificacion);
-  const totalAdelantos_cts = calcularTotalAdelantosSimples(adelantosCts);
-
-  const totalAdelantosSimple = redondear2(totalAdelantosSimp);
-  const totalAdelantosGratificacion = redondear2(totalAdelantosGrati);
-  const totalAdelantosCts = redondear2(totalAdelantos_cts);
-
-  console.log({
-    totalAdelantosSimple,
-    totalAdelantosGratificacion,
-    totalAdelantosCts
-  });
   const totalFinal = redondear2(subtotalAPagar - totalAdelantosSimple - totalAdelantosGratificacion - totalAdelantosCts);
 
   let decorationAdelantosSimple = false;

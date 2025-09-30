@@ -41,6 +41,7 @@ import {
   Power,
   RefreshCw,
   Filter,
+  FileText,
 } from "lucide-react";
 //import beneficiosService from "../services/beneficiosService";
 //import { formatoDinero } from "../utils/formatoDinero";
@@ -169,6 +170,37 @@ const GestionTrabajadoresDadosDeBaja = () => {
     }));
   };
 
+ const handleDownload = async (id, dni, nombre_completo_trabajador) => {
+  try {
+    const response = await trabajadoresDadosDeBajaService.reporteLiquidacion(id);
+
+    console.log("response completo", response);
+
+    let blob;
+    if (response.data instanceof Blob) {
+      // 👌 Ya viene como Blob
+      blob = response.data;
+    } else {
+      // 🚨 Viene como texto/base64 → conviértelo a Blob
+      blob = new Blob([response.data], { type: "application/pdf" });
+    }
+
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `LBS - ${dni} - ${nombre_completo_trabajador}.pdf`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+
+    toast.success("Liquidación descargada exitosamente");
+  } catch (err) {
+    console.error("Error en handleDownload", err);
+    toast.error("Error al tratar de descargar la liquidación del trabajador");
+  }
+};
+
+
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -238,6 +270,7 @@ const GestionTrabajadoresDadosDeBaja = () => {
                   <th className="px-4 py-3 font-medium">Motivo</th>
                   <th className="px-4 py-3 font-medium">Estado liquidación</th>
                   <th className="px-4 py-3 font-medium">Neto a Liquidar</th>
+                  <th className="px-4 py-3 font-medium">Acciones</th>
                 </tr>
               </thead>
               <tbody className="divide-y">
@@ -274,6 +307,16 @@ const GestionTrabajadoresDadosDeBaja = () => {
                         <td className="px-4 py-3 ">{t.motivo}</td>
                         <td className="px-4 py-3 ">{t.estado_liquidacion}</td>
                         <td className="px-4 py-3 ">{t.total_liquidacion}</td>
+                        <td className="px-4 py-3 flex justify-center items-center">
+                          <button
+                                onClick={() => handleDownload(t.id, t.trabajador.numero_documento, `${t.trabajador.nombres ?? ""} ${
+                            t.trabajador.apellidos ?? ""
+                          }`.trim())}
+                                className="cursor-pointer flex items-center justify-center gap-2 bg-gray-100 rounded-lg text-gray-700 font-semibold hover:bg-gray-300/90 transition-colors"
+                            >
+                                <FileText size={20} />
+                            </button>
+                        </td>
                       </tr>
                     );
                   })}

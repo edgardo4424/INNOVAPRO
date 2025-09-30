@@ -46,6 +46,27 @@ module.exports = {
           { transaction: t }
         );
       }
+
+      // 👇 Agregar filial_id si no existe
+      if (!table.filial_id) {
+        await queryInterface.addColumn(
+          "bajas_trabajadores",
+          "filial_id",
+          {
+            type: Sequelize.INTEGER,
+            allowNull: false,
+            // Si quieres relación explícita con filiales:
+            references: {
+                    model: "empresas_proveedoras",
+                    key: "id",
+                  },
+            onUpdate: "CASCADE",
+            onDelete: "RESTRICT",
+            comment: "Filial al momento de la baja",
+          },
+          { transaction: t }
+        );
+      }
     });
   },
 

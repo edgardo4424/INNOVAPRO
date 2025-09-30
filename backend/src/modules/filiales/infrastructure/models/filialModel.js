@@ -87,6 +87,9 @@ Filial.associate = (models) => {
    Filial.hasMany(models.cierres_planilla_mensual, {
       foreignKey: "filial_id",
    });
+    Filial.hasMany(models.bajas_trabajadores, {
+      foreignKey: "filial_id",
+   });
 };
 
 module.exports = { Filial }; // Exporta el modelo para que pueda ser utilizado en otros módulos

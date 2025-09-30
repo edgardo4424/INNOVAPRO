@@ -25,6 +25,10 @@ const bonoRepository = new SequelizeBonoRepository();
 const SequelizeVacacionesRepository = require("../../modules/vacaciones/infraestructure/repositories/sequelizeVacacionesRepository");
 const vacacionesRepository = new SequelizeVacacionesRepository();
 
+const SequelizeAdelantoSueldoRepository = require("../../modules/adelanto_sueldo/infraestructure/repositories/sequlizeAdelantoSueldoRepository");
+const adelantoSueldoRepository = new SequelizeAdelantoSueldoRepository();
+
+
 const db = require("../../database/models");
 const sequelize = require("../../database/sequelize");
 
@@ -273,7 +277,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
 
       promedioBonoObra = calculaPromedioBonos(bonosDelTrabajador, 6) || 0;
 
-      //! 10. Calcular la remuneracion computable
+      //! 10. Calcular la remuneracion computable (OJOOOOOOOO)
       remuneracionComputable =
         ultimoSueldo +
         asignacionFamiliar +
@@ -381,7 +385,6 @@ module.exports = async function darBajaTrabajador(dataBody) {
             ultimoBancoDeposito: ultimoBancoDepositoGratificacion,
             gratificacion_meses: calculoGratificacionTruncaMeses,
             gratificacion_dias: calculoGratificacionTruncaDias,
-            grati_neta: calculoGratificacionNetoTrunca,
             bonificacion_essalud: calculoBonificacionEssalud,
             total: redondear2(
               calculoGratificacionNetoTrunca + calculoBonificacionEssalud
@@ -498,7 +501,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
         ultimoBancoDeposito: ultimoBancoDepositoCts,
         sueldo: remuneracionComputable,
         promedio_gratificacion,
-        remuneracionComputableParaCts: remuneracionComputableParaCts,
+/*         remuneracionComputableParaCts: remuneracionComputableParaCts, */
         calculoCtsTruncaMeses: calculoCtsTruncaMeses,
         calculoCtsTruncaDias: calculoCtsTruncaDias,
         total: calculoCtsNetoTrunca,
@@ -606,11 +609,11 @@ module.exports = async function darBajaTrabajador(dataBody) {
       calculoVacacionesTruncaDias,
       descuentos_vacaciones_gozadas,
       dias_vacaciones_gozadas: cantidadDiasVacacionesGozadas,
-      subtotal_vacaciones_truncas: subtotal_vacaciones_truncas,
-      porcentaje_descuento_sistema_pension:
+     /*  subtotal_vacaciones_truncas: subtotal_vacaciones_truncas, */
+     /*  porcentaje_descuento_sistema_pension:
         trabajadorEncontrado.sistema_pension == "AFP"
           ? PORCENTAJE_DESCUENTO_AFP_Y_SEGURO
-          : PORCENTAJE_DESCUENTO_ONP,
+          : PORCENTAJE_DESCUENTO_ONP, */
       descuentos_ley: descuentos_ley_vacaciones_trunca,
       total: redondear2(
         subtotal_vacaciones_truncas - descuentos_ley_vacaciones_trunca
@@ -754,24 +757,63 @@ module.exports = async function darBajaTrabajador(dataBody) {
       promedio_bonos: promedioBonoObra,
     };
 
+    //! 15. Calcular descuentos adicionales
+
+    //* Calcular si tiene adelantos por pagar
+      const adelantosPagar = await adelantoSueldoRepository.obtenerAdelantosPorTrabajadorId(trabajador_id)
+    
+      const adelantosPagarFormateado = adelantosPagar.map(adelanto => adelanto.get({ plain: true }));
+    
+      const adelantosSimple = adelantosPagarFormateado.filter(adelanto => adelanto.tipo === 'simple') || [];
+      const adelantosGratificacion = adelantosPagarFormateado.filter(adelanto => adelanto.tipo === 'gratificacion') || [];
+      const adelantosCts = adelantosPagarFormateado.filter(adelanto => adelanto.tipo === 'cts') || [];
+    
+      const calcularTotalAdelantosSimples = (adelantos) => {
+        return adelantos.reduce(
+          (total, adelanto) =>
+            total +
+            ((Number.parseFloat(adelanto.monto) || 0) /
+              (Number(adelanto.cuotas)) * (Number(adelanto.cuotas) - Number(adelanto.cuotas_pagadas))),
+          0
+        ) || 0;
+      };
+    
+      const totalAdelantosSimp = calcularTotalAdelantosSimples(adelantosSimple);
+      const totalAdelantosGrati = calcularTotalAdelantosSimples(adelantosGratificacion);
+      const totalAdelantos_cts = calcularTotalAdelantosSimples(adelantosCts);
+    
+      const totalAdelantosSimple = redondear2(totalAdelantosSimp);
+      const totalAdelantosGratificacion = redondear2(totalAdelantosGrati);
+      const totalAdelantosCts = redondear2(totalAdelantos_cts);
+
+      const totalDescuentosAdicionales = totalAdelantosSimple + totalAdelantosGratificacion + totalAdelantosCts
+
+      const descuentos_adicionales = {
+        totalAdelantosSimple,
+        totalAdelantosGratificacion,
+        totalAdelantosCts
+      }
+
     const respuesta = {
       informacionLiquidacion,
       gratificacionTrunca,
       ctsTrunca,
       vacacionesTrunca,
       remuneracion_trunca,
+      descuentos_adicionales
     };
 
     console.log("respuesta", respuesta);
 
-    //! Insertar en la tabla baja_trabajadores toda la informacion de
+    //! Insertar en la tabla baja_trabajadores toda la informacion
+    //! OJOOOOOOOOOOOOO añadir en total_liquidacion algun descuento o ingreso
 
     const estado_liquidacion = "CALCULADA";
     const total_liquidacion = redondear2(
       (gratificacionTrunca?.total || 0) +
         (ctsTrunca?.total || 0) +
         (vacacionesTrunca?.total || 0) +
-        (remuneracion_trunca?.total || 0)
+        (remuneracion_trunca?.total || 0) - (totalDescuentosAdicionales)
     );
 
     const dataBajaTrabajadores = {
@@ -784,7 +826,9 @@ module.exports = async function darBajaTrabajador(dataBody) {
       usuario_registro_id: usuario_cierre_id,
       estado_liquidacion: estado_liquidacion,
       total_liquidacion: total_liquidacion,
+      filial_id: contratoLaboralEncontrado.filial_id,
       detalles_liquidacion: respuesta,
+
     };
 
     console.log("dataBajaTrabajadores", dataBajaTrabajadores);

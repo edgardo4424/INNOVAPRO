@@ -10,7 +10,7 @@ async function pdfInfoTrabajador({
   detalles_liquidacion,
   fecha_ingreso,
   fecha_baja,
-  motivo
+  motivo,
 }) {
 
   const { informacionLiquidacion } = detalles_liquidacion;

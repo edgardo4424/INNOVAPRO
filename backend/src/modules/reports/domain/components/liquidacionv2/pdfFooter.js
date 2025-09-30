@@ -6,29 +6,24 @@ const { redondear2 } = require("../../../../../shared/utils/redondear2");
 
 const adelantoSueldoRepository = new SequelizeAdelantoSueldoRepository();
 
-async function pdfFooter({ contrato_id, trabajador, detalles_liquidacion }) {
+async function pdfFooter({ filial_id, trabajador, detalles_liquidacion }) {
 
 
 
     const hoy = moment().format("YYYY-MM-DD");
 
-    const contratoEncontrado = await db.contratos_laborales.findByPk(contrato_id, {
-        include: [
-            {
-                model: db.empresas_proveedoras,
-                as: "empresa_proveedora",
-            }
-        ]
-    });
+    const filialEncontrado = await db.empresas_proveedoras.findByPk(filial_id);
 
-   const nombre_empresa = contratoEncontrado.empresa_proveedora.razon_social;
+   const nombre_empresa = filialEncontrado.razon_social;
+
+   console.log('nombre_empresa', nombre_empresa)
 
   const fechaTexto = moment(hoy).format("DD [de] MMMM [del] YYYY");
   const fechaFirma = moment(hoy).format("DD/MM/YYYY");
 
   const montoTexto = ""; // Ej: "Un mil trescientos ochenta con 39/100"
 
-   const { informacionLiquidacion, ctsTrunca, vacacionesTrunca, gratificacionTrunca, remuneracion_trunca } = detalles_liquidacion;
+   const { informacionLiquidacion, ctsTrunca, vacacionesTrunca, gratificacionTrunca, remuneracion_trunca, descuentos_adicionales } = detalles_liquidacion;
 
   const totalCtsTrunca = ctsTrunca?.total || 0;
   const totalVacacionesTrunca = vacacionesTrunca?.total || 0;
@@ -37,61 +32,41 @@ async function pdfFooter({ contrato_id, trabajador, detalles_liquidacion }) {
 
   const subtotalAPagar = redondear2(totalCtsTrunca + totalVacacionesTrunca + totalGratificacionTrunca + totalRemuneracionTrunca);
 
-
-  //* Calcular si tiene adelantos por pagar
-  const adelantosPagar = await adelantoSueldoRepository.obtenerAdelantosPorTrabajadorId(trabajador.id)
-
-  const adelantosPagarFormateado = adelantosPagar.map(adelanto => adelanto.get({ plain: true }));
-
-  const adelantosSimple = adelantosPagarFormateado.filter(adelanto => adelanto.tipo === 'simple') || [];
-  const adelantosGratificacion = adelantosPagarFormateado.filter(adelanto => adelanto.tipo === 'gratificacion') || [];
-  const adelantosCts = adelantosPagarFormateado.filter(adelanto => adelanto.tipo === 'cts') || [];
-
-  const calcularTotalAdelantosSimples = (adelantos) => {
-    return adelantos.reduce(
-      (total, adelanto) =>
-        total +
-        ((Number.parseFloat(adelanto.monto) || 0) /
-          (Number(adelanto.cuotas)) * (Number(adelanto.cuotas) - Number(adelanto.cuotas_pagadas))),
-      0
-    ) || 0;
-  };
-
-  const totalAdelantosSimp = calcularTotalAdelantosSimples(adelantosSimple);
-  const totalAdelantosGrati = calcularTotalAdelantosSimples(adelantosGratificacion);
-  const totalAdelantos_cts = calcularTotalAdelantosSimples(adelantosCts);
-
-  const totalAdelantosSimple = redondear2(totalAdelantosSimp);
-  const totalAdelantosGratificacion = redondear2(totalAdelantosGrati);
-  const totalAdelantosCts = redondear2(totalAdelantos_cts);
+   const totalAdelantosSimple = descuentos_adicionales?.totalAdelantosSimple || 0
+  const totalAdelantosGratificacion = descuentos_adicionales?.totalAdelantosGratificacion || 0
+  const totalAdelantosCts = descuentos_adicionales?.totalAdelantosCts || 0
 
   const totalFinal = redondear2(subtotalAPagar - totalAdelantosSimple - totalAdelantosGratificacion - totalAdelantosCts);
 
   return [
     // Texto de recibí
     {
+       style: 'parrafo',
       text: [
         { text: `Recibí de la empresa ${nombre_empresa}, ` },
         { text: `el importe de ${montoTexto} soles, ` },
-        { text: `(S/ ${totalFinal}), ` },
+        { text: `(S/ ${totalFinal.toFixed(2)}), ` },
         { text: `por concepto de mis beneficios sociales, sin nada que reclamar firmo el presente documento del ${fechaFirma}. ` },
         { text: `Firmo la presente liquidación, dando fe de lo mencionado al ${fechaFirma}\n`, bold: false },
         { text: `El pago se realizará mediante transferencia bancaria a su cuenta del trabajador y/o cheque.`, bold: true },
       ],
-      alignment: "justify",
-      margin: [0, 20, 0, 40],
+     /*  alignment: "justify",
+      margin: [0, 20, 0, 40], */
+       fontSize: 9,
     },
     // Línea de firma
     {
+ 
       columns: [
         { width: "*", text: "" },
         {
           width: "auto",
           stack: [
-            { text: "_____________________________", alignment: "center" },
-            { text: `${trabajador.nombre}`, alignment: "center", bold: true },
-            { text: `DNI: ${trabajador.dni}`, alignment: "center", bold: true },
+            { text: "_____________________________", alignment: "center",  margin: [0, 2, 0, 2] },
+            { text: `${trabajador.nombres} ${trabajador.apellidos}`, alignment: "center", bold: true,  margin: [0, 2, 0, 2] },
+            { text: `${trabajador.tipo_documento}: ${trabajador.numero_documento}`, alignment: "center", bold: true },
           ],
+          fontSize: 9
         },
         { width: "*", text: "" },
       ],

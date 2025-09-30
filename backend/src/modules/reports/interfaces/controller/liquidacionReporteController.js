@@ -3,7 +3,7 @@ const SequelizeDarBajaTrabajadorRepository = require('../../../dar_baja_trabajad
 const darBajaTrabajadoresRepository = new SequelizeDarBajaTrabajadorRepository()
 
 const generarPdfLiquidacion = require('../../application/useCases/liquidacion/generarPdfLiquidacion');
-const generarPdfLiquidacionV2 = require('../../application/useCases/liquidacion/generarPdfLiquidacionV2');
+const generarPdfLiquidacionV2 = require('../../application/useCases/liquidacion/generarPdfLiquidacionv2');
 
 const liquidacionReporteController = {
     async generarPdfLiquidacion(req, res) {
