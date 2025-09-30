@@ -191,6 +191,7 @@ class Vacaciones {
       const totalVendidos = diasUsadosVendidos + this.#dias_vendidos;
       const totalGeneral = totalTomados + totalVendidos;
 
+
       // Comparación con redondeo a 2 decimales
       const maxT = parseFloat(maxTomadosTotal.toFixed(2));
       const maxV = parseFloat(maxVendidosTotal.toFixed(2));
@@ -213,6 +214,18 @@ class Vacaciones {
             `La suma total de días tomados y vendidos (${totalGeneral}) excede el permitido (${maxDisponible}).`
          );
       }
+      if (totalGeneral % 7 === 5) {
+        errores.push(
+          "Debe agregar 2 días correspondientes al fin de semana para completar la semana de vacaciones.",
+        );
+      }
+
+      if (totalGeneral % 7 === 6) {
+        errores.push(
+          "Debe agregar 1 día correspondiente al fin de semana para completar la semana de vacaciones.",
+        );
+      }
+
       return errores;
    }
 
