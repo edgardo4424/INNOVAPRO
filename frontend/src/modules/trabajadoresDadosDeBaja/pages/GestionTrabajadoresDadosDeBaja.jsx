@@ -146,6 +146,7 @@ const GestionTrabajadoresDadosDeBaja = () => {
     try {
       setErrorMsg(null);
 
+      console.log('form', form);
       if (viewMode === "crear") {
         await trabajadoresDadosDeBajaService.darDeBajaTrabajador(form);
         toast.success("Trabajador dado de baja correctamente");

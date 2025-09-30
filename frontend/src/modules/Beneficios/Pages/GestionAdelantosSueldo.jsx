@@ -46,6 +46,7 @@ import { toast } from "sonner";
 import { formatoDinero } from "../utils/formatoDinero";
 import { formatoFechaBeneficios } from "../utils/formatoFechaBeneficios";
 import { formatearFecha } from "@/utils/formatearFecha";
+import { adelantosSueldoSchema } from "../schema/adelantos_sueldo.schema";
 
 const GestionAdelantoSueldo = () => {
   const [adelantoSueldos, setAdelantoSueldos] = useState([]);
@@ -57,6 +58,8 @@ const GestionAdelantoSueldo = () => {
   const [viewMode, setViewMode] = useState("crear"); // "crear" | "editar" | "ver"
   const [editing, setEditing] = useState(null);
 
+  const [errores, setErrores] = useState({});
+  
   const [form, setForm] = useState({
     trabajador_id: "",
     fecha: "",
@@ -105,6 +108,7 @@ const GestionAdelantoSueldo = () => {
   }, [adelantoSueldos, search]);
 
   const openCreate = () => {
+    setErrores({});
     setViewMode("crear");
     setEditing(null);
     setForm({
@@ -128,8 +132,8 @@ const GestionAdelantoSueldo = () => {
       observacion: adelanto.observacion ?? "",
       estado: Boolean(adelanto.estado),
       tipo: adelanto.tipo ?? "",
-      forma_descuento: adelanto.forma_descuento ?? " ",
-      primera_cuota: adelanto.primera_cuota ?? " ",
+      forma_descuento: adelanto.forma_descuento ?? "",
+      primera_cuota: adelanto.primera_cuota ?? "",
       cuotas: adelanto.cuotas ?? "",
       cuotas_pagadas: adelanto.cuotas_pagadas ?? "",
     });
@@ -154,41 +158,66 @@ const GestionAdelantoSueldo = () => {
     setDialogOpen(true);
   };
 
-  const handleSave = async () => {
-    try {
-      const payload = {
-        trabajador_id: form.trabajador_id ? Number(form.trabajador_id) : null,
-        fecha: form.fecha,
-        monto: Number(form.monto || 0),
-        observacion: form.observacion,
-        tipo: form.tipo,
-        forma_descuento: form.forma_descuento,
-        primera_cuota: form.primera_cuota,
-        cuotas: form.cuotas,
-      };
-      if (viewMode === "crear") {
-        await beneficiosService.crearAdelantoSaldo(payload);
-        toast.success("Adelanto de sueldo agregado.");
-      } else if (viewMode === "editar" && editing) {
-        payload.id = editing.id;
-        beneficiosService.editarAdelantoSueldo(payload);
-        toast.success("Trabajador editado. ");
-      }
-      setDialogOpen(false);
-      await fetchAdelantoSueldos();
-    } catch (e) {
+ const handleSave = async () => {
+  try {
+    
+    const payload = {
+      trabajador_id: form.trabajador_id ? Number(form.trabajador_id) : null,
+      fecha: form.fecha,
+      monto: Number(form.monto || 0),
+      observacion: form.observacion,
+      tipo: form.tipo,
+      forma_descuento: form.forma_descuento,
+      primera_cuota: form.primera_cuota || null,
+      cuotas: form.cuotas,
+    };
 
-      if (e?.response?.data?.mensaje && e?.response?.data?.mensaje.length > 0) {
-        const err = e?.response?.data?.mensaje;
-        for (const er of err) {
-          toast.error(er);
-        }
-        return;
-      }
+    // 🔹 Validar con Yup
+    const datosValidados = await adelantosSueldoSchema.validate(payload, {
+      abortEarly: false,
+    });
 
-      toast.error("Error desconcido");
+    setErrores({}); // limpiar errores previos
+
+    if (viewMode === "crear") {
+      await beneficiosService.crearAdelantoSaldo(datosValidados);
+      toast.success("Adelanto de sueldo agregado.");
+    } else if (viewMode === "editar" && editing) {
+      datosValidados.id = editing.id;
+      await beneficiosService.editarAdelantoSueldo(datosValidados);
+      toast.success("Adelanto de sueldo editado.");
     }
-  };
+
+    setDialogOpen(false);
+    await fetchAdelantoSueldos();
+
+  } catch (e) {
+ 
+    // 🔹 Errores de Yup
+    if (e.name === "ValidationError") {
+      const newErrors = {};
+      e.inner.forEach(err => {
+        newErrors[err.path] = err.message;
+        //toast.error(err.message); // mostrar en toast cada error
+      });
+      setErrores(newErrors);
+      return;
+    }
+
+    // 🔹 Errores del backend
+    if (e?.response?.data?.mensaje) {
+      const mensajes = Array.isArray(e.response.data.mensaje)
+        ? e.response.data.mensaje
+        : [e.response.data.mensaje];
+      mensajes.forEach(m => toast.error(m));
+      return;
+    }
+
+    // 🔹 Error genérico
+    toast.error("Error desconocido");
+  }
+};
+
 
   const handleDelete = async (adelanto) => {
     try {
@@ -411,6 +440,9 @@ const GestionAdelantoSueldo = () => {
                     ))}
                   </SelectContent>
                 </Select>
+                {errores.trabajador_id && (
+                     <p className="error-message">{errores.trabajador_id}</p>
+                  )}
               </div>
 
               <section className="grid grid-cols-2 space-x-3">
@@ -448,6 +480,9 @@ const GestionAdelantoSueldo = () => {
                       <SelectItem value={"cts"}>CTS</SelectItem>
                     </SelectContent>
                   </Select>
+                   {errores.tipo && (
+                     <p className="error-message">{errores.tipo}</p>
+                  )}
                 </div>
 
                 {/* Fecha */}
@@ -464,6 +499,9 @@ const GestionAdelantoSueldo = () => {
                     }
                     disabled={viewMode === "ver"}
                   />
+                   {errores.fecha && (
+                     <p className="error-message">{errores.fecha}</p>
+                  )}
                 </div>
               </section>
               <section className="grid grid-cols-2 space-x-3">
@@ -482,6 +520,9 @@ const GestionAdelantoSueldo = () => {
                     }
                     disabled={viewMode === "ver"}
                   />
+                   {errores.monto && (
+                     <p className="error-message">{errores.monto}</p>
+                  )}
                   {form.monto && (
                     <p className="text-xs text-gray-500">
                       Prevista: {formatoDinero(form.monto)}
@@ -509,6 +550,9 @@ const GestionAdelantoSueldo = () => {
                         <SelectItem value={"quincenal"}>Quincenal</SelectItem>
                       </SelectContent>
                     </Select>
+                      {errores.forma_descuento && (
+                     <p className="error-message">{errores.forma_descuento}</p>
+                  )}
                   </div>
                 )}
               </section>
@@ -529,6 +573,9 @@ const GestionAdelantoSueldo = () => {
                     }
                     disabled={viewMode === "ver"}
                   />
+                  {errores.primera_cuota && (
+                     <p className="error-message">{errores.primera_cuota}</p>
+                  )}
                 </div>
                 <div className="grid gap-1">
                   <Label>Numero de cuotas</Label>
@@ -545,6 +592,9 @@ const GestionAdelantoSueldo = () => {
                     }
                     disabled={viewMode === "ver"}
                   />
+                  {errores.cuotas && (
+                     <p className="error-message">{errores.cuotas}</p>
+                  )}
                 </div>
               </section>
               {(viewMode != "crear") && (
