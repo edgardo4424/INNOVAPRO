@@ -1,7 +1,7 @@
 const { QueryTypes } = require('sequelize');
 const sequelize = require('../../../../config/db');
 
-const _ejecutarCalculoQuinta = require('../../interfaces/controllers/_ejecutarCalculoQuinta');
+const _ejecutarCalculoQuinta = require('./_ejecutarCalculoQuinta');
 const SequelizeCalculoQuintaCategoriaRepository = require('../../infrastructure/repositories/SequelizeQuintaCategoriaRepository');
 const GuardarCalculoQuinta = require('../useCases/guardarCalculoQuinta');
 const RecalcularQuinta = require('../useCases/recalcularQuinta');

@@ -18,7 +18,40 @@ const obtenerBaseMesUC = new ObtenerRetencionBaseMesPorDni({ repo });
 const { _absolutizeSoportes, _baseVacia } = require('../../shared/utils/helpers');
 const { mapCalculoQuintaToResponse } = require('../../shared/mappers/mapCalculoQuintaToResponse');
 // Motor de cálculo
-const _ejecutarCalculoQuinta = require('./_ejecutarCalculoQuinta');
+const _ejecutarCalculoQuinta = require('../../application/useCases/_ejecutarCalculoQuinta');
+
+const { Op } = require("sequelize");
+const { ContratoLaboral } = require("../../../contratos_laborales/infraestructure/models/contratoLaboralModel");
+
+function parsePeriodoYYYYMM(fecha_anio_mes) {
+  // Espera "YYYY-MM"
+  if (typeof fecha_anio_mes !== 'string' || !/^\d{4}-\d{2}$/.test(fecha_anio_mes.trim())) {
+    const err = new Error("El parámetro 'fecha_anio_mes' debe tener formato YYYY-MM.");
+    err.status = 400; throw err;
+  }
+  const [y, m] = fecha_anio_mes.split('-').map(Number);
+  if (m < 1 || m > 12) {
+    const err = new Error("Mes inválido en 'fecha_anio_mes'.");
+    err.status = 400; throw err;
+  }
+  return { anio: y, mes: m };
+}
+
+async function contratosVigentesAlMes({ trabajadorId, anio, mes }) {
+  // Vigente al 15 del mes
+  const ref = new Date(anio, mes - 1, 15);
+  return await ContratoLaboral.findAll({
+    where: {
+      trabajador_id: Number(trabajadorId),
+      estado: true,
+      [Op.and]: [
+        { fecha_inicio: { [Op.lte]: ref } },
+        { [Op.or]: [{ fecha_fin: { [Op.gte]: ref } }, { fecha_fin: null }] }
+      ]
+    },
+    attributes: ['id','filial_id','sueldo']
+  });
+}
 
 module.exports = {
   async previsualizar(req, res) {
@@ -69,7 +102,7 @@ module.exports = {
   async crear(req, res) {
     try {
       const { dto, ctx } = await _ejecutarCalculoQuinta(req);
-      console.log("req del usuario que llega para guardar: ", req.usuario.id)
+      
       // Entradas visibles (en dto)
       dto.entradas = {
         ...(dto.entradas || {}),
@@ -235,6 +268,30 @@ module.exports = {
     } catch (err) {
       const status = err.status || 500;
       return res.status(status).json({ ok: false, message: err.message || "Error interno al consultar retención base del trabajador"})
+    }
+  },
+
+  async obtenerMultiempleoInferido(req, res) {
+    try {
+      const trabajadorId = Number(req.query.trabajador_id);
+      const fecha = String(req.query.fecha_anio_mes || "");
+
+      if (!Number.isFinite(trabajadorId) || trabajadorId <= 0) {
+        return res.status(400).json({ ok: false, message: "Parámetro 'trabajador_id' inválido." });
+      }
+
+      const data = await repo.obtenerMultiempleoInferido({
+        trabajadorId,
+        fechaAnioMes: fecha
+      });
+
+      return res.status(200).json({ ok: true, data });
+    } catch (error) {
+      console.error("[QuintaCategoria] obtenerMultiempleoInferido error:", error);
+      return res.status(error.status || 500).json({
+        ok: false,
+        message: error.message || "Error interno al obtener multiempleo inferido."
+      });
     }
   },
 };
