@@ -7,11 +7,8 @@ import BadgeEstadoAsistencia from "../components/BadgeEstadoAsistencia";
 import { useParams, useSearchParams } from "react-router-dom";
 import AsistenciaSimple from "../components/AsistenciaSimple";
 import InputTest from "../components/InputTest";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const GestionAsistencia = () => {
-   const [searchParams] = useSearchParams();
-   // const area_id = searchParams.get("area_id");
+const GestionAsistenciaAutomatica = () => {
 
    const [fechaSeleccionada, setFechaSeleccionada] = useState(
       new Date().toISOString().split("T")[0]
@@ -20,52 +17,34 @@ const GestionAsistencia = () => {
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState(null);
    const [trabajadoresFiltrados,setTrabajadoresFiltrados]=useState([]);
-   const [areas,setAreas]=useState([]);
-   const [area_id,setAreaId]=useState(undefined);
+   const [area_id,setAreaId]=useState(null);
    const [nombreArea,setNombreArea]=useState("")
 
-   const obtenerAreas=async()=>{
-      try {
-         setLoading(true);
-         const areasResponse=await asistenciaService.getAreas();
-         setAreas(areasResponse.data.areas)      
-      } catch (error) {
-         setError("Error al cargar las areas laborales.");
-      }finally{
-         setLoading(true)
-      }
-   }
-   useEffect(()=>{
-      obtenerAreas();
-   },[])
    const obtenerTrabajadores = async () => {
       try {
          setLoading(true);
-         const response = await asistenciaService.obtenerTrabajadoresPorFilial(
-            area_id,
+         const response = await asistenciaService.obtenerTrabajadoresPorArea(
             fechaSeleccionada
          );
+         console.log('La respuesta fue: ',response.data.datos);
+         
          setTrabajadoresFiltrados([...response.data.datos.trabajadores] || [])
          setTrabajadores([...response.data.datos.trabajadores] || []);
-         setNombreArea(response.data.datos.area_nombre??"-")
+         setAreaId(response.data.datos.area_id)
+         setNombreArea(response.data.datos.area_nombre);
       } catch (err) {
-         console.log(err);
          setError("Error al cargar los trabajadores.");
       } finally {
          setLoading(false);
       }
    };
-   useEffect(() => {
-      const hoy = new Date().toISOString().split("T")[0];
-      setFechaSeleccionada(hoy);
-   }, [area_id]);
+
 
    useEffect(() => {
-      if (fechaSeleccionada&&area_id) {
-         setError("")
+      if (fechaSeleccionada) {
          obtenerTrabajadores();
       }
-   }, [fechaSeleccionada, area_id]);
+   }, [fechaSeleccionada]);
 
    const estadisticas = useMemo(() => {
       const stats = {
@@ -109,18 +88,7 @@ const GestionAsistencia = () => {
                   {error}
                </div>
             )}
-            <section className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 ">
-               <Select onValueChange={(e)=>setAreaId(e)} disabled={areas.length<1}  value={area_id}>
-                   <SelectTrigger className="w-full truncate">
-                      <SelectValue placeholder="Seleccione un área laboral"  className="text-md"/>
-                   </SelectTrigger>
-                   <SelectContent>
-                      {areas.map((a,index)=>(
-                         <SelectItem value={a.id.toString()} key={index}>{a.nombre}</SelectItem>
-                      ))}
-                   </SelectContent>
-            </Select>
-            </section>
+
             <AsistenciaHeader
                trabajadores={trabajadores}
                estadisticas={estadisticas}
@@ -196,4 +164,4 @@ const GestionAsistencia = () => {
    );
 };
 
-export default GestionAsistencia;
+export default GestionAsistenciaAutomatica;

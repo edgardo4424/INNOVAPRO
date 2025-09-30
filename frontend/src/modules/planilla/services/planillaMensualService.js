@@ -27,6 +27,9 @@ const planillaMensualService = {
       api.get(`/data_mantenimiento/codigo-importe/${filial_id}_importe`),
    editDataMantenimiento: (id, data) => api.put(`/data_mantenimiento/${id}`, data),
 
+   exportarPlame:(payload)=>api.post("/planilla/exportar-plame",payload, {
+  responseType: 'blob', // 👈 Esto fuerza a axios a interpretar la respuesta como archivo binario
+   })
 };
 
 export default planillaMensualService;

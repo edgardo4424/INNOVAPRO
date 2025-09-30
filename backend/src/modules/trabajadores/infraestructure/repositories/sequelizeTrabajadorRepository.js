@@ -4,6 +4,7 @@ const EmpresaProveedora = db.empresas_proveedoras;
 const { Op, fn, col, where } = require("sequelize");
 const filtrarContratosSinInterrupcion = require("../../../../services/filtrarContratosSinInterrupcion");
 const moment = require("moment");
+const { Area } = require("../models/areaModel");
 class SequelizeTrabajadorRepository {
    async crear(trabajadorData, transaction = null) {
       const options = {};
@@ -23,6 +24,16 @@ class SequelizeTrabajadorRepository {
       return trabajador;
    }
 
+   async obtenerTrabajadorSimplePorId(id, transaction = null) {
+      const options = {
+         where: { id },
+      };
+      if (transaction) {
+         options.transaction = transaction;
+      }
+      const trabajador = await Trabajador.findOne(options);
+      return trabajador.get({plain:true});
+   }
    async obtenerTrabajadorPorId(id, transaction = null) {
       const options = {
          where: { id },
@@ -43,7 +54,17 @@ class SequelizeTrabajadorRepository {
       const trabajador = await Trabajador.findOne(options);
       return trabajador.get({plain:true});
    }
+   async obtenerAreas(){
+      const areas= await Area.findAll();
+      return areas;
+   }
+
    async obtenerTrabajadoresPorArea(areaId, fecha) {
+      const area=await Area.findByPk(areaId)
+      if(!area){
+         throw new Error("El area no existe")
+      }
+      
       const trabajadores = await Trabajador.findAll({
          include: [
             {
@@ -101,7 +122,101 @@ class SequelizeTrabajadorRepository {
          delete data.contratos_laborales;
          return data;
       });
-      return resultado;
+      return {
+         trabajadores:resultado,
+          area_nombre:area.nombre
+      };
+   }
+  async obtenerTrabajadoresPorAreaCargo(fecha, cargos_areas) {
+     const { area_id, cargos_id } = cargos_areas;
+     const area=await Area.findByPk(area_id)
+     if(!area){
+      throw new Error("El area no existe")
+     }
+     console.log(area.get({plain:true}));
+     
+     const includes = [
+       {
+         model: db.asistencias,
+         as: "asistencias",
+         required: false,
+         where: where(fn("DATE", col("asistencias.fecha")), fecha),
+         include: [
+           { model: db.gastos, as: "gastos" },
+           {
+             model: db.jornadas,
+             as: "jornadas",
+             include: [
+               {
+                 model: db.tipos_trabajo,
+                 as: "tipo_trabajo",
+                 required: false,
+               },
+             ],
+           },
+         ],
+       },
+       {
+         model: db.contratos_laborales,
+         as: "contratos_laborales",
+         include: [{ model: db.empresas_proveedoras, as: "empresa_proveedora" }],
+       },
+     ];
+
+     // 🔹 Conjunto A: trabajadores del área
+     const trabajadoresArea = await Trabajador.findAll({
+       include: [
+         ...includes,
+         {
+           model: db.cargos,
+           as: "cargo",
+           required: true,
+           where: { area_id },
+         },
+       ],
+     });
+
+     // 🔹 Conjunto B: trabajadores filtrados por cargos_id (pueden ser de otras áreas)
+     let trabajadoresCargos = [];
+     if (cargos_id?.length) {
+       trabajadoresCargos = await Trabajador.findAll({
+         include: [
+           ...includes,
+           {
+             model: db.cargos,
+             as: "cargo",
+             required: true,
+             where: { id: { [Op.in]: cargos_id } },
+           },
+         ],
+       });
+     }
+
+     // 🔹 Unión final
+     const concatenado = [...trabajadoresArea, ...trabajadoresCargos];
+     // Convertir asistencia de arreglo a objeto único (si existe)
+     const resultado = concatenado.map((t) => {
+       const data = t.toJSON();
+       data.asistencia = data.asistencias?.[0] || null;
+       delete data.asistencias;
+       const hoy = new Date().toISOString().split("T")[0];
+
+       const contrato_actual = data.contratos_laborales.find((c) => {
+         return c.fecha_inicio <= hoy && c.fecha_fin >= hoy;
+       });
+       if (!contrato_actual) {
+         throw new Error("El trabajador no cuenta con un contrato laboral.");
+       }
+       data.filial = contrato_actual.empresa_proveedora.razon_social;
+       delete data.contratos_laborales;
+       return data;
+     });
+
+     return {
+      trabajadores:resultado,
+      area_nombre:area.nombre,
+      area_id:area.id
+     };
    }
 
    async obtenerTrabajadores() {

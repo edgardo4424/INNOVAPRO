@@ -93,6 +93,8 @@ export const useAsistencia = (trabajador, obtenerTrabajadores, date) => {
             return;
          }
          toast.error("Hubo un error descocnocido");
+      }finally{
+         await obtenerTrabajadores();
       }
    };
 
