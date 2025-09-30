@@ -6,28 +6,50 @@ const moment = require("moment");
  */
 function calcularPeriodoComputableDelContrato(contrato, diasNoComputables = 0) {
   const inicio = moment(contrato.fecha_inicio, "YYYY-MM-DD");
-  const fin = (
-    contrato.fecha_terminacion_anticipada
-      ? moment(contrato.fecha_terminacion_anticipada, "YYYY-MM-DD")
-      : moment(contrato.fecha_fin, "YYYY-MM-DD")
-  ).add(1, "day"); // ✅ incluye el último día
+  const fin = contrato.fecha_terminacion_anticipada
+    ? moment(contrato.fecha_terminacion_anticipada, "YYYY-MM-DD")
+    : moment(contrato.fecha_fin, "YYYY-MM-DD");
 
-  let diasTotales = fin.diff(inicio, "days"); // Total real
-  let diasComputables = Math.max(diasTotales - diasNoComputables, 0);
+  // ✅ Incluir último día trabajado
+  const finIncluido = fin.clone().add(1, "day");
 
-  const base = moment("2000-01-01");
-  const resultado = base.clone().add(diasComputables, "days");
+  // Calcular años, meses y días con calendario real
+  const temp = inicio.clone();
 
-  const anios = resultado.diff(base, "years");
-  base.add(anios, "years");
+  let anios = finIncluido.diff(temp, "years");
+  temp.add(anios, "years");
 
-  const meses = resultado.diff(base, "months");
-  base.add(meses, "months");
+  let meses = finIncluido.diff(temp, "months");
+  temp.add(meses, "months");
 
-    const dias = resultado.diff(base, "days") + 1; // ✅ suma 1 día final
+  let dias = finIncluido.diff(temp, "days");
+
+  // ✅ Restar días no computables
+  dias -= diasNoComputables;
+
+  // Normalizar si los días quedaron negativos
+  while (dias < 0) {
+    if (meses > 0) {
+      meses -= 1;
+      dias += temp.subtract(1, "month").daysInMonth(); // sumamos los días del mes anterior
+      temp.add(1, "month"); // volver al mes original
+    } else if (anios > 0) {
+      anios -= 1;
+      meses += 11;
+      dias += 30; // aprox, puedes ajustar según días reales de mes
+    } else {
+      dias = 0; // no puede quedar negativo en total
+    }
+  }
+
+  // Normalizar meses
+  if (meses >= 12) {
+    anios += Math.floor(meses / 12);
+    meses = meses % 12;
+  }
 
   return {
-    periodoComputable: { anios, meses, dias },
+    periodoComputable: { anios, meses, dias }
   };
 }
 
