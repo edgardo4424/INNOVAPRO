@@ -153,7 +153,7 @@ const TrabajadorController = {
             });
             }
          }
-         console.log("ESTAS SON LAS FILIALES: ", filiales)
+         
          return res.json({
             ok: true,
             data: {

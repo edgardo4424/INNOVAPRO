@@ -17,7 +17,7 @@ function _resolverPeriodoFilial(req) {
 module.exports = async function bloqueoCierreQuinta(req, res, next) {
   try {
     const { periodo, filialId, anio, mes } = _resolverPeriodoFilial(req);
-    console.log("REQ QUE LLEGA A CIERRE: ", _resolverPeriodoFilial(req))
+   
     if (!filialId || (!periodo && (!anio || !mes))) {
       return res.status(400).json({ ok: false, message: 'Parámetros insuficientes para validar cierre (filial y período).' });
     }

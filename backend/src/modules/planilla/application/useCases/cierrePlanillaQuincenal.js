@@ -87,8 +87,6 @@ module.exports = async (
         filial_id
       );
 
-       //console.log('trabajadoresConPlanillaQuincenalCerrada', trabajadoresConPlanillaQuincenalCerrada);
-
     const trabajadoresConPlanillaQuincenalCerradas = trabajadoresConPlanillaQuincenalCerrada.map(
       (planillaQuincenal) => {
         return {

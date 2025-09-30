@@ -17,7 +17,6 @@ export default function useUsuarios() {
         const responseTrabajadores =
           await usuariosService.obtenerTrabajadoresSinUsuario();
         setUsuarios(usuariosDB);
-        console.log("Trabajadores", responseTrabajadores.data);
 
         setTrabajadores(responseTrabajadores.data);
       } catch (error) {
