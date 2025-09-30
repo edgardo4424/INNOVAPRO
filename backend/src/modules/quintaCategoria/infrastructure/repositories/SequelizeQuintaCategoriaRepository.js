@@ -59,6 +59,19 @@ class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository 
       ]
     );
 
+    // Traemos (RUC, razón social) en un solo query
+    const ids = Array.from(filialesSet);
+    const infoByFilial = new Map();
+    if (ids.length) {
+      const empresas = await sequelize.query(
+        `SELECT id, ruc, razon_social FROM empresas_proveedoras WHERE id IN (:ids)`,
+        { type: QueryTypes.SELECT, replacements: { ids } }
+      );
+      for (const e of empresas) {
+        infoByFilial.set(Number(e.id), { ruc: e.ruc || null, razon_social: e.razon_social || null });
+      }
+    }
+
     // determinar retentora y monto aplicable
     const resultados = [];
     for (const filialId of filialesSet) {
@@ -80,7 +93,7 @@ class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository 
 
       try {
         const { dto, ctx } = await _ejecutarCalculoQuinta(fakeReq);
-
+        console.log("DTO DE LA FILIAL: ", filialId, "=", dto, "y su CTX: ", ctx);
         const meta = ctx?.soportes?.meta || {};
         const esSecundaria = !!meta.es_secundaria;
         const filialRetieneId = Number(meta.filial_retiene_id ?? filialId);
@@ -89,10 +102,22 @@ class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository 
         const monto = (esSecundaria || filialRetieneId !== Number(filialId))
           ? 0
           : Number(dto?.retencion_base_mes || 0);
-
-        resultados.push({ filial_id: Number(filialId), monto });
-      } catch (e) {
-        resultados.push({ filial_id: Number(filialId), monto: 0 });
+          
+        const info = infoByFilial.get(Number(filialId)) || { ruc: null, razon_social: null };
+        resultados.push({
+          filial_id: Number(filialId),
+          ruc: info.ruc,
+          razon_social: info.razon_social,
+          monto,
+        });
+      } catch {
+        const info = infoByFilial.get(Number(filialId)) || { ruc: null, razon_social: null };
+        resultados.push({
+          filial_id: Number(filialId),
+          ruc: info.ruc,
+          razon_social: info.razon_social,
+          monto: 0,
+        });
       }
     }
 

@@ -2,15 +2,28 @@ const { Op } = require("sequelize");
 
 const { Trabajador } = require("../../../trabajadores/infraestructure/models/trabajadorModel");
 const { ContratoLaboral } = require("../../../contratos_laborales/infraestructure/models/contratoLaboralModel");
+const { Filial } = require('../../../filiales/infrastructure/models/filialModel')
 
 const { periodoMes } = require("./helpers");
 
   // Función auxiliar para enriquecer el req body
   function _enriquecerReqBody(req, trabajador, contrato) {
+    
+    console.log("CONTRATO ENCONTRADO: ", {
+      id: contrato?.id,
+      filial_id: contrato?.filial_id,
+      sueldo: contrato?.sueldo,
+      ruc: contrato?.empresa_proveedora?.ruc,
+      razon_social: contrato?.empresa_proveedora?.razon_social,
+    });
     req.body.__trabajadorId = trabajador.id;
     req.body.__contratoId = contrato?.id;
     req.body.__filialId = contrato?.filial_id;
     req.body.remuneracionMensualActual = Number(contrato?.sueldo || 0);
+
+    req.body.__filialRuc = contrato?.empresa_proveedora?.ruc || null;
+    req.body.__filialRazonSocial = contrato?.empresa_proveedora?.razon_social || null;
+
     if (!req.body.dni) req.body.dni = trabajador.numero_documento;
     if (trabajador.asignacion_familiar) {
       req.body.__tiene_asignacion_familiar = true;
@@ -52,12 +65,21 @@ module.exports = async function enriquecerConContratoOFalla(req) {
       ]
     }; // Así aseguramos obtener los contratos vigentes en el período especificado
 
+    // Include para traer RUC/razón social de la filial
+    const includeEmpresa = [{
+      model: Filial,
+      as: "empresa_proveedora",
+      attributes: ["id", "ruc", "razon_social"]
+    }];
+
     let contrato = null;
     // Si llega filialId explícito elegimos el contrato vigente de esa filial
     if (filialId != null) {
       contrato = await ContratoLaboral.findOne({
         where: { ...baseWhere, filial_id: Number(filialId) }, // Que cumpla todas las condiciones y que sea de la filial dada
+        include: includeEmpresa,
         order: [["sueldo", "DESC"], ["fecha_inicio", "DESC"], ["id", "DESC"]], // POR SUELDO MAYOR, MAS RECIENTE, Y POR ULTIMO EL ID MAS ANTIGUO
+        attributes: ["id", "trabajador_id", "filial_id", "sueldo"]
       });
 
       if (!contrato) {
@@ -68,7 +90,9 @@ module.exports = async function enriquecerConContratoOFalla(req) {
     } else { // Si no buscamos los vigentes sin filtrar por filial
       const contratosVigentes = await ContratoLaboral.findAll({
         where: baseWhere,
+        include: includeEmpresa,
         order: [["sueldo", "DESC"], ["fecha_inicio", "DESC"]],
+        attributes: ["id", "trabajador_id", "filial_id", "sueldo"]
       });
 
       if (contratosVigentes.length > 1) {
