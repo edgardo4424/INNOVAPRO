@@ -15,7 +15,6 @@ class SequelizeNotasCreditoDebitoRepository {
         return value != null ? parseFloat(value) : 0;
     }
     async crear(data) {
-        console.log("desde el repositorio", data);
         // Inicia una transacción usando la instancia correcta de sequelize.
         const transaction = await db.sequelize.transaction();
         let createdNota = {};
@@ -28,7 +27,6 @@ class SequelizeNotasCreditoDebitoRepository {
             }
             createdNota.nota = nota;
 
-            console.log("NOTA CREADA", nota);
 
             //* 2. Crear los Detalles de la Nota
             const createdDetalles = [];
@@ -57,8 +55,6 @@ class SequelizeNotasCreditoDebitoRepository {
             }
             createdNota.detalles = createdDetalles;
 
-            console.log("DETALLES CREADOS", createdDetalles);
-
             //* 3. Crear las Leyendas de la Nota
             const createdLeyendas = [];
             for (const leyendaData of data.legend) {
@@ -76,7 +72,6 @@ class SequelizeNotasCreditoDebitoRepository {
             }
             createdNota.leyendas = createdLeyendas;
 
-            console.log("LEYENDAS CREADAS", createdLeyendas);
 
             // *4. Crear la Respuesta de SUNAT
             const sunat = await SunatRespuesta.create(
@@ -91,7 +86,6 @@ class SequelizeNotasCreditoDebitoRepository {
             }
             createdNota.sunat_respuesta = sunat;
 
-            console.log("RESPUESTA CREADA", sunat);
 
             //* 5. Anular la factura asociada (MOVIDO DENTRO DE LA TRANSACCIÓN)
             const {
@@ -126,7 +120,6 @@ class SequelizeNotasCreditoDebitoRepository {
             }
             await toUpdate.update({ estado: valueEstado }, { transaction });
 
-            console.log("FACTURA O GUIA ANULADA", toUpdate);
 
             //* Si todas las operaciones fueron exitosas, confirma la transacción.
             await transaction.commit();

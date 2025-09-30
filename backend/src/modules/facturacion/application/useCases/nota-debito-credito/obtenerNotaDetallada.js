@@ -16,7 +16,6 @@ module.exports = async (body, notaRepository) => {
             },
         };
 
-    console.log(notaObtenida)
 
     return {
         codigo: 200,

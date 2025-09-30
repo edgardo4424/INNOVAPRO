@@ -290,7 +290,7 @@ const ChoferForm = ({ closeModal, refresh, Form, setForm }) => {
             <SelectContent>
               {listaVehiculos.map((v) => (
                 <SelectItem key={v.id} value={v.id.toString()}>
-                  {v.nro_placa} - {v?.transportista?.razon_social || ""}
+                  {v.nro_placa} - {v?.transportista?.razon_Social || ""}
                 </SelectItem>
               ))}
               <SelectItem value={null}>Ninguno</SelectItem>

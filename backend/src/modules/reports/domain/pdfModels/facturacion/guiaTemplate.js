@@ -138,13 +138,13 @@ function guiaTemplate(data) {
                         text: `Emitido desde ${guia.empresa_link_website}`,
                         style: "footer",
                         alignment: "center",
-                        margin: [0, 0, 0, 0]
+                        margin: [0, 5, 0, 0]
                     },
                     {
                         text: `Página ${currentPage} de ${pageCount}`,
                         style: "footer",
                         alignment: "right",
-                        margin: [0, 0, 40, 0]
+                        margin: [0, 5, 40, 0]
                     }
                 ]
             };

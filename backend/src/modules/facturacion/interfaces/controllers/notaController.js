@@ -19,7 +19,6 @@ const borradorRepository = new SequelizeBorradorRepository()
 const notaController = {
     async crearNota(req, res) {
         try {
-            console.log(req.body)
             const { codigo, respuesta } = await crearNotaCreditoDebito(req.body, notaRepository, borradorRepository);
             res.status(codigo).json(respuesta);
         } catch (error) {
