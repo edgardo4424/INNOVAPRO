@@ -273,7 +273,7 @@ const GestionTrabajadoresDadosDeBaja = () => {
                         </td>
                         <td className="px-4 py-3 ">{t.motivo}</td>
                         <td className="px-4 py-3 ">{t.estado_liquidacion}</td>
-                        <td className="px-4 py-3 "></td>
+                        <td className="px-4 py-3 ">{t.total_liquidacion}</td>
                       </tr>
                     );
                   })}
