@@ -255,7 +255,7 @@ class SequelizeCtsRopository {
                inicio_c,
                fin_c
             );
-         r.faltas_importe = (c.sueldo / 12 / 30) * r.faltas_dias;
+         r.faltas_importe = (r.remuneracion_comp  / 12 / 30) * r.faltas_dias;
          r.faltas_importe = parseFloat(r.faltas_importe.toFixed(2));
          const dias_no_computados =
             await asistenciasRepository.obtenerDiasNoComputablesPorRangoFecha(

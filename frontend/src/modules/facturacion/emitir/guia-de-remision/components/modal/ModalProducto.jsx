@@ -34,7 +34,7 @@ export default function ModalProducto({ open, setOpen }) {
                     // disabled={pagosCompletos}
                     >
                         <Package />
-                        <span className="hidden md:block">Nuevo Pago</span>
+                        <span className="hidden md:block">Nuevo Producto</span>
                     </Button>
                 </AlertDialogTrigger>
 

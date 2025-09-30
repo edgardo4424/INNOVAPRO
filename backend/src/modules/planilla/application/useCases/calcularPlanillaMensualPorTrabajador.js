@@ -1,9 +1,24 @@
+const calculo_aportes_totales_planilla = require("../../infrastructure/utils/calcular_aportes_totales_planilla");
+
+// ${filial_id}_importe
 module.exports = async (
    anio_mes_dia,
    filial_id,
    planillaRepository,
-   trabajadorRepository
+   trabajadorRepository,
+   dataRepository
 ) => {
+
+   if (!anio_mes_dia||!filial_id) {
+      throw new Error("Datos enviados son incorrectos")
+   }
+   const importes=await dataRepository.obtenerDataMantenimientoPorCodigoImporte(`${filial_id}_importe`);
+   for (const i of importes) {
+      if(i.valor<=0){
+         throw new Error("Actualice los importes del empleador, existen valores inválidos")
+      }
+   }
+   
    const hoy = new Date().toISOString().slice(0, 10);
    const fin_mes = anio_mes_dia; // supondremos que viene como 'YYYY-MM-DD'
 
@@ -11,7 +26,7 @@ module.exports = async (
       await trabajadorRepository.obtenerTrabajadoresYcontratos();
 
    const payload = {
-      planilla: { trabajadores: [] },
+      planilla: { trabajadores: [],datos_totales:{} },
       honorarios: { trabajadores: [] },
    };
 
@@ -82,6 +97,13 @@ module.exports = async (
          payload.honorarios.trabajadores.push(res);
       }
    }
+   const { recalculo_planillas,datos_totales}=calculo_aportes_totales_planilla(payload.planilla.trabajadores,importes);
+   
+
+   
+   
+   payload.planilla.trabajadores=recalculo_planillas;
+   payload.planilla.datos_totales=datos_totales
 
    return {
       codigo: 202,

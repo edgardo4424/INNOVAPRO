@@ -21,6 +21,7 @@ import {
    ShieldCheck,
    ScrollText,
    Receipt,
+   Building,
 } from "lucide-react";
 import {
    Sidebar,
@@ -68,6 +69,7 @@ const iconMap = {
    Trabajadores: Users,
    "Facturación": Receipt,
    "Gestión de Condiciones": ShieldCheck,
+   "Asistencia general":Building
 };
 
 const modulesByRole = {
@@ -116,17 +118,8 @@ const modulesByRole = {
             { name: "Quinta Categoría", path: "/retenciones/calculoQuintaCategoria" },
          ],
       },
-      {
-         group: "Asistencia",
-         items: [
-            { name: "Almacen ", path: "/asistencia/almacen?area_id=2" },
-            {
-               name: "Montadores",
-               path: "/asistencia/montadores?area_id=6",
-            },
-            { name: "Ventas ", path: "/asistencia/ventas?area_id=9" },
-         ],
-      },
+      { name: "Asistencia", path: "/asistencia-general" },
+
       {
          group: "Facturación",
          items: [
@@ -162,6 +155,7 @@ const modulesByRole = {
    "Jefe de OT": [
       { name: "Centro de Atención", path: "/centro-atencion" },
       { name: "Stock de Piezas", path: "/stock/piezas" },
+      { name: "Asistencia",path: "/asistencia-area"},
    ],
    "OT": [
       { name: "Centro de Atención", path: "/centro-atencion" },
@@ -210,6 +204,9 @@ const modulesByRole = {
             { name: "Lista de guías", path: "/facturacion/bandeja/guia-remision?page=1&limit=10" },
          ],
       },
+      { name: "Asistencia",path: "/asistencia-area"},
+
+
    ],
    "Gerente de administración":[
       {
@@ -223,7 +220,25 @@ const modulesByRole = {
             { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
          ],
       },
+      {         
+         name: "Asistencia del area",
+         path: "/asistencia-area",
+      },
+      { name: "Asistencia general", path: "/asistencia-general" },
+
    ],
+   "Gerente de comercialización":[
+        {         
+         name: "Asistencia",
+         path: "/asistencia-area",
+      },
+   ],
+   "Jefe montadores y operadores":[
+        {         
+         name: "Asistencia",
+         path: "/asistencia-area",
+      },
+   ]
 
 };
 
