@@ -107,15 +107,14 @@ const HistoricoPlanillaQuincenal = ({setEsCalculo, setDataMantenimiento}) => {
               nombre_libro: "Planilla Quincenal", 
                datos: planillaQuincenalTipoPlanilla,
                columnas: [{ key: "asig_fam", label: "Asignación" }],
-               excluir: ["id","trabajador_id","contrato_id"]
+               excluir: ["id","trabajador_id","contrato_id", "registro_planilla_quincenal_detalle"]
             })
       }
       
-      console.log('planillaQuincenalTipoRh',planillaQuincenalTipoRh);
       if(planillaQuincenalTipoRh.length>0){
-            hojas.push({ nombre_libro: "Honorarios", datos: planillaQuincenalTipoRh ,excluir: ["id","trabajador_id"]})
+            hojas.push({ nombre_libro: "Honorarios", datos: planillaQuincenalTipoRh ,excluir: ["id","trabajador_id", "contrato_id","registro_planilla_quincenal_detalle"]})
       }
-      console.log('hojas',hojas);
+      
       setLibroExcel(hojas)
 
    },[planillaQuincenalTipoPlanilla,planillaQuincenalTipoRh])
