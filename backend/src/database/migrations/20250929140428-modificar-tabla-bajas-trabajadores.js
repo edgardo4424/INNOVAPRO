@@ -74,12 +74,15 @@ module.exports = {
     await queryInterface.sequelize.transaction(async (t) => {
       const table = await queryInterface.describeTable('bajas_trabajadores');
 
-      // 1. Eliminar columna nueva si existe
+      // Eliminar columnas nuevas
       if (table.detalles_liquidacion) {
         await queryInterface.removeColumn('bajas_trabajadores', 'detalles_liquidacion', { transaction: t });
       }
+      if (table.filial_id) {
+        await queryInterface.removeColumn('bajas_trabajadores', 'filial_id', { transaction: t });
+      }
 
-      // 2. Volver a crear columnas eliminadas (solo si no existen ya)
+      // Volver a crear columnas eliminadas
       const columnasAgregar = [
         ['tiempo_laborado_anios', { type: Sequelize.INTEGER, defaultValue: 0 }],
         ['tiempo_laborado_meses', { type: Sequelize.INTEGER, defaultValue: 0 }],
