@@ -24,14 +24,10 @@ function pdfSeccionVacaciones({ contrato, detalles_liquidacion, trabajador }) {
   ) || 0;
   const totalDias = Number(vacacionesTrunca.calculoVacacionesTruncaDias) || 0;
 
-  console.log({
-    totalAnios,
-    totalMeses,
-    totalDias,
-  });
+  const descuentos_vacaciones_gozadas = Number(vacacionesTrunca?.descuentos_vacaciones_gozadas) || 0;
 
   const subtotalVacacionesTrunca = redondear2(
-    totalAnios + totalMeses + totalDias
+    totalAnios + totalMeses + totalDias - descuentos_vacaciones_gozadas
   );
 
   console.log('subtotalVacacionesTrunca', subtotalVacacionesTrunca);
@@ -55,6 +51,7 @@ function pdfSeccionVacaciones({ contrato, detalles_liquidacion, trabajador }) {
   let decorationUnderlineAnios = false;
    let decorationUnderlineMeses = false;
   let decorationUnderlineDias = false;
+  let decorationUnderlineVacacionesGozadas = false;
 
    if(vacacionesTrunca.anios_computados != 0) {
     decorationUnderlineAnios = true;
@@ -68,6 +65,13 @@ function pdfSeccionVacaciones({ contrato, detalles_liquidacion, trabajador }) {
     decorationUnderlineAnios = false;
     decorationUnderlineMeses = false;
     decorationUnderlineDias = true;
+  }
+
+  if(descuentos_vacaciones_gozadas != 0) {
+    decorationUnderlineAnios = false;
+    decorationUnderlineMeses = false;
+    decorationUnderlineDias = false;
+    decorationUnderlineVacacionesGozadas = true;
   }
 
   let divisorDelRegimen;
@@ -176,11 +180,11 @@ function pdfSeccionVacaciones({ contrato, detalles_liquidacion, trabajador }) {
                       : [
                           [
                             {
-                              text: `Descuentos Vacaciones Gozadas ${vacacionesTrunca.dias_vacaciones_gozadas}`,
+                              text: `DESC. VACACIONES GOZADAS (${vacacionesTrunca.dias_vacaciones_gozadas} días)`, colSpan: 2, // 👈 ocupa 2 columnas
                             },
                             {},
                             {
-                              text: `-${(vacacionesTrunca.descuentos_vacaciones_gozadas).toFixed(2)}`,
+                              text: `-${(descuentos_vacaciones_gozadas).toFixed(2)}`,
                               alignment: "right",
                               decoration: "underline",
                             },
