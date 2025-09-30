@@ -18,7 +18,7 @@ const AsistenciaHeader = ({
    estadisticas,
    fechaSeleccionada,
    setFechaSeleccionada,
-   title,
+   title="",
 }) => {
    return (
       <Card>

@@ -179,7 +179,7 @@ const ListaNotas = () => {
           <div className="w-full max-w-6xl">
             <div className="mb-6 flex items-center justify-between"></div>
             <h2 className="text-2xl font-bold text-blue-600 md:text-3xl">
-              No hay facturas
+              No hay notas
             </h2>
           </div>
         ) : (

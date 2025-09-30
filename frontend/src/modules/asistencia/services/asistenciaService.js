@@ -7,6 +7,9 @@ const asistenciaService = {
    actualizarAsistencia: (data) => api.put("/asistencias", data),
    crearAsistenciaSimple: (data) => api.post("/asistencias/simple", data),
    actualizarAsistenciaSimple: (data) => api.put("/asistencias/simple", data),
+   obtenerTrabajadoresPorArea: (fecha) =>api.get(`/trabajadores/area/${fecha}`),
+   getAreas:()=>api.get("/trabajadores/areas"),
+
 };
 
 export default asistenciaService;

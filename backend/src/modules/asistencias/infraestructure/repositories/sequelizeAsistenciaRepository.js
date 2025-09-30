@@ -42,7 +42,10 @@ class SequelizeAsistenciaRepository {
         }
       }
       if (asistenciaData.jornadas && asistenciaData.jornadas.length > 0) {
-        for (const jornada of [...asistenciaData.jornadas].reverse()) {
+        for (const jornada of [...asistenciaData.jornadas]) {
+          if(!jornada.turno||!jornada.lugar||!jornada.tipo_trabajo_id){
+              throw new Error("Complete los datos correctamente")
+          }
           await Jornada.create(
             {
               asistencia_id: asistencia.id,
@@ -177,7 +180,10 @@ class SequelizeAsistenciaRepository {
         }
       }
       if (asistenciaData.jornadas && asistenciaData.jornadas.length > 0) {
-        for (const jornada of [...asistenciaData.jornadas].reverse()) {
+        for (const jornada of [...asistenciaData.jornadas]) {
+          if(!jornada.turno||!jornada.lugar||!jornada.tipo_trabajo_id){
+              throw new Error("Complete los datos correctamente")
+          }
           await Jornada.create(
             {
               asistencia_id: asistenciaData.id,
@@ -468,6 +474,23 @@ class SequelizeAsistenciaRepository {
         where: {
           trabajador_id,
           estado_asistencia: "licencia_sin_goce",
+          fecha: {
+            [Op.between]: [fechaInicio, fechaFin], // <-- inclusivo en ambos extremos
+          },
+        },
+      });
+
+      return cantidadFaltas;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+    async obtenerCantidadVacaciones(trabajador_id, fechaInicio, fechaFin) {
+    try {
+      const cantidadFaltas = await Asistencia.count({
+        where: {
+          trabajador_id,
+          estado_asistencia: "vacacion-gozada",
           fecha: {
             [Op.between]: [fechaInicio, fechaFin], // <-- inclusivo en ambos extremos
           },

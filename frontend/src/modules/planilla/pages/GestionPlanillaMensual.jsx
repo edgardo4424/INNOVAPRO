@@ -1,20 +1,7 @@
-import { useEffect, useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-
-import CalculoPlanillaQuincenal from "./CalculoPlanillaQuincenal";
-import HistoricoPlanillaQuincenal from "./HistoricoPlanillaQuincenal";
-
-import {
-   DropdownMenu,
-   DropdownMenuContent,
-   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { MonitorCog } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import dataMantenimientoService from "@/modules/dataMantenimiento/services/dataMantenimientoService";
 import CalculoPlanillaMensual from "./CalculoPlanillaMensual";
 import HistoricoPlanillaMensual from "./HistoricoPlanillaMensual";
+import ExportacionPlame from "./ExportacionPlame";
 
 const GestionPlanillaMensual = () => {
    return (
@@ -31,14 +18,17 @@ const GestionPlanillaMensual = () => {
                   Calcular Planilla Mensual
                </TabsTrigger>
                <TabsTrigger value="historico">Histórico</TabsTrigger>
+               <TabsTrigger value="plame">Buscar Plame</TabsTrigger>
             </TabsList>
 
             <TabsContent value="calcular" className=" rounded-lg shadow-sm">
                <CalculoPlanillaMensual />
             </TabsContent>
-
             <TabsContent value="historico" className=" rounded-lg shadow-sm">
                <HistoricoPlanillaMensual />
+            </TabsContent>
+            <TabsContent value="plame" className=" rounded-lg shadow-sm">
+               <ExportacionPlame />
             </TabsContent>
          </Tabs>
       </div>

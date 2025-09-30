@@ -190,7 +190,15 @@ const TransportistaPublicoForm = () => {
             htmlFor={`chofer-nro_mtc`}
             className="mb-1 block text-left text-sm font-semibold text-gray-700"
           >
-            Número MTC
+            {`Número MTC`}
+            <a
+              href="https://www.mtc.gob.pe/tramitesenlinea/tweb_tLinea/tw_consultadgtt/Frm_rep_intra_mercancia.aspx"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-blue-700"
+            >
+              Ir al sitio
+            </a>
           </Label>
           <Input
             type="text"

@@ -187,7 +187,7 @@ const ListaBorradores = () => {
           <div className="w-full max-w-6xl">
             <div className="flex items-center justify-between mb-6"></div>
             <h2 className="text-2xl md:text-3xl font-bold text-blue-600">
-              No hay facturas
+              No hay borradores
             </h2>
           </div>
         ) : (

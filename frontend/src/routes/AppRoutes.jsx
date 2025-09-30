@@ -26,6 +26,7 @@ import RoleGuard from "./rol.guard";
 import PlanillaMensual from "@/modules/planilla/pages/CalculoPlanillaMensual";
 import GestionPlanillaMensual from "@/modules/planilla/pages/GestionPlanillaMensual";
 import { BandejaProvider } from "@/modules/facturacion/context/BandejaContext";
+import GestionAsistenciaAutomatica from "@/modules/asistencia/pages/GestionAsistenciaAutomatica";
 
 // Lazy load components
 const Login = lazy(() => import("@/modules/auth/pages/Login"));
@@ -119,7 +120,7 @@ export default function AppRoutes() {
          <Suspense fallback={<LoaderInnova />}>
             <Routes>
                {/* Ruta pública */}
-               <Route path={LOGIN_PATH} element={<Login />} />
+               <Route path="/login" element={<Login />} />
                {/* Rutas protegidas */}
                <Route path="/" element={<ProtectedRoute />}> {/* TODO EL DASHBOARD PROTEGIDO */}
                   <Route element={<DashboardLayout />}>
@@ -146,10 +147,6 @@ export default function AppRoutes() {
                         <Route
                            path="tabla-trabajadores"
                            element={<GestionTrabajadores />}
-                        />
-                        <Route
-                           path="asistencia/:tipo"
-                           element={<GestionAsistencia />}
                         />
                         <Route
                            path="planilla"
@@ -294,12 +291,16 @@ export default function AppRoutes() {
 
                      <>
                         {/* Rutas para el modulo de aistencia */}
-                        <Route element={<RoleGuard roles={["CEO"]} />}>
+                        <Route element={<RoleGuard roles={["CEO","Gerente de administración"]} />}>
                            <Route
-                              path="asistencia/:tipo"
+                              path="asistencia-general"
                               element={<GestionAsistencia />}
                            />
                         </Route>
+                         <Route
+                              path="asistencia-area"
+                              element={<GestionAsistenciaAutomatica />}
+                           />
                         <Route element={<RoleGuard roles={["CEO"]} />}>
                            <Route
                               path="planilla-quincenal"

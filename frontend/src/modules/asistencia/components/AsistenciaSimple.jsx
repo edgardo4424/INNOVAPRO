@@ -60,7 +60,6 @@ export default function AsistenciaSimple({
             estado_asistencia: selectedEstado,
          };
          await asistenciaService.crearAsistenciaSimple(nuevaAsistencia);
-         await obtenerTrabajadores();
          toast.success("Asistencia guardada corrrectamente");
       } catch (error) {
           if(error?.response?.data?.error){
@@ -69,6 +68,7 @@ export default function AsistenciaSimple({
          }
          toast.error("Hubo un error descocnocido");
       } finally {
+         await obtenerTrabajadores();
          setIsLoading(false);
       }
    };
