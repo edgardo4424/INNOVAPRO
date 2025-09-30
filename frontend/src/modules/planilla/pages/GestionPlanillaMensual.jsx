@@ -1,6 +1,7 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import CalculoPlanillaMensual from "./CalculoPlanillaMensual";
 import HistoricoPlanillaMensual from "./HistoricoPlanillaMensual";
+import ExportacionPlame from "./ExportacionPlame";
 
 const GestionPlanillaMensual = () => {
    return (
@@ -17,14 +18,17 @@ const GestionPlanillaMensual = () => {
                   Calcular Planilla Mensual
                </TabsTrigger>
                <TabsTrigger value="historico">Histórico</TabsTrigger>
+               <TabsTrigger value="plame">Buscar Plame</TabsTrigger>
             </TabsList>
 
             <TabsContent value="calcular" className=" rounded-lg shadow-sm">
                <CalculoPlanillaMensual />
             </TabsContent>
-
             <TabsContent value="historico" className=" rounded-lg shadow-sm">
                <HistoricoPlanillaMensual />
+            </TabsContent>
+            <TabsContent value="plame" className=" rounded-lg shadow-sm">
+               <ExportacionPlame />
             </TabsContent>
          </Tabs>
       </div>

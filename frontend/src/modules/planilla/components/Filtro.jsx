@@ -10,7 +10,7 @@ import {
 import { Check, Funnel } from "lucide-react";
 import { listaMeses } from "../utils/valorInicial";
 
-const Filtro = ({ filiales, filtro, setFiltro, Buscar }) => {
+const Filtro = ({ filiales, filtro, setFiltro, Buscar,nombre_button="Aplicar" }) => {
   const anhoActual = new Date().getFullYear();
   const utlimosCincoAnhos = Array.from({ length: 5 }, (_, i) => anhoActual - i);
 
@@ -96,7 +96,7 @@ const Filtro = ({ filiales, filtro, setFiltro, Buscar }) => {
           </div>
           <div className="md:col-span-1">
             <Button onClick={Buscar} className="px-2 cursor-pointer w-full">
-              <Check className="mr-1 w-3 h-3" /> Aplicar
+              <Check className="mr-1 w-3 h-3" /> {nombre_button}
             </Button>
           </div>
         </div>

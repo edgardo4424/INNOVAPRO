@@ -24,6 +24,16 @@ class SequelizeTrabajadorRepository {
       return trabajador;
    }
 
+   async obtenerTrabajadorSimplePorId(id, transaction = null) {
+      const options = {
+         where: { id },
+      };
+      if (transaction) {
+         options.transaction = transaction;
+      }
+      const trabajador = await Trabajador.findOne(options);
+      return trabajador.get({plain:true});
+   }
    async obtenerTrabajadorPorId(id, transaction = null) {
       const options = {
          where: { id },

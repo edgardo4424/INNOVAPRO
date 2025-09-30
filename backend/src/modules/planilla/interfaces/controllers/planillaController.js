@@ -12,6 +12,7 @@ const sequelize = require("../../../.././config/db");
 const obtenerPlanillaMensualCerradas = require("../../application/useCases/obtenerPlanillaMensualCerradas");
 const calcularPlanillaMensualTruncaPorTrabajador = require("../../application/useCases/calcularPlanillaMensualTruncaPorTrabajador");
 const SequelizeDataRepository = require("../../../data_mantenimiento/infrastructure/repositories/sequelizeDataMantenimientoRepository");
+const exportarPlame = require("../../application/useCases/exportarPlame");
 
 const planillaRepository = new sequelizePlanillaRepository();
 const trabajadorRepository = new SequelizeTrabajadorRepository();
@@ -112,7 +113,7 @@ const PlanillaController = {
           await transaction.commit();
          res.status(cierrePM.codigo).json(cierrePM.respuesta);
       } catch (error) {
-         console.log(error);
+         console.log("Error alc errar la planilla mensual: ",error);
          await transaction.rollback();
          res.status(500).json({ error: error.message });
       }
@@ -140,11 +141,26 @@ const PlanillaController = {
          const planillaMensualCerradas = await obtenerPlanillaMensualCerradas(
             req.body,
             planillaRepository
-         ); // Llamamos al caso de uso para obtener todos los planillaQuincenalCerradas
+         ); // Llamamos al caso de uso para obtener todos los planillaMensualCerradas
 
          res.status(planillaMensualCerradas.codigo).json(
             planillaMensualCerradas.respuesta
          ); // 🔥 Siempre devuelve un array, aunque esté vacío
+      } catch (error) {
+         console.log("error", error);
+         res.status(500).json({ error: error.message }); // Respondemos con un error
+      }
+   },
+   async exportarPlame(req, res) {
+      try {
+         console.log("Funcion para descargar el plame ejecutandose");
+         
+         await exportarPlame(
+            res,
+            req.body,
+            planillaRepository,
+            
+         ); 
       } catch (error) {
          console.log("error", error);
          res.status(500).json({ error: error.message }); // Respondemos con un error

@@ -485,6 +485,23 @@ class SequelizeAsistenciaRepository {
       throw new Error(error.message);
     }
   }
+    async obtenerCantidadVacaciones(trabajador_id, fechaInicio, fechaFin) {
+    try {
+      const cantidadFaltas = await Asistencia.count({
+        where: {
+          trabajador_id,
+          estado_asistencia: "vacacion-gozada",
+          fecha: {
+            [Op.between]: [fechaInicio, fechaFin], // <-- inclusivo en ambos extremos
+          },
+        },
+      });
+
+      return cantidadFaltas;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
   async obtenerCantidadTardanzasPorRangoFecha(
     trabajador_id,
     fechaInicio,

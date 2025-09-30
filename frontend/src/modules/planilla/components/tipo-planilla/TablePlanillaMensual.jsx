@@ -35,7 +35,9 @@ const TablePlanillaMensual = ({
             .toLowerCase()
             .includes(filtro?.toLowerCase())
       );
-
+   
+      // console.log("Los datos totoales son ",datosTotalesPlanilla);
+      
    return (
       <div className="w-full overflow-x-auto p-5  flex flex-col bg-gray-100 border-2 rounded-xl shadow-xl">
          <h1 className="text-2xl font-bold pb-6">Planilla</h1>
@@ -383,7 +385,7 @@ const TablePlanillaMensual = ({
                               />
                            )
                         )}
-                        <RowTotalPlanillaMensual datosTotalesPlanilla={datosTotalesPlanilla} />
+                        {/* <RowTotalPlanillaMensual datosTotalesPlanilla={datosTotalesPlanilla} /> */}
                      </>
                   )}
                </TableBody>
