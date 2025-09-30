@@ -1,6 +1,6 @@
-module.exports = async (choferRepository) => {
+module.exports = async (vehiculosRepository) => {
 
-    const { success, message, data, total } = await choferRepository.listar();
+    const { success, message, data, total } = await vehiculosRepository.listar();
 
     if (!success) {
         return {

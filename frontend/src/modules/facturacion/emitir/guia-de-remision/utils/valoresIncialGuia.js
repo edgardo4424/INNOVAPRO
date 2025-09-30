@@ -6,6 +6,10 @@ const guiaInical = {
     observacion: "",
     fecha_Emision: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
 
+    // ?Datos del comprobante de referencia
+    obra : "",
+    nro_contrato : "",
+
     estado_Documento: "0",
     empresa_Ruc: "20562974998",
 

@@ -13,6 +13,7 @@ class SequelizeVehiculosRepository {
             return {
                 success: true,
                 message: `${listaVehiculos.length} vehiculos encontrados`,
+                total: listaVehiculos.length,
                 data: listaVehiculos
             }
         } catch (error) {

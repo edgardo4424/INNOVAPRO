@@ -29,8 +29,15 @@ const InfDocumentoForm = () => {
     setGuiaDatosInternos,
   } = useGuiaTransporte();
 
-  const { tipo_Doc, serie, correlativo, observacion, empresa_Ruc } =
-    guiaTransporte;
+  const {
+    tipo_Doc,
+    serie,
+    correlativo,
+    observacion,
+    empresa_Ruc,
+    obra,
+    nro_contrato,
+  } = guiaTransporte;
 
   const activarCorrelativo = (e) => {
     e.preventDefault();
@@ -287,6 +294,40 @@ const InfDocumentoForm = () => {
             </Select>
           </div>
         </div>
+
+        <div className="col-span-1 md:col-span-2 lg:col-span-1">
+          <Label
+            htmlFor="cliente_Razon_Social"
+            className="mb-1 block text-left text-sm font-semibold text-gray-700"
+          >
+            Obra
+          </Label>
+          <Input
+            type="text"
+            id="obra"
+            name="obra"
+            value={obra}
+            onChange={handleChange}
+            className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
+
+        <div className="col-span-1 md:col-span-2 lg:col-span-1">
+          <Label
+            htmlFor="cliente_Razon_Social"
+            className="mb-1 block text-left text-sm font-semibold text-gray-700"
+          >
+            Contrato
+          </Label>
+          <Input
+            type="text"
+            id="nro_contrato"
+            name="nro_contrato"
+            value={nro_contrato}
+            onChange={handleChange}
+            className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
         <div className="col-span-1 md:col-span-2 lg:col-span-3">
           <Label
             htmlFor="observacion"
@@ -302,7 +343,7 @@ const InfDocumentoForm = () => {
               onChange={handleChange}
               rows="2"
               maxLength="250"
-            className="h-32 w-full resize-none rounded-lg border border-gray-300 bg-white p-4 placeholder-gray-400 transition-all duration-200"
+              className="h-32 w-full resize-none rounded-lg border border-gray-300 bg-white p-4 placeholder-gray-400 transition-all duration-200"
             ></Textarea>
             <p className="absolute right-4 bottom-2 mt-2 text-right text-sm text-gray-500">
               {observacion.length}/250

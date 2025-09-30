@@ -27,9 +27,17 @@ const Vehiculos = sequelize.define(
         },
         id_transportista: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true,
             references: {
                 model: "transportistas",
+                key: "id",
+            },
+        },
+        id_chofer: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+                model: "choferes",
                 key: "id",
             },
         },
@@ -52,6 +60,7 @@ const Vehiculos = sequelize.define(
 
 Vehiculos.associate = (models) => {
     Vehiculos.belongsTo(models.transportistas, { foreignKey: "id_transportista" });
+    Vehiculos.belongsTo(models.choferes, { foreignKey: "id_chofer" });
 }
 
 

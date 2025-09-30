@@ -4,6 +4,7 @@ const router = express.Router();
 const { verificarToken } = require("../../../../shared/middlewares/authMiddleware");
 const choferController = require("../controller/choferController");
 const transporteController = require("../controller/transportistaController");
+const vehiculosController = require("../controller/vehiculos");
 
 
 // router.use(verificarToken); // Verificamos el token y el rol de Gerente para as las rutas
@@ -18,4 +19,8 @@ router.get("/transportista", transporteController.listar);
 router.post("/chofer", choferController.guardar);
 router.delete("/chofer", choferController.eliminar);
 router.get("/chofer", choferController.listar);
+
+// ?? VEHICULOS 
+router.get("/vehiculo", vehiculosController.listar);
+
 module.exports = router;

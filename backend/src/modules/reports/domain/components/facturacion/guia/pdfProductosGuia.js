@@ -12,28 +12,25 @@ function pdfProductosGuia(
             stack: [
                 {
                     table: {
-                        widths: ['10%', '45%', '10%', '15%', '20%'],
+                        widths: ['10%', '65%', '10%', '15%',],
                         body: [
                             [
                                 { text: 'ITEM', style: 'tableHeaderMain', fillColor: bg_color, alignment: 'center' },
                                 { text: 'DESCRIPCION', style: 'tableHeaderMain', fillColor: bg_color, alignment: 'center' },
                                 { text: 'UNI.', style: 'tableHeaderMain', fillColor: bg_color, alignment: 'center' },
                                 { text: 'CANTIDAD', style: 'tableHeaderMain', fillColor: bg_color, alignment: 'center' },
-                                { text: 'PESO', style: 'tableHeaderMain', fillColor: bg_color, alignment: 'center' },
                             ],
                             ...(guia.guia_detalles?.length ? guia.guia_detalles : []).map(d => [
                                 { text: d.cod_Producto || "—", style: 'tableBody', alignment: 'center' },
                                 { text: d.descripcion || "—", style: 'tableBody', alignment: 'left' },
                                 { text: d.unidad || "—", style: 'tableBody', alignment: 'center' },
                                 { text: d.cantidad || "—", style: 'tableBody', alignment: 'center' },
-                                { text: d.peso_kg.toFixed(2) >> 0 ? d.peso_kg.toFixed(2) : "0.00", style: 'tableBody', alignment: 'center' },
                             ]),
                             [
                                 { text: '', style: 'tableBody', alignment: 'center' },
                                 { text: '', style: 'tableBody', alignment: 'center' },
                                 { text: '', style: 'tableBody', alignment: 'center' },
                                 { text: `${cantidad_total}`, style: 'tableHeaderMain', fillColor: bg_color, alignment: 'center' },
-                                { text: `${peso_total.toFixed(2)}`, style: 'tableHeaderMain', fillColor: bg_color, alignment: 'center' },
                             ],
                         ],
                     },

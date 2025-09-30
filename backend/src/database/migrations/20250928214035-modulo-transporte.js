@@ -107,9 +107,19 @@ module.exports = {
       },
       id_transportista: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: "transportistas",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      id_chofer: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: "choferes",
           key: "id",
         },
         onUpdate: "CASCADE",
