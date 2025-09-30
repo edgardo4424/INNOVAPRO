@@ -100,7 +100,7 @@ const TablePlanillaMensual = ({ planillaMensualTipoRh, total }) => {
               <>
                 
                  {filtrarTrabajadores(planillaMensualTipoRh).map((e, index) => (
-                  <RowRHMensual key={index} e={e} index={index} />
+                  <RowRHMensual key={index} e={e} />
                 ))}
                 {/* <RowTotalRHMensual total={total} /> */}
               </>
