@@ -198,7 +198,7 @@ const ArrayFormasDePago = [
     { value: "001", act: true, description: "001 - Depósito en cuenta." },
     { value: "002", act: false, description: "002 - Giro." },
     { value: "003", act: false, description: "003 - Transferencia de fondos." },
-    { value: "004", act: false, description: "004 - Orden de pago. " },
+    { value: "004", act: false, description: "004 - Orden de pago." },
     { value: "005", act: false, description: "005 - Tarjeta de débito." },
     { value: "006", act: false, description: "006 - Tarjeta de crédito emitida en el país por una empresa del sistema financiero." },
     { value: "007", act: false, description: "007 - Cheques con la cláusula “no negociable”,“intransferible”, “no a la orden” u otra equivalente." },

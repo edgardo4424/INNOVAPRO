@@ -37,6 +37,7 @@ const TransportistaPublicoForm = () => {
 
     if (transportista.nro_doc.length !== 11) {
       toast.error("El número de documento del chofer debe tener 11 dígitos.");
+      setLoadingBtn(false);
       return;
     }
 
@@ -50,7 +51,13 @@ const TransportistaPublicoForm = () => {
       }
 
       // ? ========= 1) RUC -> Razón Social (consulta “ligera”) =========
-      const rucResp = await factilizaService.obtenerEmpresaPorRuc(ruc);
+      const rucPromise = factilizaService.obtenerEmpresaPorRuc(ruc);
+      toast.promise(rucPromise, {
+        pending: "Buscando información de la empresa",
+        success: "Empresa encontrada",
+        error: "No se encontraron resultados",
+      });
+      const rucResp = await rucPromise;
       const rucStatus = rucResp?.status ?? 200;
       const rucOk =
         (rucResp?.success ?? rucResp?.succes ?? rucResp?.estado ?? true) &&
@@ -74,36 +81,34 @@ const TransportistaPublicoForm = () => {
       }));
 
       //? ========= 2) MTC (con toast.promise) =========
-      const mtcPromise = facturaService.obtenerMtc(ruc);
+      // const mtcPromise = facturaService.obtenerMtc(ruc);
 
-      toast.promise(mtcPromise, {
-        pending: "Buscando MTC",
-        success: "Información encontrada",
-        warning: "No se encontró información en MTC",
-      });
+      // toast.promise(mtcPromise, {
+      //   pending: "Buscando MTC",
+      //   success: "Información encontrada",
+      //   warning: "No se encontró información en MTC",
+      // });
 
-      const mtcResp = await mtcPromise;
+      // const mtcResp = await mtcPromise;
 
-      //? Algunas APIs devuelven { status, estado, data:{ status, ... } }
-      const mtcTopStatus = mtcResp?.status; // a veces existe
-      const mtcDataStatus = mtcResp?.data?.status; // a veces está dentro de data
-      const mtcOkFlag = (mtcResp?.estado ?? mtcResp?.success ?? true) === true;
-      const mtcOk =
-        (mtcTopStatus === 200 || mtcDataStatus === 200) && mtcOkFlag;
+      // //? Algunas APIs devuelven { status, estado, data:{ status, ... } }
+      // const mtcTopStatus = mtcResp?.status; // a veces existe
+      // const mtcDataStatus = mtcResp?.data?.status; // a veces está dentro de data
+      // const mtcOkFlag = (mtcResp?.estado ?? mtcResp?.success ?? true) === true;
+      // const mtcOk =
+      //   (mtcTopStatus === 200 || mtcDataStatus === 200) && mtcOkFlag;
 
-      const nombresAlt =
-        mtcResp?.razon_social || mtcResp?.data?.razon_social || "";
-      const nro_mtc = mtcOk
-        ? mtcResp?.data?.codigo_mtc || mtcResp?.codigo_mtc || ""
-        : "";
+      // const nombresAlt =
+      //   mtcResp?.razon_social || mtcResp?.data?.razon_social || "";
+      // const nro_mtc = mtcOk
+      //   ? mtcResp?.data?.codigo_mtc || mtcResp?.codigo_mtc || ""
+      //   : "";
 
       setGuiaDatosPublico((prev) => ({
         ...prev,
         transportista: {
           ...prev.transportista,
-          //? Si no vino de Sunat, puedes usar el de MTC como fallback (descomenta si lo quieres):
-          //? razon_Social: prev.transportista?.razon_Social || razonSocial || nombresAlt || "",
-          nro_mtc,
+          // nro_mtc,
         },
       }));
     } catch (error) {
@@ -195,9 +200,9 @@ const TransportistaPublicoForm = () => {
               href="https://www.mtc.gob.pe/tramitesenlinea/tweb_tLinea/tw_consultadgtt/Frm_rep_intra_mercancia.aspx"
               target="_blank"
               rel="noopener noreferrer"
-              class="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-blue-700"
+              className="ml-4 rounded-lg bg-blue-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-blue-700"
             >
-              Ir al sitio
+              consultar
             </a>
           </Label>
           <Input

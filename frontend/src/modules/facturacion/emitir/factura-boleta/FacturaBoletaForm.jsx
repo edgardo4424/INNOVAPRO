@@ -103,17 +103,22 @@ const FacturaBoletaForm = () => {
 
   useEffect(() => {
     const cambioDelDia = async () => {
-      const hoy = new Date();
-      const hoyISO = new Date().toISOString().slice(0, 10);
-      const { status, success, data } =
-        await factilizaService.obtenerTipoCambio(hoyISO);
-      if (success && status === 200) {
-        setPrecioDolarActual(data.compra);
-      }
+      try {
+        const hoy = new Date(); // Esta línea es redundante si solo usas 'hoyISO' después
+        const hoyISO = new Date().toISOString().slice(0, 10);
+
+        const { status, success, data } =
+          await factilizaService.obtenerTipoCambio(hoyISO);
+
+        if (success && status === 200) {
+          setPrecioDolarActual(data.compra);
+        } else {
+        }
+      } catch (error) {}
     };
+
     cambioDelDia();
   }, []);
-
   return (
     <div className="mb-6 rounded-3xl border border-gray-400 bg-white p-4 shadow-xl transition-all duration-300">
       {/* Form */}
@@ -146,14 +151,14 @@ const FacturaBoletaForm = () => {
         <div className="flex gap-x-8">
           <button
             onClick={handleRegister}
-            className="cursor-pointer rounded-xl bg-innova-blue px-4 py-3 font-semibold text-white"
-            >
+            className="bg-innova-blue cursor-pointer rounded-xl px-4 py-3 font-semibold text-white"
+          >
             Guardar
           </button>
           <button
             onClick={handleCancelar}
-            className="cursor-pointer rounded-xl bg-innova-orange px-4 py-3 font-semibold text-white"
-            >
+            className="bg-innova-orange cursor-pointer rounded-xl px-4 py-3 font-semibold text-white"
+          >
             Cancelar
           </button>
         </div>

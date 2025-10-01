@@ -384,21 +384,27 @@ export function GuiaTransporteProvider({ children }) {
   };
 
   const Limpiar = () => {
-    setGuiaTransporte(guiaInical);
+    setGuiaTransporte({
+      ...guiaInical,
+      empresa_Ruc: guiaTransporte.empresa_Ruc,
+      serie: guiaTransporte.serie,
+    });
     setGuiaDatosPublico(ValoresPublico);
     setGuiaDatosInternos(ValoresInterno);
     buscarCorrelativo();
   };
-
 
   return (
     <GuiaTransporteContext.Provider
       value={{
         serieGuia,
         buscarCorrelativo,
-        correlativos, setCorrelativos,
-        correlativoEstado, setCorrelativoEstado,
-        loadingCorrelativo, setLoadingCorrelativo,
+        correlativos,
+        setCorrelativos,
+        correlativoEstado,
+        setCorrelativoEstado,
+        loadingCorrelativo,
+        setLoadingCorrelativo,
         filiales,
         productoActual,
         setProductoActual,

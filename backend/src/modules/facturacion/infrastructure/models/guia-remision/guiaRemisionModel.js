@@ -21,6 +21,14 @@ const GuiaRemision = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
+        obra: {
+            type: DataTypes.STRING(100),
+            allowNull: true,
+        },
+        nro_contrato: {
+            type: DataTypes.STRING(100),
+            allowNull: true,
+        },
         observacion: {
             type: DataTypes.STRING,
             allowNull: false,

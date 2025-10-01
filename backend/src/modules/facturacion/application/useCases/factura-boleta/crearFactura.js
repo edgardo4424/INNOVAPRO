@@ -31,7 +31,6 @@ module.exports = async (body, facturaRepository, borradorRepository) => {
     // todo: Validacion si ya se registro una factura con ese correlativo o serie
     if (facturaData.estado) {
         const facturaExistente = await facturaRepository.buscarExistencia(facturaData.serie, facturaData.correlativo, facturaData.estado);
-        console.log("🚚 facturaExistente:", facturaExistente);
         if (facturaExistente) {
             return {
                 codigo: 409,

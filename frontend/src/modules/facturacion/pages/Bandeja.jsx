@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const Bandeja = () => {
 
     return (
-        <div className="min-h-screen  max-w-7xl mx-auto flex flex-col w-full items-center px-4 md:px-8 py-6 ">
+        <div className="min-h-screen  max-w-7xl  mx-auto flex flex-col w-full items-center px-4 md:px-8 py-6 ">
 
             <div className="flex flex-col max-w-3xl items-center justify-between my-3">
                 <h2 className="text-2xl font-extrabold md:text-3xl">

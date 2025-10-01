@@ -1,5 +1,11 @@
 import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext"; // Importamos el contexto correcto
-import { formatDateTime, getModalidadTrasladoDescription, getMotivoTrasladoDescription, getTipoDocCliente, getTipoDocGuiaDescription } from "@/modules/facturacion/utils/formateos";
+import {
+  formatDateTime,
+  getModalidadTrasladoDescription,
+  getMotivoTrasladoDescription,
+  getTipoDocCliente,
+  getTipoDocGuiaDescription,
+} from "@/modules/facturacion/utils/formateos";
 import { Eye, X } from "lucide-react"; // Solo necesitamos Eye y X para previsualizar
 import { useState } from "react";
 import ModalEnviarGuia from "./ModalEnviarGuia";
@@ -33,7 +39,6 @@ export default function ModalVisualizarGuiaPrivada() {
   const openModal = () => {
     setIsOpen(true);
   };
-
 
   return (
     <>
@@ -76,7 +81,7 @@ export default function ModalVisualizarGuiaPrivada() {
                       </p>{" "}
                       {/* Placeholder */}
                     </div>
-                    <div className="col-span-2 flex justify-end md:text-center space-y-2 md:space-y-0">
+                    <div className="col-span-2 flex justify-end space-y-2 md:space-y-0 md:text-center">
                       <div>
                         <p className="text-sm font-bold md:text-lg">
                           {getTipoDocGuiaDescription(guiaTransporte.tipo_Doc)}
@@ -100,38 +105,61 @@ export default function ModalVisualizarGuiaPrivada() {
                       <h3 className="mb-3 text-sm font-bold text-gray-600">
                         DATOS DEL DESTINATARIO:
                       </h3>
-                      <div className="grid grid-cols-1 space-y-2 text-sm text-gray-800 md:grid-cols-3 md:space-y-1">
-                        <div className="col-span-2 grid grid-cols-1 gap-x-2 md:grid-cols-[170px_1fr] space-y-2 md:space-y-0">
+
+                      <div className="grid grid-cols-1 gap-4 text-sm text-gray-800 md:grid-cols-2">
+                        {/* Razón Social y Dirección */}
+                        <div className="grid grid-cols-1 gap-y-2 md:col-span-1 md:grid-cols-[180px_minmax(0,1fr)]">
                           <span className="text-xs font-semibold text-gray-700 md:text-sm">
                             Razón Social/Nombre:
                           </span>
-                          <span className="text-xs font-medium md:text-sm">
-                            {guiaTransporte.cliente_Razon_Social || "N/A"}
+                          <span className="text-xs font-medium break-words md:text-sm">
+                            {guiaTransporte?.cliente_Razon_Social || "N/A"}
                           </span>
 
                           <span className="text-xs font-semibold text-gray-700 md:text-sm">
                             Dirección:
                           </span>
-                          <span className="text-xs font-medium md:text-sm">
-                            {guiaTransporte.cliente_Direccion || "N/A"}
+                          <span className="text-xs font-medium break-words md:text-sm">
+                            {guiaTransporte?.cliente_Direccion || "N/A"}
                           </span>
                         </div>
-                        <div className="grid grid-cols-[140px_1fr] space-y-2 gap-x-2 md:space-y-0">
-                          <span className="text-xs font-semibold text-gray-700 md:text-sm">
-                            Tipo Doc.:
-                          </span>
-                          <span className="text-xs font-medium md:text-sm">
-                            {getTipoDocCliente(
-                              guiaTransporte.cliente_Tipo_Doc,
-                            )}
-                          </span>
 
-                          <span className="text-xs font-semibold text-gray-700 md:text-sm">
-                            Nro. Doc.:
-                          </span>
-                          <span className="text-xs font-medium md:text-sm">
-                            {guiaTransporte.cliente_Num_Doc || "N/A"}
-                          </span>
+                        <div className="flex justify-between col-span-1">
+                          {/* Documento */}
+                          <div className="grid grid-cols-2 gap-y-2 gap-x-2">
+                            <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                              Tipo Doc.:
+                            </span>
+                            <span className="text-xs font-medium md:text-sm">
+                              {getTipoDocCliente(
+                                guiaTransporte?.cliente_Tipo_Doc,
+                              ) || "N/A"}
+                            </span>
+
+                            <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                              Nro. Doc.:
+                            </span>
+                            <span className="text-xs font-medium md:text-sm">
+                              {guiaTransporte?.cliente_Num_Doc || "N/A"}
+                            </span>
+                          </div>
+
+                          {/* Obra y Contrato */}
+                          <div className="grid grid-cols-2 gap-y-2  gap-x-2">
+                            <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                              Obra:
+                            </span>
+                            <span className="text-xs font-medium break-words md:text-sm">
+                              {guiaTransporte?.obra || "N/A"}
+                            </span>
+
+                            <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                              Contrato:
+                            </span>
+                            <span className="text-xs font-medium break-words md:text-sm">
+                              {guiaTransporte?.nro_contrato || "N/A"}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -244,7 +272,9 @@ export default function ModalVisualizarGuiaPrivada() {
                             Feca de Traslado:
                           </span>
                           <span className="text-xs font-medium md:text-sm">
-                            {formatDateTime(guiaTransporte.guia_Envio_Fec_Traslado)}
+                            {formatDateTime(
+                              guiaTransporte.guia_Envio_Fec_Traslado,
+                            )}
                           </span>
                           <span className="text-xs font-semibold text-gray-700 md:text-sm">
                             Peso Total Bruto:
@@ -253,6 +283,12 @@ export default function ModalVisualizarGuiaPrivada() {
                             {guiaTransporte.guia_Envio_Peso_Total || "0"}{" "}
                             {guiaTransporte.guia_Envio_Und_Peso_Total || "N/A"}
                           </span>
+                          <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                            Peso Placa:
+                          </span>
+                          <span className="text-xs font-medium md:text-sm">
+                            {guiaTransporte?.guia_Envio_Vehiculo_Placa || "0"}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -260,7 +296,7 @@ export default function ModalVisualizarGuiaPrivada() {
                 </div>
 
                 <div className="rounded-xl border border-gray-200 bg-white">
-                  <div className="grid grid-cols-1 p-4 md:p-6 md:grid-cols-2">
+                  <div className="grid grid-cols-1 p-4 md:grid-cols-2 md:p-6">
                     {/* Punto de Partida */}
                     <div>
                       <h3 className="mb-3 text-sm font-bold text-gray-600">
@@ -310,12 +346,11 @@ export default function ModalVisualizarGuiaPrivada() {
                 </div>
 
                 {/* Datos del Conductor (Chofer) */}
-
                 {tipoGuia == "transporte-publico" && (
                   <div className="rounded-xl border border-gray-200 bg-white">
                     <div className="p-4 md:p-6">
                       <h3 className="mb-3 text-sm font-bold text-gray-600">
-                        DATOS DEL CONDUCTOR:
+                        DATOS DEL TRANSPORTISTA:
                       </h3>
                       {guiaDatosPublico.transportista && (
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -355,6 +390,60 @@ export default function ModalVisualizarGuiaPrivada() {
                     </div>
                   </div>
                 )}
+
+                {/* Datos del Conductor (Chofer) */}
+                {Array.isArray(guiaTransporte?.chofer) &&
+                  guiaTransporte.chofer.length > 0 && (
+                    <div className="rounded-xl border border-gray-200 bg-white">
+                      <div className="p-4 md:p-6">
+                        <h3 className="mb-3 text-sm font-bold text-gray-600">
+                          DATOS DEL CHOFER:
+                        </h3>
+
+                        {(() => {
+                          const chofer = guiaTransporte.chofer[0];
+
+                          return (
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                              <div className="grid grid-cols-1 gap-2 text-sm md:grid-cols-[110px_1fr]">
+                                <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                                  Tipo Doc.:
+                                </span>
+                                <span className="text-xs font-medium md:text-sm">
+                                  {getTipoDocCliente(chofer?.tipo_doc) || "N/A"}
+                                </span>
+
+                                <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                                  Nro. Doc.:
+                                </span>
+                                <span className="text-xs font-medium md:text-sm">
+                                  {chofer?.nro_doc || "N/A"}
+                                </span>
+                              </div>
+
+                              <div className="grid grid-cols-1 gap-2 text-sm md:grid-cols-[140px_1fr]">
+                                <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                                  Nombre Apellido:
+                                </span>
+                                <span className="text-xs font-medium md:text-sm">
+                                  {(chofer?.nombres || "") +
+                                    " " +
+                                    (chofer?.apellidos || "")}
+                                </span>
+
+                                <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                                  Nro. Licencia:
+                                </span>
+                                <span className="text-xs font-medium md:text-sm">
+                                  {chofer?.licencia || "N/A"}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })()}
+                      </div>
+                    </div>
+                  )}
 
                 {/* Tabla de Detalle de Productos */}
                 <div className="mb-6">
@@ -415,7 +504,7 @@ export default function ModalVisualizarGuiaPrivada() {
 
                 {/* Sección de Observacion */}
                 <div className="">
-                  <h3 className="text-sm md:text-md mb-2 border-b pb-1 font-bold text-gray-600">
+                  <h3 className="md:text-md mb-2 border-b pb-1 text-sm font-bold text-gray-600">
                     OBSERVACION:
                   </h3>
                   <div className="rounded-md border border-gray-200 bg-white p-4 text-sm text-gray-800">

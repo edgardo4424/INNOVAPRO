@@ -26,13 +26,12 @@ const OPCIONES_DETALLE = [
   "DIRECCION DEL DESTINO",
   "DESCRIPCION DEL SERVICIO O PRODUCTO",
   "PROYECTO",
-  "ORDEN DE SERVICIO",
   "CONTRATO",
   "VALORIZACION",
   "NIVEL DE RIESGO",
   "TIPO DE EQUIPO",
   "MARCA Y MODELO",
-  "NUMERO DE SERIE",
+  "COTIZACION",
   "FECHA DE FABRICACION",
   "FECHA DE ENTREGA",
 ];
@@ -127,24 +126,36 @@ export default function ModalDetalleExtra({ open, setOpen }) {
             <div key={i} className="grid grid-cols-7 items-end gap-4 py-2">
               <div className="col-span-full flex flex-col gap-1 sm:col-span-3">
                 <Label htmlFor={`detalle-${i}`}>Nombre</Label>
-                <Select
-                  name="detalle"
-                  value={detalle.detalle}
-                  onValueChange={(value) => handleSelectChange(value, i)}
-                >
-                  <SelectTrigger className="w-full rounded-md border border-gray-300 shadow-sm">
-                    <SelectValue placeholder="Nombre del campo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {OPCIONES_DETALLE.map((opcion, index) => (
-                      <SelectItem key={index} value={opcion}>
-                        {opcion}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="flex gap-2">
+                  {/* Input para escribir libremente */}
+                  <Input
+                    id={`detalle-${i}`}
+                    type="text"
+                    name="detalle"
+                    placeholder="Nombre del campo"
+                    value={detalle.detalle}
+                    onChange={(e) => handleInputChange(e, i)}
+                    className="flex-1"
+                  />
+
+                  {/* Select para opciones predefinidas */}
+                  <Select
+                    onValueChange={(value) => handleSelectChange(value, i)}
+                  >
+                    <SelectTrigger className="w-10 shrink-0 rounded-md border border-gray-300 shadow-sm"></SelectTrigger>
+
+                    <SelectContent>
+                      {OPCIONES_DETALLE.map((opcion, index) => (
+                        <SelectItem key={index} value={opcion}>
+                          {opcion}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              <div className="col-span-5 md:col-span-3 flex flex-col gap-2">
+
+              <div className="col-span-5 flex flex-col gap-2 md:col-span-3">
                 <Label htmlFor={`valor-${i}`}>Valor</Label>
                 <Input
                   id={`valor-${i}`}

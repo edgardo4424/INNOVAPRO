@@ -15,8 +15,8 @@ function pdfLegendFactura(
         } else if (String(factura.descuento_cod_tipo) === "62") {
             // Retención
             return {
-                text: "",
-                // text: "OPERACIÓN SUJETA A RETENCIÓN DEL IGV",
+                // text: "",
+                text: "OPERACIÓN SUJETA A RETENCIÓN DEL IGV",
                 style: "amountInLetters",
                 border: [true, true, true, true],
                 borderColor: border_color,
@@ -29,7 +29,7 @@ function pdfLegendFactura(
     return {
         stack: [
             {
-                text: `IMPORTE EN LETRAS: ${factura.legend_facturas?.[0]?.legend_Value || "—"}`,
+                text: `${factura.legend_facturas?.[0]?.legend_Value || "—"}`,
                 style: "amountInLetters",
                 border: [true, true, true, true],
                 borderColor: border_color,

@@ -15,6 +15,7 @@ const {
 } = require("../../modules/trabajadores/infraestructure/models/trabajadorModel");
 db.trabajadores = Trabajador;
 
+
 const {
    ReciboPorHonorario
 } = require("../../modules/recibo_x_honorarios/infraestructure/models/reciboModel");
@@ -24,11 +25,11 @@ const {
 } = require("../../modules/planilla/infrastructure/models/PlanillaRecibosHonorarios");
 db.planilla_mensual_recibo_honorario=PlanillaMensualReciboHonorario
 
-
 const {Cts}=require("../../modules/cts/infraestructure/models/ctsModel");
 db.cts=Cts
 const {CierreCTS}=require("../../modules/cts/infraestructure/models/ctsCierreModel");
 db.cierres_cts=CierreCTS
+
 const {
    Cargo,
 } = require("../../modules/trabajadores/infraestructure/models/cargoModel");
@@ -79,11 +80,11 @@ db.tipos_trabajo = TipoTrabajo;
 const { Obra } = require("../../modules/obras/infrastructure/models/obraModel");
 db.obras = Obra;
 
-const {PlanillaMensual}=require("../../modules/planilla/infrastructure/models/PlanillaMensualModel")
-db.planilla_mensual=PlanillaMensual;
+const { PlanillaMensual } = require("../../modules/planilla/infrastructure/models/PlanillaMensualModel")
+db.planilla_mensual = PlanillaMensual;
 
-const {CierresPlanillaMensual}=require("../../modules/planilla/infrastructure/models/CierrePlanillaMensualModel");
-db.cierres_planilla_mensual=CierresPlanillaMensual
+const { CierresPlanillaMensual } = require("../../modules/planilla/infrastructure/models/CierrePlanillaMensualModel");
+db.cierres_planilla_mensual = CierresPlanillaMensual
 const {
    Filial,
 } = require("../../modules/filiales/infrastructure/models/filialModel");
@@ -212,6 +213,15 @@ db.guia_detalles = GuiaDetalles
 const { GuiaChoferes } = require('../../modules/facturacion/infrastructure/models/guia-remision/guiaChoferesModel')
 db.guia_choferes = GuiaChoferes
 
+const { Vehiculos } = require('../../modules/transporte/insfrastructure/models/vehiculosModel')
+db.vehiculos = Vehiculos
+
+const { Transportistas } = require('../../modules/transporte/insfrastructure/models/transportistasModel')
+db.transportistas = Transportistas
+
+const { Choferes } = require('../../modules/transporte/insfrastructure/models/choferesModel')
+db.choferes = Choferes
+
 // todo notas de credito y debito
 const { NotasCreditoDebito } = require('../../modules/facturacion/infrastructure/models/notas-credito-debito/notasCreditoDebitoModel')
 db.notas_credito_debito = NotasCreditoDebito
@@ -225,10 +235,6 @@ db.detalle_nota_cre_deb = DetalleNotaCreditoDebito
 // todo respuesta de sunat
 const { SunatRespuesta } = require('../../modules/facturacion/infrastructure/models/sunatRespuestaModel')
 db.sunat_respuesta = SunatRespuesta
-
-// todo ruc
-const { RucFacturacion } = require('../../modules/facturacion/infrastructure/models/rucFacturacionModel')
-db.ruc_facturacion = RucFacturacion
 
 // todo borrador
 const { Borrador } = require('../../modules/facturacion/infrastructure/models/borrador/borradorModel')
@@ -255,7 +261,7 @@ const { BajasTrabajadores } = require("../../modules/dar_baja_trabajadores/infra
 db.bajas_trabajadores = BajasTrabajadores;
 
 // ✅ Solo se asocian los que tienen .associate()
-if(db.usuarios.associate) db.usuarios.associate(db);
+if (db.usuarios.associate) db.usuarios.associate(db);
 if (db.contactos.associate) db.contactos.associate(db);
 if (db.clientes.associate) db.clientes.associate(db);
 if (db.obras.associate) db.obras.associate(db);
@@ -281,7 +287,7 @@ if (db.cotizaciones_transporte) db.cotizaciones_transporte.associate(db);
 if (db.cotizaciones_instalacion) db.cotizaciones_instalacion.associate(db);
 if (db.trabajadores.associate) db.trabajadores.associate(db);
 if (db.vacaciones.associate) db.vacaciones.associate(db);
-if(db.asistencias_vacaciones.associate) db.asistencias_vacaciones.associate(db)
+if (db.asistencias_vacaciones.associate) db.asistencias_vacaciones.associate(db)
 if (db.contratos_laborales.associate) db.contratos_laborales.associate(db);
 if (db.bonos.associate) db.bonos.associate(db);
 if (db.adelanto_sueldo.associate) db.adelanto_sueldo.associate(db);
@@ -299,6 +305,7 @@ if(db.bajas_trabajadores) db.bajas_trabajadores.associate(db)
 if(db.recibos_por_honorarios) db.recibos_por_honorarios.associate(db)
 if(db.planilla_mensual_recibo_honorario) db.planilla_mensual_recibo_honorario.associate(db)
 
+
 // ? Conexion Facturacion
 if (db.factura.associate) db.factura.associate(db);
 if (db.detalle_factura.associate) db.detalle_factura.associate(db);
@@ -307,15 +314,17 @@ if (db.legend_factura.associate) db.legend_factura.associate(db)
 if (db.guias_de_remision.associate) db.guias_de_remision.associate(db)
 if (db.guia_detalles.associate) db.guia_detalles.associate(db)
 if (db.guia_choferes.associate) db.guia_choferes.associate(db)
+if (db.transportistas.associate) db.transportistas.associate(db)
+if (db.vehiculos.associate) db.vehiculos.associate(db)
+if (db.choferes.associate) db.choferes.associate(db)
 if (db.notas_credito_debito.associate) db.notas_credito_debito.associate(db)
 if (db.legend_nota_cre_deb) db.legend_nota_cre_deb.associate(db)
 if (db.detalle_nota_cre_deb) db.detalle_nota_cre_deb.associate(db)
 if (db.sunat_respuesta.associate) db.sunat_respuesta.associate(db)
-if (db.ruc_facturacion.associate) db.ruc_facturacion.associate(db)
 if (db.borradores.associate) db.borradores.associate(db)
 
 // * Ubigeo
-if(db.ubigeos) db.ubigeos.associate(db)
+if (db.ubigeos) db.ubigeos.associate(db)
 
 if (db.cargos) db.cargos.associate(db);
 if (db.areas) db.areas.associate(db);

@@ -231,18 +231,20 @@ export function NotaProvider({ children }) {
           cdr_response_code: data.sunatResponse.cdrResponse.code,
           cdr_response_description: data.sunatResponse.cdrResponse.description,
         };
-        let detalleFormateado;
+        let detalleFormateado = [];
 
-        notaCreditoDebito.detalle.forEach((detalle) => {
-          detalleFormateado = [
-            {
+        if (notaCreditoDebito.motivo_Cod == "05") {
+          notaCreditoDebito.detalle.forEach((detalle) => {
+            detalleFormateado.push({
               ...detalle,
               Descuentos: detalle.Descuentos
                 ? JSON.stringify(detalle.Descuentos)
                 : null,
-            },
-          ];
-        });
+            });
+          });
+        } else {
+          detalleFormateado = notaCreditoDebito.detalle;
+        }
 
         // ? b. Preparar el objeto final a registrar.
         const notaEmitida = {
@@ -363,7 +365,11 @@ export function NotaProvider({ children }) {
   };
 
   const Limpiar = () => {
-    setNotaCreditoDebito(notaInical);
+    setNotaCreditoDebito({
+      ...notaInical,
+      empresa_Ruc: notaCreditoDebito.empresa_Ruc,
+      serie: notaCreditoDebito.serie,
+    });
     setIdFactura(null);
     buscarCorrelativo();
   };

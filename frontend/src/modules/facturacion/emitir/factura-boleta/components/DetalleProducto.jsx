@@ -1,5 +1,5 @@
 import ModalDetalleExtra from "@/modules/facturacion/components/modal/ModalDetallesExtra";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useFacturaBoleta } from "../../../context/FacturaBoletaContext";
 
 const DetalleProducto = () => {
@@ -11,59 +11,36 @@ const DetalleProducto = () => {
 
   let subTotalConIgv = factura.total_Impuestos + factura.monto_Oper_Gravadas;
 
-    const handleInputChange = useRef(
-      (e) => {
-        const { name, value } = e.target;
-        setFactura((prevValores) => ({
-          ...prevValores,
-          Observacion: value.toUpperCase(),
-        }));
-      }
-    ).current;
-  
-    useEffect(() => {
-      const handleInput = (e) => {
-        handleInputChange(e);
-      };
-      const debouncedHandleInput = debounce(handleInput, 500);
-      const inputElement = document.querySelector("input");
-      inputElement.addEventListener("input", debouncedHandleInput);
-      return () => {
-        inputElement.removeEventListener("input", debouncedHandleInput);
-      };
-    }, []);
-  
-    const debounce = (fn, delay) => {
-      let timerId = null;
-      return function (...args) {
-        if (timerId) {
-          clearTimeout(timerId);
-        }
-        timerId = setTimeout(() => {
-          fn(...args);
-          timerId = null;
-        }, delay);
-      };
-    };
+  const handleObservacion = (e) => {
+    const { value } = e.target;
+    setFactura((prevFactura) => ({
+      ...prevFactura,
+      Observacion: value.toUpperCase(),
+    }));
+  };
 
   return (
     <div className="flex w-full flex-col md:flex-row md:gap-6 lg:px-8">
       {/* Sección Izquierda - Observaciones y Detalles Extra */}
       <div className="flex w-full flex-col items-start py-6 md:w-7/12">
         {/* Observaciones */}
-        <div className="mb-6 flex w-full flex-col items-start">
+        <div className="mb-6 flex w-full flex-col items-start relative">
           <h2 className="mb-3 flex items-center text-lg font-semibold text-gray-800 md:text-xl">
             <span className="mr-3 h-6 w-1 rounded-full bg-blue-500"></span>
-            Observación:
+            <span> Observación:</span>
           </h2>
           <textarea
             name=""
             id=""
             className="h-32 w-full resize-none rounded-lg border border-gray-300 bg-white p-4 placeholder-gray-400 transition-all duration-200"
             placeholder="Ingrese observación adicional para el documento..."
-            onChange={handleInputChange}
+            onChange={handleObservacion}
             value={factura.Observacion}
+            maxLength="250"
           ></textarea>
+          <p className="mt-2 text-right text-sm text-gray-500 absolute bottom-2 right-4">
+            {factura.Observacion.length}/250
+          </p>
         </div>
 
         {/* Detalles Extra */}

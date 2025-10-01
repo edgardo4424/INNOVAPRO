@@ -1,11 +1,11 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext";
@@ -29,9 +29,15 @@ const InfDocumentoForm = () => {
     setGuiaDatosInternos,
   } = useGuiaTransporte();
 
-  const { tipo_Doc, serie, correlativo, observacion, empresa_Ruc } =
-    guiaTransporte;
-
+  const {
+    tipo_Doc,
+    serie,
+    correlativo,
+    observacion,
+    empresa_Ruc,
+    obra,
+    nro_contrato,
+  } = guiaTransporte;
 
   const activarCorrelativo = (e) => {
     e.preventDefault();
@@ -40,10 +46,9 @@ const InfDocumentoForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const newValue = typeof value === "string" ? value.toUpperCase() : value;
     setGuiaTransporte((prevGuiaTransporte) => ({
       ...prevGuiaTransporte,
-      [name]: newValue,
+      [name]: value.toUpperCase(),
     }));
   };
 
@@ -53,7 +58,6 @@ const InfDocumentoForm = () => {
       [name]: value,
     }));
   };
-
 
   useEffect(() => {
     if (filiales.length !== 0) {
@@ -222,6 +226,7 @@ const InfDocumentoForm = () => {
                 value={correlativo}
                 onChange={handleChange}
                 disabled={!correlativoEstado}
+                maxLength={8}
                 className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:outline-none"
               />
               <button
@@ -289,6 +294,40 @@ const InfDocumentoForm = () => {
             </Select>
           </div>
         </div>
+
+        <div className="col-span-1 md:col-span-2 lg:col-span-1">
+          <Label
+            htmlFor="cliente_Razon_Social"
+            className="mb-1 block text-left text-sm font-semibold text-gray-700"
+          >
+            Obra
+          </Label>
+          <Input
+            type="text"
+            id="obra"
+            name="obra"
+            value={obra}
+            onChange={handleChange}
+            className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
+
+        <div className="col-span-1 md:col-span-2 lg:col-span-1">
+          <Label
+            htmlFor="cliente_Razon_Social"
+            className="mb-1 block text-left text-sm font-semibold text-gray-700"
+          >
+            Codigo Contrato
+          </Label>
+          <Input
+            type="text"
+            id="nro_contrato"
+            name="nro_contrato"
+            value={nro_contrato}
+            onChange={handleChange}
+            className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
         <div className="col-span-1 md:col-span-2 lg:col-span-3">
           <Label
             htmlFor="observacion"
@@ -296,14 +335,20 @@ const InfDocumentoForm = () => {
           >
             Observación
           </Label>
-          <Textarea
-            id="observacion"
-            name="observacion"
-            value={observacion}
-            onChange={handleChange}
-            rows="2"
-            className="block h-22 w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800"
-          ></Textarea>
+          <div className="relative flex w-full">
+            <Textarea
+              id="observacion"
+              name="observacion"
+              value={observacion}
+              onChange={handleChange}
+              rows="2"
+              maxLength="250"
+              className="h-32 w-full resize-none rounded-lg border border-gray-300 bg-white p-4 placeholder-gray-400 transition-all duration-200"
+            ></Textarea>
+            <p className="absolute right-4 bottom-2 mt-2 text-right text-sm text-gray-500">
+              {observacion.length}/250
+            </p>
+          </div>
         </div>
       </form>
     </div>

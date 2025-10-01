@@ -21,6 +21,7 @@ import {
    ShieldCheck,
    ScrollText,
    Receipt,
+   Truck,
    Building,
 } from "lucide-react";
 import {
@@ -69,6 +70,7 @@ const iconMap = {
    Trabajadores: Users,
    "Facturación": Receipt,
    "Gestión de Condiciones": ShieldCheck,
+   "Gestión de Transporte": Truck,
    "Asistencia general":Building
 };
 
@@ -102,6 +104,13 @@ const modulesByRole = {
          ],
       },
       {
+         group: "Gestión de Transporte",
+         items: [
+            { name: "Choferes", path: "/transporte/choferes" },
+            { name: "Transportistas", path: "/transporte/transportistas" },
+         ],
+      },
+      {
          group: "Beneficios",
          items: [
             { name: "Vacaciones", path: "/vacaciones" },
@@ -130,7 +139,6 @@ const modulesByRole = {
             { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
          ],
       },
-
       {
          group: "Planilla",
          items: [
@@ -197,6 +205,13 @@ const modulesByRole = {
       },
    ],
    "Jefa de Almacén":[
+      {
+         group: "Gestión de Transporte",
+         items: [
+            { name: "Choferes", path: "/transporte/choferes" },
+            { name: "Transportistas", path: "/transporte/transportistas" },
+         ],
+      },
       {
          group: "Facturación",
          items: [

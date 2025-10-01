@@ -176,7 +176,7 @@ function pdfDatosGuia(guia, choferes, transportistas, invi = "#FFFFFF") {
             ]
             : []),
         //? Choferes
-        choferes.length > 0 ? { text: "CHOFERES", style: "tituloDatosGuia", margin: [0, 0, 0, 5] } : null,
+        choferes.length > 0 ? { text: "CHOFER", style: "tituloDatosGuia", margin: [0, 0, 0, 5] } : null,
         choferes.length > 0 ? { stack: choferesContent } : null,
     ].filter((item) => item !== null);
 }

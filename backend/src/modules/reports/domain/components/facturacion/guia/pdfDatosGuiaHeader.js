@@ -32,6 +32,12 @@ function pdfDatosGuiaHeader(guia, choferes, transportistas, invi = "#FFFFFF") {
                                     text: guia.guia_Envio_Des_Traslado || "—", style: "datosGuiaValue", alignment: "left",
                                 },
                             ],
+                            [
+                                { text: "CODIGO CONTRATO:", style: "datosGuiaLabel" },
+                                {
+                                    text: guia?.nro_contrato || "—", style: "datosGuiaValue", alignment: "left",
+                                },
+                            ],
                         ],
                     },
                     layout: "noBorders",
@@ -61,6 +67,12 @@ function pdfDatosGuiaHeader(guia, choferes, transportistas, invi = "#FFFFFF") {
                                 {
                                     text: guia.guia_Envio_Llegada_Direccion || "—",
                                     style: "datosGuiaValue",
+                                },
+                            ],
+                            [
+                                { text: "OBRA:", style: "datosGuiaLabel" },
+                                {
+                                    text: guia?.obra || "—", style: "datosGuiaValue", alignment: "left",
                                 },
                             ],
                         ],
