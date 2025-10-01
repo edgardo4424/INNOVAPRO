@@ -34,7 +34,6 @@ function pdfTotalAPagar({  detalles_liquidacion }) {
     decorationAdelantosCts = true;
   }
 
-  console.log('totalAdelantosSimple == 0',totalAdelantosSimple == 0);
   return {
     stack: [
       // Cabecera
@@ -91,7 +90,7 @@ function pdfTotalAPagar({  detalles_liquidacion }) {
                           [
                             {  },
                             {
-                              text: "Descuento por adelanto de sueldo de Gratificación",
+                              text: "Descuento por adelanto de Gratificación",
                               alignment: "right",
                             },
                             { text: `-${totalAdelantosGratificacion.toFixed(2)}`, alignment: "right", decoration: decorationAdelantosGratificacion ? "underline" : null },
@@ -103,7 +102,7 @@ function pdfTotalAPagar({  detalles_liquidacion }) {
                           [
                             {  },
                             {
-                              text: "Descuento por adelanto de sueldo de CTS",
+                              text: "Descuento por adelanto de CTS",
                               alignment: "right",
                               
                             },
@@ -122,7 +121,7 @@ function pdfTotalAPagar({  detalles_liquidacion }) {
                          text: totalAdelantosSimple == 0 && totalAdelantosGratificacion == 0 && totalAdelantosCts == 0 ? '' : `S/ ${totalFinal.toFixed(2)}`,
                         alignment: "right",
                         bold: true,
-                fontSize: 11,
+                fontSize: 10,
                       },
                     ]
                   ],

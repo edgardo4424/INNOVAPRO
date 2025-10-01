@@ -7,6 +7,8 @@ const {
 function pdfRemuneracionTrunca({ detalles_liquidacion, trabajador, contrato }) {
   const { informacionLiquidacion, remuneracion_trunca } = detalles_liquidacion;
 
+  if(remuneracion_trunca == null) return
+
   const sueldoBase = redondear2(contrato.sueldo);
 
   const sueldoBaseRemuneracion = redondear2(
@@ -23,8 +25,6 @@ function pdfRemuneracionTrunca({ detalles_liquidacion, trabajador, contrato }) {
   const descuento_planilla_quincenal = redondear2(
     remuneracion_trunca.descuento_planilla_quincenal
   )
-
-  console.log('descuento_planilla_quincenal', descuento_planilla_quincenal);
 
   const subtotalRemuneracionTrunca = redondear2(
     sueldoBaseRemuneracion + asignacion_familiar - montoFaltas - descuento_planilla_quincenal

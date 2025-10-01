@@ -271,7 +271,7 @@ const GestionTrabajadoresDadosDeBaja = () => {
                   <th className="px-4 py-3 font-medium">Motivo</th>
                   <th className="px-4 py-3 font-medium">Estado liquidación</th>
                   <th className="px-4 py-3 font-medium">Neto a Liquidar</th>
-                  <th className="px-4 py-3 font-medium">Acciones</th>
+                  <th className="px-4 py-3 font-medium">Liquidación</th>
                 </tr>
               </thead>
               <tbody className="divide-y">

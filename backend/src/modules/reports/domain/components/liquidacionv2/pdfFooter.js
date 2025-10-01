@@ -18,8 +18,6 @@ async function pdfFooter({ filial_id, trabajador, detalles_liquidacion }) {
 
    const nombre_empresa = filialEncontrado.razon_social;
 
-   console.log('nombre_empresa', nombre_empresa)
-
   const fechaTexto = moment(hoy).format("DD [de] MMMM [del] YYYY");
   const fechaFirma = moment(hoy).format("DD/MM/YYYY");
 
