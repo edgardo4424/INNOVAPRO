@@ -4,11 +4,23 @@ import { formatearFecha } from "../../utils/formatearFecha";
 import ModalInfoDetallesQuincenal from "./ModalInfoDetallesQuincenal";
 
 const RowPlanillaQuincenal = ({ key, e, index }) => {
+
+   let registroPlanillaQuincenalDetalle = e?.registro_planilla_quincenal_detalle;
+
+try {
+  if (typeof registroPlanillaQuincenalDetalle === "string" && registroPlanillaQuincenalDetalle.trim() !== "") {
+    registroPlanillaQuincenalDetalle = JSON.parse(registroPlanillaQuincenalDetalle);
+  }
+} catch (e) {
+  console.error("Error al parsear info_detalle:", e);
+  registroPlanillaQuincenalDetalle = [];
+}
+
   return (
     <TableRow key={key} className={"text-xs"}>
       <TableCell className="text-center">
-                  {e.registro_planilla_quincenal_detalle && e.registro_planilla_quincenal_detalle.length > 1 && (
-                     <ModalInfoDetallesQuincenal data={e.registro_planilla_quincenal_detalle} />
+                  {registroPlanillaQuincenalDetalle && registroPlanillaQuincenalDetalle.length > 1 && (
+                     <ModalInfoDetallesQuincenal data={registroPlanillaQuincenalDetalle} />
                   )}
                </TableCell>
       <TableCell className="text-right">{e.tipo_documento}</TableCell>

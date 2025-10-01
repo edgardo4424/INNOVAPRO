@@ -11,11 +11,22 @@ import { formatearFecha } from "@/utils/formatearFecha";
 
 const RowPlanillaMensual = ({ e }) => {
 
+      let registroPlanillaMensualDetalle = e?.info_detalle;
+
+try {
+  if (typeof registroPlanillaMensualDetalle === "string" && registroPlanillaMensualDetalle.trim() !== "") {
+    registroPlanillaMensualDetalle = JSON.parse(registroPlanillaMensualDetalle);
+  }
+} catch (e) {
+  console.error("Error al parsear info_detalle:", e);
+  registroPlanillaMensualDetalle = [];
+}
+
    return (
       <TableRow className={"text-xs"}>
          <TableCell className="text-center">
-            {e.info_detalle.length > 1 && (
-               <ModalInfoDetalle data={e.info_detalle} />
+            {registroPlanillaMensualDetalle.length > 1 && (
+               <ModalInfoDetalle data={registroPlanillaMensualDetalle} />
             )}
          </TableCell>
 
