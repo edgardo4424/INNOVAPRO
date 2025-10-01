@@ -126,8 +126,8 @@ const TransportistaPublicoForm = () => {
       <div className="flex">
         <h2 className="mb-6 text-2xl font-semibold">Datos del Transportista</h2>
       </div>
-      <div className="relative mb-6 grid grid-cols-1 gap-x-6 gap-y-4 rounded-md border border-gray-400 p-6 md:grid-cols-2 lg:grid-cols-5">
-        <div>
+      <div className="relative mb-6 grid grid-cols-1 gap-x-4 gap-y-4 rounded-md border border-gray-400 p-6  lg:grid-cols-4">
+        {/* <div>
           <Label
             htmlFor={`transportePublico-tipo_doc`}
             className="mb-1 block text-left text-sm font-semibold text-gray-700"
@@ -146,8 +146,8 @@ const TransportistaPublicoForm = () => {
               <SelectItem value="6">RUC</SelectItem>
             </SelectContent>
           </Select>
-        </div>
-        <div>
+        </div> */}
+        <div className="col-span-1">
           <Label
             htmlFor={`chofer-nro_doc`}
             className="mb-1 block text-left text-sm font-semibold text-gray-700"
@@ -195,7 +195,7 @@ const TransportistaPublicoForm = () => {
             htmlFor={`chofer-nro_mtc`}
             className="mb-1 block text-left text-sm font-semibold text-gray-700"
           >
-            {`Número MTC`}
+            {`MTC`}
             <a
               href="https://www.mtc.gob.pe/tramitesenlinea/tweb_tLinea/tw_consultadgtt/Frm_rep_intra_mercancia.aspx"
               target="_blank"
