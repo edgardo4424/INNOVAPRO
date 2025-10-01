@@ -145,9 +145,6 @@ const sizeInBytes = new TextEncoder().encode(jsonString).length;
 const sizeInKB = sizeInBytes / 1024;
 const sizeInMB = sizeInKB / 1024;
 
-console.log(`Tamaño del JSON: ${sizeInBytes} bytes`);
-console.log(`Tamaño del JSON: ${sizeInKB.toFixed(2)} KB`);
-console.log(`Tamaño del JSON: ${sizeInMB.toFixed(2)} MB`);
 
          setLoading(true);
          const response =
@@ -156,7 +153,6 @@ console.log(`Tamaño del JSON: ${sizeInMB.toFixed(2)} MB`);
             );
          toast.success("Planilla guardada con éxito.");
       } catch (error) {
-         console.log("Error en el payload",error);
          
          if (error.response?.data?.mensaje) {
             toast.error(error.response?.data?.mensaje);

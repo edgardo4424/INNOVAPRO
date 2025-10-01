@@ -124,8 +124,6 @@ class SequelizeChoferesRepository {
     }
   }
 
-
-
   async listar() {
     try {
       const choferes = await Choferes.findAll({
@@ -134,7 +132,7 @@ class SequelizeChoferesRepository {
           attributes: ["id", "nro_placa", "marca", "color", "id_chofer"],
         },
       });
-      console.log("choferes", choferes);
+      
       return {
         success: true,
         message: ` ${choferes.length} choferes encontrados.`,

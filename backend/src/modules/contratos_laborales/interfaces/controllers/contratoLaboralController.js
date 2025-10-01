@@ -29,7 +29,6 @@ const ContratoLaboralController = {
             contratoLaboralActualizado.respuesta
          );
       } catch (error) {
-         console.log(error);
          res.status(500).json({ error: error.message });
       }
    },
@@ -41,7 +40,6 @@ const ContratoLaboralController = {
          );
          res.status(contratoEliminado.codigo).json(contratoEliminado.respuesta);
       } catch (error) {
-         console.log(error);
          res.status(500).json({ error: error.message });
       }
    },

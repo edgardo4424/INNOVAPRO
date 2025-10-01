@@ -93,7 +93,6 @@ class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository 
 
       try {
         const { dto, ctx } = await _ejecutarCalculoQuinta(fakeReq);
-        console.log("DTO DE LA FILIAL: ", filialId, "=", dto, "y su CTX: ", ctx);
         const meta = ctx?.soportes?.meta || {};
         const esSecundaria = !!meta.es_secundaria;
         const filialRetieneId = Number(meta.filial_retiene_id ?? filialId);

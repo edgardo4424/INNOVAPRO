@@ -34,7 +34,6 @@ class SequelizeClienteRepository {
     async actualizarCliente(id, clienteData) {
         const cliente = await Cliente.findByPk(id); // Busca el cliente por ID
         if (!cliente) { // Si no se encuentra el cliente, retorna null
-          console.log("❌ Cliente no encontrado");
           return null; 
         }
         await cliente.update(clienteData); // Actualiza el cliente con los nuevos datos

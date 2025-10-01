@@ -18,8 +18,6 @@ const AsistenciaController = {
             mensaje: asistencia.respuesta.mensaje,
          });
       } catch (error) {
-         console.log(error);
-
          res.status(500).json({ error: error.message });
       }
    },
@@ -34,8 +32,6 @@ const AsistenciaController = {
             mensaje: asistencia.respuesta.mensaje,
          });
       } catch (error) {
-         console.log(error);
-
          res.status(500).json({ error: error.message });
       }
    },
@@ -49,8 +45,6 @@ const AsistenciaController = {
             mensaje: asistencia.respuesta.mensaje,
          });
       } catch (error) {
-         console.log(error);
-
          res.status(500).json({ error: error.message });
       }
    },
@@ -64,8 +58,6 @@ const AsistenciaController = {
             mensaje: asistencia.respuesta.mensaje,
          });
       } catch (error) {
-         console.log(error);
-
          res.status(500).json({ error: error.message });
       }
    },
@@ -77,7 +69,6 @@ const AsistenciaController = {
          const faltas = await obtenerFaltasTrabajadorPorRangoFecha(trabajador_id, fecha_inicio, fecha_fin, asistenciaRepository);
          res.status(faltas.codigo).json(faltas.respuesta);
       } catch (error) {
-         console.log(error);
          res.status(500).json({ error: error.message });
       }
    },

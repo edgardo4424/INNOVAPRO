@@ -393,12 +393,10 @@ module.exports = async function darBajaTrabajador(dataBody) {
             ),
           };
         } else {
-          /*  console.log(
-            "No corresponde gratificación trunca (ya se pagó en diciembre o se dio de baja después del 15)."
-          ); */
+
         }
       } else {
-        /*    console.log("ya fue cerrada la grati"); */
+
       }
 
       //! 12. Calcular cts trunca
@@ -416,7 +414,6 @@ module.exports = async function darBajaTrabajador(dataBody) {
         ultimaGratiPeriodo = moment(`${año - 1}-12`, "YYYY-MM");
       }
 
-      //console.log("ultimaGratiPeriodo", ultimaGratiPeriodo.format("YYYY-MM"));
       const gratificacionPorTrabajador = await db.gratificaciones.findOne({
         where: {
           trabajador_id,
@@ -882,7 +879,6 @@ module.exports = async function darBajaTrabajador(dataBody) {
       },
     };
   } catch (error) {
-    console.log("error", error);
     await transaction.rollback();
     return {
       codigo: 500,

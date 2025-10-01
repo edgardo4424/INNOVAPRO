@@ -329,13 +329,14 @@ export function useQuintaCategoria() {
         const baseTotal = Number(row.retencion_base_mes) + Number(row.retencion_adicional_mes);
 
         const base = {
-          anio: form.anio ? Number(form.anio) : undefined,
-          mes:  form.mes  ? Number(form.mes)  : undefined,
+          anio: row.anio ? Number(row.anio) : undefined,
+          mes:  row.mes  ? Number(row.mes)  : undefined,
+          filialId: Number(row.filial_id || form.filial_id || 0) || undefined,
+
           fuentePrevios: normalizarFuentePrevios(form.fuentePrevios),
           __filialId:     form.filial_id     ? Number(form.filial_id)     : undefined,
           __contratoId:   form.contrato_id   ? Number(form.contrato_id)   : undefined,
           __trabajadorId: form.trabajadorId  ? Number(form.trabajadorId)  : undefined,
-          filialId:     form.filial_id     ? Number(form.filial_id)     : undefined,
           contratoId:   form.contrato_id   ? Number(form.contrato_id)   : undefined,
           trabajadorId: form.trabajadorId  ? Number(form.trabajadorId)  : undefined,
           remuneracionMensualActual: form.remuneracionMensualActual

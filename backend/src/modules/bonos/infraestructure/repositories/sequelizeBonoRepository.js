@@ -72,7 +72,6 @@ class SequelizeBonoRepository {
       fecha: { [Op.between]: [fechaInicio, fechaFin] }, // inclusivo
       // deleted_at: null, // si usas soft delete y paranoid:false
     },
-    // logging: console.log, // útil para depurar el SQL
   });
 
   return Number(total || 0);

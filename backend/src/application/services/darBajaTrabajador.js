@@ -58,8 +58,6 @@ module.exports = async function darBajaTrabajador(dataBody) {
     observacion,
   } = dataBody;
 
-  // console.log("dataBody", dataBody);
-
   try {
     //! Buscar el contrato laboral del trabajador asignando la fecha_baja
     const contratoLaboralEncontrado = await db.contratos_laborales.findByPk(
@@ -84,8 +82,6 @@ module.exports = async function darBajaTrabajador(dataBody) {
     const contratosDelTrabajador = contratos.map((contrato) =>
       contrato.get({ plain: true })
     );
-
-    //console.log('contratosDelTrabajador',contratosDelTrabajador);
 
     //! Comparar si la fecha de baja es menor a la fecha de fin contrato, tomar la fecha de baja como fecha_terminacion_anticipada
     // !sino tomar la fecha fin contrato como fecha_terminacion_anticipada
@@ -193,7 +189,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
       ctsTruncaId = cts_trunca ? cts_trunca.id : null;
       montoCtsTrunca = cts_trunca ? Number(cts_trunca.cts_depositar) : 0;
     }else{
-      //console.log('NO CUMPLIO CON LOS BENEFICIOS');
+      
     }
 
     // Crear una fecha que represente el día 15 de ese mes/año
@@ -326,7 +322,6 @@ module.exports = async function darBajaTrabajador(dataBody) {
       },
     };
   } catch (error) {
-    console.log("error", error);
     await transaction.rollback();
     return {
       codigo: 500,

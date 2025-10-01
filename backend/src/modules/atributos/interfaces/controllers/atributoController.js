@@ -13,7 +13,6 @@ const AtributoController = {
             const atributos = await obtenerAtributos(atributoRepository); // Llamamos al caso de uso para obtener los atributos
             res.status(200).json(atributos.respuesta); // 🔥 Siempre devuelve un array, aunque esté vacío
         } catch (error) {
-            console.log(error);
             res.status(500).json({ error: error.message }); // Respondemos con un error
         }
     },
@@ -23,7 +22,6 @@ const AtributoController = {
             const atributos = await obtenerAtributosPorUsoId(req.params.id, atributoRepository); // Llamamos al caso de uso para obtener los atributos por UsoId
             res.status(200).json(atributos.respuesta); // 🔥 Siempre devuelve un array, aunque esté vacío
         } catch (error) {
-            console.log(error);
             res.status(500).json({ error: error.message }); // Respondemos con un error
         }
     },

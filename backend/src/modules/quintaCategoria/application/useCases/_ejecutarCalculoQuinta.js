@@ -103,8 +103,8 @@ module.exports = async function _ejecutarCalculoQuinta(req, isRecalculo = false)
       base.total_ingresos = reales.total_ingresos;
       base.es_proyeccion = false;
 
-      // Retenciones previas REALES acumuladas de planilla
-      retencionesPrevias = Number(retencionesPrevias || 0) + Number(reales.retenciones || 0);
+      /* // Retenciones previas REALES acumuladas de planilla
+      retencionesPrevias = Number(retencionesPrevias || 0) + Number(reales.retenciones || 0); */
 
       // Reflejo para auditoría/preview
       if (!soportes.meta) soportes.meta = {};

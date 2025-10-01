@@ -255,7 +255,6 @@ export default function DetalleTarea({
                      </Button>
                   </div>
                   )}
-                  {console.log("Piezas: ", formData.despiece)}
 
                {mostrarConfirmacion && (
                <AlertDialog open={true} onOpenChange={setMostrarConfirmacion}>

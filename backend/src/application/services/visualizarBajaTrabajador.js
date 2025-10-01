@@ -19,8 +19,6 @@ const sequelize = require("../../database/sequelize");
 module.exports = async function darBajaTrabajador(baja_trabajador_id) {
   const transaction = await sequelize.transaction();
 
-  // console.log("dataBody", dataBody);
-
   try {
     //! Obtener la informacion del trabajador que se dio de baja
 
@@ -158,7 +156,6 @@ module.exports = async function darBajaTrabajador(baja_trabajador_id) {
       },
     };
   } catch (error) {
-    console.log("error", error);
     await transaction.rollback();
     return {
       codigo: 500,

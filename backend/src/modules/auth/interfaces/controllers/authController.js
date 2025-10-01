@@ -9,7 +9,6 @@ const AuthController = {
       const resultado = await loginUsuario(req.body, usuarioRepository);
       res.status(resultado.codigo).json(resultado.respuesta);
     } catch (error) {
-      console.log('error',error);
       res.status(500).json({ mensaje: "Error en login", error: error.message });
   }
 }
