@@ -97,7 +97,7 @@ module.exports = async function enriquecerConContratoOFalla(req) {
 
       if (contratosVigentes.length > 1) {
         // Si hay más de un contrato elegimos el primero.
-        console.warn(`[WARN] Se encontraron múltiples contratos vigentes para el trabajador ${trabajador.id}. Usando el de mayor sueldo.`);
+        // console.warn(`[WARN] Se encontraron múltiples contratos vigentes para el trabajador ${trabajador.id}. Usando el de mayor sueldo.`);
         contrato = contratosVigentes[0];
       } else if (contratosVigentes.length === 1) {
         contrato = contratosVigentes[0];

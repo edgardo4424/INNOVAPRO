@@ -1,8 +1,8 @@
 import { TableCell, TableRow } from "@/components/ui/table";
 
-const RowRHMensual = ({ key, e, index }) => {
+const RowRHMensual = ({  e }) => {
   return (
-    <TableRow key={key} className={"text-xs"}>
+    <TableRow  className={"text-xs"}>
       <TableCell className="text-right">{e.tipo_documento}</TableCell>
       <TableCell className="text-right">{e.numero_documento}</TableCell>
       <TableCell className="text-right">{e.nombres_apellidos}</TableCell>

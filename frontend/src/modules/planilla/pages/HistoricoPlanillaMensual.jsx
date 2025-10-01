@@ -95,7 +95,7 @@ const HistoricoPlanillaMensual = () => {
 
    useEffect(()=>{
       if(planillaMensualTipoPlanilla.length>0){
-         const hojas=[
+         let hojas=[
             { nombre_libro: "Planilla", 
                datos: planillaMensualTipoPlanilla,
                columnas: [{ key: "asig_fam", label: "Asignación" }] ,
