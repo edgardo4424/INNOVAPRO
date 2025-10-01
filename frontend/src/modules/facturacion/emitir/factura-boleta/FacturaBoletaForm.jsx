@@ -104,21 +104,25 @@ const FacturaBoletaForm = () => {
   useEffect(() => {
     const cambioDelDia = async () => {
       try {
-        const hoy = new Date(); // Esta línea es redundante si solo usas 'hoyISO' después
-        const hoyISO = new Date().toISOString().slice(0, 10);
+        
+        const hoyISO = new Intl.DateTimeFormat("en-CA", {
+          timeZone: "America/Lima",
+        }).format(new Date());
 
         const { status, success, data } =
           await factilizaService.obtenerTipoCambio(hoyISO);
 
         if (success && status === 200) {
           setPrecioDolarActual(data.compra);
-        } else {
         }
-      } catch (error) {}
+      } catch (error) {
+        console.error(error);
+      }
     };
 
     cambioDelDia();
   }, []);
+
   return (
     <div className="mb-6 rounded-3xl border border-gray-400 bg-white p-4 shadow-xl transition-all duration-300">
       {/* Form */}
