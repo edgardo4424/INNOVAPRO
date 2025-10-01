@@ -32,6 +32,9 @@ router.get('/base-mes', QuintaCategoriaController.getRetencionBaseMesPorDni);
 // MASIVO POR FILIAL
 router.post('/masivo', bloqueoCierreQuinta, QuintaCategoriaMasivoController.crearMasivo);
 
+// MULTIEMPLEO INFERIDO (GET)
+router.get('/multiempleo/inferido', QuintaCategoriaController.obtenerMultiempleoInferido);
+
 // Declaración de multiempleo (SUNAT): registro/consulta por DNI/AÑO
 router.get('/multiempleo/declaracion', MultiempleoController.obtenerDeclaracion);
 router.post('/multiempleo/declaracion', MultiempleoController.insertarDeclaracion);

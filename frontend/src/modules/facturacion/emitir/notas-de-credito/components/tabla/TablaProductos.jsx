@@ -49,7 +49,7 @@ const TablaProductos = ({ setOpen }) => {
     const valoresVisibles = (campo) => visiblesSet.has(campo);
 
     const selectItem = (item) => {
-        if (String(notaCreditoDebito?.motivo_Cod) === "03") {
+        if (String(notaCreditoDebito?.motivo_Cod) === "03" && String(notaCreditoDebito?.tipo_Doc) === "07") {
             const itemDetalle = documentoAAfectar?.detalle?.find(
                 (detalleItem) => detalleItem.id === item.id
             );
@@ -102,7 +102,7 @@ const TablaProductos = ({ setOpen }) => {
                                 <TableCell className={valoresVisibles("cantidad") ? "" : "hidden"}>
                                     {producto?.cantidad ?? ""}
                                 </TableCell>
-                                <TableCell className={valoresVisibles("descripcion") ? "min-w-[400px]" : "hidden"}>
+                                <TableCell className={valoresVisibles("descripcion") ? "min-w-[200px] max-w-sm whitespace-normal" : "hidden"}>
                                     {producto?.descripcion || ""}
                                 </TableCell>
                                 <TableCell className={valoresVisibles("unidad") ? "" : "hidden"}>

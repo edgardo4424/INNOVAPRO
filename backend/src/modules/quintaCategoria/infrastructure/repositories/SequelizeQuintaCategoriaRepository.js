@@ -14,6 +14,122 @@ const _id = (x) => {
 };
 
 class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository {
+
+  _parsePeriodoYYYYMM(fechaAnioMes) {
+    if (typeof fechaAnioMes !== 'string' || !/^\d{4}-\d{2}$/.test(fechaAnioMes)) {
+      const err = new Error("fechaAnioMes debe tener formato YYYY-MM");
+      err.status = 400; throw err;
+    }
+    const [y, m] = fechaAnioMes.split('-').map(Number);
+    if (m < 1 || m > 12) { const err = new Error("Mes inválido en fechaAnioMes"); err.status = 400; throw err; }
+    return { anio: y, mes: m };
+  }
+
+  async obtenerMultiempleoInferido({ trabajadorId, fechaAnioMes }) {
+    const _ejecutarCalculoQuinta = require('../../application/useCases/_ejecutarCalculoQuinta');
+
+    const pad = (x) => String(x).padStart(2, '0');
+    const match = String(fechaAnioMes || '').match(/^\d{4}-\d{2}$/);
+    if (!match) {
+      const err = new Error("fechaAnioMes debe tener formato YYYY-MM");
+      err.status = 400; throw err;
+    }
+    const [anio, mes] = match[0].split('-').map(Number);
+
+    // descubrir filiales desde la proyección multi
+    const firstReq = {
+      body: {
+        anio, mes,
+        periodo: `${anio}-${pad(mes)}`,
+        trabajadorId,
+        __trabajadorId: trabajadorId,
+        fuentePrevios: 'AUTO',
+      }
+    };
+
+    const { ctx: ctx0 } = await _ejecutarCalculoQuinta(firstReq);
+
+    const detalle = ctx0?.base?.remu_multi?.detalle_por_filial || [];
+    const seedFilial = Number(ctx0?.filialActualId) || null;
+
+    const filialesSet = new Set(
+      [
+        ...(seedFilial ? [seedFilial] : []),
+        ...detalle.map(d => Number(d.filial_id)).filter(Number.isFinite)
+      ]
+    );
+
+    // Traemos (RUC, razón social) en un solo query
+    const ids = Array.from(filialesSet);
+    const infoByFilial = new Map();
+    if (ids.length) {
+      const empresas = await sequelize.query(
+        `SELECT id, ruc, razon_social FROM empresas_proveedoras WHERE id IN (:ids)`,
+        { type: QueryTypes.SELECT, replacements: { ids } }
+      );
+      for (const e of empresas) {
+        infoByFilial.set(Number(e.id), { ruc: e.ruc || null, razon_social: e.razon_social || null });
+      }
+    }
+
+    // determinar retentora y monto aplicable
+    const resultados = [];
+    for (const filialId of filialesSet) {
+      const det = detalle.find(d => Number(d.filial_id) === Number(filialId));
+      const contratoId = det ? Number(det.contrato_id || det.id_contrato || det.id) : null;
+
+      const fakeReq = {
+        body: {
+          anio, mes,
+          periodo: `${anio}-${pad(mes)}`,
+          trabajadorId,
+          __trabajadorId: trabajadorId,
+          __filialId: Number(filialId),
+          contratoId,
+          __contratoId: contratoId,
+          fuentePrevios: 'AUTO',
+        }
+      };
+
+      try {
+        const { dto, ctx } = await _ejecutarCalculoQuinta(fakeReq);
+        console.log("DTO DE LA FILIAL: ", filialId, "=", dto, "y su CTX: ", ctx);
+        const meta = ctx?.soportes?.meta || {};
+        const esSecundaria = !!meta.es_secundaria;
+        const filialRetieneId = Number(meta.filial_retiene_id ?? filialId);
+
+        // Regla: solo la retentora reporta monto; secundarias = 0
+        const monto = (esSecundaria || filialRetieneId !== Number(filialId))
+          ? 0
+          : Number(dto?.retencion_base_mes || 0);
+          
+        const info = infoByFilial.get(Number(filialId)) || { ruc: null, razon_social: null };
+        resultados.push({
+          filial_id: Number(filialId),
+          ruc: info.ruc,
+          razon_social: info.razon_social,
+          monto,
+        });
+      } catch {
+        const info = infoByFilial.get(Number(filialId)) || { ruc: null, razon_social: null };
+        resultados.push({
+          filial_id: Number(filialId),
+          ruc: info.ruc,
+          razon_social: info.razon_social,
+          monto: 0,
+        });
+      }
+    }
+
+    resultados.sort((a, b) => a.filial_id - b.filial_id);
+
+    return {
+      trabajador_id: Number(trabajadorId),
+      fecha_anio_mes: `${anio}-${pad(mes)}`,
+      filiales: resultados,
+    };
+  }
+
   // CIERRES DE QUINTA
   async obtenerCierreQuinta(periodo, filial_id, transaction = null) {
     return CierreQuintaModel.findOne({ where: { periodo, filial_id }, transaction });

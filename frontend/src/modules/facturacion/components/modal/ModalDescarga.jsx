@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { saveAs } from 'file-saver';
 import facturaService from '../../service/FacturaService';
 import { toast } from 'react-toastify';
+import { Await } from 'react-router-dom';
 
 /* ================== helpers simplificados ================== */
 const toDocumentoPayload = (doc = {}) => {
@@ -156,15 +157,13 @@ const ModalDescarga = ({
 
             if (format === 'all') {
                 // Descargar XML
-                const xmlResponse = await factilizaService.consultarXml(payload);
-                await processResponse(xmlResponse, `${baseName}-XML`, 'xml');
+                await handleDownload('xml')
                 
-                // Pequeña pausa para evitar bloqueos del navegador
+                // ? Pequeña pausa para evitar bloqueos del navegador
                 await new Promise(resolve => setTimeout(resolve, 100));
                 
                 // Descargar PDF
-                const pdfResponse = await factilizaService.consultarPdf(payload);
-                await processResponse(pdfResponse, `${baseName}-PDF`, 'pdf');
+                await handleDownload('pdf-innova')
                 
                 setMsg('XML/CDR y PDF descargados exitosamente.');
             }
@@ -224,14 +223,14 @@ const ModalDescarga = ({
                                 {loading ? 'Procesando…' : 'Descargar CDR'}
                             </button>
 
-                            <button
+                            {/* <button
                                 onClick={() => handleDownload('pdf')}
                                 disabled={loading}
                                 className="cursor-pointer flex items-center justify-center gap-2 p-4 bg-gray-100 rounded-lg text-gray-700 font-semibold hover:bg-gray-300/90 transition-colors disabled:opacity-60"
                             >
                                 <FileText size={20} />
                                 {loading ? 'Procesando…' : 'Descargar PDF'}
-                            </button>
+                            </button> */}
 
                             <button
                                 onClick={() => handleDownload('pdf-innova')}

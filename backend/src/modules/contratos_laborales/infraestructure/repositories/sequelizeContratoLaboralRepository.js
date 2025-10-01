@@ -77,7 +77,6 @@ class SequelizeContratoLaboralRepository {
     if (transaction) {
       options.transaction = transaction;
     }
-    console.log(contratoLaboralData);
 
     const contratoLaboral = await ContratoLaboral.update(
       contratoLaboralData,

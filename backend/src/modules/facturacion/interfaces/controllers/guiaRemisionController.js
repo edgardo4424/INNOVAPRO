@@ -44,7 +44,7 @@ const guiaRemisionController = {
 
     async obtenerRelacionesGuias(req, res) {
         try {
-            console.log(req.body)
+            
             const { codigo, respuesta } = await obtenerGuiasPorRuc(req.body, guiaRepository);
             res.status(codigo).json(respuesta);
         } catch (error) {

@@ -81,6 +81,7 @@ export function FacturaBoletaProvider({ children }) {
         detraccion,
         retencionActivado,
         retencion,
+        detallesExtra,
       );
       if (!validos) {
         // *Encuentra el primer error y lo muestra en un toast
@@ -327,11 +328,11 @@ export function FacturaBoletaProvider({ children }) {
         (_, i) => i !== edicionProducto.index,
       ),
     }));
-    setFactura((prevFactura) => ({
-      ...prevFactura,
-      forma_pago: [],
-      cuotas_Real: [],
-    }));
+    // setFactura((prevFactura) => ({
+    //   ...prevFactura,
+    //   forma_pago: [],
+    //   cuotas_Real: [],
+    // }));
   };
 
   const emitirFactura = async () => {
@@ -346,8 +347,9 @@ export function FacturaBoletaProvider({ children }) {
 
       if (
         retencionActivado &&
+        !detraccionActivado &&
         factura.tipo_Doc !== "03" &&
-        factura.monto_Imp_Venta > 699
+        factura.tipo_Operacion !== "1001"
       ) {
         facturaAEmitir = {
           ...factura,
@@ -355,6 +357,8 @@ export function FacturaBoletaProvider({ children }) {
         };
       } else if (
         factura.tipo_Operacion === "1001" &&
+        detraccionActivado &&
+        !retencionActivado &&
         factura.tipo_Doc !== "03"
       ) {
         facturaAEmitir = {
@@ -488,7 +492,11 @@ export function FacturaBoletaProvider({ children }) {
   };
 
   const Limpiar = () => {
-    setFactura(ValorInicialFactura);
+    setFactura({
+      ...ValorInicialFactura,
+      empresa_Ruc: factura.empresa_Ruc,
+      serie: factura.serie,
+    });
     setProductoActual(valorInicialProducto);
     setEdicionProducto({ edicion: false, index: null });
     setPagoActual(valorIncialPago);

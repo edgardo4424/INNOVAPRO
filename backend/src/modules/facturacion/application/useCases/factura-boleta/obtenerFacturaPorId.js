@@ -13,9 +13,6 @@ module.exports = async (id, facturaRepository) => {
             },
         };
 
-        // const  facturaDataValues = {...facturaObtenida.dataValues, factura_detalles: facturaObtenida.factura_detalles.dataValues, formas_pago: facturaObtenida.formas_pago.dataValues, leyendas: facturaObtenida.leyendas.dataValues};
-        console.log("UNA FACTURA**********************",facturaObtenida);
-    // const datosFormateados = Factura.formatearFactura([facturaObtenida]);
 
     return {
         codigo: 200,

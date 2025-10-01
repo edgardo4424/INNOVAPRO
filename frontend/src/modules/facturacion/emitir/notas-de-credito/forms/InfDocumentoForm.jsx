@@ -32,15 +32,13 @@ const InfDocumentoForm = () => {
     setCorrelativoEstado(!correlativoEstado);
   };
 
-  const handleInputChange = useRef(
-    (e) => {
-      const { name, value } = e.target;
-      setNotaCreditoDebito((prevValores) => ({
-        ...prevValores,
-        [name]: value.toUpperCase(),
-      }));
-    }
-  ).current;
+  const handleInputChange = useRef((e) => {
+    const { name, value } = e.target;
+    setNotaCreditoDebito((prevValores) => ({
+      ...prevValores,
+      [name]: value.toUpperCase(),
+    }));
+  }).current;
 
   useEffect(() => {
     const handleInput = (e) => {
@@ -66,7 +64,6 @@ const InfDocumentoForm = () => {
       }, delay);
     };
   };
-
 
   const handleSelectChange = (value, name) => {
     setNotaCreditoDebito((prevValores) => ({
@@ -95,6 +92,7 @@ const InfDocumentoForm = () => {
       ...prev,
       serie: nuevaSerie,
       correlativo: "", // Limpiar el correlativo para que se recalcule
+      detalle: [],
     }));
   }, [notaCreditoDebito.tipo_Doc]);
 
@@ -256,6 +254,7 @@ const InfDocumentoForm = () => {
                 value={notaCreditoDebito.correlativo}
                 onChange={handleInputChange}
                 disabled={!correlativoEstado}
+                maxLength={8}
                 className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:outline-none"
               />
               <button

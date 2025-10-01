@@ -1334,7 +1334,7 @@ class SequelizePlanillaRepository {
       // prettier-ignore
       planilla.licencia_con_goce_de_haber = ((c.sueldo / 30)*licencia_con_goce).toFixed(2);
       // prettier-ignore
-      planilla.licencia_sin_goce_de_haber = ((c.sueldo / 30)*licencia_sin_goce).toFixed(2);
+      planilla.licencia_sin_goce_de_haber = ((c.sueldo / DIAS_LABORALES) * licencia_sin_goce).toFixed(2);      
       planilla.vacaciones = (
         (c.sueldo / 30) *
         CANTIDAD_VACACIONES_GOZADAS

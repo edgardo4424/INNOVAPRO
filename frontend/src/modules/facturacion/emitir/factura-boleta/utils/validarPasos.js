@@ -3,7 +3,7 @@ function isNullOrEmpty(value) {
     return value === undefined || value === null || (typeof value === 'string' && value.trim() === '');
 }
 
-export async function validarFacturaCompleta(Factura, Detraccion, retencionActivado, Retencion,detallesExtra) {
+export async function validarFacturaCompleta(Factura, Detraccion, retencionActivado, Retencion, detallesExtra) {
     if (!Factura) {
         return {
             errores: null,
@@ -72,6 +72,16 @@ export async function validarFacturaCompleta(Factura, Detraccion, retencionActiv
         { key: "valor", name: "Campo Valor de Detalle extra Incompleto" }
     ];
 
+    // 0. validar que correlativo no tenga mas de 8 caracteres y que no tenga ningun caracter especial ni letra 
+    if (Factura.correlativo && Factura.correlativo.length > 8) {
+        errores.correlativo = "El campo 'Correlativo' no puede tener más de 8 caracteres.";
+        validos = false;
+    }
+    if (Factura.correlativo && /[^0-9]/.test(Factura.correlativo)) {
+        errores.correlativo = "El campo 'Correlativo' solo puede contener números.";
+        validos = false;
+    }
+
     // 1. Validar campos globales
     camposGlobales.forEach(campo => {
         if (isNullOrEmpty(Factura[campo.key])) {
@@ -131,15 +141,12 @@ export async function validarFacturaCompleta(Factura, Detraccion, retencionActiv
     }
 
     if (Factura.forma_pago && Factura.forma_pago.length > 0) {
-        // SOLUCIÓN: Usar centavos para evitar errores de punto flotante
         const montoTotalFacturaCentavos = Math.round(Factura.monto_Imp_Venta * 100);
 
         const montoTotalPagosCentavos = Factura.forma_pago.reduce(
             (total, pago) => total + Math.round((parseFloat(pago.monto) || 0) * 100),
             0
         );
-
-        // La validación ahora compara los valores enteros, que son exactos.
         if (montoTotalPagosCentavos !== montoTotalFacturaCentavos) {
             errores.forma_pago_monto = "La suma de los pagos no cubre el monto total de la factura.";
             validos = false;
@@ -148,18 +155,39 @@ export async function validarFacturaCompleta(Factura, Detraccion, retencionActiv
         const fechaEmision = new Date(Factura.fecha_Emision);
         const pagosACredito = Factura.forma_pago.filter(pago => pago.tipo === "CREDITO");
 
-        const pagosConFechaAnterior = pagosACredito.filter(pago => {
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+
+        const pagosConFechaAnteriorOIgualAEmision = pagosACredito.filter(pago => {
             const fechaPago = new Date(pago.fecha_Pago);
+            fechaPago.setHours(0, 0, 0, 0);
+
             return fechaPago <= fechaEmision;
         });
 
-        if (pagosConFechaAnterior.length > 0) {
-            errores.forma_pago_fecha = "Los pagos a crédito no pueden ser iguales o anteriores a la fecha de emisión.";
+        // **NUEVA VALIDACIÓN (Si quieres evitar que la cuota sea hoy)**
+        const pagosConFechaIgualAHoy = pagosACredito.filter(pago => {
+            const fechaPago = new Date(pago.fecha_Pago);
+            fechaPago.setHours(0, 0, 0, 0); // Limpiamos la hora
+
+            return fechaPago.getTime() === hoy.getTime();
+        });
+
+
+        // Dejamos tu validación original (fecha_Pago <= fecha_Emision)
+        if (pagosConFechaAnteriorOIgualAEmision.length > 0) {
+            errores.forma_pago_fecha = "La fecha de pago a crédito no puede ser anterior o igual a la fecha de emisión.";
+            validos = false;
+        }
+
+        // Agregamos una validación para evitar que el pago a crédito se programe para HOY
+        if (pagosConFechaIgualAHoy.length > 0) {
+            errores.forma_pago_fecha_hoy = "Los pagos a crédito deben ser posteriores a la fecha actual.";
             validos = false;
         }
     }
 
-    if(detallesExtra && detallesExtra.length>0){
+    if (detallesExtra && detallesExtra.length > 0) {
         detallesExtra.forEach((detalle, index) => {
             camposDetallesExtra.forEach(campo => {
                 if (detalle[campo.key] === "") {

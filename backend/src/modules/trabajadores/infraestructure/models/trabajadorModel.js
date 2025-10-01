@@ -119,6 +119,9 @@ Trabajador.associate = (models) => {
       foreignKey: "trabajador_id",
       as: "bajas_trabajadores",
    });
+   Trabajador.hasMany(models.recibos_por_honorarios, {
+      foreignKey: "trabajador_id",
+   });
    
    // Un trabajador tiene un usuario
    Trabajador.hasOne(models.usuarios, {

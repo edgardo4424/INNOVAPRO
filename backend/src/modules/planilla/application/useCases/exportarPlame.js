@@ -1,6 +1,6 @@
 const SequelizeFilialRepository = require("../../../filiales/infrastructure/repositories/sequelizeFilialRepository");
 const SequelizeTrabajadorRepository = require("../../../trabajadores/infraestructure/repositories/sequelizeTrabajadorRepository");
-
+const SequelizeQuintaCategoriaRepository=require("../../../quintaCategoria/infrastructure/repositories/SequelizeQuintaCategoriaRepository")
 /**
  * Genera un archivo ZIP con los TXT de PLAME
  * @param {Object} res - response de Express
@@ -15,6 +15,7 @@ const plame_prestadores_cuarta = require("../../infrastructure/utils/plame_prest
 const contar_dias_laborables_mes  = require("../../infrastructure/utils/calcular_dias_laborales_mes");
 const obtenerDatosAsistencia = require("../../infrastructure/services/obtener_datos_asistencia");
 const generarRem = require("../../infrastructure/utils/generaRem");
+const quintaRepository=new SequelizeQuintaCategoriaRepository()
 function convertirHorasDecimales(valor) {
   const horas = Math.floor(valor);
   const minutos = Math.round((valor - horas) * 60);
@@ -68,14 +69,26 @@ module.exports = async (res, payload, planillaRepository) => {
 
   let jornadas_laborales=[];
   let subsidiados=[];
-  let ingresos_tributos=[]
+  let ingresos_tributos=[];
+  let quintas=[]
 
   for (const t of planillaMensualCerradas) {
-        const tipo_documento=t.tipo_documento == "CE" ? "04" : "01"
+        const tipo_documento=t.tipo_documento == "CE" ? "04" : "01";
         const dias_falta=Number(dias)-t.dias_labor;
         const areas_dif=["Almacen","Montadores"];
         let horas_trabajadas=0;
         let horas_extras_trabajadas=0;
+        //formato==== yyyy-mm
+        // console.log(fecha_anio_mes);
+        const response_quinta= await quintaRepository.obtenerMultiempleoInferido({trabajadorId:t.trabajador_id,fechaAnioMes:fecha_anio_mes});
+         console.log("La quinta de ",t.nombres_apellidos,"\n",response_quinta);
+         const quintas_filtradas=response_quinta.filiales.filter((f)=>f.filial_id!=filial_id);
+         console.log("Quintas filtradas: ",quintas_filtradas);
+        for (const q of quintas_filtradas) {
+            quintas.push(`${tipo_documento}|${t.numero_documento}|${q.ruc||"No implementado"}|${q.monto}`)
+        }
+         
+        
         if(areas_dif.includes(t.area)){            
             horas_trabajadas=(dias_laborales_almacen-dias_falta)*8;
         }
@@ -105,9 +118,7 @@ module.exports = async (res, payload, planillaRepository) => {
         if(vacaciones_g){
             subsidiados.push(`${tipo_documento}|${t.numero_documento}|23|${vacaciones_g}`)
         }
-        ingresos_tributos.push(...generarRem(t,tipo_documento));
-        console.log("Los ingresos tributos en la vuelta",t.id,"**** \n",ingresos_tributos);
-        
+        ingresos_tributos.push(...generarRem(t,tipo_documento));        
     
     }
     //!Agregando las jornadas laborales
@@ -116,6 +127,8 @@ module.exports = async (res, payload, planillaRepository) => {
     archive.append(subsidiados.join("\n"), { name: `0601${anio}${mes}${filial.ruc}.snl` });
     //!Agregando los iNGRESSOS TRIBUTOS Y DECLARACIONES
     archive.append(ingresos_tributos.join("\n"), { name: `0601${anio}${mes}${filial.ruc}.rem` });
+     //!Agregando la quinta al plame
+    archive.append(quintas.join("\n"), { name: `0601${anio}${mes}${filial.ruc}.or5` });
 
     archive.finalize();
 

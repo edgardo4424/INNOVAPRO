@@ -121,7 +121,7 @@ const ProductoForm = ({ closeModal }) => {
 
     if (!validar.validos) {
       if (validar.message) {
-        toast.error(validar.message, { position: "top-right" });
+        toast.warn(validar.message, { position: "top-right" });
       }
       setProductoValida(validar.errores);
       setActiveButton(false);
@@ -129,7 +129,6 @@ const ProductoForm = ({ closeModal }) => {
     }
     setActiveButton(false);
     agregarProducto();
-    setFactura((prev) => ({ ...prev, forma_pago: [], cuotas_Real: [] }));
     closeModal();
   };
 
@@ -144,7 +143,7 @@ const ProductoForm = ({ closeModal }) => {
   }, []);
 
   return (
-    <div className="md:max-h-[unset] max-h-[45dvh]  min-h-[40dvh] w-full overflow-y-scroll md:overflow-y-hidden">
+    <div className="max-h-[45dvh] min-h-[40dvh] w-full overflow-y-scroll md:max-h-[unset] md:overflow-y-hidden">
       <div className="flex w-full justify-end">
         <ModalListaDeProductos
           itemActual={productoActual}
@@ -229,15 +228,8 @@ const ProductoForm = ({ closeModal }) => {
             name="cantidad"
             value={productoActual.cantidad || ""}
             onChange={handleInputChange}
-            className="border-1 border-gray-400"
+            className={`border-1 ${productoValida?.cantidad ? "border-red-500" : "border-gray-400"}`}
           />
-          <span
-            className={`text-sm text-red-500 ${
-              productoValida.cantidad ? "block" : "hidden"
-            }`}
-          >
-            Debes ingresar la cantidad del producto
-          </span>
         </div>
 
         {/* Valor Unitario */}
@@ -249,16 +241,9 @@ const ProductoForm = ({ closeModal }) => {
             value={productoActual.monto_Valor_Unitario || ""}
             step="0.01"
             onChange={handleInputChange}
-            className="border-1 border-gray-400"
+            className={`border-1 ${productoValida?.monto_Valor_Unitario ? "border-red-500" : "border-gray-400"}`}
             list="piezas-lista"
           />
-          <span
-            className={`text-sm text-red-500 ${
-              productoValida.monto_Valor_Unitario ? "block" : "hidden"
-            }`}
-          >
-            Debes ingresar el valor unitario
-          </span>
         </div>
 
         {/* Porcentaje IGV */}
@@ -347,13 +332,6 @@ const ProductoForm = ({ closeModal }) => {
               {/* <SelectItem value="40">40 - Exportación</SelectItem> */}
             </SelectContent>
           </Select>
-          <span
-            className={`text-sm text-red-500 ${
-              productoValida.tip_Afe_Igv ? "block" : "hidden"
-            }`}
-          >
-            Selecciona un Tipo Afe. IGV
-          </span>
         </div>
 
         {/* Total Impuestos */}
@@ -407,6 +385,7 @@ const ProductoForm = ({ closeModal }) => {
             value={productoActual.factor_Icbper}
             step="0.01"
             onChange={handleInputChange}
+            disabled
             className="border-1 border-gray-400"
           />
         </div>
@@ -414,20 +393,19 @@ const ProductoForm = ({ closeModal }) => {
         {/* Descripción */}
         <div className="col-span-full flex flex-col gap-1 md:col-span-3">
           <Label>Descripción</Label>
-          <textarea
-            type="text"
-            name="descripcion"
-            value={productoActual.descripcion}
-            onChange={handleInputChange}
-            className="h-40 resize-none rounded-xl border-1 border-gray-400 p-2"
-          />
-          <span
-            className={`text-sm text-red-500 ${
-              productoValida.descripcion ? "block" : "hidden"
-            }`}
-          >
-            Debes ingresar la descripción del producto
-          </span>
+          <div className="relative w-full">
+            <textarea
+              type="text"
+              name="descripcion"
+              value={productoActual.descripcion}
+              onChange={handleInputChange}
+              maxLength={250}
+              className={`h-40 w-full resize-none rounded-xl border-1 p-2 ${productoValida?.descripcion ? "border-red-500" : "border-gray-400"}`}
+            />
+            <p className="absolute right-4 bottom-2 mt-2 text-right text-sm text-gray-500">
+              {productoActual.descripcion.length}/250
+            </p>
+          </div>
         </div>
       </form>
       {/* 🔘 Botones de acción */}

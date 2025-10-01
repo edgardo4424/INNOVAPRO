@@ -44,10 +44,6 @@ function pdfClienteGuia(
                                     // { text: `RELLENO`, style: 'clientData', color: bg_color },
                                     { text: `Fecha de Emisión: ${utils.formatDateTime(guia.fecha_Emision) || "—"}`, style: 'clientData' },
                                     { text: `Fecha de Traslado: ${utils.formatDateTime(guia.guia_Envio_Fec_Traslado) || "—"}`, style: 'clientData' },
-                                    transportistas.length > 0 ?
-                                        { text: `Mtc: ${transportistas[0]?.dataValues?.nro_mtc || "—"}`, style: 'clientData' }
-                                        :
-                                        { text: `RELLENO`, style: 'clientData', color: bg_color },
                                 ],
                                 margin: [5, 3, 5, 3],
                                 border: [false, false, false, false]

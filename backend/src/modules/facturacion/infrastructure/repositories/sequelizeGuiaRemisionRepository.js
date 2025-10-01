@@ -54,7 +54,6 @@ class SequelizeGuiaRemisionRepository {
                 throw new Error("No se pudo crear la Guia de Remision.");
             }
             createdGuia.guia = guia;
-            console.log("GUIA CREADA", guia);
             // * 2. Crear los Detalles de la Guia
             const createdDetalles = [];
             for (const detalleData of data.detalle) {
@@ -268,7 +267,8 @@ class SequelizeGuiaRemisionRepository {
         for (const item of rucsAndSeries) {
             const key = `${item.ruc}-${item.serie}`;
             const ultimoCorrelativo = correlativosMap.get(key) || 0;
-            const siguienteCorrelativo = String(ultimoCorrelativo + 1).padStart(5, '0');
+            // ? LA CANTIDAD DE DIGITOS EN EL CORRELATIVO ES DE 8
+            const siguienteCorrelativo = String(ultimoCorrelativo + 1).padStart(8, '0');
 
             resultados.push({
                 ruc: item.ruc,
@@ -329,8 +329,6 @@ class SequelizeGuiaRemisionRepository {
                         //? Intentar diferentes nombres de campos para peso
                         pesoUnitario = pesoItem[0].peso_kg || pesoItem[0].peso || pesoItem[0].weight || 0;
 
-                        // console.log(`Producto: ${detalle.dataValues.cod_Producto}, Peso unitario: ${pesoUnitario}, Cantidad: ${detalle.dataValues.cantidad}, Unidad: ${detalle.dataValues.unidad}`);
-
                         //? Solo multiplicar por cantidad si la unidad es NIU
                         if (detalle.dataValues.unidad === 'NIU') {
                             pesoCalculado = pesoUnitario * parseFloat(detalle.dataValues.cantidad || 1);
@@ -338,9 +336,7 @@ class SequelizeGuiaRemisionRepository {
                             pesoCalculado = pesoUnitario;
                         }
 
-                        // console.log(`Peso calculado: ${pesoCalculado}`);
                     } else {
-                        console.log(`No se encontró pieza para código: ${detalle.dataValues.cod_Producto}`);
                     }
 
                     //? Sumar al peso total de la guía
@@ -389,10 +385,6 @@ class SequelizeGuiaRemisionRepository {
                     item: cod_Producto
                 }
             });
-            // console.log(`Piezas encontradas para ${cod_Producto}:`, piezas.length);
-            // if (piezas.length > 0) {
-            //     console.log(`Peso encontrado:`, piezas[0].peso_kg || piezas[0].peso);
-            // }
             return piezas;
         } catch (error) {
             console.error(`Error al obtener peso para ${cod_Producto}:`, error);

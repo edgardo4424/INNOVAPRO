@@ -18,7 +18,6 @@ module.exports = async (body, guiaRemisionRepository) => {
         chofer: transporte
     });
 
-    console.log("resultadoCreacion", success, message, resultadoCreacion);
     if (!success) {
         return {
             codigo: 400,

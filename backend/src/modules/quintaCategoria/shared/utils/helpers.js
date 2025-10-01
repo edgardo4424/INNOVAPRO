@@ -114,9 +114,22 @@ const intOrNull = (v) => {
 const _periodo = ({ anio, mes, periodo }) =>
   periodo || `${String(anio).padStart(4, '0')}-${String(mes).padStart(2, '0')}`;
 
+const toNum = (v, def = 0) => {
+  if (v == null || v === "") return def;
+  const n = Number(v);
+  if (!Number.isFinite(n)) return def;
+  return n;
+}
+const toStr = (v) => {
+  if (v == null) return null;
+  const s = String(v).trim();
+  return s || null;
+}
 
 module.exports = {
   pad2,
+  toNum,
+  toStr,
   ymd,
   round2,
   denominadorFraccionamiento,

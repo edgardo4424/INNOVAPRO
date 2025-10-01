@@ -3,17 +3,8 @@ export async function validarModal(tipo, item, factura, cuotasGeneradas = null) 
         const camposRequeridos = [
             { key: "unidad" },
             { key: "cantidad" },
-            // { key: "cod_Producto" },
             { key: "descripcion" },
-            // { key: "monto_valor_Unitario" },
-            // { key: "monto_Base_Igv" },
-            // { key: "porcentaje_Igv" },
-            // { key: "igv" },
-            { key: "tip_Afe_Igv" },
-            // { key: "total_Impuestos" },
-            { key: "monto_Precio_Unitario" },
-            { key: "monto_Valor_Venta" },
-            // { key: "factor_Icbper" },
+            { key: "monto_Valor_Unitario" },
         ];
 
         const errores = {};
@@ -32,7 +23,7 @@ export async function validarModal(tipo, item, factura, cuotasGeneradas = null) 
             return {
                 errores,
                 validos: false,
-                message: "⚠️ Verifica los datos del Producto"
+                message: "Verifica los datos del Producto"
             };
         }
 
