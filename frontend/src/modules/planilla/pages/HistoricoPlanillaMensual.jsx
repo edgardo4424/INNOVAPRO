@@ -9,6 +9,7 @@ import { viPlanillaMensual } from "../utils/valorInicial";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import ExportExcel from "@/shared/components/exportarExcel";
+import { calculo_aportes_trabajador } from "../hooks/calculo_aportes_trabajador";
 
 const HistoricoPlanillaMensual = () => {
    const [filiales, setFiliales] = useState([]);
@@ -25,7 +26,7 @@ const HistoricoPlanillaMensual = () => {
    const [planillaMensualTipoRh, setPlanillaMensualTipoRh] = useState(
       viPlanillaMensual.honorarios
    );
-
+   const [datosTotalesPlanilla, setDatosTotalesPlanilla] = useState({})
    // ?? Filtro para la peticion
    const [filtro, setFiltro] = useState({
       anio: new Date().getFullYear() + "",
@@ -58,6 +59,8 @@ const HistoricoPlanillaMensual = () => {
             }
          }
          setPlanillaMensualTipoPlanilla(pl);
+         const data=calculo_aportes_trabajador(pl);
+         setDatosTotalesPlanilla(data.datos_totales)         
          setPlanillaMensualTipoRh(rh);
          if(pl.length<1&&rh.length<1){
             toast.info("Aun no se ha guardado la planilla en este mes.")
@@ -116,6 +119,7 @@ const HistoricoPlanillaMensual = () => {
             <div className="w-full px-7 ">
                <TablePlanillaMensual
                   planillaMensualTipoPlanilla={planillaMensualTipoPlanilla}
+                  datosTotalesPlanilla={datosTotalesPlanilla}
                />
             </div>
          );
