@@ -5,9 +5,9 @@ const obtenerCargosArea = (rol) => {
   switch (rol) {
     case "Gerente de administración":
       obj.area_id = 1;
-      obj.cargos_id = [2,13];
+      obj.cargos_id = [2,13,23];
       // Area:Administracion,Legal,Marketing
-      // Cargos: gerente de admin, abogada
+      // Cargos: cargo_id:2 esgerente de admin , gerente de admin, cargo_id:13 es abogada, cargo_id:23 es marketing
       break;
     case "Gerente de comercialización":
       obj.area_id = 9;
