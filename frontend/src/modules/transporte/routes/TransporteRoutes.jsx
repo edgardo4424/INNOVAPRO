@@ -22,6 +22,7 @@ const TransporteRoutes = () => {
               roles={[
                 "CEO",
                 "Jefa de Almacén",
+                "Gerente de administración"
               ]}
             />
           }
@@ -41,6 +42,7 @@ const TransporteRoutes = () => {
               roles={[
                 "CEO",
                 "Jefa de Almacén",
+                "Gerente de administración"
               ]}
             />
           }
@@ -60,6 +62,7 @@ const TransporteRoutes = () => {
               roles={[
                 "CEO",
                 "Jefa de Almacén",
+                "Gerente de administración"
               ]}
             />
           }
