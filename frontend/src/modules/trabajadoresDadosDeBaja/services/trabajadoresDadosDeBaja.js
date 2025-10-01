@@ -5,6 +5,10 @@ const trabajadoresDadosDeBajaService = {
    getTrabajadoresConContratosVigentes: (dataPOST) => api.post("/trabajadores/contratos-vigentes", dataPOST),
    darDeBajaTrabajador: (dataPOST) => api.post("/dar_baja_trabajadores", dataPOST),
    getTrabajadoresDadosDeBaja: () => api.get("/dar_baja_trabajadores"),
+   reporteLiquidacion: (id) => api.get(`/reports/liquidacion-pdf/${id}`, {
+    responseType: "blob", // MUY IMPORTANTE
+  }),
+
 };
 
 export default trabajadoresDadosDeBajaService;

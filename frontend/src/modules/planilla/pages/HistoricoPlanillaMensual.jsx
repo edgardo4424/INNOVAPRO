@@ -43,7 +43,6 @@ const HistoricoPlanillaMensual = () => {
             fecha_anio_mes: anio_mes_dia,
             filial_id: filtro.filial_id,
          };
-         console.log("data enviada", dataPOST);
          const res =
             await planillaMensualService.obtenerHistoricoPlanillaMensual(
                dataPOST
@@ -58,8 +57,6 @@ const HistoricoPlanillaMensual = () => {
                pl.push(p);
             }
          }
-         
-
          setPlanillaMensualTipoPlanilla(pl);
          setPlanillaMensualTipoRh(rh);
          if(pl.length<1&&rh.length<1){
@@ -88,7 +85,7 @@ const HistoricoPlanillaMensual = () => {
             setFiltro({ ...filtro, filial_id: res?.[0]?.id });
          } catch (error) {
             //console.log(error);
-            toast.error("Error al guardar la planilla");
+            toast.error("No se pudieron obtener las filiales");
          } finally {
             setLoading(false);
          }
@@ -98,7 +95,7 @@ const HistoricoPlanillaMensual = () => {
 
    useEffect(()=>{
       if(planillaMensualTipoPlanilla.length>0){
-         const hojas=[
+         let hojas=[
             { nombre_libro: "Planilla", 
                datos: planillaMensualTipoPlanilla,
                columnas: [{ key: "asig_fam", label: "Asignación" }] ,

@@ -15,10 +15,21 @@ const {
 } = require("../../modules/trabajadores/infraestructure/models/trabajadorModel");
 db.trabajadores = Trabajador;
 
-const { Cts } = require("../../modules/cts/infraestructure/models/ctsModel");
-db.cts = Cts
-const { CierreCTS } = require("../../modules/cts/infraestructure/models/ctsCierreModel");
-db.cierres_cts = CierreCTS
+
+const {
+   ReciboPorHonorario
+} = require("../../modules/recibo_x_honorarios/infraestructure/models/reciboModel");
+db.recibos_por_honorarios=ReciboPorHonorario
+const {
+   PlanillaMensualReciboHonorario
+} = require("../../modules/planilla/infrastructure/models/PlanillaRecibosHonorarios");
+db.planilla_mensual_recibo_honorario=PlanillaMensualReciboHonorario
+
+const {Cts}=require("../../modules/cts/infraestructure/models/ctsModel");
+db.cts=Cts
+const {CierreCTS}=require("../../modules/cts/infraestructure/models/ctsCierreModel");
+db.cierres_cts=CierreCTS
+
 const {
    Cargo,
 } = require("../../modules/trabajadores/infraestructure/models/cargoModel");
@@ -284,13 +295,16 @@ if (db.asistencias.associate) db.asistencias.associate(db);
 if (db.gastos.associate) db.gastos.associate(db);
 if (db.jornadas.associate) db.jornadas.associate(db);
 if (db.tipos_trabajo.associate) db.tipos_trabajo.associate(db);
-if (db.cts) db.cts.associate(db)
-if (db.cierres_cts) db.cierres_cts.associate(db)
-if (db.gratificaciones) db.gratificaciones.associate(db)
-if (db.cierres_gratificaciones) db.cierres_gratificaciones.associate(db)
-if (db.planilla_quincenal) db.planilla_quincenal.associate(db)
-if (db.cierres_planilla_quincenal) db.cierres_planilla_quincenal.associate(db)
-if (db.bajas_trabajadores) db.bajas_trabajadores.associate(db)
+if(db.cts)db.cts.associate(db)
+if(db.cierres_cts)db.cierres_cts.associate(db)
+if(db.gratificaciones) db.gratificaciones.associate(db)
+if(db.cierres_gratificaciones) db.cierres_gratificaciones.associate(db)
+if(db.planilla_quincenal) db.planilla_quincenal.associate(db)
+if(db.cierres_planilla_quincenal) db.cierres_planilla_quincenal.associate(db)
+if(db.bajas_trabajadores) db.bajas_trabajadores.associate(db)
+if(db.recibos_por_honorarios) db.recibos_por_honorarios.associate(db)
+if(db.planilla_mensual_recibo_honorario) db.planilla_mensual_recibo_honorario.associate(db)
+
 
 // ? Conexion Facturacion
 if (db.factura.associate) db.factura.associate(db);

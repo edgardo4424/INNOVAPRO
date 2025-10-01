@@ -10,9 +10,10 @@ import {
 import { Check, Funnel } from "lucide-react";
 import { listaMeses } from "../utils/valorInicial";
 
-const Filtro = ({ filiales, filtro, setFiltro, Buscar }) => {
+const Filtro = ({ filiales, filtro, setFiltro, Buscar,nombre_button="Aplicar",hidden=false }) => {
+  const anhoActual = new Date().getFullYear();
+  const utlimosCincoAnhos = Array.from({ length: 5 }, (_, i) => anhoActual - i);
 
-  
   return (
     <div className=" flex gap-x-5 w-full">
       <div className="flex flex-col items-center justify-between w-full gap-x-5 border-2 border-gray-300 p-4 rounded-2xl">
@@ -28,14 +29,14 @@ const Filtro = ({ filiales, filtro, setFiltro, Buscar }) => {
                     </div> */}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-7  w-full gap-4">
-         
+
           {/* Select del mes */}
           <div className="md:col-span-2">
             <Select
               name="mes"
               value={filtro.mes}
               onValueChange={(v) => setFiltro((p) => ({ ...p, mes: v }))}
-              
+
             >
               <SelectTrigger className="w-full border-1 border-gray-400">
                 <SelectValue placeholder="Selecciona el mes" />
@@ -48,12 +49,12 @@ const Filtro = ({ filiales, filtro, setFiltro, Buscar }) => {
                     </SelectItem>
                   ))
                 }
-         
+
               </SelectContent>
             </Select>
           </div>
 
-           {/* Select de año */}
+          {/* Select de año */}
           <div className="md:col-span-2">
             <Select
               name="anio"
@@ -64,12 +65,11 @@ const Filtro = ({ filiales, filtro, setFiltro, Buscar }) => {
                 <SelectValue placeholder="Selecciona el año" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="2025">2025</SelectItem>
-                <SelectItem value="2026">2026</SelectItem>
-                <SelectItem value="2027">2027</SelectItem>
-                <SelectItem value="2028">2028</SelectItem>
-                <SelectItem value="2029">2029</SelectItem>
-                <SelectItem value="2030">2030</SelectItem>
+                {utlimosCincoAnhos.map((year) => (
+                  <SelectItem key={year} value={String(year)}>
+                    {year}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -94,11 +94,14 @@ const Filtro = ({ filiales, filtro, setFiltro, Buscar }) => {
               </SelectContent>
             </Select>
           </div>
-          <div className="md:col-span-1">
+          
+          {
+            !hidden&&<div className="md:col-span-1">
             <Button onClick={Buscar} className="px-2 cursor-pointer w-full">
-              <Check className="mr-1 w-3 h-3" /> Aplicar
+              <Check className="mr-1 w-3 h-3" /> {nombre_button}
             </Button>
           </div>
+          }
         </div>
       </div>
     </div>

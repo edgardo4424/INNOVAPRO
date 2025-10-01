@@ -22,7 +22,7 @@ class SequelizeDarBajaTrabajadorRepository {
          {
             model: db.usuarios,
             as: "registrado_por",
-            attributes: ["id", "nombre"],
+            attributes: ["id"],
          },
          {
             model: db.contratos_laborales,
@@ -231,6 +231,69 @@ async obtenerInformacionPdfLiquidacion(baja_trabajador_id, transaction = null){
       respuesta: {
         mensaje: "Liquidación del trabajador",
         liquidacion: respuesta,
+      },
+    };
+}
+
+async obtenerInformacionPdfLiquidacionv2(baja_trabajador_id, transaction = null){
+
+    //! Obtener la informacion del trabajador que se dio de baja
+    console.log("baja_trabajador_id", baja_trabajador_id);
+
+    const trabajador_dado_de_baja = await db.bajas_trabajadores.findByPk(
+      baja_trabajador_id,
+      {
+        include: [
+          {
+            model: db.trabajadores,
+            as: "trabajador",
+          },
+          {
+            model: db.contratos_laborales,
+            as: "contrato",
+          },
+        ],
+        transaction,
+      }
+    );
+
+    if (!trabajador_dado_de_baja) {
+      return {
+        codigo: 404,
+        respuesta: {
+          mensaje: "Trabajador dado de baja no encontrado",
+          liquidacion: null
+        },
+      };
+    }
+
+    //! Obtener la filial del trabajador con el ultimo contrato id
+    const contrato_laboral = await db.contratos_laborales.findOne({
+      where: { id: trabajador_dado_de_baja.contrato_id },
+      include: [
+        {
+          model: db.empresas_proveedoras,
+          as: "empresa_proveedora",
+        },
+      ],
+      transaction,
+    });
+
+    if (!contrato_laboral) {
+      return {
+        codigo: 404,
+        respuesta: {
+          mensaje: "Contrato laboral no encontrado",
+          liquidacion: null,
+        },
+      };
+    }
+
+    return {
+      codigo: 200,
+      respuesta: {
+        mensaje: "Liquidación del trabajador",
+        liquidacion: trabajador_dado_de_baja
       },
     };
 }

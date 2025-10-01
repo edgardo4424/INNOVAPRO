@@ -15,6 +15,8 @@ function ymd(d){ const p=n=>String(n).padStart(2,"0"); return `${d.getFullYear()
 
 const obtenerTrabajadoresYcontratos = require("../../application/useCases/obtenerTrabajadoresYcontratos");
 const obtenerTrabajadoresConContratosVigentes = require("../../application/useCases/obtenerTrabajadoresConContratosVigentes");
+const obtenerTrabajadoresPorAreaCargo = require("../../application/useCases/obtenerTrabajadoresPorAreaCargo");
+const obtenerAreas = require("../../application/useCases/obtenerAreas");
 
 
 const trabajadorRepository = new SequelizeTrabajadorRepository();
@@ -73,6 +75,31 @@ const TrabajadorController = {
          res.status(500).json({ error: error.message });
       }
    },
+   async obtenerTrabajadoresPorAreaCargo(req, res) {
+      try {         
+         const rol=req.usuario.rol;         
+         const trabajadores = await obtenerTrabajadoresPorAreaCargo(
+            req.params.fecha,
+            rol,
+            trabajadorRepository
+         );
+         res.status(trabajadores.codigo).json(trabajadores.respuesta);
+      } catch (error) {
+         console.log(error);
+         res.status(500).json({ error: error.message });
+      }
+   },
+   async obtenerAreas(req, res) {
+      try {
+         console.log("Ejecutando sistema.....");
+         
+         const areas = await obtenerAreas(trabajadorRepository);
+         res.status(areas.codigo).json(areas.respuesta);
+      } catch (error) {
+         res.status(500).json({ error: error.message });
+      }
+   },
+   
    async obtenerTrabajadores(req, res) {
       try {
          const trabajadores = await obtenerTrabajadores(trabajadorRepository);
@@ -126,7 +153,7 @@ const TrabajadorController = {
             });
             }
          }
-         console.log("ESTAS SON LAS FILIALES: ", filiales)
+         
          return res.json({
             ok: true,
             data: {

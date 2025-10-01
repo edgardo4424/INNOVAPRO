@@ -15,14 +15,14 @@ import { Label } from "@/components/ui/label";
 import React, { useEffect, useState } from "react";
 import planillaMensualService from "../../services/planillaMensualService";
 import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function ModalImportesTrabajador({
-   importes = [],
-   setImportes,
-   filiales=[],
    filial_id,
 }) {
+   const [importes,setImportes]=useState([])
    const [isOpen, setIsOpen] = useState(false);
+   const [validacionImportes,setValidacionImportes]=useState(false)
    const handleInputChange = (index, field, value) => {
       setImportes((prev) =>
          prev.map((importe, i) =>
@@ -36,6 +36,14 @@ export default function ModalImportesTrabajador({
    const fetchDataMantenimiento = async (id) => {
       try {
          const res = await planillaMensualService.obtenerDatosMantenimiento(id);
+         for (const i of res.data) {
+            if(i.valor<=0){
+               setValidacionImportes(true)
+            }
+            else{
+               setValidacionImportes(false)
+            }
+         }
          setImportes(res.data);
       } catch (error) {
          toast.error("Error al obtemer los importes del trabjador");
@@ -51,32 +59,47 @@ export default function ModalImportesTrabajador({
    const handleSave =async (e) => {
       e.preventDefault();
       try {
-         let data_m_update = [];
          for (const imp of importes) {
-            const res = await planillaMensualService.editDataMantenimiento(
+            if(imp.valor<=0){
+               throw new Error("Los valores ingresados son invalidos")
+            }
+         }
+         for (const imp of importes) {
+             await planillaMensualService.editDataMantenimiento(
                imp.id,
                imp
-            );
-            data_m_update.push(res.data.data_mantenimiento)
+            );            
          }
-        setImportes(data_m_update);
         toast.success("Datos actualizados correctamente.")         
       } catch (error) {
         console.log(error);
-        
+        if (error.message) {
+            toast.error(error.message);
+            return;
+        }
         toast.error("Error al actualizar los importes.")
       }
       finally{
+         await fetchDataMantenimiento(filial_id)
         setIsOpen(false)
       }
    };
 
+   
+
    return (
       <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-         <AlertDialogTrigger asChild>
-            <Button>Agregar Importes</Button>
+          <AlertDialogTrigger asChild>
+             <Tooltip open={validacionImportes}>
+               <TooltipTrigger asChild>
+                 <Button variant="outline" onClick={()=>setIsOpen(true)}>Importes del Empleador</Button>
+               </TooltipTrigger>
+               <TooltipContent className=" text-white custom-tooltip-red bg-red-500"   >
+                 Agregue los importes del Empleador
+                 
+               </TooltipContent>
+             </Tooltip>
          </AlertDialogTrigger>
-
          <AlertDialogContent>
             <AlertDialogHeader>
                <AlertDialogTitle>Importes del empleador</AlertDialogTitle>

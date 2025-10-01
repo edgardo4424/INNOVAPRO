@@ -2,7 +2,6 @@ const SequelizeAsistenciaRepository = require("../../../asistencias/infraestruct
 const SequelizeVacacionesRepository = require("../../../vacaciones/infraestructure/repositories/sequelizeVacacionesRepository");
 
 const asistenciasRepository = new SequelizeAsistenciaRepository();
-const vacacionesRepository = new SequelizeVacacionesRepository();
 
 const obtenerDatosAsistencia = async (
    fecha_inicio_periodo,
@@ -33,19 +32,18 @@ const obtenerDatosAsistencia = async (
          fecha_inicio_periodo,
          fecha_cierre_periodo
       );
-   const responseV =
-      await vacacionesRepository.obtenerVacacionesPorTrabajadorId(
+   const vacaciones_g =
+      await asistenciasRepository.obtenerCantidadVacaciones(
+         trabajador_id,
          fecha_inicio_periodo,
-         fecha_cierre_periodo,
-         trabajador_id
-      );
-   const vacaciones = responseV.map((v) => v.get({ plain: true }));
+         fecha_cierre_periodo
+   );
    return {
       faltas,
       faltas_justificadas,
       licencia_con_goce,
       licencia_sin_goce,
-      vacaciones: vacaciones || [],
+      vacaciones_g
    };
 };
 

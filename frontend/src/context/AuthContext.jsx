@@ -55,8 +55,6 @@ export function AuthProvider({ children }) {
   const login = async (email, password, recaptchaToken, navigate) => {
     
     const data = await loginService(email, password, recaptchaToken); 
-
-    console.log('data', data);
   
     if (data?.error) {
       alert(`❌ ${data.mensaje}`);

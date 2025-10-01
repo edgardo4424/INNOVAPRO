@@ -1289,8 +1289,7 @@ class SequelizePlanillaRepository {
         faltas_justificadas,
         licencia_con_goce,
         licencia_sin_goce,
-        vacaciones,
-      } = await obtenerDatosAsistencia(inicio_real, fin_real, trabajador.id);
+     } = await obtenerDatosAsistencia(inicio_real, fin_real, trabajador.id);
 
       const {
         CANTIDAD_HE_PRIMERA_Q,
@@ -1305,11 +1304,6 @@ class SequelizePlanillaRepository {
         CANTIDAD_VACACIONES_VENDIDAS,
       } = await obtenerDatosPorQuincena(inicio_real, fin_real, trabajador.id);
 
-      const DIAS_VACACIONES = InterseccionVacacionesPlanilla(
-        vacaciones,
-        inicio_real,
-        fin_real
-      );
       const DIAS_FIJOS = 30;
       planilla.tipo_documento = trabajador.tipo_documento;
       planilla.numero_documento = trabajador.numero_documento;
@@ -1329,7 +1323,7 @@ class SequelizePlanillaRepository {
       planilla.sueldo_basico = c.sueldo;
       // sueldo del mes: suedo que corresponde por los dias laborados
       // prettier-ignore
-      const DESCUENTO_DIAS=(((DIAS_FIJOS-DIAS_NO_CONTRATADOS)-DIAS_VACACIONES)-licencia_con_goce)-faltas_justificadas;
+      const DESCUENTO_DIAS=(((DIAS_FIJOS-DIAS_NO_CONTRATADOS)-CANTIDAD_VACACIONES_GOZADAS)-licencia_con_goce)-faltas_justificadas;
       planilla.sueldo_del_mes = ((c.sueldo / 30) * DESCUENTO_DIAS).toFixed(2);
       if (trabajador.asignacion_familiar) {
         planilla.asig_fam = MONTO_ASIGNACION_FAMILIAR;
@@ -1340,7 +1334,7 @@ class SequelizePlanillaRepository {
       // prettier-ignore
       planilla.licencia_con_goce_de_haber = ((c.sueldo / 30)*licencia_con_goce).toFixed(2);
       // prettier-ignore
-      planilla.licencia_sin_goce_de_haber = ((c.sueldo / 30)*licencia_sin_goce).toFixed(2);
+      planilla.licencia_sin_goce_de_haber = ((c.sueldo / DIAS_LABORALES) * licencia_sin_goce).toFixed(2);      
       planilla.vacaciones = (
         (c.sueldo / 30) *
         CANTIDAD_VACACIONES_GOZADAS

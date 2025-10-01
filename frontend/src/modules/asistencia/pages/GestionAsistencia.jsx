@@ -7,11 +7,11 @@ import BadgeEstadoAsistencia from "../components/BadgeEstadoAsistencia";
 import { useParams, useSearchParams } from "react-router-dom";
 import AsistenciaSimple from "../components/AsistenciaSimple";
 import InputTest from "../components/InputTest";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const GestionAsistencia = () => {
-   const { tipo } = useParams();
    const [searchParams] = useSearchParams();
-   const area_id = searchParams.get("area_id");
+   // const area_id = searchParams.get("area_id");
 
    const [fechaSeleccionada, setFechaSeleccionada] = useState(
       new Date().toISOString().split("T")[0]
@@ -19,22 +19,37 @@ const GestionAsistencia = () => {
    const [trabajadores, setTrabajadores] = useState([]);
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState(null);
-   const [trabajadoresFiltrados,setTrabajadoresFiltrados]=useState([])
+   const [trabajadoresFiltrados,setTrabajadoresFiltrados]=useState([]);
+   const [areas,setAreas]=useState([]);
+   const [area_id,setAreaId]=useState(undefined);
+   const [nombreArea,setNombreArea]=useState("")
 
-   const obtenerTrabajadores = async () => {
-      if (!area_id) {
-         setError("Área no especificada en la URL");
-         return;
+   const obtenerAreas=async()=>{
+      try {
+         setLoading(true);
+         const areasResponse=await asistenciaService.getAreas();
+         setAreas(areasResponse.data.areas)      
+      } catch (error) {
+         setError("Error al cargar las areas laborales.");
+      }finally{
+         setLoading(true)
       }
+   }
+   useEffect(()=>{
+      obtenerAreas();
+   },[])
+   const obtenerTrabajadores = async () => {
       try {
          setLoading(true);
          const response = await asistenciaService.obtenerTrabajadoresPorFilial(
             area_id,
             fechaSeleccionada
          );
-         setTrabajadoresFiltrados([...response.data.trabajadores] || [])
-         setTrabajadores([...response.data.trabajadores] || []);
+         setTrabajadoresFiltrados([...response.data.datos.trabajadores] || [])
+         setTrabajadores([...response.data.datos.trabajadores] || []);
+         setNombreArea(response.data.datos.area_nombre??"-")
       } catch (err) {
+         console.log(err);
          setError("Error al cargar los trabajadores.");
       } finally {
          setLoading(false);
@@ -46,7 +61,8 @@ const GestionAsistencia = () => {
    }, [area_id]);
 
    useEffect(() => {
-      if (fechaSeleccionada) {
+      if (fechaSeleccionada&&area_id) {
+         setError("")
          obtenerTrabajadores();
       }
    }, [fechaSeleccionada, area_id]);
@@ -93,13 +109,24 @@ const GestionAsistencia = () => {
                   {error}
                </div>
             )}
-
+            <section className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 ">
+               <Select onValueChange={(e)=>setAreaId(e)} disabled={areas.length<1}  value={area_id}>
+                   <SelectTrigger className="w-full truncate">
+                      <SelectValue placeholder="Seleccione un área laboral"  className="text-md"/>
+                   </SelectTrigger>
+                   <SelectContent>
+                      {areas.map((a,index)=>(
+                         <SelectItem value={a.id.toString()} key={index}>{a.nombre}</SelectItem>
+                      ))}
+                   </SelectContent>
+            </Select>
+            </section>
             <AsistenciaHeader
                trabajadores={trabajadores}
                estadisticas={estadisticas}
                fechaSeleccionada={fechaSeleccionada}
                setFechaSeleccionada={setFechaSeleccionada}
-               title={tipo}
+               title={nombreArea}
             />
             <div className="grid grid-cols-1 md:grid-cols-3">
                <InputTest trabajadores={trabajadores} setTrabajadoresFiltrados={setTrabajadoresFiltrados}/> 
@@ -110,7 +137,7 @@ const GestionAsistencia = () => {
                </div>
             ) : (
                <div className="space-y-4">
-                  {trabajadoresFiltrados.length === 0 ? (
+                  {(trabajadoresFiltrados.length === 0 || !area_id) ? (
                      <div className="text-center text-gray-400">
                         No hay trabajadores disponibles para esta área.
                      </div>

@@ -72,8 +72,6 @@ const JornadaCard = ({ trabajador, obtenerTrabajadores, fecha }) => {
                   </Select>
                </div>
 
-               {/* Tardanza */}
-
                {/* Horas */}
                <div>
                   <Label className="text-xs">Horas</Label>
@@ -189,8 +187,8 @@ const JornadaCard = ({ trabajador, obtenerTrabajadores, fecha }) => {
 
             {/* Checkbox para Segunda Jornada - Solo aparece si primera jornada es "mañana" */}
             {puedeAgregarSegundaJornada && (
-               <div className=" pt-4 mb-4">
-                  <div className="flex items-center space-x-2 mb-4">
+               <div className="my-4 flex flex-wrap space-x-4  items-center min-h-[67px]">
+                  <div className="flex items-center space-x-2 ">
                      <input
                         type="checkbox"
                         checked={tieneSegundaJornada}
@@ -210,9 +208,9 @@ const JornadaCard = ({ trabajador, obtenerTrabajadores, fecha }) => {
                   </div>
 
                   {tieneSegundaJornada && segundaJornada && (
-                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 bg-blue-50 p-4 rounded-lg">
+                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1">
                         {/* Lugar Segunda Jornada */}
-                        <div>
+                        <div className="">
                            <Label className="text-xs">
                               Lugar Segunda Jornada
                            </Label>
@@ -230,7 +228,7 @@ const JornadaCard = ({ trabajador, obtenerTrabajadores, fecha }) => {
                         </div>
 
                         {/* Tipo de Trabajo Segunda Jornada */}
-                        <div>
+                        <div className="">
                            <Label className="text-xs">
                               Tipo de Trabajo Segunda Jornada
                            </Label>
@@ -247,7 +245,7 @@ const JornadaCard = ({ trabajador, obtenerTrabajadores, fecha }) => {
                                  )
                               }
                            >
-                              <SelectTrigger>
+                              <SelectTrigger className="w-full">
                                  <SelectValue placeholder="Seleccione un tipo de trabajo" />
                               </SelectTrigger>
                               <SelectContent>

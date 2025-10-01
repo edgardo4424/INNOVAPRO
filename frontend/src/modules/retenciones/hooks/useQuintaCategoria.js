@@ -9,6 +9,7 @@ import {
   quintaObtenerSinPrevios,
 } from "../service/quintaService";
 import trabajadoresService from "@/modules/trabajadores/services/trabajadoresService";
+import empresasService from "@/modules/filiales/services/empresasService";
 import { FUENTE_PREVIOS, DEBOUNCE_MS } from "../utils/quinta.constants";
 import {
   normalizarFuentePrevios,
@@ -60,6 +61,8 @@ export function useQuintaCategoria() {
   const [loadingPreview, setLoadingPreview] = useState(false);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
+
+  const [filialesGenerales, setFilialesGenerales] = useState([]);
 
   // Control de concurrencia / debounce
   const debounceRef = useRef(null);
@@ -157,16 +160,33 @@ export function useQuintaCategoria() {
     resetPreview(); // SI SE SIGUE SETEANDO NULL MAL BORRA ESTO Y LA FUNCION MISMA
   }, [trabajadores, setFormIfChanged]);
 
+  // Acepta objeto de filiales “vigentes” ({filial_id, contrato_id, sueldo})
+  // o de filiales “generales” ({id, razon_social}) y lo normaliza.
   const handleFilialSelect = useCallback((val, filialObj) => {
+    // Si viene del <Select> de Cierre: { id, razon_social }
+    if (filialObj && filialObj.id && !filialObj.filial_id) {
+      const filial_id = Number(filialObj.id);
+      setFormIfChanged(prev => ({
+        ...prev,
+        filial_id: String(filial_id || ""),
+        // cierre no requiere contrato/sueldo
+        contrato_id: "",
+      }));
+      return;
+    }
+
+    // Flujo normal (filiales vigentes al mes): { filial_id, contrato_id, sueldo }
     const f = filialObj ?? filiales.find(x => String(x.filial_id) === String(val));
     if (!f) return;
+
     setFormIfChanged(prev => ({
       ...prev,
-      filial_id: String(f.filial_id),
+      filial_id: String(f.filial_id || ""),
       contrato_id: String(f.contrato_id || ""),
       remuneracionMensualActual: typeof f.sueldo === "number" ? f.sueldo : prev.remuneracionMensualActual,
     }));
   }, [filiales, setFormIfChanged]);
+
 
   // Clave estable para preview (evita bucles)
   const certificadoKey = useMemo(() => {
@@ -376,6 +396,17 @@ export function useQuintaCategoria() {
     } catch (err) { console.error("Error cargando trabajadores", err); }
   })(); }, []);
 
+  useEffect(() => { (async () => {
+    try {
+      const data = await empresasService.obtenerEmpresas();
+      const list = Array.isArray(data) ? data : (data?.filialesGenerales || data?.data || []);
+      setFilialesGenerales(list || []);
+    } catch (err) {
+      console.error("Error cargando filiales", err);
+    }
+  })(); }, []);
+
+
   useEffect(() => { cargarHistorial(); }, [cargarHistorial]);
 
   useEffect(() => {
@@ -493,6 +524,6 @@ export function useQuintaCategoria() {
     trabajadores, filiales, loadingPreview, saving, errors,
     handleChange, handleTrabajadorSelect, handleFilialSelect,
     canCalcular, handlePreview, handleGuardar, handleRecalcular,
-    onSoportesGuardado,
+    onSoportesGuardado, filialesGenerales, setFilialesGenerales,
   };
 }

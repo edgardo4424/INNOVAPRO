@@ -57,13 +57,7 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
                   p.fecha_fin
                 );
 
-                console.log({
-                 
-                  trabajador,
-                  contratos,
-                   fechaInicioCalculo,
-                  fechaFinCalculo,
-                });
+
 
               //const promedioBonoObra = Number((bonoTotalDelTrabajador / p.meses).toFixed(2));
 
@@ -160,7 +154,6 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
                   null // fecha_anio_mes_dia
                 );
 
-                console.log('totalAdelantosSueldo', totalAdelantosSueldo);
 
               const total = +(
                 gratiNeta +

@@ -1,3 +1,4 @@
+//Aca se pasara el sueldo el valor 
 const calcularHextrasEnCts = (
    asistencias,
    valor_hora_extra,

@@ -10,6 +10,10 @@ const calcularGratificacionPlanilla = async (
    transaction
 ) => {
    if (periodograti) {
+      const validarCierreGratificacion=await gratificacionRepository.obtenerCierreGratificacion(periodograti,anioGratificacion,filial_id,transaction);
+      if(!validarCierreGratificacion){
+         throw new Error("Registre la gratificación para poder calcular la planilla")
+      }
       const responseGratificacion =
          await gratificacionRepository.obtenerGratificacionPorTrabajador(
             periodograti,
