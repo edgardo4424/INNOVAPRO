@@ -30,12 +30,13 @@ const ChoferesLayout = () => {
       const { data, success, message } = await choferService.listar();
       if (success) {
         setListaChoferes(data);
-      } else {
-        toast.error(message || "No se pudieron cargar los choferes.");
-      }
+      } 
+      // else {
+      //   toast.error(message || "No se pudieron cargar los choferes.");
+      // }
     } catch (error) {
-      toast.error("Error al cargar choferes.");
-      console.error(error);
+      // toast.error("Error al cargar choferes.");
+      // console.error(error);
     } finally {
       setLoading(false);
     }

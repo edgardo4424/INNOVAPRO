@@ -133,7 +133,7 @@ const GestionAsistencia = () => {
             </div>
             {loading ? (
                <div className="text-center py-6 text-gray-500">
-                  Cargando trabajadores...
+                     {area_id?"Cargando trabajadores...":"Seleccione un área.."}
                </div>
             ) : (
                <div className="space-y-4">
