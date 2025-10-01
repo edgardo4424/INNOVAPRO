@@ -52,7 +52,6 @@ export default function ModalPlacas({ open, setOpen }) {
   });
 
   const plasmar = (item) => {
-    console.log("✅ Plasmar PLACA:", item.chofere);
     if (plasmarChofer && item.chofere) {
       setGuiaTransporte((prevGuiaTransporte) => ({
         ...prevGuiaTransporte,

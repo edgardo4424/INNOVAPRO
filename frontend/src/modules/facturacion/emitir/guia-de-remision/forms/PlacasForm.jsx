@@ -79,12 +79,12 @@ const PlacasForm = ({ closeModal }) => {
       {/* 🧩 Filtro y Checks */}
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         <div className="col-span-1 flex flex-col gap-1">
-          <Label>Buscar por placa, chofer o transportista</Label>
+          <Label>Buscar por placa</Label>
           <Input
             type="text"
             value={filtro}
             onChange={(e) => setFiltro(e.target.value)}
-            placeholder="Ej: placa, chofer, transportista"
+            placeholder="Ej: placa"
             className="border-1 border-gray-400"
           />
         </div>
