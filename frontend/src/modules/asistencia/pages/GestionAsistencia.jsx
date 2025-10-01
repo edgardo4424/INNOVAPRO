@@ -8,6 +8,7 @@ import { useParams, useSearchParams } from "react-router-dom";
 import AsistenciaSimple from "../components/AsistenciaSimple";
 import InputTest from "../components/InputTest";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 const GestionAsistencia = () => {
    const [searchParams] = useSearchParams();
@@ -100,6 +101,16 @@ const GestionAsistencia = () => {
 
       return stats;
    }, [trabajadores]);
+   const sincronizacion=async()=>{
+      try {
+       const response=  await asistenciaService.sincronizarAsistencia();
+       console.log("Response en el front");
+       
+      } catch (error) {
+         console.log("Error en el front: ",error);
+         
+      }
+   }
 
    return (
       <div className="min-h-full flex-1 flex flex-col items-center p-8">
@@ -120,6 +131,9 @@ const GestionAsistencia = () => {
                       ))}
                    </SelectContent>
             </Select>
+            <Button onClick={sincronizacion}>
+               Sincronizacion
+            </Button>
             </section>
             <AsistenciaHeader
                trabajadores={trabajadores}

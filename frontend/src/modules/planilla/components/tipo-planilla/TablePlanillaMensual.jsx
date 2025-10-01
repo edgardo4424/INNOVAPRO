@@ -23,7 +23,17 @@ const TablePlanillaMensual = ({
    planillaMensualTipoPlanilla,
    filiales,
    filial_id,
-   datosTotalesPlanilla,
+   datosTotalesPlanilla={
+           sumatoria_sueldo_basico: 0,
+           sumatoria_sueldo_mensual: 0,
+           sumatoria_sueldo_bruto: 0,
+           sumatoria_sueldo_neto: 0,
+           sumatoria_saldo_por_pagar: 0,
+           sumatoria_essalud: 0,
+           sumatoria_vida_ley: 0,
+           sumatoria_sctr_salud: 0,
+           sumatoria_sctr_pension: 0,
+         },
 }) => {
    const [filtro, setFiltro] = useState("");
 
@@ -385,7 +395,7 @@ const TablePlanillaMensual = ({
                               />
                            )
                         )}
-                        {/* <RowTotalPlanillaMensual datosTotalesPlanilla={datosTotalesPlanilla} /> */}
+                        <RowTotalPlanillaMensual datosTotalesPlanilla={datosTotalesPlanilla} />
                      </>
                   )}
                </TableBody>

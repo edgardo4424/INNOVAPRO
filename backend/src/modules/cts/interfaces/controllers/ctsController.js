@@ -3,7 +3,7 @@ const calcularCtsIndividual = require("../../application/calcularCtsIndividual")
 const calcularCtsTrunca = require("../../application/calcularCtsTrunca");
 const cierreCts = require("../../application/cierreCts");
 const obtenerCtsPorTrabajador = require("../../application/obtenerCtsPorTrabajador");
-const obtenerHistoricocts = require("../../application/obtenerHistoricocts");
+const obtenerHistoricocts = require("../../application/obtenerHistoricoCts");
 
 const SequelizeCtsRopository = require("../../infraestructure/repositories/sequelizeCtsRepository");
 

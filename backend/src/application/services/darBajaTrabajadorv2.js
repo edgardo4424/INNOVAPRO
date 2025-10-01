@@ -47,7 +47,7 @@ const { obtenerFechaInicioCts } = require("../utils/obtenerFechaInicioCts");
 const { calcularMesesDiasCTS } = require("../utils/calcularMesesDiasCts");
 const {
   ajustarMesesDiasPorFaltasCTS,
-} = require("../utils/ajustarMesesDiasPorFaltasCts");
+} = require("../utils/ajustarMesesDiasPorFaltasCTS");
 const { calcularTiempoLaborado } = require("../utils/calcularTiempoEnEmpresa");
 
 module.exports = async function darBajaTrabajador(dataBody) {
