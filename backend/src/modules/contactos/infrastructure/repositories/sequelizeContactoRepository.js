@@ -82,7 +82,6 @@ class SequelizeContactoRepository {
     const contacto = await Contacto.findByPk(id); // Busca el contacto por ID
     if (!contacto) {
       // Si no se encuentra el contacto, retorna null
-      console.log("❌ Contacto no encontrado");
       return null;
     }
     await contacto.update(contactoData); // Actualiza el contacto con los nuevos datos

@@ -20,39 +20,6 @@ const { mapCalculoQuintaToResponse } = require('../../shared/mappers/mapCalculoQ
 // Motor de cálculo
 const _ejecutarCalculoQuinta = require('../../application/useCases/_ejecutarCalculoQuinta');
 
-const { Op } = require("sequelize");
-const { ContratoLaboral } = require("../../../contratos_laborales/infraestructure/models/contratoLaboralModel");
-
-function parsePeriodoYYYYMM(fecha_anio_mes) {
-  // Espera "YYYY-MM"
-  if (typeof fecha_anio_mes !== 'string' || !/^\d{4}-\d{2}$/.test(fecha_anio_mes.trim())) {
-    const err = new Error("El parámetro 'fecha_anio_mes' debe tener formato YYYY-MM.");
-    err.status = 400; throw err;
-  }
-  const [y, m] = fecha_anio_mes.split('-').map(Number);
-  if (m < 1 || m > 12) {
-    const err = new Error("Mes inválido en 'fecha_anio_mes'.");
-    err.status = 400; throw err;
-  }
-  return { anio: y, mes: m };
-}
-
-async function contratosVigentesAlMes({ trabajadorId, anio, mes }) {
-  // Vigente al 15 del mes
-  const ref = new Date(anio, mes - 1, 15);
-  return await ContratoLaboral.findAll({
-    where: {
-      trabajador_id: Number(trabajadorId),
-      estado: true,
-      [Op.and]: [
-        { fecha_inicio: { [Op.lte]: ref } },
-        { [Op.or]: [{ fecha_fin: { [Op.gte]: ref } }, { fecha_fin: null }] }
-      ]
-    },
-    attributes: ['id','filial_id','sueldo']
-  });
-}
-
 module.exports = {
   async previsualizar(req, res) {
     try {
@@ -166,6 +133,28 @@ module.exports = {
     try {
       const prev = await repo.findById(req.params.id);
       if (!prev) return res.status(404).json({ ok: false, message: 'No encontrado' });
+
+     // Validación crítica: no permitir cambiar de mes/año en un recálculo
+     if (req.body?.mes && Number(req.body.mes) !== Number(prev.mes)) {
+        return res.status(400).json({
+          ok: false,
+          message: `Este recálculo pertenece a ${prev.anio}-${String(prev.mes).padStart(2,'0')}. No puede ejecutarse para otro mes.`
+        });
+      }
+      if (req.body?.anio && Number(req.body.anio) !== Number(prev.anio)) {
+        return res.status(400).json({
+          ok: false,
+          message: `Este recálculo pertenece al año ${prev.anio}. No puede ejecutarse para otro año.`
+        });
+      }
+
+      req.body = {
+        ...req.body,
+        anio: Number(prev.anio),
+        mes: Number(prev.mes),
+        __filialId: Number(prev.filial_id),
+        filialId: Number(prev.filial_id), // el middleware también lo usa
+      };
 
       const { dto, ctx } = await _ejecutarCalculoQuinta(req);
 

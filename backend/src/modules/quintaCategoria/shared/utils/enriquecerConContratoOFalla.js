@@ -8,14 +8,6 @@ const { periodoMes } = require("./helpers");
 
   // Función auxiliar para enriquecer el req body
   function _enriquecerReqBody(req, trabajador, contrato) {
-    
-    console.log("CONTRATO ENCONTRADO: ", {
-      id: contrato?.id,
-      filial_id: contrato?.filial_id,
-      sueldo: contrato?.sueldo,
-      ruc: contrato?.empresa_proveedora?.ruc,
-      razon_social: contrato?.empresa_proveedora?.razon_social,
-    });
     req.body.__trabajadorId = trabajador.id;
     req.body.__contratoId = contrato?.id;
     req.body.__filialId = contrato?.filial_id;

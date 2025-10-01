@@ -386,7 +386,7 @@ class SequelizeAsistenciaRepository {
       });
       return asistencias;
     } catch (error) {
-      console.log(error);
+      throw new Error(error.message);
     }
   }
 
@@ -404,7 +404,7 @@ class SequelizeAsistenciaRepository {
       });
       return asistencias;
     } catch (error) {
-      console.log(error);
+      throw new Error(error.message);
     }
   }
 
