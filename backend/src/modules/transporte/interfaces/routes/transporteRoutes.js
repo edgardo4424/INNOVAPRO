@@ -7,7 +7,7 @@ const transporteController = require("../controller/transportistaController");
 const vehiculosController = require("../controller/vehiculos");
 
 
-// router.use(verificarToken); // Verificamos el token y el rol de Gerente para as las rutas
+router.use(verificarToken); // Verificamos el token y el rol de Gerente para as las rutas
 
 // ?? TRANSPORTE
 router.post("/transportista", transporteController.guardar);
