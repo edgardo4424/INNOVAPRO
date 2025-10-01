@@ -1,39 +1,7 @@
 
-export const calculo_aportes_trabajador = (planillas = [], importes) => {
-   let seguro_vida = 0;
-   let sctr_salud = 0;
-   let sctr_pension = 0;
-   let sumatoria_sueldo_basico = 0;
+export const calculo_aportes_trabajador = (planillas = []) => {
 
-   for (const importe of importes) {
-      if (importe.codigo.includes("seguro_vida")) {
-         seguro_vida = importe.valor;
-      }
-      if (importe.codigo.includes("sctr_salud")) {
-         sctr_salud = importe.valor;
-      }
-      if (importe.codigo.includes("sctr_pension")) {
-         sctr_pension = importe.valor;
-      }
-   }
-   for (const p of planillas) {
-      sumatoria_sueldo_basico += Number(p.sueldo_basico);
-   }
-
-   let recalculo_planillas = planillas.map((p) => {
-      let porc = ((p.sueldo_basico / sumatoria_sueldo_basico) * 100) / 100;
-      porc = porc;
-      porc = Number(porc);
-      let data = {
-         ...p,
-         essalud: p.sueldo_bruto * 0.09,
-         seguro_vida_ley: porc * seguro_vida,
-         sctr_salud: porc * sctr_salud,
-         sctr_pension: porc * sctr_pension,
-      };
-      return data;
-   });
-
+   let sumatoria_sueldo_basico=0
    let sumatoria_sueldo_mensual = 0;
    let sumatoria_sueldo_bruto = 0;
    let sumatoria_sueldo_neto = 0;
@@ -43,7 +11,7 @@ export const calculo_aportes_trabajador = (planillas = [], importes) => {
    let sumatoria_sctr_salud = 0;
    let sumatoria_sctr_pension = 0;
 
-   for (const p of recalculo_planillas) {
+   for (const p of planillas) {
       sumatoria_sueldo_basico += Number(p.sueldo_basico);
       sumatoria_sueldo_mensual += Number(p.sueldo_del_mes);
       sumatoria_sueldo_bruto += Number(p.sueldo_bruto);
@@ -56,7 +24,6 @@ export const calculo_aportes_trabajador = (planillas = [], importes) => {
    }
 
    return {
-      recalculo_planillas,
       datos_totales: {
          sumatoria_sueldo_basico,
          sumatoria_sueldo_mensual,
