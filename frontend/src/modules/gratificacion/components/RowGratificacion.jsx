@@ -8,8 +8,18 @@ import {
 } from "@/components/ui/tooltip";
 
 const RowGratificacion = ({ e }) => {
-  
-  console.log('e.no_computable', e.no_computable);
+
+  let infoDetalle = e?.info_detalle;
+
+try {
+  if (typeof infoDetalle === "string" && infoDetalle.trim() !== "") {
+    infoDetalle = JSON.parse(infoDetalle);
+  }
+} catch (e) {
+  console.error("Error al parsear info_detalle:", e);
+  infoDetalle = {};
+}
+
   return (
     <>
       <TableRow className={"text-xs"}>
@@ -48,7 +58,7 @@ const RowGratificacion = ({ e }) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {e?.info_detalle?.info_horas_extras?.map(i => (
+                          {infoDetalle?.info_horas_extras?.map(i => (
                             <tr key={i.mes} className="">
                               <td className="px-2 py-1 text-center">{formatearFecha(i.fecha)}</td>
                               <td className="px-2 py-1 text-center">{i.horas_extras}</td>
@@ -57,7 +67,7 @@ const RowGratificacion = ({ e }) => {
                           <tr className="border-t border-gray-200">
                               <td className="px-2 py-1 text-center">Total</td>
                               <td className="px-2 py-1 text-center">
-                                {e?.info_detalle?.info_horas_extras
+                                {infoDetalle?.info_horas_extras
                                   ?.reduce((total, item) => total + item.horas_extras, 0)}
                               </td>
                             </tr>
@@ -91,7 +101,7 @@ const RowGratificacion = ({ e }) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {e?.info_detalle?.info_bonos?.map(i => (
+                          {infoDetalle?.info_bonos?.map(i => (
                             <tr key={i.mes} className="">
                               <td className="px-2 py-1 text-center">{formatearFecha(i.fecha)}</td>
                               <td className="px-2 py-1 text-center">{i.monto}</td>
@@ -100,7 +110,7 @@ const RowGratificacion = ({ e }) => {
                           <tr className="border-t border-gray-200">
                               <td className="px-2 py-1 text-center">Total</td>
                               <td className="px-2 py-1 text-center">
-                                {(e?.info_detalle?.info_bonos
+                                {(infoDetalle?.info_bonos
                                   ?.reduce((total, item) => total + +(item.monto), 0)).toFixed(2)}
                               </td>
                             </tr>
@@ -137,7 +147,7 @@ const RowGratificacion = ({ e }) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {e?.info_detalle?.info_faltas?.map(i => (
+                          {infoDetalle?.info_faltas?.map(i => (
                             <tr key={i.mes} className="">
                               <td className="px-2 py-1 text-center">{formatearFecha(i.fecha)}</td>
                             </tr>
@@ -173,7 +183,7 @@ const RowGratificacion = ({ e }) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {e?.info_detalle?.info_no_computables?.map(i => (
+                          {infoDetalle?.info_no_computables?.map(i => (
                             <tr key={i.mes} className="">
                               <td className="px-2 py-1 text-center">{formatearFecha(i.fecha)}</td>
                             </tr>

@@ -33,7 +33,20 @@ const HistoricoGratificacion = ({setEsCalculo, setDataMantenimiento}) => {
       const res = await gratificacionService.obtenerGratificacionesCerradas(filtro);
       
       setGratificacion(res);
-      setDataMantenimiento(res.data_mantenimiento_detalle)
+
+      let dataMantenimientoDetalle = res.data_mantenimiento_detalle;
+
+try {
+  if (typeof dataMantenimientoDetalle === "string" && dataMantenimientoDetalle.trim() !== "") {
+    dataMantenimientoDetalle = JSON.parse(dataMantenimientoDetalle);
+  }
+} catch (e) {
+  console.error("Error al parsear data_mantenimiento_detalle:", e);
+  dataMantenimientoDetalle = {};
+}
+
+setDataMantenimiento(dataMantenimientoDetalle || {});
+
     } catch (error) {
     } finally {
       setLoading(false);
