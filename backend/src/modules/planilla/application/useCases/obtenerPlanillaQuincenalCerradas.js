@@ -30,6 +30,7 @@ const planillaQuincenalCerradasTipoHonorarios = planillaQuincenalCerradas.filter
     seguro: g.seguro,
     comision: g.comision_afp,
     quinta_categoria: g.quinta_categoria,
+    adelanto_sueldo: g.adelanto_sueldo,
     total_descuentos: g.total_descuentos,
     total_a_pagar: g.total_pagar,
 
@@ -37,7 +38,7 @@ const planillaQuincenalCerradasTipoHonorarios = planillaQuincenalCerradas.filter
     banco: g.banco,
     numero_cuenta: g.numero_cuenta,
     registro_planilla_quincenal_detalle: g.registro_planilla_quincenal_detalle,
-    adelanto_sueldo: g.adelanto_sueldo
+    
   }));
 
   const planillaQuincenalHonorariosMapeadas = planillaQuincenalCerradasTipoHonorarios.map((g) => ({

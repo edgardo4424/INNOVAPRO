@@ -108,11 +108,13 @@ export default function TrabajadorCombobox({
           <ChevronsUpDown className="ml-2 h-3.5 w-3.5 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-0 w-[420px]">
+      <PopoverContent className="p-0 w-[420px]"
+  onWheel={(e) => e.stopPropagation()} >
         <Command>
           <CommandInput placeholder="Busca por nombre o DNI..." />
           <CommandEmpty>Sin resultados.</CommandEmpty>
-          <CommandGroup>
+          <CommandGroup className="max-h-60 overflow-y-auto">
+
             {trabajadores.map((t) => (
               <CommandItem
                 key={t.id}

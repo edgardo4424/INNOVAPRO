@@ -19,7 +19,6 @@ async function generarPdfEscaleraAcceso({ dataDespiece, tiene_pernos, porcentaje
 
     if (pernoExpansionConArgolla) {
 
-      console.log('entre 1er if');
       pernoExpansionConArgollaEnElDespiece = await db.despieces_detalle.findOne(
         {
           where: {
@@ -30,8 +29,6 @@ async function generarPdfEscaleraAcceso({ dataDespiece, tiene_pernos, porcentaje
       );
     }
 
-    console.log('pernoExpansionConArgollaEnElDespiece', pernoExpansionConArgollaEnElDespiece);
-
     pernoExpansionSinArgolla = await db.piezas.findOne({
       where: {
         item: "CON.0200",
@@ -39,7 +36,7 @@ async function generarPdfEscaleraAcceso({ dataDespiece, tiene_pernos, porcentaje
     });
 
     if (pernoExpansionSinArgolla) {
-      console.log('entre 2do if');
+     
       pernoExpansionSinArgollaEnElDespiece = await db.despieces_detalle.findOne(
         {
           where: {
@@ -50,7 +47,7 @@ async function generarPdfEscaleraAcceso({ dataDespiece, tiene_pernos, porcentaje
       );
     }
 
-    console.log('pernoExpansionSinArgollaEnElDespiece', pernoExpansionSinArgollaEnElDespiece);
+   
   }
 
   // Obtener la lista de atributos

@@ -67,8 +67,13 @@ class SequelizeGratificacionRepository {
       (await dataMantenimientoRepository.obtenerPorCodigo("valor_falta")).valor
     );
 
-    const MONTO_POR_HORA_EXTRA = Number(
-      (await dataMantenimientoRepository.obtenerPorCodigo("valor_hora_extra"))
+    const MONTO_POR_HORA_EXTRA_MAYOR = Number(
+      (await dataMantenimientoRepository.obtenerPorCodigo("valor_hora_extra_mayor"))
+        .valor
+    );
+
+      const MONTO_POR_HORA_EXTRA_MENOR = Number(
+      (await dataMantenimientoRepository.obtenerPorCodigo("valor_hora_extra_menor"))
         .valor
     );
 
@@ -100,7 +105,8 @@ class SequelizeGratificacionRepository {
     const dataMantenimiento = {
       MONTO_ASIGNACION_FAMILIAR,
       MONTO_FALTA_POR_DIA,
-      MONTO_POR_HORA_EXTRA,
+      MONTO_POR_HORA_EXTRA_MAYOR,
+      MONTO_POR_HORA_EXTRA_MENOR,
       MONTO_NO_COMPUTABLE,
       PORCENTAJE_BONIFICACION_ESSALUD,
       PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO,
@@ -138,7 +144,8 @@ class SequelizeGratificacionRepository {
     const data_mat = {
         valor_asignacion_familiar: dataMantenimiento.MONTO_ASIGNACION_FAMILIAR,
         valor_falta: dataMantenimiento.MONTO_FALTA_POR_DIA,
-        valor_hora_extra: dataMantenimiento.MONTO_POR_HORA_EXTRA,
+        valor_hora_extra_mayor: dataMantenimiento.MONTO_POR_HORA_EXTRA_MAYOR,
+        valor_hora_extra_menor: dataMantenimiento.MONTO_POR_HORA_EXTRA_MENOR,
         valor_no_computable: dataMantenimiento.MONTO_NO_COMPUTABLE,
         valor_bonificacion_essalud: dataMantenimiento.PORCENTAJE_BONIFICACION_ESSALUD,
         valor_desc_quinta_categoria_no_domiciliado: dataMantenimiento.PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO
@@ -258,10 +265,16 @@ class SequelizeGratificacionRepository {
       (await dataMantenimientoRepository.obtenerPorCodigo("valor_falta")).valor
     );
 
-    const MONTO_POR_HORA_EXTRA = Number(
-      (await dataMantenimientoRepository.obtenerPorCodigo("valor_hora_extra"))
+    const MONTO_POR_HORA_EXTRA_MAYOR = Number(
+      (await dataMantenimientoRepository.obtenerPorCodigo("valor_hora_extra_mayor"))
         .valor
     );
+
+      const MONTO_POR_HORA_EXTRA_MENOR = Number(
+      (await dataMantenimientoRepository.obtenerPorCodigo("valor_hora_extra_menor"))
+        .valor
+    );
+
 
     const MONTO_NO_COMPUTABLE = Number(
       (
@@ -290,7 +303,8 @@ class SequelizeGratificacionRepository {
     const dataMantenimiento = {
       MONTO_ASIGNACION_FAMILIAR,
       MONTO_FALTA_POR_DIA,
-      MONTO_POR_HORA_EXTRA,
+      MONTO_POR_HORA_EXTRA_MAYOR,
+      MONTO_POR_HORA_EXTRA_MENOR,
       MONTO_NO_COMPUTABLE,
       PORCENTAJE_BONIFICACION_ESSALUD,
       PORCENTAJE_DESCUENTO_5TA_CATEGORIA_NO_DOMICILIADO,

@@ -19,7 +19,7 @@ module.exports = async function editarTrabajadorConContrato(data) {
          trabajadorRepository,
          transaction
       ); 
-      console.log('response_edit',response_edit);     
+       
       if (response_edit.codigo !== 201) {
          throw new Error(response_edit.respuesta.mensaje);
       }

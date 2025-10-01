@@ -9,6 +9,7 @@ import {
 
 const RowGratificacion = ({ e }) => {
   
+  console.log('e.no_computable', e.no_computable);
   return (
     <>
       <TableRow className={"text-xs"}>
@@ -157,7 +158,7 @@ const RowGratificacion = ({ e }) => {
           {e.no_computable > 0 ? (
             <Tooltip side="bottom" align="center" className="mr-2">
               <TooltipTrigger asChild>
-                <div>{typeof e.no_computable === "number" ? (e.no_computable).toFixed(2) : e.no_computable}</div>
+                <div>{ typeof e.no_computable === "number" ? `-${(e.no_computable).toFixed(2)}` : `-${e.no_computable}`}</div>
               </TooltipTrigger>
               <TooltipContent>
 
@@ -185,7 +186,7 @@ const RowGratificacion = ({ e }) => {
               </TooltipContent>
             </Tooltip>
           ) : (
-            typeof e.no_computable === "number" ? (e.no_computable).toFixed(2) : e.no_computable
+            typeof e.no_computable === "number" ? `-${(e.no_computable).toFixed(2)}` : `-${e.no_computable}`
           )}
         </TableCell>
         <TableCell className="text-right">{typeof e.grat_despues_descuento === "number" ? (e.grat_despues_descuento).toFixed(2) : e.grat_despues_descuento}</TableCell>

@@ -98,8 +98,7 @@ class SequelizeDarBajaTrabajadorRepository {
 async obtenerInformacionPdfLiquidacion(baja_trabajador_id, transaction = null){
 
     //! Obtener la informacion del trabajador que se dio de baja
-    console.log("baja_trabajador_id", baja_trabajador_id);
-
+  
     const trabajador_dado_de_baja = await db.bajas_trabajadores.findByPk(
       baja_trabajador_id,
       {
@@ -238,8 +237,7 @@ async obtenerInformacionPdfLiquidacion(baja_trabajador_id, transaction = null){
 async obtenerInformacionPdfLiquidacionv2(baja_trabajador_id, transaction = null){
 
     //! Obtener la informacion del trabajador que se dio de baja
-    console.log("baja_trabajador_id", baja_trabajador_id);
-
+  
     const trabajador_dado_de_baja = await db.bajas_trabajadores.findByPk(
       baja_trabajador_id,
       {

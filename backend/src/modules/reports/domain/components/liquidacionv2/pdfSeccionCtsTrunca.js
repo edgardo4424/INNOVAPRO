@@ -7,6 +7,8 @@ const {
 function pdfSeccionCtsTrunca({ contrato, detalles_liquidacion }) {
   const { ctsTrunca, informacionLiquidacion } = detalles_liquidacion;
 
+    if(ctsTrunca == null) return; 
+
   const mensaje_cts_tiempo_computado = construirMensajeTiempo({
     meses: ctsTrunca.meses_computados,
     dias: ctsTrunca.dias_computados,

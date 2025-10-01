@@ -9,6 +9,7 @@ const SequelizeAdelantoSueldoRepository = require("../../../adelanto_sueldo/infr
 const calcularPromedioHorasExtras = require("../../../../services/calculoHorasEsxtras");
 const calculaPromedioBonos = require("../../../../services/calculoBonos");
 const { mapearInfoDetalleGratificacion } = require("./mapearInfoDetalleGratificacion");
+const { umbral_monto_hora_extra } = require("../../../../shared/utils/constantes.");
 
 const asistenciaRepository = new SequelizeAsistenciaRepository();
 const bonoRepository = new SequelizeBonoRepository();
@@ -58,7 +59,6 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
                 );
 
 
-
               //const promedioBonoObra = Number((bonoTotalDelTrabajador / p.meses).toFixed(2));
 
               const bonosDelTrabajadorPorFecha =
@@ -85,12 +85,23 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
                 bonosDelTrabajador,
                 6
               );
+  
+              const valor_hora_extra = p.sueldo_base >= umbral_monto_hora_extra ? dataMantenimiento.MONTO_POR_HORA_EXTRA_MAYOR : dataMantenimiento.MONTO_POR_HORA_EXTRA_MENOR;
+              
+    /*           console.log({
+                trabajador: trabajador.nombres,
+                sueldo_base: p.sueldo_base,
+                esMayor: p.sueldo_base >= umbral_monto_hora_extra,
+                valor_hora_extra
+              });
+ */
               const promedioHorasExtras = calcularPromedioHorasExtras(
                 asistenciasDelTrabajador,
-                dataMantenimiento.MONTO_POR_HORA_EXTRA,
+                valor_hora_extra,
                 6
               );
 
+    
               const faltasDias =
                 await asistenciaRepository.obtenerCantidadFaltasPorRangoFecha(
                   trabajador.id,
@@ -105,7 +116,7 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
                   fechaFinCalculo
                 );
 
-              const noComputable = diasNoComputables * dataMantenimiento.MONTO_NO_COMPUTABLE;
+              //const noComputable = diasNoComputables * dataMantenimiento.MONTO_NO_COMPUTABLE;
 
               // Asignacion familiar
               const asignacionFamiliar =
@@ -124,7 +135,11 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
 
               // Monto por faltas
               const totalFaltasMonto = Number(
-                ((p.sueldo_base / 6 / 30) * faltasDias).toFixed(2)
+                ((Number(gratiBruta) / 6 / 30) * faltasDias).toFixed(2)
+              );
+
+              const noComputable = Number(
+                ((Number(gratiBruta) / 6 / 30) * diasNoComputables).toFixed(2)
               );
 
               // Faltas: si llevaras por mes, podrías repartir por proporción de meses
@@ -154,7 +169,6 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
                   null // fecha_anio_mes_dia
                 );
 
-
               const total = +(
                 gratiNeta +
                 bonificacion -
@@ -165,8 +179,6 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
                 contratos.length == 1
                   ? ultimaFechaFinContrato
                   : p.fecha_terminacion_anticipada || p.fecha_fin;
-
-                 
 
               // Obtener los contratos que esta dentro del rango p.fecha_inicio y fechaFin
 
@@ -193,7 +205,6 @@ async function calcularComponentesGratificaciones(contratos, periodo, anio, data
               })
 
               const lista_id_contratos = contratosQueCumplen.map((c) => c.id);
-
 
               const banco = contratosQueCumplen[contratosQueCumplen.length - 1].banco || ""
               const numeroCuenta= contratosQueCumplen[contratosQueCumplen.length - 1].numero_cuenta || ""

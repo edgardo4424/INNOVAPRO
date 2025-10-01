@@ -7,6 +7,7 @@ import planillaQuincenalService from "../services/planillaQuincenalService";
 import { viPlanillaQuincenal } from "../utils/valorInicial";
 import TablePlanillaQuincenal from "../components/tipo-planilla/TablePlanillaQuincenal";
 import TableRHQuincenal from "../components/tipo-rh/TableRHQuincenal";
+import ExportExcel from "@/shared/components/exportarExcel";
 
 const HistoricoPlanillaQuincenal = ({setEsCalculo, setDataMantenimiento}) => {
   
@@ -33,6 +34,10 @@ const HistoricoPlanillaQuincenal = ({setEsCalculo, setDataMantenimiento}) => {
     mes: new Date().toLocaleString("es-PE", { month: "2-digit" }),
     filial_id: "",
   });
+
+   //!Estado para el excel
+   const [libroExcel,setLibroExcel]=useState(null)
+
 
   const buscarPlanillaQuincenalCerrada = async () => {
     try {
@@ -92,10 +97,32 @@ const HistoricoPlanillaQuincenal = ({setEsCalculo, setDataMantenimiento}) => {
     obtenerFiliales();
   }, []);
 
+  useEffect(()=>{
+
+      let hojas=[]
+      
+      if(planillaQuincenalTipoPlanilla.length>0){
+          hojas.push(
+            { 
+              nombre_libro: "Planilla Quincenal", 
+               datos: planillaQuincenalTipoPlanilla,
+               columnas: [{ key: "asig_fam", label: "Asignación" }],
+               excluir: ["id","trabajador_id","contrato_id", "registro_planilla_quincenal_detalle"]
+            })
+      }
+      
+      if(planillaQuincenalTipoRh.length>0){
+            hojas.push({ nombre_libro: "Honorarios", datos: planillaQuincenalTipoRh ,excluir: ["id","trabajador_id", "contrato_id","registro_planilla_quincenal_detalle"]})
+      }
+      
+      setLibroExcel(hojas)
+
+   },[planillaQuincenalTipoPlanilla,planillaQuincenalTipoRh])
+
   return (
-    <div className="min-h-full flex-1  flex flex-col items-center">
-      <div className="w-full px-4 max-w-7xl py-6 flex justify-between">
-        <div className="flex flex-col w-full">
+    <div className="min-h-full flex-1  flex flex-col items-center space-y-6">
+      
+        <div className="w-full px-7 flex justify-between">
           
           <Filtro
             filiales={filiales}
@@ -104,7 +131,10 @@ const HistoricoPlanillaQuincenal = ({setEsCalculo, setDataMantenimiento}) => {
             Buscar={buscarPlanillaQuincenalCerrada}
           />
         </div>
-      </div>
+    
+        {libroExcel&&<ExportExcel nombreArchivo={`Planilla_mensual_${filtro.mes||"x"}.xlsx`} hojas={libroExcel}/>}
+         
+
         {loading ? (
               <div className="w-full px-20  max-w-8xl min-h-[50vh] flex items-center">
                 <div className="w-full flex flex-col items-center justify-center">

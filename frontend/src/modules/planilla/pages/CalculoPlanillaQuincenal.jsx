@@ -33,6 +33,7 @@ const CalculoPlanillaQuincenal = ({setDataMantenimiento, setEsCalculo}) => {
     filial_id: "",
   });
 
+
   const buscarPlanillaQuincenal = async () => {
     try {
       setLoading(true);
@@ -68,6 +69,7 @@ const CalculoPlanillaQuincenal = ({setDataMantenimiento, setEsCalculo}) => {
     obtenerFiliales();
   }, []);
 
+  
   const renderTipoPlanilla = () => {
 
     if (planillaQuincenalTipoPlanilla) {
@@ -102,6 +104,8 @@ const CalculoPlanillaQuincenal = ({setDataMantenimiento, setEsCalculo}) => {
           />
         </div>
       </div>
+
+
       {loading ? (
         <div className="w-full px-20  max-w-8xl min-h-[50vh] flex items-center">
           <div className="w-full flex flex-col items-center justify-center">

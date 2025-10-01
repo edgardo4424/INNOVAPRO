@@ -44,19 +44,23 @@ const ExportExcel = ({ hojas, nombreArchivo = "exportacion.xlsx" }) => {
           return nuevo;
         });
 
-        // 4. Crear worksheet sin encabezado automático
-        const ws = XLSX.utils.json_to_sheet(datosFiltrados, {
-          header: todasLasClaves,
-          skipHeader: true,
-        });
+         // 4. Crear hoja vacía con headers personalizados
+        const ws = XLSX.utils.json_to_sheet([], { header: todasLasClaves });
 
-        // 5. Crear fila de encabezados legibles
+        // 5. Agregar encabezados legibles a la fila 1 (A1)
         const encabezadosVisibles = todasLasClaves.map(
-          (key) => mapaEtiquetas[key] || key,
+          (key) => mapaEtiquetas[key] || key
         );
-
         XLSX.utils.sheet_add_aoa(ws, [encabezadosVisibles], { origin: "A1" });
 
+         // 6. Agregar datos a partir de la fila 2 (A2)
+        XLSX.utils.sheet_add_json(ws, datosFiltrados, {
+          header: todasLasClaves,
+          skipHeader: true,
+          origin: "A2",
+        });
+
+         // 7. Agregar la hoja al libro
         XLSX.utils.book_append_sheet(
           wb,
           ws,

@@ -8,10 +8,8 @@ module.exports = async (baja_trabajador_id, darBajaTrabajadoresRepository) => {
      const transaction = await db.sequelize.transaction(); // Iniciar transacción
     try {
     // ? buscamos la factura
-    console.log('baja_trabajador_id', baja_trabajador_id);
+   
     const informacionLiquidacion = await darBajaTrabajadoresRepository.obtenerInformacionPdfLiquidacionv2(baja_trabajador_id, transaction);
-
-    console.log('informacionLiquidacion', informacionLiquidacion);
 
     if (!informacionLiquidacion.respuesta.liquidacion) {
          await transaction.rollback(); // ❌ Deshacer todo si algo falla
@@ -20,8 +18,6 @@ module.exports = async (baja_trabajador_id, darBajaTrabajadoresRepository) => {
 
     const liquidacionData = informacionLiquidacion?.respuesta?.liquidacion || {};
     const liquidacionTrabajador = liquidacionData.get({ plain: true });
-
-    console.log('liquidacionTrabajador', liquidacionTrabajador);
 
     // 2. Armar modelo PDF
     const docDefinition = await liquidacionTemplatev2(liquidacionTrabajador);

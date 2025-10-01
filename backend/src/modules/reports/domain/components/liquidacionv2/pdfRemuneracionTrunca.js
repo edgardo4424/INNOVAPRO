@@ -7,6 +7,8 @@ const {
 function pdfRemuneracionTrunca({ detalles_liquidacion, trabajador, contrato }) {
   const { informacionLiquidacion, remuneracion_trunca } = detalles_liquidacion;
 
+  if(remuneracion_trunca == null) return
+
   const sueldoBase = redondear2(contrato.sueldo);
 
   const sueldoBaseRemuneracion = redondear2(
@@ -17,14 +19,12 @@ function pdfRemuneracionTrunca({ detalles_liquidacion, trabajador, contrato }) {
     informacionLiquidacion.asignacion_familiar
   );
 
-  const montoFaltas = redondear2(remuneracion_trunca?.monto_dias_faltas);
+  const montoFaltas = redondear2(remuneracion_trunca?.monto_dias_faltas_y_no_computados);
 
   
   const descuento_planilla_quincenal = redondear2(
     remuneracion_trunca.descuento_planilla_quincenal
   )
-
-  console.log('descuento_planilla_quincenal', descuento_planilla_quincenal);
 
   const subtotalRemuneracionTrunca = redondear2(
     sueldoBaseRemuneracion + asignacion_familiar - montoFaltas - descuento_planilla_quincenal
@@ -132,7 +132,7 @@ function pdfRemuneracionTrunca({ detalles_liquidacion, trabajador, contrato }) {
                       ? []
                       : [
                           [
-                            { text: "ASIGNACIÓN FAMILIAR" },
+                            { text: "ASIGNACIÓN FAMILIAR", colSpan: 2 },
                             {},
                             {
                               text: asignacion_familiar.toFixed(2),
@@ -148,7 +148,7 @@ function pdfRemuneracionTrunca({ detalles_liquidacion, trabajador, contrato }) {
                       ? []
                       : [
                           [
-                            { text: "DESCUENTO PLANILLA QUINCENAL" },
+                            { text: "DESCUENTO PLANILLA QUINCENAL", colSpan: 2 },
                             {},
                             {
                               text: `-${descuento_planilla_quincenal.toFixed(2)}`,
@@ -166,7 +166,7 @@ function pdfRemuneracionTrunca({ detalles_liquidacion, trabajador, contrato }) {
                       : [
                           [
                             {
-                              text: `FALTA ${remuneracion_trunca.dias_faltas} días`,
+                              text: `FALTA ${remuneracion_trunca.dias_faltas_y_no_computados} días`,
                             },
                             {},
                             {

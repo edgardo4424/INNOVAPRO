@@ -13,6 +13,9 @@ import { useEffect, useState } from "react";
 const FiltroHistorico = ({ filtro, setFiltro, Buscar, periodos }) => {
    const [filiales, setFiliales] = useState([]);
 
+   const anhoActual = new Date().getFullYear();
+const utlimosCincoAnhos = Array.from({ length: 5 }, (_, i) => anhoActual - i);
+
    useEffect(() => {
       const ObtenerFiliales = async () => {
          try {
@@ -49,12 +52,11 @@ const FiltroHistorico = ({ filtro, setFiltro, Buscar, periodos }) => {
                         <SelectValue placeholder="Selecciona el año" />
                      </SelectTrigger>
                      <SelectContent>
-                        <SelectItem value="2025">2025</SelectItem>
-                        <SelectItem value="2026">2026</SelectItem>
-                        <SelectItem value="2027">2027</SelectItem>
-                        <SelectItem value="2028">2028</SelectItem>
-                        <SelectItem value="2029">2029</SelectItem>
-                        <SelectItem value="2030">2030</SelectItem>
+                        {utlimosCincoAnhos.map((year) => (
+                  <SelectItem key={year} value={String(year)}>
+                    {year}
+                  </SelectItem>
+                ))}
                      </SelectContent>
                   </Select>
                </div>

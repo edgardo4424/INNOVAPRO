@@ -7,13 +7,11 @@ const {
 function pdfSeccionGratificacionTrunca({ contrato, detalles_liquidacion }) {
   const { gratificacionTrunca, informacionLiquidacion } = detalles_liquidacion;
 
-  console.log('informacionLiquidacion', informacionLiquidacion);
-
+  if(gratificacionTrunca == null) return; 
   const mensaje_gratificacion_tiempo_computado = construirMensajeTiempo({
     meses: gratificacionTrunca.meses_computados,
     dias: gratificacionTrunca.dias_computados,
   });
-
 
   const totalMeses = redondear2(gratificacionTrunca.gratificacion_meses) || 0;
   const totalDias = redondear2(gratificacionTrunca.gratificacion_dias) || 0;
