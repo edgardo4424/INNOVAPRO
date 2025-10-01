@@ -134,7 +134,7 @@ const InfDocumentoForm = () => {
         <div className="col-span-full flex flex-col gap-1 sm:col-span-1">
           {" "}
           {/* Col-span-full para que ocupe todo el ancho en móviles */}
-          <Label htmlFor="tipo_operacion">Tipo de Operación</Label>
+          <Label htmlFor="tipo_operacion" className="font-semibold text-gray-700">Tipo de Operación</Label>
           <Select
             name="tipo_operacion"
             value={notaCreditoDebito.tipo_Operacion}
@@ -169,7 +169,7 @@ const InfDocumentoForm = () => {
 
         {/* Tipo de Documento */}
         <div>
-          <Label htmlFor="tipo_Doc" className="mb-1 block text-left text-sm">
+          <Label htmlFor="tipo_Doc" className="mb-1 block text-left text-sm font-semibold text-gray-700">
             Tipo de Documento
           </Label>
           <Select
@@ -193,7 +193,7 @@ const InfDocumentoForm = () => {
 
         {/* Serie */}
         <div>
-          <Label htmlFor="serie">Serie</Label>
+          <Label htmlFor="serie" className="font-semibold text-gray-700">Serie</Label>
           <Select
             value={notaCreditoDebito.serie}
             name="serie"
@@ -242,7 +242,7 @@ const InfDocumentoForm = () => {
 
         {/* Correlativo */}
         <div>
-          <Label htmlFor="correlativo" className="mb-1 block text-left text-sm">
+          <Label htmlFor="correlativo" className="mb-1 block text-left text-sm font-semibold text-gray-700">
             Correlativo
           </Label>
           <div className="flex justify-between gap-x-2">
@@ -279,7 +279,7 @@ const InfDocumentoForm = () => {
 
         {/* Tipo de Moneda */}
         <div className="col-span-full flex flex-col gap-1 sm:col-span-1">
-          <Label htmlFor="tipo_moneda">Tipo de Moneda</Label>
+          <Label htmlFor="tipo_moneda" className="font-semibold text-gray-700">Tipo de Moneda</Label>
           <Select
             value={notaCreditoDebito.tipo_Moneda}
             name="tipo_Moneda"
@@ -301,7 +301,7 @@ const InfDocumentoForm = () => {
         <div>
           <Label
             htmlFor="fecha_Emision"
-            className="mb-1 block text-left text-sm"
+            className="mb-1 block text-left text-sm font-semibold text-gray-700"
           >
             Fecha de Emisión
           </Label>
@@ -320,7 +320,7 @@ const InfDocumentoForm = () => {
         <div className="col-span-full flex flex-col gap-1 sm:col-span-1">
           {" "}
           {/* Col-span-full para que ocupe todo el ancho en móviles */}
-          <Label htmlFor="tipo_operacion">Ruc de la empresa</Label>
+          <Label htmlFor="tipo_operacion" className="font-semibold text-gray-700">Ruc de la empresa</Label>
           <Select
             name="tipo_operacion"
             value={notaCreditoDebito.empresa_Ruc}
@@ -345,7 +345,7 @@ const InfDocumentoForm = () => {
 
         {/* Observación */}
         <div className="col-span-1 md:col-span-2 lg:col-span-2">
-          <Label htmlFor="observacion" className="mb-1 block text-left text-sm">
+          <Label htmlFor="observacion" className="mb-1 block text-left text-sm font-semibold text-gray-700">
             Observación
           </Label>
           <textarea

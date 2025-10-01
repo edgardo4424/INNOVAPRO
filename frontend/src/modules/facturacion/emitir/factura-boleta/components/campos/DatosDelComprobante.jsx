@@ -101,10 +101,11 @@ const DatosDelComprobante = () => {
       >
         {/* Tipo de Operacion */}
         <div className="col-span-full flex flex-col gap-1 sm:col-span-1">
-          <Label htmlFor="tipo_operacion">Tipo de Venta</Label>
+          <Label htmlFor="tipo_operacion" className="font-semibold text-gray-700">Tipo de Venta</Label>
           <Select
             name="tipo_operacion"
             value={factura.tipo_Operacion}
+            disabled
             readOnly
             // onValueChange={(value) =>{
             //   console.log('first');
@@ -129,7 +130,7 @@ const DatosDelComprobante = () => {
 
         {/* Serie */}
         <div className="col-span-full flex flex-col gap-1 sm:col-span-1">
-          <Label htmlFor="serie">Serie</Label>
+          <Label htmlFor="serie" className="font-semibold text-gray-700">Serie</Label>
           <Select
             value={factura.serie}
             name="serie"
@@ -156,7 +157,7 @@ const DatosDelComprobante = () => {
 
         {/* Correlativo */}
         <div className="col-span-full flex flex-col gap-1 sm:col-span-1">
-          <Label htmlFor="correlativo">Correlativo</Label>
+          <Label htmlFor="correlativo" className="font-semibold text-gray-700">Correlativo</Label>
           <div className="flex justify-between gap-x-2">
             <div className="relative w-full">
               <Input
@@ -192,7 +193,7 @@ const DatosDelComprobante = () => {
 
         {/* Tipo de Documento */}
         <div className="col-span-full flex flex-col gap-1 sm:col-span-1">
-          <Label htmlFor="tipo_doc">Tipo de Documento</Label>
+          <Label htmlFor="tipo_doc" className="font-semibold text-gray-700">Tipo de Documento</Label>
           <Select
             value={factura.tipo_Doc}
             name="tipo_Doc"
@@ -210,7 +211,7 @@ const DatosDelComprobante = () => {
 
         {/* Tipo de Moneda */}
         <div className="col-span-full flex flex-col gap-1 sm:col-span-1">
-          <Label htmlFor="tipo_moneda">Tipo de Moneda</Label>
+          <Label htmlFor="tipo_moneda" className="font-semibold text-gray-700">Tipo de Moneda</Label>
           <Select
             value={factura.tipo_Moneda}
             name="tipo_Moneda"
@@ -228,7 +229,7 @@ const DatosDelComprobante = () => {
 
         {/* Fecha Emision */}
         <div className="col-span-full flex flex-col gap-1 sm:col-span-1">
-          <Label htmlFor="fecha_emision">Fecha Emisión</Label>
+          <Label htmlFor="fecha_emision" className="font-semibold text-gray-700">Fecha Emisión</Label>
           <Calendar22
             Dato={factura}
             setDato={setFactura}
@@ -238,7 +239,7 @@ const DatosDelComprobante = () => {
 
         {/* Ruc de la empresa */}
         <div className="col-span-full flex flex-col gap-1 sm:col-span-1 md:col-span-1">
-          <Label htmlFor="empresa_Ruc">Ruc de la empresa</Label>
+          <Label htmlFor="empresa_Ruc" className="font-semibold text-gray-700">Ruc de la empresa</Label>
           <Select
             value={factura.empresa_Ruc}
             name="empresa_Ruc"
@@ -259,7 +260,7 @@ const DatosDelComprobante = () => {
 
         {/* Orden de compra */}
         <div className="col-span-full flex flex-col gap-1 sm:col-span-1">
-          <Label htmlFor="correlativo">Orden de compra</Label>
+          <Label htmlFor="correlativo" className="font-semibold text-gray-700">Orden de compra</Label>
           <Input
             type="text"
             name="orden_compra"

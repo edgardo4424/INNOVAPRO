@@ -82,7 +82,6 @@ const FormaDePago = () => {
 
   useEffect(() => {
     // if (isRecalculatingRef.current) return;
-  console.log("pasp")
     if (factura.forma_pago.length > 0) {
       isRecalculatingRef.current = true;
 

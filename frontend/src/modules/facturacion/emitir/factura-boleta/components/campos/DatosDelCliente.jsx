@@ -100,7 +100,7 @@ const DatosDelCliente = () => {
             >
                 {/* Tipo de Documento */}
                 <div className="flex flex-col gap-1 col-span-full sm:col-span-1">
-                    <Label htmlFor="cliente_tipo_doc">Tipo de Documento</Label>
+                    <Label htmlFor="cliente_tipo_doc" className="font-semibold text-gray-700">Tipo de Documento</Label>
                     <Select value={cliente_Tipo_Doc} onValueChange={handleSelectChange}>
                         <SelectTrigger className="w-full border border-gray-300 rounded-md shadow-sm">
                             <SelectValue placeholder="Selecciona tipo de documento" />
@@ -124,7 +124,7 @@ const DatosDelCliente = () => {
 
                 {/* Número de Documento */}
                 <div className="flex flex-col gap-1 col-span-full sm:col-span-1">
-                    <Label htmlFor="cliente_num_doc">Número de Documento</Label>
+                    <Label htmlFor="cliente_num_doc" className="font-semibold text-gray-700">Número de Documento</Label>
                     <div className="flex gap-2">
                         <Input
                             type="number"
@@ -149,7 +149,7 @@ const DatosDelCliente = () => {
 
                 {/* Razón Social */}
                 <div className="flex flex-col gap-1 col-span-1">
-                    <Label htmlFor="cliente_razon_social">Razón Social</Label>
+                    <Label htmlFor="cliente_razon_social" className="font-semibold text-gray-700">Razón Social</Label>
                     <Input
                         type="text"
                         name="cliente_Razon_Social"
@@ -163,7 +163,7 @@ const DatosDelCliente = () => {
 
                 {/* Dirección */}
                 <div className="flex flex-col gap-1 col-span-1 lg:col-span-3">
-                    <Label htmlFor="cliente_direccion">Dirección</Label>
+                    <Label htmlFor="cliente_direccion" className="font-semibold text-gray-700">Dirección</Label>
                     <Input
                         type="text"
                         name="cliente_Direccion"
