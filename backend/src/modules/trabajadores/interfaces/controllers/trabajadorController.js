@@ -17,6 +17,7 @@ const obtenerTrabajadoresYcontratos = require("../../application/useCases/obtene
 const obtenerTrabajadoresConContratosVigentes = require("../../application/useCases/obtenerTrabajadoresConContratosVigentes");
 const obtenerTrabajadoresPorAreaCargo = require("../../application/useCases/obtenerTrabajadoresPorAreaCargo");
 const obtenerAreas = require("../../application/useCases/obtenerAreas");
+const sincronizacion_marcate = require("../../application/useCases/sincronizacion_marcate");
 
 
 const trabajadorRepository = new SequelizeTrabajadorRepository();
@@ -73,6 +74,18 @@ const TrabajadorController = {
          res.status(trabajadores.codigo).json(trabajadores.respuesta);
       } catch (error) {
          res.status(500).json({ error: error.message });
+      }
+   },
+   async sincronizarMarcate(req,res){
+      console.log("Holaaaa");
+      
+      try {
+         const response=await sincronizacion_marcate();
+         res.status(response.codigo).json(response.respuesta);
+      } catch (error) {
+         console.log(error);
+         res.status(500).json({ error: error });
+
       }
    },
    async obtenerTrabajadoresPorAreaCargo(req, res) {

@@ -9,6 +9,7 @@ const asistenciaService = {
    actualizarAsistenciaSimple: (data) => api.put("/asistencias/simple", data),
    obtenerTrabajadoresPorArea: (fecha) =>api.get(`/trabajadores/area/${fecha}`),
    getAreas:()=>api.get("/trabajadores/areas"),
+   sincronizarAsistencia:()=>api.get("/trabajadores/sincronizar/marcate/erp")
 
 };
 
