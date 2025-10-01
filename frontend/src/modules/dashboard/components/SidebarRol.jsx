@@ -240,6 +240,47 @@ const modulesByRole = {
          path: "/asistencia-area",
       },
       { name: "Asistencia general", path: "/asistencia-general" },
+      {
+         group: "Trabajadores",
+         items: [
+            { name: "Crear Trabajador", path: "/crear-trabajador" },
+            { name: "Tabla de Trabajadores", path: "/tabla-trabajadores" },
+            { name: "Dar de Baja", path: "/trabajadores-dados-de-baja" },
+         ],
+      },
+      {   group: "Gestión de Transporte",
+         items: [
+            { name: "Choferes", path: "/transporte/choferes" },
+            { name: "Transportistas", path: "/transporte/transportistas" },
+         ],
+      },
+      {
+         group: "Beneficios",
+         items: [
+            { name: "Vacaciones", path: "/vacaciones" },
+            { name: "Cts", path: "/gestion-cts" },
+            { name: "Gratificacion", path: "/gratificacion" },
+            { name: "Bonos", path: "/bonos" },
+            { name: "Adelanto de sueldo", path: "/adelanto-sueldo" },
+
+         ],
+      },
+      {
+         group: "Retenciones",
+         items: [
+            { name: "Quinta Categoría", path: "/retenciones/calculoQuintaCategoria" },
+         ],
+      },
+      {
+         group: "Planilla",
+         items: [
+            { name: "Planilla quincenal", path: "/planilla-quincenal" },
+            { name: "Planilla mensual", path: "/planilla-mensual" },
+
+         ],
+      },
+      { name: "Datos de mantenimiento", path: "/data-mantenimiento" },
+
 
    ],
    "Gerente de comercialización":[
