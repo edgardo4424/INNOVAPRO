@@ -82,6 +82,11 @@ export async function validarFacturaCompleta(Factura, Detraccion, retencionActiv
         validos = false;
     }
 
+    if (Factura.empresa_Ruc == Factura.cliente_Num_Doc) {
+        errores.cliente_Num_Doc = "El RUC del cliente no puede ser igual al RUC del emisor.";
+        validos = false;
+    }
+
     // 1. Validar campos globales
     camposGlobales.forEach(campo => {
         if (isNullOrEmpty(Factura[campo.key])) {

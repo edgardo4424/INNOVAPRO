@@ -79,7 +79,7 @@ const FormaDePago = () => {
     precioDolarActual,
     detraccionActivado,
   ]);
-
++
   useEffect(() => {
     // if (isRecalculatingRef.current) return;
     if (factura.forma_pago.length > 0) {

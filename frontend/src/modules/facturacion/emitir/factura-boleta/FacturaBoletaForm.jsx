@@ -24,6 +24,7 @@ const FacturaBoletaForm = () => {
     Limpiar,
     setPrecioDolarActual,
     detraccion,
+    detraccionActivado,
     retencion,
     detallesExtra,
     setDetallesExtra,
@@ -53,6 +54,7 @@ const FacturaBoletaForm = () => {
     let nuevoBorrador = {
       ...factura,
       valores_Detraccion: detraccion,
+      detraccion_activada: detraccionActivado,
       valores_Retencion: retencion,
       retencion_activada: retencionActivado,
       valores_Detalles_Extra: detallesExtra,
@@ -104,7 +106,6 @@ const FacturaBoletaForm = () => {
   useEffect(() => {
     const cambioDelDia = async () => {
       try {
-        
         const hoyISO = new Intl.DateTimeFormat("en-CA", {
           timeZone: "America/Lima",
         }).format(new Date());

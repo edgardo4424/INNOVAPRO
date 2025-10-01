@@ -67,14 +67,16 @@ const factilizaService = {
 
     // CDR: puede venir como texto (<?cdr...) o como base64/zip. Devuelve tal cual.
     consultarCdr: async (documento) => {
-        // forzamos texto para evitar que Axios intente parsear JSON
         const res = await apiFactilizaConsultasDocumentos.post(
             `/invoice/cdr`,
             documento,
-            { responseType: "text", transformResponse: [(d) => d] }
+            {
+                responseType: "arraybuffer", // 👈 clave
+            }
         );
-        return res.data; // string (XML) o string base64, según tu API
+        return res;
     },
+
 
     // PDF: tu API devuelve binario -> pedimos blob y exponemos headers útiles
     consultarPdf: async (documento) => {

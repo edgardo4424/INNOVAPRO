@@ -13,7 +13,7 @@ function pdfheader(
 
     let qr = false;
 
-    if (doc.tipo_Doc == "09") {
+    if (doc.tipo_Doc == "01" || doc.tipo_Doc == "03" || doc.tipo_Doc == "09") {
         qr = true;
     }
 

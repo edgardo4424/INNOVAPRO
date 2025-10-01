@@ -219,7 +219,7 @@ export function NotaProvider({ children }) {
         await factilizaService.enviarNota(notaCreditoDebito);
 
       // ? 3. Evaluar la respuesta de la API de factilización.
-      if (status === 200 && success) {
+      if (status === 200 && data?.sunatResponse?.cdrResponse?.code == "0") {
         // ? ÉXITO en SUNAT: La nota fue aceptada.
 
         // ? a. Formatear la respuesta de SUNAT para el registro en la base de datos.
@@ -282,7 +282,7 @@ export function NotaProvider({ children }) {
             data: notaEmitida,
           };
         }
-      } else if (status === 200 && !success) {
+      } else if (status === 200  && data?.sunatResponse?.cdrResponse?.code != "0") {
         // ? ERROR LÓGICO: La API respondió, pero SUNAT rechazó el documento.
         result = {
           success: false,

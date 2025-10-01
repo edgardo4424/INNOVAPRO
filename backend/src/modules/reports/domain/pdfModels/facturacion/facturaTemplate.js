@@ -10,6 +10,31 @@ const { pdfDetalleRelacionados } = require("../../components/facturacion/factura
 const { pdfLegendFactura } = require("../../components/facturacion/factura-boleta/pdfLegendFactura");
 const { pdfCuotasFactura } = require("../../components/facturacion/factura-boleta/pdfCuotasFactura");
 
+// ? pie cuentas de banco
+const cuenta_andamios_electricos = path.join(__dirname, "../../../../../assets/pdf/cuentas_banco/cuentas_AE.png")
+const cuenta_encofrados_innova = path.join(__dirname, "../../../../../assets/pdf/cuentas_banco/cuentas_EI.png")
+const cuenta_indek = path.join(__dirname, "../../../../../assets/pdf/cuentas_banco/cuentas_IA.png")
+const cuenta_rental = path.join(__dirname, "../../../../../assets/pdf/cuentas_banco/cuentas_IR.png")
+const cuenta_green = path.join(__dirname, "../../../../../assets/pdf/cuentas_banco/cuentas_IG.png")
+
+function renderPieCuenta(factura) {
+    const ruc = (factura.empresa_ruc || factura.empresa_Ruc).toString().trim();
+    if (ruc == '20562974998') {
+        return cuenta_encofrados_innova
+    } else if (ruc == '20602696643') {
+        return cuenta_andamios_electricos
+    } else if (ruc == '20555389052') {
+        return cuenta_indek
+    } else if (ruc == '20603021933') {
+        return cuenta_rental
+    } else if (ruc == '20610202358') {
+        return cuenta_green
+    }
+    else {
+        return ''
+    }
+}
+
 function facturaTemplate(data) {
     const factura = data[0];
     //* Colores base
@@ -71,6 +96,21 @@ function facturaTemplate(data) {
             unbreakable: true,
             stack: [pdfCuotasFactura(factura)]
         },
+        {
+            unbreakable: true,
+            stack: [
+                (() => {
+                    const imgPath = renderPieCuenta(factura);
+                    return imgPath
+                        ? {
+                            image: imgPath,
+                            width: 515,            // ancho útil aproximado en A4 con márgenes [40,40,40,60]
+                            margin: [0, 10, 0, 0]
+                        }
+                        : { text: '' };
+                })()
+            ]
+        }
     ];
 
     return {
