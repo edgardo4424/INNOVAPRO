@@ -18,5 +18,6 @@ router.get("/trabajadores-contratos", TrabajadorController.obtenerTrabajadoresYc
 router.post("/contratos-vigentes", TrabajadorController.obtenerTrabajadoresConContratosVigentes);
 router.get("/:id", TrabajadorController.obtenerTrabajadorPorId);
 router.get("/:dni/filiales-vigentes", TrabajadorController.listarFilialesVigentes);
- 
+router.get("/sincronizar/marcate/erp", TrabajadorController.sincronizarMarcate );
+
 module.exports = router;
