@@ -33,6 +33,17 @@ async function liquidacionTemplatev2(data) {
     filial_id
   } = data;
 
+  let detallesLiquidacion = detalles_liquidacion;
+
+try {
+  if (typeof detallesLiquidacion === "string" && detallesLiquidacion.trim() !== "") {
+    detallesLiquidacion = JSON.parse(detallesLiquidacion);
+  }
+} catch (e) {
+  console.error("Error al parsear detallesLiquidacion:", e);
+  detallesLiquidacion = {};
+}
+
   return {
     content: [
       pdfHeader({
@@ -42,7 +53,7 @@ async function liquidacionTemplatev2(data) {
      await pdfInfoTrabajador({
         trabajador,
         contrato,
-        detalles_liquidacion,
+        detalles_liquidacion: detallesLiquidacion,
         fecha_ingreso,
         fecha_baja,
         motivo
@@ -50,12 +61,12 @@ async function liquidacionTemplatev2(data) {
 
       lineaHorizontal(),
 
-      pdfSeccionCtsTrunca({ contrato, detalles_liquidacion }),
-      pdfSeccionVacaciones({contrato, detalles_liquidacion, trabajador}),
-      pdfSeccionGratificacionTrunca({ contrato, detalles_liquidacion }),
-      pdfRemuneracionTrunca({ detalles_liquidacion, trabajador, contrato }),
-      pdfTotalAPagar({ detalles_liquidacion }), 
-      await pdfFooter({ filial_id, trabajador, detalles_liquidacion }),
+      pdfSeccionCtsTrunca({ contrato, detalles_liquidacion: detallesLiquidacion }),
+      pdfSeccionVacaciones({contrato, detalles_liquidacion: detallesLiquidacion, trabajador}),
+      pdfSeccionGratificacionTrunca({ contrato, detalles_liquidacion: detallesLiquidacion }),
+      pdfRemuneracionTrunca({ detalles_liquidacion: detallesLiquidacion, trabajador, contrato }),
+      pdfTotalAPagar({ detalles_liquidacion: detallesLiquidacion }), 
+      await pdfFooter({ filial_id, trabajador, detalles_liquidacion: detallesLiquidacion }),
     ],
     styles: {
       docTypeHeaderCenter: {

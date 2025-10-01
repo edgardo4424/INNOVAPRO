@@ -50,8 +50,19 @@ const HistoricoPlanillaQuincenal = ({setEsCalculo, setDataMantenimiento}) => {
         filial_id: filtro.filial_id,
       }
       const res = await planillaQuincenalService.obtenerPlanillaQuincenalCerradas(dataPOST);
+      
+   let dataMantenimientoDetalle = res.data_mantenimiento_detalle;
+
+      try {
+  if (typeof dataMantenimientoDetalle === "string" && dataMantenimientoDetalle.trim() !== "") {
+    dataMantenimientoDetalle = JSON.parse(dataMantenimientoDetalle);
+  }
+} catch (e) {
+  console.error("Error al parsear data_mantenimiento_detalle:", e);
+  dataMantenimientoDetalle = {};
+}
    
-      setDataMantenimiento(res.data_mantenimiento_detalle)
+      setDataMantenimiento(dataMantenimientoDetalle || {});
       setPlanillaQuincenalTipoPlanilla(res.planilla.trabajadores);
       setPlanillaQuincenalTipoRh(res.honorarios.trabajadores);
     } catch (error) {
