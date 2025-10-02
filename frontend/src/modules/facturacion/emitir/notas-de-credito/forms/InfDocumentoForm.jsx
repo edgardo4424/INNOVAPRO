@@ -7,11 +7,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { useNota } from "@/modules/facturacion/context/NotaContext";
+import { formatDateTime } from "@/modules/facturacion/utils/formateos";
 import { LoaderCircle, Search, SquarePen } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { Calendar22 } from "../../factura-boleta/components/Calendar22";
 
 const InfDocumentoForm = () => {
   const {
@@ -337,14 +336,22 @@ const InfDocumentoForm = () => {
           >
             Fecha de Emisión
           </Label>
-          <Calendar22
+          {/* <Calendar22
             tipo={"fecha_Emision"}
             Dato={notaCreditoDebito}
-            setDato={setNotaCreditoDebito}
+            // setDato={setNotaCreditoDebito}
             type="datetime-local"
             id="fecha_Emision"
             name="fecha_Emision"
             className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:outline-none"
+          /> */}
+          <input
+            type="string"
+            id="fecha_Emision"
+            name="fecha_Emision"
+            className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:outline-none"
+            value={formatDateTime(notaCreditoDebito?.fecha_Emision) || ""}
+            readOnly
           />
         </div>
 

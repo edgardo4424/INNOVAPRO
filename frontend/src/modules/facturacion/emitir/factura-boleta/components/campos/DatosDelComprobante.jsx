@@ -11,6 +11,7 @@ import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaCon
 import { LoaderCircle, Search, SquarePen } from "lucide-react";
 import { useEffect } from "react";
 import { Calendar22 } from "../Calendar22";
+import { Calendar44 } from "../Calendar44";
 
 const DatosDelComprobante = () => {
   const {
@@ -230,7 +231,7 @@ const DatosDelComprobante = () => {
         {/* Fecha Emision */}
         <div className="col-span-full flex flex-col gap-1 sm:col-span-1">
           <Label htmlFor="fecha_emision" className="font-semibold text-gray-700">Fecha Emisión</Label>
-          <Calendar22
+          <Calendar44
             Dato={factura}
             setDato={setFactura}
             tipo="fecha_Emision"
