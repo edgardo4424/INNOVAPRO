@@ -24,7 +24,7 @@ export default function ClienteForm({
    handleCancel,
    handleSubmit,
 }) {
-   console.log("CONTACTOS QUE LLEGAN: ", contactos);
+ 
    const handleChange = (e) => {
       const { name, value } = e.target;
       setCliente((prev) => ({ ...prev, [name]: value }));
@@ -270,34 +270,36 @@ export default function ClienteForm({
                {/* Contactos asociados */}
                <div className="flex  flex-col gap-1 relative">
                   <Label>Contactos</Label>
+           
                   <Select
-                     isMulti
-                     options={contactos.map((c) => ({
-                        value: c.id,
-                        label: c.razon_social || c.nombre,
-                     }))}
-                     value={contactos
-                        .filter((c) =>
-                           cliente.contactos_asociados?.includes(c.id)
-                        )
-                        .map((c) => ({
-                           value: c.id,
-                           label: c.nombre,
-                        }))}
-                     onChange={(selected) =>
-                        setCliente((prev) => ({
-                           ...prev,
-                           contactos_asociados: selected.map((s) => s.value),
-                        }))
-                     }
-                     placeholder="Selecciona clientes..."
-                     menuPlacement="top"
-                  />
+  isMulti
+  options={contactos.map((c) => ({
+    value: c.id,
+    label: c.razon_social || c.nombre,
+  }))}
+  value={contactos
+    .filter((c) =>
+      cliente.contactos_asociados?.some((asoc) => asoc.id === c.id)
+    )
+    .map((c) => ({
+      value: c.id,
+      label: c.nombre,
+    }))}
+  onChange={(selected) =>
+    setCliente((prev) => ({
+      ...prev,
+      contactos_asociados: selected.map((s) => s.value), // array de IDs
+    }))
+  }
+  placeholder="Selecciona contactos..."
+  menuPlacement="top"
+/>
                </div>
 
                {/* Obras asociadas */}
                <div className="flex flex-col gap-1 relative">
                   <Label>Obras</Label>
+                  
                   <Select
                      isMulti
                      options={obras.map((o) => ({
@@ -305,14 +307,19 @@ export default function ClienteForm({
                         label: o.nombre,
                      }))}
                      value={obras
-                        .filter((o) => cliente.obras_asociadas?.includes(o.id))
-                        .map((o) => ({ value: o.id, label: o.nombre }))}
-                     onChange={(selected) =>
-                        setCliente((prev) => ({
-                           ...prev,
-                           obras_asociadas: selected.map((s) => s.value),
-                        }))
-                     }
+    .filter((c) =>
+      cliente.obras_asociadas?.some((asoc) => asoc.id === c.id)
+    )
+    .map((c) => ({
+      value: c.id,
+      label: c.nombre,
+    }))}
+  onChange={(selected) =>
+    setCliente((prev) => ({
+      ...prev,
+      obras_asociadas: selected.map((s) => s.value), // array de IDs
+    }))
+  }
                      placeholder="Selecciona obras..."
                      menuPlacement="top"
                   />
