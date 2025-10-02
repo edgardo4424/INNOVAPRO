@@ -11,7 +11,7 @@ const db = require("../../../../database/models"); // Llamamos los modelos seque
 const { Op, fn, col } = require('sequelize');
 
 class SequelizeFacturaRepository {
-    
+
     static toNumber(value) {
         return value != null ? parseFloat(value) : 0;
     }
@@ -138,11 +138,12 @@ class SequelizeFacturaRepository {
         const { ruc, tipo_Doc } = body
 
         const facturas = await Factura.findAll({
-            where: { empresa_ruc: ruc, tipo_Doc: tipo_Doc, 
+            where: {
+                empresa_ruc: ruc, tipo_Doc: tipo_Doc,
                 estado: {
                     [Op.notIn]: ['ANULADA', 'ANULADA-NOTA']
                 }
-             },
+            },
             include: [
                 {
                     model: DetalleFactura,
@@ -269,7 +270,7 @@ class SequelizeFacturaRepository {
     }
 
     async buscarExistencia(serie, correlativo, estado) {
-        
+
         const where = {
             serie: serie,
             correlativo: correlativo,
@@ -587,6 +588,19 @@ class SequelizeFacturaRepository {
                 data: null
             };
         }
+    }
+
+    async reporte(query) {
+        return await Factura.findAll({
+            where: {
+                empresa_ruc: query.empresa_ruc,
+                estado: query.estado,
+                tipo_Doc: query.tipo_Doc,
+                correlativo: query.correlativo,
+                serie: query.serie,
+            },
+        }
+        );
     }
 }
 

@@ -41,4 +41,8 @@ router.post("/nota-debito-credito/crear", notaController.crearNota);
 router.post("/nota-debito-credito/detallada", notaController.obtenerNotaDetallada);
 router.post("/nota-debito-credito/correlativo", notaController.obtenerCorrelativo);
 
+
+// ?? FACTURA - NOTA - GUIA
+router.post("/reporte-venta", facturaController.obtenerFacturas);
+
 module.exports = router;
