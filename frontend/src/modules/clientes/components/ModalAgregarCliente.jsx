@@ -51,11 +51,8 @@ export default function ModalAgregarCliente({ agregarCliente, obras, contactos }
       }
 
       try {
-         console.log("ruc Limpio", rucLimpio);
 
          const resultado = await buscarDatosPorRUC(rucLimpio);
-
-         console.log("respuesta del ruc", resultado);
 
          if (!resultado || !resultado.razon_social) {
             setRucNoEncontrado(true);
@@ -86,13 +83,10 @@ export default function ModalAgregarCliente({ agregarCliente, obras, contactos }
       if (!clienteSeguro.tipo_documento) {
          clienteSeguro.tipo_documento = "DNI";
       }
-      console.log("CLIENTE (SEGURO)", clienteSeguro)
       const erroresValidados =
          cliente.tipo === "Persona Jurídica"
             ? validarClienteJuridico(cliente)
             : validarClienteNatural(cliente);
-
-      console.log("erroresValidados", erroresValidados)
 
       if (Object.keys(erroresValidados).length > 0) {
          setErrores(erroresValidados);
@@ -115,7 +109,7 @@ export default function ModalAgregarCliente({ agregarCliente, obras, contactos }
             );
             return;
          }
-         console.log("CLIENTE ENVIADO A CREAR: ", clienteLimpio);
+
          const res = await clientesService.crear(clienteLimpio);
          if (res.data && res.data.cliente) {
             agregarCliente(res.data.cliente);

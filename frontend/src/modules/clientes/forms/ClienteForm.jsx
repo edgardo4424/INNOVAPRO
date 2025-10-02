@@ -24,8 +24,6 @@ export default function ClienteForm({
    handleCancel,
    handleSubmit,
 }) {
-   console.log("CONTACTOS QUE LLEGAN: ", contactos);
-   console.log('OBRAS QUE LLEGAN: ', obras);
    const handleChange = (e) => {
       const { name, value } = e.target;
       setCliente((prev) => ({ ...prev, [name]: value }));
@@ -271,10 +269,6 @@ export default function ClienteForm({
                {/* Contactos asociados */}
                <div className="flex  flex-col gap-1 relative">
                   <Label>Contactos</Label>
-                  {console.log('cliente', cliente)}
-                  {console.log('contactos', contactos)}
-                  {console.log('cliente.contactos_asociados', cliente.contactos_asociados)}
-                 
                    <Select
                      isMulti
                      options={contactos.map((o) => ({
@@ -298,7 +292,6 @@ export default function ClienteForm({
                {/* Obras asociadas */}
                <div className="flex flex-col gap-1 relative">
                   <Label>Obras</Label>
-                   {console.log('cliente.obras_asociados', cliente.obras_asociadas)}
                   <Select
                      isMulti
                      options={obras.map((o) => ({

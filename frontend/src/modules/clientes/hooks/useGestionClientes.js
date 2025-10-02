@@ -21,7 +21,6 @@ export function useGestionClientes() {
           contactosService.obtenerClientes(),
           contactosService.obtenerObras(),
         ]);
-        console.log("CONTACTOS DEL BACKEND: ", contactos)
         setContactos(contactos);
         setClientes(clientes);
         setObras(obras);
