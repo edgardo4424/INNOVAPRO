@@ -99,7 +99,6 @@ const ListaDeDocumentosVariables = ({ closeModal }) => {
       ...notaCreditoDebito,
       // ?ASIGNAR SERIE
       serie: serieAsignada,
-      tipo_Moneda: doc.tipo_Moneda,
       // ?fecha emision afectado
       fecha_Emision_Afectado: doc.fecha_Emision,
       // ?Datos del comprobante
