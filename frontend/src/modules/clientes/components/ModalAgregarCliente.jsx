@@ -91,7 +91,7 @@ export default function ModalAgregarCliente({ agregarCliente }) {
          cliente.tipo === "Persona Jurídica"
             ? validarClienteJuridico(cliente)
             : validarClienteNatural(cliente);
-
+console.log("erroresValidados", erroresValidados);
       if (Object.keys(erroresValidados).length > 0) {
          setErrores(erroresValidados);
          toast.warning("Completa los campos correctamente");
@@ -118,6 +118,7 @@ export default function ModalAgregarCliente({ agregarCliente }) {
          if (res.data && res.data.cliente) {
             agregarCliente(res.data.cliente);
             toast.success("Cliente agregado correctamente");
+            setCliente(initialForm);
             setOpen(false);
          } else {
             toast.error("Error al guardar el cliente");
