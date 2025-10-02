@@ -4,11 +4,11 @@ const guiaInical = {
     serie: "T001",
     correlativo: "",
     observacion: "",
-    fecha_Emision: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
+    fecha_Emision: new Date().toISOString().split("T")[0] + "T" + new Date().toTimeString().split(" ")[0] + "-05:00",
 
     // ?Datos del comprobante de referencia
-    obra : "",
-    nro_contrato : "",
+    obra: "",
+    nro_contrato: "",
 
     estado_Documento: "0",
     empresa_Ruc: "20562974998",
@@ -20,8 +20,7 @@ const guiaInical = {
 
     guia_Envio_Peso_Total: 0,
     guia_Envio_Und_Peso_Total: "KGM",
-    guia_Envio_Fec_Traslado: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
-
+    guia_Envio_Fec_Traslado: new Date(Date.now() + 1800000).toISOString().split("T")[0] + "T" + new Date(Date.now() + 1800000).toTimeString().split(" ")[0] + "-05:00",
 
     guia_Envio_Partida_Ubigeo: "",
     guia_Envio_Partida_Direccion: "",

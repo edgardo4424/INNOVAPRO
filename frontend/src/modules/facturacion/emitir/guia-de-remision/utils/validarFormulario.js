@@ -144,10 +144,10 @@ export async function validarFormulario(tipo, Guia) {
     const fechaEmision = new Date(Guia.fecha_Emision);
     const fechaTraslado = new Date(Guia.guia_Envio_Fec_Traslado);
 
-    if (fechaTraslado < fechaEmision) {
-        errores.guia_Envio_Fec_Traslado = "La fecha de traslado no puede ser anterior a la fecha de emisión.";
-        validos = false;
-    }
+    // if (fechaTraslado < fechaEmision) {
+    //     errores.guia_Envio_Fec_Traslado = "La fecha de traslado no puede ser anterior a la fecha de emisión.";
+    //     validos = false;
+    // }
 
     if (isNaN(fechaEmision.getTime())) {
         errores.fecha_Emision = "La fecha de emisión es inválida.";
