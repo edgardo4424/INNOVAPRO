@@ -26,4 +26,6 @@ router.post("/planilla-mensual-trunca", planillaController.calcularPlanillaMensu
 
 router.post("/exportar-plame",planillaController.exportarPlame);
 
+// router.get("/validar/recibos-por-honorarios/plame")
+
 module.exports = router; 

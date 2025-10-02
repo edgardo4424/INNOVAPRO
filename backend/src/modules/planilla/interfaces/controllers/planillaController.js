@@ -136,6 +136,10 @@ const PlanillaController = {
       }
    },
 
+   async obtenerReciboPorPlanilla(req,res){
+
+   },
+
    async obtenerPlanillaMensualCerradas(req, res) {
       try {
          const planillaMensualCerradas = await obtenerPlanillaMensualCerradas(
@@ -153,8 +157,6 @@ const PlanillaController = {
    },
    async exportarPlame(req, res) {
       try {
-         console.log("Funcion para descargar el plame ejecutandose");
-         
          await exportarPlame(
             res,
             req.body,

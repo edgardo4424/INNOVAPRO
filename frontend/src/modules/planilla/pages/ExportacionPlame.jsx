@@ -90,7 +90,6 @@ const ExportacionPlame = () => {
           setFiltro={setFiltro}
           Buscar={buscarPlame}
           nombre_button="Buscar Plame"
-          hidden={true}
         />
       </div>
 

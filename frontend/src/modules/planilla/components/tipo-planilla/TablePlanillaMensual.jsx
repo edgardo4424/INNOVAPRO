@@ -272,7 +272,7 @@ const TablePlanillaMensual = ({
                      </TableHead>
 
                      <TableHead
-                        colSpan={3}
+                        colSpan={4}
                         className="text-center border-r h-5 text-white border-black"
                      >
                         APORTES AL TRABAJADOR

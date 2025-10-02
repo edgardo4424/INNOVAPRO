@@ -1191,7 +1191,7 @@ class SequelizePlanillaRepository {
       PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT,
       PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA,
       PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA,
-      PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO
+      PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO,
     } = await datosMantPM();
     //Todo: validamos que el mes que se recibe se integrara la grati o cts
     const { periodocts, periodograti } = calcular_periodo_grati_cts(fin_de_mes);
@@ -1221,7 +1221,6 @@ class SequelizePlanillaRepository {
     if (!response_trabajador) throw new Error("El trabajador no existe.");
     //Se valido que el trabajador exista
     const trabajador = response_trabajador.get({ plain: true });
-
 
     const contratoInicial = filtrarContratosSinInterrupcion(
       trabajador.contratos_laborales
@@ -1289,7 +1288,7 @@ class SequelizePlanillaRepository {
         faltas_justificadas,
         licencia_con_goce,
         licencia_sin_goce,
-     } = await obtenerDatosAsistencia(inicio_real, fin_real, trabajador.id);
+      } = await obtenerDatosAsistencia(inicio_real, fin_real, trabajador.id);
 
       const {
         CANTIDAD_HE_PRIMERA_Q,
@@ -1334,7 +1333,7 @@ class SequelizePlanillaRepository {
       // prettier-ignore
       planilla.licencia_con_goce_de_haber = ((c.sueldo / 30)*licencia_con_goce).toFixed(2);
       // prettier-ignore
-      planilla.licencia_sin_goce_de_haber = ((c.sueldo / DIAS_LABORALES) * licencia_sin_goce).toFixed(2);      
+      planilla.licencia_sin_goce_de_haber = ((c.sueldo / DIAS_LABORALES) * licencia_sin_goce).toFixed(2);
       planilla.vacaciones = (
         (c.sueldo / 30) *
         CANTIDAD_VACACIONES_GOZADAS
@@ -1435,6 +1434,30 @@ class SequelizePlanillaRepository {
 
     const planillaMensualCerradas = await PlanillaMensual.findAll({
       where: { cierre_planilla_mensual_id: cierrePlanillaMensual.id },
+      transaction,
+    });
+    return planillaMensualCerradas;
+  }
+  async obtenerReciboPorPlanilla(
+    fecha_anio_mes,
+    filial_id,
+    transaction = null
+  ) {
+    const cierrePlanillaMensual = await CierresPlanillaMensual.findOne({
+      where: { periodo: fecha_anio_mes, filial_id },
+      transaction,
+    });
+    if (!cierrePlanillaMensual) {
+      return [];
+    }
+
+    const planillaMensualCerradas = await PlanillaMensual.findAll({
+      where: { cierre_planilla_mensual_id: cierrePlanillaMensual.id ,tipo_contrato:'HONORARIOS'},
+      include:[
+        {
+          model:db.recibos_por_honorarios
+        }
+      ],
       transaction,
     });
     return planillaMensualCerradas;

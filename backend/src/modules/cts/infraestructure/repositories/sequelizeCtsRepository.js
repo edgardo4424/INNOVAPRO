@@ -149,8 +149,7 @@ class SequelizeCtsRopository {
          contratos_limpios
       );
 
-      if (trabajador.id == 7)
-         console.log("Los contrtos en rango de valeria: ", contratos_en_rango);
+
 
       // TODO: Union de contratos que tienen el mismo regimen
       const contratos_unidos = unificarContratos(contratos_en_rango);
@@ -269,7 +268,7 @@ class SequelizeCtsRopository {
          }
          r.cts_depositar =
             r.cts_meses + r.cts_dias - r.faltas_importe - r.no_computable;
-         if (trabajador.domiciliado) {
+         if (!trabajador.domiciliado) {
             r.no_domiciliado = r.cts_depositar * 0.3;
          }
 
