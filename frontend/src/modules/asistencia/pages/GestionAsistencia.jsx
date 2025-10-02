@@ -9,6 +9,7 @@ import AsistenciaSimple from "../components/AsistenciaSimple";
 import InputTest from "../components/InputTest";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 const GestionAsistencia = () => {
    const [searchParams] = useSearchParams();
@@ -23,7 +24,8 @@ const GestionAsistencia = () => {
    const [trabajadoresFiltrados,setTrabajadoresFiltrados]=useState([]);
    const [areas,setAreas]=useState([]);
    const [area_id,setAreaId]=useState(undefined);
-   const [nombreArea,setNombreArea]=useState("")
+   const [nombreArea,setNombreArea]=useState("");
+   const [asistenciasSincronizacion,setAsistenciasSincronizacion]=useState(null)
 
    const obtenerAreas=async()=>{
       try {
@@ -102,28 +104,24 @@ const GestionAsistencia = () => {
       return stats;
    }, [trabajadores]);
    const sincronizacion=async()=>{
-
       try {
+      setAsistenciasSincronizacion(null)
       let lista_dni=[];
       for (const t of trabajadores) {
-            lista_dni.push(t.numero_documento)
+            lista_dni.push(t.numero_documento);
       }
          const payload={
          fecha:fechaSeleccionada,
          lista_dni
       }
-
        const response=  await asistenciaService.sincronizarAsistencia(payload);
-       for (const t of trabajadores) {
-         if (!t.asistencia) {
-            let asistencia={...t.asistencia}
-
-            lista_dni.push(t.numero_documento)
-         }
-            
-      }
-       console.log("Response en el front",response.data.datos);
-       
+       if(response.data.datos.length>0){
+         setAsistenciasSincronizacion(response.data.datos);      
+         toast.success("Asistencias de marcate obtenidas correctamente.")
+       }
+       else{
+          toast.info("No hay asistencias registradas en marcate para esta área")
+       }
       } catch (error) {
          console.log("Error en el front: ",error);
          
@@ -208,6 +206,7 @@ const GestionAsistencia = () => {
                                     trabajador={trabajador}
                                     obtenerTrabajadores={obtenerTrabajadores}
                                     fecha={fechaSeleccionada}
+                                    asistenciasSincronizacion={asistenciasSincronizacion}
                                  />
                               </div>
                            </CardContent>
