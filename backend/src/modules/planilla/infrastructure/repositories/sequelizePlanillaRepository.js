@@ -155,11 +155,19 @@ class SequelizePlanillaRepository {
         {
           model: db.trabajadores,
           as: "trabajador",
+          include: [
+            {
+              model: db.cargos,
+              as: "cargo",
+            }
+          ]
         },
       ],
       raw: false,
       transaction,
     });
+
+    console.log('contratosPlanilla', contratosPlanilla);
 
     const contratosRxh = await db.contratos_laborales.findAll({
       where: {
@@ -177,6 +185,12 @@ class SequelizePlanillaRepository {
         {
           model: db.trabajadores,
           as: "trabajador",
+          include: [
+            {
+              model: db.cargos,
+              as: "cargo",
+            }
+          ]
         },
       ],
       raw: false,
@@ -300,16 +314,7 @@ class SequelizePlanillaRepository {
         quinta_categoria +
         totalAdelantosSueldo
       ).toFixed(2);
-     if (trabajador.id == 7) {
-  console.log('--- Detalle de descuentos para Valeria ---');
-  console.log('ONP:', onp);
-  console.log('AFP:', afp);
-  console.log('Seguro:', seguro);
-  console.log('Comisión:', comision);
-  console.log('Quinta Categoría:', quinta_categoria);
-  console.log('Adelantos de Sueldo:', totalAdelantosSueldo);
-  console.log('Total Descuentos:', totalDescuentos);
-}
+     
       
       const totalAPagar = +(sueldoBruto - totalDescuentos).toFixed(2);
 
@@ -343,7 +348,10 @@ class SequelizePlanillaRepository {
         tipo_afp: sistema_pension == "AFP" ? tipo_afp : "ONP",
 
         adelanto_sueldo: totalAdelantosSueldo,
-        adelantos_ids: adelantos_ids
+        adelantos_ids: adelantos_ids,
+
+        cargo: trabajador.cargo ? trabajador.cargo.nombre : null,
+
       });
     }
 
@@ -402,8 +410,6 @@ class SequelizePlanillaRepository {
 
     const listaPlanillaTipoPlanillaConDetalle = unificarTrabajadoresTipoPlanillaQuincenal(
       listaPlanillaTipoPlanilla)
-
-       console.dir(listaPlanillaTipoPlanillaConDetalle, { depth: null });
 
 
  const listaPlanillaTipoHonorariosConDetalle = unificarTrabajadoresTipoHonorariosQuincenal(
