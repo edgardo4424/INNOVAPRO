@@ -12,7 +12,7 @@ class SequelizeContactoRepository {
 
     const nuevoContacto = await Contacto.create(contactoData, { transaction });
 
-    // Relacionar clientes si existen
+    /* // Relacionar clientes si existen
     if (contactoData.clientesIds && contactoData.clientesIds.length > 0) {
       const clientesRelacionados = await db.clientes.findAll({
         where: { id: contactoData.clientesIds },
@@ -42,7 +42,7 @@ class SequelizeContactoRepository {
         }));
         await db.contacto_obras.bulkCreate(contactoObras, { transaction });
       }
-    }
+    } */
 
     await transaction.commit();
 
@@ -50,22 +50,7 @@ class SequelizeContactoRepository {
   }
 
   async obtenerContactos() {
-    return await Contacto.findAll({
-      include: [
-        {
-          model: db.clientes,
-          through: { attributes: [] },
-          as: "clientes_asociados",
-          attributes: ["id", "razon_social"], // 🔥 Solo obtener los atributos necesarios
-        },
-        {
-          model: db.obras,
-          through: { attributes: [] },
-          as: "obras_asociadas",
-          attributes: ["id", "nombre", "direccion", "ubicacion"], // 🔥 Solo obtener los atributos necesarios
-        },
-      ],
-    }); // Llama al método del repositorio para obtener todos los contactos
+    return await Contacto.findAll();
   }
 
   async obtenerPorId(id) {

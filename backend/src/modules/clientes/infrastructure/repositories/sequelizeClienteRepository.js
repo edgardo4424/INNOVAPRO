@@ -14,7 +14,7 @@ class SequelizeClienteRepository {
     async obtenerClientes() {
         return await Cliente.findAll({
             attributes: [
-                "id", "razon_social", "tipo", "ruc", "dni", "telefono", "email",
+                "id", "razon_social", "tipo", "ruc", "tipo_documento", "dni", "telefono", "email",
                 "domicilio_fiscal", "representante_legal", "dni_representante", "creado_por", "fecha_creacion"
             ],
             include: [
@@ -22,6 +22,11 @@ class SequelizeClienteRepository {
                     model: db.contactos,
                     through: { attributes: [] }, // Relación correcta con la tabla intermedia
                     as: "contactos_asociados",
+                },
+                {
+                    model: db.obras,
+                    through: { attributes: [] }, // Relación correcta con la tabla intermedia
+                    as: "obras_asociadas",
                 },
             ]
         }); // Llama al método del repositorio para obtener todos los clientes

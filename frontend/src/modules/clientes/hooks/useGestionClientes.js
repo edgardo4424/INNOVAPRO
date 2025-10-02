@@ -1,27 +1,36 @@
 import { useEffect, useState } from "react";
 import clientesService from "../services/clientesService";
+import contactosService from "../../contactos/services/contactosService";
 import { toast } from "react-toastify";
 import { confirmToast } from "../../../utils/confirmToast";
 
 export function useGestionClientes() {
   const [clientes, setClientes] = useState([]);
+  const [contactos, setContactos ] = useState([]);
+  const [obras, setObras ] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const [paginaActual, setPaginaActual] = useState(1);
   const [clientesPorPagina,setClientesPorPagina] = useState(5);
 
-
-  // 🔄 Cargar clientes al iniciar
+  // 🔄 Cargar datos iniciales
   useEffect(() => {
-    async function fetchClientes() {
+    async function cargarDatos() {
       try {
-        const res = await clientesService.obtenerTodos();
-        setClientes(res.data || []);
+        const [contactos, clientes, obras] = await Promise.all([
+          contactosService.obtenerContactos(),
+          contactosService.obtenerClientes(),
+          contactosService.obtenerObras(),
+        ]);
+        console.log("CONTACTOS DEL BACKEND: ", contactos)
+        setContactos(contactos);
+        setClientes(clientes);
+        setObras(obras);
       } catch (error) {
-        console.error("❌ Error al obtener clientes:", error);
-        toast.error("Error al cargar clientes");
+        console.error("❌ Error al cargar datos:", error);
+        toast.error("Error al cargar contactos");
       }
     }
-    fetchClientes();
+    cargarDatos();
   }, []);
 
 
@@ -67,6 +76,8 @@ export function useGestionClientes() {
 
   return {
       clientesPaginados,
+      contactos,
+      obras,
       busqueda,
       setBusqueda,
       paginaActual,

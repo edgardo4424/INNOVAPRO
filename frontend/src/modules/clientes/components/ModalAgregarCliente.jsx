@@ -32,10 +32,13 @@ const initialForm = {
    representante_legal: "",
    dni_representante: "",
 };
-export default function ModalAgregarCliente({ agregarCliente }) {
+export default function ModalAgregarCliente({ agregarCliente, obras, contactos }) {
    const { user } = useAuth();
 
    const [cliente, setCliente] = useState(initialForm);
+
+   console.log("OBRAS EN MODAL: ", obras);
+   console.log("CONTACTOS EN MODAL: ", contactos);
 
    const [errores, setErrores] = useState({});
 
@@ -150,6 +153,8 @@ export default function ModalAgregarCliente({ agregarCliente }) {
             </AlertDialogHeader>
             <ClienteForm
                cliente={cliente}
+               contactos={contactos}
+               obras={obras}
                setCliente={setCliente}
                errores={errores}
                handleBuscarRUC={handleBuscarRUC}

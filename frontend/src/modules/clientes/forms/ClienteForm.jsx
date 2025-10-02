@@ -2,18 +2,21 @@ import { AlertDialogFooter } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-   Select,
+   Select as UISelect,
    SelectContent,
    SelectItem,
    SelectTrigger,
    SelectValue,
 } from "@/components/ui/select";
+import Select from "react-select";
 import React, { useEffect, useState } from "react";
 import { obtenerClienteSchema } from "../schema/cliente.schema";
 import { Button } from "@/components/ui/button";
 
 export default function ClienteForm({
    cliente,
+   contactos,
+   obras,
    setCliente,
    errores,
    handleBuscarRUC,
@@ -21,6 +24,7 @@ export default function ClienteForm({
    handleCancel,
    handleSubmit,
 }) {
+   console.log("CONTACTOS QUE LLEGAN: ", contactos);
    const handleChange = (e) => {
       const { name, value } = e.target;
       setCliente((prev) => ({ ...prev, [name]: value }));
@@ -40,7 +44,7 @@ export default function ClienteForm({
                {/* Tipo de cliente */}
                <div className="flex flex-col gap-1">
                   <Label className="truncate">Tipo de Cliente:</Label>
-                  <Select
+                  <UISelect
                      name="tipo"
                      value={cliente.tipo}
                      onV
@@ -59,7 +63,7 @@ export default function ClienteForm({
                            Persona Natural
                         </SelectItem>
                      </SelectContent>
-                  </Select>
+                  </UISelect>
                </div>
 
                {/* Razon Social / Nombre */}
@@ -135,7 +139,7 @@ export default function ClienteForm({
 
                      <div className="flex flex-col gap-1">
                         <Label>Tipo de Documento</Label>
-                        <Select
+                        <UISelect
                            name="tipo_documento"
                            value={cliente.tipo_documento ?? ""}
                            onValueChange={(value) =>
@@ -153,7 +157,7 @@ export default function ClienteForm({
                               <SelectItem value="CE">CE</SelectItem>
                               <SelectItem value></SelectItem>
                            </SelectContent>
-                        </Select>
+                        </UISelect>
                      </div>
 
                      {/* Documento del representante */}
@@ -195,7 +199,7 @@ export default function ClienteForm({
                      {/* Tipo de documento */}
                      <div className="flex flex-col gap-1">
                         <Label>Tipo de Documento</Label>
-                        <Select
+                        <UISelect
                            name="tipo_documento"
                            value={cliente.tipo_documento ?? ""}
                            onValueChange={(value) =>
@@ -213,7 +217,7 @@ export default function ClienteForm({
                               <SelectItem value="CE">CE</SelectItem>
                               <SelectItem value></SelectItem>
                            </SelectContent>
-                        </Select>
+                        </UISelect>
                      </div>
 
                      {/* Documento */}
@@ -261,6 +265,57 @@ export default function ClienteForm({
                   {getError("email") && (
                      <p className="error-message">{getError("email")}</p>
                   )}
+               </div>
+
+               {/* Contactos asociados */}
+               <div className="flex  flex-col gap-1 relative">
+                  <Label>Contactos</Label>
+                  <Select
+                     isMulti
+                     options={contactos.map((c) => ({
+                        value: c.id,
+                        label: c.razon_social || c.nombre,
+                     }))}
+                     value={contactos
+                        .filter((c) =>
+                           cliente.contactos_asociados?.includes(c.id)
+                        )
+                        .map((c) => ({
+                           value: c.id,
+                           label: c.nombre,
+                        }))}
+                     onChange={(selected) =>
+                        setCliente((prev) => ({
+                           ...prev,
+                           contactos_asociados: selected.map((s) => s.value),
+                        }))
+                     }
+                     placeholder="Selecciona clientes..."
+                     menuPlacement="top"
+                  />
+               </div>
+
+               {/* Obras asociadas */}
+               <div className="flex flex-col gap-1 relative">
+                  <Label>Obras</Label>
+                  <Select
+                     isMulti
+                     options={obras.map((o) => ({
+                        value: o.id,
+                        label: o.nombre,
+                     }))}
+                     value={obras
+                        .filter((o) => cliente.obras_asociadas?.includes(o.id))
+                        .map((o) => ({ value: o.id, label: o.nombre }))}
+                     onChange={(selected) =>
+                        setCliente((prev) => ({
+                           ...prev,
+                           obras_asociadas: selected.map((s) => s.value),
+                        }))
+                     }
+                     placeholder="Selecciona obras..."
+                     menuPlacement="top"
+                  />
                </div>
 
                {/* Botones */}
