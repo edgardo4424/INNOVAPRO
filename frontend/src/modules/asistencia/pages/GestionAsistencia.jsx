@@ -9,6 +9,7 @@ import AsistenciaSimple from "../components/AsistenciaSimple";
 import InputTest from "../components/InputTest";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 const GestionAsistencia = () => {
    const [searchParams] = useSearchParams();
@@ -23,7 +24,8 @@ const GestionAsistencia = () => {
    const [trabajadoresFiltrados,setTrabajadoresFiltrados]=useState([]);
    const [areas,setAreas]=useState([]);
    const [area_id,setAreaId]=useState(undefined);
-   const [nombreArea,setNombreArea]=useState("")
+   const [nombreArea,setNombreArea]=useState("");
+   const [asistenciasSincronizacion,setAsistenciasSincronizacion]=useState(null)
 
    const obtenerAreas=async()=>{
       try {
@@ -103,9 +105,23 @@ const GestionAsistencia = () => {
    }, [trabajadores]);
    const sincronizacion=async()=>{
       try {
-       const response=  await asistenciaService.sincronizarAsistencia();
-       console.log("Response en el front");
-       
+      setAsistenciasSincronizacion(null)
+      let lista_dni=[];
+      for (const t of trabajadores) {
+            lista_dni.push(t.numero_documento);
+      }
+         const payload={
+         fecha:fechaSeleccionada,
+         lista_dni
+      }
+       const response=  await asistenciaService.sincronizarAsistencia(payload);
+       if(response.data.datos.length>0){
+         setAsistenciasSincronizacion(response.data.datos);      
+         toast.success("Asistencias de marcate obtenidas correctamente.")
+       }
+       else{
+          toast.info("No hay asistencias registradas en marcate para esta área")
+       }
       } catch (error) {
          console.log("Error en el front: ",error);
          
@@ -131,9 +147,11 @@ const GestionAsistencia = () => {
                       ))}
                    </SelectContent>
             </Select>
-            <Button onClick={sincronizacion}>
-               Sincronizacion
-            </Button>
+            {(trabajadores&&trabajadores.length>0)&&
+               <Button onClick={sincronizacion}>
+                  Sincronizacion
+               </Button>
+            }
             </section>
             <AsistenciaHeader
                trabajadores={trabajadores}
@@ -188,6 +206,7 @@ const GestionAsistencia = () => {
                                     trabajador={trabajador}
                                     obtenerTrabajadores={obtenerTrabajadores}
                                     fecha={fechaSeleccionada}
+                                    asistenciasSincronizacion={asistenciasSincronizacion}
                                  />
                               </div>
                            </CardContent>

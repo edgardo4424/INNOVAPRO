@@ -13,9 +13,9 @@ router.use("/condiciones", condicionAlquilerRoutes);
 router.use("/auth", require("../modules/auth/interfaces/routes/authRoutes"));
 
 // 📌 PROTEGER RUTAS DESPUÉS DEL LOGIN
-if (process.env.NODE_ENV !== "development") {
-    router.use(verificarToken);
-}
+// if (process.env.NODE_ENV !== "development") {
+//     router.use(verificarToken);
+// }
 
 // Cargar dinámicamente rutas de módulos con Clean Architecture
 registerModuleRoutes(router, null); // Ya protegemos globamente con el middleware verificarToken

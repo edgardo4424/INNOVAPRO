@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import asistenciaService from "../services/asistenciaService";
 import { toast } from "react-toastify";
 
-export const useAsistencia = (trabajador, obtenerTrabajadores, date) => {
+export const useAsistencia = (trabajador, obtenerTrabajadores, date,asistenciasSincronizacion=[]) => {
    const [asistencia, setAsistencia] = useState({
       trabajador_id: trabajador.id,
       estado_asistencia: "",
@@ -20,7 +20,15 @@ export const useAsistencia = (trabajador, obtenerTrabajadores, date) => {
       ],
       gastos: [],
    });
-
+   useEffect(()=>{
+      if(asistenciasSincronizacion&&asistenciasSincronizacion.length>0){
+         const asistencia_marcate=asistenciasSincronizacion.find((a)=>a.trabajador.dni==trabajador.numero_documento);
+         if (asistencia_marcate) {
+            console.log("Asistencia existe ",asistencia_marcate);
+            setAsistencia({...asistencia,estado_asistencia:asistencia_marcate.asistencia.estado})
+         }
+      }
+   },[asistenciasSincronizacion])
    const [inputsDeshabilitados, setInputsDeshabilitados] = useState(false);
    useEffect(() => {
       if (trabajador.asistencia) {

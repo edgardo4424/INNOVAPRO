@@ -1,21 +1,21 @@
-const axios = require("axios");
+const asistenciaClient = require("../../infraestructure/service/apiMarcate");
 
-module.exports = async () => {
-  const asistenciaClient = axios.create({
-    baseURL: "https://marcate.grupoinnova.pe/backend/api/data_publica/",
-    headers: {
-      Authorization:
-        "ApiKey marcate_sk_51a43bbf0d3b2e34b42a24fb89fd29b0a4ca551adcb2a89f5e418253cbad5788",
-    },
-    timeout: 10000,
-  });
+module.exports = async (payload) => {
 
+  console.log("Paylaod recibido: ",payload);
+  
+  const{lista_dni,fecha}=payload;
+  if (!lista_dni||!fecha) {
+    return{
+      codigo:400,
+      respuesta:"Payload enviado incorrecto"
+    }
+  }
   const respuesta = await asistenciaClient.post("asistencias-por-fecha", {
-    fecha: "2025-10-01",
-    lista_dni_trabajadores: ["4861869"],
+    fecha: fecha,
+    lista_dni_trabajadores: [lista_dni],
   });
-
-  // console.log("Respuesta del sistema de asistencias:", datosAsistencias);
+  // console.log("Respuesta del sistema de asistencias:", respuesta.data);
   return {
     codigo: 200,
     respuesta: respuesta.data,

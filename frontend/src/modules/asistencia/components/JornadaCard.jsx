@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/tooltip";
 import { estadosAsistencia } from "./AsistenciaSimple";
 
-const JornadaCard = ({ trabajador, obtenerTrabajadores, fecha }) => {
+const JornadaCard = ({ trabajador, obtenerTrabajadores, fecha,asistenciasSincronizacion }) => {
    const {
       asistencia,
       actualizarAsistencia,
@@ -31,7 +31,8 @@ const JornadaCard = ({ trabajador, obtenerTrabajadores, fecha }) => {
       guardarAsistencia,
       inputsDeshabilitados,
       actualizarEstadoAsistencia,
-   } = useAsistencia(trabajador, obtenerTrabajadores, fecha);
+      
+   } = useAsistencia(trabajador, obtenerTrabajadores, fecha,asistenciasSincronizacion);
 
    const {
       jornadaPrincipal,
