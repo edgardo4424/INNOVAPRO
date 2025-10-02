@@ -34,7 +34,6 @@ export function NotaProvider({ children }) {
     { value: "BDT2", doc: "03" },
   ];
 
-
   // ?? BORRADOR
   const [idBorrador, setIdBorrador] = useState(null);
 
@@ -221,7 +220,11 @@ export function NotaProvider({ children }) {
         await factilizaService.enviarNota(notaCreditoDebito);
 
       // ? 3. Evaluar la respuesta de la API de factilización.
-      if (status === 200 && data?.sunatResponse?.cdrResponse?.code == "0") {
+      if (
+        status === 200 &&
+        (data?.sunatResponse?.cdrResponse?.code == "0" ||
+          data?.error?.code == "HTTP")
+      ) {
         // ? ÉXITO en SUNAT: La nota fue aceptada.
 
         // ? a. Formatear la respuesta de SUNAT para el registro en la base de datos.

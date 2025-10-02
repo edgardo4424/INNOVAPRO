@@ -48,6 +48,12 @@ function pdfInformativoHeader(
                             {
                                 stack: [
                                     { text: `RELLENO`, style: 'clientData', color: bg_color },
+
+                                    {
+                                        text: `Fecha de emisión:   ${utils.formatDateTime(nota.fecha_Emision) || "—"}`,
+                                        style: 'clientData',
+                                        preserveLeadingSpaces: true
+                                    },
                                     {
                                         text: `RUC:           ${nota.cliente_Num_Doc || "—"}`,
                                         style: 'clientData',
@@ -63,7 +69,6 @@ function pdfInformativoHeader(
                                         style: 'clientData',
                                         preserveLeadingSpaces: true
                                     },
-                                    { text: `RELLENO`, style: 'clientData', color: bg_color },
                                     { text: `RELLENO`, style: 'clientData', color: bg_color },
                                 ],
                                 margin: [5, 3, 5, 3],
@@ -107,7 +112,7 @@ function pdfInformativoHeader(
                                         preserveLeadingSpaces: true
                                     },
                                     {
-                                        text: `Motivo:            ${truncateText(utils.getMotivoLabel(nota.motivo_Cod, nota.tipo_Doc), 25)}`,
+                                        text: `Motivo:            ${utils.getMotivoLabel(nota.motivo_Cod, nota.tipo_Doc) || "—"}`,
                                         style: 'clientData',
                                         preserveLeadingSpaces: true
                                     },

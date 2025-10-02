@@ -371,7 +371,11 @@ export function FacturaBoletaProvider({ children }) {
       const { status, success, message, data } =
         await factilizaService.enviarFactura(facturaAEmitir);
 
-      if (status === 200 && data?.sunatResponse?.cdrResponse?.code == "0") {
+      if (
+        status === 200 &&
+        (data?.sunatResponse?.cdrResponse?.code == "0" ||
+          data?.error?.code == "HTTP")
+      ) {
         const sunat_respuest = {
           hash: data?.hash || null,
           cdr_zip: data?.sunatResponse?.cdrZip || null, // Descomentar si es necesario
