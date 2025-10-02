@@ -38,6 +38,8 @@ const campos_04 = [
 const TablaProductos = ({ setOpen }) => {
     const { notaCreditoDebito, setItemActual, documentoAAfectar } = useNota();
 
+    const { tipo_Moneda: moneda } = notaCreditoDebito
+
     // Calcula una vez qué campos se muestran según el motivo
     const visiblesSet = useMemo(() => {
         if (notaCreditoDebito?.motivo_Cod === "03" && notaCreditoDebito?.tipo_Doc === "07") return new Set(campos_03);
@@ -109,16 +111,16 @@ const TablaProductos = ({ setOpen }) => {
                                     {producto?.unidad || ""}
                                 </TableCell>
                                 <TableCell className={valoresVisibles("valor_unitario") ? "" : "hidden"}>
-                                    S/. {producto?.monto_Valor_Unitario ?? 0}
+                                   {moneda == "PEN" ? "S/." : "$"} {producto?.monto_Valor_Unitario ?? 0}
                                 </TableCell>
                                 <TableCell className={valoresVisibles("precio_unitario") ? "" : "hidden"}>
-                                    S/. {producto?.monto_Precio_Unitario ?? 0}
+                                    {moneda == "PEN" ? "S/." : "$"} {producto?.monto_Precio_Unitario ?? 0}
                                 </TableCell>
                                 <TableCell className={valoresVisibles("igv") ? "" : "hidden"}>
-                                    S/. {producto?.igv ?? 0}
+                                    {moneda == "PEN" ? "S/." : "$"} {producto?.igv ?? 0}
                                 </TableCell>
                                 <TableCell className={valoresVisibles("monto_precio_unitario") ? "" : "hidden"}>
-                                    S/. {producto?.monto_Precio_Unitario ?? 0}
+                                    {moneda == "PEN" ? "S/." : "$"} {producto?.monto_Precio_Unitario ?? 0}
                                 </TableCell>
                             </TableRow>
                         ))}

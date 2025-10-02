@@ -83,23 +83,23 @@ const ListaDeDocumentosVariables = ({ closeModal }) => {
 
   const handleClick = (doc) => {
     console.log(doc);
+    // Determinar serie en base al tipo de documento afectado y tipo de nota
+    const getSerie = (tipoDoc, tipoNota) => {
+      const seriesMap = {
+        "01": { "07": "FCT1", "08": "FDT1" }, // Factura → Nota Crédito o Débito
+        "03": { "07": "BCT1", "08": "BDT1" }, // Boleta → Nota Crédito o Débito
+      };
+      return seriesMap[tipoDoc]?.[tipoNota] || null;
+    };
+
+    const serieAsignada = getSerie(doc.tipo_Doc, nCD);
+
     // ?Rellenamos los datos de la factura/boleta a afectar
     setNotaCreditoDebito({
       ...notaCreditoDebito,
       // ?ASIGNAR SERIE
-      serie:
-        doc.tipo_Doc === "01"
-          ? nCD === "07"
-            ? "FC01"
-            : "FD01"
-          : doc.tipo_Doc === "03"
-            ? nCD === "07"
-              ? "BC01"
-              : "BD01"
-            : nCD === "07"
-              ? "TC01"
-              : "TD01",
-
+      serie: serieAsignada,
+      tipo_Moneda: doc.tipo_Moneda,
       // ?fecha emision afectado
       fecha_Emision_Afectado: doc.fecha_Emision,
       // ?Datos del comprobante

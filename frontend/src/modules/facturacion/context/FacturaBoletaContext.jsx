@@ -24,18 +24,18 @@ export function FacturaBoletaProvider({ children }) {
   const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
 
   const serieFactura = [
-    { value: "F001" },
-    { value: "F002" },
-    { value: "F003" },
-    { value: "F004" },
-    { value: "F005" },
+    { value: "FT01", descrip: "ALQUILER" },
+    { value: "FT02", descrip: "TRANSPORTE" },
+    { value: "FT03", descrip: "SERVICIO" },
+    { value: "FT04", descrip: "VENTA" },
+    // { value: "FT05" },
   ];
   const serieBoleta = [
-    { value: "B001" },
-    { value: "B002" },
-    { value: "B003" },
-    { value: "B004" },
-    { value: "B005" },
+    { value: "BT01", descrip: "ALQUILER" },
+    { value: "BT02", descrip: "TRANSPORTE" },
+    { value: "BT03", descrip: "SERVICIO" },
+    { value: "BT04", descrip: "VENTA" },
+    // { value: "BT05" },
   ];
 
   // ** ID SI LA FACTURA FUE RRELLENADA DESDE EL BORRADOR
@@ -149,7 +149,7 @@ export function FacturaBoletaProvider({ children }) {
   // Al cambiar el tipo de documento o la serie, actualizar el correlativo
   useEffect(() => {
     // Establecer la serie por defecto al cambiar el tipo de documento
-    const nuevaSerie = factura.tipo_Doc === "01" ? "F001" : "B001";
+    const nuevaSerie = factura.tipo_Doc === "01" ? "FT01" : "BT01";
     setFactura((prev) => ({
       ...prev,
       serie: nuevaSerie,
@@ -421,7 +421,10 @@ export function FacturaBoletaProvider({ children }) {
             data: facturaCopia,
           };
         }
-      } else if (status === 200 && data?.sunatResponse?.cdrResponse?.code != "0") {
+      } else if (
+        status === 200 &&
+        data?.sunatResponse?.cdrResponse?.code != "0"
+      ) {
         result = {
           success: false,
           message: message,

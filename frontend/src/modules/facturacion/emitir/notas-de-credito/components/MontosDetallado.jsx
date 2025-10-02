@@ -2,6 +2,7 @@ import { useNota } from "@/modules/facturacion/context/NotaContext";
 
 const MontosDetallado = () => {
   const { notaCreditoDebito } = useNota();
+  const { tipo_Moneda: moneda } = notaCreditoDebito;
 
   let subTotalConIgv =
     Number(notaCreditoDebito.total_Impuestos) +
@@ -17,7 +18,9 @@ const MontosDetallado = () => {
           {/* IGV */}
           <div className="flex w-full max-w-sm justify-between py-1">
             <span className="font-semibold">IGV</span>
-            <span>S/. {notaCreditoDebito.monto_Igv || 0}</span>
+            <span>
+              {moneda == "PEN" ? "S/." : "$"} {notaCreditoDebito.monto_Igv || 0}
+            </span>
           </div>
           {/* Sub Total + IGV
                     <div className="flex justify-between w-full max-w-sm py-1">
@@ -27,17 +30,25 @@ const MontosDetallado = () => {
           {/* Exonerados */}
           <div className="flex w-full max-w-sm justify-between py-1">
             <span className="font-semibold">Exonerados</span>
-            <span>S/. {notaCreditoDebito.monto_Oper_Exoneradas || 0}</span>
+            <span>
+              {moneda == "PEN" ? "S/." : "$"}{" "}
+              {notaCreditoDebito.monto_Oper_Exoneradas || 0}
+            </span>
           </div>
           {/* Sub Total */}
           <div className="flex w-full max-w-sm justify-between py-1">
             <span className="font-semibold">Sub Total</span>
-            <span>S/. {notaCreditoDebito.sub_Total || 0}</span>
+            <span>
+              {moneda == "PEN" ? "S/." : "$"} {notaCreditoDebito.sub_Total || 0}
+            </span>
           </div>
           {/* Monto Importes Venta */}
           <div className="flex w-full max-w-sm justify-between py-1">
             <span className="font-semibold">Monto Importes Venta</span>
-            <span>S/. {notaCreditoDebito.monto_Imp_Venta || 0}</span>
+            <span>
+              {moneda == "PEN" ? "S/." : "$"}{" "}
+              {notaCreditoDebito.monto_Imp_Venta || 0}
+            </span>
           </div>
         </div>
         {/* )} */}
