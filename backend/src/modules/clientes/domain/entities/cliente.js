@@ -14,7 +14,7 @@ class Cliente {
 
     static validarCamposObligatorios(datos, modo = "crear") {
         const camposValidos = [
-            "razon_social", "tipo", "ruc", "dni", "telefono", "email",
+            "razon_social", "tipo", "ruc", "dni", "telefono", "email", "tipo_documento",
             "domicilio_fiscal", "representante_legal", "dni_representante", "creado_por"
         ]
         
@@ -42,10 +42,10 @@ class Cliente {
     }
 
     static validarTipoEntidad(datos) {
-        const { tipo, ruc, domicilio_fiscal, representante_legal, dni_representante, dni } = datos;
+        const { tipo, ruc, domicilio_fiscal, representante_legal, tipo_documento, dni_representante, dni } = datos;
 
         if (tipo === "Persona Jurídica") {
-            if (!ruc || !domicilio_fiscal || !representante_legal || !dni_representante) {
+            if (!ruc || !domicilio_fiscal || !representante_legal || !tipo_documento || !dni_representante) {
                 return "Los datos de la Persona Jurídica son obligatorios.";
             }
         } else if (tipo === "Persona Natural") {
@@ -76,6 +76,7 @@ class Cliente {
                 ruc: datos.ruc,
                 domicilio_fiscal: datos.domicilio_fiscal,
                 representante_legal: datos.representante_legal,
+                tipo_documento: datos.tipo_documento,
                 dni_representante: datos.dni_representante,
                 ...(datos.dni?.trim() ? { dni: datos.dni.trim() } : {})
             }
@@ -88,6 +89,7 @@ class Cliente {
                 ruc: null,
                 domicilio_fiscal: null,
                 representante_legal: null,
+                tipo_documento: null,
                 dni_representante: null,
             }
         }

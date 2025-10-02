@@ -41,7 +41,7 @@ const Cliente = sequelize.define('clientes', {
     },
     tipo_documento: {
         type: DataTypes.ENUM("DNI", "CE"),
-        allowNull: false,
+        allowNull: true,
     },
     dni_representante: {
         type: DataTypes.STRING(8),

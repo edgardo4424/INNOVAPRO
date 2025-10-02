@@ -37,9 +37,6 @@ export default function ModalAgregarCliente({ agregarCliente, obras, contactos }
 
    const [cliente, setCliente] = useState(initialForm);
 
-   console.log("OBRAS EN MODAL: ", obras);
-   console.log("CONTACTOS EN MODAL: ", contactos);
-
    const [errores, setErrores] = useState({});
 
    const [rucNoEncontrado, setRucNoEncontrado] = useState(false);
@@ -89,7 +86,7 @@ export default function ModalAgregarCliente({ agregarCliente, obras, contactos }
       if (!clienteSeguro.tipo_documento) {
          clienteSeguro.tipo_documento = "DNI";
       }
-
+      console.log("CLIENTE (SEGURO)", clienteSeguro)
       const erroresValidados =
          cliente.tipo === "Persona Jurídica"
             ? validarClienteJuridico(cliente)
@@ -116,7 +113,7 @@ export default function ModalAgregarCliente({ agregarCliente, obras, contactos }
             );
             return;
          }
-
+         console.log("CLIENTE ENVIADO A CREAR: ", clienteLimpio);
          const res = await clientesService.crear(clienteLimpio);
          if (res.data && res.data.cliente) {
             agregarCliente(res.data.cliente);
