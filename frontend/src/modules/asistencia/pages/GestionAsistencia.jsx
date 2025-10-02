@@ -102,9 +102,27 @@ const GestionAsistencia = () => {
       return stats;
    }, [trabajadores]);
    const sincronizacion=async()=>{
+
       try {
-       const response=  await asistenciaService.sincronizarAsistencia();
-       console.log("Response en el front");
+      let lista_dni=[];
+      for (const t of trabajadores) {
+            lista_dni.push(t.numero_documento)
+      }
+         const payload={
+         fecha:fechaSeleccionada,
+         lista_dni
+      }
+
+       const response=  await asistenciaService.sincronizarAsistencia(payload);
+       for (const t of trabajadores) {
+         if (!t.asistencia) {
+            let asistencia={...t.asistencia}
+
+            lista_dni.push(t.numero_documento)
+         }
+            
+      }
+       console.log("Response en el front",response.data.datos);
        
       } catch (error) {
          console.log("Error en el front: ",error);
@@ -131,9 +149,11 @@ const GestionAsistencia = () => {
                       ))}
                    </SelectContent>
             </Select>
-            <Button onClick={sincronizacion}>
-               Sincronizacion
-            </Button>
+            {(trabajadores&&trabajadores.length>0)&&
+               <Button onClick={sincronizacion}>
+                  Sincronizacion
+               </Button>
+            }
             </section>
             <AsistenciaHeader
                trabajadores={trabajadores}
