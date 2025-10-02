@@ -32,7 +32,7 @@ const initialForm = {
    representante_legal: "",
    dni_representante: "",
 };
-export default function ModalAgregarCliente({ agregarCliente }) {
+export default function ModalAgregarCliente({ agregarCliente, obras, contactos }) {
    const { user } = useAuth();
 
    const [cliente, setCliente] = useState(initialForm);
@@ -51,11 +51,8 @@ export default function ModalAgregarCliente({ agregarCliente }) {
       }
 
       try {
-         console.log("ruc Limpio", rucLimpio);
 
          const resultado = await buscarDatosPorRUC(rucLimpio);
-
-         console.log("respuesta del ruc", resultado);
 
          if (!resultado || !resultado.razon_social) {
             setRucNoEncontrado(true);
@@ -86,7 +83,6 @@ export default function ModalAgregarCliente({ agregarCliente }) {
       if (!clienteSeguro.tipo_documento) {
          clienteSeguro.tipo_documento = "DNI";
       }
-
       const erroresValidados =
          cliente.tipo === "Persona Jurídica"
             ? validarClienteJuridico(cliente)
@@ -150,6 +146,8 @@ export default function ModalAgregarCliente({ agregarCliente }) {
             </AlertDialogHeader>
             <ClienteForm
                cliente={cliente}
+               contactos={contactos}
+               obras={obras}
                setCliente={setCliente}
                errores={errores}
                handleBuscarRUC={handleBuscarRUC}

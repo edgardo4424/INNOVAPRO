@@ -45,7 +45,7 @@ export default function ModuloNavegacion() {
          { name: "Cotizaciones", path: "/cotizaciones" },
          { name: "Registrar Cotización", path: "/cotizaciones/registrar" },
       ],
-      Ventas: [
+      "Técnico Comercial": [
          { name: "Gestión de Clientes", path: "/gestion-clientes" },
          { name: "Gestión de Contactos", path: "/gestion-contactos" },
          { name: "Gestión de Obras", path: "/gestion-obras" },

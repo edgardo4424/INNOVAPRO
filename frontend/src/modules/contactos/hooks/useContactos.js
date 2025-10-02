@@ -6,8 +6,6 @@ import { confirmToast } from "../../../utils/confirmToast";
 
 export default function useContactos() {
   const [contactos, setContactos] = useState([]);
-  const [clientes, setClientes] = useState([]);
-  const [obras, setObras] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const [paginaActual, setPaginaActual] = useState(1);
   const [contactosPorPagina,setContactosPorPagina] = useState( 5);
@@ -18,20 +16,13 @@ export default function useContactos() {
   useEffect(() => {
     async function cargarDatos() {
       try {
-        const [contactos, clientes, obras] = await Promise.all([
-          contactosService.obtenerContactos(),
-          contactosService.obtenerClientes(),
-          contactosService.obtenerObras(),
-        ]);
+        const contactos = await contactosService.obtenerContactos();
         setContactos(contactos);
-        setClientes(clientes);
-        setObras(obras);
       } catch (error) {
         console.error("❌ Error al cargar datos:", error);
         toast.error("Error al cargar contactos");
       }
     }
-
     cargarDatos();
   }, []);
 

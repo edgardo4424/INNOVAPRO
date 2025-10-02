@@ -3,14 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import Select from "react-select";
 import { obtenerContactoSchema } from "../schema/contacto.schema";
 import { toast } from "react-toastify";
 
 export default function ContactoForm({
    data: contactoInicial = {},
-   clientes,
-   obras,
    onSubmit,
    handleCancel,
    closeModal,
@@ -121,57 +118,6 @@ export default function ContactoForm({
                   {errores.cargo && (
                      <p className="error-message">{errores.cargo}</p>
                   )}
-               </div>
-
-               {/* Clientes asociados */}
-               <div className="flex  flex-col gap-1 relative">
-                  <Label>Clientes</Label>
-                  <Select
-                     isMulti
-                     options={clientes.map((c) => ({
-                        value: c.id,
-                        label: c.razon_social || c.nombre,
-                     }))}
-                     value={clientes
-                        .filter((c) =>
-                           contacto.clientes_asociados?.includes(c.id)
-                        )
-                        .map((c) => ({
-                           value: c.id,
-                           label: c.razon_social || c.nombre,
-                        }))}
-                     onChange={(selected) =>
-                        setContacto((prev) => ({
-                           ...prev,
-                           clientes_asociados: selected.map((s) => s.value),
-                        }))
-                     }
-                     placeholder="Selecciona clientes..."
-                     menuPlacement="top"
-                  />
-               </div>
-
-               {/* Obras asociadas */}
-               <div className="flex flex-col gap-1 relative">
-                  <Label>Obras</Label>
-                  <Select
-                     isMulti
-                     options={obras.map((o) => ({
-                        value: o.id,
-                        label: o.nombre,
-                     }))}
-                     value={obras
-                        .filter((o) => contacto.obras_asociadas?.includes(o.id))
-                        .map((o) => ({ value: o.id, label: o.nombre }))}
-                     onChange={(selected) =>
-                        setContacto((prev) => ({
-                           ...prev,
-                           obras_asociadas: selected.map((s) => s.value),
-                        }))
-                     }
-                     placeholder="Selecciona obras..."
-                     menuPlacement="top"
-                  />
                </div>
 
                {/* Botones */}
