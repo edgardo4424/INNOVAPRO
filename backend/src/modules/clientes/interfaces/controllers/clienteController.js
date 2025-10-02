@@ -44,6 +44,7 @@ const ClienteController = {
             const clienteActualizado = await actualizarCliente(req.params.id, req.body, clienteRepository, entidadService); // Llamamos al caso de uso para actualizar un cliente
             res.status(clienteActualizado.codigo).json(clienteActualizado.respuesta); // Respondemos con el cliente actualizado
         } catch (error) {
+            console.log('error', error);
             res.status(500).json({ error: error.message }); // Respondemos con un error
         }
     },

@@ -18,15 +18,12 @@ class SequelizeClienteRepository {
         transaction,
       });
 
-      console.log("CONTACTOS RELACIONADOS", contactosRelacionados);
-
       if (contactosRelacionados.length > 0) {
         const clienteContactos = contactosRelacionados.map((contacto) => ({
           contacto_id: contacto.id,
           cliente_id: nuevoCliente.id,
         }));
 
-        console.log("clienteContactos", clienteContactos);
         await db.contacto_clientes.bulkCreate(clienteContactos, {
           transaction,
         });
@@ -46,9 +43,8 @@ class SequelizeClienteRepository {
           obra_id: obra.id,
         }));
 
-        console.log("clienteObras", clienteObras);
         await db.cliente_obras.bulkCreate(clienteObras, { transaction });
-        console.log("inserte 2");
+ 
       }
     }
 
@@ -68,11 +64,13 @@ class SequelizeClienteRepository {
                     model: db.contactos,
                     through: { attributes: [] }, // Relación correcta con la tabla intermedia
                     as: "contactos_asociados",
+                    attributes: ["id"],
                 },
                 {
                     model: db.obras,
                     through: { attributes: [] }, // Relación correcta con la tabla intermedia
                     as: "obras_asociadas",
+                     attributes: ["id"],
                 }
             ]
         }); // Llama al método del repositorio para obtener todos los clientes
@@ -83,13 +81,24 @@ class SequelizeClienteRepository {
     }
 
     async actualizarCliente(id, clienteData) {
-        const cliente = await Cliente.findByPk(id); // Busca el cliente por ID
-        if (!cliente) { // Si no se encuentra el cliente, retorna null
-          return null; 
-        }
-        await cliente.update(clienteData); // Actualiza el cliente con los nuevos datos
-        return cliente; // Retorna el cliente actualizado
-      }
+    const cliente = await Cliente.findByPk(id); // Busca el cliente por ID
+    if (!cliente) {
+      // Si no se encuentra el cliente, retorna null
+      return null;
+    }
+    await cliente.update(clienteData); // Actualiza el cliente con los nuevos datos
+
+    // Actualiza relaciones
+    if (Array.isArray(clienteData.contactos_asociados)) {
+      await cliente.setContactos_asociados(clienteData.contactos_asociados);
+    }
+
+    if (Array.isArray(clienteData.obras_asociadas)) {
+      await cliente.setObras_asociadas(clienteData.obras_asociadas);
+    }
+
+    return cliente; // Retorna el cliente actualizado
+  }
 
     async eliminarCliente(id) {
         const cliente = await this.obtenerPorId(id); // Llama al método del repositorio para obtener el cliente por ID
