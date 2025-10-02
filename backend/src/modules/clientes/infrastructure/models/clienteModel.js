@@ -69,6 +69,14 @@ Cliente.associate = (models) => {
     Cliente.hasMany(models.cotizaciones,{
      foreignKey: "cliente_id",
   })
+
+  Cliente.belongsToMany(models.obras, {
+        through: "cliente_obras",
+        foreignKey: "cliente_id",
+        otherKey: "obra_id",
+        as: "obras_asociados",
+    });
+
 };
 
 module.exports = { Cliente }; // Exporta el modelo para que pueda ser utilizado en otros módulos

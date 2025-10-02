@@ -12,38 +12,6 @@ class SequelizeContactoRepository {
 
     const nuevoContacto = await Contacto.create(contactoData, { transaction });
 
-    /* // Relacionar clientes si existen
-    if (contactoData.clientesIds && contactoData.clientesIds.length > 0) {
-      const clientesRelacionados = await db.clientes.findAll({
-        where: { id: contactoData.clientesIds },
-        transaction
-      });
-
-      if (clientesRelacionados.length > 0) {
-        const clienteContactos = clientesRelacionados.map((cliente) => ({
-          contacto_id: nuevoContacto.id,
-          cliente_id: cliente.id,
-        }));
-        await db.contacto_clientes.bulkCreate(clienteContactos, {transaction});
-      }
-    }
-
-    // Relacionar obras si existen
-    if (contactoData.obrasIds && contactoData.obrasIds.length > 0) {
-      const obrasRelacionadas = await db.obras.findAll({
-        where: { id: contactoData.obrasIds },
-        transaction
-      });
-
-      if (obrasRelacionadas.length > 0) {
-        const contactoObras = obrasRelacionadas.map((obra) => ({
-          contacto_id: nuevoContacto.id,
-          obra_id: obra.id,
-        }));
-        await db.contacto_obras.bulkCreate(contactoObras, { transaction });
-      }
-    } */
-
     await transaction.commit();
 
     return nuevoContacto;
@@ -71,15 +39,6 @@ class SequelizeContactoRepository {
     }
     await contacto.update(contactoData); // Actualiza el contacto con los nuevos datos
     
-    // Actualiza relaciones
-    if (Array.isArray(contactoData.clientesIds)) {
-        await contacto.setClientes_asociados(contactoData.clientesIds);
-    }
-
-    if (Array.isArray(contactoData.obrasIds)) {
-        await contacto.setObras_asociadas(contactoData.obrasIds);
-    }
-
     return contacto; // Retorna el contacto actualizado
   }
 

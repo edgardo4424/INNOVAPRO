@@ -7,9 +7,56 @@ class SequelizeClienteRepository {
     }
 
     async crear(clienteData) {
-          return await Cliente.create(clienteData);
+    const transaction = await db.sequelize.transaction();
+
+    const nuevoCliente = await Cliente.create(clienteData, { transaction });
+
+    console.log("NUEVO CLIENTE", nuevoCliente);
+    // Relacionar contactos si existen
+    if (clienteData.contactosIds && clienteData.contactosIds.length > 0) {
+      const contactosRelacionados = await db.contactos.findAll({
+        where: { id: clienteData.contactosIds },
+        transaction,
+      });
+
+      console.log("CONTACTOS RELACIONADOS", contactosRelacionados);
+
+      if (contactosRelacionados.length > 0) {
+        const clienteContactos = contactosRelacionados.map((contacto) => ({
+          contacto_id: contacto.id,
+          cliente_id: nuevoCliente.id,
+        }));
+
+        console.log("clienteContactos", clienteContactos);
+        await db.contacto_clientes.bulkCreate(clienteContactos, {
+          transaction,
+        });
       }
-      
+    }
+
+    // Relacionar obras si existen
+    if (clienteData.obrasIds && clienteData.obrasIds.length > 0) {
+      const obrasRelacionadas = await db.obras.findAll({
+        where: { id: clienteData.obrasIds },
+        transaction,
+      });
+
+      if (obrasRelacionadas.length > 0) {
+        const clienteObras = obrasRelacionadas.map((obra) => ({
+          cliente_id: nuevoCliente.id,
+          obra_id: obra.id,
+        }));
+
+        console.log("clienteObras", clienteObras);
+        await db.cliente_obras.bulkCreate(clienteObras, { transaction });
+        console.log("inserte 2");
+      }
+    }
+
+    await transaction.commit();
+
+    return nuevoCliente;
+  }
 
     async obtenerClientes() {
         return await Cliente.findAll({
