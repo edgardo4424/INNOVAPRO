@@ -40,7 +40,7 @@ const FacturaBoleta = () => {
         setFactura({
           tipo_Operacion: "0101",
           tipo_Doc: "01",
-          serie: "F001",
+          serie: "FT01",
           ...ValorInicialFactura,
         });
       }

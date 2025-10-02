@@ -50,7 +50,7 @@ const DatosDelComprobante = () => {
   // Al cambiar el tipo de documento o la serie, actualizar el correlativo
   useEffect(() => {
     // Establecer la serie por defecto al cambiar el tipo de documento
-    const nuevaSerie = factura.tipo_Doc === "01" ? "F001" : "B001";
+    const nuevaSerie = factura.tipo_Doc === "01" ? "FT01" : "BT01";
     setFactura((prev) => ({
       ...prev,
       serie: nuevaSerie,
@@ -143,12 +143,12 @@ const DatosDelComprobante = () => {
               {factura.tipo_Doc === "01"
                 ? serieFactura.map((item) => (
                     <SelectItem key={item.value} value={item.value}>
-                      {item.value}
+                      {item.value} {item.descrip ? `- ${item.descrip}` : ""}
                     </SelectItem>
                   ))
                 : serieBoleta.map((item) => (
                     <SelectItem key={item.value} value={item.value}>
-                      {item.value}
+                      {item.value} {item.descrip ? `(${item.descrip})` : ""}
                     </SelectItem>
                   ))}
             </SelectContent>

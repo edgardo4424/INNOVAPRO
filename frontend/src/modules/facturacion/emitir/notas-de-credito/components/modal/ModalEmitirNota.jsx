@@ -68,7 +68,6 @@ const codigosMotivosDebito = [
   },
 ];
 
-
 const tipoOperacion = {
   "0101": "Venta Interna",
   1001: "Operaciones Gravadas",
@@ -83,6 +82,7 @@ export default function ModalEmitirNota() {
   const [isOpen, setIsOpen] = useState(false);
   const { notaCreditoDebito, filiales } = useNota();
 
+  const { tipo_Moneda: moneda } = notaCreditoDebito;
   const openModal = () => {
     setIsOpen(true);
   };
@@ -109,7 +109,6 @@ export default function ModalEmitirNota() {
     }
   };
 
-
   const getTipoOperacionLabel = (codigo) => {
     return tipoOperacion[codigo] || "Desconocido";
   };
@@ -124,10 +123,10 @@ export default function ModalEmitirNota() {
     ? filialActual.razon_social
     : "Empresa Desconocida";
 
-  const formatCurrency = (amount) => {
+  const formatCurrency = (amount, moneda = "PEN") => {
     return new Intl.NumberFormat("es-PE", {
       style: "currency",
-      currency: "PEN",
+      currency: moneda,
       minimumFractionDigits: 2,
     }).format(amount);
   };
@@ -279,7 +278,7 @@ export default function ModalEmitirNota() {
                     <div className="flex items-center justify-between border-t border-gray-200 pt-2">
                       <p className="font-semibold text-gray-600">Total:</p>
                       <p className="text-2xl font-extrabold text-indigo-700">
-                        {formatCurrency(notaCreditoDebito.monto_Imp_Venta)}
+                        {formatCurrency(notaCreditoDebito.monto_Imp_Venta, moneda)}
                       </p>
                     </div>
                   </div>

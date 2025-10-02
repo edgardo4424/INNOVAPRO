@@ -4,7 +4,7 @@ const ValorInicialFactura = {
     // ?Datos del comprobante
     tipo_Operacion: "0101",
     tipo_Doc: "01",
-    serie: "F001",
+    serie: "FT01",
     correlativo: "",
     tipo_Moneda: "PEN",
     fecha_Emision: new Date().toISOString().split("T")[0] + "T" + new Date().toTimeString().split(" ")[0] + "-05:00",

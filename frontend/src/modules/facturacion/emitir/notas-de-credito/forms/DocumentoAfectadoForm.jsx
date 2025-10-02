@@ -115,13 +115,13 @@ const DocumentoAfectadoForm = () => {
     }
   };
 
-  useEffect(() => {
-    setNotaCreditoDebito((prev) => ({
-      ...prev,
-      motivo_Cod: "",
-      motivo_Des: "",
-    }));
-  }, [notaCreditoDebito.tipo_Doc]);
+  // useEffect(() => {
+  //   setNotaCreditoDebito((prev) => ({
+  //     ...prev,
+  //     motivo_Cod: "",
+  //     motivo_Des: "",
+  //   }));
+  // }, [notaCreditoDebito.tipo_Doc]);
 
   useEffect(() => {
     // ?? CASOS DE NOTA DE CREDITO

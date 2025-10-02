@@ -4,7 +4,7 @@ const notaInical = {
     // ?Datos del comprobante
     tipo_Operacion: "0101",
     tipo_Doc: "07",
-    serie: "BC01",
+    serie: "BCT1",
     correlativo: "1",
     fecha_Emision: new Date().toISOString().split("T")[0] + "T05:00:00-05:00",
     tipo_Moneda: "PEN",

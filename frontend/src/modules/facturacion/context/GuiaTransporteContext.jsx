@@ -24,10 +24,10 @@ export function GuiaTransporteProvider({ children }) {
 
   const serieGuia = [
     { value: "T001" },
-    { value: "T002" },
-    { value: "T003" },
-    { value: "T004" },
-    { value: "T005" },
+    // { value: "T002" },
+    // { value: "T003" },
+    // { value: "T004" },
+    // { value: "T005" },
   ];
 
   const [correlativos, setCorrelativos] = useState([]);
