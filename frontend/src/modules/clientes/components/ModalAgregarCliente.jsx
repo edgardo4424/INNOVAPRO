@@ -92,6 +92,8 @@ export default function ModalAgregarCliente({ agregarCliente, obras, contactos }
             ? validarClienteJuridico(cliente)
             : validarClienteNatural(cliente);
 
+      console.log("erroresValidados", erroresValidados)
+
       if (Object.keys(erroresValidados).length > 0) {
          setErrores(erroresValidados);
          toast.warning("Completa los campos correctamente");

@@ -103,6 +103,7 @@ db.contactos = Contacto;
 
 db.contacto_clientes = require("./contacto_clientes")(sequelize, DataTypes);
 db.contacto_obras = require("./contacto_obras")(sequelize, DataTypes);
+db.cliente_obras = require("./cliente_obras")(sequelize, DataTypes);
 
 const {
    Notificaciones,

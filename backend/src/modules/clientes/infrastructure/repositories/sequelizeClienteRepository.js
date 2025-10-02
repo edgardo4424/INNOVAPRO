@@ -11,11 +11,10 @@ class SequelizeClienteRepository {
 
     const nuevoCliente = await Cliente.create(clienteData, { transaction });
 
-    console.log("NUEVO CLIENTE", nuevoCliente);
     // Relacionar contactos si existen
-    if (clienteData.contactosIds && clienteData.contactosIds.length > 0) {
+    if (clienteData.contactos_asociados && clienteData.contactos_asociados.length > 0) {
       const contactosRelacionados = await db.contactos.findAll({
-        where: { id: clienteData.contactosIds },
+        where: { id: clienteData.contactos_asociados },
         transaction,
       });
 
@@ -35,9 +34,9 @@ class SequelizeClienteRepository {
     }
 
     // Relacionar obras si existen
-    if (clienteData.obrasIds && clienteData.obrasIds.length > 0) {
+    if (clienteData.obras_asociadas && clienteData.obras_asociadas.length > 0) {
       const obrasRelacionadas = await db.obras.findAll({
-        where: { id: clienteData.obrasIds },
+        where: { id: clienteData.obras_asociadas },
         transaction,
       });
 
@@ -70,6 +69,11 @@ class SequelizeClienteRepository {
                     through: { attributes: [] }, // Relación correcta con la tabla intermedia
                     as: "contactos_asociados",
                 },
+                {
+                    model: db.obras,
+                    through: { attributes: [] }, // Relación correcta con la tabla intermedia
+                    as: "obras_asociadas",
+                }
             ]
         }); // Llama al método del repositorio para obtener todos los clientes
     }

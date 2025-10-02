@@ -25,8 +25,7 @@ class SequelizeContactoRepository {
    
     return await Contacto.findByPk(id, {
       include: [
-        { model: db.clientes, as: "clientes_asociados" },
-        { model: db.obras, as: "obras_asociadas" },
+        { model: db.clientes, as: "clientes_asociados" }
       ],
     });
   }

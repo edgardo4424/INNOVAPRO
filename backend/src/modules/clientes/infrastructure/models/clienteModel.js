@@ -74,7 +74,7 @@ Cliente.associate = (models) => {
         through: "cliente_obras",
         foreignKey: "cliente_id",
         otherKey: "obra_id",
-        as: "obras_asociados",
+        as: "obras_asociadas",
     });
 
 };

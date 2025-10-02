@@ -66,6 +66,8 @@ class Cliente {
             telefono: datos.telefono || "",
             email: datos.email || "",
             creado_por: datos.creado_por,
+            obras_asociadas: datos.obras_asociadas || [],
+            contactos_asociados: datos.contactos_asociados || [],
         }
 
         if (!base.email.trim()) delete base.email; // Eliminar el campo email si está vacío
