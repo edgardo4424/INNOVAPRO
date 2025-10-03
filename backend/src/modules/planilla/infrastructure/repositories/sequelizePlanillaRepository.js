@@ -938,6 +938,7 @@ class SequelizePlanillaRepository {
       const grupoRxh=trabajador_rxh_model();
       for (const p of planillasRxhObtenidas) {
          grupoRxh.trabajador_id=p.trabajador_id;
+         grupoRxh.ruc=trabajador.ruc||"Ruc no disponible";
          grupoRxh.tipo_contrato=p.tipo_contrato;
          grupoRxh.contrato_id=p.contrato_id
          grupoRxh.periodo=p.periodo;
@@ -1452,14 +1453,48 @@ class SequelizePlanillaRepository {
     }
 
     const planillaMensualCerradas = await PlanillaMensual.findAll({
-      where: { cierre_planilla_mensual_id: cierrePlanillaMensual.id ,tipo_contrato:'HONORARIOS'},
-      include:[
+      where: {
+        cierre_planilla_mensual_id: cierrePlanillaMensual.id,
+        tipo_contrato: "HONORARIOS",
+      },
+      attributes: [
+        "id",
+        "trabajador_id",
+        "tipo_contrato",
+        "regimen",
+        "periodo",
+        "tipo_documento",
+        "numero_documento",
+        "area",
+        "nombres_apellidos",
+      ],
+      include: [
         {
-          model:db.recibos_por_honorarios
-        }
+          model: db.planilla_mensual_recibo_honorario,
+          as: "recibo",
+          include: [
+            {
+              model: db.recibos_por_honorarios,
+              as: "recibo_por_honorario",
+            },
+          ],
+        },
       ],
       transaction,
     });
+    for (const planilla of planillaMensualCerradas) {
+      const recibo = planilla.recibo;
+      const reciboHonorario = recibo?.recibo_por_honorario;
+
+      if (
+        reciboHonorario &&
+        reciboHonorario.indicador_retencion_cuarta_categoria !== undefined
+      ) {
+        reciboHonorario.indicador_retencion_cuarta_categoria =
+          reciboHonorario.indicador_retencion_cuarta_categoria == 1;
+      }
+    }
+
     return planillaMensualCerradas;
   }
 }

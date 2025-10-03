@@ -1,408 +1,347 @@
 import { useState } from "react";
-
 import { Input } from "@/components/ui/input";
 import {
-   Table,
-   TableBody,
-   TableCell,
-   TableHead,
-   TableHeader,
-   TableRow,
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableCell,
 } from "@/components/ui/table";
-
 import { Search } from "lucide-react";
 import RowPlanillaMensual from "./RowPlanillaMensual";
 import RowTotalPlanillaMensual from "./RowTotalPlanillaMensual";
 import { Button } from "@/components/ui/button";
 import ModalImportesTrabajador from "./ModalmportesTrabajador";
 
-/* import RowGratificacion from "@/modules/gratificacion/components/RowGratificacion";
-import RowTotalGratificacion from "@/modules/gratificacion/components/RowTotalGratificacion"; */
-
 const TablePlanillaMensual = ({
-   planillaMensualTipoPlanilla,
-   filiales,
-   filial_id,
-   datosTotalesPlanilla={
-           sumatoria_sueldo_basico: 0,
-           sumatoria_sueldo_mensual: 0,
-           sumatoria_sueldo_bruto: 0,
-           sumatoria_sueldo_neto: 0,
-           sumatoria_saldo_por_pagar: 0,
-           sumatoria_essalud: 0,
-           sumatoria_vida_ley: 0,
-           sumatoria_sctr_salud: 0,
-           sumatoria_sctr_pension: 0,
-         },
+  planillaMensualTipoPlanilla,
+  filiales,
+  filial_id,
+  datosTotalesPlanilla = {
+    sumatoria_sueldo_basico: 0,
+    sumatoria_sueldo_mensual: 0,
+    sumatoria_sueldo_bruto: 0,
+    sumatoria_sueldo_neto: 0,
+    sumatoria_saldo_por_pagar: 0,
+    sumatoria_essalud: 0,
+    sumatoria_vida_ley: 0,
+    sumatoria_sctr_salud: 0,
+    sumatoria_sctr_pension: 0,
+  },
 }) => {
-   const [filtro, setFiltro] = useState("");
+  const [filtro, setFiltro] = useState("");
 
-   // Filtrar por nombres y apellidos (case-insensitive)
-   const filtrarTrabajadores = (trabajadores) =>
-      trabajadores.filter((t) =>
-         `${t.nombres} ${t.apellidos}`
-            .toLowerCase()
-            .toLowerCase()
-            .includes(filtro?.toLowerCase())
-      );
-   
-      // console.log("Los datos totoales son ",datosTotalesPlanilla);
-      
-   return (
-      <div className="w-full overflow-x-auto p-5  flex flex-col bg-gray-100 border-2 rounded-xl shadow-xl">
-         <h1 className="text-2xl font-bold pb-6">Planilla</h1>
-         <section className="grid grid-cols-4 space-x-3">
-            <div className="relative col-span-3">
-               <Input
-                  type="search"
-                  className="block w-full appearance-none px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Buscar por nombres"
-                  value={filtro}
-                  onChange={(e) => setFiltro(e.target.value)}
-               />
-               <Search className="absolute right-3 top-1 text-gray-400" />
-            </div>
-            <div className="col-span-1 flex justify-center">
-               {filiales?.length > 0 && filial_id && (
-                  <ModalImportesTrabajador
-                     filial_id={filial_id}
-                  />
-               )}
-            </div>
-         </section>
+const filtrarTrabajadores = (trabajadores) => {
+  const resultado = trabajadores.filter((t) =>
+    `${t.nombres_apellidos}`
+      .toLowerCase()
+      .includes(filtro?.toLowerCase())
+  );
 
-         <div className="py-4">
-            <Table>
+  console.log("Filtro aplicado:", filtro);
+  console.log("Resultados filtrados:", resultado);
 
-               <TableHeader className={""}>
-                  <TableRow className={"bg-gray-800 text-xs "}>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Acciones
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Tipo Doc
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        N° Doc
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Nombres y Apellidos
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Área
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        AFP
-                     </TableHead>
+  return resultado;
+};
 
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Fecha Ingreso
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Dias Labor
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Sueldo Base
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Sueldo Mensual
-                     </TableHead>
+  return (
+    <article className="flex w-full flex-col overflow-x-auto rounded-xl border-2 p-5 shadow-xl">
+      <section className="flex justify-between">
+        <div className="flex items-center">
+          <h1 className="text-xl font-bold">Planilla</h1>
+        </div>
+        <section className=" flex space-x-6">
+          <div className="relative w-98">
+            <Input
+              type="search"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+              placeholder="Buscar por nombres"
+              value={filtro}
+              onChange={(e) => setFiltro(e.target.value)}
+            />
+            <Search className="absolute top-2 right-3 h-5 w-5 text-gray-400" />
+          </div>
+          <div className="col-span-1 flex items-center justify-center">
+            {filiales?.length > 0 && filial_id && (
+              <ModalImportesTrabajador filial_id={filial_id} />
+            )}
+          </div>
+        </section>
+      </section>
 
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Asig. Fam.
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Descanso Méd
-                     </TableHead>
+      {/* Tabla scrollable con headers sticky */}
+      <div className="mt-4 max-h-[600px] overflow-auto rounded-md bg-gray-100">
+        <table className="w-full min-w-[1500px]">
+          <thead className="bg-innova-blue sticky top-0 z-10 text-xs text-white">
+            {/* --- PRIMERA FILA: GRUPOS --- */}
+            <tr>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Acciones
+              </th>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Tipo Doc
+              </th>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                N° Doc
+              </th>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Nombres y Apellidos
+              </th>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Área
+              </th>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                AFP
+              </th>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Fecha Ingreso
+              </th>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Días Labor
+              </th>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Sueldo Base
+              </th>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Sueldo Mensual
+              </th>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Asig. Fam.
+              </th>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Descanso Méd
+              </th>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Lic. con Goce
+              </th>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Lic. sin Goce
+              </th>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Vacaciones
+              </th>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Vac. Vendidas
+              </th>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Gratificación
+              </th>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                CTS
+              </th>
 
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Lic. con Goce de Haber
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Lic. sin Goce de Haber
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Vacaciones
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Vacaciones vendidas
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Gratificación
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        CTS
-                     </TableHead>
+              {/* GRUPO HORAS EXTRAS */}
+              <th
+                colSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Prom. H. Extras
+              </th>
 
-                     <TableHead
-                        colSpan={2}
-                        className="text-center border-r h-5 text-white border-black"
-                     >
-                        Prom. H. Extras.
-                     </TableHead>
+              {/* GRUPO FALTAS */}
+              <th
+                colSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Importe Faltas
+              </th>
 
-                     {/* <TableHead colSpan={2} className="text-center border-r h-5 text-white border-black">Salida a Obra</TableHead> */}
+              {/* GRUPO TARDANZAS */}
+              <th
+                colSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Importe Tardanzas
+              </th>
 
-                     <TableHead
-                        colSpan={2}
-                        className="text-center border-r h-5 text-white border-black"
-                     >
-                        Importe Faltas
-                     </TableHead>
+              {/* GRUPO BONOS */}
+              <th
+                colSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Bonos
+              </th>
 
-                     <TableHead
-                        colSpan={2}
-                        className="text-center border-r h-5 text-white border-black"
-                     >
-                        Importe Tardanzas
-                     </TableHead>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Sueldo Bruto
+              </th>
 
-                     <TableHead
-                        colSpan={2}
-                        className="text-center border-r h-5 text-white border-black"
-                     >
-                        Prom. Bonos
-                     </TableHead>
+              {/* GRUPO DESCUENTOS */}
+              <th
+                colSpan="5"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Descuentos al Trabajador
+              </th>
 
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Sueldo Bruto
-                     </TableHead>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Total Desc.
+              </th>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Sueldo Neto
+              </th>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Sueldo Quin.
+              </th>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Adelanto/Prést.
+              </th>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Saldo x Pagar
+              </th>
+              <th
+                rowSpan="2"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                ESSALUD 9%
+              </th>
 
-                     {/* Grupo DESCUENTOS AL TRABAJADOR ocupa 5 columnas */}
-                     <TableHead
-                        colSpan={5}
-                        className="text-center border-r h-5 text-white border-black"
-                     >
-                        DESCUENTOS AL TRABAJADOR
-                     </TableHead>
+              {/* GRUPO APORTES */}
+              <th
+                colSpan="4"
+                className="px-2 py-2 text-center whitespace-nowrap"
+              >
+                Aportes al Trabajador
+              </th>
+            </tr>
 
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Total Descuentos
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Sueldo Neto
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Sueldo Quincenal
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Adelanto / Préstamo
-                     </TableHead>
+            {/* --- SEGUNDA FILA: SUBCOLUMNAS --- */}
+            <tr>
+              {/* HORAS EXTRAS */}
+              <th className="px-2 py-2 text-center whitespace-nowrap">1Q</th>
+              <th className="px-2 py-2 text-center whitespace-nowrap">2Q</th>
 
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Saldo por Pagar
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        ESSALUD 9%
-                     </TableHead>
+              {/* FALTAS */}
+              <th className="px-2 py-2 text-center whitespace-nowrap">1Q</th>
+              <th className="px-2 py-2 text-center whitespace-nowrap">2Q</th>
 
-                     <TableHead
-                        colSpan={4}
-                        className="text-center border-r h-5 text-white border-black"
-                     >
-                        APORTES AL TRABAJADOR
-                     </TableHead>
-                  </TableRow>
+              {/* TARDANZAS */}
+              <th className="px-2 py-2 text-center whitespace-nowrap">1Q</th>
+              <th className="px-2 py-2 text-center whitespace-nowrap">2Q</th>
 
-                  {/* Sub-encabezados del grupo FALTAS */}
-                  <TableRow className={"bg-gray-800 text-xs "}>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        1era Quincena
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        2da Quincena
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        1era Quincena
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        2da Quincena
-                     </TableHead>
+              {/* BONOS */}
+              <th className="px-2 py-2 text-center whitespace-nowrap">1Q</th>
+              <th className="px-2 py-2 text-center whitespace-nowrap">2Q</th>
 
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        1era Quincena
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        2da Quincena
-                     </TableHead>
+              {/* DESCUENTOS */}
+              <th className="px-2 py-2 text-center whitespace-nowrap">ONP</th>
+              <th className="px-2 py-2 text-center whitespace-nowrap">
+                AFP Oblig.
+              </th>
+              <th className="px-2 py-2 text-center whitespace-nowrap">
+                Seguro
+              </th>
+              <th className="px-2 py-2 text-center whitespace-nowrap">
+                Comisión
+              </th>
+              <th className="px-2 py-2 text-center whitespace-nowrap">
+                5ta Categ.
+              </th>
 
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        1era Quincena
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        2da Quincena
-                     </TableHead>
+              {/* APORTES */}
+              <th className="px-2 py-2 text-center whitespace-nowrap">
+                Vida Ley
+              </th>
+              <th className="px-2 py-2 text-center whitespace-nowrap">
+                SCTR Salud
+              </th>
+              <th className="px-2 py-2 text-center whitespace-nowrap">
+                SCTR Pensión
+              </th>
+            </tr>
+          </thead>
 
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        ONP
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        AFP Ap. Oblig
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Seguro
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Comisión
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        5ta Categ.
-                     </TableHead>
-
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        Seguro Vida Ley %
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        SCTR Salud %
-                     </TableHead>
-                     <TableHead
-                        rowSpan={2}
-                        className="text-center border-r text-white border-black"
-                     >
-                        SCTR Pension %
-                     </TableHead>
-                  </TableRow>
-               </TableHeader>
-               <TableBody>
-                  {/* Render Trabajadores Planilla */}
-                  {planillaMensualTipoPlanilla.length > 0 && (
-                     <>
-                        {filtrarTrabajadores(planillaMensualTipoPlanilla).map(
-                           (e, index) => (
-                              <RowPlanillaMensual
-                                 key={index}
-                                 e={e}
-                              />
-                           )
-                        )}
-                        <RowTotalPlanillaMensual datosTotalesPlanilla={datosTotalesPlanilla} />
-                     </>
-                  )}
-               </TableBody>
-            </Table>
-         </div>
+          <tbody className="mt16">
+            {planillaMensualTipoPlanilla.length > 0 && (
+              <>
+                {filtrarTrabajadores(planillaMensualTipoPlanilla).map(
+                  (e, index) => (
+                    <RowPlanillaMensual key={index} e={e} />
+                  ),
+                )}
+                <RowTotalPlanillaMensual
+                  datosTotalesPlanilla={datosTotalesPlanilla}
+                />
+              </>
+            )}
+          </tbody>
+        </table>
       </div>
-   );
+    </article>
+  );
 };
 
 export default TablePlanillaMensual;

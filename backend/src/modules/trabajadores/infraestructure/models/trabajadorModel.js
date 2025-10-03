@@ -71,6 +71,10 @@ const Trabajador = sequelize.define(
          type: DataTypes.DATEONLY,
          allowNull: true,
       },
+      ruc: {
+         type: DataTypes.STRING,
+         allowNull: true,
+      },
    },
    {
       tableName: "trabajadores",

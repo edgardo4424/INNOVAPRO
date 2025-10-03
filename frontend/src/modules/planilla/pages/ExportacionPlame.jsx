@@ -6,6 +6,7 @@ import planillaMensualService from "../services/planillaMensualService";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { FaSpinner } from "react-icons/fa";
+import ReciboCard from "../components/plame/ReciboCard";
 
 const ExportacionPlame = () => {
   const [filiales, setFiliales] = useState([]);
@@ -13,6 +14,8 @@ const ExportacionPlame = () => {
   // ?? loading
   const [loading, setLoading] = useState(false);
   const [loadPlame, setLoadPlame] = useState(false);
+  const [recibos,setRecibos]=useState(null);
+
 
   // ?? Filtro para la peticion
   const [filtro, setFiltro] = useState({
@@ -78,12 +81,19 @@ const ExportacionPlame = () => {
   };
 
   const buscarPlame = async () => {
-    console.log("Buscando plame");
+    setRecibos(null)
+    try {
+      const respuesta=await planillaMensualService.obtenerReciboPorPlanilla(`${filtro.anio}-${filtro.mes}`,filtro.filial_id);
+      setRecibos(respuesta.data)
+    } catch (error) {
+      console.log("Error recibido: ",error);
+      
+    }
   };
 
   return (
-    <div className="flex min-h-full flex-1 flex-col items-center space-y-6">
-      <div className="flex w-full justify-between px-7">
+    <div className="min-h-full flex-1  flex flex-col items-center space-y-6">
+      <div className="w-full flex justify-between ">
         <Filtro
           filiales={filiales}
           filtro={filtro}
@@ -101,7 +111,14 @@ const ExportacionPlame = () => {
           </div>
         </div>
       ) : (
-        <article>
+        <article className="w-full">
+          <section className="space-y-3">
+            {
+              (recibos&&recibos.length>0)&&recibos.map((r,index)=>(
+                <ReciboCard planilla_recibo={r} key={index}/>
+              ))
+            }
+          </section>
           <Button onClick={() => exportarPlame()} disabled={loadPlame}>
             {loadPlame && <FaSpinner className="animate-spin" />}
             Exportar Plame

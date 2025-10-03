@@ -65,13 +65,11 @@ ReciboPorHonorario.associate = (models) => {
     foreignKey: "trabajador_id",
     as: "trabajador",
   });
-
-  //    ReciboPorHonorario.belongsToMany(models.planilla_mensual, {
-  //       through: "planilla_mensual_recibo_honorario",
-  //       foreignKey: "recibo_por_honorarios_id",
-  //       otherKey: "planilla_mensual_id",
-  //       as: "planillas",
-  //    });
+    
+  ReciboPorHonorario.hasOne(models.planilla_mensual_recibo_honorario, {
+      foreignKey: 'recibo_por_honorarios_id',
+      as: 'planilla_mensual'
+    });
 };
 
 module.exports = { ReciboPorHonorario };
