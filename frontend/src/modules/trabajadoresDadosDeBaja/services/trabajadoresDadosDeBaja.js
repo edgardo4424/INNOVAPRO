@@ -8,6 +8,7 @@ const trabajadoresDadosDeBajaService = {
    reporteLiquidacion: (id) => api.get(`/reports/liquidacion-pdf/${id}`, {
     responseType: "blob", // MUY IMPORTANTE
   }),
+  getMotivosLiquidacion: () => api.get("/motivos_liquidacion"),
 
 };
 

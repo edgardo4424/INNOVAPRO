@@ -201,6 +201,7 @@ const TrabajadorController = {
          );
          res.status(response.codigo).json(response.respuesta);
       } catch (error) {
+
          res.status(502).json({ error: error.message });
       }
    },

@@ -30,6 +30,10 @@ class SequelizeDarBajaTrabajadorRepository {
             where: {
               estado: true,
             },
+         },
+         {
+          model: db.motivos_liquidacion,
+          as: "motivo_liquidacion"
          }
       ]
    });
@@ -250,6 +254,10 @@ async obtenerInformacionPdfLiquidacionv2(baja_trabajador_id, transaction = null)
             model: db.contratos_laborales,
             as: "contrato",
           },
+          {
+            model: db.motivos_liquidacion,
+            as: "motivo_liquidacion"
+          }
         ],
         transaction,
       }
