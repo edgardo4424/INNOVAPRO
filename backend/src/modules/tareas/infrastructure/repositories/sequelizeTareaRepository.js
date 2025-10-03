@@ -68,6 +68,10 @@ class SequelizeTareaRepository {
           model: db.usuarios,
           as: "usuario_solicitante",
           attributes: ["id", ],
+          include:[{
+            model:db.trabajadores,
+            as:"trabajador"
+          }]
         },
         {
           model: db.empresas_proveedoras,

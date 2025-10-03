@@ -6,7 +6,7 @@ const { emitirNotificacionPrivada } = require("../modules/notificaciones/infrast
  */
 async function tomarTarea(idTarea, usuario) {
     const tarea = await db.tareas.findByPk(idTarea, {
-      include: [{ model: db.usuarios, as: "usuario_solicitante" }],
+      include: [{ model: db.usuarios, as: "tecnico_asignado", include:[{model:db.trabajadores, as:"trabajador"}] }],
     });
   
     if (!tarea) throw { status: 404, mensaje: "Tarea no encontrada" };
@@ -29,7 +29,7 @@ async function tomarTarea(idTarea, usuario) {
     if (tarea.usuario_solicitante) {
       const notiCreador = await db.notificaciones.create({
         usuarioId: tarea.usuario_solicitante.id,
-        mensaje: `El técnico ${usuario.nombre} ha tomado tu tarea #${tarea.id}.`,
+        mensaje: `El técnico ${usuario.tecnico_asignado.nombres} ha tomado tu tarea #${tarea.id}.`,
         tipo: "tarea",
       });
   
