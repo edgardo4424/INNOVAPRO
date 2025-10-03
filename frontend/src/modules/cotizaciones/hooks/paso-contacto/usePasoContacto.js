@@ -6,18 +6,18 @@ import { toast } from "react-toastify";
 // Proporciona los datos cargados y un estado de carga para manejar la UI mientras se obtienen los datos.
 
 export default function usePasoContacto() {
-  const [contactos, setContactos] = useState([]);
+  const [clientes, setClientes] = useState([]);
   const [filiales, setFiliales] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const cargarDatos = async () => {
       try {
-        const [contactosRes, filialesRes] = await Promise.all([
-          api.get("/contactos"),
+        const [clientesRes, filialesRes] = await Promise.all([
+          api.get("/clientes"),
           api.get("/filiales"),
         ]);
-        setContactos(contactosRes.data);
+        setClientes(clientesRes.data);
         setFiliales(filialesRes.data);
       } catch (error) {
         console.error("Error cargando datos del paso 1", error);
@@ -30,5 +30,5 @@ export default function usePasoContacto() {
     cargarDatos();
   }, []);
 
-  return { contactos, filiales, loading };
+  return { clientes, filiales, loading };
 }

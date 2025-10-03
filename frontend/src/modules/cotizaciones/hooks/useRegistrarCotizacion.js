@@ -4,9 +4,8 @@ import { extraerDistrito } from "../utils/cotizacionUtils";
 import { crearCotizacion, obtenerCotizacionPorId, crearCotizacionDesdeOT } from "../services/cotizacionesService";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { esPernoExpansion, mapearPieza } from "./paso-confirmacion/useGenerarDespiece"
+import { mapearPieza } from "./paso-confirmacion/useGenerarDespiece"
 import { validarAtributosPorUso } from "../validaciones/validarAtributosPorUso";
-import { Direction } from "react-data-table-component";
 
 // Este hook maneja la lógica del wizard para registrar una cotización.
 // Permite avanzar y retroceder entre pasos, validar datos y guardar la cotización final.
@@ -73,7 +72,7 @@ export function useRegistrarCotizacion(pasosLength) {
     (async () => {
       try {
         const data = await obtenerCotizacionPorId(id);
-           
+        console.log("DATA DE LA COTI: ", data)
         const despieceFormateado = data.despiece?.map(mapearPieza)
 
         const hayPernos = despieceFormateado.some(p => p.esPerno); 
@@ -107,6 +106,7 @@ export function useRegistrarCotizacion(pasosLength) {
             resumenDespiece: calcularResumenDespiece(data.despiece)
           },
           cotizacion: {
+            id: data.cotizacion.id,
             tipo: data.cotizacion.tipo_cotizacion,
             duracion_alquiler: data.cotizacion.tiempo_alquiler_dias,
           },
@@ -120,9 +120,10 @@ export function useRegistrarCotizacion(pasosLength) {
         setPasoActual(3); // Acá definimos desde qué paso vamos a comenzar: El tercero es el paso confirmación
       } catch (error) {
         console.error("Error al cargar la cotización: ", error);
+        toast.error("No se pudo cargar la cotización seleccionada.");
       }
     })();
-  }, [id]);
+  }, [id, setFormData]);
   
 
   // Funciones para avanzar y retroceder entre los pasos del wizard.

@@ -18,8 +18,8 @@ export default function FormularioGeneral({
   clientes,
   obras,
   empresas,
-  clientesFiltrados,
-  setClientesFiltrados,
+  contactosFiltrados,
+  setContactosFiltrados,
   obrasFiltradas,
   setObrasFiltradas,
   obraSeleccionada,
@@ -34,49 +34,49 @@ export default function FormularioGeneral({
   // Paso para seleccionar datos generales de la tarea
   const renderPaso1 = () => (
     <>
-      <h3 className={styles.formStepContainer}>🏢 Paso 1: Contacto, Cliente, Obra y Filial</h3>
-          {/* CONTACTO */}
-          <div className="form-group">
-            <label>Contacto:</label>
-            <Select
-              options={contactos.map(c => ({ label: `${c.nombre} — ${c.email}`, value: c.id }))}
-              value={
-                contactos.find(c => c.id === formData.contactoId)
-                  ? {
-                      label: `${contactos.find(c => c.id === formData.contactoId)?.nombre}`,
-                      value: formData.contactoId,
-                    }
-                  : null
-              }
-              onChange={(option) => {
-                const contacto = contactos.find(c => c.id === option.value);
-                onChangeCampo("contactoId", option.value);
-                onChangeCampo("clienteId", null);
-                onChangeCampo("obraId", null);
-                onChangeCampo("empresaProveedoraId", null);
-                setClientesFiltrados(contacto?.clientes_asociados || []);
-                setObrasFiltradas(contacto?.obras_asociadas || []);
-              }}
-              placeholder="— Seleccione un contacto —"
-            />
-          </div>
-
-          {/* CLIENTE */}
+      <h3 className={styles.formStepContainer}>🏢 Paso 1: Cliente, Contacto, Obra y Filial</h3>
+          {/* Cliente */}
           <div className="form-group">
             <label>Cliente:</label>
             <Select
-              isDisabled={!formData.contactoId}
-              options={clientesFiltrados.map(c => ({ label: c.razon_social, value: c.id }))}
+              options={clientes.map(cliente => ({ label: `${cliente.razon_social} — ${cliente.ruc}`, value: cliente.id }))}
               value={
-                clientesFiltrados.find(c => c.id === formData.clienteId)
+                clientes.find(cliente => cliente.id === formData.clienteId)
                   ? {
-                      label: clientesFiltrados.find(c => c.id === formData.clienteId)?.razon_social,
+                      label: `${clientes.find(cliente => cliente.id === formData.clienteId)?.razon_social}`,
                       value: formData.clienteId,
                     }
                   : null
               }
-              onChange={(option) => onChangeCampo("clienteId", option.value)}
+              onChange={(option) => {
+                const cliente = clientes.find(cliente => cliente.id === option.value);
+                onChangeCampo("clienteId", option.value);
+                onChangeCampo("contactoId", null);
+                onChangeCampo("obraId", null);
+                onChangeCampo("empresaProveedoraId", null);
+                setContactosFiltrados(cliente?.contactos_asociados || []);
+                setObrasFiltradas(cliente?.obras_asociadas || []);
+              }}
               placeholder="— Seleccione un cliente —"
+            />
+          </div>
+
+          {/* CONTACTO */}
+          <div className="form-group">
+            <label>Contacto:</label>
+            <Select
+              isDisabled={!formData.clienteId}
+              options={contactosFiltrados.map(contacto => ({ label: contacto.nombre, value: contacto.id }))}
+              value={
+                contactosFiltrados.find(contacto => contacto.id === formData.contactoId)
+                  ? {
+                      label: contactosFiltrados.find(contacto => contacto.id === formData.contactoId)?.nombre,
+                      value: formData.contactoId,
+                    }
+                  : null
+              }
+              onChange={(option) => onChangeCampo("contactoId", option.value)}
+              placeholder="— Seleccione un contacto —"
             />
           </div>
 

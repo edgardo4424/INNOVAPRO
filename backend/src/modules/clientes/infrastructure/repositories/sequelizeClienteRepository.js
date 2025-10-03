@@ -64,13 +64,11 @@ class SequelizeClienteRepository {
                     model: db.contactos,
                     through: { attributes: [] }, // Relación correcta con la tabla intermedia
                     as: "contactos_asociados",
-                    attributes: ["id"],
                 },
                 {
                     model: db.obras,
                     through: { attributes: [] }, // Relación correcta con la tabla intermedia
                     as: "obras_asociadas",
-                     attributes: ["id"],
                 }
             ]
         }); // Llama al método del repositorio para obtener todos los clientes

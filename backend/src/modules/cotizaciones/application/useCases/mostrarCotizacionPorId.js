@@ -113,6 +113,7 @@ module.exports = async (id, cotizacionRepository) => {
   // Obtener cotizacion
 
   const dataCotizacion = {
+    id: cotizacion.id,
     contacto_id: cotizacion.contacto_id,
     contacto_nombre: cotizacion.contacto.nombre,
     cliente_id: cotizacion.cliente_id,

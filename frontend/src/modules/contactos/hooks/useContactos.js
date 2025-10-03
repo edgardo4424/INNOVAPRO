@@ -98,8 +98,6 @@ export default function useContactos() {
       totalPaginas,
       paginaActual,
       setPaginaActual,
-      clientes,
-      obras,
       busqueda,
       setBusqueda,
       agregarContacto,
