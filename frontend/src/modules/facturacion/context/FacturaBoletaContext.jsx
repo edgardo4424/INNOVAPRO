@@ -401,6 +401,7 @@ export function FacturaBoletaProvider({ children }) {
           ...facturaAEmitir,
           usuario_id: id_logeado,
           estado: "EMITIDA",
+          precio_dolar: precioDolarActual,
           cuotas_Real: JSON.stringify(facturaAEmitir.cuotas_Real),
           sunat_respuesta: sunat_respuest,
           id_borrador: idBorrador ? idBorrador : null,

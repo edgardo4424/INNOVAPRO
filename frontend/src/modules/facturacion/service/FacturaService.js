@@ -109,6 +109,10 @@ const facturaService = {
 
 
     // ? ENDPOINTS REPORTES
+    reporteVentas: async (body) => {
+        const res = await api.post(`/facturacion/reporte-venta`, body);
+        return res.data;
+    },
     reporteFactura: async (body) => {
         const res = await api.post(`/reports/reporte-factura`, body, {
             responseType: 'blob',

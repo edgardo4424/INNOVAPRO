@@ -159,7 +159,7 @@ const ModalAnularDocumento = ({
           {serie && correlativo ? (
             <>
               <h2 className="text-2xl font-bold text-gray-900">
-                Revertir {tipoDocumento(tipo_Doc)}
+                Anular {tipoDocumento(tipo_Doc)}
               </h2>
               <h2 className="text-xl font-semibold text-red-600">
                 {serie}-{correlativo}
@@ -167,7 +167,7 @@ const ModalAnularDocumento = ({
             </>
           ) : (
             <h2 className="text-2xl font-bold text-gray-900">
-              Revertir Documento
+              Anular Documento
             </h2>
           )}
           <p className="mt-2 text-gray-600">
@@ -181,7 +181,7 @@ const ModalAnularDocumento = ({
             htmlFor="motivo"
             className="mb-2 block text-sm font-medium text-gray-700"
           >
-            Motivo de reversión <span className="text-red-500">*</span>:
+            Motivo de anulación <span className="text-red-500">*</span>:
           </label>
           <textarea
             id="motivo"
@@ -223,9 +223,9 @@ const ModalAnularDocumento = ({
                 Procesando...
               </>
             ) : mensajeSeguro ? (
-              "Seguro de Revertir?"
+              "Seguro de Anular?"
             ) : (
-              "Revertir"
+              "Anular"
             )}
           </button>
         </div>

@@ -23,15 +23,19 @@ module.exports = async (query, facturaRepository) => {
             respuesta: {
                 mensaje: isEmpty ? "Documentos no encontrados" : "Documentos encontrados",
                 estado: true,
+                total_facturas_boleta: meta.total_facturas_boleta,
+                total_guia: meta.total_guia,
+                total_notas: meta.total_notas,
                 total: totalRecords,
                 datos: data,
                 meta: {
-                    page: Number(meta.currentPage) || Number(query?.page) || 1,
-                    totalPages: Number(meta.totalPages) || 1,
-                    pageSize: Number(query?.limit) || data.length,
                     // opcional: devolver filtros aplicados para depuración/UX
                     filtros: {
-                        tipo_doc: query?.tipo_doc,
+                        factura: query?.ac_factura,
+                        boleta: query?.ac_boleta,
+                        nota_credito: query?.ac_n_credito,
+                        nota_debito: query?.ac_n_debito,
+                        guia: query?.ac_guia,
                         empresa_ruc: query?.empresa_ruc,
                         cliente_num_doc: query?.cliente_num_doc,
                         cliente_razon_social: query?.cliente_razon_social,
@@ -53,3 +57,19 @@ module.exports = async (query, facturaRepository) => {
         };
     }
 };
+
+
+({
+    "ac_factura": true,
+    "ac_boleta": false,
+    "ac_n_credito": false,
+    "ac_n_debito": false,
+    "ac_guia": true,
+    "empresa_ruc": "20123456789",
+    "cliente_num_doc": "10456789012",
+    "cliente_razon_social": "COMERCIAL ABC S.A.C.",
+    "usuario_id": 5,
+    "fec_des": "2025-09-01",
+    "fec_ast": "2025-09-30"
+}
+)

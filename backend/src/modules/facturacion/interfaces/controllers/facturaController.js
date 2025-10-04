@@ -20,6 +20,8 @@ const obtenerCdrZip = require('../../application/useCases/factura-boleta/obtener
 
 const obtenerMTC = require('../../application/useCases/factura-boleta/obtenerMTC')
 
+const reporteVentas = require('../../application/useCases/factura-boleta/reporteVentas')
+
 const facturaRepository = new SequelizeFacturaRepository()
 
 const borradorRepository = new SequelizeBorradorRepository()

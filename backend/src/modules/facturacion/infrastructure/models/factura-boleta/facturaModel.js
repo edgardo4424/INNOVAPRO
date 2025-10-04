@@ -188,6 +188,11 @@ const Factura = sequelize.define(
             type: DataTypes.TEXT,
             allowNull: true,
         },
+        precio_dolar: {
+            type: DataTypes.DECIMAL(12, 6),
+            allowNull: true,
+            defaultValue: null,
+        }
     },
     {
         timestamps: false,

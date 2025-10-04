@@ -8,7 +8,7 @@ const { NotasCreditoDebito } = require("../models/notas-credito-debito/notasCred
 const { Filial } = require("../../../filiales/infrastructure/models/filialModel");
 const { Ubigeo } = require("../../../ubigeo/infrastructure/models/ubigeoModel");
 const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
-const { Op, fn, col } = require('sequelize');
+const { Op, fn, col, literal, DataTypes } = require('sequelize');
 
 class SequelizeFacturaRepository {
 
@@ -591,17 +591,332 @@ class SequelizeFacturaRepository {
     }
 
     async reporte(query) {
-        return await Factura.findAll({
-            where: {
-                empresa_ruc: query.empresa_ruc,
-                estado: query.estado,
-                tipo_Doc: query.tipo_Doc,
-                correlativo: query.correlativo,
-                serie: query.serie,
-            },
+        try {
+            const {
+                ac_factura = false,
+                ac_boleta = false,
+                ac_n_credito = false,
+                ac_n_debito = false,
+                ac_guia = false,
+                empresa_ruc,
+                cliente_num_doc,
+                cliente_razon_social,
+                usuario_id,
+                fec_des,
+                fec_ast,
+            } = query;
+            const sane = (v) => {
+                if (v === null || v === undefined) return undefined;
+                if (typeof v === "string") {
+                    const t = v.trim();
+                    if (!t || t.toLowerCase() === "null" || t.toLowerCase() === "undefined") return undefined;
+                    return t;
+                }
+                return v;
+            };
+            // Usa NUEVAS variables (no reasignes las const del destructuring)
+            const nEmpresaRuc = sane(empresa_ruc);
+            const nAcFactura = sane(ac_factura);
+            const nAcBoleta = sane(ac_boleta);
+            const nAcNCredito = sane(ac_n_credito);
+            const nAcNDebito = sane(ac_n_debito);
+            const nAcGuia = sane(ac_guia);
+            const nClienteNumDoc = sane(cliente_num_doc);
+            const nClienteRazonSocial = sane(cliente_razon_social);
+            const nUsuarioId = sane(usuario_id);
+            const nFecDes = sane(fec_des);
+            const nFecAst = sane(fec_ast);
+
+            const whereFactura = {};
+            const whereGuia = {};
+            const whereNota = {};
+
+
+            if (nEmpresaRuc) {
+                whereFactura.empresa_ruc = { [Op.like]: `%${nEmpresaRuc}%` };
+                whereGuia.empresa_ruc = { [Op.like]: `%${nEmpresaRuc}%` };
+                whereNota.empresa_ruc = { [Op.like]: `%${nEmpresaRuc}%` };
+            }
+            if (nClienteNumDoc) {
+                whereFactura.cliente_num_doc = { [Op.like]: `%${nClienteNumDoc}%` };
+                whereGuia.cliente_num_doc = { [Op.like]: `%${nClienteNumDoc}%` };
+                whereNota.cliente_num_doc = { [Op.like]: `%${nClienteNumDoc}%` };
+            }
+            if (nClienteRazonSocial) {
+                whereFactura.cliente_razon_social = { [Op.like]: `%${nClienteRazonSocial}%` };
+                whereGuia.cliente_razon_social = { [Op.like]: `%${nClienteRazonSocial}%` };
+                whereNota.cliente_razon_social = { [Op.like]: `%${nClienteRazonSocial}%` };
+            }
+            if (nUsuarioId) {
+                whereFactura.usuario_id = nUsuarioId;
+                whereGuia.usuario_id = nUsuarioId;
+                whereNota.usuario_id = nUsuarioId;
+            }
+
+            // ? Rango de fechas (asegúrate que el atributo del modelo sea exactamente 'fecha_Emision')
+            if (nFecDes && nFecAst) {
+                whereFactura.fecha_Emision = { [Op.between]: [nFecDes, nFecAst] };
+                whereGuia.fecha_Emision = { [Op.between]: [nFecDes, nFecAst] };
+                whereNota.fecha_Emision = { [Op.between]: [nFecDes, nFecAst] };
+            } else if (nFecDes) {
+                whereFactura.fecha_Emision = { [Op.gte]: nFecDes };
+                whereGuia.fecha_Emision = { [Op.gte]: nFecDes };
+                whereNota.fecha_Emision = { [Op.gte]: nFecDes };
+            } else if (nFecAst) {
+                whereFactura.fecha_Emision = { [Op.lte]: nFecAst };
+                whereGuia.fecha_Emision = { [Op.lte]: nFecAst };
+                whereNota.fecha_Emision = { [Op.lte]: nFecAst };
+            }
+
+            // ? filtro tipo de documento
+            if (!nAcFactura & nAcBoleta) {
+                whereFactura.tipo_doc = "03";
+            } else if (nAcFactura & !nAcBoleta) {
+                whereFactura.tipo_doc = "01";
+            }
+
+            if (!nAcNDebito & nAcNCredito) {
+                whereNota.tipo_doc = "07";
+            } else if (nAcNDebito & !nAcNCredito) {
+                whereNota.tipo_doc = "08";
+            }
+
+            // ? COUNT ROWS
+            let facturaResultado = { count: 0, rows: [] };
+            let guiaResultado = { count: 0, rows: [] };
+            let notaResultado = { count: 0, rows: [] };
+
+            // ? filiales
+            const { count, rows: filiales } = await Filial.findAndCountAll({})
+
+            if (nAcFactura || nAcBoleta) {
+                const { count, rows } = await Factura.findAndCountAll({
+                    attributes: [
+                        ["empresa_ruc", "filial"],
+                        ["cliente_razon_social", "razon_social"],
+                        ["cliente_num_doc", "ruc_cliente"],
+                        [
+                            literal(`CASE 
+                            WHEN tipo_doc = '01' THEN 'Factura'
+                            WHEN tipo_doc = '03' THEN 'Boleta'
+                            ELSE tipo_doc
+                        END`),
+                            "tipo_doc"
+                        ],
+                        "serie",
+                        "correlativo",
+                        "fecha_emision",
+                        "fecha_vencimiento",
+                        ["valor_venta", "base"],
+                        ["monto_igv", "igv"],
+                        ["monto_imp_venta", "total"],
+                        ["detraccion_mount", "detraccion"],
+                        ["descuento_monto", "retencion"],
+                        [
+                            literal(`CASE 
+                            WHEN detraccion_mount IS NOT NULL OR descuento_monto IS NOT NULL 
+                            THEN COALESCE(neto_Pagar, 0) 
+                            ELSE NULL 
+                            END`),
+                            "neto"
+                        ], [
+                            literal(`CASE 
+                            WHEN estado = 'ANULADA' THEN 'Dado de baja'
+                            ELSE 'Validado'
+                        END`),
+                            "estado"
+                        ],
+                        "tipo_moneda",
+                        [
+                            literal(`CASE WHEN tipo_moneda = 'USD' THEN precio_dolar ELSE NULL END`),
+                            "precio_dolar"
+                        ],
+                        [
+                            literal(`CASE WHEN tipo_moneda = 'USD' THEN monto_imp_venta * precio_dolar ELSE NULL END`),
+                            "monto_en_soles"
+                        ],
+                        ["estado_documento", "codigo"],
+                        [literal('`sunat_respuesta`.`cdr_response_description`'), 'mensaje'],
+                        [literal('NULL'), 'doc_de_referencia'],
+                        [literal('NULL'), 'doc_de_referencia'],
+                        [literal('NULL'), 'tipo_doc_de_referencia']
+                    ],
+                    include: [
+                        {
+                            model: SunatRespuesta,
+                            attributes: [],
+                            required: false
+                        }
+                    ],
+                    where: whereFactura,
+                    order: [["id", "DESC"]],
+                });
+                facturaResultado = { count, rows };
+            }
+
+
+            if (nAcGuia) {
+                const { count, rows } = await GuiaRemision.findAndCountAll({
+                    attributes: [
+                        ["empresa_ruc", "filial"],
+                        ["cliente_num_doc", "ruc_cliente"],
+                        [
+                            literal(`CASE 
+                            WHEN tipo_doc = '09' THEN 'Guía de Remisión'
+                            ELSE tipo_doc
+                        END`),
+                            "tipo_doc"
+                        ],
+                        "serie",
+                        "correlativo",
+                        "fecha_emision",
+                        [literal('NULL'), "base"],
+                        [literal('NULL'), "igv"],
+                        [literal('NULL'), "total"],
+                        [literal('NULL'), "detraccion"],
+                        [literal('NULL'), "retencion"],
+                        [literal('NULL'), "neto"],
+                        [literal('NULL'), 'fecha_vencimiento'],
+                        [literal('NULL'), 'base'],
+                        [
+                            literal(`CASE 
+                            WHEN estado = 'ANULADA' THEN 'Dado de baja'
+                            ELSE 'Validado'
+                        END`),
+                            "estado"
+                        ],
+                        [literal('NULL'), 'tipo_moneda'],
+                        [literal('NULL'), 'precio_dolar'],
+                        [literal('NULL'), 'monto_en_soles'],
+                        ["estado_documento", "codigo"],
+                        [literal('`sunat_respuesta`.`cdr_response_description`'), 'mensaje'],
+                        [literal('NULL'), 'doc_de_referencia'],
+                        [literal('NULL'), 'fec_doc_de_referencia'],
+                        [literal('NULL'), 'tipo_doc_de_referencia']
+                    ],
+                    include: [
+                        {
+                            model: SunatRespuesta,
+                            attributes: [],
+                            required: false
+                        }
+                    ],
+                    where: whereGuia,
+                    order: [["id", "DESC"]],
+                });
+                guiaResultado = { count, rows };
+            }
+
+            if (nAcNDebito || nAcNCredito) {
+                const { count, rows } = await NotasCreditoDebito.findAndCountAll({
+                    attributes: [
+                        ["empresa_ruc", "filial"],
+                        ["cliente_razon_social", "razon_social"],
+                        ["cliente_num_doc", "ruc_cliente"],
+                        [
+                            literal(`CASE 
+                            WHEN tipo_doc = '07' THEN 'Nota de Crédito'
+                            WHEN tipo_doc = '08' THEN 'Nota de Débito'
+                            ELSE tipo_doc
+                        END`),
+                            "tipo_doc"
+                        ],
+                        "serie",
+                        "correlativo",
+                        "fecha_emision",
+                        [literal('NULL'), 'fecha_vencimiento'],
+                        ["valor_venta", "base"],
+                        ["monto_igv", "igv"],
+                        ["monto_imp_venta", "total"],
+                        [literal('NULL'), "detraccion"],
+                        [literal('NULL'), "retencion"],
+                        [literal('NULL'), "neto"],
+                        [
+                            literal(`CASE 
+                            WHEN estado = 'ANULADA' THEN 'Dado de baja'
+                            ELSE 'Validado'
+                        END`),
+                            "estado"
+                        ],
+                        "tipo_moneda",
+                        [
+                            literal(`CASE WHEN tipo_moneda = 'USD' THEN precio_dolar ELSE NULL END`),
+                            "precio_dolar"
+                        ],
+                        [
+                            literal(`CASE WHEN tipo_moneda = 'USD' THEN monto_imp_venta * precio_dolar ELSE NULL END`),
+                            "monto_en_soles"
+                        ],
+                        ["estado_documento", "codigo"],
+                        [literal('`sunat_respuesta`.`cdr_response_description`'), 'mensaje'],
+                        ["fecha_Emision_Afectado", 'fec_doc_de_referencia'],
+                        ["afectado_Num_Doc", 'doc_de_referencia'],
+                        ["afectado_Tipo_Doc", 'tipo_doc_de_referencia']
+                    ],
+                    include: [
+                        {
+                            model: SunatRespuesta,
+                            attributes: [],
+                            required: false
+                        }
+                    ],
+                    where: whereNota,
+                    order: [["id", "DESC"]],
+                });
+                notaResultado = { count, rows };
+            }
+
+            // Unificamos resultados de documentos
+            const documentos = [
+                ...facturaResultado.rows,
+                ...guiaResultado.rows,
+                ...notaResultado.rows
+            ];
+
+            // Convertimos filiales en un mapa { ruc: razon_social }
+            const filialMap = {};
+            filiales.forEach(f => {
+                filialMap[f.ruc] = f.razon_social;
+            });
+
+            // Armamos dataFinal con la transformación y ordenada por fecha_emision
+            let dataFinal = documentos
+                .map(item => {
+                    const plain = item.get ? item.get({ plain: true }) : item;
+                    return {
+                        ...plain,
+                        filial: filialMap[plain.filial] || plain.filial // reemplaza el RUC por la razón social
+                    };
+                })
+                .sort((a, b) => new Date(b.fecha_emision) - new Date(a.fecha_emision));
+
+
+            const totalRecords = facturaResultado.count + guiaResultado.count + notaResultado.count;
+
+            return {
+                success: true,
+                message: "Documentos listados correctamente.",
+                data: dataFinal,
+                metadata: {
+                    totalRecords,
+                    total_facturas_boleta: facturaResultado.count,
+                    total_guia: guiaResultado.count,
+                    total_notas: notaResultado.count,
+                    filtros: query
+                }
+            };
+
+        } catch (error) {
+            console.log(error);
+            return {
+                success: false,
+                message: "Error al listar los documentos.",
+                data: [],
+                error: error.message
+            };
         }
-        );
     }
+
 }
 
 module.exports = SequelizeFacturaRepository;

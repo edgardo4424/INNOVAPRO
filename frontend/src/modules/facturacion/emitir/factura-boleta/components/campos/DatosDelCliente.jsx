@@ -25,6 +25,31 @@ const DatosDelCliente = () => {
         cliente_Direccion,
     } = factura;
 
+    let dad = {
+  filial: "RUC PRUEBA FACTALIZA",
+  razon_social: "Deister Software Peru S.a.C.",
+  ruc_cliente: "20602860338",
+  tipo_doc: "Factura",
+  serie: "FT01",
+  correlativo: "00000008",
+  fecha_emision: "2025-10-03T22:41:28.000Z",
+  fecha_vencimiento: "2025-10-31T05:00:00.000Z",
+  base: "788.02",
+  igv: "141.84",
+  total: "929.86",
+  detraccion: "92.99",
+  retencion: null,
+  neto: "836.87",
+  estado: "Validado",
+  tipo_moneda: "PEN",
+  precio_dolar: null,
+  monto_en_soles: null,
+  codigo: "0",
+  mensaje: "La Factura numero FT01-00000008, ha sido aceptada",
+  doc_de_referencia: null,
+  tipo_doc_de_referencia: null,
+};
+
     const handleBuscar = async (e) => {
         e.preventDefault();
 
