@@ -22,6 +22,10 @@ const facturaService = {
         const res = await api.post(`/facturacion/correlativo`, body);
         return res.data;
     },
+    obtenerCorrelativoPendientes: async (body) => {
+        const res = await api.post(`/facturacion/factura/correlativo-pendientes`, body);
+        return res.data;
+    },
     obtenerCdrZip: async (body) => {
         const res = await api.post(`/facturacion/cdr-zip`, body);
         return res.data;
@@ -63,6 +67,10 @@ const facturaService = {
         const res = await api.post('/facturacion/guia-remision/correlativo', body);
         return res.data
     },
+    obtenerCorrelativoPendientesGuia: async (body) => {
+        const res = await api.post(`/facturacion/guia-remision/correlativo-pendientes`, body);
+        return res.data;
+    },
     obtenerTodasLasGuiasRemision: async (query) => {
         const res = await api.get(`/facturacion/guia-remision${query}`);
         return res.data;
@@ -97,6 +105,10 @@ const facturaService = {
     obtenerCorrelativoNota: async (body) => {
         const res = await api.post('/facturacion/nota-debito-credito/correlativo', body);
         return res.data
+    },
+    obtenerCorrelativoPendientesNota: async (body) => {
+        const res = await api.post(`/facturacion/nota-debito-credito/correlativo-pendientes`, body);
+        return res.data;
     },
     obtenerTodasLasNotas: async (query) => {
         const res = await api.get(`/facturacion/nota-debito-credito${query}`);

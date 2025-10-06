@@ -18,7 +18,10 @@ const NotasCreditoForm = () => {
     setDocumentoAAfectar,
     documentoAAfectar,
     idBorrador,
+    correlativosPendientes,
   } = useNota();
+
+  
 
   const handleRegister = async () => {
     if (idBorrador) {

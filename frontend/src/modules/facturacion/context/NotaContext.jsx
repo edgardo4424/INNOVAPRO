@@ -16,6 +16,7 @@ const NotaContext = createContext();
 export function NotaProvider({ children }) {
   // ** CORRELATIVOS
   const [correlativos, setCorrelativos] = useState([]);
+  const [correlativosPendientes, setCorrelativosPendientes] = useState([]);
   const [correlativoEstado, setCorrelativoEstado] = useState(false);
   const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
   // Notas de crédito
@@ -81,7 +82,10 @@ export function NotaProvider({ children }) {
 
       const { data } =
         await facturaService.obtenerCorrelativoNota(rucsAndSeries);
-      setCorrelativos(data);
+      const { data: data2 } =
+        await facturaService.obtenerCorrelativoPendientesNota(rucsAndSeries);
+        setCorrelativos(data);
+        setCorrelativosPendientes(data2);
     } catch (error) {
     } finally {
       setLoadingCorrelativo(false);
@@ -102,8 +106,7 @@ export function NotaProvider({ children }) {
         if (success && status === 200) {
           setPrecioDolarActual(data.venta);
         }
-      } catch (error) {
-      }
+      } catch (error) {}
     };
 
     cambioDelDia();
@@ -407,6 +410,7 @@ export function NotaProvider({ children }) {
     <NotaContext.Provider
       value={{
         correlativos,
+        correlativosPendientes,
         setCorrelativos,
         correlativoEstado,
         setCorrelativoEstado,
