@@ -41,7 +41,6 @@ const NotasCreditoForm = () => {
       ...notaCreditoDebito,
       documento_Afectado: documentoAAfectar,
     };
-    console.log(nuevoBorrador);
 
     const formateado = await formatearBorrador(
       tipo_borrador,
@@ -77,7 +76,6 @@ const NotasCreditoForm = () => {
         });
       }
     } catch (error) {
-      console.log(error);
     }
   };
 

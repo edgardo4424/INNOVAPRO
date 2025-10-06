@@ -83,7 +83,6 @@ export function NotaProvider({ children }) {
         await facturaService.obtenerCorrelativoNota(rucsAndSeries);
       setCorrelativos(data);
     } catch (error) {
-      console.error("Error al obtener correlativos:", error);
     } finally {
       setLoadingCorrelativo(false);
     }
@@ -104,7 +103,6 @@ export function NotaProvider({ children }) {
           setPrecioDolarActual(data.venta);
         }
       } catch (error) {
-        console.error(error);
       }
     };
 
@@ -334,7 +332,6 @@ export function NotaProvider({ children }) {
       }
     } catch (error) {
       // ? ERROR DE RED o EXCEPCIÓN: Fallo de conexión o problema inesperado.
-      console.error("Error al enviar la nota:", error);
       if (error.response) {
         result = {
           success: false,

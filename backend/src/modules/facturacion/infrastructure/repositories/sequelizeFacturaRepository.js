@@ -295,7 +295,6 @@ class SequelizeFacturaRepository {
                 throw new Error("No se pudo crear la factura principal.");
             }
             createdInvoice.factura = factura;
-            // console.log("FACTURA CREADA", factura);
 
             //* 2. Crear los Detalles de la Factura
             const createdDetalles = [];
@@ -363,7 +362,6 @@ class SequelizeFacturaRepository {
                 throw new Error("No se pudo crear la respuesta sunat.");
             }
             createdInvoice.sunat_respuesta = sunat;
-            // console.log("FACTURA RESPUESTA SUNAT DESDE SEQUELIZE", sunat);
             //* Si todas las operaciones fueron exitosas, confirma la transacción.
             await transaction.commit();
 
@@ -375,11 +373,7 @@ class SequelizeFacturaRepository {
         } catch (error) {
             //! Si ocurre algún error en cualquier punto, revierte la transacción.
             await transaction.rollback();
-            console.error(
-                "Error en SequelizeFacturaRepository.crear:",
-                error.message,
-                error.stack
-            );
+
             return {
                 success: false,
                 message:
@@ -580,7 +574,6 @@ class SequelizeFacturaRepository {
         } catch (error) {
             //? Si ocurre algún error, revertir la transacción
             await transaction.rollback();
-            console.error("Error en anular documento:", error.message, error.stack);
 
             return {
                 success: false,
@@ -911,7 +904,6 @@ class SequelizeFacturaRepository {
             };
 
         } catch (error) {
-            console.log(error);
             return {
                 success: false,
                 message: "Error al listar los documentos.",
