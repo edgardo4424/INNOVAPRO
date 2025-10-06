@@ -122,12 +122,18 @@ const FiltroReporte = ({
               const fecha = e.target.value;
               if (
                 filtro.fec_des &&
-                new Date(fecha) < new Date(filtro.fec_des)
+                new Date(fecha) < new Date(filtro.fec_des) &&
+                new Date(fecha) == new Date()
               ) {
-                toast.error("La fecha hasta debe ser mayor a la fecha desde");
+                toast.warn(
+                  "La fecha hasta debe ser mayor o igual a la fecha desde",
+                );
               } else {
                 // Siempre asignar 23:50
-                setFiltro({ ...filtro, fec_ast: `${fecha}T23:50:00` });
+                setFiltro({
+                  ...filtro,
+                  fec_ast: `${fecha ? `${fecha}T23:50:00` : ""}`,
+                });
               }
             }}
             className="rounded-md border border-gray-300 p-2 text-xs focus:border-blue-500 focus:ring-blue-500"

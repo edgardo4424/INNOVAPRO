@@ -101,7 +101,7 @@ export function NotaProvider({ children }) {
           await factilizaService.obtenerTipoCambio(hoyISO);
 
         if (success && status === 200) {
-          setPrecioDolarActual(data.compra);
+          setPrecioDolarActual(data.venta);
         }
       } catch (error) {
         console.error(error);

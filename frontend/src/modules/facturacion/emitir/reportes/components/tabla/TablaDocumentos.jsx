@@ -67,7 +67,7 @@ const TablaDocumentos = ({ documentos, loading }) => {
                   {doc?.tipo_doc || ""}
                 </td>
                 <td className="min-w-[130px] border px-4 py-3 text-xs">
-                  {doc?.serie || ""} - {doc?.correlativo || ""}
+                  {doc?.comprobante_serie_correlativo || ""}
                 </td>
                 <td className="border px-4 py-3 text-xs">
                   {doc?.estado || ""}
@@ -110,7 +110,7 @@ const TablaDocumentos = ({ documentos, loading }) => {
                   {doc?.doc_de_referencia || ""}
                 </td>
                 <td className="border px-4 py-3 text-xs">
-                  {doc?.tipo_doc_de_referencia || ""}
+                  {doc?.afectado_tipo_doc || ""}
                 </td>
               </tr>
             ))

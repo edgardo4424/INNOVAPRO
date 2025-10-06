@@ -703,9 +703,7 @@ class SequelizeFacturaRepository {
                         END`),
                             "tipo_doc"
                         ],
-                        "serie",
-                        "correlativo",
-                        "fecha_emision",
+                        [literal("CONCAT(serie, '-', correlativo)"), "comprobante_serie_correlativo"],
                         "fecha_vencimiento",
                         ["valor_venta", "base"],
                         ["monto_igv", "igv"],
@@ -768,7 +766,7 @@ class SequelizeFacturaRepository {
                             "tipo_doc"
                         ],
                         "serie",
-                        "correlativo",
+                        [literal("CONCAT(serie, '-', correlativo)"), "comprobante_serie_correlativo"],
                         "fecha_emision",
                         [literal('NULL'), "base"],
                         [literal('NULL'), "igv"],
@@ -821,8 +819,7 @@ class SequelizeFacturaRepository {
                         END`),
                             "tipo_doc"
                         ],
-                        "serie",
-                        "correlativo",
+                        [literal("CONCAT(serie, '-', correlativo)"), "comprobante_serie_correlativo"],
                         "fecha_emision",
                         [literal('NULL'), 'fecha_vencimiento'],
                         ["valor_venta", "base"],
@@ -851,7 +848,14 @@ class SequelizeFacturaRepository {
                         [literal('`sunat_respuesta`.`cdr_response_description`'), 'mensaje'],
                         ["fecha_Emision_Afectado", 'fec_doc_de_referencia'],
                         ["afectado_Num_Doc", 'doc_de_referencia'],
-                        ["afectado_Tipo_Doc", 'tipo_doc_de_referencia']
+                        [
+                            literal(`CASE 
+                            WHEN afectado_tipo_doc = '01' THEN 'Factura'
+                            WHEN afectado_tipo_doc = '03' THEN 'Boleta'
+                            ELSE afectado_tipo_doc
+                        END`),
+                            "afectado_tipo_doc"
+                        ],
                     ],
                     include: [
                         {
