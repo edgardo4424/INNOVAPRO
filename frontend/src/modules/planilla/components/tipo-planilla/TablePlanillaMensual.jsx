@@ -71,8 +71,8 @@ const filtrarTrabajadores = (trabajadores) => {
       </section>
 
       {/* Tabla scrollable con headers sticky */}
-      <div className="mt-4 max-h-[600px] overflow-auto rounded-md bg-gray-100">
-        <table className="w-full min-w-[1500px]">
+      <div className="mt-4 max-h-[600px] overflow-auto rounded-md bg-gray-100 ">
+        <table className="w-full min-w-[1500px] ">
           <thead className="bg-innova-blue sticky top-0 z-10 text-xs text-white">
             {/* --- PRIMERA FILA: GRUPOS --- */}
             <tr>
@@ -332,12 +332,11 @@ const filtrarTrabajadores = (trabajadores) => {
                     <RowPlanillaMensual key={index} e={e} />
                   ),
                 )}
-                <RowTotalPlanillaMensual
-                  datosTotalesPlanilla={datosTotalesPlanilla}
-                />
+              
               </>
             )}
           </tbody>
+         <RowTotalPlanillaMensual datosTotalesPlanilla={datosTotalesPlanilla} />
         </table>
       </div>
     </article>
