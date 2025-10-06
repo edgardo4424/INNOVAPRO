@@ -16,7 +16,7 @@ const PlacasForm = ({ closeModal }) => {
   const { setGuiaDatosPublico, setGuiaTransporte } = useGuiaTransporte();
   const [listaVehiculos, setListaVehiculos] = useState([]);
   const [filtro, setFiltro] = useState("");
-  const [plasmarChofer, setPlasmarChofer] = useState(true);
+  const [plasmarChofer, setPlasmarChofer] = useState(false);
   const [plasmarTransportista, setPlasmarTransportista] = useState(true);
 
   const buscarVehiculos = async () => {
@@ -26,7 +26,7 @@ const PlacasForm = ({ closeModal }) => {
         setListaVehiculos(data);
       }
     } catch (error) {
-      toast.error("Error al cargar vehículos");
+      toast.error("Error al cargar Placas");
     }
   };
 
@@ -120,7 +120,7 @@ const PlacasForm = ({ closeModal }) => {
                 <TableHead>Transportista</TableHead>
                 <TableHead>Mtc</TableHead>
                 <TableHead>Chofer</TableHead>
-                <TableHead>Licencia</TableHead>
+                {/* <TableHead>Licencia</TableHead> */}
               </TableRow>
             </TableHeader>
             <TableBody className="bg-gray-200">
@@ -148,9 +148,9 @@ const PlacasForm = ({ closeModal }) => {
                       {item?.transportista?.nro_mtc || "N/A"}
                     </TableCell>
                     <TableCell>{item?.chofere?.nombres || "N/A"}</TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       {item?.chofere?.licencia || "N/A"}
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 ))
               )}

@@ -1,16 +1,16 @@
 import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { CarFront, X } from "lucide-react";
-import PlacasForm from "../../forms/PlacasForm";
+import { UserRoundSearch, X } from "lucide-react";
+import ChoferForm from "../../forms/ChoferForm";
 
-export default function ModalPlacas({ open, setOpen }) {
+export default function ModalChoferes({ open, setOpen }) {
   const closeModal = () => {
     setOpen(false);
   };
@@ -19,9 +19,9 @@ export default function ModalPlacas({ open, setOpen }) {
     <AlertDialog open={open} onOpenChange={setOpen}>
       <div className="flex items-start justify-start md:items-end">
         <AlertDialogTrigger asChild>
-          <Button className="text-innova-blue size-[10px] cursor-pointer bg-white hover:scale-105 hover:bg-white hover:text-blue-500">
+          <Button className="text-innova-blue size-[10px] cursor-pointer bg-white hover:scale-105 hover:bg-white hover:text-yellow-500">
             <span className="flex text-xs">
-              <CarFront className="size-5" />
+              <UserRoundSearch className="size-5" />
             </span>
           </Button>
         </AlertDialogTrigger>
@@ -37,16 +37,13 @@ export default function ModalPlacas({ open, setOpen }) {
 
         {/* 🧾 Encabezado */}
         <AlertDialogHeader>
-          <AlertDialogTitle>
-            Lista de Placas, Transportistas, Choferes
-          </AlertDialogTitle>
+          <AlertDialogTitle>Lista de Choferes</AlertDialogTitle>
           <AlertDialogDescription className="hidden text-center md:block">
-            Al seleccionar una fila, se plasmará la información según los
-            checkboxes seleccionados.
+            Al seleccionar un chofer se plasmara en la guia de remision
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <PlacasForm closeModal={closeModal} />
+        <ChoferForm closeModal={closeModal} />
       </AlertDialogContent>
     </AlertDialog>
   );

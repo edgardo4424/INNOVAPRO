@@ -12,9 +12,12 @@ import { choferInicialPrivado } from "../utils/valoresIncialGuia";
 import { Search, Trash, UserRoundPlus } from "lucide-react";
 import factilizaService from "../../../service/FactilizaService";
 import { toast } from "react-toastify";
+import ModalChoferes from "../components/modal/ModalChoferes";
+import { useState } from "react";
 
 const ChoferPrivadoForm = () => {
   const { guiaTransporte, setGuiaTransporte } = useGuiaTransporte();
+  const [open, setOpen] = useState(false);
 
   // Función unificada para manejar cambios en inputs y selects
   const handleChange = (value, name, index) => {
@@ -114,163 +117,169 @@ const ChoferPrivadoForm = () => {
       <h1 className="mb-6 pb-2 text-left text-2xl font-semibold">
         Datos del Chofer
       </h1>
-      {guiaTransporte?.chofer.length > 0 && guiaTransporte.chofer.map((chofer, index) => (
-        <div
-          key={index}
-          className="relative mb-6 grid grid-cols-1 gap-x-6 gap-y-4 rounded-md border border-gray-400 p-6 md:grid-cols-2 lg:grid-cols-3"
-        >
-          {/* Botón para eliminar chofer (visible si hay más de uno) */}
-          {
-            <div className="absolute top-2 right-2 flex items-center justify-center">
-              <button
-                type="button"
-                className="scale-105 cursor-pointer text-red-500 transition-all duration-300 hover:text-red-600"
-                onClick={() => removeChofer(index)}
+      {guiaTransporte?.chofer.length > 0 &&
+        guiaTransporte.chofer.map((chofer, index) => (
+          <div
+            key={index}
+            className="relative mb-6 grid grid-cols-1 gap-x-6 gap-y-4 rounded-md border border-gray-400 p-6 md:grid-cols-2 lg:grid-cols-3"
+          >
+            {/* Botón para eliminar chofer (visible si hay más de uno) */}
+            {
+              <div className="absolute top-2 right-2 flex items-center justify-center">
+                <button
+                  type="button"
+                  className="scale-105 cursor-pointer text-red-500 transition-all duration-300 hover:text-red-600"
+                  onClick={() => removeChofer(index)}
+                >
+                  <Trash />
+                </button>
+              </div>
+            }
+
+            {/* Campo Tipo de Chofer */}
+            <div>
+              <Label
+                htmlFor={`chofer-${index}-tipo`}
+                className="mb-1 block text-left text-sm font-semibold text-gray-700"
               >
-                <Trash />
-              </button>
+                Tipo
+              </Label>
+              <Select
+                name="tipo"
+                value={chofer.tipo}
+                onValueChange={(value) => handleChange(value, "tipo", index)}
+              >
+                <SelectTrigger className="w-full rounded-md border border-gray-300 shadow-sm">
+                  <SelectValue placeholder="Selecciona un tipo de chofer" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Principal">PRINCIPAL</SelectItem>
+                  <SelectItem value="Secundario">SECUNDARIO</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-          }
 
-          {/* Campo Tipo de Chofer */}
-          <div>
-            <Label
-              htmlFor={`chofer-${index}-tipo`}
-              className="mb-1 block text-left text-sm font-semibold text-gray-700"
-            >
-              Tipo
-            </Label>
-            <Select
-              name="tipo"
-              value={chofer.tipo}
-              onValueChange={(value) => handleChange(value, "tipo", index)}
-            >
-              <SelectTrigger className="w-full rounded-md border border-gray-300 shadow-sm">
-                <SelectValue placeholder="Selecciona un tipo de chofer" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Principal">PRINCIPAL</SelectItem>
-                <SelectItem value="Secundario">SECUNDARIO</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+            {/* Campo Tipo de Documento */}
+            <div>
+              <Label
+                htmlFor={`chofer-${index}-tipo_doc`}
+                className="mb-1 block text-left text-sm font-semibold text-gray-700"
+              >
+                Tipo Documento
+              </Label>
+              <Select
+                name="tipo_doc"
+                value={chofer.tipo_doc}
+                onValueChange={(value) =>
+                  handleChange(value, "tipo_doc", index)
+                }
+              >
+                <SelectTrigger className="w-full rounded-md border border-gray-300 shadow-sm">
+                  <SelectValue placeholder="Selecciona un tipo de Documento" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">
+                    DNI - Documento Nacional de Identidad
+                  </SelectItem>
+                  <SelectItem value="4">CE - Carnet de extranjería</SelectItem>
+                  {/* Puedes añadir más tipos de documento aquí */}
+                </SelectContent>
+              </Select>
+            </div>
 
-          {/* Campo Tipo de Documento */}
-          <div>
-            <Label
-              htmlFor={`chofer-${index}-tipo_doc`}
-              className="mb-1 block text-left text-sm font-semibold text-gray-700"
-            >
-              Tipo Documento
-            </Label>
-            <Select
-              name="tipo_doc"
-              value={chofer.tipo_doc}
-              onValueChange={(value) => handleChange(value, "tipo_doc", index)}
-            >
-              <SelectTrigger className="w-full rounded-md border border-gray-300 shadow-sm">
-                <SelectValue placeholder="Selecciona un tipo de Documento" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">
-                  DNI - Documento Nacional de Identidad
-                </SelectItem>
-                <SelectItem value="4">CE - Carnet de extranjería</SelectItem>
-                {/* Puedes añadir más tipos de documento aquí */}
-              </SelectContent>
-            </Select>
-          </div>
+            {/* Campo Número de Documento y Botón de Búsqueda */}
+            <div>
+              <div className="flex items-center gap-x-2">
+                <Label
+                  htmlFor={`chofer-${index}-nro_doc`}
+                  className="mb-1 block text-left text-sm font-semibold text-gray-700"
+                >
+                  Número Documento
+                </Label>
+                <ModalChoferes open={open} setOpen={setOpen} />
+              </div>
+              <div className="flex gap-2">
+                <Input
+                  type="text" // Cambiado a text para flexibilidad, puedes restringir con 'number' si solo son dígitos
+                  id={`chofer-${index}-nro_doc`}
+                  name="nro_doc"
+                  value={chofer.nro_doc}
+                  onChange={(e) =>
+                    handleChange(e.target.value, e.target.name, index)
+                  }
+                  className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                />
+                <button
+                  type="button" // Importante: usa type="button" para evitar que el botón envíe el formulario
+                  onClick={(e) => handleBuscar(e, index)}
+                  className="bg-innova-blue hover:bg-innova-blue-hover focus:ring-innova-blue cursor-pointer rounded-md p-2 text-white transition-colors duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none"
+                >
+                  <Search className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
 
-          {/* Campo Número de Documento y Botón de Búsqueda */}
-          <div>
-            <Label
-              htmlFor={`chofer-${index}-nro_doc`}
-              className="mb-1 block text-left text-sm font-semibold text-gray-700"
-            >
-              Número Documento
-            </Label>
-            <div className="flex gap-2">
+            {/* Campo Licencia */}
+            <div>
+              <Label
+                htmlFor={`chofer-${index}-licencia`}
+                className="mb-1 block text-left text-sm font-semibold text-gray-700"
+              >
+                Licencia
+              </Label>
               <Input
-                type="text" // Cambiado a text para flexibilidad, puedes restringir con 'number' si solo son dígitos
-                id={`chofer-${index}-nro_doc`}
-                name="nro_doc"
-                value={chofer.nro_doc}
+                type="text"
+                id={`chofer-${index}-licencia`}
+                name="licencia"
+                value={chofer.licencia}
                 onChange={(e) =>
                   handleChange(e.target.value, e.target.name, index)
                 }
                 className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
               />
-              <button
-                type="button" // Importante: usa type="button" para evitar que el botón envíe el formulario
-                onClick={(e) => handleBuscar(e, index)}
-                className="bg-innova-blue hover:bg-innova-blue-hover focus:ring-innova-blue cursor-pointer rounded-md p-2 text-white transition-colors duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none"
+            </div>
+
+            {/* Campo Nombres */}
+            <div>
+              <Label
+                htmlFor={`chofer-${index}-nombres`}
+                className="mb-1 block text-left text-sm font-semibold text-gray-700"
               >
-                <Search className="h-5 w-5" />
-              </button>
+                Nombres
+              </Label>
+              <Input
+                type="text"
+                id={`chofer-${index}-nombres`}
+                name="nombres"
+                value={chofer.nombres}
+                onChange={(e) =>
+                  handleChange(e.target.value, e.target.name, index)
+                }
+                className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+              />
+            </div>
+
+            {/* Campo Apellidos */}
+            <div>
+              <Label
+                htmlFor={`chofer-${index}-apellidos`}
+                className="mb-1 block text-left text-sm font-semibold text-gray-700"
+              >
+                Apellidos
+              </Label>
+              <Input
+                type="text"
+                id={`chofer-${index}-apellidos`}
+                name="apellidos"
+                value={chofer.apellidos}
+                onChange={(e) =>
+                  handleChange(e.target.value, e.target.name, index)
+                }
+                className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+              />
             </div>
           </div>
-
-          {/* Campo Licencia */}
-          <div>
-            <Label
-              htmlFor={`chofer-${index}-licencia`}
-              className="mb-1 block text-left text-sm font-semibold text-gray-700"
-            >
-              Licencia
-            </Label>
-            <Input
-              type="text"
-              id={`chofer-${index}-licencia`}
-              name="licencia"
-              value={chofer.licencia}
-              onChange={(e) =>
-                handleChange(e.target.value, e.target.name, index)
-              }
-              className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
-            />
-          </div>
-
-          {/* Campo Nombres */}
-          <div>
-            <Label
-              htmlFor={`chofer-${index}-nombres`}
-              className="mb-1 block text-left text-sm font-semibold text-gray-700"
-            >
-              Nombres
-            </Label>
-            <Input
-              type="text"
-              id={`chofer-${index}-nombres`}
-              name="nombres"
-              value={chofer.nombres}
-              onChange={(e) =>
-                handleChange(e.target.value, e.target.name, index)
-              }
-              className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
-            />
-          </div>
-
-          {/* Campo Apellidos */}
-          <div>
-            <Label
-              htmlFor={`chofer-${index}-apellidos`}
-              className="mb-1 block text-left text-sm font-semibold text-gray-700"
-            >
-              Apellidos
-            </Label>
-            <Input
-              type="text"
-              id={`chofer-${index}-apellidos`}
-              name="apellidos"
-              value={chofer.apellidos}
-              onChange={(e) =>
-                handleChange(e.target.value, e.target.name, index)
-              }
-              className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
-            />
-          </div>
-        </div>
-      ))}
+        ))}
       <div className="">
         <button
           type="button"
