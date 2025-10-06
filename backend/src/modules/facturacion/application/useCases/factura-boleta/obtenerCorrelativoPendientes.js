@@ -9,7 +9,7 @@ module.exports = async (body, facturaRepository) => {
                 status: 200,
                 mensaje: "No se encontraron correlativos pendientes",
                 estado: false,
-                correlativos: null
+                data: []
             },
         };
 

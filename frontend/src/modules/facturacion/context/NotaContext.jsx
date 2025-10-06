@@ -84,8 +84,8 @@ export function NotaProvider({ children }) {
         await facturaService.obtenerCorrelativoNota(rucsAndSeries);
       const { data: data2 } =
         await facturaService.obtenerCorrelativoPendientesNota(rucsAndSeries);
-        setCorrelativos(data);
-        setCorrelativosPendientes(data2);
+      setCorrelativos(data);
+      setCorrelativosPendientes(data2);
     } catch (error) {
     } finally {
       setLoadingCorrelativo(false);
@@ -402,8 +402,8 @@ export function NotaProvider({ children }) {
       empresa_Ruc: notaCreditoDebito.empresa_Ruc,
       serie: notaCreditoDebito.serie,
     });
-    setIdFactura(null);
     buscarCorrelativo();
+    setIdFactura(null);
   };
 
   return (

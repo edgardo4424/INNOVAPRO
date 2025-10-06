@@ -109,16 +109,6 @@ const InfDocumentoForm = () => {
   }, [guiaTransporte.empresa_Ruc, guiaTransporte.serie, correlativos]);
 
   useEffect(() => {
-    if (guiaTransporte.empresa_Ruc) {
-      setGuiaDatosInternos((prevValores) => ({
-        ...prevValores,
-        guia_Envio_Partida_Ruc: guiaTransporte.empresa_Ruc,
-        guia_Envio_Llegada_Ruc: guiaTransporte.empresa_Ruc,
-      }));
-    }
-  }, [guiaTransporte.empresa_Ruc]);
-
-  useEffect(() => {
     if (tipoGuia === "traslado-misma-empresa") {
       const filialSameRuc = filiales.find(
         (filial) => filial.ruc === guiaTransporte.empresa_Ruc,
@@ -132,17 +122,29 @@ const InfDocumentoForm = () => {
         cliente_Direccion: filialSameRuc.direccion,
       }));
     }
-  }, [tipoGuia]);
+    if (guiaTransporte.empresa_Ruc) {
+      setGuiaDatosInternos((prevValores) => ({
+        ...prevValores,
+        guia_Envio_Partida_Ruc: guiaTransporte.empresa_Ruc,
+        guia_Envio_Llegada_Ruc: guiaTransporte.empresa_Ruc,
+      }));
+    }
+  }, [tipoGuia, guiaTransporte.empresa_Ruc]);
 
   useEffect(() => {
-    setMostrarPendientes(false);
-    const lista = correlativosPendientes.filter(
-      (item) =>
-        item.ruc === guiaTransporte.empresa_Ruc &&
-        item.serie === guiaTransporte.serie,
-    );
+    if (correlativosPendientes?.length > 0 && correlativosPendientes) {
+      setMostrarPendientes(false);
+      const lista = correlativosPendientes.filter(
+        (item) =>
+          item.ruc === guiaTransporte.empresa_Ruc &&
+          item.serie === guiaTransporte.serie,
+      );
 
-    setListaCorrelativos(lista.flatMap((item) => item.pendientes));
+      setListaCorrelativos(lista.flatMap((item) => item.pendientes));
+    }else{
+      setMostrarPendientes(false);
+      setListaCorrelativos([]);
+    }
   }, [
     guiaTransporte.empresa_Ruc,
     guiaTransporte.serie,

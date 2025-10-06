@@ -400,6 +400,7 @@ export function GuiaTransporteProvider({ children }) {
       empresa_Ruc: guiaTransporte.empresa_Ruc,
       serie: guiaTransporte.serie,
     });
+    setTipoGuia("transporte-publico");
     setGuiaDatosPublico(ValoresPublico);
     setGuiaDatosInternos(ValoresInterno);
     buscarCorrelativo();

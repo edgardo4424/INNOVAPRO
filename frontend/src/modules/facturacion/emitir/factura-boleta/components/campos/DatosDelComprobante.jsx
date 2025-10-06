@@ -100,14 +100,19 @@ const DatosDelComprobante = () => {
   }, [factura.empresa_Ruc, factura.serie, correlativos]);
 
   useEffect(() => {
-    setMostrarPendientes(false);
-    const lista = correlativosPendientes.filter(
-      (item) =>
-        item.ruc === factura.empresa_Ruc && item.serie === factura.serie,
-    );
+    if (correlativosPendientes?.length > 0 && correlativosPendientes) {
+      setMostrarPendientes(false);
+      const lista = correlativosPendientes.filter(
+        (item) =>
+          item.ruc === factura.empresa_Ruc && item.serie === factura.serie,
+      );
 
-    // Une todos los arrays "pendientes" en uno solo
-    setListaCorrelativos(lista.flatMap((item) => item.pendientes));
+      // Une todos los arrays "pendientes" en uno solo
+      setListaCorrelativos(lista.flatMap((item) => item.pendientes));
+    } else {
+      setMostrarPendientes(false);
+      setListaCorrelativos([]);
+    }
   }, [factura.empresa_Ruc, factura.serie, correlativosPendientes]);
 
   return (

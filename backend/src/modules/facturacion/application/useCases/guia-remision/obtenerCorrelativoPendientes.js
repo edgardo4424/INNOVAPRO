@@ -10,7 +10,7 @@ module.exports = async (body, guiaRepository) => {
                 status: 200,
                 mensaje: "No se encontraron correlativos pendientes",
                 estado: false,
-                correlativos: null
+                data: []
             },
         };
 

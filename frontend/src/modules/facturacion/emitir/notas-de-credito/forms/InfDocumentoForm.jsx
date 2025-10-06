@@ -161,15 +161,20 @@ const InfDocumentoForm = () => {
   ]);
 
   useEffect(() => {
-    setMostrarPendientes(false);
-    const lista = correlativosPendientes.filter(
-      (item) =>
-        item.ruc === notaCreditoDebito.empresa_Ruc &&
-        item.serie === notaCreditoDebito.serie,
-    );
+    if (correlativosPendientes?.length > 0 && correlativosPendientes) {
+      setMostrarPendientes(false);
+      const lista = correlativosPendientes.filter(
+        (item) =>
+          item.ruc === notaCreditoDebito.empresa_Ruc &&
+          item.serie === notaCreditoDebito.serie,
+      );
 
-    // Une todos los arrays "pendientes" en uno solo
-    setListaCorrelativos(lista.flatMap((item) => item.pendientes));
+      // Une todos los arrays "pendientes" en uno solo
+      setListaCorrelativos(lista.flatMap((item) => item.pendientes));
+    } else {
+      setMostrarPendientes(false);
+      setListaCorrelativos([]);
+    }
   }, [
     notaCreditoDebito.empresa_Ruc,
     notaCreditoDebito.serie,
