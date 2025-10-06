@@ -24,7 +24,7 @@ module.exports = {
   async previsualizar(req, res) {
     try {
       const { dto, ctx } = await _ejecutarCalculoQuinta(req);
-      
+
       // Mapeamos el formato de salida
       const response = mapCalculoQuintaToResponse(dto);
       response.warnings = ctx.warnings;

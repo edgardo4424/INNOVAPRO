@@ -37,7 +37,7 @@ export default function CalculoQuintaCategoria() {
   const filialId = Number(form.filial_id);
   const anio = form.anio;
   const mes = form.mes;
-
+  console.log("PREVIEW QUE LLEGA AL FRONTEND: ", preview)
   const { cerrado, loading: closing, cerrar, periodo } = useCierreQuinta({ filialId, anio, mes });
 
   const [loadingClose, setLoadingClose] = useState(false);
