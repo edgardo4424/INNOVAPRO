@@ -133,10 +133,6 @@ const DatosDelComprobante = () => {
             value={factura.tipo_Operacion}
             disabled
             readOnly
-            // onValueChange={(value) =>{
-            //   console.log('first');
-            //   handleSelectChange(value, "tipo_Operacion")
-            // }}
           >
             <SelectTrigger className="w-full rounded-md border border-gray-300 shadow-sm">
               <SelectValue placeholder="Selecciona un tipo de operación" />
