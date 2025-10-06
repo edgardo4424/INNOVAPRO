@@ -1,3 +1,5 @@
+const obtenerCorrelativoPendientes = require("../../application/useCases/guia-remision/obtenerCorrelativoPendientes");
+
 const crearGuia = require("../../application/useCases/guia-remision/crearGuia");
 
 const obtenerCorrelativo = require("../../application/useCases/guia-remision/obtenerCorrelativo");
@@ -42,9 +44,21 @@ const guiaRemisionController = {
         }
     },
 
+    async obtenerCorrelativoPendientes(req, res) {
+        // * Controlador para obtener el correlativo de la Guia
+        // * se encarga de llamar al caso de uso
+        // * "obtenerCorrelativo" y devolver su respuesta
+        try {
+            const { codigo, respuesta } = await obtenerCorrelativoPendientes(req.body, guiaRepository)
+            res.status(codigo).json(respuesta)
+        } catch (error) {
+            res.status(500).json({ error: error.message, estado: false })
+        }
+    },
+
     async obtenerRelacionesGuias(req, res) {
         try {
-            
+
             const { codigo, respuesta } = await obtenerGuiasPorRuc(req.body, guiaRepository);
             res.status(codigo).json(respuesta);
         } catch (error) {

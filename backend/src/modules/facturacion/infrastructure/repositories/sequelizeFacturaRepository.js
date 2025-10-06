@@ -441,6 +441,77 @@ class SequelizeFacturaRepository {
         return resultados;
     }
 
+    async correlativoPendientes(body) {
+        const resultados = [];
+        const rucsAndSeries = [];
+
+        // Armar las combinaciones de RUC y Serie
+        for (const data of body) {
+            if (data.serieBoleta) {
+                for (const serie of data.serieBoleta) {
+                    rucsAndSeries.push({ ruc: data.ruc, serie: serie.value });
+                }
+            }
+            if (data.serieFactura) {
+                for (const serie of data.serieFactura) {
+                    rucsAndSeries.push({ ruc: data.ruc, serie: serie.value });
+                }
+            }
+        }
+
+        // Traer todos los correlativos de esas series
+        const facturas = await Factura.findAll({
+            attributes: ["empresa_ruc", "serie", "correlativo"],
+            where: {
+                [Op.or]: rucsAndSeries.map(item => ({
+                    empresa_ruc: item.ruc,
+                    serie: item.serie
+                }))
+            },
+            raw: true
+        });
+
+        // Agrupar por RUC-SERIE
+        const agrupados = new Map();
+        for (const f of facturas) {
+            const key = `${f.empresa_ruc}-${f.serie}`;
+            if (!agrupados.has(key)) agrupados.set(key, []);
+            agrupados.get(key).push(Number(f.correlativo));
+        }
+
+        // Detectar correlativos pendientes
+        for (const { ruc, serie } of rucsAndSeries) {
+            const key = `${ruc}-${serie}`;
+            const correlativos = (agrupados.get(key) || []).sort((a, b) => a - b);
+
+            const pendientes = [];
+            if (correlativos.length > 0) {
+                const min = correlativos[0];
+                const max = correlativos[correlativos.length - 1];
+
+                // Usamos Set para eficiencia
+                const existentes = new Set(correlativos);
+
+                for (let i = min; i <= max; i++) {
+                    if (!existentes.has(i)) {
+                        pendientes.push(String(i).padStart(8, "0"));
+                    }
+                }
+            }
+
+            // 👉 Solo devolver si hay pendientes
+            if (pendientes.length > 0) {
+                resultados.push({
+                    ruc,
+                    serie,
+                    pendientes
+                });
+            }
+        }
+
+        return resultados;
+    }
+
     async cdrzip(id_factura) {
         const cdr_zip = await SunatRespuesta.findOne({
             attributes: ['cdr_zip'],
