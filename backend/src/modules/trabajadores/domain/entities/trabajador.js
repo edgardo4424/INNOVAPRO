@@ -55,9 +55,9 @@ class Trabajador {
       if (!this.telefono || !this.telefono.trim()) {
          errores.push("Número de teléfono inválido");
       }
-      if (this.sueldo_base < 1130) {
+     /*  if (this.sueldo_base < 1130) {
          errores.push("El sueldo base es invalido");
-      }
+      } */
       if (this.domiciliado === null || this.domiciliado === undefined) {
          errores.push("Dato domiciliado inválida");
       }

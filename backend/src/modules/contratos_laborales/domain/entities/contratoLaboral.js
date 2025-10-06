@@ -58,9 +58,9 @@ class ContratoLaboral {
          );
       }
 
-      if (this.sueldo <= 1130) {
+      /* if (this.sueldo <= 1130) {
          errores.push("El sueldo debe ser un número mayor a 1130.");
-      }
+      } */
 
       const regimenValido = ["MYPE", "GENERAL"];
       if (!regimenValido.includes(this.regimen)) {

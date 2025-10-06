@@ -13,6 +13,7 @@ const trabajadorRepository = new SequelizeTrabajadorRepository();
 module.exports = async function editarTrabajadorConContrato(data) {
    const transaction = await sequelize.transaction();
    const { id: trabajadorId, contratos_laborales } = data;
+ 
    try {
       const response_edit = await editarTrabajador(
          data,

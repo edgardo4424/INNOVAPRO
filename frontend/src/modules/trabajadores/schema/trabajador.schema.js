@@ -20,7 +20,7 @@ const contratoSchema = yup.object({
       .number()
       .transform((value, originalValue) => Number(originalValue))
       .typeError("El sueldo base debe ser un número")
-      .min(1130, "El sueldo base debe ser mayor a 1130")
+      /* .min(1130, "El sueldo base debe ser mayor a 1130") */
       .required("El sueldo base es requerido"),
    regimen: yup
       .string()
