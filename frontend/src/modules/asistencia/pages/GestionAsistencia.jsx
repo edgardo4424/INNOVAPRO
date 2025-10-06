@@ -201,42 +201,13 @@ const GestionAsistencia = () => {
                      </div>
                   ) : area_id == 6 || area_id == 2 ? (
                      trabajadoresFiltrados.map((trabajador) => (
-                        <Card key={trabajador.id} className={"py-3 gap-2"}>
-                           <CardHeader className={""}>
-                              <CardTitle className="flex items-center justify-start gap-8 ">
-                                 <div>
-                                    <h3 className="text-lg font-semibold !mt-0">
-                                       {trabajador.nombres}{" "}
-                                       {trabajador.apellidos}
-                                    </h3>
-                                    <div>
-                                       <p className="text-[9px] text-neutral-500">
-                                          {trabajador.tipo_documento}:{" "}
-                                          {trabajador.numero_documento}
-                                       </p>
-                                       <p className="text-xs lowercase text-neutral-500">
-                                          {trabajador.filial}
-                                       </p>
-                                    </div>
-                                 </div>
-                                 <div className="">
-                                    <BadgeEstadoAsistencia
-                                       trabajador={trabajador}
-                                    />
-                                 </div>
-                              </CardTitle>
-                           </CardHeader>
-                           <CardContent className={""}>
-                              <div className="grid grid-cols-1 gap-4">
-                                 <JornadaCard
-                                    trabajador={trabajador}
-                                    obtenerTrabajadores={obtenerTrabajadores}
-                                    fecha={fechaSeleccionada}
-                                    asistenciasSincronizacion={asistenciasSincronizacion}
-                                 />
-                              </div>
-                           </CardContent>
-                        </Card>
+                          <JornadaCard
+                             key={trabajador.id}
+                             trabajador={trabajador}
+                             obtenerTrabajadores={obtenerTrabajadores}
+                             fecha={fechaSeleccionada}
+                             asistenciasSincronizacion={asistenciasSincronizacion}
+                          />
                      ))
                   ) : (
                      trabajadoresFiltrados.map((trabajador) => (
