@@ -79,6 +79,10 @@ const EmitirRoutes = lazy(() =>
    import("../modules/facturacion/routes/EmitirRoutes")
 );
 
+const Reportes = lazy(() =>
+   import("../modules/facturacion/pages/Reporte")
+);
+
 const BandejaRoutes = lazy(() =>
    import("../modules/facturacion/routes/BandejaRoutes")
 );
@@ -251,6 +255,16 @@ export default function AppRoutes() {
                            path="facturacion/bandeja/*"
                            element={<BandejaRoutes />}
                         />
+
+                        <Route
+                           path="facturacion/reportes-venta"
+                           element={
+                                 <BandejaProvider>
+                                    <Reportes />
+                                 </BandejaProvider>
+                                 }
+                        />
+
                         <Route element={<RoleGuard roles={["CEO", "Gerente de administración","Asistente Facturación","Contadora"]} />}>
 
                            <Route

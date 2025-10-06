@@ -1,6 +1,6 @@
 // src/modules/facturacion/routes/BandejaRoutes.jsx
-
-import { Routes, Route } from "react-router-dom";
+import RoleGuard from "@/routes/rol.guard";
+import { Route, Routes } from "react-router-dom";
 import { FacturaBoletaProvider } from "../context/FacturaBoletaContext";
 import { GuiaTransporteProvider } from "../context/GuiaTransporteContext";
 import { NotaProvider } from "../context/NotaContext";
@@ -9,7 +9,6 @@ import Emitir from "../pages/Emitir";
 import FacturaBoleta from "../pages/FacturaBoleta";
 import GuiaRemision from "../pages/GuiaRemision";
 import NotaCredito from "../pages/NotaCredito";
-import RoleGuard from "@/routes/rol.guard";
 
 const BandejaRoutes = () => {
   return (
@@ -45,11 +44,7 @@ const BandejaRoutes = () => {
         <Route
           element={
             <RoleGuard
-              roles={[
-                "CEO",
-                "Gerente de administración",
-                "Jefa de Almacén",
-              ]}
+              roles={["CEO", "Gerente de administración", "Jefa de Almacén"]}
             />
           }
         >
@@ -85,6 +80,7 @@ const BandejaRoutes = () => {
             }
           />
         </Route>
+
       </Route>
     </Routes>
   );

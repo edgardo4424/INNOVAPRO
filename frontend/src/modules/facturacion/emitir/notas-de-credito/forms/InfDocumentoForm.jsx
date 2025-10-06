@@ -160,9 +160,11 @@ const InfDocumentoForm = () => {
           <Select
             name="tipo_operacion"
             value={notaCreditoDebito.tipo_Operacion}
-            onValueChange={(e) => {
-              handleSelectChange(e, "tipo_Operacion");
-            }}
+            // onValueChange={(e) => {
+            //   handleSelectChange(e, "tipo_Operacion");
+            // }}
+            readOnly
+            disabled
           >
             <SelectTrigger className="w-full rounded-md border border-gray-300 shadow-sm">
               {" "}
