@@ -13,11 +13,12 @@ export const useAsistencia = (
     trabajador_id: trabajador.id,
     estado_asistencia: "",
     horas_trabajadas: 8,
+    minutos_trabajados:0,
     horas_extras: 0,
     fecha: new Date(date).toISOString().slice(0, 10),
     jornadas: [
       {
-        id: 1,
+        id: 2,
         turno: "mañana",
         lugar: "",
         tipo_trabajo_id: null,
@@ -31,17 +32,66 @@ export const useAsistencia = (
         (a) => a.trabajador.dni == trabajador.numero_documento,
       );
       if (asistencia_marcate) {
-         const payload={...asistencia}
+         const payload={...asistencia};         
          const manana=payload.jornadas.find((j)=>j.turno==="mañana")||null;
-         const tarde=payload.jornadas.find((j)=>j.turno==="tarde")||null;
+         const tarde=payload.jornadas.find((j)=>j.turno==="tarde")||null;         
+         const m_marcate=asistencia_marcate?.asistencia?.jornada_manhana||null;
+         const t_marcate=asistencia_marcate?.asistencia?.jornada_tarde||null;
+
+         if(m_marcate){
+            if(manana){
+               payload.jornadas=payload.jornadas.map((j)=>{
+                  const jor={...j}
+                  if(jor.turno==="mañana"){
+                     jor.lugar=m_marcate.direccion_obra
+                  }
+                  return jor;
+               })
+            }
+            else{
+              payload.jornadas.push({
+                  id: new Date().getTime(),
+                  turno: "mañana",
+                  lugar: m_marcate.direccion_obra,
+                  tipo_trabajo_id: null,
+              })
+            }
+         }
          
+         if(t_marcate){
+            if(tarde){
+               payload.jornadas=payload.jornadas.map((j)=>{
+                  const jor={...j}
+                  console.log("Jornada tarde copiada",jor);
+                  if(jor.turno==="tarde"){
+                     jor.lugar=t_marcate.direccion_obra
+                  }
+                  return jor;
+               })
+            }
+            else{
+              payload.jornadas.push({
+                  id: new Date().getTime(),
+                  turno: "tarde",
+                  lugar: t_marcate.direccion_obra,
+                  tipo_trabajo_id: null,
+              })
+            }
+         }
+         payload.estado_asistencia=asistencia_marcate.asistencia.estado;
+         const {horas,minutos,segundos}=asistencia_marcate.asistencia.tiempo_trabajado
+         console.log(asistencia_marcate.asistencia.tiempo_trabajado);
+         if(horas){
+            payload.horas_trabajadas=horas
+         }
+         if (minutos) {
+            payload.minutos_trabajados=minutos;
+         }
+         if(asistencia_marcate.asistencia.horas_extras){
+            payload.horas_extras=asistencia_marcate.asistencia.horas_extras
+         }
 
-
-        console.log("Asistencia existe ", asistencia_marcate);
-        setAsistencia((prev) => ({
-          ...prev,
-           estado_asistencia: asistencia_marcate.asistencia.estado
-        }));
+        setAsistencia(payload);
       }
     }
   }, [asistenciasSincronizacion]);

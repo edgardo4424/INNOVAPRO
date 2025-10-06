@@ -74,42 +74,61 @@ const JornadaCard = ({ trabajador, obtenerTrabajadores, fecha,asistenciasSincron
                </div>
 
                {/* Horas */}
-               <div>
+              <section className="col-span-2 grid grid-cols-3 gap-4 items-center">
+                 <div>
                   <Label className="text-xs">Horas</Label>
                   <Input
                      type="number"
                      min="0"
                      max="12"
                      step="0.5"
-                     value={asistencia.horas_trabajadas || 0}
+                     value={asistencia.horas_trabajadas?? ""}
                      onChange={(e) =>
                         actualizarAsistencia(
                            "horas_trabajadas",
-                           Number.parseFloat(e.target.value) || 0
+                           Number.parseFloat(e.target.value) 
                         )
                      }
                      disabled={inputsDeshabilitados}
                      className="w-full"
                   />
-               </div>
-               <div>
+                 </div>
+                 <div>
+                  <Label className="text-xs">Minutos</Label>
+                  <Input
+                     type="number"
+                     value={asistencia.minutos_trabajados?? ""}
+                     onChange={(e) =>
+                        actualizarAsistencia(
+                           "minutos_trabajados",
+                           Number.parseFloat(e.target.value)
+                        )
+                     }
+                     placeholder="0"
+                     disabled={inputsDeshabilitados}
+                     className="w-full"
+                  />
+                 </div>
+                 <div>
                   <Label className="text-xs">Horas Extras</Label>
                   <Input
                      type="number"
                      min="0"
                      max="12"
                      step="0.5"
-                     value={asistencia.horas_extras || 0}
+                     value={asistencia.horas_extras ?? ""}
                      onChange={(e) =>
                         actualizarAsistencia(
                            "horas_extras",
-                           Number.parseFloat(e.target.value) || 0
+                           Number.parseFloat(e.target.value)
                         )
                      }
+                     placeholder="0"
                      disabled={inputsDeshabilitados}
                      className="w-full"
                   />
-               </div>
+                 </div>
+              </section>
 
                {/* Turno */}
                <div>
