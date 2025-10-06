@@ -52,6 +52,7 @@ const dataInicial = {
       tipo_contrato: "",
       banco: "",
       numero_cuenta: "",
+        es_indefinido: false,
     },
   ],
 };
@@ -106,6 +107,7 @@ export default function TrabajadorForm() {
         if (ignore) return;
 
         const t = res && res.data.trabajador ? res.data.trabajador : res || {};
+        console.log('t.contratos_laborales', t.contratos_laborales);
         const contratos = Array.isArray(t.contratos_laborales)
           ? t.contratos_laborales.map((c, idx) => ({
               id: c?.id ?? idx + 1,
@@ -117,6 +119,7 @@ export default function TrabajadorForm() {
               regimen: c?.regimen ?? "",
               tipo_contrato: c?.tipo_contrato ?? "",
               filial_id: c?.filial_id.toString() ?? "",
+              es_indefinido: c?.es_indefinido ?? false,
             }))
           : dataInicial.contratos_laborales;
 
@@ -213,6 +216,7 @@ export default function TrabajadorForm() {
           abortEarly: false,
         });
 
+        console.log('dataToSubmit', dataToSubmit);
         await trabajadoresService.crearTrabajador(dataToSubmit);
         toast.success("Trabajador creado con éxito");
       }

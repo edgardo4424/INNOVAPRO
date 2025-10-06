@@ -51,6 +51,7 @@ const TrabajadorController = {
          const nuevaContratacion = await crearTrabajadorConContrato(req.body);
          res.status(nuevaContratacion.codigo).json(nuevaContratacion.respuesta);
       } catch (error) {
+                  console.log('error', error);
          res.status(500).json({ error: error.message });
       }
    },
