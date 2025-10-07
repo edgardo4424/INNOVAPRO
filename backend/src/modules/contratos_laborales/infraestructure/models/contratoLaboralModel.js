@@ -54,6 +54,10 @@ const ContratoLaboral = sequelize.define(
          type: DataTypes.STRING,
          allowNull: true,
       },
+      numero_cuenta_cts: {
+         type: DataTypes.STRING,
+         allowNull: true,
+      },
       banco: {
          type: DataTypes.STRING,
          allowNull: true,
