@@ -116,7 +116,7 @@ const DatosDelComprobante = () => {
   }, [factura.empresa_Ruc, factura.serie, correlativosPendientes]);
 
   return (
-    <div className="overflow-y-auto p-4 sm:p-6 lg:px-8 lg:py-4">
+    <div className=" p-4 sm:p-6 lg:px-8 lg:py-4">
       <h1 className="py-3 text-2xl font-bold text-gray-800">
         Datos del Comprobante
       </h1>
@@ -234,7 +234,7 @@ const DatosDelComprobante = () => {
               </div>
 
               {mostrarPendientes && listaCorrelativos.length > 0 && (
-                <div className="r absolute top-12 col-span-full rounded-md border border-gray-200 bg-gray-50 p-3 shadow-inner">
+                <div className="r absolute top-12 z-10 col-span-full rounded-md border border-gray-200 bg-gray-50 p-3 shadow-inner">
                   <h3 className="mb-2 text-sm font-bold text-gray-700">
                     Pendientes:
                   </h3>

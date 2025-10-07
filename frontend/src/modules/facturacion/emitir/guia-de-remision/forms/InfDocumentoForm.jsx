@@ -152,7 +152,7 @@ const InfDocumentoForm = () => {
   ]);
 
   return (
-    <div className="overflow-y-auto p-4 sm:p-6 lg:px-8 lg:py-4">
+    <div className=" p-4 sm:p-6 lg:px-8 lg:py-4">
       <h2 className="mb-2 flex text-2xl font-semibold">
         Información del Documento
       </h2>
