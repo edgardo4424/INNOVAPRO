@@ -1,5 +1,5 @@
 import factilizaService from "@/modules/facturacion/service/FactilizaService";
-import { FileCode, FileText, Folders, X } from "lucide-react";
+import { FileArchive, FileCode, FileText, X } from "lucide-react";
 import { useState } from "react";
 // npm install file-saver
 import { saveAs } from "file-saver";
@@ -369,8 +369,8 @@ const ModalDescarga = ({
                 disabled={loading}
                 className="bg-innova-blue hover:bg-innova-blue-hover flex cursor-pointer items-center justify-center gap-2 rounded-lg p-4 font-semibold text-white transition-colors disabled:opacity-60"
               >
-                <Folders size={20} />
-                {loading ? "Procesando…" : "Descargar Ambos"}
+                <FileArchive size={20} />
+                {loading ? "Procesando…" : "Descargar ZIP"}
               </button>
             </div>
           </div>
