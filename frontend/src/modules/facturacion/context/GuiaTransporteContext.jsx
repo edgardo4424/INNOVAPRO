@@ -24,10 +24,10 @@ export function GuiaTransporteProvider({ children }) {
 
   const serieGuia = [
     { value: "T001" },
-    { value: "T002" },
-    { value: "T003" },
-    { value: "T004" },
-    { value: "T005" },
+    // { value: "T002" },
+    // { value: "T003" },
+    // { value: "T004" },
+    // { value: "T005" },
   ];
 
   const [correlativos, setCorrelativos] = useState([]);
@@ -237,7 +237,11 @@ export function GuiaTransporteProvider({ children }) {
         message: message_factiliza,
         data: data_factiliza,
       } = await factilizaService.enviarGuia(guiaAEmitir);
-      if (status_factiliza === 200 && succes_factiliza) {
+      if (
+        status_factiliza === 200 &&
+        (data_factiliza?.sunatResponse?.cdrResponse?.code == "0" ||
+          data_factiliza?.error?.code == "HTTP")
+      ) {
         let sunat_respuest = {
           hash: data_factiliza?.hash ?? null,
           mensaje: message_factiliza ?? null,
@@ -296,7 +300,10 @@ export function GuiaTransporteProvider({ children }) {
             status: 400,
           };
         }
-      } else if (status_factiliza === 200 && !succes_factiliza) {
+      } else if (
+        status_factiliza === 200 &&
+        data_factiliza?.sunatResponse?.cdrResponse?.code != "0"
+      ) {
         result = {
           success: false,
           message: message_factiliza,

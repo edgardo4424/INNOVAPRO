@@ -19,6 +19,7 @@ class SequelizeAsistenciaRepository {
         {
           trabajador_id: asistenciaData.trabajador_id,
           horas_trabajadas: asistenciaData.horas_trabajadas || null,
+          minutos_trabajados: asistenciaData.minutos_trabajados || null,          
           horas_extras: asistenciaData.horas_extras || null,
           estado_asistencia: asistenciaData.estado_asistencia,
           fecha: asistenciaData.fecha,
@@ -107,6 +108,7 @@ class SequelizeAsistenciaRepository {
                      await Asistencia.update(
                      {
                         horas_trabajadas: asistenciaData.horas_trabajadas || null,
+                        minutos_trabajados:asistenciaData.minutos_trabajados||null,
                         horas_extras: asistenciaData.horas_extras || null,
                         estado_asistencia: asistenciaData.estado_asistencia,
                      },
@@ -126,6 +128,7 @@ class SequelizeAsistenciaRepository {
                   await Asistencia.update(
                   {
                      horas_trabajadas: asistenciaData.horas_trabajadas || null,
+                     minutos_trabajados:asistenciaData.minutos_trabajados||null,
                      horas_extras: asistenciaData.horas_extras || null,
                      estado_asistencia: asistenciaData.estado_asistencia,
                   },
@@ -141,6 +144,7 @@ class SequelizeAsistenciaRepository {
                await Asistencia.update(
                {
                   horas_trabajadas: asistenciaData.horas_trabajadas || null,
+                  minutos_trabajados:asistenciaData.minutos_trabajados||null,
                   horas_extras: asistenciaData.horas_extras || null,
                   estado_asistencia: asistenciaData.estado_asistencia,
                },
@@ -214,6 +218,7 @@ class SequelizeAsistenciaRepository {
       await Asistencia.create({
         trabajador_id: asistenciaData.trabajador_id,
         horas_trabajadas: 9,
+        minutos_trabajados:0,
         estado_asistencia: asistenciaData.estado_asistencia,
         fecha: asistenciaData.fecha,
       });
@@ -319,6 +324,7 @@ class SequelizeAsistenciaRepository {
       {
         trabajador_id: asistenciaData.trabajador_id,
         horas_trabajadas: 0,
+        minutos_trabajados:0,
         estado_asistencia: asistenciaData.estado_asistencia,
         fecha: asistenciaData.fecha,
       },

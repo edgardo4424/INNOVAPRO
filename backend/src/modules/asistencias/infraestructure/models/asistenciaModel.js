@@ -29,6 +29,10 @@ const Asistencia = sequelize.define(
          type: DataTypes.INTEGER,
          allowNull: true,
       },
+      minutos_trabajados:{
+         type:DataTypes.INTEGER,
+         allowNull:true
+      },
       estado_asistencia: {
          type: DataTypes.ENUM(
             "presente",

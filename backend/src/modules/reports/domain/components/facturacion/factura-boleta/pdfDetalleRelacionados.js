@@ -67,32 +67,32 @@ function pdfDetalleRelacionados(
                     vLineWidth: () => 0,
                 }
             },
-            {
-                width: "30%",
-                table: {
-                    widths: ["100%"],
-                    body: [
-                        [
-                            {
-                                qr: qrData,
-                                fit: 90,
-                                alignment: "center",
-                                margin: [0, 10, 0, 0]
-                            }
-                        ],
-                        [
-                            {
-                                text: "Código QR",
-                                alignment: "center",
-                                fontSize: 7,
-                                margin: [0, 5, 0, 0],
-                                color: text_color
-                            }
-                        ]
-                    ]
-                },
-                layout: "noBorders"
-            }
+            // {
+            //     width: "30%",
+            //     table: {
+            //         widths: ["100%"],
+            //         body: [
+            //             [
+            //                 {
+            //                     qr: qrData,
+            //                     fit: 90,
+            //                     alignment: "center",
+            //                     margin: [0, 10, 0, 0]
+            //                 }
+            //             ],
+            //             [
+            //                 {
+            //                     text: "Código QR",
+            //                     alignment: "center",
+            //                     fontSize: 7,
+            //                     margin: [0, 5, 0, 0],
+            //                     color: text_color
+            //                 }
+            //             ]
+            //         ]
+            //     },
+            //     layout: "noBorders"
+            // }
         ]
     }
 }

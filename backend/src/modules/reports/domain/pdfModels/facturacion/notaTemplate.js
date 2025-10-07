@@ -7,6 +7,31 @@ const { pdfProductoNota } = require("../../components/facturacion/nota/pdfProduc
 const { pdfDetallesMontos } = require("../../components/facturacion/nota/pdfDetalleMontos");
 const { pdfLegendNota } = require("../../components/facturacion/nota/pdfLegendNota");
 
+// ? pie cuentas de banco
+const cuenta_andamios_electricos = path.join(__dirname, "../../../../../assets/pdf/cuentas_banco/cuentas_AE.png")
+const cuenta_encofrados_innova = path.join(__dirname, "../../../../../assets/pdf/cuentas_banco/cuentas_EI.png")
+const cuenta_indek = path.join(__dirname, "../../../../../assets/pdf/cuentas_banco/cuentas_IA.png")
+const cuenta_rental = path.join(__dirname, "../../../../../assets/pdf/cuentas_banco/cuentas_IR.png")
+const cuenta_green = path.join(__dirname, "../../../../../assets/pdf/cuentas_banco/cuentas_IG.png")
+
+function renderPieCuenta(nota) {
+    const ruc = (nota.empresa_ruc || nota.empresa_Ruc).toString().trim();
+    if (ruc == '20562974998') {
+        return cuenta_encofrados_innova
+    } else if (ruc == '20602696643') {
+        return cuenta_andamios_electricos
+    } else if (ruc == '20555389052') {
+        return cuenta_indek
+    } else if (ruc == '20603021933') {
+        return cuenta_rental
+    } else if (ruc == '20610202358') {
+        return cuenta_green
+    }
+    else {
+        return ''
+    }
+}
+
 function notaTemplate(data) {
     const nota = data[0];
     //* Colores base
@@ -72,6 +97,21 @@ function notaTemplate(data) {
                 ]
             },
             layout: "noBorders"
+        },
+        {
+            unbreakable: true,
+            stack: [
+                (() => {
+                    const imgPath = renderPieCuenta(nota);
+                    return imgPath
+                        ? {
+                            image: imgPath,
+                            width: 515,            // ancho útil aproximado en A4 con márgenes [40,40,40,60]
+                            margin: [0, 10, 0, 0]
+                        }
+                        : { text: '' };
+                })()
+            ]
         }
 
     ]

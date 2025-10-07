@@ -2,7 +2,6 @@ const { PdfService } = require('../../../infrastructure/pdf/PdfService');
 const { facturaTemplate } = require('../../../domain/pdfModels/facturacion/facturaTemplate');
 
 module.exports = async (body, facturaRepository) => {
-    console.log("🚚 Atributos para buscar existencia:", body);
     // ? destructuramos el body
     const { correlativo, serie, numRuc, tipoDoc } = body;
     // ? buscamos la factura

@@ -77,16 +77,13 @@ const TrabajadorController = {
          res.status(500).json({ error: error.message });
       }
    },
-   async sincronizarMarcate(req,res){
-      console.log("Holaaaa");
-      
-      try {
-         const response=await sincronizacion_marcate();
+   async sincronizarMarcate(req,res){      
+      try {         
+         const response=await sincronizacion_marcate(req.body);
          res.status(response.codigo).json(response.respuesta);
       } catch (error) {
-         console.log(error);
+         console.log("El error desde marcate es:",error);
          res.status(500).json({ error: error });
-
       }
    },
    async obtenerTrabajadoresPorAreaCargo(req, res) {

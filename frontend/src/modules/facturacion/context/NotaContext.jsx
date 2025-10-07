@@ -18,19 +18,20 @@ export function NotaProvider({ children }) {
   const [correlativos, setCorrelativos] = useState([]);
   const [correlativoEstado, setCorrelativoEstado] = useState(false);
   const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
-
+  // Notas de crédito
   const serieCredito = [
-    { value: "FC01", doc: "01" },
-    { value: "FC02", doc: "01" },
-    { value: "BC01", doc: "03" },
-    { value: "BC02", doc: "03" },
+    { value: "FCT1", doc: "01" }, // Nota de crédito sobre factura
+    { value: "FCT2", doc: "01" }, // (opcional segunda serie)
+    { value: "BCT1", doc: "03" }, // Nota de crédito sobre boleta
+    { value: "BCT2", doc: "03" },
   ];
 
+  // Notas de débito
   const serieDebito = [
-    { value: "FD01", doc: "01" },
-    { value: "FD02", doc: "01" },
-    { value: "BD01", doc: "03" },
-    { value: "BD02", doc: "03" },
+    { value: "FDT1", doc: "01" }, // Nota de débito sobre factura
+    { value: "FDT2", doc: "01" },
+    { value: "BDT1", doc: "03" }, // Nota de débito sobre boleta
+    { value: "BDT2", doc: "03" },
   ];
 
   // ?? BORRADOR
@@ -219,7 +220,11 @@ export function NotaProvider({ children }) {
         await factilizaService.enviarNota(notaCreditoDebito);
 
       // ? 3. Evaluar la respuesta de la API de factilización.
-      if (status === 200 && success) {
+      if (
+        status === 200 &&
+        (data?.sunatResponse?.cdrResponse?.code == "0" ||
+          data?.error?.code == "HTTP")
+      ) {
         // ? ÉXITO en SUNAT: La nota fue aceptada.
 
         // ? a. Formatear la respuesta de SUNAT para el registro en la base de datos.
@@ -282,7 +287,10 @@ export function NotaProvider({ children }) {
             data: notaEmitida,
           };
         }
-      } else if (status === 200 && !success) {
+      } else if (
+        status === 200 &&
+        data?.sunatResponse?.cdrResponse?.code != "0"
+      ) {
         // ? ERROR LÓGICO: La API respondió, pero SUNAT rechazó el documento.
         result = {
           success: false,

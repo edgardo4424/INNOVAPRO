@@ -18,6 +18,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Calendar22 } from "../../factura-boleta/components/Calendar22";
 import { Ubigeos } from "../utils/ubigeo";
 import ModalPlacas from "../components/modal/ModalPlacas";
+import { Calendar55 } from "../components/calendar55";
 
 const DatosGuiaEnvioForm = () => {
   const {
@@ -445,7 +446,7 @@ const DatosGuiaEnvioForm = () => {
           >
             Fecha de Traslado
           </Label>
-          <Calendar22
+          {/* <Calendar22
             tipo={"guia_Envio_Fec_Traslado"}
             Dato={guiaDatosPrivado}
             setDato={setGuiaTransporte}
@@ -455,6 +456,11 @@ const DatosGuiaEnvioForm = () => {
             value={guia_Envio_Fec_Traslado}
             // onChange={handleChange}
             className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+          /> */}
+          <Calendar55
+            Dato={guiaTransporte}
+            setDato={setGuiaTransporte}
+            tipo="guia_Envio_Fec_Traslado"
           />
         </div>
 
@@ -595,7 +601,7 @@ const DatosGuiaEnvioForm = () => {
         </div>
 
         <div className="col-span-1 md:col-span-2 lg:col-span-1">
-          <div className="flex gap-x-4 items-center">
+          <div className="flex items-center gap-x-4">
             <Label
               htmlFor="guia_Envio_Llegada_Direccion"
               className="mb-1 block text-left text-sm font-semibold text-gray-700"

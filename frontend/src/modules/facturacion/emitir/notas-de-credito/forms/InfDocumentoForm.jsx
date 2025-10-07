@@ -7,11 +7,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { useNota } from "@/modules/facturacion/context/NotaContext";
+import { formatDateTime } from "@/modules/facturacion/utils/formateos";
 import { LoaderCircle, Search, SquarePen } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { Calendar22 } from "../../factura-boleta/components/Calendar22";
 
 const InfDocumentoForm = () => {
   const {
@@ -66,10 +65,27 @@ const InfDocumentoForm = () => {
   };
 
   const handleSelectChange = (value, name) => {
-    setNotaCreditoDebito((prevValores) => ({
-      ...prevValores,
-      [name]: value,
-    }));
+    if (name == "tipo_Doc") {
+      setNotaCreditoDebito((prevValores) => ({
+        ...prevValores,
+        tipo_Doc: value,
+        motivo_Cod: "",
+        motivo_Des: "",
+        monto_Igv: 0.0,
+        total_Impuestos: 0.0,
+        valor_Venta: 0.0,
+        monto_Oper_Gravadas: 0.0,
+        monto_Oper_Exoneradas: 0.0,
+        sub_Total: 0.0,
+        monto_Imp_Venta: 0.0,
+        legend: [],
+      }));
+    } else {
+      setNotaCreditoDebito((prevValores) => ({
+        ...prevValores,
+        [name]: value,
+      }));
+    }
   };
 
   useEffect(() => {
@@ -77,15 +93,15 @@ const InfDocumentoForm = () => {
     let nuevaSerie;
     if (notaCreditoDebito.tipo_Doc === "07") {
       if (notaCreditoDebito.afectado_Tipo_Doc == "01") {
-        nuevaSerie = "FC01";
+        nuevaSerie = "FCT1";
       } else {
-        nuevaSerie = "BC01";
+        nuevaSerie = "BCT1";
       }
     } else {
       if (notaCreditoDebito.afectado_Tipo_Doc == "01") {
-        nuevaSerie = "FD01";
+        nuevaSerie = "FDT1";
       } else {
-        nuevaSerie = "BD01";
+        nuevaSerie = "BDT1";
       }
     }
     setNotaCreditoDebito((prev) => ({
@@ -93,6 +109,7 @@ const InfDocumentoForm = () => {
       serie: nuevaSerie,
       correlativo: "", // Limpiar el correlativo para que se recalcule
       detalle: [],
+      motivo_Cod: "",
     }));
   }, [notaCreditoDebito.tipo_Doc]);
 
@@ -134,7 +151,12 @@ const InfDocumentoForm = () => {
         <div className="col-span-full flex flex-col gap-1 sm:col-span-1">
           {" "}
           {/* Col-span-full para que ocupe todo el ancho en móviles */}
-          <Label htmlFor="tipo_operacion" className="font-semibold text-gray-700">Tipo de Operación</Label>
+          <Label
+            htmlFor="tipo_operacion"
+            className="font-semibold text-gray-700"
+          >
+            Tipo de Operación
+          </Label>
           <Select
             name="tipo_operacion"
             value={notaCreditoDebito.tipo_Operacion}
@@ -169,7 +191,10 @@ const InfDocumentoForm = () => {
 
         {/* Tipo de Documento */}
         <div>
-          <Label htmlFor="tipo_Doc" className="mb-1 block text-left text-sm font-semibold text-gray-700">
+          <Label
+            htmlFor="tipo_Doc"
+            className="mb-1 block text-left text-sm font-semibold text-gray-700"
+          >
             Tipo de Documento
           </Label>
           <Select
@@ -193,7 +218,9 @@ const InfDocumentoForm = () => {
 
         {/* Serie */}
         <div>
-          <Label htmlFor="serie" className="font-semibold text-gray-700">Serie</Label>
+          <Label htmlFor="serie" className="font-semibold text-gray-700">
+            Serie
+          </Label>
           <Select
             value={notaCreditoDebito.serie}
             name="serie"
@@ -242,7 +269,10 @@ const InfDocumentoForm = () => {
 
         {/* Correlativo */}
         <div>
-          <Label htmlFor="correlativo" className="mb-1 block text-left text-sm font-semibold text-gray-700">
+          <Label
+            htmlFor="correlativo"
+            className="mb-1 block text-left text-sm font-semibold text-gray-700"
+          >
             Correlativo
           </Label>
           <div className="flex justify-between gap-x-2">
@@ -279,13 +309,14 @@ const InfDocumentoForm = () => {
 
         {/* Tipo de Moneda */}
         <div className="col-span-full flex flex-col gap-1 sm:col-span-1">
-          <Label htmlFor="tipo_moneda" className="font-semibold text-gray-700">Tipo de Moneda</Label>
+          <Label htmlFor="tipo_moneda" className="font-semibold text-gray-700">
+            Tipo de Moneda
+          </Label>
           <Select
             value={notaCreditoDebito.tipo_Moneda}
             name="tipo_Moneda"
-            onValueChange={(e) => {
-              handleSelectChange(e, "tipo_Moneda");
-            }}
+            disabled
+            readOnly
           >
             <SelectTrigger className="w-full rounded-md border border-gray-300 shadow-sm">
               <SelectValue placeholder="Qué moneda usas" />
@@ -305,14 +336,22 @@ const InfDocumentoForm = () => {
           >
             Fecha de Emisión
           </Label>
-          <Calendar22
+          {/* <Calendar22
             tipo={"fecha_Emision"}
             Dato={notaCreditoDebito}
-            setDato={setNotaCreditoDebito}
+            // setDato={setNotaCreditoDebito}
             type="datetime-local"
             id="fecha_Emision"
             name="fecha_Emision"
             className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:outline-none"
+          /> */}
+          <input
+            type="string"
+            id="fecha_Emision"
+            name="fecha_Emision"
+            className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:outline-none"
+            value={formatDateTime(notaCreditoDebito?.fecha_Emision) || ""}
+            readOnly
           />
         </div>
 
@@ -320,7 +359,12 @@ const InfDocumentoForm = () => {
         <div className="col-span-full flex flex-col gap-1 sm:col-span-1">
           {" "}
           {/* Col-span-full para que ocupe todo el ancho en móviles */}
-          <Label htmlFor="tipo_operacion" className="font-semibold text-gray-700">Ruc de la empresa</Label>
+          <Label
+            htmlFor="tipo_operacion"
+            className="font-semibold text-gray-700"
+          >
+            Ruc de la empresa
+          </Label>
           <Select
             name="tipo_operacion"
             value={notaCreditoDebito.empresa_Ruc}
@@ -345,7 +389,10 @@ const InfDocumentoForm = () => {
 
         {/* Observación */}
         <div className="col-span-1 md:col-span-2 lg:col-span-2">
-          <Label htmlFor="observacion" className="mb-1 block text-left text-sm font-semibold text-gray-700">
+          <Label
+            htmlFor="observacion"
+            className="mb-1 block text-left text-sm font-semibold text-gray-700"
+          >
             Observación
           </Label>
           <textarea

@@ -11,6 +11,7 @@ import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaCon
 import { LoaderCircle, Search, SquarePen } from "lucide-react";
 import { useEffect } from "react";
 import { Calendar22 } from "../Calendar22";
+import { Calendar44 } from "../Calendar44";
 
 const DatosDelComprobante = () => {
   const {
@@ -50,7 +51,7 @@ const DatosDelComprobante = () => {
   // Al cambiar el tipo de documento o la serie, actualizar el correlativo
   useEffect(() => {
     // Establecer la serie por defecto al cambiar el tipo de documento
-    const nuevaSerie = factura.tipo_Doc === "01" ? "F001" : "B001";
+    const nuevaSerie = factura.tipo_Doc === "01" ? "FT01" : "BT01";
     setFactura((prev) => ({
       ...prev,
       serie: nuevaSerie,
@@ -143,12 +144,12 @@ const DatosDelComprobante = () => {
               {factura.tipo_Doc === "01"
                 ? serieFactura.map((item) => (
                     <SelectItem key={item.value} value={item.value}>
-                      {item.value}
+                      {item.value} {item.descrip ? `- ${item.descrip}` : ""}
                     </SelectItem>
                   ))
                 : serieBoleta.map((item) => (
                     <SelectItem key={item.value} value={item.value}>
-                      {item.value}
+                      {item.value} {item.descrip ? `(${item.descrip})` : ""}
                     </SelectItem>
                   ))}
             </SelectContent>
@@ -230,7 +231,7 @@ const DatosDelComprobante = () => {
         {/* Fecha Emision */}
         <div className="col-span-full flex flex-col gap-1 sm:col-span-1">
           <Label htmlFor="fecha_emision" className="font-semibold text-gray-700">Fecha Emisión</Label>
-          <Calendar22
+          <Calendar44
             Dato={factura}
             setDato={setFactura}
             tipo="fecha_Emision"

@@ -92,7 +92,7 @@ export default function ModalImportesTrabajador({
           <AlertDialogTrigger asChild>
              <Tooltip open={validacionImportes}>
                <TooltipTrigger asChild>
-                 <Button variant="outline" onClick={()=>setIsOpen(true)}>Importes del Empleador</Button>
+                 <Button className="text-white bg-innova-blue hover:bg-innova-blue/80 cursor-pointer" onClick={()=>setIsOpen(true)}>Importes del Empleador</Button>
                </TooltipTrigger>
                <TooltipContent className=" text-white custom-tooltip-red bg-red-500"   >
                  Agregue los importes del Empleador

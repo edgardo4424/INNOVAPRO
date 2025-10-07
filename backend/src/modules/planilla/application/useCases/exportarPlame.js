@@ -15,6 +15,7 @@ const plame_prestadores_cuarta = require("../../infrastructure/utils/plame_prest
 const contar_dias_laborables_mes  = require("../../infrastructure/utils/calcular_dias_laborales_mes");
 const obtenerDatosAsistencia = require("../../infrastructure/services/obtener_datos_asistencia");
 const generarRem = require("../../infrastructure/utils/generaRem");
+const plame_recibo_por_honorario = require("../../infrastructure/utils/plame_recibos_honorarios");
 const quintaRepository=new SequelizeQuintaCategoriaRepository()
 function convertirHorasDecimales(valor) {
   const horas = Math.floor(valor);
@@ -70,9 +71,11 @@ module.exports = async (res, payload, planillaRepository) => {
   let jornadas_laborales=[];
   let subsidiados=[];
   let ingresos_tributos=[];
-  let quintas=[]
+  let quintas=[];
+  let recibos=[];
 
   for (const t of planillaMensualCerradas) {
+
         const tipo_documento=t.tipo_documento == "CE" ? "04" : "01";
         const dias_falta=Number(dias)-t.dias_labor;
         const areas_dif=["Almacen","Montadores"];
@@ -81,9 +84,7 @@ module.exports = async (res, payload, planillaRepository) => {
         //formato==== yyyy-mm
         // console.log(fecha_anio_mes);
         const response_quinta= await quintaRepository.obtenerMultiempleoInferido({trabajadorId:t.trabajador_id,fechaAnioMes:fecha_anio_mes});
-         console.log("La quinta de ",t.nombres_apellidos,"\n",response_quinta);
          const quintas_filtradas=response_quinta.filiales.filter((f)=>f.filial_id!=filial_id);
-         console.log("Quintas filtradas: ",quintas_filtradas);
         for (const q of quintas_filtradas) {
             quintas.push(`${tipo_documento}|${t.numero_documento}|${q.ruc||"No implementado"}|${q.monto}`)
         }
@@ -116,9 +117,16 @@ module.exports = async (res, payload, planillaRepository) => {
             subsidiados.push(`${tipo_documento}|${t.numero_documento}|05|${licencia_sin_goce}`)
         }
         if(vacaciones_g){
-            subsidiados.push(`${tipo_documento}|${t.numero_documento}|23|${vacaciones_g}`)
+            subsidiados.push(`${tipo_documento}|${t.numero_documento}|23|${vacaciones_g}`);
         }
-        ingresos_tributos.push(...generarRem(t,tipo_documento));        
+
+
+        ingresos_tributos.push(...generarRem(t,tipo_documento));   
+        
+        if(t.tipo_contrato==="HONORARIOS"){          
+          const response_recibo=await plame_recibo_por_honorario(trabajadorRepository,t.recibo.recibo_por_honorario);
+          recibos.push(response_recibo);
+        }
     
     }
     //!Agregando las jornadas laborales
@@ -129,7 +137,12 @@ module.exports = async (res, payload, planillaRepository) => {
     archive.append(ingresos_tributos.join("\n"), { name: `0601${anio}${mes}${filial.ruc}.rem` });
      //!Agregando la quinta al plame
     archive.append(quintas.join("\n"), { name: `0601${anio}${mes}${filial.ruc}.or5` });
+    archive.append(recibos.join("\n"), { name: `0601${anio}${mes}${filial.ruc}.4ta` });
 
+    
+    console.log("Recibos",recibos);
+    
     archive.finalize();
 
 }; // Exporta la función para que pueda ser utilizada en otros módulos
+

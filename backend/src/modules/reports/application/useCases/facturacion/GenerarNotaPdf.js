@@ -2,12 +2,10 @@ const { PdfService } = require('../../../infrastructure/pdf/PdfService');
 const { notaTemplate } = require('../../../domain/pdfModels/facturacion/notaTemplate');
 
 module.exports = async (body, notaRepository) => {
-
     // ? destructuramos el body
     const { correlativo, serie, numRuc, tipoDoc } = body;
     // ? buscamos la factura
     const notaObtenida = await notaRepository.obtenerNotaDetallada(correlativo, serie, numRuc, tipoDoc);
-    console.log("desde reporte", notaObtenida);
     if (!notaObtenida) {
         return { codigo: 404, respuesta: { error: 'Nota no encontrada' } };
     }

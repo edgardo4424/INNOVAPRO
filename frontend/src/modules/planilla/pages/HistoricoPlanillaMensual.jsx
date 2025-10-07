@@ -9,6 +9,7 @@ import { viPlanillaMensual } from "../utils/valorInicial";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import ExportExcel from "@/shared/components/exportarExcel";
+import { calculo_aportes_trabajador } from "../hooks/calculo_aportes_trabajador";
 
 const HistoricoPlanillaMensual = () => {
    const [filiales, setFiliales] = useState([]);
@@ -25,7 +26,7 @@ const HistoricoPlanillaMensual = () => {
    const [planillaMensualTipoRh, setPlanillaMensualTipoRh] = useState(
       viPlanillaMensual.honorarios
    );
-
+   const [datosTotalesPlanilla, setDatosTotalesPlanilla] = useState({})
    // ?? Filtro para la peticion
    const [filtro, setFiltro] = useState({
       anio: new Date().getFullYear() + "",
@@ -58,6 +59,8 @@ const HistoricoPlanillaMensual = () => {
             }
          }
          setPlanillaMensualTipoPlanilla(pl);
+         const data=calculo_aportes_trabajador(pl);
+         setDatosTotalesPlanilla(data.datos_totales)         
          setPlanillaMensualTipoRh(rh);
          if(pl.length<1&&rh.length<1){
             toast.info("Aun no se ha guardado la planilla en este mes.")
@@ -113,9 +116,10 @@ const HistoricoPlanillaMensual = () => {
    const renderTipoPlanilla = () => {
       if (planillaMensualTipoPlanilla) {
          return (
-            <div className="w-full px-7 ">
+            <div className="w-full p ">
                <TablePlanillaMensual
                   planillaMensualTipoPlanilla={planillaMensualTipoPlanilla}
+                  datosTotalesPlanilla={datosTotalesPlanilla}
                />
             </div>
          );
@@ -125,7 +129,7 @@ const HistoricoPlanillaMensual = () => {
    const renderTipoRh = () => {
       if (planillaMensualTipoRh) {
          return (
-            <div className="w-full px-7 ">
+            <div className="w-full ">
                <TableRHMensual planillaMensualTipoRh={planillaMensualTipoRh} />
             </div>
          );
@@ -134,7 +138,7 @@ const HistoricoPlanillaMensual = () => {
 
    return (
       <div className="min-h-full flex-1  flex flex-col items-center space-y-6">
-         <div className="w-full px-7 flex justify-between">
+         <div className="w-full  flex justify-between">
                <Filtro
                   filiales={filiales}
                   filtro={filtro}

@@ -10,6 +10,7 @@ const FacturaBoleta = () => {
     setFactura,
     setIdBorrador,
     setRetencionActivado,
+    setDetraccionActivado,
     setDetraccion,
     setRetencion,
     setDetallesExtra,
@@ -22,6 +23,7 @@ const FacturaBoleta = () => {
       if (documento.length > 0) {
         let {
           valores_Detraccion,
+          detraccion_activada,
           valores_Retencion,
           retencion_activada,
           valores_Detalles_Extra,
@@ -30,6 +32,7 @@ const FacturaBoleta = () => {
         setFactura(facturaObtenida);
         setIdBorrador(documento[1].borr_id_delete);
         setDetraccion(valores_Detraccion);
+        setDetraccionActivado(detraccion_activada);
         setRetencion(valores_Retencion);
         setRetencionActivado(retencion_activada);
         setDetallesExtra(valores_Detalles_Extra);
@@ -37,7 +40,7 @@ const FacturaBoleta = () => {
         setFactura({
           tipo_Operacion: "0101",
           tipo_Doc: "01",
-          serie: "F001",
+          serie: "FT01",
           ...ValorInicialFactura,
         });
       }
@@ -49,7 +52,7 @@ const FacturaBoleta = () => {
     <div className="flex w-full flex-col items-center bg-gray-100 py-6 md:px-8">
       <div className="w-full max-w-6xl">
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-2xl font-bold  md:text-3xl">
+          <h2 className="text-2xl font-bold md:text-3xl">
             Generar Factura / Boleta
           </h2>
         </div>
