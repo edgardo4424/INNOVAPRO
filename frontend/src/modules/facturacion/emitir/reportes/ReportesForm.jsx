@@ -78,9 +78,7 @@ const ReportesForm = () => {
         );
 
         setExcelData({
-          nombre_libro: sanitizeSheetName(
-            `Reporte de Ventas ${formatDateTime(filtro.fec_des)} - ${formatDateTime(filtro.fec_ast)}`,
-          ),
+          nombre_libro: sanitizeSheetName(`Reporte de Ventas `,),
           datos: datos.map((doc) => ({
             ...doc,
             // 🔹 Fechas formateadas con tu helper
