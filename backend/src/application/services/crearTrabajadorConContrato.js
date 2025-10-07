@@ -10,6 +10,8 @@ const trabajadorRepository = new SequelizeTrabajadorRepository();
 module.exports = async function registrarTrabajadorConContrato(data) {
    const transaction = await sequelize.transaction();
 
+   console.log('data', data);
+
    try {
 
       // 1. Crear trabajador

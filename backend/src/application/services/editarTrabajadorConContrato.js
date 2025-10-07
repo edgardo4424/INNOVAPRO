@@ -15,6 +15,7 @@ module.exports = async function editarTrabajadorConContrato(data) {
    const { id: trabajadorId, contratos_laborales } = data;
  
    try {
+      console.log('data', data);
       const response_edit = await editarTrabajador(
          data,
          trabajadorRepository,
@@ -104,6 +105,7 @@ module.exports = async function editarTrabajadorConContrato(data) {
          },
       };
    } catch (error) {
+      console.log('error', error);
       await transaction.rollback();
       return {
          codigo: 500,

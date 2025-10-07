@@ -49,6 +49,8 @@ const contratoSchema = yup.object({
       .required("El tipo de contrato es obligatorio"),
    banco: yup.string().required("El nombre es requerido"),
    numero_cuenta: yup.string().required("El nombre es requerido"),
+
+  
 });
 
 export const trabajadorSchema = (isEdit = false, isGerente = false) =>
@@ -143,4 +145,48 @@ export const trabajadorSchema = (isEdit = false, isGerente = false) =>
          })
          .nullable()
          .required("El cargo es obligatorio"),
+
+      
+   asignacion_familiar: yup.boolean().default(false),
+
+   asignacion_familiar_fecha: yup
+    .mixed()
+    .transform((value, originalValue) =>
+      originalValue === "" || originalValue === null
+        ? null
+        : new Date(originalValue)
+    )
+    .nullable()
+    .test(
+      "fecha-asignacion-familiar",
+      "La fecha es requerida",
+      function (value) {
+         console.log('this.parent', this.parent);
+        const { asignacion_familiar } = this.parent;
+        // Si asignacion_familiar es true, la fecha debe existir
+        if (asignacion_familiar) {
+          return !!value;
+        }
+        return true; // si no tiene asignación familiar, no se valida
+      }
+    )
+    .typeError("La fecha de asignación familiar no es válida"),
+
+    cuspp_afp: yup
+      .string()
+      .nullable()
+      .test(
+        "cuspp-afp",
+        "El CUSPP debe tener máximo 13 caracteres",
+        function (value) {
+         console.log('value', value);
+          if(value){
+            // Si tiene valor, validar longitud exacta de 13
+            return value.length == 13;
+          }else{
+            // Si no tiene valor, no se valida
+            return true
+          }
+        }
+      )
    });

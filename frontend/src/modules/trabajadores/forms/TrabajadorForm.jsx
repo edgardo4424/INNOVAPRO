@@ -42,6 +42,7 @@ const dataInicial = {
   tipo_afp: null,
   cargo_id: "",
   comision_afp: false,
+  cuspp_afp: "",
   contratos_laborales: [
     {
       id: Math.floor(Date.now() / 1000),
@@ -52,7 +53,7 @@ const dataInicial = {
       tipo_contrato: "",
       banco: "",
       numero_cuenta: "",
-        es_indefinido: false,
+      es_indefinido: false,
     },
   ],
 };
@@ -107,7 +108,7 @@ export default function TrabajadorForm() {
         if (ignore) return;
 
         const t = res && res.data.trabajador ? res.data.trabajador : res || {};
-        console.log('t.contratos_laborales', t.contratos_laborales);
+        console.log("t.contratos_laborales", t.contratos_laborales);
         const contratos = Array.isArray(t.contratos_laborales)
           ? t.contratos_laborales.map((c, idx) => ({
               id: c?.id ?? idx + 1,
@@ -138,6 +139,7 @@ export default function TrabajadorForm() {
           sistema_pension: t.sistema_pension ?? "",
           tipo_afp: t.tipo_afp ?? null,
           comision_afp: !!t.comision_afp,
+          cuspp_afp: t.cuspp_afp ?? "",
           cargo_id: (t.cargo_id ?? "").toString(),
           contratos_laborales: contratos.length
             ? contratos
@@ -184,7 +186,9 @@ export default function TrabajadorForm() {
       numero_documento: formData.numero_documento.trim(),
       telefono: formData.telefono.trim(),
       fecha_nacimiento: formData.fecha_nacimiento,
-      asignacion_familiar: formData.asignacion_familiar_fecha,
+      asignacion_familiar: formData.asignacion_familiar,
+      asignacion_familiar_fecha: formData.asignacion_familiar_fecha,
+
       domiciliado: formData.domiciliado,
       sistema_pension: formData.sistema_pension,
       tipo_afp: formData.tipo_afp,
@@ -192,6 +196,7 @@ export default function TrabajadorForm() {
       cargo_id: formData.cargo_id,
       contratos_laborales: formData.contratos_laborales,
       sueldo_base: ultimoContrato ? ultimoContrato.sueldo : "",
+      cuspp_afp: formData.cuspp_afp.trim(),
     };
   };
 
@@ -203,24 +208,42 @@ export default function TrabajadorForm() {
       setIsSubmitting(true);
 
       const dataToSubmit = buildPayload();
+
       if (isEditMode) {
         dataToSubmit.id = trabajador_id;
+
         await trabajadorSchema(isEditMode).validate(dataToSubmit, {
           abortEarly: false,
         });
-        const response =
-          await trabajadoresService.editarTrabajador(dataToSubmit);
+
+        const dataBodyEditar = {
+          ...dataToSubmit,
+          asignacion_familiar: dataToSubmit?.asignacion_familiar
+            ? dataToSubmit?.asignacion_familiar_fecha
+            : null,
+        };
+        console.log('dataBodyEditar', dataBodyEditar);
+        //const response =
+        //  await trabajadoresService.editarTrabajador(dataBodyEditar);
         toast.success("Trabajador actualizado con éxito");
       } else {
         await trabajadorSchema(isEditMode).validate(dataToSubmit, {
           abortEarly: false,
         });
 
-        console.log('dataToSubmit', dataToSubmit);
-        await trabajadoresService.crearTrabajador(dataToSubmit);
+        console.log("dataToSubmit", dataToSubmit);
+        const dataBodyCrear = {
+          ...dataToSubmit,
+          asignacion_familiar: dataToSubmit.asignacion_familiar
+            ? dataToSubmit?.asignacion_familiar_fecha
+            : null,
+        };
+
+        console.log("dataBodyCrear", dataBodyCrear);
+        //await trabajadoresService.crearTrabajador(dataBodyCrear);
         toast.success("Trabajador creado con éxito");
       }
-      navigate("/tabla-trabajadores");
+      //navigate("/tabla-trabajadores");
     } catch (error) {
       if (error && error.name === "ValidationError") {
         const newErrors =
@@ -232,7 +255,6 @@ export default function TrabajadorForm() {
       } else {
         console.error("El error encontrado es: ", error);
         if (error?.response?.data?.mensaje) {
-
           if (typeof error?.response?.data?.mensaje == "string") {
             toast.error(error?.response?.data?.mensaje);
           } else {
@@ -244,13 +266,13 @@ export default function TrabajadorForm() {
           return;
         }
         toast.error(
-           (error &&
-              error.response &&
-              error.response.data &&
-              error.response.data.message) ||
-              (isEditMode
-                 ? "Error al actualizar el trabajador"
-                 : "Error al crear el trabajador")
+          (error &&
+            error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+            (isEditMode
+              ? "Error al actualizar el trabajador"
+              : "Error al crear el trabajador"),
         );
       }
     } finally {
@@ -378,9 +400,7 @@ export default function TrabajadorForm() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="telefono">
-                      Teléfono
-                    </Label>
+                    <Label htmlFor="telefono">Teléfono</Label>
                     <Input
                       id="telefono"
                       value={formData.telefono}
@@ -390,9 +410,7 @@ export default function TrabajadorForm() {
                       placeholder="Ingrese el número de teléfono"
                     />
                     {errors.telefono && (
-                      <p className="text-sm text-red-500">
-                        {errors.telefono}
-                      </p>
+                      <p className="text-sm text-red-500">{errors.telefono}</p>
                     )}
                   </div>
                 </section>
@@ -473,26 +491,55 @@ export default function TrabajadorForm() {
                 </div>
 
                 <div className="grid w-full grid-cols-1 space-y-4 md:grid-cols-2">
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center gap-4">
                     <Checkbox
                       id="asignacion_familiar"
                       checked={formData.asignacion_familiar}
                       className="border-[#1b274a]/50 data-[state=checked]:border-[#1b274a]/80 data-[state=checked]:bg-[#1b274a]"
                       onCheckedChange={(checked) => {
+                        //handleInputChange("asignacion_familiar", !!checked);
+                        console.log("!!checked", !!checked);
                         handleInputChange("asignacion_familiar", !!checked);
-                        handleInputChange("asignacion_familiar", !!checked);
-                        handleInputChange(
+                        if (!checked) {
+                          console.log("checkado");
+                          handleInputChange("asignacion_familiar_fecha", "");
+                        }
+                        /* handleInputChange(
                           "asignacion_familiar_fecha",
                           checked
                             ? new Date().toISOString().split("T")[0]
                             : null,
-                        );
+                        ); */
                       }}
                     />
 
                     <Label htmlFor="asignacion_familiar">
                       Asignacion Familiar
                     </Label>
+
+                    {formData.asignacion_familiar && (
+                      <div className="">
+                        <Input
+                          id="asignacion_familiar_fecha"
+                          type={"date"}
+                          value={formData.asignacion_familiar_fecha}
+                          onChange={(e) => {
+                            console.log("e.target.value", e.target.value);
+
+                            handleInputChange(
+                              "asignacion_familiar_fecha",
+                              e.target.value,
+                            );
+                          }}
+                          placeholder="Ingresa la fecha de asignación familiar"
+                        />
+                        {errors.asignacion_familiar_fecha && (
+                          <p className="text-sm text-red-500">
+                            {errors.asignacion_familiar_fecha}
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -563,6 +610,25 @@ export default function TrabajadorForm() {
                         <Label htmlFor="comision_afp">
                           ¿Aplica comisión AFP?
                         </Label>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="tipo_afp">CUSPP AFP</Label>
+
+                        <Input
+                          id="cuspp_afp"
+                          value={formData.cuspp_afp}
+                          onChange={(e) =>
+                            handleInputChange("cuspp_afp", e.target.value)
+                          }
+                          placeholder="Ingrese el CUSPP"
+                        />
+
+                         {errors.cuspp_afp && (
+                          <p className="text-sm text-red-500">
+                            {errors.cuspp_afp}
+                          </p>
+                        )}
                       </div>
                     </>
                   )}
