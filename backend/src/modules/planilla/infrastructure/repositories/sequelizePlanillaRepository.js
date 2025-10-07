@@ -149,7 +149,17 @@ class SequelizePlanillaRepository {
           { fecha_terminacion_anticipada: null },
           { fecha_terminacion_anticipada: { [Op.gte]: fechaInicioMes } },
         ],
-        fecha_fin: { [Op.gte]: fechaInicioMes },
+        // 👇 Si es indefinido => se trae siempre
+    // Si no es indefinido => verificar fecha_fin >= fechaInicioMes
+        [Op.or]: [
+          { es_indefinido: true },
+          {
+            [Op.and]: [
+              { es_indefinido: false },
+              { fecha_fin: { [Op.gte]: fechaInicioMes } }
+            ]
+          }
+        ],
       },
       include: [
         {
@@ -180,6 +190,7 @@ class SequelizePlanillaRepository {
           { fecha_terminacion_anticipada: { [Op.gte]: fechaInicioMes } },
         ],
         fecha_fin: { [Op.gte]: fechaInicioMes },
+      
       },
       include: [
         {
@@ -525,7 +536,18 @@ class SequelizePlanillaRepository {
           { fecha_terminacion_anticipada: null },
           { fecha_terminacion_anticipada: { [Op.gte]: fechaInicioMes } },
         ],
-        fecha_fin: { [Op.gte]: fechaInicioMes },
+        //fecha_fin: { [Op.gte]: fechaInicioMes },
+         // 👇 Si es indefinido => se trae siempre
+    // Si no es indefinido => verificar fecha_fin >= fechaInicioMes
+        [Op.or]: [
+          { es_indefinido: true },
+          {
+            [Op.and]: [
+              { es_indefinido: false },
+              { fecha_fin: { [Op.gte]: fechaInicioMes } }
+            ]
+          }
+        ],
       },
       include: [
         {
@@ -548,6 +570,7 @@ class SequelizePlanillaRepository {
           { fecha_terminacion_anticipada: { [Op.gte]: fechaInicioMes } },
         ],
         fecha_fin: { [Op.gte]: fechaInicioMes },
+        
       },
       include: [
         {
@@ -1441,17 +1464,17 @@ class SequelizePlanillaRepository {
 
     const planillaMensualCerradas = await PlanillaMensual.findAll({
       where: { cierre_planilla_mensual_id: cierrePlanillaMensual.id },
-      include:[
+      include: [
         {
-          model:db.planilla_mensual_recibo_honorario,
-          as:"recibo",
-          include:[
+          model: db.planilla_mensual_recibo_honorario,
+          as: "recibo",
+          include: [
             {
-              model:db.recibos_por_honorarios,
-              as:"recibo_por_honorario"
-            }
-          ]
-        }
+              model: db.recibos_por_honorarios,
+              as: "recibo_por_honorario",
+            },
+          ],
+        },
       ],
       transaction,
     });
