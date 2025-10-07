@@ -47,5 +47,6 @@ router.post("/nota-debito-credito/correlativo-pendientes", notaController.obtene
 
 // ?? FACTURA - NOTA - GUIA
 router.post("/reporte-venta", facturaController.reporteVentas);
+router.get("/reporte-dasboard", facturaController.reporteDasboard);
 
 module.exports = router;

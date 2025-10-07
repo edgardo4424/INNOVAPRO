@@ -9,6 +9,7 @@ const { Filial } = require("../../../filiales/infrastructure/models/filialModel"
 const { Ubigeo } = require("../../../ubigeo/infrastructure/models/ubigeoModel");
 const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 const { Op, fn, col, literal, DataTypes } = require('sequelize');
+const { toDateOnly, addDays, addMonths, mergeByFechaRuc, attachRazonSocial, totalsByFilial } = require("../helper/cashDasboard");
 
 class SequelizeFacturaRepository {
 
@@ -979,6 +980,253 @@ class SequelizeFacturaRepository {
                 success: false,
                 message: "Error al listar los documentos.",
                 data: [],
+                error: error.message
+            };
+        }
+    }
+
+    async emitidosFilialUnificado() {
+        try {
+            // 1) Filiales -> mapa { ruc: razon_social }
+            const { rows: filiales } = await Filial.findAndCountAll({
+                attributes: ["ruc", "razon_social"],
+                raw: true,
+            });
+            const filialMap = {};
+            filiales.forEach(f => { filialMap[f.ruc] = f.razon_social; });
+
+            // 2) Aggregations en paralelo
+            const [factAgg, guiaAgg, notaAgg] = await Promise.all([
+                // Factura: 01 (factura), 03 (boleta)
+                Factura.findAll({
+                    attributes: [
+                        ["empresa_ruc", "empresa_ruc"],
+                        [fn("SUM", literal("CASE WHEN tipo_doc = '01' THEN 1 ELSE 0 END")), "factura_emitido"],
+                        [fn("SUM", literal("CASE WHEN tipo_doc = '03' THEN 1 ELSE 0 END")), "boleta_emitido"],
+                        [fn("COUNT", literal("1")), "total_fact_doc"]
+                    ],
+                    group: ["empresa_ruc"],
+                    raw: true,
+                }),
+
+                // Guía de remisión: total por empresa_ruc
+                GuiaRemision.findAll({
+                    attributes: [
+                        ["empresa_ruc", "empresa_ruc"],
+                        [fn("COUNT", literal("1")), "guia_emitido"]
+                    ],
+                    group: ["empresa_ruc"],
+                    raw: true,
+                }),
+
+                // Notas de crédito (07) y débito (08)
+                NotasCreditoDebito.findAll({
+                    attributes: [
+                        ["empresa_ruc", "empresa_ruc"],
+                        [fn("SUM", literal("CASE WHEN tipo_doc = '07' THEN 1 ELSE 0 END")), "nota_credito_emitido"],
+                        [fn("SUM", literal("CASE WHEN tipo_doc = '08' THEN 1 ELSE 0 END")), "nota_debito_emitido"],
+                        [fn("COUNT", literal("1")), "total_notas_doc"]
+                    ],
+                    group: ["empresa_ruc"],
+                    raw: true,
+                }),
+            ]);
+
+            // 3) Merge por empresa_ruc
+            const resultMap = new Map();
+
+            const upsertRow = (ruc) => {
+                if (!resultMap.has(ruc)) {
+                    resultMap.set(ruc, {
+                        empresa_ruc: ruc,
+                        factura_emitido: 0,
+                        boleta_emitido: 0,
+                        nota_credito_emitido: 0,
+                        nota_debito_emitido: 0,
+                        guia_emitido: 0,
+                        total: 0,
+                        razon_social: filialMap[ruc] || "No registrada",
+                    });
+                }
+                return resultMap.get(ruc);
+            };
+
+            // Facturas
+            factAgg.forEach(row => {
+                const r = upsertRow(row.empresa_ruc);
+                r.factura_emitido = Number(row.factura_emitido || 0);
+                r.boleta_emitido = Number(row.boleta_emitido || 0);
+            });
+
+            // Guías
+            guiaAgg.forEach(row => {
+                const r = upsertRow(row.empresa_ruc);
+                r.guia_emitido = Number(row.guia_emitido || 0);
+            });
+
+            // Notas
+            notaAgg.forEach(row => {
+                const r = upsertRow(row.empresa_ruc);
+                r.nota_credito_emitido = Number(row.nota_credito_emitido || 0);
+                r.nota_debito_emitido = Number(row.nota_debito_emitido || 0);
+            });
+
+            // 4) Calcular total y ordenar
+            const data = Array.from(resultMap.values()).map(r => ({
+                ...r,
+                total:
+                    Number(r.factura_emitido) +
+                    Number(r.boleta_emitido) +
+                    Number(r.nota_credito_emitido) +
+                    Number(r.nota_debito_emitido) +
+                    Number(r.guia_emitido),
+            }))
+                .sort((a, b) => a.empresa_ruc.localeCompare(b.empresa_ruc));
+
+            return {
+                success: true,
+                message: "Datos unificados por filial obtenidos correctamente.",
+                data,
+            };
+        } catch (error) {
+            return {
+                success: false,
+                message: "Error al listar los documentos.",
+                data: [],
+                error: error.message,
+            };
+        }
+    }
+
+    async emitidosMontosPorFilialRangos(fechaBaseStr) {
+        try {
+            // 1) Fecha base normalizada a date-only
+            const fechaBase = toDateOnly(fechaBaseStr);
+
+            // RANGOS (INCLUSIVOS)
+            // 7 días: base-6 .. base
+            const d7_start = toDateOnly(addDays(fechaBase, -6));
+            const d7_end = fechaBase;
+
+            // 30 días: base-29 .. base
+            const d30_start = toDateOnly(addDays(fechaBase, -29));
+            const d30_end = fechaBase;
+
+            // 3 meses: base - 3 meses (mismo día si existe) .. base
+            const m3_start = toDateOnly(addMonths(fechaBase, -3));
+            const m3_end = fechaBase;
+
+            // 2) Filiales -> mapa { ruc: razon_social }
+            const { rows: filiales } = await Filial.findAndCountAll({
+                attributes: ['ruc', 'razon_social'],
+                raw: true,
+            });
+            const filialMap = {};
+            filiales.forEach(f => { filialMap[f.ruc] = f.razon_social; });
+
+            // Función para consultar y fusionar por un rango arbitrario
+            async function queryRange(startDate, endDate) {
+                // FACTURA: sumas por día (DATE) y por RUC, separando tipo_doc 01/03
+                const fact = await Factura.findAll({
+                    attributes: [
+                        [literal('DATE(fecha_emision)'), 'fecha'],
+                        ['empresa_ruc', 'empresa_ruc'],
+                        [fn('SUM', literal("CASE WHEN tipo_doc = '01' THEN monto_imp_venta ELSE 0 END")), 'factura_monto'],
+                        [fn('SUM', literal("CASE WHEN tipo_doc = '03' THEN monto_imp_venta ELSE 0 END")), 'boleta_monto'],
+                    ],
+                    where: {
+                        fecha_emision: {
+                            [Op.gte]: `${startDate} 00:00:00`,
+                            [Op.lte]: `${endDate} 23:59:59`,
+                        },
+                    },
+                    group: [literal('DATE(fecha_emision)'), 'empresa_ruc'],
+                    raw: true,
+                });
+
+                // NOTAS: sumas por día y por RUC, separando 07/08
+                const notas = await NotasCreditoDebito.findAll({
+                    attributes: [
+                        [literal('DATE(fecha_emision)'), 'fecha'],
+                        ['empresa_ruc', 'empresa_ruc'],
+                        [fn('SUM', literal("CASE WHEN tipo_doc = '07' THEN monto_imp_venta ELSE 0 END")), 'nota_credito_monto'],
+                        [fn('SUM', literal("CASE WHEN tipo_doc = '08' THEN monto_imp_venta ELSE 0 END")), 'nota_debito_monto'],
+                    ],
+                    where: {
+                        fecha_emision: {
+                            [Op.gte]: `${startDate} 00:00:00`,
+                            [Op.lte]: `${endDate} 23:59:59`,
+                        },
+                    },
+                    group: [literal('DATE(fecha_emision)'), 'empresa_ruc'],
+                    raw: true,
+                });
+
+                // Merge por (fecha, ruc)
+                const merged = mergeByFechaRuc(fact, notas);
+                const withNames = attachRazonSocial(merged, filialMap);
+                const totals = totalsByFilial(withNames);
+
+                return {
+                    range: { start: startDate, end: endDate },
+                    by_day: withNames,
+                    totals_by_filial: totals.map(t => ({
+                        ...t,
+                        razon_social: filialMap[t.empresa_ruc] || 'No registrada',
+                    })),
+                };
+            }
+
+            // 3) Ejecutar las tres ventanas
+            const [last7, last30, last3months] = await Promise.all([
+                queryRange(d7_start, d7_end),
+                queryRange(d30_start, d30_end),
+                queryRange(m3_start, m3_end),
+            ]);
+            console.log(last7, last30, last3months)
+
+            return {
+                success: true,
+                message: 'Montos por filial obtenidos.',
+                data: {
+                    base_date: fechaBase,
+                    last_7_days: last7,       // por día y totales por filial
+                    last_30_days: last30,     // por día y totales por filial
+                    last_3_months: last3months, // por día y totales por filial
+                },
+            };
+        } catch (error) {
+            console.log("Error al listar los montos por filial:", error);
+            return {
+                success: false,
+                message: 'Error al listar los montos por filial.',
+                data: [],
+                error: error.message,
+            };
+        }
+    }
+
+    async count() {
+        try {
+            const { count: countFactura, rows: rowsFactura } = await Factura.findAll();
+            const { count: countGuia, rows: rowGuia } = await GuiaRemision.findAll();
+            const { count: countNota, rows: rowsNota } = await NotasCreditoDebito.findAll();
+
+            return {
+                factura: countFactura,
+                guia: countGuia,
+                nota: countNota
+            }
+
+        } catch (error) {
+            return {
+                success: false,
+                message: "Error al listar los documentos.",
+                data: {
+                    factura: null,
+                    guia: null,
+                    nota: null
+                },
                 error: error.message
             };
         }
