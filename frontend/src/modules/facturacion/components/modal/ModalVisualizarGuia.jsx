@@ -241,7 +241,7 @@ export default function ModalVisualizarGuia({
                             <Fragment key={index}>
                               <div className="grid grid-cols-[140px_1fr] gap-x-2">
                                 <span className="font-semibold text-gray-700">
-                                  {chofer.nro_mtc ? "Transportista" : "Chofer"}:
+                                  {chofer.razon_Social ? "Transportista" : "Chofer"}:
                                 </span>
                                 <p className="grid grid-cols-1 font-medium">
                                   {chofer.nombres && (
