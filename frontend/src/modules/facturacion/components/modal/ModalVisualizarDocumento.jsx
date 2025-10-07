@@ -45,8 +45,8 @@ export default function ModalVisualizarDocumento({
   }
   if (factura?.cuotas_Real) {
     pagosTabla = JSON.parse(factura.cuotas_Real);
-  } else if (factura?.forma_pago) {
-    pagosTabla = factura.forma_pago;
+  } else if (factura?.forma_pago_facturas) {
+    pagosTabla = factura.forma_pago_facturas;
   }
 
   // Helpers
@@ -244,7 +244,7 @@ export default function ModalVisualizarDocumento({
                             </span>
                             <span className="font-medium">
                               {factura.forma_pago_facturas[0].tipo.toUpperCase()}{" "}
-                              {factura.dias_pagar !== "" &&
+                              {factura.dias_pagar &&
                                 `${factura.dias_pagar} DIAS`}{" "}
                             </span>
                             <span className="font-semibold text-gray-700">
