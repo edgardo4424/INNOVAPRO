@@ -29,21 +29,21 @@ module.exports = async (body, facturaRepository, borradorRepository) => {
     }
 
     // todo: Validacion si ya se registro una factura con ese correlativo o serie
-    if (facturaData.estado) {
-        const facturaExistente = await facturaRepository.buscarExistencia(facturaData.serie, facturaData.correlativo, facturaData.estado);
-        if (facturaExistente) {
-            return {
-                codigo: 409,
-                respuesta: {
-                    mensaje: "La factura ya existe en la base de datos. Correlativo: " + correlativo + " Serie: " + serie + " Estado: " + estado,
-                    estado: false,
-                    datos: null,
-                    success: false,
-                    status: 409
-                },
-            };
-        }
-    }
+    // if (facturaData.estado) {
+    //     const facturaExistente = await facturaRepository.buscarExistencia(facturaData.serie, facturaData.correlativo, facturaData.estado);
+    //     if (facturaExistente) {
+    //         return {
+    //             codigo: 409,
+    //             respuesta: {
+    //                 mensaje: "La factura ya existe en la base de datos. Correlativo: " + correlativo + " Serie: " + serie + " Estado: " + estado,
+    //                 estado: false,
+    //                 datos: null,
+    //                 success: false,
+    //                 status: 409
+    //             },
+    //         };
+    //     }
+    // }
 
     try {
         //* 4. Llamar al repositorio con el objeto 'facturaData' y los arrays de componentes
