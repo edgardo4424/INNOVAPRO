@@ -43,6 +43,7 @@ const dataInicial = {
   cargo_id: "",
   comision_afp: false,
   cuspp_afp: "",
+  estado_civil: "SOLTERO",
   contratos_laborales: [
     {
       id: Math.floor(Date.now() / 1000),
@@ -140,6 +141,7 @@ export default function TrabajadorForm() {
           tipo_afp: t.tipo_afp ?? null,
           comision_afp: !!t.comision_afp,
           cuspp_afp: t.cuspp_afp ?? "",
+          estado_civil: t.estado_civil,
           cargo_id: (t.cargo_id ?? "").toString(),
           contratos_laborales: contratos.length
             ? contratos
@@ -197,6 +199,7 @@ export default function TrabajadorForm() {
       contratos_laborales: formData.contratos_laborales,
       sueldo_base: ultimoContrato ? ultimoContrato.sueldo : "",
       cuspp_afp: formData.cuspp_afp.trim(),
+      estado_civil: formData.estado_civil,
     };
   };
 
@@ -223,8 +226,8 @@ export default function TrabajadorForm() {
             : null,
         };
         console.log('dataBodyEditar', dataBodyEditar);
-        //const response =
-        //  await trabajadoresService.editarTrabajador(dataBodyEditar);
+        const response =
+         await trabajadoresService.editarTrabajador(dataBodyEditar);
         toast.success("Trabajador actualizado con éxito");
       } else {
         await trabajadorSchema(isEditMode).validate(dataToSubmit, {
@@ -240,10 +243,10 @@ export default function TrabajadorForm() {
         };
 
         console.log("dataBodyCrear", dataBodyCrear);
-        //await trabajadoresService.crearTrabajador(dataBodyCrear);
+        await trabajadoresService.crearTrabajador(dataBodyCrear);
         toast.success("Trabajador creado con éxito");
       }
-      //navigate("/tabla-trabajadores");
+      navigate("/tabla-trabajadores");
     } catch (error) {
       if (error && error.name === "ValidationError") {
         const newErrors =
@@ -411,6 +414,33 @@ export default function TrabajadorForm() {
                     />
                     {errors.telefono && (
                       <p className="text-sm text-red-500">{errors.telefono}</p>
+                    )}
+                  </div>
+
+                   <div className="space-y-2">
+                    <Label htmlFor="telefono">Estado Civil</Label>
+                     <Select
+                      value={formData.estado_civil}
+                      onValueChange={(value) =>
+                        handleInputChange("estado_civil", value)
+                      }
+                    >
+                      <SelectTrigger className={"w-full"}>
+                        <SelectValue placeholder="Seleccione estado civil" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="SOLTERO">Soltero</SelectItem>
+                        <SelectItem value="CASADO">Casado</SelectItem>
+                        <SelectItem value="DIVORCIADO">Divorciado</SelectItem>
+                        <SelectItem value="VIUDO">Viudo</SelectItem>
+                        <SelectItem value="CONVIVIENTE">Conviviente</SelectItem>
+
+                      </SelectContent>
+                    </Select>
+                    {errors.estado_civil && (
+                      <p className="text-sm text-red-500">
+                        {errors.estado_civil}
+                      </p>
                     )}
                   </div>
                 </section>
