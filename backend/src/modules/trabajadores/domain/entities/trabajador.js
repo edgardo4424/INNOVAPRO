@@ -16,6 +16,7 @@ class Trabajador {
     fecha_baja,
     contratos_laborales,
     fecha_nacimiento,
+    ruc
   }) {
     (this.id = id),
       (this.nombres = nombres),
@@ -33,6 +34,7 @@ class Trabajador {
     this.fecha_baja = fecha_baja;
     this.contratos_laborales = contratos_laborales;
     this.fecha_nacimiento = fecha_nacimiento;
+    this.ruc=ruc
   }
 
   validarCamposObligatorios(editar = false) {
@@ -171,6 +173,7 @@ class Trabajador {
       comision_afp: this.comision_afp,
       fecha_baja: this.fecha_baja,
       fecha_nacimiento: this.fecha_nacimiento,
+      ruc:this.ruc
     };
     if (editar) {
       datos.trabajador_id = this.id;

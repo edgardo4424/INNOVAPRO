@@ -34,6 +34,7 @@ const dataInicial = {
   tipo_documento: "",
   numero_documento: "",
   telefono: "",
+  ruc:"",
   fecha_nacimiento: "",
   asignacion_familiar: false,
   asignacion_familiar_fecha: null,
@@ -50,9 +51,10 @@ const dataInicial = {
       sueldo: "",
       regimen: "",
       tipo_contrato: "",
+      numero_cuenta_cts:"",
       banco: "",
       numero_cuenta: "",
-        es_indefinido: false,
+      es_indefinido: false,
     },
   ],
 };
@@ -107,7 +109,7 @@ export default function TrabajadorForm() {
         if (ignore) return;
 
         const t = res && res.data.trabajador ? res.data.trabajador : res || {};
-        console.log('t.contratos_laborales', t.contratos_laborales);
+        console.log("t.contratos_laborales", t.contratos_laborales);
         const contratos = Array.isArray(t.contratos_laborales)
           ? t.contratos_laborales.map((c, idx) => ({
               id: c?.id ?? idx + 1,
@@ -118,6 +120,7 @@ export default function TrabajadorForm() {
               sueldo: c?.sueldo ?? "",
               regimen: c?.regimen ?? "",
               tipo_contrato: c?.tipo_contrato ?? "",
+              numero_cuenta_cts:c?.numero_cuenta_cts??"",
               filial_id: c?.filial_id.toString() ?? "",
               es_indefinido: c?.es_indefinido ?? false,
             }))
@@ -131,6 +134,7 @@ export default function TrabajadorForm() {
           tipo_documento: t.tipo_documento ?? "",
           numero_documento: t.numero_documento ?? "",
           telefono: t.telefono ?? "",
+          ruc:t.ruc??"",
           fecha_nacimiento: t.fecha_nacimiento ?? "",
           asignacion_familiar: t.asignacion_familiar ? true : false, // checkbox
           asignacion_familiar_fecha: t.asignacion_familiar ?? null, // guardamos la fecha real
@@ -183,6 +187,7 @@ export default function TrabajadorForm() {
       tipo_documento: formData.tipo_documento,
       numero_documento: formData.numero_documento.trim(),
       telefono: formData.telefono.trim(),
+      ruc:formData.ruc.trim(),
       fecha_nacimiento: formData.fecha_nacimiento,
       asignacion_familiar: formData.asignacion_familiar_fecha,
       domiciliado: formData.domiciliado,
@@ -216,23 +221,24 @@ export default function TrabajadorForm() {
           abortEarly: false,
         });
 
-        console.log('dataToSubmit', dataToSubmit);
+        console.log("dataToSubmit", dataToSubmit);
         await trabajadoresService.crearTrabajador(dataToSubmit);
         toast.success("Trabajador creado con éxito");
       }
-      navigate("/tabla-trabajadores");
+      // navigate("/tabla-trabajadores");
     } catch (error) {
+      // console.log("Erro recibido: ",error.inner);
+      
       if (error && error.name === "ValidationError") {
         const newErrors =
           error.inner?.reduce((acc, curr) => {
             acc[curr.path] = curr.message;
             return acc;
-          }, {}) || {};
+          }, {}) || {};        
         setErrors(newErrors);
       } else {
         console.error("El error encontrado es: ", error);
         if (error?.response?.data?.mensaje) {
-
           if (typeof error?.response?.data?.mensaje == "string") {
             toast.error(error?.response?.data?.mensaje);
           } else {
@@ -244,13 +250,13 @@ export default function TrabajadorForm() {
           return;
         }
         toast.error(
-           (error &&
-              error.response &&
-              error.response.data &&
-              error.response.data.message) ||
-              (isEditMode
-                 ? "Error al actualizar el trabajador"
-                 : "Error al crear el trabajador")
+          (error &&
+            error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+            (isEditMode
+              ? "Error al actualizar el trabajador"
+              : "Error al crear el trabajador"),
         );
       }
     } finally {
@@ -376,11 +382,28 @@ export default function TrabajadorForm() {
                       </p>
                     )}
                   </div>
-
+                </section>
+                <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="telefono">
-                      Teléfono
+                    <Label htmlFor="ruc">
+                      Ruc del empleado
                     </Label>
+                    <Input
+                      id="ruc"
+                      value={formData.ruc}
+                      onChange={(e) =>
+                        handleInputChange("ruc", e.target.value)
+                      }
+                      placeholder="No obligatorio"
+                    />
+                    {errors.ruc && (
+                      <p className="text-sm text-red-500">
+                        {errors.ruc}
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="telefono">Teléfono</Label>
                     <Input
                       id="telefono"
                       value={formData.telefono}
@@ -390,9 +413,7 @@ export default function TrabajadorForm() {
                       placeholder="Ingrese el número de teléfono"
                     />
                     {errors.telefono && (
-                      <p className="text-sm text-red-500">
-                        {errors.telefono}
-                      </p>
+                      <p className="text-sm text-red-500">{errors.telefono}</p>
                     )}
                   </div>
                 </section>

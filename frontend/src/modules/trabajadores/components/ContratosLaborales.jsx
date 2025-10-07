@@ -50,6 +50,7 @@ const ContratosLaborales = ({ formData, setFormData, errors, filiales }) => {
          tipo_contrato: "",
          filial_id: "",
          es_indefinido: false,
+         numero_cuenta_cts:"",
       };
       setFormData((prev) => ({
          ...prev,
@@ -359,6 +360,36 @@ const ContratosLaborales = ({ formData, setFormData, errors, filiales }) => {
                               {
                                  errors[
                                     `contratos_laborales[${i}].numero_cuenta`
+                                 ]
+                              }
+                           </p>
+                        )}
+                     </div>
+                     {/* Número de cuenta Cts */}
+                     <div className="space-y-2">
+                        <Label htmlFor={`numero_cuenta_cts_${i}`}>
+                           Número de cuenta CTS
+                        </Label>
+                        <Input
+                           id={`numero_cuenta_cts_${i}`}
+                           type="text"
+                           value={c.numero_cuenta_cts || ""}
+                           onChange={(e) =>
+                              handleInputChange(
+                                 i,
+                                 "numero_cuenta_cts",
+                                 e.target.value
+                              )
+                           }
+                           placeholder="Ej. 1234567890"
+                        />
+                        {errors?.[
+                           `contratos_laborales[${i}].numero_cuenta_cts`
+                        ] && (
+                           <p className="text-xs text-red-500">
+                              {
+                                 errors[
+                                    `contratos_laborales[${i}].numero_cuenta_cts`
                                  ]
                               }
                            </p>

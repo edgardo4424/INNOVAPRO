@@ -10,7 +10,8 @@ class ContratoLaboral {
       filial_id,
       numero_cuenta,
       banco,
-      es_indefinido
+      es_indefinido,
+      numero_cuenta_cts
    }) {
       this.id = id;
       this.trabajador_id = trabajador_id;
@@ -23,6 +24,7 @@ class ContratoLaboral {
       this.numero_cuenta = numero_cuenta;
       this.banco = banco;
       this.es_indefinido = es_indefinido;
+      this.numero_cuenta_cts=numero_cuenta_cts;
    }
 
    validar(editar = false) {
@@ -100,7 +102,8 @@ class ContratoLaboral {
             tipo_contrato: this.tipo_contrato,
             banco: this.banco,
             numero_cuenta: this.numero_cuenta,
-            es_indefinido: this.es_indefinido
+            es_indefinido: this.es_indefinido,
+            numero_cuenta_cts:this.numero_cuenta_cts
          };
       } else {
          return {
@@ -113,7 +116,8 @@ class ContratoLaboral {
             tipo_contrato: this.tipo_contrato,
             banco: this.banco,
             numero_cuenta: this.numero_cuenta,
-            es_indefinido: this.es_indefinido
+            es_indefinido: this.es_indefinido,
+            numero_cuenta_cts:this.numero_cuenta_cts
          };
       }
    }
