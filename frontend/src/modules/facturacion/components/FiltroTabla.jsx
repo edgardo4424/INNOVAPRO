@@ -84,13 +84,13 @@ const FiltroTabla = ({
         </label>
         <input
           type="date"
-          value={filtro.fec_des}
+          value={filtro.fec_des ? filtro.fec_des.split("T")[0] : ""}
           onChange={(e) => {
-            const fecha = new Date(e.target.value);
-            if (filtro.fec_ast && fecha > new Date(filtro.fec_ast)) {
+            const fecha = e.target.value;
+            if (filtro.fec_ast && new Date(fecha) > new Date(filtro.fec_ast)) {
               toast.error("La fecha desde debe ser menor a la fecha hasta");
             } else {
-              setFiltro({ ...filtro, fec_des: e.target.value });
+              setFiltro({ ...filtro, fec_des: `${fecha}T05:00:00` });
             }
           }}
           className="rounded-lg border border-gray-300 p-3 text-sm focus:border-blue-500 focus:ring-blue-500"
@@ -103,13 +103,20 @@ const FiltroTabla = ({
         </label>
         <input
           type="date"
-          value={filtro.fec_ast}
+          value={filtro.fec_ast ? filtro.fec_ast.split("T")[0] : ""}
           onChange={(e) => {
-            const fecha = new Date(e.target.value);
-            if (filtro.fec_des && fecha < new Date(filtro.fec_des)) {
+            const fecha = e.target.value;
+            if (
+              filtro.fec_des &&
+              new Date(fecha) < new Date(filtro.fec_des) &&
+              new Date(fecha) == new Date()
+            ) {
               toast.error("La fecha hasta debe ser mayor a la fecha desde");
             } else {
-              setFiltro({ ...filtro, fec_ast: e.target.value });
+              setFiltro({
+                ...filtro,
+                fec_ast: `${fecha ? `${fecha}T23:50:00` : ""}`,
+              });
             }
           }}
           className="rounded-lg border border-gray-300 p-3 text-sm focus:border-blue-500 focus:ring-blue-500"
@@ -137,7 +144,7 @@ const FiltroTabla = ({
       </div>
 
       {/* Contenedor para los botones de acción */}
-      <div className="mt-auto flex flex-col sm:flex-row gap-2 xl:flex-col">
+      <div className="mt-auto flex flex-col gap-2 sm:flex-row xl:flex-col">
         <button
           className="bg-innova-blue 2xl:px-auto cursor-pointer rounded-lg px-4 py-3 text-sm font-bold text-white shadow-md transition duration-300 hover:scale-102"
           onClick={handleAplicarFiltros}
