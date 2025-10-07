@@ -241,7 +241,12 @@ const PlanillaMensual = sequelize.define(
             key: "id",
          },
       },
+      ruc: {
+         type: DataTypes.STRING,
+         allowNull: true,
+      },
    },
+   
    {
       timestamps: true,
       tableName: "planilla_mensual",
@@ -269,6 +274,10 @@ PlanillaMensual.associate = (models) => {
       foreignKey: "cierre_planilla_mensual_id",
       as: "cierrePlanillaMensual",
    });
+   PlanillaMensual.hasOne(models.planilla_mensual_recibo_honorario, {
+      foreignKey: 'planilla_mensual_id',
+      as: 'recibo'
+});
 };
 
 module.exports = { PlanillaMensual };

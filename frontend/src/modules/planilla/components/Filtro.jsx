@@ -20,13 +20,8 @@ const Filtro = ({ filiales, filtro, setFiltro, Buscar,nombre_button="Aplicar",hi
         <div className="flex items-between justify-start gap-x-2 w-full py-2">
           <div className="flex">
             <Funnel />
-            <h2 className="font-bold">Filtro</h2>
+            <h2 className="font-bold">Filtros</h2>
           </div>
-          {/* <div className="flex w-full justify-end">
-                        <Button onClick={Buscar} size="xs" className="h-7 px-2 cursor-pointer" >
-                            <Check className="mr-1 w-3 h-3" /> Aplicar
-                        </Button>
-                    </div> */}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-7  w-full gap-4">
 

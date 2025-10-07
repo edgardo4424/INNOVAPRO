@@ -19,7 +19,7 @@ const ContratoLaboral = sequelize.define(
       },
       fecha_fin: {
          type: DataTypes.DATEONLY,
-         allowNull: false,
+         allowNull: true,
       },
       fecha_terminacion_anticipada: {
          type: DataTypes.DATEONLY,
@@ -57,6 +57,11 @@ const ContratoLaboral = sequelize.define(
       banco: {
          type: DataTypes.STRING,
          allowNull: true,
+      },
+      es_indefinido: {
+         type: DataTypes.BOOLEAN,
+         allowNull: false,
+         defaultValue: false,
       },
    },
    {

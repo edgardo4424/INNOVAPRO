@@ -39,6 +39,7 @@ import trabajadoresService from "../services/trabajadoresService";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { obtenerContratoActual } from "@/modules/Beneficios/utils/contrato_actual";
+import { formatearFecha } from "@/utils/formatearFecha";
 
 export default function CompGestionTrabajadoresonent() {
    const [trabajadores, setTrabajadores] = useState([]);
@@ -55,6 +56,7 @@ export default function CompGestionTrabajadoresonent() {
          setLoading(true);
          setError(null);
          const response = await trabajadoresService.getTrabajadores();
+         console.log('response', response.data);
          setTrabajadores(response.data);
       } catch (error) {
          console.error("Error al cargar trabajadores", error);
@@ -312,6 +314,7 @@ export default function CompGestionTrabajadoresonent() {
                            const filialActual = obtenerContratoActual(
                               employee.contratos_laborales
                            );
+                           
                            return (
                               <TableRow key={employee.id}>
                                  <TableCell>
@@ -355,7 +358,7 @@ export default function CompGestionTrabajadoresonent() {
                                  </TableCell>
 
                                  <TableCell>
-                                    {formatDate(
+                                    {formatearFecha(
                                        employee.contrato_mas_antiguo
                                           ?.fecha_inicio
                                     )}

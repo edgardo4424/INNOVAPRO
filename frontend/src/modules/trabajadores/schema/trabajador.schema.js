@@ -7,21 +7,35 @@ const contratoSchema = yup.object({
       .typeError("La fecha de inicio no es válida")
       .required("La fecha de inicio es requerida"),
    fecha_fin: yup
-      .date()
-      .required("La fecha de fin es obligatoria")
-      .min(
-         yup.ref("fecha_inicio"),
-         "La fecha fin debe ser posterior a la fecha de inicio"
+      .mixed()
+      .transform((value, originalValue) =>
+         originalValue === "" || originalValue === null
+            ? null
+            : new Date(originalValue)
       )
-      .transform((value, originalValue) => new Date(originalValue))
-      .typeError("La fecha de fin no es válida")
-      .required("La fecha de fin es requerida"),
+      .nullable()
+      .test(
+         "fecha-fin-debe-ser-posterior",
+         "La fecha fin debe ser posterior a la fecha de inicio",
+         function (value) {
+            if (!value) return true; // Si es null o vacío, pasa
+            const { fecha_inicio } = this.parent;
+            return fecha_inicio && value > fecha_inicio;
+         }
+      )
+      .typeError("La fecha de fin no es válida"),
    sueldo: yup
-      .number()
-      .transform((value, originalValue) => Number(originalValue))
-      .typeError("El sueldo base debe ser un número")
-      .min(1130, "El sueldo base debe ser mayor a 1130")
-      .required("El sueldo base es requerido"),
+  .number()
+  .transform((value, originalValue) => {
+    if (originalValue === "" || originalValue === null || originalValue === undefined) {
+      return NaN; // Forzar error en typeError / required
+    }
+    return Number(originalValue);
+  })
+  .typeError("El sueldo base debe ser un número")
+  .min(0, "El sueldo base debe ser mayor a 0") // ahora sí estrictamente mayor que 0
+  .required("El sueldo base es requerido"),
+
    regimen: yup
       .string()
       .oneOf(["GENERAL", "MYPE"], "El régimen debe ser GENERAL o MYPE")

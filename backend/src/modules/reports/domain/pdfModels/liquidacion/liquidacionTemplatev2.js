@@ -29,7 +29,7 @@ async function liquidacionTemplatev2(data) {
     detalles_liquidacion,
     fecha_ingreso,
     fecha_baja,
-    motivo,
+    motivo_liquidacion,
     filial_id
   } = data;
 
@@ -56,7 +56,7 @@ try {
         detalles_liquidacion: detallesLiquidacion,
         fecha_ingreso,
         fecha_baja,
-        motivo
+        motivo: motivo_liquidacion?.descripcion_corta ? motivo_liquidacion.descripcion_corta: "No especificado",
       }),
 
       lineaHorizontal(),

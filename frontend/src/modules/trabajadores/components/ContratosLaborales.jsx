@@ -22,6 +22,7 @@ import {
    AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { CalendarIcon, Plus, Trash2 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const ContratosLaborales = ({ formData, setFormData, errors, filiales }) => {
    // Estados para confirmar sueldo
@@ -48,6 +49,7 @@ const ContratosLaborales = ({ formData, setFormData, errors, filiales }) => {
          regimen: "",
          tipo_contrato: "",
          filial_id: "",
+         es_indefinido: false,
       };
       setFormData((prev) => ({
          ...prev,
@@ -120,9 +122,28 @@ const ContratosLaborales = ({ formData, setFormData, errors, filiales }) => {
                   className="rounded-lg border border-muted p-4 md:p-5"
                >
                   <div className="mb-4 flex items-center justify-between">
-                     <p className="text-sm font-medium text-muted-foreground">
-                        Contrato #{i + 1}
-                     </p>
+
+                     <div className="flex gap-6">
+                        <div className="text-sm font-medium text-muted-foreground">
+                                                Contrato #{i + 1}
+                        </div>
+                         <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`es_indefinido_${i}`}
+                      checked={c.es_indefinido}
+                      className="border-[#1b274a]/50 data-[state=checked]:border-[#1b274a]/80 data-[state=checked]:bg-[#1b274a]"
+                      onCheckedChange={(checked) => {
+                        handleInputChange(i, "es_indefinido", !!checked)
+                        handleInputChange(i, "fecha_fin", !!checked ? "" : c.fecha_fin)
+                      }}
+                    />
+
+                    <Label htmlFor="es_indefinido">
+                       Contrato indefinido
+                    </Label>
+                  </div>
+                     </div>
+                     
                      <Button
                         type="button"
                         variant="destructive"
@@ -175,6 +196,7 @@ const ContratosLaborales = ({ formData, setFormData, errors, filiales }) => {
                            onChange={(e) =>
                               handleInputChange(i, "fecha_fin", e.target.value)
                            }
+                           disabled={c.es_indefinido}
                         />
                         {errors?.[`contratos_laborales[${i}].fecha_fin`] && (
                            <p className="text-xs text-red-500">

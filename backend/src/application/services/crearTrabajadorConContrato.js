@@ -11,6 +11,7 @@ module.exports = async function registrarTrabajadorConContrato(data) {
    const transaction = await sequelize.transaction();
 
    try {
+
       // 1. Crear trabajador
       const resultadoTrabajador = await crearTrabajador(
          data,
@@ -29,12 +30,24 @@ module.exports = async function registrarTrabajadorConContrato(data) {
             },
          };
       }
+
+      console.log('resultadoTrabajador', resultadoTrabajador);
       const trabajador_id = resultadoTrabajador.respuesta.trabajador.id;
       if (!trabajador_id) {
          await transaction.rollback();
       }
+
+      console.log('data.contratos_laborales', data.contratos_laborales);
+
+      const contratosLaboralesMapeados = data.contratos_laborales.map((contrato) => ({
+         ...contrato,
+         fecha_fin: contrato.es_indefinido ? null : contrato.fecha_fin // puede ser null por ser contrato indefinido
+      }))
+
+      console.log('contratosLaboralesMapeados', contratosLaboralesMapeados);
+
       const contratosCreados = [];
-      for (const contratoData of data.contratos_laborales || []) {
+      for (const contratoData of contratosLaboralesMapeados || []) {
          // Asociar el contrato al trabajador recién creado
          contratoData.trabajador_id = trabajador_id;
 
@@ -70,6 +83,7 @@ module.exports = async function registrarTrabajadorConContrato(data) {
          },
       };
    } catch (error) {
+      console.log('error inesperado', error);
       await transaction.rollback();
       return {
          codigo: 500,

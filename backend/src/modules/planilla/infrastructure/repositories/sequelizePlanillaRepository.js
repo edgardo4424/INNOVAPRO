@@ -155,11 +155,19 @@ class SequelizePlanillaRepository {
         {
           model: db.trabajadores,
           as: "trabajador",
+          include: [
+            {
+              model: db.cargos,
+              as: "cargo",
+            }
+          ]
         },
       ],
       raw: false,
       transaction,
     });
+
+    console.log('contratosPlanilla', contratosPlanilla);
 
     const contratosRxh = await db.contratos_laborales.findAll({
       where: {
@@ -177,6 +185,12 @@ class SequelizePlanillaRepository {
         {
           model: db.trabajadores,
           as: "trabajador",
+          include: [
+            {
+              model: db.cargos,
+              as: "cargo",
+            }
+          ]
         },
       ],
       raw: false,
@@ -300,16 +314,7 @@ class SequelizePlanillaRepository {
         quinta_categoria +
         totalAdelantosSueldo
       ).toFixed(2);
-     if (trabajador.id == 7) {
-  console.log('--- Detalle de descuentos para Valeria ---');
-  console.log('ONP:', onp);
-  console.log('AFP:', afp);
-  console.log('Seguro:', seguro);
-  console.log('Comisión:', comision);
-  console.log('Quinta Categoría:', quinta_categoria);
-  console.log('Adelantos de Sueldo:', totalAdelantosSueldo);
-  console.log('Total Descuentos:', totalDescuentos);
-}
+     
       
       const totalAPagar = +(sueldoBruto - totalDescuentos).toFixed(2);
 
@@ -343,7 +348,10 @@ class SequelizePlanillaRepository {
         tipo_afp: sistema_pension == "AFP" ? tipo_afp : "ONP",
 
         adelanto_sueldo: totalAdelantosSueldo,
-        adelantos_ids: adelantos_ids
+        adelantos_ids: adelantos_ids,
+
+        cargo: trabajador.cargo ? trabajador.cargo.nombre : null,
+
       });
     }
 
@@ -402,8 +410,6 @@ class SequelizePlanillaRepository {
 
     const listaPlanillaTipoPlanillaConDetalle = unificarTrabajadoresTipoPlanillaQuincenal(
       listaPlanillaTipoPlanilla)
-
-       console.dir(listaPlanillaTipoPlanillaConDetalle, { depth: null });
 
 
  const listaPlanillaTipoHonorariosConDetalle = unificarTrabajadoresTipoHonorariosQuincenal(
@@ -938,6 +944,7 @@ class SequelizePlanillaRepository {
       const grupoRxh=trabajador_rxh_model();
       for (const p of planillasRxhObtenidas) {
          grupoRxh.trabajador_id=p.trabajador_id;
+         grupoRxh.ruc=trabajador.ruc||"Ruc no disponible";
          grupoRxh.tipo_contrato=p.tipo_contrato;
          grupoRxh.contrato_id=p.contrato_id
          grupoRxh.periodo=p.periodo;
@@ -1191,7 +1198,7 @@ class SequelizePlanillaRepository {
       PORCENTAJE_DESCUENTO_COMISION_AFP_HABITAT,
       PORCENTAJE_DESCUENTO_COMISION_AFP_INTEGRA,
       PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA,
-      PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO
+      PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO,
     } = await datosMantPM();
     //Todo: validamos que el mes que se recibe se integrara la grati o cts
     const { periodocts, periodograti } = calcular_periodo_grati_cts(fin_de_mes);
@@ -1221,7 +1228,6 @@ class SequelizePlanillaRepository {
     if (!response_trabajador) throw new Error("El trabajador no existe.");
     //Se valido que el trabajador exista
     const trabajador = response_trabajador.get({ plain: true });
-
 
     const contratoInicial = filtrarContratosSinInterrupcion(
       trabajador.contratos_laborales
@@ -1289,7 +1295,7 @@ class SequelizePlanillaRepository {
         faltas_justificadas,
         licencia_con_goce,
         licencia_sin_goce,
-     } = await obtenerDatosAsistencia(inicio_real, fin_real, trabajador.id);
+      } = await obtenerDatosAsistencia(inicio_real, fin_real, trabajador.id);
 
       const {
         CANTIDAD_HE_PRIMERA_Q,
@@ -1334,7 +1340,7 @@ class SequelizePlanillaRepository {
       // prettier-ignore
       planilla.licencia_con_goce_de_haber = ((c.sueldo / 30)*licencia_con_goce).toFixed(2);
       // prettier-ignore
-      planilla.licencia_sin_goce_de_haber = ((c.sueldo / DIAS_LABORALES) * licencia_sin_goce).toFixed(2);      
+      planilla.licencia_sin_goce_de_haber = ((c.sueldo / DIAS_LABORALES) * licencia_sin_goce).toFixed(2);
       planilla.vacaciones = (
         (c.sueldo / 30) *
         CANTIDAD_VACACIONES_GOZADAS
@@ -1435,8 +1441,78 @@ class SequelizePlanillaRepository {
 
     const planillaMensualCerradas = await PlanillaMensual.findAll({
       where: { cierre_planilla_mensual_id: cierrePlanillaMensual.id },
+      include:[
+        {
+          model:db.planilla_mensual_recibo_honorario,
+          as:"recibo",
+          include:[
+            {
+              model:db.recibos_por_honorarios,
+              as:"recibo_por_honorario"
+            }
+          ]
+        }
+      ],
       transaction,
     });
+    return planillaMensualCerradas;
+  }
+  async obtenerReciboPorPlanilla(
+    fecha_anio_mes,
+    filial_id,
+    transaction = null
+  ) {
+    const cierrePlanillaMensual = await CierresPlanillaMensual.findOne({
+      where: { periodo: fecha_anio_mes, filial_id },
+      transaction,
+    });
+    if (!cierrePlanillaMensual) {
+      return [];
+    }
+
+    const planillaMensualCerradas = await PlanillaMensual.findAll({
+      where: {
+        cierre_planilla_mensual_id: cierrePlanillaMensual.id,
+        tipo_contrato: "HONORARIOS",
+      },
+      attributes: [
+        "id",
+        "trabajador_id",
+        "tipo_contrato",
+        "regimen",
+        "periodo",
+        "tipo_documento",
+        "numero_documento",
+        "area",
+        "nombres_apellidos",
+      ],
+      include: [
+        {
+          model: db.planilla_mensual_recibo_honorario,
+          as: "recibo",
+          include: [
+            {
+              model: db.recibos_por_honorarios,
+              as: "recibo_por_honorario",
+            },
+          ],
+        },
+      ],
+      transaction,
+    });
+    for (const planilla of planillaMensualCerradas) {
+      const recibo = planilla.recibo;
+      const reciboHonorario = recibo?.recibo_por_honorario;
+
+      if (
+        reciboHonorario &&
+        reciboHonorario.indicador_retencion_cuarta_categoria !== undefined
+      ) {
+        reciboHonorario.indicador_retencion_cuarta_categoria =
+          reciboHonorario.indicador_retencion_cuarta_categoria == 1;
+      }
+    }
+
     return planillaMensualCerradas;
   }
 }

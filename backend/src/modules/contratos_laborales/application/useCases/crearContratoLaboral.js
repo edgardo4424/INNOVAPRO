@@ -18,6 +18,7 @@ module.exports = async function name(
       };
    }
    
+   console.log('contrato_laboral.get()', contrato_laboral.get());
    
    const nuevoContratoLaboral = await contratoLaboralRepository.crear(
       contrato_laboral.get(),

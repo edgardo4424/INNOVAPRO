@@ -151,7 +151,14 @@ const PlanillaQuincenal = sequelize.define(
       type: DataTypes.JSON,
     },
 
-  
+    cargo: {
+         type: DataTypes.STRING,
+         allowNull: false,
+      },
+    tipo_afp: {
+         type: DataTypes.STRING,
+         allowNull: false,
+      },
 
   },
   {

@@ -118,7 +118,7 @@ module.exports = async (
       });
     });
 
-    //console.log('dataPlanillaQuincenalSinCerrar', dataPlanillaQuincenalSinCerrar);
+    console.log('dataPlanillaQuincenalSinCerrar', dataPlanillaQuincenalSinCerrar);
 
     await planillaQuincenalRepository.insertarVariasPlanillaQuincenal(
       dataPlanillaQuincenalSinCerrar,

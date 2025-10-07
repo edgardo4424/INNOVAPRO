@@ -1,5 +1,4 @@
 module.exports = async (filia_id, trabajadorRepository) => {
-   console.log('filial_id', filia_id);
    //Nos traeta todos los trabajadores pero por la filial
    const trabajadores = await trabajadorRepository.obtenerTrabajadoresConContratosVigentes(filia_id);
    return {

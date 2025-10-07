@@ -414,6 +414,20 @@ class SequelizeTrabajadorRepository {
 
       return trabajadoresFiltrados;
    }
+
+   async obtenerTrabajadorPorNroDocumento(numero_documento, transaction = null) {
+      const options = {
+               where: { numero_documento: numero_documento, estado: "activo", fecha_baja: null},
+      };
+
+      if (transaction) {
+         options.transaction = transaction;
+      }
+
+      const trabajador = await Trabajador.findOne(options);
+
+      return trabajador;
+   }
 }
 
 module.exports = SequelizeTrabajadorRepository;

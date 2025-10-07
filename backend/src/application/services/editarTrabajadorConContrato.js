@@ -13,6 +13,7 @@ const trabajadorRepository = new SequelizeTrabajadorRepository();
 module.exports = async function editarTrabajadorConContrato(data) {
    const transaction = await sequelize.transaction();
    const { id: trabajadorId, contratos_laborales } = data;
+ 
    try {
       const response_edit = await editarTrabajador(
          data,
@@ -25,6 +26,12 @@ module.exports = async function editarTrabajadorConContrato(data) {
       }
 
       const contratosFront = contratos_laborales ?? [];
+      
+      const contratosFrontFormateado = contratosFront.map((contrato) => ({
+         ...contrato,
+          fecha_fin: contrato.es_indefinido ? null : (contrato.fecha_fin == "" ? null : contrato.fecha_fin) // puede ser null por ser contrato indefinido
+      }))
+
       const res = await obtenerContratosPorTrabajadorId(
          trabajadorId,
          contratoLaboralRepository,
@@ -33,14 +40,14 @@ module.exports = async function editarTrabajadorConContrato(data) {
       const contratosDb = res.respuesta.contratos;
       const contratosBdIds = new Set(contratosDb.map((c) => String(c.id)));
       const contratosFrontIds = new Set(
-         contratosFront.map((c) => String(c.id))
+         contratosFrontFormateado.map((c) => String(c.id))
       );
       const contratos_crear = [];
       const contratos_actualizar = [];
       const contratos_eliminar = [];
     
       
-      for (const contrato of contratosFront) {
+      for (const contrato of contratosFrontFormateado) {
          if (contratosBdIds.has(String(contrato.id))) {
             contratos_actualizar.push(contrato);
          } else {

@@ -28,6 +28,9 @@ const vacacionesRepository = new SequelizeVacacionesRepository();
 const SequelizeAdelantoSueldoRepository = require("../../modules/adelanto_sueldo/infraestructure/repositories/sequlizeAdelantoSueldoRepository");
 const adelantoSueldoRepository = new SequelizeAdelantoSueldoRepository();
 
+const SequelizeMotivosLiquidacionRepository = require("../../modules/motivos_liquidacion/infrastructure/repositories/sequelizeMotivosLiquidacionRepository");
+const motivosLiquidacionRepository = new SequelizeMotivosLiquidacionRepository();
+
 const db = require("../../database/models");
 const sequelize = require("../../database/sequelize");
 
@@ -53,13 +56,15 @@ const { calcularTiempoLaborado } = require("../utils/calcularTiempoEnEmpresa");
 module.exports = async function darBajaTrabajador(dataBody) {
   const transaction = await sequelize.transaction();
 
+  console.log('dataBody', dataBody);
+
   const {
     usuario_cierre_id,
     filial_id,
     trabajador_id,
     contrato_id,
     fecha_baja,
-    motivo,
+    motivo_liquidacion_id,
     observacion,
   } = dataBody;
 
@@ -736,11 +741,20 @@ module.exports = async function darBajaTrabajador(dataBody) {
       };
     }
 
+    console.log('motivo_liquidacion_id', motivo_liquidacion_id);
+
+    const motivoLiquidacion = await motivosLiquidacionRepository.obtenerMotivoLiquidacionPorId(
+      motivo_liquidacion_id,
+      transaction
+    );
+
+    console.log('motivoLiquidacion', motivoLiquidacion);
+
     const informacionLiquidacion = {
       trabajador_id: trabajador_id,
       fecha_ingreso_trabajador: fecha_ingreso_trabajador,
       fecha_cese: fechaBaja.format("YYYY-MM-DD"),
-      motivo_cese: motivo,
+      motivo_cese: motivoLiquidacion.descripcion_corta,
       tiempo_servicio: tiempoLaborado,
       faltas_injustificadas:
         cantidadFaltasInjustificadasDeTodoElTiempoDeServicio,
@@ -842,7 +856,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
       contrato_id: contratoLaboralEncontrado.id,
       fecha_ingreso: fecha_ingreso_trabajador,
       fecha_baja: fechaBaja.format("YYYY-MM-DD"),
-      motivo: motivo,
+      motivo_liquidacion_id: motivo_liquidacion_id,
       observacion: observacion,
       usuario_registro_id: usuario_cierre_id,
       estado_liquidacion: estado_liquidacion,
@@ -879,6 +893,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
       },
     };
   } catch (error) {
+    console.log('error', error);
     await transaction.rollback();
     return {
       codigo: 500,

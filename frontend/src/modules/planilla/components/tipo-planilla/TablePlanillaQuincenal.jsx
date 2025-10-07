@@ -55,7 +55,8 @@ const TablePlanillaQuincenal = ({ planillaQuincenalTipoPlanilla, total }) => {
                <TableHead rowSpan={2} className="text-center border-r text-white border-black">Tipo Doc</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">N° Doc</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Nombres y Apellidos</TableHead>
-             {/*  <TableHead rowSpan={2} className="text-center border-r text-white border-black">AFP</TableHead> */}
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">Cargo</TableHead>
+              <TableHead rowSpan={2} className="text-center border-r text-white border-black">AFP</TableHead>
                 <TableHead rowSpan={2} className="text-center border-r text-white border-black">Fecha Ingreso</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Dias Laborados</TableHead>
               <TableHead rowSpan={2} className="text-center border-r text-white border-black">Sueldo Base</TableHead>
