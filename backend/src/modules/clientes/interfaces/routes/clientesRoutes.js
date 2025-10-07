@@ -7,7 +7,8 @@ const { verificarToken } = require('../../../../shared/middlewares/authMiddlewar
 router.use(verificarToken)
 
 // 📌 Rutas de clientes (protegidas por token desde index.js)
-router.get("/", clienteController.obtenerClientes);
+router.get("/", clienteController.obtenerClientesContactosObras);
+router.get("/id-contactos-obras", clienteController.obtenerClientes);
 router.get("/:id", clienteController.obtenerClientePorId);
 router.post("/", clienteController.crearCliente);
 router.put("/:id", clienteController.actualizarCliente);

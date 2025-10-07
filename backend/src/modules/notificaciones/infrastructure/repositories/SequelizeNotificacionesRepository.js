@@ -36,6 +36,12 @@ class SequelizeNotificacionesRepository {
           model: db.usuarios, // o models.Usuario
           as: "usuario",
           attributes: ["id"], // 👈 solo lo necesario
+          include: [
+            {
+              model: db.trabajadores,
+              as: "trabajador",
+            },
+          ],
         },
       }
     );

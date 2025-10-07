@@ -31,6 +31,7 @@ export function GuiaTransporteProvider({ children }) {
   ];
 
   const [correlativos, setCorrelativos] = useState([]);
+  const [correlativosPendientes, setCorrelativosPendientes] = useState([]);
   const [correlativoEstado, setCorrelativoEstado] = useState(false);
   const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
 
@@ -65,7 +66,10 @@ export function GuiaTransporteProvider({ children }) {
 
       const { data } =
         await facturaService.obtenerCorrelativoGuia(rucsAndSeries);
+      const { data: data2 } =
+        await facturaService.obtenerCorrelativoPendientesGuia(rucsAndSeries);
       setCorrelativos(data);
+      setCorrelativosPendientes(data2);
     } catch (error) {
       console.error("Error al obtener correlativos:", error);
     } finally {
@@ -396,6 +400,7 @@ export function GuiaTransporteProvider({ children }) {
       empresa_Ruc: guiaTransporte.empresa_Ruc,
       serie: guiaTransporte.serie,
     });
+    setTipoGuia("transporte-publico");
     setGuiaDatosPublico(ValoresPublico);
     setGuiaDatosInternos(ValoresInterno);
     buscarCorrelativo();
@@ -407,6 +412,7 @@ export function GuiaTransporteProvider({ children }) {
         serieGuia,
         buscarCorrelativo,
         correlativos,
+        correlativosPendientes,
         setCorrelativos,
         correlativoEstado,
         setCorrelativoEstado,

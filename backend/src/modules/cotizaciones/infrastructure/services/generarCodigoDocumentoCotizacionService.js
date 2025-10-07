@@ -8,6 +8,14 @@ async function generarCodigoDocumentoCotizacion({
   cotizacion,
   cp,
 }) {
+
+  console.log({
+    uso_id_para_registrar,
+    filial_razon_social,
+    usuario_nombre,
+    cotizacion,
+    cp,
+  })
   // 🔹 Iniciales de la filial (ej. IR)
   const filialAbv = filial_razon_social
     .split(" ")

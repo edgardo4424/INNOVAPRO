@@ -112,12 +112,12 @@ function pdfInformativoHeader(
                                         preserveLeadingSpaces: true
                                     },
                                     {
-                                        text: `Motivo:            ${utils.getMotivoLabel(nota.motivo_Cod, nota.tipo_Doc) || "—"}`,
+                                        text: `Tipo:            ${utils.getMotivoLabel(nota.motivo_Cod, nota.tipo_Doc) || "—"}`,
                                         style: 'clientData',
                                         preserveLeadingSpaces: true
                                     },
                                     {
-                                        text: `Descripcion:    ${descripcionFormateada}`,
+                                        text: `Motivo:    ${descripcionFormateada}`,
                                         style: 'clientData',
                                         preserveLeadingSpaces: true,
                                         lineHeight: 1.2

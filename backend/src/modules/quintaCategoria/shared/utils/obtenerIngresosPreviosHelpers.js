@@ -128,9 +128,6 @@ const valorGrati = (fila) => {
     const valor = fila.dataValues ? fila.dataValues : fila;
     const num = (v) => (v == null ? null : Number(v));
     return (
-        num(valor.grat_despues_descuento) ??
-        num(valor.gratificacion_semestral) ??
-        num(valor.total_pagar || 0) ??
         num(valor.total_a_pagar) ??
         0
     );

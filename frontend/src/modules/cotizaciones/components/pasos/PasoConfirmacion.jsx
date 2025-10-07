@@ -25,7 +25,7 @@ import Loader from "../../../../shared/components/Loader";
 
 export default function PasoConfirmacion() {
   const { formData, setFormData, errores } = useWizardContext();
-
+  console.log("FORMDATA en PASO CONFIRMACIÓN: ", formData)
   useGenerarDespiece(formData, setFormData); // Hook personalizado para generar el despiece
   useCalculoTransporte(formData, setFormData); // Hook personalizado para calcular el transporte
 

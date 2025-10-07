@@ -44,6 +44,7 @@ const ContactoController = {
             const contactoActualizado = await actualizarContacto(req.params.id, req.body, contactoRepository, entidadService);
             res.status(contactoActualizado.codigo).json(contactoActualizado.respuesta); 
         } catch (error) {
+             console.log('error', error);
             res.status(500).json({ error: error.message }); 
         }
     },

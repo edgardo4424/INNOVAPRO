@@ -135,6 +135,7 @@ const modulesByRole = {
             { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
             { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
             { name: "Guia de Remision", path: "/facturacion/emitir/guia" },
+            { name: "Reporte", path: "/facturacion/reportes-venta" },
             { name: "Bandeja", path: "/facturacion/bandeja" },
             { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
          ],
@@ -185,7 +186,7 @@ const modulesByRole = {
          items: [
             { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
             { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
-            // { name: "Emitir", path: "/facturacion/emitir" },
+            { name: "Reporte", path: "/facturacion/reportes-venta" },
             { name: "Bandeja", path: "/facturacion/bandeja" },
             { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
          ],
@@ -198,7 +199,7 @@ const modulesByRole = {
          items: [
             { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
             { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
-            // { name: "Emitir", path: "/facturacion/emitir" },
+            { name: "Reporte", path: "/facturacion/reportes-venta" },
             { name: "Bandeja", path: "/facturacion/bandeja" },
             { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
          ],
@@ -230,9 +231,16 @@ const modulesByRole = {
             { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
             { name: "Guia de Remision", path: "/facturacion/emitir/guia" },
             { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
-            // { name: "Emitir", path: "/facturacion/emitir" },
+            { name: "Reporte", path: "/facturacion/reportes-venta" },
             { name: "Bandeja", path: "/facturacion/bandeja" },
             { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
+         ],
+      },
+      {
+         group: "Gestión de Transporte",
+         items: [
+            { name: "Choferes", path: "/transporte/choferes" },
+            { name: "Transportistas", path: "/transporte/transportistas" },
          ],
       },
       {         

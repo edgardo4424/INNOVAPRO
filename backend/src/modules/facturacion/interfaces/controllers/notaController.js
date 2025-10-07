@@ -1,6 +1,9 @@
 
 const crearNotaCreditoDebito = require('../../application/useCases/nota-debito-credito/crearNotaCreditoDebito');
 
+const obtenerCorrelativoPendientes = require("../../application/useCases/nota-debito-credito/obtenerCorrelativoPendientes");
+
+
 const SequelizeBorradorRepository = require('../../infrastructure/repositories/sequelizeBorradorRespository')
 
 const obtenerNotaDetallada = require('../../application/useCases/nota-debito-credito/obtenerNotaDetallada');
@@ -56,6 +59,18 @@ const notaController = {
         // * "obtenerCorrelativo" y devolver su respuesta
         try {
             const { codigo, respuesta } = await obtenerCorrelativo(req.body, notaRepository)
+            res.status(codigo).json(respuesta)
+        } catch (error) {
+            res.status(500).json({ error: error.message, estado: false })
+        }
+    },
+
+    async obtenerCorrelativoPendientes(req, res) {
+        // * Controlador para obtener el correlativo de la Guia
+        // * se encarga de llamar al caso de uso
+        // * "obtenerCorrelativo" y devolver su respuesta
+        try {
+            const { codigo, respuesta } = await obtenerCorrelativoPendientes(req.body, notaRepository)
             res.status(codigo).json(respuesta)
         } catch (error) {
             res.status(500).json({ error: error.message, estado: false })

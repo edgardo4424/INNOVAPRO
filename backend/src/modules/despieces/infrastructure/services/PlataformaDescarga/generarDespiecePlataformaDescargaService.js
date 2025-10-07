@@ -37,7 +37,7 @@ async function generarDespiecePlataformaDescarga(data) {
       const piezaInfoMap = mapearPiezasConDatos(piezasBD);
       const resultadosCombinados = combinarResultados(resultadoFinal, piezaInfoMap);
       const totales = calcularTotalesGenerales(resultadosCombinados);
-
+/* 
       console.table(resultadosCombinados);
       console.log("🔢 Totales generales:");
       console.log(`🧩 Total de piezas: ${subtotales.total}`);
@@ -45,7 +45,7 @@ async function generarDespiecePlataformaDescarga(data) {
       console.log(`📦 Peso total (Ton): ${(totales.peso_kg / 1000).toFixed(2)}`);
       console.log(`💰 Precio subtotal de venta dolares ($): ${totales.precio_venta_dolares.toFixed(2)}`);
       console.log(`💰 Precio subtotal de venta soles (S/): ${totales.precio_venta_soles.toFixed(2)}`);
-      console.log(`📅 Precio subtotal de alquiler soles (S/): ${totales.precio_alquiler_soles.toFixed(2)}`);
+      console.log(`📅 Precio subtotal de alquiler soles (S/): ${totales.precio_alquiler_soles.toFixed(2)}`); */
 
       return {
         despiece: resultadosCombinados,
@@ -61,7 +61,7 @@ async function generarDespiecePlataformaDescarga(data) {
 
   const resultadoFinal = unificarDespiecesConTotales(resultadosPorZona);
 
-console.table(resultadoFinal.despiece);
+/* console.table(resultadoFinal.despiece);
 
 console.log("🔢 Totales generales unificados:");
 console.log(`🧩 Total de piezas: ${resultadoFinal.totales.total_piezas}`);
@@ -69,7 +69,7 @@ console.log(`📦 Peso total (kg): ${resultadoFinal.totales.peso_total_kg.toFixe
 console.log(`📦 Peso total (Ton): ${resultadoFinal.totales.peso_total_ton}`);
 console.log(`💰 Precio subtotal venta $: ${resultadoFinal.totales.precio_subtotal_venta_dolares.toFixed(2)}`);
 console.log(`💰 Precio subtotal venta S/: ${resultadoFinal.totales.precio_subtotal_venta_soles.toFixed(2)}`);
-console.log(`📅 Precio subtotal alquiler S/: ${resultadoFinal.totales.precio_subtotal_alquiler_soles.toFixed(2)}`);
+console.log(`📅 Precio subtotal alquiler S/: ${resultadoFinal.totales.precio_subtotal_alquiler_soles.toFixed(2)}`); */
 
   return {
     despiece: resultadoFinal.despiece,

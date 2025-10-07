@@ -39,6 +39,10 @@ const Cliente = sequelize.define('clientes', {
     representante_legal: {
         type: DataTypes.STRING,
     },
+    tipo_documento: {
+        type: DataTypes.ENUM("DNI", "CE"),
+        allowNull: true,
+    },
     dni_representante: {
         type: DataTypes.STRING(8),
     },
@@ -67,11 +71,12 @@ Cliente.associate = (models) => {
   })
 
   Cliente.belongsToMany(models.obras, {
-    through: "cliente_obras",
-    foreignKey: "cliente_id",
-    otherKey: "obra_id",
-    as: "obras_asociadas",
-});
+        through: "cliente_obras",
+        foreignKey: "cliente_id",
+        otherKey: "obra_id",
+        as: "obras_asociadas",
+    });
+
 };
 
 module.exports = { Cliente }; // Exporta el modelo para que pueda ser utilizado en otros módulos

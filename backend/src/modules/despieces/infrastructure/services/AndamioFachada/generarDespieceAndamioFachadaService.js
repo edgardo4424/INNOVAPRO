@@ -52,14 +52,14 @@ async function generarDespieceAndamioDeFachada(data) {
             piezaInfoMap
          );
          const totales = calcularTotalesGenerales(resultadosCombinados);
-      console.table(resultadosCombinados);
+/*       console.table(resultadosCombinados);
       console.log("🔢 Totales generales:");
       console.log(`🧩 Total de piezas: ${subtotales.total}`);
       console.log(`📦 Peso total (kg): ${totales.peso_kg.toFixed(2)}`);
       console.log(`📦 Peso total (Ton): ${(totales.peso_kg / 1000).toFixed(2)}`);
       console.log(`💰 Precio subtotal de venta dolares ($): ${totales.precio_venta_dolares.toFixed(2)}`);
       console.log(`💰 Precio subtotal de venta soles (S/): ${totales.precio_venta_soles.toFixed(2)}`);
-      console.log(`📅 Precio subtotal de alquiler soles (S/): ${totales.precio_alquiler_soles.toFixed(2)}`);
+      console.log(`📅 Precio subtotal de alquiler soles (S/): ${totales.precio_alquiler_soles.toFixed(2)}`); */
 
       return {
         despiece: resultadosCombinados,

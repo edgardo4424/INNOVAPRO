@@ -40,13 +40,6 @@ Contacto.associate = (models) => {
     as: "clientes_asociados",
   });
 
-  Contacto.belongsToMany(models.obras, {
-    through: "contacto_obras",
-    foreignKey: "contacto_id",
-    otherKey: "obra_id",
-    as: "obras_asociadas",
-  });
-
   Contacto.hasMany(models.cotizaciones,{
      foreignKey: "contacto_id",
   })

@@ -150,11 +150,13 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
         include: [{ model: db.trabajadores, as: "trabajador" }],
       }
     );
+
+    console.log('usuarioEncontrado', usuarioEncontrado);
     
     const datosParaGenerarCodigoDocumento = {
       uso_id_para_registrar: uso_id,
       filial_razon_social: filialEncontrado.razon_social,
-      usuario_rol: usuarioEncontrado.rol,
+      //usuario_rol: usuarioEncontrado.rol,
       usuario_nombre: usuarioEncontrado.trabajador.nombres + " " + usuarioEncontrado.trabajador.apellidos,
       //anio_cotizacion: new Date().getFullYear(),
       estado_cotizacion: cotizacionFinal.estados_cotizacion_id,

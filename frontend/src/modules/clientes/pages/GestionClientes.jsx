@@ -14,6 +14,9 @@ export default function GestionClientes() {
       clientesPaginados,
       busqueda,
       setBusqueda,
+      obras,
+      contactos,
+      setContactos,
       paginaActual,
       setPaginaActual,
       totalPaginas,
@@ -29,7 +32,7 @@ export default function GestionClientes() {
          <ModuloNavegacion />
 
          <div className="w-full max-w-7xl flex flex-row-reverse md:flex-row justify-between px-4 my-6 items-center gap-4">
-            <ModalAgregarCliente agregarCliente={agregarCliente} />
+            <ModalAgregarCliente agregarCliente={agregarCliente} obras={obras} contactos={contactos}/>
             <div className="relative flex-1 w-full md:max-w-80 ">
                <Input
                   type="text"
@@ -48,6 +51,8 @@ export default function GestionClientes() {
          <TablaClientes
             clientes={clientesPaginados}
             onEliminar={eliminarCliente}
+            contactos={contactos}
+            obras={obras}
             actualizarCliente={actualizarCliente}
          />
 

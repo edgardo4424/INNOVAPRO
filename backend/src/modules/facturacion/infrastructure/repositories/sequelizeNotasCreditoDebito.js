@@ -379,6 +379,77 @@ class SequelizeNotasCreditoDebitoRepository {
 
         return resultados;
     }
+
+    async correlativoPendientes(body) {
+        const resultados = [];
+        const rucsAndSeries = [];
+
+        // Construir combinaciones de RUC + Serie (ignorar tipoDoc)
+        for (const data of body) {
+            if (data.credito) {
+                for (const serie of data.credito) {
+                    rucsAndSeries.push({ ruc: data.ruc, serie: serie.value });
+                }
+            }
+            if (data.debito) {
+                for (const serie of data.debito) {
+                    rucsAndSeries.push({ ruc: data.ruc, serie: serie.value });
+                }
+            }
+        }
+
+        // Traer correlativos desde BD
+        const notas = await NotasCreditoDebito.findAll({
+            attributes: ["empresa_Ruc", "serie", "correlativo"],
+            where: {
+                [Op.or]: rucsAndSeries.map(item => ({
+                    empresa_Ruc: item.ruc,
+                    serie: item.serie
+                }))
+            },
+            raw: true
+        });
+
+        // Agrupar por RUC-SERIE
+        const agrupados = new Map();
+        for (const n of notas) {
+            const key = `${n.empresa_Ruc}-${n.serie}`;
+            if (!agrupados.has(key)) agrupados.set(key, []);
+            agrupados.get(key).push(Number(n.correlativo));
+        }
+
+        // Detectar pendientes
+        for (const { ruc, serie } of rucsAndSeries) {
+            const key = `${ruc}-${serie}`;
+            const correlativos = (agrupados.get(key) || []).sort((a, b) => a - b);
+
+            const pendientes = [];
+            if (correlativos.length > 0) {
+                const min = correlativos[0];
+                const max = correlativos[correlativos.length - 1];
+
+                // Usamos Set para mejor rendimiento
+                const existentes = new Set(correlativos);
+                for (let i = min; i <= max; i++) {
+                    if (!existentes.has(i)) {
+                        pendientes.push(String(i).padStart(8, "0"));
+                    }
+                }
+            }
+
+            // 👉 Solo devolver si hay pendientes
+            if (pendientes.length > 0) {
+                resultados.push({
+                    ruc,
+                    serie,
+                    pendientes
+                });
+            }
+        }
+
+        return resultados;
+    }
+
 }
 
 module.exports = SequelizeNotasCreditoDebitoRepository;

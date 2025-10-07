@@ -20,6 +20,7 @@ const FacturaBoletaContext = createContext();
 export function FacturaBoletaProvider({ children }) {
   // ** CORRELATIVOS
   const [correlativos, setCorrelativos] = useState([]);
+  const [correlativosPendientes, setCorrelativosPendientes] = useState([]);
   const [correlativoEstado, setCorrelativoEstado] = useState(false);
   const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
 
@@ -132,7 +133,9 @@ export function FacturaBoletaProvider({ children }) {
       }));
 
       const { data } = await facturaService.obtenerCorrelativo(rucsAndSeries);
+      const { data: data2 } = await facturaService.obtenerCorrelativoPendientes(rucsAndSeries);
       setCorrelativos(data);
+      setCorrelativosPendientes(data2);
     } catch (error) {
     } finally {
       setLoadingCorrelativo(false);
@@ -401,6 +404,7 @@ export function FacturaBoletaProvider({ children }) {
           ...facturaAEmitir,
           usuario_id: id_logeado,
           estado: "EMITIDA",
+          precio_dolar: precioDolarActual,
           cuotas_Real: JSON.stringify(facturaAEmitir.cuotas_Real),
           sunat_respuesta: sunat_respuest,
           id_borrador: idBorrador ? idBorrador : null,
@@ -523,6 +527,7 @@ export function FacturaBoletaProvider({ children }) {
     <FacturaBoletaContext.Provider
       value={{
         correlativos,
+        correlativosPendientes,
         setCorrelativos,
         correlativoEstado,
         setCorrelativoEstado,

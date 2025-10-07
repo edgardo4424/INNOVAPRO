@@ -16,6 +16,7 @@ const NotaContext = createContext();
 export function NotaProvider({ children }) {
   // ** CORRELATIVOS
   const [correlativos, setCorrelativos] = useState([]);
+  const [correlativosPendientes, setCorrelativosPendientes] = useState([]);
   const [correlativoEstado, setCorrelativoEstado] = useState(false);
   const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
   // Notas de crédito
@@ -33,6 +34,7 @@ export function NotaProvider({ children }) {
     { value: "BDT1", doc: "03" }, // Nota de débito sobre boleta
     { value: "BDT2", doc: "03" },
   ];
+  const [precioDolarActual, setPrecioDolarActual] = useState(0);
 
   // ?? BORRADOR
   const [idBorrador, setIdBorrador] = useState(null);
@@ -80,15 +82,37 @@ export function NotaProvider({ children }) {
 
       const { data } =
         await facturaService.obtenerCorrelativoNota(rucsAndSeries);
+      const { data: data2 } =
+        await facturaService.obtenerCorrelativoPendientesNota(rucsAndSeries);
       setCorrelativos(data);
+      setCorrelativosPendientes(data2);
     } catch (error) {
-      console.error("Error al obtener correlativos:", error);
     } finally {
       setLoadingCorrelativo(false);
     }
   };
 
-  // Al cargar el componente o cambiar la lista de filiales, buscar los correlativos
+  // ?? OBTENER TIPO DE CAMBIO
+  useEffect(() => {
+    const cambioDelDia = async () => {
+      try {
+        const hoyISO = new Intl.DateTimeFormat("en-CA", {
+          timeZone: "America/Lima",
+        }).format(new Date());
+
+        const { status, success, data } =
+          await factilizaService.obtenerTipoCambio(hoyISO);
+
+        if (success && status === 200) {
+          setPrecioDolarActual(data.venta);
+        }
+      } catch (error) {}
+    };
+
+    cambioDelDia();
+  }, []);
+
+  //? Al cargar el componente o cambiar la lista de filiales, buscar los correlativos
   useEffect(() => {
     if (filiales.length > 0) {
       buscarCorrelativo();
@@ -254,6 +278,7 @@ export function NotaProvider({ children }) {
         // ? b. Preparar el objeto final a registrar.
         const notaEmitida = {
           ...notaCreditoDebito,
+          precio_dolar: precioDolarActual,
           usuario_id: id_logeado,
           detalle: detalleFormateado,
           sunat_respuesta: sunat_respuest,
@@ -310,7 +335,6 @@ export function NotaProvider({ children }) {
       }
     } catch (error) {
       // ? ERROR DE RED o EXCEPCIÓN: Fallo de conexión o problema inesperado.
-      console.error("Error al enviar la nota:", error);
       if (error.response) {
         result = {
           success: false,
@@ -378,14 +402,15 @@ export function NotaProvider({ children }) {
       empresa_Ruc: notaCreditoDebito.empresa_Ruc,
       serie: notaCreditoDebito.serie,
     });
-    setIdFactura(null);
     buscarCorrelativo();
+    setIdFactura(null);
   };
 
   return (
     <NotaContext.Provider
       value={{
         correlativos,
+        correlativosPendientes,
         setCorrelativos,
         correlativoEstado,
         setCorrelativoEstado,

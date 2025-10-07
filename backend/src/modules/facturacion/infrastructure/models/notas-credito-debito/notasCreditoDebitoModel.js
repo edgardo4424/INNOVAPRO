@@ -144,12 +144,18 @@ const NotasCreditoDebito = sequelize.define(
         fecha_Emision_Afectado: {
             type: DataTypes.DATE,
             allowNull: true,
-        }
+        },
         //! -- Campo de anulacion
         // anulacion_Motivo: {
         //     type: DataTypes.STRING,
         //     allowNull: true,
         // }
+
+        precio_dolar: {
+            type: DataTypes.DECIMAL(12, 6),
+            allowNull: true,
+            defaultValue: null,
+        }
     },
     {
         timestamps: false,

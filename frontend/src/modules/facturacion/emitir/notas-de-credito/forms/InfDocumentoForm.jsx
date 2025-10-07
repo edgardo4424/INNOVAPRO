@@ -9,8 +9,8 @@ import {
 } from "@/components/ui/select";
 import { useNota } from "@/modules/facturacion/context/NotaContext";
 import { formatDateTime } from "@/modules/facturacion/utils/formateos";
-import { LoaderCircle, Search, SquarePen } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { ListTodo, LoaderCircle, Search, SquarePen } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 const InfDocumentoForm = () => {
   const {
@@ -24,11 +24,30 @@ const InfDocumentoForm = () => {
     correlativoEstado,
     setCorrelativoEstado,
     loadingCorrelativo,
+    correlativosPendientes,
   } = useNota();
+
+  const [listaCorrelativos, setListaCorrelativos] = useState([]);
+
+  // ? ... otros estados
+  const [mostrarPendientes, setMostrarPendientes] = useState(false);
+
+  // ? Función para alternar la visibilidad de la lista
+  const togglePendientes = () => {
+    setMostrarPendientes((prev) => !prev);
+  };
 
   const activarCorrelativo = (e) => {
     e.preventDefault();
     setCorrelativoEstado(!correlativoEstado);
+  };
+
+  const seleccionarCorrelativo = (value) => {
+    setNotaCreditoDebito((prevValores) => ({
+      ...prevValores,
+      correlativo: value,
+    }));
+    setMostrarPendientes(false);
   };
 
   const handleInputChange = useRef((e) => {
@@ -141,6 +160,27 @@ const InfDocumentoForm = () => {
     notaCreditoDebito.tipo_operacion,
   ]);
 
+  useEffect(() => {
+    if (correlativosPendientes?.length > 0 && correlativosPendientes) {
+      setMostrarPendientes(false);
+      const lista = correlativosPendientes.filter(
+        (item) =>
+          item.ruc === notaCreditoDebito.empresa_Ruc &&
+          item.serie === notaCreditoDebito.serie,
+      );
+
+      // Une todos los arrays "pendientes" en uno solo
+      setListaCorrelativos(lista.flatMap((item) => item.pendientes));
+    } else {
+      setMostrarPendientes(false);
+      setListaCorrelativos([]);
+    }
+  }, [
+    notaCreditoDebito.empresa_Ruc,
+    notaCreditoDebito.serie,
+    correlativosPendientes,
+  ]);
+
   return (
     <div className="overflow-y-auto p-4 sm:p-6 lg:px-8 lg:py-4">
       <h2 className="mb-2 flex text-2xl font-semibold">
@@ -160,9 +200,11 @@ const InfDocumentoForm = () => {
           <Select
             name="tipo_operacion"
             value={notaCreditoDebito.tipo_Operacion}
-            onValueChange={(e) => {
-              handleSelectChange(e, "tipo_Operacion");
-            }}
+            // onValueChange={(e) => {
+            //   handleSelectChange(e, "tipo_Operacion");
+            // }}
+            readOnly
+            disabled
           >
             <SelectTrigger className="w-full rounded-md border border-gray-300 shadow-sm">
               {" "}
@@ -294,16 +336,47 @@ const InfDocumentoForm = () => {
                 <SquarePen />
               </button>
             </div>
-            <button
-              className="bg-innova-blue hover:bg-innova-blue-hover focus:ring-innova-blue cursor-pointer rounded-md p-2 text-white transition-colors duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none"
-              onClick={buscarCorrelativo}
-            >
-              {loadingCorrelativo ? (
-                <LoaderCircle className="size-5 animate-spin" />
-              ) : (
-                <Search className="size-5" />
+            <div className="relative flex">
+              <div className="flex gap-x-1">
+                <button
+                  className="bg-innova-blue hover:bg-innova-blue-hover focus:ring-innova-blue cursor-pointer rounded-md p-2 text-white transition-colors duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none"
+                  onClick={buscarCorrelativo}
+                >
+                  {loadingCorrelativo ? (
+                    <LoaderCircle className="size-5 animate-spin" />
+                  ) : (
+                    <Search className="size-5" />
+                  )}
+                </button>
+                {listaCorrelativos.length > 0 && (
+                  <button
+                    // Añado el onClick para cambiar el estado 'mostrarPendientes'
+                    onClick={togglePendientes}
+                    className={`cursor-pointer rounded-md px-2 text-white hover:scale-105 ${mostrarPendientes ? "bg-green-500 hover:bg-green-600" : "bg-yellow-500 hover:bg-yellow-500"}`}
+                  >
+                    <ListTodo />
+                  </button>
+                )}
+              </div>
+              {mostrarPendientes && listaCorrelativos.length > 0 && (
+                <div className="r absolute top-12 col-span-full rounded-md border border-gray-200 bg-gray-50 p-3 shadow-inner">
+                  <h3 className="mb-2 text-sm font-bold text-gray-700">
+                    Pendientes:
+                  </h3>
+                  <ul className="flex flex-col gap-2">
+                    {listaCorrelativos.map((pendiente, index) => (
+                      <li
+                        key={index}
+                        className="cursor-pointer rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-gray-800 hover:bg-green-200"
+                        onClick={() => seleccionarCorrelativo(pendiente)}
+                      >
+                        {pendiente}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               )}
-            </button>
+            </div>
           </div>
         </div>
 

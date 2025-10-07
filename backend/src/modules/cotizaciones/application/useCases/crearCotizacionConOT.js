@@ -58,7 +58,9 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       cotizacionEncontrada.filial_id
     );
     const usuarioEncontrado = await db.usuarios.findByPk(
-      cotizacionEncontrada.usuario_id
+      cotizacionEncontrada.usuario_id, {
+        include: [{ model: db.trabajadores, as: "trabajador" }],
+      }
     );
 
       // Insertar Atributos Valor
@@ -88,11 +90,13 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
     // Conseguir el cp del despiece 
     const despieceEncontrado = await db.despieces.findByPk(cotizacionEncontrada.despiece_id)
 
+    console.log('usuarioEncontrado', usuarioEncontrado);
+
     const datosParaGenerarCodigoDocumento = {
       uso_id_para_registrar: uso_id,
       filial_razon_social: filialEncontrado.razon_social,
-      usuario_rol: usuarioEncontrado.rol,
-      usuario_nombre: usuarioEncontrado.nombre,
+      //usuario_rol: usuarioEncontrado.rol,
+      usuario_nombre: usuarioEncontrado.trabajador.nombres + " " + usuarioEncontrado.trabajador.apellidos,
       //anio_cotizacion: new Date().getFullYear(),
       estado_cotizacion: cotizacionEncontrada.estados_cotizacion_id,
 

@@ -20,6 +20,10 @@ const obtenerCdrZip = require('../../application/useCases/factura-boleta/obtener
 
 const obtenerMTC = require('../../application/useCases/factura-boleta/obtenerMTC')
 
+const reporteVentas = require('../../application/useCases/factura-boleta/reporteVentas')
+
+const obtenerCorrelativoPendientes = require('../../application/useCases/factura-boleta/obtenerCorrelativoPendientes')
+
 const facturaRepository = new SequelizeFacturaRepository()
 
 const borradorRepository = new SequelizeBorradorRepository()
@@ -55,7 +59,7 @@ const facturaController = {
         // * recibe la serie, correlativo, ruc y tipo del documento de la factura por parametro y llamar al caso de uso
         // * "obtenerFacturaDetallada" y devolver su respuesta
         try {
-            const { codigo, respuesta } = await obtenerFacturaDetallada( req.body,facturaRepository)
+            const { codigo, respuesta } = await obtenerFacturaDetallada(req.body, facturaRepository)
             res.status(codigo).json(respuesta)
         } catch (error) {
             res.status(500).json({ error: error.message })
@@ -87,12 +91,36 @@ const facturaController = {
         }
     },
 
+    async obtenerCorrelativoPendientes(req, res) {
+        // * Controlador para obtener el correlativo de la factura
+        // * se encarga de llamar al caso de uso
+        // * "obtenerCorrelativo" y devolver su respuesta
+        try {
+            const { codigo, respuesta } = await obtenerCorrelativoPendientes(req.body, facturaRepository)
+            res.status(codigo).json(respuesta)
+        } catch (error) {
+            res.status(500).json({ error: error.message, estado: false })
+        }
+    },
+
     async anularFactura(req, res) {
         // * Controlador para anular una factura
         // * se encarga de llamar al caso de uso
         // * "anularFactura" y devolver su respuesta
         try {
             const { codigo, respuesta } = await anularFactura(req.body, facturaRepository)
+            res.status(codigo).json(respuesta)
+        } catch (error) {
+            res.status(500).json({ error: error.message, estado: false })
+        }
+    },
+
+    async reporteVentas(req, res) {
+        // * Controlador para emitir un reporte de ventas de facturas - boletas - guias - notas
+        // * se encarga de llamar al caso de uso
+        // * "reporteVentas" y devolver su respuesta
+        try {
+            const { codigo, respuesta } = await reporteVentas(req.body, facturaRepository)
             res.status(codigo).json(respuesta)
         } catch (error) {
             res.status(500).json({ error: error.message, estado: false })
