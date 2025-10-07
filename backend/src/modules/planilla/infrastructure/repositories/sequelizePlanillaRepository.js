@@ -1435,6 +1435,18 @@ class SequelizePlanillaRepository {
 
     const planillaMensualCerradas = await PlanillaMensual.findAll({
       where: { cierre_planilla_mensual_id: cierrePlanillaMensual.id },
+      include:[
+        {
+          model:db.planilla_mensual_recibo_honorario,
+          as:"recibo",
+          include:[
+            {
+              model:db.recibos_por_honorarios,
+              as:"recibo_por_honorario"
+            }
+          ]
+        }
+      ],
       transaction,
     });
     return planillaMensualCerradas;
