@@ -120,7 +120,7 @@ const ReportesForm = () => {
             },
             { key: "doc_de_referencia", label: "Documentos de Referencia" },
             {
-              key: "tipo_doc_de_referencia",
+              key: "afectado_tipo_doc",
               label: "Tipo Documento de Referencia",
             },
           ],
