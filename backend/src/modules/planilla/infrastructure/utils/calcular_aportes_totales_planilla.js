@@ -55,8 +55,7 @@ const calculo_aportes_totales_planilla = (planillas = [], importes) => {
       sumatoria_sctr_pension += Number(p.sctr_pension);
    }
 
-   console.log('suamtoria sb',sumatoria_sueldo_basico);
-   console.log('suamtopria sm',sumatoria_sueldo_mensual);
+
    
    
    return {
