@@ -245,6 +245,46 @@ const PlanillaMensual = sequelize.define(
          type: DataTypes.STRING,
          allowNull: true,
       },
+      dias_falta: {
+         type: DataTypes.INTEGER,
+         allowNull: true,
+         defaultValue: 0,
+      },
+      dias_vacaciones: {
+         type: DataTypes.INTEGER,
+         allowNull: true,
+         defaultValue: 0,
+      },
+      dias_licencia_con_goce: {
+         type: DataTypes.INTEGER,
+         allowNull: true,
+         defaultValue: 0,
+      },
+      dias_licencia_sin_goce: {
+         type: DataTypes.INTEGER,
+         allowNull: true,
+         defaultValue: 0,
+      },
+      dias_falta_justificada: {
+         type: DataTypes.INTEGER,
+         allowNull: true,
+         defaultValue: 0,
+      },
+      dias_tardanza: {
+         type: DataTypes.INTEGER,
+         allowNull: true,
+         defaultValue: 0,
+      },
+      dias_permiso: {
+         type: DataTypes.INTEGER,
+         allowNull: true,
+         defaultValue: 0,
+      },
+      domiciliado: {
+         type: DataTypes.BOOLEAN,
+         allowNull: false,
+         defaultValue: true,
+      },
    },
    
    {
