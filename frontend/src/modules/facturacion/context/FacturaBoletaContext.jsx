@@ -14,6 +14,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { validarFacturaCompleta } from "../emitir/factura-boleta/utils/validarPasos";
 import filialesService from "../service/FilialesService";
+import determinarEstadoFactura from "../utils/manejadorCodigosSunat";
 
 const FacturaBoletaContext = createContext();
 
@@ -133,7 +134,8 @@ export function FacturaBoletaProvider({ children }) {
       }));
 
       const { data } = await facturaService.obtenerCorrelativo(rucsAndSeries);
-      const { data: data2 } = await facturaService.obtenerCorrelativoPendientes(rucsAndSeries);
+      const { data: data2 } =
+        await facturaService.obtenerCorrelativoPendientes(rucsAndSeries);
       setCorrelativos(data);
       setCorrelativosPendientes(data2);
     } catch (error) {
@@ -374,19 +376,16 @@ export function FacturaBoletaProvider({ children }) {
       const { status, success, message, data } =
         await factilizaService.enviarFactura(facturaAEmitir);
 
-      if (
-        status === 200 &&
-        (data?.sunatResponse?.cdrResponse?.code == "0" ||
-          data?.error?.code == "HTTP")
-      ) {
+      if (status === 200) {
         const sunat_respuest = {
-          hash: data?.hash || null,
-          cdr_zip: data?.sunatResponse?.cdrZip || null, // Descomentar si es necesario
-          sunat_success: data?.sunatResponse?.success || null,
-          cdr_response_id: data?.sunatResponse?.cdrResponse?.id || null,
-          cdr_response_code: data?.sunatResponse?.cdrResponse?.code || null,
+          hash: data?.hash ?? null,
+          // cdr_zip: data?.sunatResponse?.cdrZip ?? null, // Descomentar si es necesario
+          cdr_zip: null,
+          sunat_success: data?.sunatResponse?.success ?? null,
+          cdr_response_id: data?.sunatResponse?.cdrResponse?.id ?? null,
+          cdr_response_code: data?.sunatResponse?.cdrResponse?.code ?? null,
           cdr_response_description:
-            data?.sunatResponse?.cdrResponse?.description || null,
+            data?.sunatResponse?.cdrResponse?.description ?? null,
         };
 
         // ?? Transformamos los documentos relacionados a texto
@@ -403,7 +402,7 @@ export function FacturaBoletaProvider({ children }) {
         const facturaCopia = {
           ...facturaAEmitir,
           usuario_id: id_logeado,
-          estado: "EMITIDA",
+          estado: determinarEstadoFactura({ status, success, message, data }),
           precio_dolar: precioDolarActual,
           cuotas_Real: JSON.stringify(facturaAEmitir.cuotas_Real),
           sunat_respuesta: sunat_respuest,
@@ -429,18 +428,6 @@ export function FacturaBoletaProvider({ children }) {
             data: facturaCopia,
           };
         }
-      } else if (
-        status === 200 &&
-        data?.sunatResponse?.cdrResponse?.code != "0"
-      ) {
-        result = {
-          success: false,
-          message: message,
-          detailed_message:
-            `${data.error.code} - ${data.error.message}` ||
-            "Error desconocido al enviar la factura.",
-          data: facturaAEmitir,
-        };
       } else {
         result = {
           success: false,

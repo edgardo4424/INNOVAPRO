@@ -12,6 +12,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import useProducto from "../hooks/useProducto";
 import filialesService from "../service/FilialesService";
+import determinarEstadoFactura from "../utils/manejadorCodigosSunat";
 
 const GuiaTransporteContext = createContext();
 
@@ -194,7 +195,7 @@ export function GuiaTransporteProvider({ children }) {
 
         return false;
       } else {
-        toast.success(message);
+        // toast.success(message);
         setGuiaTransporteValida(null); // ?Limpia los errores del estado si todo es válido
         return true;
       }
@@ -235,30 +236,23 @@ export function GuiaTransporteProvider({ children }) {
         default:
           break;
       }
-      const {
-        status: status_factiliza,
-        success: succes_factiliza,
-        message: message_factiliza,
-        data: data_factiliza,
-      } = await factilizaService.enviarGuia(guiaAEmitir);
-      if (
-        status_factiliza === 200 &&
-        (data_factiliza?.sunatResponse?.cdrResponse?.code == "0" ||
-          data_factiliza?.error?.code == "HTTP")
-      ) {
+      const { status, success, message, data } =
+        await factilizaService.enviarGuia(guiaAEmitir);
+      if (status === 200) {
         let sunat_respuest = {
-          hash: data_factiliza?.hash ?? null,
-          mensaje: message_factiliza ?? null,
-          cdr_zip: data_factiliza?.sunatResponse?.cdrZip ?? null,
-          sunat_success: data_factiliza?.sunatResponse?.success ?? null,
-          cdr_response_id: data_factiliza?.sunatResponse?.cdrResponse.id,
-          cdr_response_code: data_factiliza?.sunatResponse?.cdrResponse.code,
+          hash: data?.hash ?? null,
+          mensaje: message ?? null,
+          // cdr_zip: data?.sunatResponse?.cdrZip ?? null,
+          cdr_zip: null,
+          sunat_success: data?.sunatResponse?.success ?? null,
+          cdr_response_id: data?.sunatResponse?.cdrResponse.id,
+          cdr_response_code: data?.sunatResponse?.cdrResponse.code,
           cdr_response_description:
-            data_factiliza.sunatResponse?.cdrResponse?.description,
+            data.sunatResponse?.cdrResponse?.description,
         };
         let guiaEstructurada = {
           ...guiaTransporte,
-          estado: "EMITIDA",
+          estado: determinarEstadoFactura({ status, success, data, message }),
         };
         if (tipoGuia == "transporte-privado") {
           guiaEstructurada = {
@@ -284,48 +278,35 @@ export function GuiaTransporteProvider({ children }) {
           sunat_respuesta: sunat_respuest,
         };
 
-        const { status, success, message } =
+        const { success: successBD, message: messageBD } =
           await RegistrarBaseDatos(guiaCopia);
 
-        if (success) {
+        if (successBD) {
           result = {
             success: true,
             message:
-              message || "Guía de remisión emitida y registrada con éxito.",
+              messageBD || "Guía de remisión emitida y registrada con éxito.",
             status: 200,
           };
         } else {
           result = {
             success: false,
             message:
-              message ||
+              messageBD ||
               "Guia emitida, pero no se pudo registrar en la base de datos.",
             data: guiaTransporte,
             status: 400,
           };
         }
-      } else if (
-        status_factiliza === 200 &&
-        data_factiliza?.sunatResponse?.cdrResponse?.code != "0"
-      ) {
-        result = {
-          success: false,
-          message: message_factiliza,
-          detailed_message:
-            `${data.error.code} - ${data.error.message}` ||
-            "Error desconocido al enviar la factura.",
-          data: data_factiliza,
-          status: status_factiliza,
-        };
       } else {
         result = {
           success: false,
-          message: message_factiliza,
+          message: message,
           detailed_message:
             `${data.error.code} - ${data.error.message}` ||
             "Error desconocido al enviar la guia.",
           data: null,
-          status: status_factiliza,
+          status: status,
         };
       }
     } catch (error) {
@@ -363,14 +344,8 @@ export function GuiaTransporteProvider({ children }) {
 
   const RegistrarBaseDatos = async (documento) => {
     try {
-      const { status, success, message } = await toast.promise(
-        facturaService.registrarGuiaRemision(documento),
-        {
-          pending: "Registrando factura en la base de datos...",
-          success: "Factura registrada conxito en la base de datos de INNOVA.",
-          error: `No se pudo registrar la factura`,
-        },
-      );
+      const { status, success, message } =
+        await facturaService.registrarGuiaRemision(documento);
       if (status === 201) {
         Limpiar();
         if (tipoGuia == "transporte-privado") {
@@ -383,7 +358,6 @@ export function GuiaTransporteProvider({ children }) {
       }
       return { status, success, message };
     } catch (error) {
-      console.log("error", error);
       if (error.response) {
         const { status, data } = error.response;
         if (status === 400) {
