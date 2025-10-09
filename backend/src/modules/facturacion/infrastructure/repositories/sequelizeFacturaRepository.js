@@ -836,7 +836,7 @@ class SequelizeFacturaRepository {
                             literal(`(
                                         SELECT sr.cdr_response_description
                                         FROM sunat_respuesta AS sr
-                                        WHERE sr.factura_id = Factura.id
+                                        WHERE sr.factura_id = factura.id
                                         ORDER BY sr.id DESC
                                         LIMIT 1
                                         )`),
