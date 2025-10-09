@@ -241,7 +241,6 @@ export default function TrabajadorForm() {
           abortEarly: false,
         });
 
-        console.log("dataToSubmit", dataToSubmit);
         const dataBodyCrear = {
           ...dataToSubmit,
           asignacion_familiar: dataToSubmit.asignacion_familiar
@@ -555,10 +554,10 @@ export default function TrabajadorForm() {
                       className="border-[#1b274a]/50 data-[state=checked]:border-[#1b274a]/80 data-[state=checked]:bg-[#1b274a]"
                       onCheckedChange={(checked) => {
                         //handleInputChange("asignacion_familiar", !!checked);
-                        console.log("!!checked", !!checked);
+                  
                         handleInputChange("asignacion_familiar", !!checked);
                         if (!checked) {
-                          console.log("checkado");
+                        
                           handleInputChange("asignacion_familiar_fecha", "");
                         }
                         /* handleInputChange(
@@ -581,8 +580,7 @@ export default function TrabajadorForm() {
                           type={"date"}
                           value={formData.asignacion_familiar_fecha}
                           onChange={(e) => {
-                            console.log("e.target.value", e.target.value);
-
+                          
                             handleInputChange(
                               "asignacion_familiar_fecha",
                               e.target.value,

@@ -132,11 +132,13 @@ const ContratosLaborales = ({
   };
 
   useEffect(() => {
-    console.log("formData.cargo_id", formData.cargo_id);
-    obtenerCargosSunat(formData.cargo_id);
+    
+      obtenerCargosSunat(formData.cargo_id);
   }, [formData.cargo_id]);
 
   const canRemove = formData.contratos_laborales.length > 1;
+
+  
 
   return (
     <>
@@ -307,7 +309,7 @@ const ContratosLaborales = ({
               <div className="space-y-2">
                 <Label>Cargo en la SUNAT *</Label>
                 <Select
-                  value={c.id_cargo_sunat}
+                  value={c?.id_cargo_sunat || ""}
                   onValueChange={(value) =>
                     handleInputChange(i, "id_cargo_sunat", value)
                   }
@@ -320,12 +322,12 @@ const ContratosLaborales = ({
     listaCargosSunat.map((cargo_sunat) => (
       <SelectItem
         key={cargo_sunat.id}
-        value={cargo_sunat.id.toString()}
+        value={cargo_sunat?.id.toString()}
       >
         {cargo_sunat.nombre}
       </SelectItem>
     ))
-  ) : String(c.id).length === 10 ? (
+  ) : String(c?.id).length === 10 ? (
     listaCargosSunat.map((cargo_sunat) => (
       <SelectItem
         key={cargo_sunat.id}
@@ -335,9 +337,13 @@ const ContratosLaborales = ({
       </SelectItem>
     ))
   ) : (
-    <SelectItem value={c.id_cargo_sunat?.toString() || ""}>
+    c?.id_cargo_sunat
+  ? (
+    <SelectItem value={c.id_cargo_sunat.toString()}>
       {c.cargo_sunat_nombre}
     </SelectItem>
+  )
+  : null
   )}
 </SelectContent>
                 </Select>
