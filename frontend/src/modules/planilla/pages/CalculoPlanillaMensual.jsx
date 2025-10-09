@@ -58,7 +58,7 @@ const CalculoPlanillaMensual = () => {
          const res = await planillaMensualService.obtenerPlanillaMensual(
             payload
          );         
-         console.log("DATOS DE RXH: ",res.payload.honorarios.trabajadores);
+         console.log("DATOS DE planilla:  ",res.payload.planilla.trabajadores);
          
          setPlanillaMensualTipoPlanilla(res.payload.planilla.trabajadores);
          setDatosTotalesPlanilla(res.payload.planilla.datos_totales)

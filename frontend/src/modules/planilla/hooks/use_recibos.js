@@ -13,7 +13,6 @@ const form_base = {
   importe_aporte_regimen_pensionario: "",
 };
 export const useRecibos = (data) => {  
-  console.log("Recibo entrante",data);
   
   const estado_inicial = data.recibo?.recibo_por_honorario
     ? data.recibo.recibo_por_honorario

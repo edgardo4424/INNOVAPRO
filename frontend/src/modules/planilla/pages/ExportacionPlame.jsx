@@ -14,8 +14,7 @@ const ExportacionPlame = () => {
   // ?? loading
   const [loading, setLoading] = useState(false);
   const [loadPlame, setLoadPlame] = useState(false);
-  const [recibos,setRecibos]=useState(null);
-
+  const [recibos, setRecibos] = useState(null);
 
   // ?? Filtro para la peticion
   const [filtro, setFiltro] = useState({
@@ -73,27 +72,42 @@ const ExportacionPlame = () => {
       window.URL.revokeObjectURL(url); // limpieza
       toast.success("Plame obtenido con éxito");
     } catch (error) {
-      console.error("❌ Error al exportar PLAME:", error);
-      alert("No se pudo descargar el archivo.");
+      if (
+        error.response &&
+        error.response.data instanceof Blob &&
+        error.response.data.type === "application/json"
+      ) {
+        try {
+          const text = await error.response.data.text();
+          const json = JSON.parse(text);
+          toast.error(json.error || "Error desconocido del servidor.");
+        } catch (e) {
+          toast.error("No se pudo interpretar el error del servidor.");
+        }
+      } else {
+        toast.error(error.message || "Error inesperado al exportar PLAME.");
+      }
     } finally {
       setLoadPlame(false);
     }
   };
 
   const buscarPlame = async () => {
-    setRecibos(null)
+    setRecibos(null);
     try {
-      const respuesta=await planillaMensualService.obtenerReciboPorPlanilla(`${filtro.anio}-${filtro.mes}`,filtro.filial_id);
-      setRecibos(respuesta.data)
+      const respuesta = await planillaMensualService.obtenerReciboPorPlanilla(
+        `${filtro.anio}-${filtro.mes}`,
+        filtro.filial_id,
+      );
+      setRecibos(respuesta.data);
     } catch (error) {
-      console.log("Error recibido: ",error);
-      
+      console.log("Error recibido: ", error);
     }
   };
 
   return (
-    <div className="min-h-full flex-1  flex flex-col items-center space-y-6">
-      <div className="w-full flex justify-between ">
+    <div className="flex min-h-full flex-1 flex-col items-center space-y-6">
+      <div className="flex w-full justify-between">
         <Filtro
           filiales={filiales}
           filtro={filtro}
@@ -113,11 +127,11 @@ const ExportacionPlame = () => {
       ) : (
         <article className="w-full">
           <section className="space-y-3">
-            {
-              (recibos&&recibos.length>0)&&recibos.map((r,index)=>(
-                <ReciboCard planilla_recibo={r} key={index}/>
-              ))
-            }
+            {recibos &&
+              recibos.length > 0 &&
+              recibos.map((r, index) => (
+                <ReciboCard planilla_recibo={r} key={index} />
+              ))}
           </section>
           <Button onClick={() => exportarPlame()} disabled={loadPlame}>
             {loadPlame && <FaSpinner className="animate-spin" />}

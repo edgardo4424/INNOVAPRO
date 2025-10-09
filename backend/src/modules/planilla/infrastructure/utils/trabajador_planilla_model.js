@@ -49,5 +49,6 @@ export const trabajador_planilla_model =()=>( {
    sctr_salud:0,
    sctr_pension:0,
    info_detalle:[],
+   domiciliado:true,
 }
 )

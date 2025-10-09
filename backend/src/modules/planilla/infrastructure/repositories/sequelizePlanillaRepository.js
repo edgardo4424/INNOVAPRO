@@ -1361,6 +1361,8 @@ class SequelizePlanillaRepository {
       planilla.tipo_contrato = c.tipo_contrato;
       planilla.periodo = anio_mes_dia.slice(0, -3);
       planilla.regimen = c.regimen;
+      planilla.domiciliado=trabajador.domiciliado
+      
 
       // ! dias de labor, se le resta--> dias mo contatados, faltas y dias de vacaciones;
       // prettier-ignore

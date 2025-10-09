@@ -71,6 +71,7 @@ const unir_planillas_mensuales = (
       grupo_planilla.filial_id = p.filial_id;
       grupo_planilla.banco = p.banco;
       grupo_planilla.numero_cuenta = p.numero_cuenta;
+      grupo_planilla.domiciliado=p.domiciliado;
    }
 
    grupo_planilla.sueldo_bruto = Number(
