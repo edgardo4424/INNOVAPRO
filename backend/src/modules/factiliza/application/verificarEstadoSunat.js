@@ -39,7 +39,10 @@ module.exports = async (documentos_pendiente, repository) => {
                     if (data.estado_Envio === '0') {
                         if (data.estado_Sunat === '0') {
                             estadoFinal = 'EMITIDA';
-                        } else {
+                        } else if (['0133', '1033', 'HTTP', '0100', '0109', '0135', '0136', '91510', 'InternalServerError'].includes(data.respuesta_Sunat.errorCode)) {
+                            estadoFinal = 'PENDIENTE';
+                        }
+                        else {
                             estadoFinal = 'RECHAZADA';
                         }
 

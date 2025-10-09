@@ -230,7 +230,7 @@ const DocumentoAfectadoForm = () => {
         </h1>
         <ModalDocumentos open={open} setOpen={setOpen} />
       </div>
-      <div className="mb-8 grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className=" grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2 lg:grid-cols-3">
         <div>
           <Label
             htmlFor="afectado_Tipo_Doc"

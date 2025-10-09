@@ -10,6 +10,7 @@ import {
   notaInical,
   ValorInicialDetalleNota,
 } from "./utils/valoresInicialNota";
+import DatosDeClienteForm from "./forms/DatosDeClienteForm";
 
 const NotasCreditoForm = () => {
   const {
@@ -94,7 +95,7 @@ const NotasCreditoForm = () => {
         <DocumentoAfectadoForm />
 
         {/*  //? LOS DATOS DEL CLIENTE SE COLOCAN DE MANERA AUTOMATICA AL SELECCIONAR EL DOCUMENTO A AFECTAR*/}
-        {/* <DatosDeClienteForm /> */}
+        <DatosDeClienteForm />
 
         {/* Sección de Detalle de Productos */}
         <DetallesForm />
