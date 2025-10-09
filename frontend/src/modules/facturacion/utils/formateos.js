@@ -1,12 +1,13 @@
-
 const formatDateTime = (dateStr) => {
   if (!dateStr) return "";
   const d = new Date(dateStr);
-  return isNaN(d) ? dateStr : d.toLocaleString("es-PE", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
+  return isNaN(d)
+    ? dateStr
+    : d.toLocaleString("es-PE", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
 };
 
 const getTipoDocLabel = (code) => {
@@ -17,6 +18,68 @@ const getTipoDocLabel = (code) => {
       return "NOTA DE DÉBITO";
     default:
       return "NOTA ELECTRÓNICA";
+  }
+};
+
+const quitarPuntos = (str) => str.replace(/\./g, "");
+
+const nombreDocumentoADdescargar = (documento, tipo_archivo) => {
+  const {
+    serie,
+    correlativo,
+    numDocumentoComprobante,
+    numRuc,
+    razonSocial,
+    tipoDoc,
+    afectado_Num_Doc,
+    afectado_Tipo_Doc,
+    motivo_Cod,
+  } = documento;
+  switch (tipoDoc) {
+    case "01":
+      if (tipo_archivo == "pdf")
+        return `F_.${serie}-${correlativo} ${quitarPuntos(razonSocial)}`;
+      if (tipo_archivo == "xml")
+        return `${numRuc}-${tipoDoc}-${serie}-${correlativo}`;
+      if (tipo_archivo == "cdr")
+        return `R-${numRuc}-${tipoDoc}-${serie}-${correlativo}`;
+
+    case "03":
+      if (tipo_archivo == "pdf")
+        return `B_.${serie}-${correlativo} ${quitarPuntos(razonSocial)}`;
+      if (tipo_archivo == "xml")
+        return `${numRuc}-${tipoDoc}-${serie}-${correlativo}`;
+      if (tipo_archivo == "cdr")
+        return `R-${numRuc}-${tipoDoc}-${serie}-${correlativo}`;
+
+    case "07":
+      if (tipo_archivo == "pdf")
+        return `NOTA DE CREDITO ${serie}-${correlativo} ${getMotivoLabelArchivo(tipoDoc, motivo_Cod)} ${afectado_Tipo_Doc == "01" ? "F" : "B"}_.${afectado_Num_Doc}`;
+      if (tipo_archivo == "xml")
+        return `${numRuc}-${tipoDoc}-${serie}-${correlativo}`;
+      if (tipo_archivo == "cdr")
+        return `R-${numRuc}-${tipoDoc}-${serie}-${correlativo}`;
+      return "NOTA DE CRÉDITO";
+
+    case "08":
+      if (tipo_archivo == "pdf")
+        return `NOTA DE DEBITO ${serie}-${correlativo} ${getMotivoLabelArchivo(tipoDoc, motivo_Cod)} ${afectado_Tipo_Doc == "01" ? "F" : "B"}_.${afectado_Num_Doc}`;
+      if (tipo_archivo == "xml")
+        return `${numRuc}-${tipoDoc}-${serie}-${correlativo}`;
+      if (tipo_archivo == "cdr")
+        return `R-${numRuc}-${tipoDoc}-${serie}-${correlativo}`;
+      return "NOTA DE CRÉDITO";
+
+    case "09":
+      if (tipo_archivo == "pdf")
+        return `G_.${serie}-${correlativo} ${quitarPuntos(razonSocial)}`;
+      if (tipo_archivo == "xml")
+        return `${numRuc}-${tipoDoc}-${serie}-${correlativo}`;
+      if (tipo_archivo == "cdr")
+        return `R-${numRuc}-${tipoDoc}-${serie}-${correlativo}`;
+
+    default:
+      return `${numRuc}-${tipoDoc}-${serie}-${correlativo}`;
   }
 };
 
@@ -92,19 +155,74 @@ const getTipoDocDescription = (typeCode) => {
 
 const MOTIVOS_NOTA = {
   CREDITO: [
-    { value: "01", label: "01 - Anulación de la operación", descripcion: "ANULACION DE OPERACION" },
-    { value: "02", label: "02 - Anulación por error en el RUC", descripcion: "ANULACION POR ERROR EN EL RUC" },
-    { value: "03", label: "03 - Corrección por error en la descripción", descripcion: "CORRECCION POR ERROR EN LA DESCRIPCION" },
-    { value: "04", label: "04 - Descuento global", descripcion: "DESCUENTO GLOBAL" },
-    { value: "05", label: "05 - Descuento por ítem", descripcion: "DESCUENTO POR ITEM" },
-    { value: "06", label: "06 - Devolución total", descripcion: "DEVOLUCION TOTAL" },
-    { value: "07", label: "07 - Devolución por ítem", descripcion: "DEVOLUCION POR ITEM" },
-    { value: "10", label: "10 - Otros Conceptos", descripcion: "OTROS CONCEPTOS" },
+    {
+      value: "01",
+      label: "01 - Anulación de la operación",
+      descripcion: "ANULACION DE OPERACION",
+      desc_doc: "ANULADO",
+    },
+    {
+      value: "02",
+      label: "02 - Anulación por error en el RUC",
+      descripcion: "ANULACION POR ERROR EN EL RUC",
+      desc_doc: "ANULADO",
+    },
+    {
+      value: "03",
+      label: "03 - Corrección por error en la descripción",
+      descripcion: "CORRECCION POR ERROR EN LA DESCRIPCION",
+      desc_doc: "CORREGIDO",
+    },
+    {
+      value: "04",
+      label: "04 - Descuento global",
+      descripcion: "DESCUENTO GLOBAL",
+      desc_doc: "DESCUENTO",
+    },
+    {
+      value: "05",
+      label: "05 - Descuento por ítem",
+      descripcion: "DESCUENTO POR ITEM",
+      desc_doc: "DESCUENTO",
+    },
+    {
+      value: "06",
+      label: "06 - Devolución total",
+      descripcion: "DEVOLUCION TOTAL",
+      desc_doc: "DEVOLUCION",
+    },
+    {
+      value: "07",
+      label: "07 - Devolución por ítem",
+      descripcion: "DEVOLUCION POR ITEM",
+      desc_doc: "DEVOLUCION",
+    },
+    {
+      value: "10",
+      label: "10 - Otros Conceptos",
+      descripcion: "OTROS CONCEPTOS",
+      desc_doc: "OTROS CONCEPTOS",
+    },
   ],
   DEBITO: [
-    { value: "01", label: "01 - Intereses por mora", descripcion: "INTERESES POR MORAS" },
-    { value: "02", label: "02 - Aumento en el valor", descripcion: "AUMENTO EN EL VALOR" },
-    { value: "03", label: "03 - Penalidades/ otros conceptos", descripcion: "PENALIDADES/ OTROS CONCEPTOS" },
+    {
+      value: "01",
+      label: "01 - Intereses por mora",
+      descripcion: "INTERESES POR MORAS",
+      desc_doc: "INTERES",
+    },
+    {
+      value: "02",
+      label: "02 - Aumento en el valor",
+      descripcion: "AUMENTO EN EL VALOR",
+      desc_doc: "AUMENTO",
+    },
+    {
+      value: "03",
+      label: "03 - Penalidades/ otros conceptos",
+      descripcion: "PENALIDADES/ OTROS CONCEPTOS",
+      desc_doc: "PENALIDAD",
+    },
   ],
 };
 
@@ -113,6 +231,13 @@ const getMotivoLabel = (tipoDoc, motivoCod) => {
   const motivos = tipoDoc === "07" ? MOTIVOS_NOTA.CREDITO : MOTIVOS_NOTA.DEBITO;
   const motivo = motivos.find((m) => m.value === motivoCod);
   return motivo?.descripcion || motivoCod;
+};
+
+const getMotivoLabelArchivo = (tipoDoc, motivoCod) => {
+  if (!motivoCod) return "—";
+  const motivos = tipoDoc === "07" ? MOTIVOS_NOTA.CREDITO : MOTIVOS_NOTA.DEBITO;
+  const motivo = motivos.find((m) => m.value === motivoCod);
+  return motivo?.desc_doc || motivoCod;
 };
 
 // ?? Helper para obtener la descripción del motivo de traslado
@@ -177,13 +302,13 @@ const getModalidadTrasladoLabel = (code) => {
   }
 };
 
-  const formatCurrency = (amount, moneda = "PEN") => {
-    return new Intl.NumberFormat("es-PE", {
-      style: "currency",
-      currency: moneda,
-      minimumFractionDigits: 2,
-    }).format(amount);
-  };
+const formatCurrency = (amount, moneda = "PEN") => {
+  return new Intl.NumberFormat("es-PE", {
+    style: "currency",
+    currency: moneda,
+    minimumFractionDigits: 2,
+  }).format(amount);
+};
 
 const opcionesCodigos = [
   { value: "01", descripcion: "VENTA", descripcionmi: "Venta" },
@@ -227,8 +352,8 @@ const opcionesOtros = [
   "ENVIO DE ALQUILER",
   "DEVOLUCION",
   "REPARACION",
-  "OTROS"
-]
+  "OTROS",
+];
 
 export {
   formatDateTime,
@@ -244,5 +369,7 @@ export {
   opcionesCodigos,
   opcionesOtros,
   getTipoResumido,
-  formatCurrency
+  formatCurrency,
+  nombreDocumentoADdescargar,
+  quitarPuntos,
 };

@@ -245,6 +245,9 @@ const TablaNotas = ({
                             tipoDoc: nota.tipo_Doc,
                             numDocumentoComprobante: nota.cliente_Num_Doc,
                             razonSocial: nota.cliente_Razon_Social,
+                            afectado_Tipo_Doc: nota.afectado_Tipo_Doc,
+                            afectado_Num_Doc: nota.afectado_Num_Doc,
+                            motivo_Cod: nota.motivo_Cod,
                           });
                         }}
                       >

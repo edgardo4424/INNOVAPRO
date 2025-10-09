@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import facturaService from "../../service/FacturaService";
 //
 import JSZip from "jszip";
+import { nombreDocumentoADdescargar } from "../../utils/formateos";
 
 /* ================== helpers simplificados ================== */
 const toDocumentoPayload = (doc = {}) => {
@@ -171,6 +172,7 @@ const ModalDescarga = ({
     try {
       setLoading(true);
       setMsg("");
+      console.log(documentoADescargar)
 
       const payload = toDocumentoPayload(documentoADescargar);
       if (
@@ -186,7 +188,7 @@ const ModalDescarga = ({
 
       if (format === "xml") {
         const response = await factilizaService.consultarXml(payload);
-        await processResponse(response, `${baseName}-XML`, "xml");
+        await processResponse(response, `${nombreDocumentoADdescargar(documentoADescargar, "xml")}`, "xml");
         setMsg("XML/CDR descargado exitosamente.");
         return;
       }
@@ -221,7 +223,7 @@ const ModalDescarga = ({
         }
         await processResponse(
           response,
-          `${documentoADescargar.serie}-${documentoADescargar.correlativo}${documentoADescargar.numRuc ? `-${documentoADescargar.razonSocial}` : ""}-PDF`,
+          `${nombreDocumentoADdescargar(documentoADescargar, "pdf")}`,
           "pdf",
         );
         setMsg("PDF descargado exitosamente.");
