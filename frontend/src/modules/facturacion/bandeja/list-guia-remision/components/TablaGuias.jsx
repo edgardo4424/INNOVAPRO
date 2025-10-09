@@ -111,8 +111,8 @@ const TablaGuias = ({
                 {filialActural(guia.empresa_ruc)}
               </td>
               <td className="flex flex-col px-2 py-3 text-xs text-gray-700">
-                <span>{guia.cliente_num_doc || ""} -</span>
                 <span>{guia.cliente_razon_social || ""}</span>
+                <span>{guia.cliente_num_doc || ""}</span>
               </td>
               {/* <td className="py-3 px-6 text-xs text-gray-700">{guia.usuario_id}</td> */}
               <td className="py-3">
