@@ -1,7 +1,7 @@
 
 const guiaInical = {
     tipo_Doc: "09",
-    serie: "T001",
+    serie: "GRT1",
     correlativo: "",
     observacion: "",
     fecha_Emision: new Date().toISOString().split("T")[0] + "T" + new Date().toTimeString().split(" ")[0] + "-05:00",

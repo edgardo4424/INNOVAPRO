@@ -24,7 +24,7 @@ export function GuiaTransporteProvider({ children }) {
   // ?? CORRELATIVOS
 
   const serieGuia = [
-    { value: "T001" },
+    { value: "GRT1" },
     // { value: "T002" },
     // { value: "T003" },
     // { value: "T004" },

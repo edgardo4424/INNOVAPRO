@@ -12,6 +12,7 @@ const determinarEstadoFactura = (respuesta) => {
     // todo Ticket presente → pendiente
     if (
         errorCode === "0133" ||
+        errorCode === "1033" ||
         errorCode === "HTTP" ||
         errorCode === "0100" ||
         errorCode === "0109" ||
@@ -29,9 +30,7 @@ const determinarEstadoFactura = (respuesta) => {
     if (
         // Errores específicos de duplicidad o anulación
         errorCode === "1032" || // Previamente informado en comunicación de baja
-        errorCode === "1033" || // Registrado previamente con otros datos
         errorCode === "2325" || // Comprobante ya existe
-
         // Rango de errores de validación de contenido (ej. RUC, montos, formato, etc.)
         (codeNumber >= 2000 && codeNumber <= 4000)
     ) {
