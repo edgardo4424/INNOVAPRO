@@ -32,12 +32,6 @@ const GratificacionController = {
         try {
             const { periodo, anio, filial_id } = req.body;
 
-            console.log({
-                periodo,
-                anio,
-                filial_id
-            });
-
             const gratificaciones = await calcularGratificaciones(periodo, anio, filial_id, gratificacionRepository); // Llamamos al caso de uso para obtener todos los gratificaciones
            
             res.status(gratificaciones.codigo).json(gratificaciones.respuesta); // 🔥 Siempre devuelve un array, aunque esté vacío

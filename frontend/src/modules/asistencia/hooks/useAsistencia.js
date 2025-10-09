@@ -15,7 +15,7 @@ export const useAsistencia = (
     horas_trabajadas: 8,
     minutos_trabajados:0,
     horas_extras: 0,
-    fecha: new Date(date).toISOString().slice(0, 10),
+    fecha: date,
     tarea_realizada_manana:"",
     tarrea_realizada_tarde:"",
     jornadas: [
@@ -66,7 +66,7 @@ export const useAsistencia = (
           if(tarde){
                payload.jornadas=payload.jornadas.map((j)=>{
                   const jor={...j}
-                  console.log("Jornada tarde copiada",jor);
+                 
                   if(jor.turno==="tarde"){
                      jor.lugar=t_marcate.direccion_obra
                   }
@@ -84,7 +84,7 @@ export const useAsistencia = (
          }
          payload.estado_asistencia=asistencia_marcate.asistencia.estado;
          const {horas,minutos,segundos}=asistencia_marcate.asistencia.tiempo_trabajado
-         console.log(asistencia_marcate);
+         
          if(horas){
             payload.horas_trabajadas=horas
          }

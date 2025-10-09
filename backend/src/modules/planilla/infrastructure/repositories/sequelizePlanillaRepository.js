@@ -177,8 +177,6 @@ class SequelizePlanillaRepository {
       transaction,
     });
 
-    console.log('contratosPlanilla', contratosPlanilla);
-
     const contratosRxh = await db.contratos_laborales.findAll({
       where: {
         filial_id: filial_id,
@@ -379,7 +377,6 @@ class SequelizePlanillaRepository {
         fecha_anio_mes
       );
 
-      console.log('diasLaborados', diasLaborados);
 
       // (SUELDO/30)*DÍAS LABORADOS
       const sueldoQuincenal = +(
@@ -701,16 +698,7 @@ class SequelizePlanillaRepository {
         quinta_categoria +
         totalAdelantosSueldo
       ).toFixed(2);
-      if (trabajador.id == 7) {
-        console.log("--- Detalle de descuentos para Valeria ---");
-        console.log("ONP:", onp);
-        console.log("AFP:", afp);
-        console.log("Seguro:", seguro);
-        console.log("Comisión:", comision);
-        console.log("Quinta Categoría:", quinta_categoria);
-        console.log("Adelantos de Sueldo:", totalAdelantosSueldo);
-        console.log("Total Descuentos:", totalDescuentos);
-      }
+      
 
       const totalAPagar = +(sueldoBruto - totalDescuentos).toFixed(2);
 
