@@ -245,7 +245,7 @@ export default function TrabajadorForm() {
         }
 
         const response =
-        // await trabajadoresService.editarTrabajador(dataBodyEditar);
+        await trabajadoresService.editarTrabajador(dataBodyEditar);
         toast.success("Trabajador actualizado con éxito");
       } else {
         await trabajadorSchema(isEditMode).validate(dataToSubmit, {
@@ -266,10 +266,10 @@ export default function TrabajadorForm() {
           return toast.error(errores.join("\n"));
         }
 
-        //await trabajadoresService.crearTrabajador(dataBodyCrear);
+        await trabajadoresService.crearTrabajador(dataBodyCrear);
         toast.success("Trabajador creado con éxito");
       }
-     // navigate("/tabla-trabajadores");
+     navigate("/tabla-trabajadores");
     } catch (error) {      
       if (error && error.name === "ValidationError") {
         const newErrors =
