@@ -47,42 +47,8 @@ const contratoSchema = yup.object({
          "El tipo de contrato debe ser Planilla o RxH"
       )
       .required("El tipo de contrato es obligatorio"),
-
-   filial_id: yup
-         .number()
-         .transform((value, originalValue) => {
-            if (
-               originalValue === "" ||
-               originalValue === null ||
-               originalValue === undefined
-            ) {
-               return null;
-            }
-            const parsed = Number(originalValue);
-            return isNaN(parsed) ? null : parsed;
-         })
-         .nullable()
-         .required("La empresa es obligatorio"),
-
-   banco: yup.string().required("El banco es requerido"),
-   numero_cuenta: yup.string().required("El número de cuenta es requerido"),
-   id_cargo_sunat: yup
-         .number()
-         .transform((value, originalValue) => {
-            if (
-               originalValue === "" ||
-               originalValue === null ||
-               originalValue === undefined
-            ) {
-               return null;
-            }
-            const parsed = Number(originalValue);
-            return isNaN(parsed) ? null : parsed;
-         })
-         .nullable()
-         .required("El cargo de la SUNAT es obligatorio"),
-
-  
+   banco: yup.string().required("El nombre es requerido"),
+   numero_cuenta: yup.string().required("El nombre es requerido"),
 });
 
 export const trabajadorSchema = (isEdit = false, isGerente = false) =>
@@ -103,6 +69,13 @@ export const trabajadorSchema = (isEdit = false, isGerente = false) =>
       numero_documento: yup
          .string()
          .required("El número de documento es requerido"),
+      ruc:yup.string()
+         .notRequired()
+         .nullable()
+         .test('is-empty-or-numeric', 'El RUC debe contener solo números', 
+            value => { 
+               return !value || /^\d+$/.test(value)
+            }),
       fecha_nacimiento: yup
       .date()
       .transform((value, originalValue) => new Date(originalValue))
@@ -133,7 +106,7 @@ export const trabajadorSchema = (isEdit = false, isGerente = false) =>
                return value === "AFP" || value === "ONP"; // Debe ser uno de esos si es PLANILLA
             }
          ),
-
+      
       tipo_afp: yup
          .string()
          .nullable()

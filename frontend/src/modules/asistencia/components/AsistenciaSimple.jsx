@@ -100,8 +100,7 @@ export default function AsistenciaSimple({
 
    const getEstadoInfo = (estado) => {
       return estadosAsistencia.find((e) => e.value === estado);
-   };
-
+   };   
    return (
       <Card className="transition-all hover:shadow-md border-l-3 border-l-blue-500 py-2 ">
          <CardContent className="">
@@ -122,8 +121,9 @@ export default function AsistenciaSimple({
                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <FileText className="h-3 w-3" />
                         <span>
-                           {trabajador.tipo_documento}:{" "}
-                           {trabajador.numero_documento}
+                           {/* {trabajador.tipo_documento}:{" "}
+                           {trabajador.numero_documento} */}
+                           {trabajador.filial}
                         </span>
                      </div>
                   </div>

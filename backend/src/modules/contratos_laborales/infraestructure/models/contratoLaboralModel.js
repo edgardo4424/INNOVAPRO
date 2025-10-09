@@ -54,6 +54,10 @@ const ContratoLaboral = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    numero_cuenta_cts: {
+         type: DataTypes.STRING,
+         allowNull: true,
+      },
     banco: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -75,6 +79,7 @@ const ContratoLaboral = sequelize.define(
     tableName: "contratos_laborales",
     timestamps: false,
   }
+
 );
 ContratoLaboral.associate = (models) => {
   ContratoLaboral.belongsTo(models.trabajadores, {

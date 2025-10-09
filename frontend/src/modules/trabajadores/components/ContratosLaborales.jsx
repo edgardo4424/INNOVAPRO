@@ -62,12 +62,14 @@ const ContratosLaborales = ({
       numero_cuenta: "",
       id_cargo_sunat: "",
       es_indefinido: false,
+      numero_cuenta_cts:"",
     };
     setFormData((prev) => ({
       ...prev,
       contratos_laborales: [...prev.contratos_laborales, nuevo],
     }));
   };
+
 
   const handleRemoveContrato = (index) => {
     setFormData((prev) => ({
@@ -409,6 +411,36 @@ const ContratosLaborales = ({
                   </p>
                 )}
               </div>
+                     {/* Número de cuenta Cts */}
+                     <div className="space-y-2">
+                        <Label htmlFor={`numero_cuenta_cts_${i}`}>
+                           Número de cuenta CTS
+                        </Label>
+                        <Input
+                           id={`numero_cuenta_cts_${i}`}
+                           type="text"
+                           value={c.numero_cuenta_cts || ""}
+                           onChange={(e) =>
+                              handleInputChange(
+                                 i,
+                                 "numero_cuenta_cts",
+                                 e.target.value
+                              )
+                           }
+                           placeholder="Ej. 1234567890"
+                        />
+                        {errors?.[
+                           `contratos_laborales[${i}].numero_cuenta_cts`
+                        ] && (
+                           <p className="text-xs text-red-500">
+                              {
+                                 errors[
+                                    `contratos_laborales[${i}].numero_cuenta_cts`
+                                 ]
+                              }
+                           </p>
+                        )}
+                     </div>          
             </div>
           </div>
         ))}
@@ -445,6 +477,7 @@ const ContratosLaborales = ({
       </AlertDialog>
     </>
   );
+
 };
 
 export default ContratosLaborales;

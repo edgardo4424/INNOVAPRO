@@ -34,6 +34,7 @@ const dataInicial = {
   tipo_documento: "",
   numero_documento: "",
   telefono: "",
+  ruc:"",
   fecha_nacimiento: "",
   asignacion_familiar: false,
   asignacion_familiar_fecha: null,
@@ -52,6 +53,7 @@ const dataInicial = {
       sueldo: "",
       regimen: "",
       tipo_contrato: "",
+      numero_cuenta_cts:"",
       banco: "",
       numero_cuenta: "",
       es_indefinido: false,
@@ -110,7 +112,6 @@ export default function TrabajadorForm() {
         if (ignore) return;
 
         const t = res && res.data.trabajador ? res.data.trabajador : res || {};
-        console.log("t.contratos_laborales", t.contratos_laborales);
         const contratos = Array.isArray(t.contratos_laborales)
           ? t.contratos_laborales.map((c, idx) => ({
               id: c?.id ?? idx + 1,
@@ -121,6 +122,7 @@ export default function TrabajadorForm() {
               sueldo: c?.sueldo ?? "",
               regimen: c?.regimen ?? "",
               tipo_contrato: c?.tipo_contrato ?? "",
+              numero_cuenta_cts:c?.numero_cuenta_cts??"",
               filial_id: c?.filial_id.toString() ?? "",
               es_indefinido: c?.es_indefinido ?? false,
               id_cargo_sunat: c?.id_cargo_sunat?.toString() ?? "",
@@ -136,6 +138,7 @@ export default function TrabajadorForm() {
           tipo_documento: t.tipo_documento ?? "",
           numero_documento: t.numero_documento ?? "",
           telefono: t.telefono ?? "",
+          ruc:t.ruc??"",
           fecha_nacimiento: t.fecha_nacimiento ?? "",
           asignacion_familiar: t.asignacion_familiar ? true : false, // checkbox
           asignacion_familiar_fecha: t.asignacion_familiar ?? null, // guardamos la fecha real
@@ -190,6 +193,7 @@ export default function TrabajadorForm() {
       tipo_documento: formData.tipo_documento,
       numero_documento: formData.numero_documento.trim(),
       telefono: formData.telefono.trim(),
+      ruc:formData.ruc.trim(),
       fecha_nacimiento: formData.fecha_nacimiento,
       asignacion_familiar: formData.asignacion_familiar,
       asignacion_familiar_fecha: formData.asignacion_familiar_fecha,
@@ -245,18 +249,17 @@ export default function TrabajadorForm() {
             : null,
         };
 
-        console.log("dataBodyCrear", dataBodyCrear);
         await trabajadoresService.crearTrabajador(dataBodyCrear);
         toast.success("Trabajador creado con éxito");
       }
       navigate("/tabla-trabajadores");
-    } catch (error) {
+    } catch (error) {      
       if (error && error.name === "ValidationError") {
         const newErrors =
           error.inner?.reduce((acc, curr) => {
             acc[curr.path] = curr.message;
             return acc;
-          }, {}) || {};
+          }, {}) || {};        
         setErrors(newErrors);
       } else {
         console.error("El error encontrado es: ", error);
@@ -404,7 +407,27 @@ export default function TrabajadorForm() {
                       </p>
                     )}
                   </div>
+                </section>
+                <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
 
+                    <Label htmlFor="ruc">
+                      Ruc del empleado
+                    </Label>
+                    <Input
+                      id="ruc"
+                      value={formData.ruc}
+                      onChange={(e) =>
+                        handleInputChange("ruc", e.target.value)
+                      }
+                      placeholder="No obligatorio"
+                    />
+                    {errors.ruc && (
+                      <p className="text-sm text-red-500">
+                        {errors.ruc}
+                      </p>
+                    )}
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="telefono">Teléfono</Label>
                     <Input

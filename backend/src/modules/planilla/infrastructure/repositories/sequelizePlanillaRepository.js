@@ -1255,19 +1255,35 @@ class SequelizePlanillaRepository {
     const contratoInicial = filtrarContratosSinInterrupcion(
       trabajador.contratos_laborales
     );
+    if(trabajador.id==1){
+      console.log("Lucas contrato incial sin fecha",contratoInicial);
+      
+    }
 
     //Todo: Obtenemos los contratos que estan en el rango del mes
-    const contratosEnRango = trabajador.contratos_laborales.filter((c) => {
-      return (
-        c.fecha_fin >= inicio_de_mes &&
-        c.fecha_inicio <= fin_de_mes &&
-        c.filial_id == filial_id
-      );
-    });
+    const contratosEnRango = trabajador.contratos_laborales.filter(
+       (c) =>
+       c.filial_id == filial_id &&
+       (
+         c.es_indefinido
+           ? c.fecha_inicio <= fin_de_mes
+           : c.fecha_fin >= inicio_de_mes && c.fecha_inicio <= fin_de_mes
+       )
+    );
+
+    if(trabajador.id==1){
+      console.log("Lucas contratos en rango del mes incial sin fecha",contratosEnRango);
+      
+    }
+
 
     // Todo: Se traen solo los contratos que tengan un maxiomo de 1 dia de serparacion
     const contratos_tratados =
       filtrarContratosSinInterrupcion(contratosEnRango);
+    if(trabajador.id==1){
+      console.log("Lucas contratos tratados del mes incial sin fecha",contratos_tratados);
+      
+    }
 
     const { found, retencion_base_mes, registro } =
       await quintaCategoriaService.getRetencionBaseMesPorDni({

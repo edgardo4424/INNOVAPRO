@@ -35,11 +35,18 @@ module.exports = async (
    for (const t of trabajadoresData) {
       // 1. Filtrar contratos en rango del mes
       const contratosEnRango = t.contratos_laborales.filter((c) => {
-         return (
-            c.fecha_fin >= inicio_mes && c.fecha_inicio <= fin_mes &&
-            c.filial_id == filial_id
-         );
+         const esMismaFilial = c.filial_id == filial_id; 
+         if (!esMismaFilial) return false;
+             
+         if (c.es_indefinido) {
+           // Solo validar inicio si es indefinido 
+           return c.fecha_inicio <= fin_mes;
+         } else {
+           // Validación completa si tiene fecha fin
+           return c.fecha_inicio <= fin_mes && c.fecha_fin >= inicio_mes;
+         }
       });
+
 
       if (contratosEnRango.length === 0) continue;
 

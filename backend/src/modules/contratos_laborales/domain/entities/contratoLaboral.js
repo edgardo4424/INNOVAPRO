@@ -11,7 +11,8 @@ class ContratoLaboral {
       numero_cuenta,
       banco,
       es_indefinido,
-      id_cargo_sunat
+      id_cargo_sunat,
+      numero_cuenta_cts
    }) {
       this.id = id;
       this.trabajador_id = trabajador_id;
@@ -25,6 +26,7 @@ class ContratoLaboral {
       this.banco = banco;
       this.es_indefinido = es_indefinido;
       this.id_cargo_sunat = id_cargo_sunat;
+      this.numero_cuenta_cts=numero_cuenta_cts;
    }
 
    validar(editar = false) {
@@ -106,7 +108,8 @@ class ContratoLaboral {
             banco: this.banco,
             numero_cuenta: this.numero_cuenta,
             es_indefinido: this.es_indefinido,
-            id_cargo_sunat: this.id_cargo_sunat
+            id_cargo_sunat: this.id_cargo_sunat,
+            numero_cuenta_cts:this.numero_cuenta_cts
          };
       } else {
          return {
@@ -120,7 +123,8 @@ class ContratoLaboral {
             banco: this.banco,
             numero_cuenta: this.numero_cuenta,
             es_indefinido: this.es_indefinido,
-            id_cargo_sunat: this.id_cargo_sunat
+            id_cargo_sunat: this.id_cargo_sunat,
+            numero_cuenta_cts:this.numero_cuenta_cts
          };
       }
    }

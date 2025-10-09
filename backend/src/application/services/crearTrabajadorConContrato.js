@@ -39,14 +39,12 @@ module.exports = async function registrarTrabajadorConContrato(data) {
          await transaction.rollback();
       }
 
-      console.log('data.contratos_laborales', data.contratos_laborales);
 
       const contratosLaboralesMapeados = data.contratos_laborales.map((contrato) => ({
          ...contrato,
          fecha_fin: contrato.es_indefinido ? null : contrato.fecha_fin // puede ser null por ser contrato indefinido
       }))
 
-      console.log('contratosLaboralesMapeados', contratosLaboralesMapeados);
 
       const contratosCreados = [];
       for (const contratoData of contratosLaboralesMapeados || []) {

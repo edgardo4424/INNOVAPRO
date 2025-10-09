@@ -52,6 +52,8 @@ const GestionAsistencia = () => {
             area_id,
             fechaSeleccionada
          );
+         console.log("La respuesta es: ",response);
+         
          setTrabajadoresFiltrados([...response.data.datos.trabajadores] || [])
          setTrabajadores([...response.data.datos.trabajadores] || []);
          setNombreArea(response.data.datos.area_nombre??"-")
