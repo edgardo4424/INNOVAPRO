@@ -46,6 +46,12 @@ const TablaDocumentos = ({
 
   const getEstadoTexto = (estado) => {
     switch (estado) {
+      case "EMITIDA":
+        return "EMITIDO";
+      case "RECHAZADA":
+        return "RECHAZADO";
+      case "PENDIENTE":
+        return "CARGANDO";
       case "ANULADA-NOTA":
         return "ANULADA POR NOTA";
       case "MODIFICADA-NOTA":
