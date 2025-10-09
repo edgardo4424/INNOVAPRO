@@ -47,8 +47,40 @@ const contratoSchema = yup.object({
          "El tipo de contrato debe ser Planilla o RxH"
       )
       .required("El tipo de contrato es obligatorio"),
-   banco: yup.string().required("El nombre es requerido"),
-   numero_cuenta: yup.string().required("El nombre es requerido"),
+
+   filial_id: yup
+         .number()
+         .transform((value, originalValue) => {
+            if (
+               originalValue === "" ||
+               originalValue === null ||
+               originalValue === undefined
+            ) {
+               return null;
+            }
+            const parsed = Number(originalValue);
+            return isNaN(parsed) ? null : parsed;
+         })
+         .nullable()
+         .required("La empresa es obligatorio"),
+
+   banco: yup.string().required("El banco es requerido"),
+   numero_cuenta: yup.string().required("El número de cuenta es requerido"),
+   id_cargo_sunat: yup
+         .number()
+         .transform((value, originalValue) => {
+            if (
+               originalValue === "" ||
+               originalValue === null ||
+               originalValue === undefined
+            ) {
+               return null;
+            }
+            const parsed = Number(originalValue);
+            return isNaN(parsed) ? null : parsed;
+         })
+         .nullable()
+         .required("El cargo de la SUNAT es obligatorio"),
 
   
 });

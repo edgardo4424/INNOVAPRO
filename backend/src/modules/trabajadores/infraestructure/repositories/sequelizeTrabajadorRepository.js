@@ -42,6 +42,13 @@ class SequelizeTrabajadorRepository {
                model: db.contratos_laborales,
                as: "contratos_laborales",
                where: { estado: 1 },
+               include: [
+                  {
+                     model: db.cargos_sunat,
+                     as: "cargo_sunat",
+
+                  }
+               ],
                required: false,
             },
          ],

@@ -55,6 +55,7 @@ const dataInicial = {
       banco: "",
       numero_cuenta: "",
       es_indefinido: false,
+      id_cargo_sunat: ""
     },
   ],
 };
@@ -122,6 +123,8 @@ export default function TrabajadorForm() {
               tipo_contrato: c?.tipo_contrato ?? "",
               filial_id: c?.filial_id.toString() ?? "",
               es_indefinido: c?.es_indefinido ?? false,
+              id_cargo_sunat: c?.id_cargo_sunat?.toString() ?? "",
+              cargo_sunat_nombre: c?.cargo_sunat?.nombre || "",
             }))
           : dataInicial.contratos_laborales;
 
@@ -511,6 +514,7 @@ export default function TrabajadorForm() {
                 setFormData={setFormData}
                 errors={errors}
                 filiales={filiales}
+                isEditMode={isEditMode}
               />
 
               {/* Beneficios y Sistema de Pensión */}
