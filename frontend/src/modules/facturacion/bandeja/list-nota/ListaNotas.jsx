@@ -10,6 +10,7 @@ import TablaSkeleton from "../../components/TablaSkeleton";
 import facturaService from "../../service/FacturaService";
 import ModalAnularDocumento from "../list-factura-boleta/components/modal/ModalAnularDocumento";
 import TablaNotas from "./components/TablaNotas";
+import ModalDocumentosPendientes from "../../components/modal/ModalDocumentosPendientes";
 
 const ListaNotas = () => {
   const navigate = useNavigate();
@@ -151,15 +152,21 @@ const ListaNotas = () => {
     { name: "Todos", value: "" },
     { name: "Credito", value: "07" },
     { name: "Debito", value: "08" },
+    // { name: "Anulado", value: "99" },
+    { name: "Rechazado", value: "66" },
+    { name: "Pendiente", value: "88" },
   ];
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col items-center px-4 py-6 md:px-2">
-      <div className="w-full">
+      <div className="flex w-full items-center justify-between">
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-2xl font-bold md:text-3xl">
             Lista de Notas Credito y Debito
           </h2>
+        </div>
+        <div className="mb-3 flex items-center justify-between">
+          <ModalDocumentosPendientes refetchTableData={handleAplicarFiltros} />
         </div>
       </div>
 

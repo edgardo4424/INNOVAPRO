@@ -17,7 +17,8 @@ const determinarEstadoFactura = (respuesta) => {
         errorCode === "0109" ||
         errorCode === "0135" ||
         errorCode === "0136" ||
-        errorCode === "91510"
+        errorCode === "91510" ||
+        errorCode === "InternalServerError"
     ) {
         return "PENDIENTE";
     }

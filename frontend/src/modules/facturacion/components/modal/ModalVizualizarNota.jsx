@@ -35,6 +35,7 @@ export default function ModalVizualizarNota({
                 const { succes, status, message, data } = await facturaService.obtenerNotaDetallada(documentoAVisualizar);
                 if (succes && status === 200) {
                     setNota(data[0]);
+                    console.log(data[0]);
                     return;
                 }
                 toast.error(message || "Error al obtener el documento");

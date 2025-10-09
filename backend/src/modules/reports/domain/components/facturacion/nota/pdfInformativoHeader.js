@@ -92,27 +92,27 @@ function pdfInformativoHeader(
                             {
                                 stack: [
                                     {
-                                        text: `Moneda:         ${utils.getTipoMoneda(nota.documento_relacionado.tipo_Moneda)}`,
+                                        text: `Moneda:         ${utils.getTipoMoneda(nota?.tipo_Moneda) || "—"}`,
                                         style: 'clientData',
                                         preserveLeadingSpaces: true
                                     },
                                     {
-                                        text: `Tipo:               ${utils.formatTypeDoc(nota.documento_relacionado.tipo_Doc) || "—"}`,
+                                        text: `Tipo:               ${utils.formatTypeDoc(nota?.afectado_Tipo_Doc) || "—"}`,
                                         style: 'clientData',
                                         preserveLeadingSpaces: true
                                     },
                                     {
-                                        text: `Referencia:     ${truncateText(nota.afectado_Num_Doc, 25)}`,
+                                        text: `Referencia:     ${truncateText(nota?.afectado_Num_Doc, 25)}`,
                                         style: 'clientData',
                                         preserveLeadingSpaces: true
                                     },
                                     {
-                                        text: `Fecha emision:     ${utils.formatDateTime(nota.documento_relacionado.fecha_Emision) || "—"}`,
+                                        text: `Fecha emision:     ${utils.formatDateTime(nota?.fecha_Emision_Afectado) || "—"}`,
                                         style: 'clientData',
                                         preserveLeadingSpaces: true
                                     },
                                     {
-                                        text: `Tipo:            ${utils.getMotivoLabel(nota.motivo_Cod, nota.tipo_Doc) || "—"}`,
+                                        text: `Tipo:            ${utils.getMotivoLabel(nota?.motivo_Cod, nota?.tipo_Doc) || "—"}`,
                                         style: 'clientData',
                                         preserveLeadingSpaces: true
                                     },

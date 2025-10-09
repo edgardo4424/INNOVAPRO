@@ -134,10 +134,25 @@ export function FacturaBoletaProvider({ children }) {
       }));
 
       const { data } = await facturaService.obtenerCorrelativo(rucsAndSeries);
-      const { data: data2 } =
-        await facturaService.obtenerCorrelativoPendientes(rucsAndSeries);
       setCorrelativos(data);
-      setCorrelativosPendientes(data2);
+    } catch (error) {
+    } finally {
+      setLoadingCorrelativo(false);
+    }
+  };
+
+  // ?? OBTENER CORRELATIVO
+  const buscarCorrelativoPendientes = async () => {
+    try {
+      const rucsAndSeries = filiales.map((filial) => ({
+        ruc: filial.ruc,
+        serieBoleta: serieBoleta,
+        serieFactura: serieFactura,
+      }));
+
+      const { data } =
+        await facturaService.obtenerCorrelativoPendientes(rucsAndSeries);
+      setCorrelativosPendientes(data);
     } catch (error) {
     } finally {
       setLoadingCorrelativo(false);
@@ -148,6 +163,7 @@ export function FacturaBoletaProvider({ children }) {
   useEffect(() => {
     if (filiales.length > 0) {
       buscarCorrelativo();
+      buscarCorrelativoPendientes();
     }
   }, [filiales]);
 
@@ -506,6 +522,7 @@ export function FacturaBoletaProvider({ children }) {
     setIdBorrador(null);
     setDetallesExtra([]);
     buscarCorrelativo();
+    buscarCorrelativoPendientes();
     setDetallesExtra([]);
     setIdBorrador(null);
   };
@@ -521,6 +538,7 @@ export function FacturaBoletaProvider({ children }) {
         loadingCorrelativo,
         setLoadingCorrelativo,
         buscarCorrelativo,
+        buscarCorrelativoPendientes,
         serieFactura,
         serieBoleta,
         filiales,

@@ -12,7 +12,13 @@ import { BandejaProvider } from "../context/BandejaContext";
 const BandejaRoutes = () => {
   return (
     <Routes>
-      <Route element={<BandejaLayout />}>
+      <Route
+        element={
+          <BandejaProvider>
+            <BandejaLayout />
+          </BandejaProvider>
+        }
+      >
         {/* Ruta por defecto */}
         <Route index element={<Bandeja />} />
         <Route
@@ -30,9 +36,7 @@ const BandejaRoutes = () => {
           <Route
             path="factura-boleta"
             element={
-              <BandejaProvider>
                 <ListaDocumentos />
-              </BandejaProvider>
             }
           />
         </Route>
@@ -52,24 +56,27 @@ const BandejaRoutes = () => {
           <Route
             path="nota-credito-debito"
             element={
-              <BandejaProvider>
                 <ListaNotas />
-              </BandejaProvider>
             }
           />
         </Route>
         <Route
           element={
             <RoleGuard
-              roles={["CEO", "Gerente de administración", "Jefa de Almacén", "Contadora", "Asistente Facturación"]}            />
+              roles={[
+                "CEO",
+                "Gerente de administración",
+                "Jefa de Almacén",
+                "Contadora",
+                "Asistente Facturación",
+              ]}
+            />
           }
         >
           <Route
             path="guia-remision"
             element={
-              <BandejaProvider>
                 <ListaGuiaRemision />
-              </BandejaProvider>
             }
           />
         </Route>
