@@ -796,6 +796,7 @@ class SequelizeFacturaRepository {
                         END`),
                             "tipo_doc"
                         ],
+                        "fecha_emision",
                         [literal("CONCAT(serie, '-', correlativo)"), "comprobante_serie_correlativo"],
                         "fecha_vencimiento",
                         ["valor_venta", "base"],
@@ -810,12 +811,16 @@ class SequelizeFacturaRepository {
                             ELSE NULL 
                             END`),
                             "neto"
-                        ], [
+                        ],
+                        [
                             literal(`CASE 
-                            WHEN estado = 'ANULADA' THEN 'Dado de baja'
-                            ELSE 'Validado'
-                        END`),
-                            "estado"
+                                    WHEN estado = 'ANULADA' THEN 'Dado de baja'
+                                    WHEN estado = 'EMITIDA' THEN 'Validado'
+                                    WHEN estado = 'RECHAZADA' THEN 'Error'
+                                    WHEN estado = 'PENDIENTE' THEN 'Pendiente'
+                                    ELSE 'Validado'
+                                END`),
+                            'estado'
                         ],
                         "tipo_moneda",
                         [
@@ -859,6 +864,7 @@ class SequelizeFacturaRepository {
                 const { count, rows } = await GuiaRemision.findAndCountAll({
                     attributes: [
                         ["empresa_ruc", "filial"],
+                        ["cliente_razon_social", "razon_social"],
                         ["cliente_num_doc", "ruc_cliente"],
                         [
                             literal(`CASE 
@@ -880,10 +886,13 @@ class SequelizeFacturaRepository {
                         [literal('NULL'), 'base'],
                         [
                             literal(`CASE 
-                            WHEN estado = 'ANULADA' THEN 'Dado de baja'
-                            ELSE 'Validado'
-                        END`),
-                            "estado"
+                                    WHEN estado = 'ANULADA' THEN 'Dado de baja'
+                                    WHEN estado = 'EMITIDA' THEN 'Validado'
+                                    WHEN estado = 'RECHAZADA' THEN 'Error'
+                                    WHEN estado = 'PENDIENTE' THEN 'Pendiente'
+                                    ELSE 'Validado'
+                                END`),
+                            'estado'
                         ],
                         [literal('NULL'), 'tipo_moneda'],
                         [literal('NULL'), 'precio_dolar'],
@@ -941,10 +950,13 @@ class SequelizeFacturaRepository {
                         [literal('NULL'), "neto"],
                         [
                             literal(`CASE 
-                            WHEN estado = 'ANULADA' THEN 'Dado de baja'
-                            ELSE 'Validado'
-                        END`),
-                            "estado"
+                                    WHEN estado = 'ANULADA' THEN 'Dado de baja'
+                                    WHEN estado = 'EMITIDA' THEN 'Validado'
+                                    WHEN estado = 'RECHAZADA' THEN 'Error'
+                                    WHEN estado = 'PENDIENTE' THEN 'Pendiente'
+                                    ELSE 'Validado'
+                                END`),
+                            'estado'
                         ],
                         "tipo_moneda",
                         [
