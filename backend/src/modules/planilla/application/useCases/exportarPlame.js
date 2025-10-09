@@ -46,10 +46,7 @@ module.exports = async (res, payload, planillaRepository) => {
   if (!filial) {
     throw new Error("La filial enviada no existe.");
   }
-  const zipName = `RUC${filial.ruc}_${fecha_anio_mes}.zip`;
-  res.setHeader("Content-Type", "application/zip");
-  res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
-  res.setHeader("Content-Disposition", `attachment; filename="${zipName}"`);
+
 
   const planillaMensualCerradas =
     await planillaRepository.obtenerPlanillaMensualCerradas(
@@ -59,11 +56,8 @@ module.exports = async (res, payload, planillaRepository) => {
   const {pl,rh}=separar_planilla_honorarios(planillaMensualCerradas)
   // archiver("zip") → define que usarás ZIP.
   // Definimos el nivel maximo de compresion.
-  const archive = archiver("zip", { zlib: { level: 9 } });
-  archive.pipe(res);
-  //!Crear archivo para prestadores de servicios de 4ta categoria osea recibo por honorarios;
+
   const {prestadores_cuarta}=await plame_prestadores_cuarta(trabajadorRepository,rh);
-  archive.append(prestadores_cuarta.join("\n"), { name: `0601${anio}${mes}${filial.ruc}.ps4` });
 
   const {dias_laborales_oficina,dias_laborales_almacen}=contar_dias_laborables_mes(anio,mes);
   const{inicio,fin}=obtenerInicioYFinDeMes(anio,Number(mes));
@@ -129,6 +123,17 @@ module.exports = async (res, payload, planillaRepository) => {
         }
     
     }
+
+  const zipName = `RUC${filial.ruc}_${fecha_anio_mes}.zip`;
+  res.setHeader("Content-Type", "application/zip");
+  res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
+  res.setHeader("Content-Disposition", `attachment; filename="${zipName}"`);
+  const archive = archiver("zip", { zlib: { level: 9 } });
+  archive.pipe(res);
+
+
+    //!Crear archivo para prestadores de servicios de 4ta categoria osea recibo por honorarios;
+    archive.append(prestadores_cuarta.join("\n"), { name: `0601${anio}${mes}${filial.ruc}.ps4` });
     //!Agregando las jornadas laborales
     archive.append(jornadas_laborales.join("\n"), { name: `0601${anio}${mes}${filial.ruc}.jor` });
     //!Agregando los dias no laborados

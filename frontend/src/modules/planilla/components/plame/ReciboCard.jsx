@@ -19,10 +19,10 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 
-const ReciboCard = ({ planilla_recibo }) => {
+const ReciboCard = ({ planilla_recibo,setLoading,buscarPlame}) => {
   // console.log("Data por recibo",planilla_recibo);
-  const { form, datos_empleado, setForm, handleClick } =
-    useRecibos(planilla_recibo);
+  const { form, datos_empleado, setForm, handleClick ,formCurrent} =
+    useRecibos(planilla_recibo,setLoading,buscarPlame);
   const handleChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
@@ -127,7 +127,7 @@ const ReciboCard = ({ planilla_recibo }) => {
               onChange={handleChange}
             />
           </section>
-          <Button type="submit">Guardar Recibo</Button>
+          <Button disabled={form===formCurrent} type="submit">{form.id?"Actualizar Recibo":"Guardar Recibo"}</Button>
         </form>
       </CardContent>
     </Card>

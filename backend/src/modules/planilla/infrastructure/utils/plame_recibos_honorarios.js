@@ -4,7 +4,9 @@ const plame_recibo_por_honorario = async (trabajadorRepository, recibo) => {
    );
 
    const tipo_doc = t.domiciliado ? "06" : "04";
-   
+   if(t.domiciliado&&!t.ruc){
+      throw new Error(`Actualice el ruc del empleado: ${t.nombres} ${t.apellidos} para poder exportar el PLAME.`)
+   }
    const numero_doc = t.domiciliado
       ? t.ruc ?? "No definido"
       : t.numero_documento;

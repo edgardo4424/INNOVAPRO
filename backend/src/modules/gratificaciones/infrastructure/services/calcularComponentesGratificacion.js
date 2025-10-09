@@ -226,7 +226,7 @@ async function calcularComponentesGratificaciones(
                 ? new Date(c.fecha_fin)
                 : null; // contrato indefinido
 
-              console.log("fin", fin);
+              // console.log("fin", fin);
               // Si es contrato indefinido (sin fecha fin), incluirlo siempre
               if (!fin) return true;
 
