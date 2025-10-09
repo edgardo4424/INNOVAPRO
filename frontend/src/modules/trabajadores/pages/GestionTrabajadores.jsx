@@ -311,7 +311,7 @@ export default function CompGestionTrabajadoresonent() {
                      </TableHeader>
                      <TableBody>
                         {filteredEmployees.map((employee) => {
-                           const filialActual = obtenerContratoActual(
+                           const filiales_nombres = obtenerContratoActual(
                               employee.contratos_laborales
                            );
                            
@@ -323,11 +323,15 @@ export default function CompGestionTrabajadoresonent() {
                                           {employee.nombres}{" "}
                                           {employee.apellidos}
                                        </div>
-                                       <div className="text-sm text-muted-foreground">
+                                       <div className="text-sm text-muted-foreground flex flex-col">
                                           Filial:{" "}
-                                          <span className="text-xs truncate lowercase">
-                                             {filialActual?.razon_social}
-                                          </span>
+                                          {
+                                             filiales_nombres.map((f,i)=>(
+                                                 <span key={i} className="text-xs truncate ">
+                                                    - {f??"CONTRATO NO ENCONTRADO"}
+                                                 </span>
+                                             ))
+                                          }
                                        </div>
                                     </div>
                                  </TableCell>
