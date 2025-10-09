@@ -1046,7 +1046,8 @@ class SequelizeFacturaRepository {
                 success: false,
                 message: "Error al listar los documentos.",
                 data: [],
-                error: error.message
+                message: error.message,
+                error: error
             };
         }
     }

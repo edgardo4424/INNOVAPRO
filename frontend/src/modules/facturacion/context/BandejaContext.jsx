@@ -56,7 +56,6 @@ export function BandejaProvider({ children }) {
         consultaPendientes,
         documentosPendientes,
         totalPendientes,
-        totalPendientes,
       }}
     >
       {children}
