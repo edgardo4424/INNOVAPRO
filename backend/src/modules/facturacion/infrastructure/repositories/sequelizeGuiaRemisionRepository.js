@@ -165,8 +165,29 @@ class SequelizeGuiaRemisionRepository {
 
             const where = {};
 
-            if (nTipoDoc && nTipoDoc.toLowerCase() !== "todos") {
-                where.tipo_borrador = nTipoDoc;
+            if (nTipoDoc) {
+                if (nTipoDoc == "99") {
+                    where.estado = {
+                        [Op.or]: [
+                            "ANULADA",
+                        ],
+                    };
+                } else if (nTipoDoc == "66") {
+                    where.estado = {
+                        [Op.or]: [
+                            "RECHAZADA",
+                        ],
+                    };
+                } else if (nTipoDoc == "88") {
+                    where.estado = {
+                        [Op.or]: [
+                            "PENDIENTE",
+                        ],
+                    };
+                }
+                else {
+                    where.tipo_doc = nTipoDoc;
+                }
             }
             if (nEmpresaRuc) {
                 where.empresa_ruc = { [Op.like]: `%${nEmpresaRuc}%` };
@@ -280,71 +301,71 @@ class SequelizeGuiaRemisionRepository {
         return resultados;
     }
 
-async correlativoPendientes(body) {
-    const resultados = [];
-    const rucsAndSeries = [];
+    async correlativoPendientes(body) {
+        const resultados = [];
+        const rucsAndSeries = [];
 
-    // Armar combinaciones de RUC y Serie
-    for (const data of body) {
-        if (data.serie) {
-            for (const serie of data.serie) {
-                rucsAndSeries.push({ ruc: data.ruc, serie: serie.value });
-            }
-        }
-    }
-
-    // Traer correlativos de GuiaRemision
-    const guias = await GuiaRemision.findAll({
-        attributes: ["empresa_Ruc", "serie", "correlativo"],
-        where: {
-            [Op.or]: rucsAndSeries.map(item => ({
-                empresa_Ruc: item.ruc,
-                serie: item.serie
-            }))
-        },
-        raw: true
-    });
-
-    // Agrupar por RUC-SERIE
-    const agrupados = new Map();
-    for (const g of guias) {
-        const key = `${g.empresa_Ruc}-${g.serie}`;
-        if (!agrupados.has(key)) agrupados.set(key, []);
-        agrupados.get(key).push(Number(g.correlativo));
-    }
-
-    // Detectar correlativos pendientes
-    for (const { ruc, serie } of rucsAndSeries) {
-        const key = `${ruc}-${serie}`;
-        const correlativos = (agrupados.get(key) || []).sort((a, b) => a - b);
-
-        const pendientes = [];
-        if (correlativos.length > 0) {
-            const min = correlativos[0];
-            const max = correlativos[correlativos.length - 1];
-
-            // Usamos Set para mejor rendimiento
-            const existentes = new Set(correlativos);
-
-            for (let i = min; i <= max; i++) {
-                if (!existentes.has(i)) {
-                    pendientes.push(String(i).padStart(8, "0"));
+        // Armar combinaciones de RUC y Serie
+        for (const data of body) {
+            if (data.serie) {
+                for (const serie of data.serie) {
+                    rucsAndSeries.push({ ruc: data.ruc, serie: serie.value });
                 }
             }
         }
 
-        // 👉 Solo guardar si tiene pendientes
-        if (pendientes.length > 0) {
-            resultados.push({
-                ruc,
-                serie,
-                pendientes
-            });
-        }
-    }
+        // Traer correlativos de GuiaRemision
+        const guias = await GuiaRemision.findAll({
+            attributes: ["empresa_Ruc", "serie", "correlativo"],
+            where: {
+                [Op.or]: rucsAndSeries.map(item => ({
+                    empresa_Ruc: item.ruc,
+                    serie: item.serie
+                }))
+            },
+            raw: true
+        });
 
-    return resultados;
-}
+        // Agrupar por RUC-SERIE
+        const agrupados = new Map();
+        for (const g of guias) {
+            const key = `${g.empresa_Ruc}-${g.serie}`;
+            if (!agrupados.has(key)) agrupados.set(key, []);
+            agrupados.get(key).push(Number(g.correlativo));
+        }
+
+        // Detectar correlativos pendientes
+        for (const { ruc, serie } of rucsAndSeries) {
+            const key = `${ruc}-${serie}`;
+            const correlativos = (agrupados.get(key) || []).sort((a, b) => a - b);
+
+            const pendientes = [];
+            if (correlativos.length > 0) {
+                const min = correlativos[0];
+                const max = correlativos[correlativos.length - 1];
+
+                // Usamos Set para mejor rendimiento
+                const existentes = new Set(correlativos);
+
+                for (let i = min; i <= max; i++) {
+                    if (!existentes.has(i)) {
+                        pendientes.push(String(i).padStart(8, "0"));
+                    }
+                }
+            }
+
+            // 👉 Solo guardar si tiene pendientes
+            if (pendientes.length > 0) {
+                resultados.push({
+                    ruc,
+                    serie,
+                    pendientes
+                });
+            }
+        }
+
+        return resultados;
+    }
 
 
     async obtenerGuiaPorInformacion(correlativo, serie, empresa_ruc, tipo_doc) {

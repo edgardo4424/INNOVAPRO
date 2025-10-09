@@ -20,6 +20,23 @@ const getTipoDocLabel = (code) => {
   }
 };
 
+const getTipoResumido = (code) => {
+  switch (code) {
+    case "01":
+      return "FACTURA";
+    case "03":
+      return "BOLETA";
+    case "09":
+      return "GUÍA DE REMISIÓN";
+    case "07":
+      return "NOTA DE CRÉDITO";
+    case "08":
+      return "NOTA DE DÉBITO";
+    default:
+      return "NOTA ELECTRÓNICA";
+  }
+};
+
 const getModalidadTrasladoDescription = (code) => {
   switch (code) {
     case "01":
@@ -161,49 +178,49 @@ const getModalidadTrasladoLabel = (code) => {
 };
 
 
-  const opcionesCodigos = [
-    { value: "01", descripcion: "VENTA", descripcionmi: "Venta" },
-    {
-      value: "02",
-      descripcion: "VENTA SUJETA A CONFIRMACION DEL COMPRADOR",
-      descripcionmi: "Venta sujeta a confirmación del comprador",
-    },
-    {
-      value: "04",
-      descripcion: "TRASLADO ENTRE ESTABLECIMIENTOS DE LA MISMA EMPRESA",
-      descripcionmi: "Traslado entre establecimientos de la misma empresa",
-    },
-    { value: "08", descripcion: "IMPORTACION", descripcionmi: "Importación" },
-    { value: "09", descripcion: "EXPORTACION", descripcionmi: "Exportación" },
-    { value: "13", descripcion: "OTROS", descripcionmi: "Otros - Alquiler" },
-    {
-      value: "14",
-      descripcion: "VENTA CON ENTREGA A TERCEROS",
-      descripcionmi: "Venta con entrega a terceros",
-    },
-    {
-      value: "18",
-      descripcion: "TRASLADO EMISOR ITINERANTE DE COMPROBANTES DE PAGO",
-      descripcionmi: "Traslado emisor itinerante de comprobantes de pago",
-    },
-    {
-      value: "19",
-      descripcion: "TRASLADO A ZONA PRIMARIA",
-      descripcionmi: "Traslado a zona primaria",
-    },
-    {
-      value: "20",
-      descripcion: "TRASLADO POR EMISOR ITINERANTE (COMPROBANTE DE PAGO)",
-      descripcionmi: "Traslado por emisor itinerante (comprobante de pago)",
-    },
-  ];
+const opcionesCodigos = [
+  { value: "01", descripcion: "VENTA", descripcionmi: "Venta" },
+  {
+    value: "02",
+    descripcion: "VENTA SUJETA A CONFIRMACION DEL COMPRADOR",
+    descripcionmi: "Venta sujeta a confirmación del comprador",
+  },
+  {
+    value: "04",
+    descripcion: "TRASLADO ENTRE ESTABLECIMIENTOS DE LA MISMA EMPRESA",
+    descripcionmi: "Traslado entre establecimientos de la misma empresa",
+  },
+  { value: "08", descripcion: "IMPORTACION", descripcionmi: "Importación" },
+  { value: "09", descripcion: "EXPORTACION", descripcionmi: "Exportación" },
+  { value: "13", descripcion: "OTROS", descripcionmi: "Otros - Alquiler" },
+  {
+    value: "14",
+    descripcion: "VENTA CON ENTREGA A TERCEROS",
+    descripcionmi: "Venta con entrega a terceros",
+  },
+  {
+    value: "18",
+    descripcion: "TRASLADO EMISOR ITINERANTE DE COMPROBANTES DE PAGO",
+    descripcionmi: "Traslado emisor itinerante de comprobantes de pago",
+  },
+  {
+    value: "19",
+    descripcion: "TRASLADO A ZONA PRIMARIA",
+    descripcionmi: "Traslado a zona primaria",
+  },
+  {
+    value: "20",
+    descripcion: "TRASLADO POR EMISOR ITINERANTE (COMPROBANTE DE PAGO)",
+    descripcionmi: "Traslado por emisor itinerante (comprobante de pago)",
+  },
+];
 
-    const opcionesOtros =[
-    "PRESTAMO",
-    "ENVIO DE ALQUILER",
-    "REPARACION",
-    "OTROS"
-  ]
+const opcionesOtros = [
+  "PRESTAMO",
+  "ENVIO DE ALQUILER",
+  "REPARACION",
+  "OTROS"
+]
 
 export {
   formatDateTime,
@@ -217,5 +234,6 @@ export {
   getCodigoTraslado,
   getModalidadTrasladoLabel,
   opcionesCodigos,
-  opcionesOtros
+  opcionesOtros,
+  getTipoResumido
 };

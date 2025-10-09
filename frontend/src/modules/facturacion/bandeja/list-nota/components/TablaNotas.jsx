@@ -125,8 +125,14 @@ const TablaNotas = ({
   };
 
   // Función para obtener el texto a mostrar del estado
-  const getEstadoTexto = (estado) => {
+   const getEstadoTexto = (estado) => {
     switch (estado) {
+      case "EMITIDA":
+        return "EMITIDO";
+      case "RECHAZADA":
+        return "RECHAZADO";
+      case "PENDIENTE":
+        return "CARGANDO";
       case "ANULADA-NOTA":
         return "ANULADA POR NOTA";
       case "MODIFICADA-NOTA":
@@ -135,6 +141,7 @@ const TablaNotas = ({
         return estado;
     }
   };
+
 
   return (
     <div className="w-full rounded-xl border-1 border-gray-200">

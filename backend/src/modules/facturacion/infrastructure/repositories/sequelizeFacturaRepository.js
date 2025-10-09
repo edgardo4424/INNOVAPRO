@@ -63,7 +63,20 @@ class SequelizeFacturaRepository {
                             "ANULADA",
                         ],
                     };
-                } else {
+                } else if (nTipoDoc == "66") {
+                    where.estado = {
+                        [Op.or]: [
+                            "RECHAZADA",
+                        ],
+                    };
+                } else if (nTipoDoc == "88") {
+                    where.estado = {
+                        [Op.or]: [
+                            "PENDIENTE",
+                        ],
+                    };
+                }
+                else {
                     where.tipo_doc = nTipoDoc;
                 }
             }
@@ -381,6 +394,22 @@ class SequelizeFacturaRepository {
                 data: null,
             };
         }
+    }
+
+    async verificarCorrelativoRegistrado(body) {
+
+        const resultado = await Factura.findOne({
+            attributes: ['serie', 'correlativo'],
+            where: {
+                empresa_ruc: body.empresa_ruc,
+                serie: body.serie,
+                correlativo: body.correlativo
+            },
+            order: [['correlativo', 'DESC']],
+            limit: 1
+        })
+
+        return resultado
     }
 
     async correlativo(body) {
@@ -767,6 +796,7 @@ class SequelizeFacturaRepository {
                         END`),
                             "tipo_doc"
                         ],
+                        "fecha_emision",
                         [literal("CONCAT(serie, '-', correlativo)"), "comprobante_serie_correlativo"],
                         "fecha_vencimiento",
                         ["valor_venta", "base"],
@@ -781,12 +811,16 @@ class SequelizeFacturaRepository {
                             ELSE NULL 
                             END`),
                             "neto"
-                        ], [
+                        ],
+                        [
                             literal(`CASE 
-                            WHEN estado = 'ANULADA' THEN 'Dado de baja'
-                            ELSE 'Validado'
-                        END`),
-                            "estado"
+                                    WHEN estado = 'ANULADA' THEN 'Dado de baja'
+                                    WHEN estado = 'EMITIDA' THEN 'Validado'
+                                    WHEN estado = 'RECHAZADA' THEN 'Error'
+                                    WHEN estado = 'PENDIENTE' THEN 'Pendiente'
+                                    ELSE 'Validado'
+                                END`),
+                            'estado'
                         ],
                         "tipo_moneda",
                         [
@@ -798,7 +832,16 @@ class SequelizeFacturaRepository {
                             "monto_en_soles"
                         ],
                         ["estado_documento", "codigo"],
-                        [literal('`sunat_respuesta`.`cdr_response_description`'), 'mensaje'],
+                        [
+                            literal(`(
+                                        SELECT sr.cdr_response_description
+                                        FROM sunat_respuesta AS sr
+                                        WHERE sr.factura_id = Factura.id
+                                        ORDER BY sr.id DESC
+                                        LIMIT 1
+                                        )`),
+                            "mensaje"
+                        ],
                         [literal('NULL'), 'doc_de_referencia'],
                         [literal('NULL'), 'doc_de_referencia'],
                         [literal('NULL'), 'tipo_doc_de_referencia']
@@ -821,6 +864,7 @@ class SequelizeFacturaRepository {
                 const { count, rows } = await GuiaRemision.findAndCountAll({
                     attributes: [
                         ["empresa_ruc", "filial"],
+                        ["cliente_razon_social", "razon_social"],
                         ["cliente_num_doc", "ruc_cliente"],
                         [
                             literal(`CASE 
@@ -842,16 +886,28 @@ class SequelizeFacturaRepository {
                         [literal('NULL'), 'base'],
                         [
                             literal(`CASE 
-                            WHEN estado = 'ANULADA' THEN 'Dado de baja'
-                            ELSE 'Validado'
-                        END`),
-                            "estado"
+                                    WHEN estado = 'ANULADA' THEN 'Dado de baja'
+                                    WHEN estado = 'EMITIDA' THEN 'Validado'
+                                    WHEN estado = 'RECHAZADA' THEN 'Error'
+                                    WHEN estado = 'PENDIENTE' THEN 'Pendiente'
+                                    ELSE 'Validado'
+                                END`),
+                            'estado'
                         ],
                         [literal('NULL'), 'tipo_moneda'],
                         [literal('NULL'), 'precio_dolar'],
                         [literal('NULL'), 'monto_en_soles'],
                         ["estado_documento", "codigo"],
-                        [literal('`sunat_respuesta`.`cdr_response_description`'), 'mensaje'],
+                        [
+                            literal(`(
+                                        SELECT sr.cdr_response_description
+                                        FROM sunat_respuesta AS sr
+                                        WHERE sr.guia_id = guias_de_remision.id
+                                        ORDER BY sr.id DESC
+                                        LIMIT 1
+                                    )`),
+                            "mensaje"
+                        ],
                         [literal('NULL'), 'doc_de_referencia'],
                         [literal('NULL'), 'fec_doc_de_referencia'],
                         [literal('NULL'), 'tipo_doc_de_referencia']
@@ -894,10 +950,13 @@ class SequelizeFacturaRepository {
                         [literal('NULL'), "neto"],
                         [
                             literal(`CASE 
-                            WHEN estado = 'ANULADA' THEN 'Dado de baja'
-                            ELSE 'Validado'
-                        END`),
-                            "estado"
+                                    WHEN estado = 'ANULADA' THEN 'Dado de baja'
+                                    WHEN estado = 'EMITIDA' THEN 'Validado'
+                                    WHEN estado = 'RECHAZADA' THEN 'Error'
+                                    WHEN estado = 'PENDIENTE' THEN 'Pendiente'
+                                    ELSE 'Validado'
+                                END`),
+                            'estado'
                         ],
                         "tipo_moneda",
                         [
@@ -909,8 +968,16 @@ class SequelizeFacturaRepository {
                             "monto_en_soles"
                         ],
                         ["estado_documento", "codigo"],
-                        [literal('`sunat_respuesta`.`cdr_response_description`'), 'mensaje'],
-                        ["fecha_Emision_Afectado", 'fec_doc_de_referencia'],
+                        [
+                            literal(`(
+                                    SELECT sr.cdr_response_description
+                                    FROM sunat_respuesta AS sr
+                                    WHERE sr.nota_id = notas_credito_debito.id
+                                    ORDER BY sr.id DESC
+                                    LIMIT 1
+                                )`),
+                            "mensaje"
+                        ], ["fecha_Emision_Afectado", 'fec_doc_de_referencia'],
                         ["afectado_Num_Doc", 'doc_de_referencia'],
                         [
                             literal(`CASE 
@@ -978,6 +1045,98 @@ class SequelizeFacturaRepository {
             return {
                 success: false,
                 message: "Error al listar los documentos.",
+                data: [],
+                error: error.message
+            };
+        }
+    }
+
+    async documentosPendiente() {
+        try {
+            // 1. Obtener Filiales
+            // El campo 'rows' se renombra a 'filiales'
+            const { rows: filiales } = await Filial.findAndCountAll({
+                attributes: ['ruc', 'razon_social'] // Solo necesitamos estos dos campos
+            })
+
+            // Convertimos filiales en un mapa { ruc: razon_social }
+            const filialMap = {};
+            filiales.forEach(f => {
+                // Asumo que 'f.get({ plain: true })' o similar se usa si el objeto es un modelo Sequelize,
+                // pero si 'filiales' ya es un array de objetos simples, se simplifica.
+                // Usamos la notación directa para simplificar:
+                filialMap[f.ruc] = f.razon_social;
+            });
+
+            // 2. Definir los atributos comunes a extraer (incluyendo la fecha de emisión para ordenar)
+            const commonAttributes = [
+                ["empresa_ruc", "filial"],
+                ["empresa_ruc", "empresa_ruc"],
+                ["tipo_doc", "tipo_Doc"],
+                ["serie", "serie"],
+                ["correlativo", "correlativo"],
+                ["estado", "estado"],
+                ["fecha_emision", "fecha_emision"] // Necesario para ordenar
+            ];
+
+            // 3. Obtener documentos pendientes (usando los atributos comunes)
+            const baseOptions = {
+                where: { estado: 'PENDIENTE' },
+            };
+
+            const facturasPendiente = await Factura.findAll({
+                ...baseOptions,
+                attributes: [
+                    ...commonAttributes.map(([db, as]) => (db === 'empresa_ruc' ? ['empresa_ruc', as] : [db, as]))
+                ]
+            })
+
+            const guiasPendiente = await GuiaRemision.findAll({
+                ...baseOptions,
+                attributes: [
+                    ...commonAttributes.map(([db, as]) => (db === 'empresa_Ruc' ? ['empresa_Ruc', as] : [db, as])) // Ajuste de mayúsculas/minúsculas
+                ]
+            })
+
+            const notasPendiente = await NotasCreditoDebito.findAll({
+                ...baseOptions,
+                attributes: [
+                    ...commonAttributes.map(([db, as]) => (db === 'empresa_Ruc' ? ['empresa_Ruc', as] : [db, as])) // Ajuste de mayúsculas/minúsculas
+                ]
+            })
+
+            // 4. Unificar y Transformar Resultados
+            const documentos = [
+                ...facturasPendiente,
+                ...guiasPendiente,
+                ...notasPendiente
+            ];
+
+            // Armamos dataFinal con la transformación y ordenada por fecha_emision
+            let dataFinal = documentos
+                .map(item => {
+                    // Usa item.get({ plain: true }) para obtener un objeto JS plano de la instancia Sequelize
+                    const plain = item.get({ plain: true });
+                    // 'plain.filial' contendrá el RUC, lo reemplazamos por la razón social
+                    return {
+                        ...plain,
+                        // Reemplaza el RUC por la razón social. Si no encuentra el RUC, mantiene el RUC original.
+                        filial: filialMap[plain.filial] || plain.filial
+                    };
+                })
+                .sort((a, b) => new Date(b.fecha_emision) - new Date(a.fecha_emision));
+
+
+            return {
+                success: true,
+                message: "Documentos pendientes listados correctamente.",
+                data: dataFinal
+            };
+        } catch (error) {
+            console.error("Error en documentosPendiente:", error);
+            return {
+                success: false,
+                message: "Error al listar los documentos pendientes.",
                 data: [],
                 error: error.message
             };

@@ -11,7 +11,7 @@ import JSZip from "jszip";
 /* ================== helpers simplificados ================== */
 const toDocumentoPayload = (doc = {}) => {
   const correlativoSrc = doc.correlativo ?? doc.correlativo ?? "";
-  const correlativo = String(correlativoSrc).replace(/^0+/, "") || "0";
+  const correlativo = correlativoSrc;
   const empresa_ruc = String(
     doc.numRuc ?? doc.empresa_ruc ?? doc.empresa_Ruc ?? "",
   );

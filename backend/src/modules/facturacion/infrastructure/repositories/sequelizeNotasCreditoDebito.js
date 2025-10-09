@@ -184,7 +184,28 @@ class SequelizeNotasCreditoDebitoRepository {
             const where = {};
 
             if (nTipoDoc) {
-                where.tipo_doc = nTipoDoc;
+                if (nTipoDoc == "99") {
+                    where.estado = {
+                        [Op.or]: [
+                            "ANULADA",
+                        ],
+                    };
+                } else if (nTipoDoc == "66") {
+                    where.estado = {
+                        [Op.or]: [
+                            "RECHAZADA",
+                        ],
+                    };
+                } else if (nTipoDoc == "88") {
+                    where.estado = {
+                        [Op.or]: [
+                            "PENDIENTE",
+                        ],
+                    };
+                }
+                else {
+                    where.tipo_doc = nTipoDoc;
+                }
             }
             if (nEmpresaRuc) {
                 where.empresa_Ruc = { [Op.like]: `%${nEmpresaRuc}%` };

@@ -119,6 +119,15 @@ const facturaService = {
         return res.data;
     },
 
+    // ? PENDIENTES
+    obtenerPendientes: async (query) => {
+        const res = await api.get(`/facturacion/documentos-pendientes`);
+        return res.data;
+    },
+    actulizarEstado: async (body) => {
+        const res = await api.post(`/factiliza/verificar-estado-sunat`, body);
+        return res.data;
+    },
 
     // ? ENDPOINTS REPORTES
     reporteVentas: async (body) => {
