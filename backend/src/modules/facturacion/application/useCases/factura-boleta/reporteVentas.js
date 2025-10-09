@@ -53,6 +53,7 @@ module.exports = async (query, facturaRepository) => {
                 mensaje: "Error inesperado al obtener borradores.",
                 estado: false,
                 error: e.message,
+                error: error,
             },
         };
     }
