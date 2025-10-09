@@ -32,7 +32,9 @@ const planillaMensualService = {
    }),
    obtenerReciboPorPlanilla:async(fecha_anio_mes,filial_id)=>api.get(`/planilla/obtener-recibos-planilla/${fecha_anio_mes}/${filial_id}`)
    ,
-   crearReciboPorPlanilla:async(data)=>api.post("/recibo_x_honorarios/crear-recibo-planilla",data)
+   crearReciboPorPlanilla:async(data)=>api.post("/recibo_x_honorarios/crear-recibo-planilla",data),
+   actualizarReciboPorPlanilla:async(data)=>api.put("/recibo_x_honorarios/actualizar-recibo-planilla",data),
+
 };
 
 export default planillaMensualService;

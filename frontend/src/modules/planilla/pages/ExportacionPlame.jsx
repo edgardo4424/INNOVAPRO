@@ -94,6 +94,7 @@ const ExportacionPlame = () => {
 
   const buscarPlame = async () => {
     setRecibos(null);
+    setLoading(true);
     try {
       const respuesta = await planillaMensualService.obtenerReciboPorPlanilla(
         `${filtro.anio}-${filtro.mes}`,
@@ -101,13 +102,16 @@ const ExportacionPlame = () => {
       );
       setRecibos(respuesta.data);
     } catch (error) {
-      console.log("Error recibido: ", error);
+      toast.error(error);
+      console.error("Error recibido: ", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="flex min-h-full flex-1 flex-col items-center space-y-6">
-      <div className="flex w-full justify-between">
+      <section className="flex w-full justify-between">
         <Filtro
           filiales={filiales}
           filtro={filtro}
@@ -115,30 +119,43 @@ const ExportacionPlame = () => {
           Buscar={buscarPlame}
           nombre_button="Buscar Plame"
         />
-      </div>
-
-      {loading ? (
-        <div className="max-w-8xl flex min-h-[50vh] w-full items-center px-20">
-          <div className="flex w-full flex-col items-center justify-center">
-            <LoaderCircle className="size-30 animate-spin text-gray-800" />
-            <h2 className="text-2xl text-gray-800">Cargando...</h2>
+      </section>
+      <section className="w-full">
+        {loading ? (
+          <div className="flex min-h-[50vh] w-full items-center px-20">
+            <div className="flex w-full flex-col items-center justify-center">
+              <LoaderCircle className="size-30 animate-spin text-gray-800" />
+              <h2 className="text-2xl text-gray-800">Cargando...</h2>
+            </div>
           </div>
-        </div>
-      ) : (
-        <article className="w-full">
-          <section className="space-y-3">
-            {recibos &&
-              recibos.length > 0 &&
-              recibos.map((r, index) => (
-                <ReciboCard planilla_recibo={r} key={index} />
-              ))}
-          </section>
-          <Button onClick={() => exportarPlame()} disabled={loadPlame}>
-            {loadPlame && <FaSpinner className="animate-spin" />}
-            Exportar Plame
-          </Button>
-        </article>
-      )}
+        ) : (
+          <article className="flex w-full flex-col">
+            <section className="min-h-[30vh] space-y-6">
+              {recibos &&
+                recibos.length > 0 &&
+                recibos.map((r, index) => (
+                  <ReciboCard
+                    planilla_recibo={r}
+                    key={index}
+                    setLoading={setLoading}
+                    buscarPlame={buscarPlame}
+                  />
+                ))}
+            </section>
+            {recibos && recibos.length > 0 && (
+              <Button
+                onClick={() => exportarPlame()}
+                disabled={loadPlame}
+                className="mt-6 self-end"
+                size="lg"
+              >
+                {loadPlame && <FaSpinner className="animate-spin" />}
+                Exportar Plame
+              </Button>
+            )}
+          </article>
+        )}
+      </section>
     </div>
   );
 };
