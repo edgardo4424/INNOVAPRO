@@ -124,9 +124,9 @@ export default function ModalVisualizarGuiaPrivada() {
                           </span>
                         </div>
 
-                        <div className="flex justify-between col-span-1">
+                        <div className="col-span-1 flex justify-between">
                           {/* Documento */}
-                          <div className="grid grid-cols-2 gap-y-2 gap-x-2">
+                          <div className="grid grid-cols-2 gap-x-2 gap-y-2">
                             <span className="text-xs font-semibold text-gray-700 md:text-sm">
                               Tipo Doc.:
                             </span>
@@ -145,7 +145,7 @@ export default function ModalVisualizarGuiaPrivada() {
                           </div>
 
                           {/* Obra y Contrato */}
-                          <div className="grid grid-cols-2 gap-y-2  gap-x-2">
+                          <div className="grid grid-cols-2 gap-x-2 gap-y-2">
                             <span className="text-xs font-semibold text-gray-700 md:text-sm">
                               Obra:
                             </span>
@@ -284,7 +284,7 @@ export default function ModalVisualizarGuiaPrivada() {
                             {guiaTransporte.guia_Envio_Und_Peso_Total || "N/A"}
                           </span>
                           <span className="text-xs font-semibold text-gray-700 md:text-sm">
-                            Peso Placa:
+                            Placa:
                           </span>
                           <span className="text-xs font-medium md:text-sm">
                             {guiaTransporte?.guia_Envio_Vehiculo_Placa || "0"}
