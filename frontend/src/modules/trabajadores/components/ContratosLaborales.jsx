@@ -32,7 +32,7 @@ const ContratosLaborales = ({
   filiales,
   isEditMode,
 }) => {
-  console.log("formData en contratos laborales", formData);
+
   // Estados para confirmar sueldo
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
@@ -163,7 +163,6 @@ const ContratosLaborales = ({
       <div className="mt-4 space-y-5">
         {formData.contratos_laborales.map((c, i) => 
          {
-            console.log("c", c);
             return ( <div
             key={c.id ?? i}
             className="border-muted rounded-lg border p-4 md:p-5"
@@ -185,6 +184,8 @@ const ContratosLaborales = ({
                         "fecha_fin",
                         !!checked ? "" : c.fecha_fin,
                       );
+                     
+                      handleInputChange(i, "tipo_contrato", !!checked ? "PLANILLA" : "");
                     }}
                   />
 
@@ -380,7 +381,7 @@ const ContratosLaborales = ({
               <div className="space-y-2">
                 <Label htmlFor={`tipo_contrato_${i}`}>Tipo de contrato *</Label>
                 <Select
-                  value={c.tipo_contrato}
+                  value={c.tipo_contrato || ""}
                   onValueChange={(value) =>
                     handleInputChange(i, "tipo_contrato", value)
                   }
@@ -389,10 +390,19 @@ const ContratosLaborales = ({
                     <SelectValue placeholder="Seleccione el tipo de contrato" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="PLANILLA">Planilla</SelectItem>
-                    <SelectItem value="HONORARIOS">
-                      Recibo por honorarios
-                    </SelectItem>
+                    {
+                      formData.contratos_laborales[i].es_indefinido ? (
+                         <SelectItem value="PLANILLA">Planilla</SelectItem>
+                      ) : (
+                        <>
+                        <SelectItem value="PLANILLA">Planilla</SelectItem>
+                        <SelectItem value="HONORARIOS">
+                          Recibo por honorarios
+                        </SelectItem>
+                        </>
+                      )
+                    }
+                    
                   </SelectContent>
                 </Select>
                 {errors?.[`contratos_laborales[${i}].tipo_contrato`] && (

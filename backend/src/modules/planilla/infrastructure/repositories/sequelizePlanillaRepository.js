@@ -379,6 +379,8 @@ class SequelizePlanillaRepository {
         fecha_anio_mes
       );
 
+      console.log('diasLaborados', diasLaborados);
+
       // (SUELDO/30)*DÍAS LABORADOS
       const sueldoQuincenal = +(
         (sueldoBase / 30) * diasLaborados) 
@@ -415,7 +417,9 @@ class SequelizePlanillaRepository {
         numero_cuenta: contrato.numero_cuenta,
 
         adelanto_sueldo: totalAdelantosSueldo,
-        adelantos_ids: adelantos_ids
+        adelantos_ids: adelantos_ids,
+
+         cargo: trabajador.cargo ? trabajador.cargo.nombre : null,
       });
     }
 

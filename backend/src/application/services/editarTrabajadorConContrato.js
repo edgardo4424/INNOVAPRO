@@ -92,7 +92,7 @@ module.exports = async function editarTrabajadorConContrato(data) {
             transaction
          );
          if (response.codigo !== 200) {
-            throw new Error("Error al crear comtrato");
+            throw new Error("Error al crear contrato");
          }
       }
   

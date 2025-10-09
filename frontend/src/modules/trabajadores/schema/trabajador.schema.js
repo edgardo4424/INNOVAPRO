@@ -20,6 +20,7 @@ const contratoSchema = yup.object({
          function (value) {
             if (!value) return true; // Si es null o vacío, pasa
             const { fecha_inicio } = this.parent;
+            console.log('this.parent', this.parent);
             return fecha_inicio && value > fecha_inicio;
          }
       )
@@ -47,8 +48,38 @@ const contratoSchema = yup.object({
          "El tipo de contrato debe ser Planilla o RxH"
       )
       .required("El tipo de contrato es obligatorio"),
-   banco: yup.string().required("El nombre es requerido"),
-   numero_cuenta: yup.string().required("El nombre es requerido"),
+   banco: yup.string().required("El banco es requerido"),
+   numero_cuenta: yup.string().required("El número de cuenta es requerido"),
+filial_id: yup
+         .number()
+         .transform((value, originalValue) => {
+            if (
+               originalValue === "" ||
+               originalValue === null ||
+               originalValue === undefined
+            ) {
+               return null;
+            }
+            const parsed = Number(originalValue);
+            return isNaN(parsed) ? null : parsed;
+         })
+         .nullable()
+         .required("La empresa es obligatorio"),
+    id_cargo_sunat: yup
+         .number()
+         .transform((value, originalValue) => {
+            if (
+               originalValue === "" ||
+               originalValue === null ||
+               originalValue === undefined
+            ) {
+               return null;
+            }
+            const parsed = Number(originalValue);
+            return isNaN(parsed) ? null : parsed;
+         })
+         .nullable()
+         .required("El cargo de la SUNAT es obligatorio"),
 });
 
 export const trabajadorSchema = (isEdit = false, isGerente = false) =>
@@ -69,6 +100,14 @@ export const trabajadorSchema = (isEdit = false, isGerente = false) =>
       numero_documento: yup
          .string()
          .required("El número de documento es requerido"),
+
+       estado_civil: yup
+      .string()
+      .oneOf(
+         ["SOLTERO", "CASADO", "DIVORCIADO", "VIUDO", "CONVIVIENTE"],
+         "El estado civil debe ser SOLTERO, CASADO, DIVORCIADO, VIUDO o CONVIVIENTE"
+      )
+      .required("El estado civil es requerido"),
       ruc:yup.string()
          .notRequired()
          .nullable()
@@ -166,7 +205,7 @@ export const trabajadorSchema = (isEdit = false, isGerente = false) =>
       "fecha-asignacion-familiar",
       "La fecha es requerida",
       function (value) {
-         console.log('this.parent', this.parent);
+        
         const { asignacion_familiar } = this.parent;
         // Si asignacion_familiar es true, la fecha debe existir
         if (asignacion_familiar) {

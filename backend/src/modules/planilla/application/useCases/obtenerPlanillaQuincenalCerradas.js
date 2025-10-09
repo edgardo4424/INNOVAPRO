@@ -50,6 +50,7 @@ const planillaQuincenalCerradasTipoHonorarios = planillaQuincenalCerradas.filter
     numero_documento: g.trabajador.numero_documento,
     nombres: g.trabajador.nombres,
     apellidos: g.trabajador.apellidos,
+    cargo: g.cargo,
     tipo_contrato: g.tipo_contrato,
     contrato_id: g.contrato_id,
     regimen: g.regimen,
@@ -59,6 +60,7 @@ const planillaQuincenalCerradasTipoHonorarios = planillaQuincenalCerradas.filter
     sueldo_base: g.sueldo_base,
 
     sueldo_quincenal: g.sueldo_quincenal,
+    adelanto_sueldo: g.adelanto_sueldo,
     total_a_pagar: g.total_pagar,
 
     banco: g.banco,

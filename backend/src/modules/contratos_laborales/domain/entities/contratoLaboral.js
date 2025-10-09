@@ -90,6 +90,7 @@ class ContratoLaboral {
          errores.push("El número de cuenta debe tener al menos 5 caracteres.");
       }
       if(!this.id_cargo_sunat || isNaN(this.id_cargo_sunat)){
+        
          errores.push("El cargo SUNAT es obligatorio.");
       }
 

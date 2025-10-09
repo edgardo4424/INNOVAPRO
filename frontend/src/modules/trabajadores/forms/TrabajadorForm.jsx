@@ -26,6 +26,7 @@ import { mockCargos, mockFiliales } from "../mocks/mockFiliales_Cargos";
 import ContratosLaborales from "../components/ContratosLaborales";
 import { toast } from "sonner";
 import { default as SelectMultiple } from "react-select";
+import { validarContratos } from "../utils/validarContratos";
 
 const dataInicial = {
   filial_id: "",
@@ -219,6 +220,8 @@ export default function TrabajadorForm() {
 
       const dataToSubmit = buildPayload();
 
+      console.log("dataToSubmit", dataToSubmit);
+
       if (isEditMode) {
         dataToSubmit.id = trabajador_id;
 
@@ -233,8 +236,16 @@ export default function TrabajadorForm() {
             : null,
         };
         console.log('dataBodyEditar', dataBodyEditar);
+
+        const { esValido, errores } = validarContratos(dataToSubmit.contratos_laborales);
+
+        console.log('!esValido', !esValido);
+        if (!esValido) {
+          return toast.error(errores.join("\n"));
+        }
+
         const response =
-         await trabajadoresService.editarTrabajador(dataBodyEditar);
+        // await trabajadoresService.editarTrabajador(dataBodyEditar);
         toast.success("Trabajador actualizado con éxito");
       } else {
         await trabajadorSchema(isEditMode).validate(dataToSubmit, {
@@ -248,10 +259,17 @@ export default function TrabajadorForm() {
             : null,
         };
 
-        await trabajadoresService.crearTrabajador(dataBodyCrear);
+         const { esValido, errores } = validarContratos(dataToSubmit.contratos_laborales);
+
+         console.log('!esValido', !esValido);
+        if (!esValido) {
+          return toast.error(errores.join("\n"));
+        }
+
+        //await trabajadoresService.crearTrabajador(dataBodyCrear);
         toast.success("Trabajador creado con éxito");
       }
-      navigate("/tabla-trabajadores");
+     // navigate("/tabla-trabajadores");
     } catch (error) {      
       if (error && error.name === "ValidationError") {
         const newErrors =
@@ -443,7 +461,7 @@ export default function TrabajadorForm() {
                   </div>
 
                    <div className="space-y-2">
-                    <Label htmlFor="telefono">Estado Civil</Label>
+                    <Label htmlFor="estado_civil">Estado Civil</Label>
                      <Select
                       value={formData.estado_civil}
                       onValueChange={(value) =>
