@@ -29,12 +29,18 @@ const InfDocumentoForm = () => {
     filiales,
     setGuiaDatosInternos,
     correlativosPendientes,
+    buscarCorrelativoPendientes,
   } = useGuiaTransporte();
 
   const [listaCorrelativos, setListaCorrelativos] = useState([]);
 
   // ? ... otros estados
   const [mostrarPendientes, setMostrarPendientes] = useState(false);
+
+  const handleCorrelativos = () => {
+    buscarCorrelativo();
+    buscarCorrelativoPendientes();
+  };
 
   // ? Función para alternar la visibilidad de la lista
   const togglePendientes = () => {
@@ -82,7 +88,7 @@ const InfDocumentoForm = () => {
 
   useEffect(() => {
     if (filiales.length !== 0) {
-      buscarCorrelativo();
+      handleCorrelativos();
     }
   }, [filiales]);
 
@@ -279,7 +285,7 @@ const InfDocumentoForm = () => {
                 <button
                   className="bg-innova-blue hover:bg-innova-blue-hover focus:ring-innova-blue cursor-pointer rounded-md p-2 text-white transition-colors duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none"
                   // disabled={correlativoEstado}
-                  onClick={(e) => buscarCorrelativo(e)}
+                  onClick={handleCorrelativos}
                 >
                   {loadingCorrelativo ? (
                     <LoaderCircle className="size-5 animate-spin" />

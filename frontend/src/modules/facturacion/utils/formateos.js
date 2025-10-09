@@ -177,6 +177,13 @@ const getModalidadTrasladoLabel = (code) => {
   }
 };
 
+  const formatCurrency = (amount, moneda = "PEN") => {
+    return new Intl.NumberFormat("es-PE", {
+      style: "currency",
+      currency: moneda,
+      minimumFractionDigits: 2,
+    }).format(amount);
+  };
 
 const opcionesCodigos = [
   { value: "01", descripcion: "VENTA", descripcionmi: "Venta" },
@@ -218,6 +225,7 @@ const opcionesCodigos = [
 const opcionesOtros = [
   "PRESTAMO",
   "ENVIO DE ALQUILER",
+  "DEVOLUCION",
   "REPARACION",
   "OTROS"
 ]
@@ -235,5 +243,6 @@ export {
   getModalidadTrasladoLabel,
   opcionesCodigos,
   opcionesOtros,
-  getTipoResumido
+  getTipoResumido,
+  formatCurrency
 };

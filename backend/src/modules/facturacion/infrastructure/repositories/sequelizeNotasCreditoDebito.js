@@ -88,38 +88,41 @@ class SequelizeNotasCreditoDebitoRepository {
 
 
             //* 5. Anular la factura asociada (MOVIDO DENTRO DE LA TRANSACCIÓN)
-            const {
-                factura_id,
-                // guia_id,
-            } = data.nota;
+            const { factura_id } = data.nota;
             let modelToUpdate = null;
+
             if (factura_id) {
                 modelToUpdate = Factura;
             }
-            // else if (guia_id) {
-            // modelToUpdate = GuiaRemision;
-            // }
+
             if (!modelToUpdate) {
                 throw new Error("No se encontró ni la factura ni la guía para anular.");
             }
+
             const toUpdate = await modelToUpdate.findByPk(factura_id);
             if (!toUpdate) {
                 throw new Error("No se encontró la factura o guía para anular.");
             }
-            // Se cambia el valor "ANULADO" a "A" para evitar el error de truncamiento de datos
-
-            let valueEstado;
-            if (data.nota.tipo_Doc === "07") {
-                if (data.nota.motivo_Cod === "01" || data.nota.motivo_Cod === "02") {
-                    valueEstado = "ANULADA-NOTA";
+            // 🔸 Solo afectar la factura si la nota fue EMITIDA
+            if (data.nota.estado === "EMITIDA") {
+                let valueEstado;
+                if (data.nota.tipo_Doc === "07") {
+                    if (data.nota.motivo_Cod === "01" || data.nota.motivo_Cod === "02") {
+                        valueEstado = "ANULADA-NOTA";
+                    } else {
+                        valueEstado = "MODIFICADA-NOTA";
+                    }
                 } else {
                     valueEstado = "MODIFICADA-NOTA";
                 }
-            } else {
-                valueEstado = "MODIFICADA-NOTA";
-            }
-            await toUpdate.update({ estado: valueEstado }, { transaction });
 
+                await toUpdate.update({ estado: valueEstado }, { transaction });
+                console.log(`Factura ${factura_id} actualizada a estado: ${valueEstado}`);
+            } else {
+                console.log(
+                    `⚠️ Nota ${data.nota.serie}-${data.nota.correlativo} tiene estado '${data.nota.estado}', no se afecta la factura.`
+                );
+            }
 
             //* Si todas las operaciones fueron exitosas, confirma la transacción.
             await transaction.commit();

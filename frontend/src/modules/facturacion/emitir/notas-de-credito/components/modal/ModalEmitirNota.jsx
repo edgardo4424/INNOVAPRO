@@ -3,7 +3,7 @@ import { Building2, Eye, FileText, ReceiptText, Tag, X } from "lucide-react";
 import { useState } from "react";
 import { formatearFecha } from "../../../../utils/formatearFecha";
 import EnviarNota from "../EnviarNota";
-import { getTipoDocCliente } from "@/modules/facturacion/utils/formateos";
+import { formatCurrency, getTipoDocCliente } from "@/modules/facturacion/utils/formateos";
 
 const codigosMotivoCredito = [
   {
@@ -123,13 +123,6 @@ export default function ModalEmitirNota() {
     ? filialActual.razon_social
     : "Empresa Desconocida";
 
-  const formatCurrency = (amount, moneda = "PEN") => {
-    return new Intl.NumberFormat("es-PE", {
-      style: "currency",
-      currency: moneda,
-      minimumFractionDigits: 2,
-    }).format(amount);
-  };
 
   const getTipoDocumentoLabel = (codigo) => {
     switch (codigo) {
@@ -231,6 +224,7 @@ export default function ModalEmitirNota() {
                     </div>
                     <div>
                       <p className="font-semibold text-gray-600">Cliente:</p>
+                      <p className="text-gray-800">{`${notaCreditoDebito.cliente_Razon_Social || ""}`}</p>
                       <p className="text-gray-800">{`${getTipoDocCliente(notaCreditoDebito.cliente_Tipo_Doc)} - ${notaCreditoDebito.cliente_Num_Doc}`}</p>
                     </div>
                     <div>
@@ -278,7 +272,10 @@ export default function ModalEmitirNota() {
                     <div className="flex items-center justify-between border-t border-gray-200 pt-2">
                       <p className="font-semibold text-gray-600">Total:</p>
                       <p className="text-2xl font-extrabold text-indigo-700">
-                        {formatCurrency(notaCreditoDebito.monto_Imp_Venta, moneda)}
+                        {formatCurrency(
+                          notaCreditoDebito.monto_Imp_Venta,
+                          moneda,
+                        )}
                       </p>
                     </div>
                   </div>

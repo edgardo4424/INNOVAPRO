@@ -67,12 +67,27 @@ export function GuiaTransporteProvider({ children }) {
 
       const { data } =
         await facturaService.obtenerCorrelativoGuia(rucsAndSeries);
-      const { data: data2 } =
-        await facturaService.obtenerCorrelativoPendientesGuia(rucsAndSeries);
       setCorrelativos(data);
-      setCorrelativosPendientes(data2);
     } catch (error) {
       console.error("Error al obtener correlativos:", error);
+    } finally {
+      setLoadingCorrelativo(false);
+    }
+  };
+
+  // ?? OBTENER CORRELATIVO
+  const buscarCorrelativoPendientes = async () => {
+    try {
+      const rucsAndSeries = filiales.map((filial) => ({
+        ruc: filial.ruc,
+        serieBoleta: serieBoleta,
+        serieFactura: serieFactura,
+      }));
+
+      const { data } =
+        await facturaService.obtenerCorrelativoPendientesGuia(rucsAndSeries);
+      setCorrelativosPendientes(data);
+    } catch (error) {
     } finally {
       setLoadingCorrelativo(false);
     }
@@ -387,6 +402,7 @@ export function GuiaTransporteProvider({ children }) {
         buscarCorrelativo,
         correlativos,
         correlativosPendientes,
+        buscarCorrelativoPendientes,
         setCorrelativos,
         correlativoEstado,
         setCorrelativoEstado,

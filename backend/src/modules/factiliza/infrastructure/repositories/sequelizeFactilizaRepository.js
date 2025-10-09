@@ -27,7 +27,7 @@ class SequelizFactilizaRepository {
             return;
         }
 
-        // 🔹 Cláusula WHERE unificada (en minúsculas)
+        // 🔹 Cláusula WHERE unificada
         where = {
             empresa_ruc: documento.empresa_ruc,
             tipo_doc: documento.tipo_Doc,
@@ -50,11 +50,14 @@ class SequelizFactilizaRepository {
                 return;
             }
 
-            // 🔹 Determinar estado del documento
+            // 🔹 Determinar nuevo estado del documento (factura/nota/guía)
             const { estado_Sunat, respuesta_Sunat, hash } = data;
             const nuevoEstado = String(estado_Sunat) === "0" ? "EMITIDA" : "RECHAZADA";
 
-            // 🔹 Actualizar campo correcto (estado)
+            // Guardar estado anterior antes de actualizar
+            const estadoAnterior = doc.estado;
+
+            // 🔹 Actualizar documento principal
             await doc.update({ estado: nuevoEstado }, { transaction });
 
             // 🔹 Registrar respuesta Sunat
@@ -70,8 +73,39 @@ class SequelizFactilizaRepository {
 
             await SunatRespuesta.create(sunatData, { transaction });
 
-            await transaction.commit();
+            // ⚡️ SI ES NOTA (07 u 08) Y PASÓ DE PENDIENTE → EMITIDA, AFECTA LA FACTURA
+            if (
+                (documento.tipo_Doc === "07" || documento.tipo_Doc === "08") &&
+                estadoAnterior === "PENDIENTE" &&
+                nuevoEstado === "EMITIDA"
+            ) {
+                console.log(`🔄 Nota ${documento.serie}-${documento.correlativo} EMITIDA — actualizando factura asociada...`);
 
+                // Buscar la factura asociada
+                const facturaAsociada = await Factura.findByPk(doc.factura_id, { transaction });
+
+                if (facturaAsociada) {
+                    let valueEstado;
+
+                    // 🧩 Usar la misma lógica de decisión que en crear()
+                    if (doc.tipo_Doc === "07") {
+                        if (doc.motivo_Cod === "01" || doc.motivo_Cod === "02") {
+                            valueEstado = "ANULADA-NOTA";
+                        } else {
+                            valueEstado = "MODIFICADA-NOTA";
+                        }
+                    } else {
+                        valueEstado = "MODIFICADA-NOTA";
+                    }
+
+                    await facturaAsociada.update({ estado: valueEstado }, { transaction });
+                    console.log(`✅ Factura ${facturaAsociada.serie}-${facturaAsociada.correlativo} actualizada a estado ${valueEstado}`);
+                } else {
+                    console.warn(`⚠️ No se encontró factura asociada a la nota ${documento.serie}-${documento.correlativo}`);
+                }
+            }
+
+            await transaction.commit();
             console.log(`✅ ${documento.tipo_Doc} ${documento.serie}-${documento.correlativo} actualizado => ${nuevoEstado}`);
         } catch (error) {
             await transaction.rollback();

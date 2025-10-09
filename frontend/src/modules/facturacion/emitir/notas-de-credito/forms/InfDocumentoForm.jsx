@@ -11,6 +11,7 @@ import { useNota } from "@/modules/facturacion/context/NotaContext";
 import { formatDateTime } from "@/modules/facturacion/utils/formateos";
 import { ListTodo, LoaderCircle, Search, SquarePen } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { notaInical } from "../utils/valoresInicialNota";
 
 const InfDocumentoForm = () => {
   const {
@@ -19,6 +20,7 @@ const InfDocumentoForm = () => {
     filiales,
     correlativos,
     buscarCorrelativo,
+    buscarCorrelativoPendientes,
     serieCredito,
     serieDebito,
     correlativoEstado,
@@ -31,6 +33,11 @@ const InfDocumentoForm = () => {
 
   // ? ... otros estados
   const [mostrarPendientes, setMostrarPendientes] = useState(false);
+
+  const handleCorrelativos = () => {
+    buscarCorrelativo();
+    buscarCorrelativoPendientes();
+  };
 
   // ? Función para alternar la visibilidad de la lista
   const togglePendientes = () => {
@@ -84,7 +91,17 @@ const InfDocumentoForm = () => {
   };
 
   const handleSelectChange = (value, name) => {
-    if (name == "tipo_Doc") {
+    if (name == "empresa_Ruc") {
+      setNotaCreditoDebito((prevValores) => ({
+        ...prevValores,
+        ...notaInical,
+        serie: prevValores.serie,
+        tipo_Doc: prevValores.tipo_Doc,
+        empresa_Ruc: value,
+      }));
+      // buscarCorrelativo();
+      setDocumentoAAfectar(ValorInicialDetalleNota);
+    } else if (name == "tipo_Doc") {
       setNotaCreditoDebito((prevValores) => ({
         ...prevValores,
         tipo_Doc: value,
@@ -126,7 +143,7 @@ const InfDocumentoForm = () => {
     setNotaCreditoDebito((prev) => ({
       ...prev,
       serie: nuevaSerie,
-      correlativo: "", // Limpiar el correlativo para que se recalcule
+      correlativo: "",
       detalle: [],
       motivo_Cod: "",
     }));
@@ -340,7 +357,7 @@ const InfDocumentoForm = () => {
               <div className="flex gap-x-1">
                 <button
                   className="bg-innova-blue hover:bg-innova-blue-hover focus:ring-innova-blue cursor-pointer rounded-md p-2 text-white transition-colors duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none"
-                  onClick={buscarCorrelativo}
+                  onClick={handleCorrelativos}
                 >
                   {loadingCorrelativo ? (
                     <LoaderCircle className="size-5 animate-spin" />

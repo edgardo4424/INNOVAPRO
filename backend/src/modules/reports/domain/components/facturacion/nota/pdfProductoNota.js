@@ -13,7 +13,7 @@ function pdfProductoNota(
     return (
         {
             table: {
-                widths: ['10%', '5%', '15%', '45%', '8%', '8%', '9%'],
+                widths: ['10%', '5%', '15%', '41%', '12%', '8%', '9%'],
                 body: [
                     [
                         { text: 'COD', style: 'tableHeaderMain', fillColor: bg_color, alignment: 'center' },
@@ -27,7 +27,7 @@ function pdfProductoNota(
                     ...(detalles?.length ? detalles : []).map(d => [
                         { text: d.cod_Producto || "—", style: 'tableBody', alignment: 'center' },
                         { text: `${Number(d.cantidad ?? 0).toFixed(2)}`, style: 'tableBody', alignment: 'center' },
-                        { text: d.unidad || 'NIU', style: 'tableBody', alignment: 'center' },
+                        { text: utils.getUnidadDeMedida(d.unidad) || 'NIU', style: 'tableBody', alignment: 'center' },
                         { text: d.descripcion, style: 'tableBody' },
                         { text: d.Descuentos ? JSON.parse(d.Descuentos)[0].montoBase.toFixed(2) : `${d.monto_Valor_Unitario ? d.monto_Valor_Unitario : "-"}`, style: 'tableBody', alignment: 'center' },
                         { text: d.Descuentos ? JSON.parse(d.Descuentos)[0].Monto.toFixed(2) : "-", style: 'tableBody', alignment: 'center' },
@@ -37,13 +37,13 @@ function pdfProductoNota(
             },
             layout: {
                 hLineWidth: function (i, node) {
-                    return i === 0 || i === node.table.body.length ? 1 : 0;
+                    return i === 0 || i === node.table.body.length || i === node.table.body.length + 6 ? 1 : 0;
                 },
                 hLineColor: function (i, node) {
-                    return i === 0 || i === node.table.body.length ? innova_border : innova_border;
+                    return i % 2 === 0 ? innova_border : innova_border;
                 },
-                vLineWidth: function (i, node) {
-                    return 0; // Se eliminan las líneas verticales para un aspecto más limpio
+                vLineColor: function (i, node) {
+                    return i % 2 === 0 ? innova_border : innova_border;
                 }
             },
         });
