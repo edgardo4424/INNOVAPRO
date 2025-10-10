@@ -11,7 +11,7 @@ const { pdfObservacionesGuia } = require("../../components/facturacion/guia/pdfO
 function guiaTemplate(data) {
     const guia = data[0];
     //* Colores base
-    const text_innova_gray = '#616161'   //? Texto principal
+    const text_innova_gray = '#000000'   //? Texto principal
     const bg_innova_gray = '#DCDBDB'   //? Fondo o relleno
     const innova_white = '#FFFFFF'   //? Fondo neutro / contraste
     const innova_blue = '#1b274a'   //? Primario corporativo (seriedad, confianza)
