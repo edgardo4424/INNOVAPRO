@@ -81,12 +81,16 @@ function proyectarIngresosAnuales({
   const asignacion_familiar_proj_multi = af_multi?.proyeccion_total_otras || 0;
 
   const remunearcion_prev_multi = remu_multi?.previos_total_otras || 0;
+  const remuneracion_mes_actual_otras = remu_multi?.mes_actual_otras || 0;
   const remuneracion_proj_multi = remu_multi?.proyeccion_total_otras || 0;
-
+  console.log("remunearcion_prev_multi: ", remunearcion_prev_multi);
+  console.log("remuneracion_mes_actual_otras: ", remuneracion_mes_actual_otras);
+  console.log("remuneracion_proj_multi: ", remuneracion_proj_multi);
   const total_multi_empleo =
     grati_pagadas_multi + grati_proy_julio_multi + grati_proy_diciembre_multi +
     asignacion_familiar_prev_multi + asignacion_familiar_proj_multi +
-    remunearcion_prev_multi + remuneracion_proj_multi;
+    remunearcion_prev_multi + remuneracion_mes_actual_otras + 
+    remuneracion_proj_multi;
   
   const af_proj_actual = Number(asignacion_familiar_proj_actual || 0);
 
@@ -97,7 +101,7 @@ function proyectarIngresosAnuales({
     total_multi_empleo +
     af_proj_actual +    
     Number(otrosIngresosProyectados || 0);
-
+  console.log("TOTAAAAAL: ", total);
   return round2(total);
 }
 

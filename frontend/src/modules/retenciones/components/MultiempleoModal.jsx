@@ -1,4 +1,5 @@
-import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter } from "@/components/ui/alert-dialog";
+// INNOVA PRO+ v1.3.1 — Quinta: Multiempleo con Dialog (fix overlay anidado)
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -11,15 +12,11 @@ const MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto"
 export default function MultiempleoModal({ open, onClose, dni, anio, filiales = [], currentFilialId, onSaved }) {
   const m = useMultiempleo({ open, dni, anio, filiales, currentFilialId });
 
-  // Derivados de estado
   const isSecundaria = !!m.es_secundaria;
   const faltaFilialSiPrincipal = !isSecundaria && !m.filial_principal_id;
-  const filialProhibidaSiSecundaria = isSecundaria && !!m.filial_principal_id; // resguardamos por si acaso
+  const filialProhibidaSiSecundaria = isSecundaria && !!m.filial_principal_id;
 
-  const canSave =
-    !m.loading &&
-    !faltaFilialSiPrincipal &&
-    !filialProhibidaSiSecundaria;
+  const canSave = !m.loading && !faltaFilialSiPrincipal && !filialProhibidaSiSecundaria;
 
   const handleSave = async () => {
     const saved = await m.save();
@@ -32,10 +29,8 @@ export default function MultiempleoModal({ open, onClose, dni, anio, filiales = 
   const onToggleSecundaria = (checked) => {
     m.setEsSecundaria(checked);
     if (checked) {
-      // Somos secundarios: no hay principal interno
       m.setFilialPrincipalId("");
     } else {
-      // Somos principales: limpiamos datos de principal externo y, si hay currentFilialId, lo usamos
       m.setPrincipalRuc("");
       m.setPrincipalRazon("");
       if (!m.filial_principal_id && currentFilialId) {
@@ -45,20 +40,16 @@ export default function MultiempleoModal({ open, onClose, dni, anio, filiales = 
   };
 
   return (
-    <AlertDialog open={open} onOpenChange={(v) => !v && onClose?.()}>
-      <AlertDialogContent className="sm:max-w-[720px]">
-        <AlertDialogHeader>
-          <AlertDialogTitle>Declaración jurada de multiempleo</AlertDialogTitle>
-        </AlertDialogHeader>
+    <Dialog open={open} onOpenChange={(v) => { if (!v) onClose?.(); }}>
+      <DialogContent className="sm:max-w-[720px]">
+        <DialogHeader>
+          <DialogTitle>Declaración jurada de multiempleo</DialogTitle>
+        </DialogHeader>
 
         {/* Archivo soporte */}
         <div className="space-y-2">
           <Label className="text-xs">Documento soporte (PDF/JPG/PNG)</Label>
-          <Input
-            type="file"
-            accept=".pdf,image/*"
-            onChange={(e) => m.onArchivoChange(e.target.files?.[0] || null)}
-          />
+          <Input type="file" accept=".pdf,image/*" onChange={(e) => m.onArchivoChange(e.target.files?.[0] || null)} />
           {!!m.archivoUrl && (
             <p className="text-[11px]">
               Actual:{" "}
@@ -99,21 +90,11 @@ export default function MultiempleoModal({ open, onClose, dni, anio, filiales = 
         <div className="grid grid-cols-2 gap-3 mt-2">
           <div>
             <Label className="text-xs">Renta bruta anual de otros empleadores</Label>
-            <Input
-              inputMode="decimal"
-              step="0.01"
-              value={m.renta_bruta_otros_anual}
-              onChange={(e)=>m.setRentaOtros(e.target.value)}
-            />
+            <Input inputMode="decimal" step="0.01" value={m.renta_bruta_otros_anual} onChange={(e)=>m.setRentaOtros(e.target.value)} />
           </div>
           <div>
             <Label className="text-xs">Retenciones previas de otros empleadores</Label>
-            <Input
-              inputMode="decimal"
-              step="0.01"
-              value={m.retenciones_previas_otros}
-              onChange={(e)=>m.setRetOtros(e.target.value)}
-            />
+            <Input inputMode="decimal" step="0.01" value={m.retenciones_previas_otros} onChange={(e)=>m.setRetOtros(e.target.value)} />
           </div>
         </div>
 
@@ -138,9 +119,7 @@ export default function MultiempleoModal({ open, onClose, dni, anio, filiales = 
             />
           </div>
           {!isSecundaria && (
-            <p className="col-span-2 text-[11px] text-slate-500">
-              Como somos <strong>principal</strong>, estos datos no aplican.
-            </p>
+            <p className="col-span-2 text-[11px] text-slate-500">Como somos <strong>principal</strong>, estos datos no aplican.</p>
           )}
         </div>
 
@@ -156,9 +135,7 @@ export default function MultiempleoModal({ open, onClose, dni, anio, filiales = 
               onChange={(e)=>m.setFilialPrincipalId(e.target.value)}
               disabled={isSecundaria}
             >
-              <option value="">
-                {isSecundaria ? "No aplica (somos secundarios)" : "Selecciona una filial"}
-              </option>
+              <option value="">{isSecundaria ? "No aplica (somos secundarios)" : "Selecciona una filial"}</option>
               {filiales.map(f => (
                 <option key={f.filial_id} value={String(f.filial_id)}>
                   {(f.filial_razon_social || `Filial ${f.filial_id}`)}
@@ -181,13 +158,11 @@ export default function MultiempleoModal({ open, onClose, dni, anio, filiales = 
           </div>
         </div>
 
-        <AlertDialogFooter className="mt-4">
+        <DialogFooter className="mt-4">
           <Button variant="ghost" onClick={onClose} disabled={m.loading}>Cancelar</Button>
-          <Button onClick={handleSave} disabled={!canSave}>
-            {m.loading ? "Guardando..." : "Guardar"}
-          </Button>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+          <Button onClick={handleSave} disabled={!canSave}>{m.loading ? "Guardando..." : "Guardar"}</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

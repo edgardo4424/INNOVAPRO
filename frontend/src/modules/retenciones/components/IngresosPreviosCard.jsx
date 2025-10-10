@@ -1,4 +1,3 @@
-// INNOVA PRO+ v1.2.0 — Quinta: Card compacta + un solo botón “Soportes”
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -32,7 +31,6 @@ export default function IngresosPreviosCard({
   const C = (valor) => currency.format(Number(valor || 0));
   const labelFilial = (id) => rsById[String(id)] || `Filial #${id}`;
 
-  // Indicadores de soportes detectados (de cualquier fuente disponible en el preview/meta)
   const soportes = {
     multiempleo: !!(meta?.soportes_json?.multiempleo || preview?.soportes?.multiempleo),
     certificado: !!(meta?.soportes_json?.certificado || preview?.soportes?.certificado),
@@ -49,7 +47,6 @@ export default function IngresosPreviosCard({
   return (
     <div className={["p-3 border rounded bg-white w-full", dense ? "text-[11.5px]" : "text-sm", className].join(" ")}>
 
-      {/* Contexto de varias filiales */}
       {meta?.origen_retencion !== "NINGUNO" && (
         <div className="mt-2 p-2 border rounded bg-slate-50">
           <div className="text-[11px] text-slate-700 font-semibold mb-1">Contexto de retención (varias filiales)</div>
@@ -80,7 +77,6 @@ export default function IngresosPreviosCard({
         </div>
       )}
 
-      {/* Acumulados de la filial actual */}
       <div className="mt-2 p-2 border rounded bg-slate-50">
         <div className="text-[11px] text-slate-700 font-semibold mb-1">Acumulados de esta filial</div>
         <div className="grid gap-1">
@@ -91,12 +87,6 @@ export default function IngresosPreviosCard({
               <Row llave="Bonos" valor={C(inPrev.bonos)} />
               <Row llave="Asignación familiar" valor={C(inPrev.asignacion_familiar)} />
               <Row llave="TOTAL" valor={C(total)} />
-              {preview?.retencion_meta?.meta?.ingresos_previos_externos > 0 && (
-                <div className="mt-1 text-[11px] text-slate-600">
-                  Externos ({preview?.retencion_meta?.meta?.fuente_externos === 'CERTIFICADO' ? 'Certificado' : 'DJ'}{preview?.retencion_meta?.meta?.certificado_aplica_desde ? ` desde ${['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][preview.retencion_meta.meta.certificado_aplica_desde]}` : ''}):{" "}
-                  <span className="font-semibold">S/ {Number(preview.retencion_meta.meta.ingresos_previos_externos || 0).toFixed(2)}</span>
-                </div>
-              )}
             </>
           ) : (
             <p className="text-gray-500 italic">No existen ingresos previos registrados.</p>
@@ -104,35 +94,25 @@ export default function IngresosPreviosCard({
         </div>
       </div>
 
-      {/* NUEVA sección “Fuente + Soportes” */}
       <div className="mt-2 p-2 border rounded bg-amber-50 text-gray-700">
         <div className="flex items-center justify-between mb-2">
           <p className="font-semibold">Fuente actual: <span className="font-medium">{fuenteLabel}</span></p>
-
-          {/* Acción secundaria para mantener tu flujo actual */}
-          <Button size="sm" variant="outline" className="h-6 px-2 text-[11px] bg-white"
-            onClick={onClickAuto}>
+          <Button size="sm" variant="outline" className="h-6 px-2 text-[11px] bg-white" onClick={onClickAuto}>
             Usar proyección automática
           </Button>
         </div>
 
-        {/* Indicadores de soportes detectados */}
         <div className="flex flex-wrap gap-1.5 mb-2">
           <Badge variant={soportes.multiempleo ? "default" : "secondary"} className="text-[10px]">Multiempleo</Badge>
           <Badge variant={soportes.certificado ? "default" : "secondary"} className="text-[10px]">Certificado 5ta</Badge>
           <Badge variant={soportes.sinprevios ? "default" : "secondary"} className="text-[10px]">Sin ingresos previos</Badge>
         </div>
 
-        {/* ÚNICO BOTÓN */}
-        <Button
-          onClick={onOpenSoportes}
-          className="h-7 px-3 text-[11px] bg-amber-600 text-white hover:opacity-95"
-        >
-          Ver / editar soportes de ingresos previos
+        <Button onClick={onOpenSoportes} className="h-7 px-3 text-[11px] bg-amber-600 text-white hover:opacity-95">
+          Soportes de ingresos previos
         </Button>
       </div>
 
-      {/* Warnings */}
       {Array.isArray(warnings) && warnings.length > 0 && (
         <div className="mt-2 p-2 border rounded bg-amber-50 text-amber-900">
           <div className="text-[11px] font-semibold">Advertencias</div>

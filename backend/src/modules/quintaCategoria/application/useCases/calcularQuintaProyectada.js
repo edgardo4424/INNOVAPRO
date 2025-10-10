@@ -57,7 +57,7 @@ module.exports = class CalcularQuintaProyectada {
       mes, remuneracionMensualActual, ingresosPreviosAcumulados, ingresos_previos_internos,
       gratiJulioProyectada, gratiDiciembreProyectada, otrosIngresosProyectados, grati_multi, af_multi,
       remu_multi, fuentePrevios, asignacion_familiar_proj_actual: Number(ingresosPrevios.asignacion_familiar_proj || 0),
-    });
+    }); 
 
     // Calculamos la retención base del mes
     const base = calcularRetencionBaseMes({
