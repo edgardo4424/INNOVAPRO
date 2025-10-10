@@ -35,8 +35,9 @@ module.exports = async function _ejecutarCalculoQuinta(req, isRecalculo = false)
   }
 
   // Normalizaciones de entrada
-  const filialActualId = Number(req.body.__filialId);
-  const dni = String(req.body.dni || "");
+  let filialActualId = Number(req.body.__filialId);
+  if (!Number.isFinite(filialActualId)) filialActualId = 0;
+  const dni  = String(req.body.dni || "");
   const anio = Number(req.body.anio);
   const mes  = Number(req.body.mes);
 
@@ -140,6 +141,7 @@ module.exports = async function _ejecutarCalculoQuinta(req, isRecalculo = false)
   if (soportes.meta.es_secundaria) {
     dto.retencion_base_mes = 0;
     dto.retencion_adicional_mes = 0;
+    soportes.meta.filial_retiene_id = null;
   }
 
   // Warnings

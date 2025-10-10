@@ -25,7 +25,7 @@ const AdelantoSueldoController = {
             nuevo_adelanto_sueldo.respuesta
          );
       } catch (error) {
-         
+         console.log('error', error);
          res.status(500).json({ error: error.message });
       }
    },

@@ -6,6 +6,8 @@ const {
 function pdfSeccionVacaciones({ contrato, detalles_liquidacion, trabajador }) {
   const { informacionLiquidacion, vacacionesTrunca } = detalles_liquidacion;
 
+  console.log('vacacionesTrunca', vacacionesTrunca);
+
   if(vacacionesTrunca == null) return; 
 
   const mensaje_vacaciones_tiempo_computado = construirMensajeTiempo({

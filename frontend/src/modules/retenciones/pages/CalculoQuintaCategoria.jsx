@@ -1,4 +1,3 @@
-// INNOVA PRO+ v1.2.1 — Quinta: Modal unificado de Soportes + fix openMasivo
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -9,8 +8,8 @@ import { toast } from "react-toastify";
 
 import { currency } from "../utils/ui";
 import { useQuintaCategoria } from "../hooks/useQuintaCategoria";
-import { useCierreQuinta } from '../hooks/useCierreQuinta';
-import { cerrarPeriodoQuinta, getEstadoCierre } from "../service/cierreQuintaService";
+import { useCierreQuinta } from "../hooks/useCierreQuinta";
+import { cerrarPeriodoQuinta } from "../service/cierreQuintaService";
 
 import TrabajadorCombobox from "../components/TrabajadorCombobox";
 import HistorialTabla from "../components/HistorialTabla";
@@ -18,11 +17,10 @@ import IngresosPreviosCard from "../components/IngresosPreviosCard";
 import PreviewResultados from "../components/PreviewResultados";
 import TramosDetalle from "../components/TramosDetalle";
 import RetencionMetaBanner from "../components/RetencionMetaBanner";
+import MultiempleoResumen from "../components/MultiempleoResumen";
 import MasivoQuintaModal from "../components/MasivoQuintaModal";
-import CierreQuintaBanner from '../components/CierreQuintaBanner';
-
-// NUEVO: modal unificado
 import SoportesPreviosModal from "../components/SoportesPreviosModal";
+import CierreQuintaBanner from '../components/CierreQuintaBanner';
 
 export default function CalculoQuintaCategoria() {
   const {
@@ -37,14 +35,13 @@ export default function CalculoQuintaCategoria() {
   const anio = form.anio;
   const mes = form.mes;
 
-  const { cerrado, loading: closing, cerrar, periodo } = useCierreQuinta({ filialId, anio, mes });
+  const { cerrado, periodo } = useCierreQuinta({ filialId, anio, mes });
 
   const [loadingClose, setLoadingClose] = useState(false);
   const [cerradoOV, setCerradoOV] = useState(false);
 
-  // NUEVO: estados de modales
   const [openSoportes, setOpenSoportes] = useState(false);
-  const [openMasivo, setOpenMasivo] = useState(false); // <-- FIX
+  const [openMasivo, setOpenMasivo] = useState(false);
 
   const onAnioChange = (valor) => { handleChange("anio", valor); resetPreview?.(); };
   const onMesChange  = (valor) => { handleChange("mes", valor);  resetPreview?.(); };
@@ -68,8 +65,13 @@ export default function CalculoQuintaCategoria() {
     []
   );
 
-  const obtenerSinPreviosDelPreview = (out) =>
-    out?.soportes?.sinPrevios || out?.retencion_meta?.soportes_json?.sin_previos || null;
+  const openSoportesGuardado = () => {
+    if (!form.trabajadorId || !form.dni || !form.anio) {
+      toast.warning("Selecciona año, mes y trabajador para gestionar soportes.");
+      return;
+    }
+    setOpenSoportes(true);
+  };
 
   return (
     <div className="p-2 sm:p-3 xl:p-4 min-h-[calc(100vh-70px)] overflow-auto">
@@ -87,8 +89,6 @@ export default function CalculoQuintaCategoria() {
             const ok = (r.status >= 200 && r.status < 300) || r?.data?.ok;
             if (ok) {
               setCerradoOV(true);
-              const estado = await getEstadoCierre({ filialId: filial_id, periodo });
-              if (!estado) console.warn("Cierre aparentemente OK pero el estado devolvió abierto");
               toast.success(`Se cerró ${periodo} para la filial ${filial_id}.`);
               return true;
             }
@@ -104,7 +104,7 @@ export default function CalculoQuintaCategoria() {
       />
 
       <div className="flex flex-col xl:flex-row gap-3 h-full">
-        {/* Izquierda: fija */}
+        {/* Izquierda */}
         <div className="w-full xl:w-[605px] shrink-0 flex flex-col gap-2 min-h-0">
           <Card className="shadow-sm">
             <CardHeader className="py-1">
@@ -120,9 +120,7 @@ export default function CalculoQuintaCategoria() {
                       <SelectTrigger className="h-6 w-full text-[11px]">
                         <SelectValue placeholder="Selecciona el año" />
                       </SelectTrigger>
-                      <SelectContent>
-                        {YEARS.map(y => <SelectItem key={y} value={y}>{y}</SelectItem>)}
-                      </SelectContent>
+                      <SelectContent>{YEARS.map(y => <SelectItem key={y} value={y}>{y}</SelectItem>)}</SelectContent>
                     </Select>
                     {errors?.anio && <p className="text-[11px] text-red-600">{errors?.anio}</p>}
                   </div>
@@ -135,7 +133,8 @@ export default function CalculoQuintaCategoria() {
                       </SelectTrigger>
                       <SelectContent>
                         {Array.from({length:12}).map((_,i)=>(
-                          <SelectItem key={i+1} value={String(i+1)}>{MESES[i]}</SelectItem>))}
+                          <SelectItem key={i+1} value={String(i+1)}>{MESES[i]}</SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     {errors?.mes && <p className="text-[11px] text-red-600">{errors?.mes}</p>}
@@ -148,7 +147,8 @@ export default function CalculoQuintaCategoria() {
                     <TrabajadorCombobox
                       trabajadores={trabajadores}
                       value={form.trabajadorId || ""}
-                      onSelect={onTrabSelect} dense
+                      onSelect={onTrabSelect}
+                      dense
                     />
                     {errors?.trabajadorId && <p className="text-[11px] text-red-600">{errors?.trabajadorId}</p>}
                   </div>
@@ -179,37 +179,23 @@ export default function CalculoQuintaCategoria() {
                 </Button>
 
                 <Button
-                  onClick={() => setOpenSoportes(true)}
-                  className="
-                    h-7 px-3 text-[11px]
-                    bg-amber-600 text-white
-                    border-0 rounded-sm shadow-sm
-                    hover:shadow-lg hover:opacity-95
-                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-amber-500/60
-                    transition-transform duration-200 active:translate-y-[1px]
-                  "
+                  onClick={openSoportesGuardado}
+                  className="h-7 px-3 text-[11px] bg-amber-600 text-white hover:opacity-95"
                 >
-                  Gestionar soportes de ingresos previos
+                  Soportes de ingresos previos
                 </Button>
 
                 <Button
                   onClick={() => setOpenMasivo(true)}
-                  className="
-                    h-7 px-3 text-[11px]
-                    bg-gradient-to-r from-innova-blue to-black text-white
-                    border-0 rounded-sm shadow-sm 
-                    hover:shadow-lg hover:opacity-95
-                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-innova-orange/60
-                    transition-transform duration-200 active:translate-y-[1px]
-                  "
+                  className="h-7 px-3 text-[11px] bg-gradient-to-r from-innova-blue to-black text-white hover:opacity-95"
                 >
                   <Calculator className="w-4 h-4 mr-1.5" />
                   Cálculo masivo
                 </Button>
 
                 {yaExisteOficialEnMes ? (
-                  <Button 
-                    className="h-7 px-2 text-[11px]" 
+                  <Button
+                    className="h-7 px-2 text-[11px]"
                     onClick={() => vigenteDelMes && handleRecalcular(vigenteDelMes)}
                     disabled={cerrado}
                     variant="secondary"
@@ -217,10 +203,10 @@ export default function CalculoQuintaCategoria() {
                     Recalcular vigente
                   </Button>
                 ) : (
-                  <Button 
-                    className="h-7 px-2 text-[11px]" 
-                    onClick={handleGuardar} 
-                    variant="secondary" 
+                  <Button
+                    className="h-7 px-2 text-[11px]"
+                    onClick={handleGuardar}
+                    variant="secondary"
                     disabled={cerrado || !preview || saving}
                   >
                     {saving ? "Guardando..." : "Guardar como oficial"}
@@ -240,7 +226,7 @@ export default function CalculoQuintaCategoria() {
                   fuentePrevios={form.fuentePrevios}
                   filiales={filiales}
                   onClickAuto={onClickAuto}
-                  onOpenSoportes={() => setOpenSoportes(true)} // único botón
+                  onOpenSoportes={openSoportesGuardado}
                   className="h-full overflow-auto"
                 />
               </div>
@@ -277,12 +263,12 @@ export default function CalculoQuintaCategoria() {
             onDone={() => {}}
           />
 
-          {/* NUEVO: Soportes Unificado */}
           <SoportesPreviosModal
             open={openSoportes}
             onClose={() => setOpenSoportes(false)}
             dni={form.dni}
             anio={form.anio}
+            filiales={filiales}
             currentFilialId={form.filial_id || undefined}
             onSaved={onSoportesGuardado}
           />
@@ -309,9 +295,13 @@ export default function CalculoQuintaCategoria() {
             </CardHeader>
             <CardContent className="min-h-0 p-2">
               <TramosDetalle dense preview={preview}/>
-              <div className="text-[11px] text-slate-500 mt-1">
-                Divisor aplicado: <b>{kpis?.divisor ?? "-"}</b>
-              </div>
+              <MultiempleoResumen 
+                ingresosPrevios={preview?.ingresos_previos}
+                filiales={filiales}
+                retencionMeta={preview?.retencion_meta}
+                currentFilialId={form.filial_id}
+                mesActual={preview?.trabajador?.mes}
+              />
             </CardContent>
           </Card>
         </div>

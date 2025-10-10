@@ -164,7 +164,6 @@ const GestionTrabajadoresDadosDeBaja = () => {
     try {
       setErrorMsg(null);
 
-      console.log('form', form);
       if (viewMode === "crear") {
         await trabajadoresDadosDeBajaService.darDeBajaTrabajador(form);
         toast.success("Trabajador dado de baja correctamente");
@@ -192,8 +191,6 @@ const GestionTrabajadoresDadosDeBaja = () => {
  const handleDownload = async (id, dni, nombre_completo_trabajador) => {
   try {
     const response = await trabajadoresDadosDeBajaService.reporteLiquidacion(id);
-
-    console.log("response completo", response);
 
     let blob;
     if (response.data instanceof Blob) {

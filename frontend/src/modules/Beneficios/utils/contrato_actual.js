@@ -9,10 +9,7 @@ export function obtenerContratoActual(contratos) {
   });
 
   if (!contratosActuales) return null; // Si no hay contrato vigente
-  let nombre_filiales=[];
-  for (let i = 0; i < contratosActuales.length; i++) {
-      nombre_filiales.push(contratosActuales[i].empresa_proveedora.razon_social)
-  }  
+  const nombre_filiales = [...new Set(contratosActuales.map(c => c.empresa_proveedora.razon_social))];
   
   return nombre_filiales
 }

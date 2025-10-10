@@ -8,7 +8,7 @@ module.exports = async (
 ) => {
   const transaction = await db.sequelize.transaction();
   try {
-    // Verificar si ya está cerrado
+    // Verificamos si ya está cerrado el período
     const cierreExistente = await quintaRepository.obtenerCierreQuinta(
       periodo,
       filial_id,
@@ -25,7 +25,7 @@ module.exports = async (
     let cierreId = null;
 
     if (cierreExistente) {
-      // actualizar cierre existente
+      // actualizamos el cierre existente
       await quintaRepository.actualizarCierreQuinta(
         cierreExistente.id,
         {
@@ -36,7 +36,7 @@ module.exports = async (
       );
       cierreId = cierreExistente.id;
     } else {
-      // crear nuevo cierre
+      // creamos un nuevo cierre
       const dataCierre = {
         filial_id,
         periodo,

@@ -105,6 +105,7 @@ class SequelizeTrabajadorRepository {
             },
             {
                model: db.contratos_laborales,
+               where: { estado: 1 },
                as: "contratos_laborales",
                include: [
                   { model: db.empresas_proveedoras, as: "empresa_proveedora" },

@@ -253,7 +253,6 @@ class SequelizeGratificacionRepository {
 
   async calcularGratificacionTruncaPorTrabajador(periodo, anio, filial_id, trabajador_id, transaction = null) {
 
-    // console.log('calculando gratificacion trunca por trabajador');
 
     const MONTO_ASIGNACION_FAMILIAR = Number(
       (

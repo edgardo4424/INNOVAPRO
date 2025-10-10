@@ -123,6 +123,7 @@ class SequelizeContratoLaboralRepository {
   }
 
   const contrato = await ContratoLaboral.findOne(options);
+  console.log('contrato', contrato);
   
   return contrato.get({plain:true});
 }

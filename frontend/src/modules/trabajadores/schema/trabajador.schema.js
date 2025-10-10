@@ -18,10 +18,15 @@ const contratoSchema = yup.object({
          "fecha-fin-debe-ser-posterior",
          "La fecha fin debe ser posterior a la fecha de inicio",
          function (value) {
-            if (!value) return true; // Si es null o vacío, pasa
-            const { fecha_inicio } = this.parent;
-            console.log('this.parent', this.parent);
-            return fecha_inicio && value > fecha_inicio;
+            //if (!value) return true; // Si es null o vacío, pasa
+         
+            const { fecha_inicio, es_indefinido } = this.parent;
+          
+            if(es_indefinido){
+               return true;
+            }else{
+               return value > fecha_inicio;
+            }
          }
       )
       .typeError("La fecha de fin no es válida"),
@@ -223,7 +228,6 @@ export const trabajadorSchema = (isEdit = false, isGerente = false) =>
         "cuspp-afp",
         "El CUSPP debe tener máximo 13 caracteres",
         function (value) {
-         console.log('value', value);
           if(value){
             // Si tiene valor, validar longitud exacta de 13
             return value.length == 13;

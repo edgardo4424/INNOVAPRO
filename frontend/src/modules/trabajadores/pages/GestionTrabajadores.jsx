@@ -48,7 +48,10 @@ export default function CompGestionTrabajadoresonent() {
    const [searchTerm, setSearchTerm] = useState("");
    const [areaFilter, setAreaFilter] = useState("all");
    const [pensionFilter, setPensionFilter] = useState("all");
+   const [filialFilter, setFilialFilter] = useState("all");
    const navigate = useNavigate();
+
+   const [listaFiliales, setListaFiliales] = useState([])
 
    // Función para cargar trabajadores
    const fetchTrabajadores = async () => {
@@ -56,7 +59,7 @@ export default function CompGestionTrabajadoresonent() {
          setLoading(true);
          setError(null);
          const response = await trabajadoresService.getTrabajadores();
-         console.log('response', response.data);
+      
          setTrabajadores(response.data);
       } catch (error) {
          console.error("Error al cargar trabajadores", error);
@@ -68,8 +71,22 @@ export default function CompGestionTrabajadoresonent() {
       }
    };
 
+   const fetchFiliales = async () => {
+      try {
+         setLoading(true);
+         setError(null);
+         const response = await trabajadoresService.getFiliales();
+   
+         setListaFiliales(response.data);
+      } catch (error) {
+         setListaFiliales([]);
+      } finally {
+      }
+   };
+
    // Cargar datos al montar el componente
    useEffect(() => {
+      fetchFiliales();
       fetchTrabajadores();
    }, []);
 
@@ -97,10 +114,17 @@ export default function CompGestionTrabajadoresonent() {
          const matchesPension =
             pensionFilter === "all" ||
             employee.sistema_pension === pensionFilter;
+         
+          // 🔹 Nueva validación: filtrar por filial dentro de los contratos laborales
+    const matchesFilial =
+      filialFilter === "all" ||
+      employee.filiales_ids?.some(
+        (id_contrato) => id_contrato === filialFilter
+      );
 
-         return matchesSearch && matchesArea && matchesPension;
+        return matchesSearch && matchesArea && matchesPension && matchesFilial;
       });
-   }, [trabajadores, searchTerm, areaFilter, pensionFilter]);
+   }, [trabajadores, searchTerm, areaFilter, pensionFilter, filialFilter, filialFilter]);
 
    // Calculate statistics
    const stats = useMemo(() => {
@@ -168,6 +192,8 @@ export default function CompGestionTrabajadoresonent() {
          </div>
       );
    }
+
+  
 
    return (
       <div className="space-y-6 p-6">
@@ -279,6 +305,26 @@ export default function CompGestionTrabajadoresonent() {
                         <SelectItem value="all">Todos los sistemas</SelectItem>
                         <SelectItem value="AFP">AFP</SelectItem>
                         <SelectItem value="ONP">ONP</SelectItem>
+                     </SelectContent>
+                  </Select>
+
+                  <Select
+                     value={filialFilter}
+                     onValueChange={setFilialFilter}
+                  >
+                     <SelectTrigger className="w-full md:w-[200px]">
+                        <SelectValue placeholder="Empresa" />
+                     </SelectTrigger>
+                     <SelectContent>
+                          <SelectItem value="all">Todos las empresas</SelectItem>
+                        {
+                           listaFiliales.map((filial) => (
+                              <SelectItem key={filial.id} value={filial.id}>
+                                 {filial.razon_social}
+                              </SelectItem>
+                           ))
+                        }
+                       
                      </SelectContent>
                   </Select>
                </div>

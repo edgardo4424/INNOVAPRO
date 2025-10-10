@@ -13,6 +13,7 @@ import { Eye } from "lucide-react";
 import { formatearFecha } from "../../utils/formatearFecha";
 
 export default function ModalInfoDetallesQuincenal({ data }) {
+   console.log('data', data);
    return (
       <AlertDialog>
          <AlertDialogTrigger asChild className="">
@@ -40,7 +41,7 @@ export default function ModalInfoDetallesQuincenal({ data }) {
                         <th className="truncate text-xs border px-2 py-2">Contrato</th>
                         <th className="truncate text-xs border px-2 py-2">Regimen</th>
                       
-                        <th className="truncate text-xs border px-2 py-2">Fecha Ingreso</th>
+                        {/* <th className="truncate text-xs border px-2 py-2">Fecha Ingreso</th> */}
                         <th className="truncate text-xs border px-2 py-2">Días Labor.</th>
                         <th className="truncate text-xs border px-2 py-2">Sueldo Base</th>
                         <th className="truncate text-xs border px-2 py-2">Sueldo Quincenal</th>
@@ -56,9 +57,9 @@ export default function ModalInfoDetallesQuincenal({ data }) {
                               {row.regimen}
                            </td>
                         
-                           <td className="border px-2 py-4.5 text-xs">
+                           {/* <td className="border px-2 py-4.5 text-xs">
                               {formatearFecha(row.fecha_ingreso)}
-                           </td>
+                           </td> */}
                            <td className="border px-2 py-4.5 text-xs">
                               {row.dias_laborados}
                            </td>
