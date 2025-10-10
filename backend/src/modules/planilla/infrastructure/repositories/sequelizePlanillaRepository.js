@@ -939,10 +939,9 @@ class SequelizePlanillaRepository {
             fin_de_mes
          );
          const DIAS_CONTRATADO=calcularDiasContratado(inicio_real,
-            fin_real,
-            inicio_de_mes,
-            fin_de_mes);
-        console.log("Dias",DIAS_CONTRATADO);
+            fin_contrato,
+            inicio_de_mes);
+        console.log("dIAS CONTRATADO EN RXH",DIAS_CONTRATADO);
         
          const SUMA_FALTAS=FALTAS_PRIMERA_Q+FALTAS_SEGUNDA_Q;
          data.trabajador_id=trabajador.id;
@@ -955,7 +954,7 @@ class SequelizePlanillaRepository {
          data.nombres_apellidos = `${trabajador.nombres} ${trabajador.apellidos}`;
          data.area = trabajador.cargo.area.nombre;
          data.fecha_ingreso = contratoInicial[0].fecha_inicio;
-         data.dias_labor = ((30 - DIAS_NO_CONTRATADOS) - SUMA_FALTAS)-CANTIDAD_VACACIONES_GOZADAS;
+         data.dias_labor = ((DIAS_CONTRATADO) - SUMA_FALTAS)-CANTIDAD_VACACIONES_GOZADAS;
          data.sueldo_basico = c.sueldo;
          data.sueldo_del_mes =(c.sueldo / 30) * data.dias_labor;
          data.vacaciones = (contrato_actual.sueldo/30)*CANTIDAD_VACACIONES_GOZADAS;
@@ -1238,7 +1237,7 @@ class SequelizePlanillaRepository {
       PORCENTAJE_DESCUENTO_COMISION_AFP_PRIMA,
       PORCENTAJE_DESCUENTO_COMISION_AFP_PROFUTURO,
     } = await datosMantPM();
-    //Todo: validamos que el mes que se recibe se integrara la grati o cts
+    //Todo: validamos que el mes que se recibe se le integrara la grati o cts
     const { periodocts, periodograti } = calcular_periodo_grati_cts(fin_de_mes);
 
     const response_trabajador = await db.trabajadores.findByPk(trabajador_id, {
@@ -1271,9 +1270,9 @@ class SequelizePlanillaRepository {
     const contratoInicial = filtrarContratosSinInterrupcion(
       trabajador.contratos_laborales
     );
-    if (trabajador.id == 1) {
-      console.log("Lucas contrato incial sin fecha", contratoInicial);
-    }
+    // if (trabajador.id == 1) {
+    //   console.log("Lucas contrato incial sin fecha", contratoInicial);
+    // }
 
     //Todo: Obtenemos los contratos que estan en el rango del mes
     const contratosEnRango = trabajador.contratos_laborales.filter(
@@ -1345,6 +1344,15 @@ class SequelizePlanillaRepository {
         inicio_de_mes,
         fin_de_mes
       );
+      const DIAS_CONTRATADO = calcularDiasContratado(
+        inicio_real,
+        fin_contrato,
+        inicio_de_mes,
+        c.es_indefinido
+      );
+      // console.log("DIAS CONTRTADO:   ",DIAS_CONTRATADO);
+      console.log(trabajador.nombres,DIAS_CONTRATADO);
+      
       const {
         faltas,
         faltas_justificadas,
@@ -1367,13 +1375,6 @@ class SequelizePlanillaRepository {
 
 
 
-        const dias_no_contratados = 12;
-        const DIAS_LABORADOS_BASE_30 = 30 - DIAS_NO_CONTRATADOS;
-
-        const total_dias_no_trabajados = faltas_justificadas + licencia_con_goce +licencia_sin_goce + CANTIDAD_VACACIONES_GOZADAS;
-
-         const dias_reales_laborados = DIAS_LABORADOS_BASE_30 - total_dias_no_trabajados;
-
       const DIAS_FIJOS = 30;
       planilla.tipo_documento = trabajador.tipo_documento;
       planilla.numero_documento = trabajador.numero_documento;
@@ -1390,11 +1391,11 @@ class SequelizePlanillaRepository {
 
       // ! dias de labor, se le resta--> dias mo contatados, faltas y dias de vacaciones;
       // prettier-ignore
-      planilla.dias_labor=(((dias_mes - DIAS_NO_CONTRATADOS) - faltas) - CANTIDAD_VACACIONES_GOZADAS)-licencia_con_goce;
+      planilla.dias_labor=(((DIAS_CONTRATADO) - faltas) - CANTIDAD_VACACIONES_GOZADAS)-licencia_con_goce;
       planilla.sueldo_basico = c.sueldo;
       // sueldo del mes: suedo que corresponde por los dias laborados
       // prettier-ignore
-      const DESCUENTO_DIAS=(((DIAS_FIJOS-DIAS_NO_CONTRATADOS)-CANTIDAD_VACACIONES_GOZADAS)-licencia_con_goce)-faltas_justificadas;
+      const DESCUENTO_DIAS=(((DIAS_CONTRATADO)-CANTIDAD_VACACIONES_GOZADAS)-licencia_con_goce)-faltas_justificadas;
       planilla.sueldo_del_mes = ((c.sueldo / 30) * DESCUENTO_DIAS).toFixed(2);
       if (trabajador.asignacion_familiar) {
         planilla.asig_fam = MONTO_ASIGNACION_FAMILIAR;

@@ -2,27 +2,42 @@ const calcularDiasContratado = (
    inicio_real,
    fin_real,
    inicio_de_mes,
-   fin_de_mes
+   es_indefinido
 ) => {
-   const inicioReal = new Date(inicio_real);
-   const finReal = new Date(fin_real);
-   const inicioMes = new Date(inicio_de_mes);
-   const finMes = new Date(fin_de_mes);
+   // Extraer días como enteros
+   const diaInicioContrato = parseInt(inicio_real.slice(8, 10));
+   const diaInicioMes = parseInt(inicio_de_mes.slice(8, 10));
+   const diaFinMes = 30;
 
-   // Determinar el inicio y fin del periodo efectivo de contratación dentro del mes
-   const inicioContrato = inicioReal > inicioMes ? inicioReal : inicioMes;
-   const finContrato = finReal < finMes ? finReal : finMes;
+   // Inicializamos diaFinContrato de forma segura
+   let diaFinContrato;
 
-   // Si el contrato no está vigente en este mes
-   if (finContrato < inicioContrato) {
-      return 0;
+   if (es_indefinido) {
+      diaFinContrato = diaFinMes; // usar siempre día 30
+   } else {
+      // Validar que fin_real existe antes de intentar parsear
+      if (typeof fin_real === 'string' && fin_real.length >= 10) {
+         diaFinContrato = parseInt(fin_real.slice(8, 10));
+      } else {
+         return 0; // o manejar según lógica deseada
+      }
    }
 
-   const diasContratados =
-      Math.floor((finContrato - inicioContrato) / (1000 * 60 * 60 * 24)) + 1;
 
-   return diasContratados;
+
+   const inicio = Math.max(diaInicioContrato, diaInicioMes);
+   const fin = Math.min(diaFinContrato, diaFinMes);
+
+
+   if (fin >= inicio) {
+      const dias = fin - inicio + 1;
+      return dias;
+   }
+
+   return 0;
 };
 
 module.exports = calcularDiasContratado;
+
+
 
