@@ -287,25 +287,37 @@ const getMotivoTrasladoDescription = (code) => {
 const getCodigoTraslado = (code) => {
   switch (code) {
     case "01":
-      return "Venta";
+      return "VENTA";
     case "02":
-      return "Venta sujeta a confirmación del comprador";
+      return "VENTA SUJETA A CONFIRMACION DEL COMPRADOR";
     case "04":
-      return "Traslado entre establecimientos de la misma empresa";
+      return "TRASLADO ENTRE ESTABLECIMIENTOS DE LA MISMA EMPRESA";
+    case "05":
+      return "CONSIGNACION";
+    case "06":
+      return "DEVOLUCION";
+    case "07":
+      return "RECOJO DE BIENES PARA TRASLADO POR PARTE DEL CLIENTE";
     case "08":
-      return "Importación";
+      return "IMPORTACION";
     case "09":
-      return "Exportación";
+      return "EXPORTACION";
     case "13":
-      return "Otros - Alquiler";
+      return "OTROS";
     case "14":
-      return "Venta con entrega a terceros";
+      return "VENTA CON ENTREGA A TERCEROS";
+    case "15":
+      return "TRASLADO DE BIENES PARA TRANSFORMACION";
+    case "16":
+      return "TRASLADO DE BIENES TRANSFORMADOS";
+    case "17":
+      return "TRASLADO PARA REPARACION";
     case "18":
-      return "Traslado emisor itinerante de comprobantes de pago";
+      return "TRASLADO EMISOR ITINERANTE DE COMPROBANTES DE PAGO";
     case "19":
-      return "Traslado a zona primaria";
+      return "TRASLADO A ZONA PRIMARIA";
     case "20":
-      return "Traslado por emisor itinerante (comprobante de pago)";
+      return "TRASLADO POR EMISOR ITINERANTE (COMPROBANTE DE PAGO)";
     default:
       return code;
   }
