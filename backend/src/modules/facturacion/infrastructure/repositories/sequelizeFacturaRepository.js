@@ -1165,6 +1165,7 @@ class SequelizeFacturaRepository {
                         [fn("SUM", literal("CASE WHEN tipo_doc = '03' THEN 1 ELSE 0 END")), "boleta_emitido"],
                         [fn("COUNT", literal("1")), "total_fact_doc"]
                     ],
+                    where: { estado: { [Op.notIn]: ['RECHAZADA', 'PENDIENTE'] } },
                     group: ["empresa_ruc"],
                     raw: true,
                 }),
@@ -1175,6 +1176,7 @@ class SequelizeFacturaRepository {
                         ["empresa_ruc", "empresa_ruc"],
                         [fn("COUNT", literal("1")), "guia_emitido"]
                     ],
+                    where: { estado: { [Op.notIn]: ['RECHAZADA', 'PENDIENTE'] } },
                     group: ["empresa_ruc"],
                     raw: true,
                 }),
@@ -1187,6 +1189,7 @@ class SequelizeFacturaRepository {
                         [fn("SUM", literal("CASE WHEN tipo_doc = '08' THEN 1 ELSE 0 END")), "nota_debito_emitido"],
                         [fn("COUNT", literal("1")), "total_notas_doc"]
                     ],
+                    where: { estado: { [Op.notIn]: ['RECHAZADA', 'PENDIENTE'] } },
                     group: ["empresa_ruc"],
                     raw: true,
                 }),
@@ -1286,7 +1289,7 @@ class SequelizeFacturaRepository {
 
             // Función para consultar y fusionar por un rango arbitrario
             async function queryRange(startDate, endDate) {
-                // FACTURA: sumas por día (DATE) y por RUC, separando tipo_doc 01/03
+                //! FACTURA: sumas por día (DATE) y por RUC, separando tipo_doc 01/03
                 const fact = await Factura.findAll({
                     attributes: [
                         [literal('DATE(fecha_emision)'), 'fecha'],
@@ -1299,12 +1302,15 @@ class SequelizeFacturaRepository {
                             [Op.gte]: `${startDate} 00:00:00`,
                             [Op.lte]: `${endDate} 23:59:59`,
                         },
+                        estado: {
+                            [Op.notIn]: ['RECHAZADA', 'PENDIENTE']
+                        },
                     },
                     group: [literal('DATE(fecha_emision)'), 'empresa_ruc'],
                     raw: true,
                 });
 
-                // NOTAS: sumas por día y por RUC, separando 07/08
+                // ! NOTAS: sumas por día y por RUC, separando 07/08
                 const notas = await NotasCreditoDebito.findAll({
                     attributes: [
                         [literal('DATE(fecha_emision)'), 'fecha'],
@@ -1316,6 +1322,9 @@ class SequelizeFacturaRepository {
                         fecha_emision: {
                             [Op.gte]: `${startDate} 00:00:00`,
                             [Op.lte]: `${endDate} 23:59:59`,
+                        },
+                        estado: {
+                            [Op.notIn]: ['RECHAZADA', 'PENDIENTE']
                         },
                     },
                     group: [literal('DATE(fecha_emision)'), 'empresa_ruc'],
