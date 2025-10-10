@@ -172,7 +172,6 @@ const ModalDescarga = ({
     try {
       setLoading(true);
       setMsg("");
-      console.log(documentoADescargar)
 
       const payload = toDocumentoPayload(documentoADescargar);
       if (

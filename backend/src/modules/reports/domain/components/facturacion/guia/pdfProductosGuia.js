@@ -16,10 +16,10 @@ function pdfProductosGuia(
   const body = [
     // ✅ Cabecera
     [
-      { text: "ITEM", style: "tableHeaderMain", fillColor: bg_color, alignment: "center" },
-      { text: "DESCRIPCION", style: "tableHeaderMain", fillColor: bg_color, alignment: "center" },
-      { text: "UNI.", style: "tableHeaderMain", fillColor: bg_color, alignment: "center" },
-      { text: "CANTIDAD", style: "tableHeaderMain", fillColor: bg_color, alignment: "center" },
+      { text: "ITEM", style: "tableHeaderMain", fillColor: "#B0B0B0", alignment: "center" },
+      { text: "DESCRIPCION", style: "tableHeaderMain", fillColor: "#B0B0B0", alignment: "center" },
+      { text: "UNI.", style: "tableHeaderMain", fillColor: "#B0B0B0", alignment: "center" },
+      { text: "CANTIDAD", style: "tableHeaderMain", fillColor: "#B0B0B0", alignment: "center" },
     ],
     // ✅ Filas con sombreado alternado
     ...(guia.guia_detalles?.length
@@ -73,6 +73,7 @@ function pdfProductosGuia(
       {
         table: {
           widths: ["10%", "70%", "10%", "10%"],
+          headerRows: 1,
           body,
         },
         layout: {
