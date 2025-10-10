@@ -186,7 +186,11 @@ class SequelizeCtsRopository {
       const asistencias = responseAsistencias.map((a) =>
          a.get({ plain: true })
       );
-
+      if(trabajador_id==7){
+         console.log("Contratops doas meses genrao");
+         console.log(contratos_dias_meses);
+         
+      }
       for (const c of contratos_dias_meses) {
          //Definimos rangos de calculo que lo usaran bonos, he, faltas
          let inicio_c =

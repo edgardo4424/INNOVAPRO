@@ -1,3 +1,4 @@
+const SequelizeTrabajadorRepository = require("../../../trabajadores/infraestructure/repositories/sequelizeTrabajadorRepository");
 const calcularcts = require("../../application/calcularcts");
 const calcularCtsIndividual = require("../../application/calcularCtsIndividual");
 const calcularCtsTrunca = require("../../application/calcularCtsTrunca");
@@ -5,14 +6,17 @@ const cierreCts = require("../../application/cierreCts");
 const obtenerCtsPorTrabajador = require("../../application/obtenerCtsPorTrabajador");
 const obtenerHistoricocts = require("../../application/obtenerHistoricoCts");
 
-const SequelizeCtsRopository = require("../../infraestructure/repositories/sequelizeCtsRepository");
+const SequelizeCtsRepository = require("../../infraestructure/repositories/sequelizeCtsRepository");
 
-const ctsRepository = new SequelizeCtsRopository();
+const ctsRepository = new SequelizeCtsRepository();
+const trabajadorRepository=new SequelizeTrabajadorRepository();
 const ctsController = {
    async calcularCts(req, res) {
+      console.log("Entro al calcuo general");
+      
       try {
          const { periodo, anio, filial_id } = req.body;
-         const cts = await calcularcts(periodo, anio, filial_id, ctsRepository);
+         const cts = await calcularcts(periodo, anio, filial_id, ctsRepository,trabajadorRepository);
          res.status(200).json(cts.respuesta);
       } catch (error) {
          console.log("error", error);

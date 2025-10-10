@@ -64,6 +64,7 @@ const {
 const { trabajador_rxh_model } = require("../utils/trabajador_rxh_model");
 const { PlanillaMensual } = require("../models/PlanillaMensualModel");
 const SequelizeContratoLaboralRepository = require("../../../contratos_laborales/infraestructure/repositories/sequelizeContratoLaboralRepository");
+const calcularDiasContratado = require("../utils/calcular_dias_contratado");
 const contratoRepository = new SequelizeContratoLaboralRepository();
 class SequelizePlanillaRepository {
   // prettier-ignore
@@ -541,16 +542,16 @@ class SequelizePlanillaRepository {
           { fecha_terminacion_anticipada: { [Op.gte]: fechaInicioMes } },
         ],
         //fecha_fin: { [Op.gte]: fechaInicioMes },
-         // 👇 Si es indefinido => se trae siempre
-    // Si no es indefinido => verificar fecha_fin >= fechaInicioMes
+        // 👇 Si es indefinido => se trae siempre
+        // Si no es indefinido => verificar fecha_fin >= fechaInicioMes
         [Op.or]: [
           { es_indefinido: true },
           {
             [Op.and]: [
               { es_indefinido: false },
-              { fecha_fin: { [Op.gte]: fechaInicioMes } }
-            ]
-          }
+              { fecha_fin: { [Op.gte]: fechaInicioMes } },
+            ],
+          },
         ],
       },
       include: [
@@ -574,7 +575,6 @@ class SequelizePlanillaRepository {
           { fecha_terminacion_anticipada: { [Op.gte]: fechaInicioMes } },
         ],
         fecha_fin: { [Op.gte]: fechaInicioMes },
-        
       },
       include: [
         {
@@ -863,6 +863,7 @@ class SequelizePlanillaRepository {
                   as: "contratos_laborales",
                   where: {
                      tipo_contrato: "HONORARIOS",
+                     estado:1
                   },
                },
                {
@@ -878,6 +879,7 @@ class SequelizePlanillaRepository {
             ],
          }
       );
+      
       const trabajador = response_trabajador.get({ plain: true });
       if (!trabajador) {
          throw new Error("El trabajador no existe.");
@@ -886,7 +888,6 @@ class SequelizePlanillaRepository {
       const contratoInicial = filtrarContratosSinInterrupcion(
          trabajador.contratos_laborales
       );
-   const contrato_actual = await contratoRepository.obtenerUltimoContratoVigentePorTrabajadorId(trabajador.id)
 
       // !Obtenemos los contratos en rango del mes 
       const contratosEnRango = trabajador.contratos_laborales.filter((c) => {
@@ -896,6 +897,9 @@ class SequelizePlanillaRepository {
             c.filial_id == filial_id
          );
       });
+
+      const contrato_actual=[...contratosEnRango].sort((a, b) => new Date(a.fecha_fin) - new Date(b.fecha_fin)).at(-1); 
+
       //!validamos que no halla interrupciones entre contratos
       const contratos_tratados =
          filtrarContratosSinInterrupcion(contratosEnRango);
@@ -934,6 +938,12 @@ class SequelizePlanillaRepository {
             inicio_de_mes,
             fin_de_mes
          );
+         const DIAS_CONTRATADO=calcularDiasContratado(inicio_real,
+            fin_real,
+            inicio_de_mes,
+            fin_de_mes);
+        console.log("Dias",DIAS_CONTRATADO);
+        
          const SUMA_FALTAS=FALTAS_PRIMERA_Q+FALTAS_SEGUNDA_Q;
          data.trabajador_id=trabajador.id;
          data.contrato_id=c.id
@@ -1238,6 +1248,7 @@ class SequelizePlanillaRepository {
           as: "contratos_laborales",
           where: {
             tipo_contrato: "PLANILLA",
+            estado:1
           },
         },
         {
@@ -1260,34 +1271,34 @@ class SequelizePlanillaRepository {
     const contratoInicial = filtrarContratosSinInterrupcion(
       trabajador.contratos_laborales
     );
-    if(trabajador.id==1){
-      console.log("Lucas contrato incial sin fecha",contratoInicial);
-      
+    if (trabajador.id == 1) {
+      console.log("Lucas contrato incial sin fecha", contratoInicial);
     }
 
     //Todo: Obtenemos los contratos que estan en el rango del mes
     const contratosEnRango = trabajador.contratos_laborales.filter(
-       (c) =>
-       c.filial_id == filial_id &&
-       (
-         c.es_indefinido
-           ? c.fecha_inicio <= fin_de_mes
-           : c.fecha_fin >= inicio_de_mes && c.fecha_inicio <= fin_de_mes
-       )
+      (c) =>
+        c.filial_id == filial_id &&
+        (c.es_indefinido
+          ? c.fecha_inicio <= fin_de_mes
+          : c.fecha_fin >= inicio_de_mes && c.fecha_inicio <= fin_de_mes)
     );
 
-    if(trabajador.id==1){
-      console.log("Lucas contratos en rango del mes incial sin fecha",contratosEnRango);
-      
+    if (trabajador.id == 1) {
+      console.log(
+        "Lucas contratos en rango del mes incial sin fecha",
+        contratosEnRango
+      );
     }
-
 
     // Todo: Se traen solo los contratos que tengan un maxiomo de 1 dia de serparacion
     const contratos_tratados =
       filtrarContratosSinInterrupcion(contratosEnRango);
-    if(trabajador.id==1){
-      console.log("Lucas contratos tratados del mes incial sin fecha",contratos_tratados);
-      
+    if (trabajador.id == 1) {
+      console.log(
+        "Lucas contratos tratados del mes incial sin fecha",
+        contratos_tratados
+      );
     }
 
     const { found, retencion_base_mes, registro } =
@@ -1354,6 +1365,15 @@ class SequelizePlanillaRepository {
         CANTIDAD_VACACIONES_VENDIDAS,
       } = await obtenerDatosPorQuincena(inicio_real, fin_real, trabajador.id);
 
+
+
+        const dias_no_contratados = 12;
+        const DIAS_LABORADOS_BASE_30 = 30 - DIAS_NO_CONTRATADOS;
+
+        const total_dias_no_trabajados = faltas_justificadas + licencia_con_goce +licencia_sin_goce + CANTIDAD_VACACIONES_GOZADAS;
+
+         const dias_reales_laborados = DIAS_LABORADOS_BASE_30 - total_dias_no_trabajados;
+
       const DIAS_FIJOS = 30;
       planilla.tipo_documento = trabajador.tipo_documento;
       planilla.numero_documento = trabajador.numero_documento;
@@ -1366,8 +1386,7 @@ class SequelizePlanillaRepository {
       planilla.tipo_contrato = c.tipo_contrato;
       planilla.periodo = anio_mes_dia.slice(0, -3);
       planilla.regimen = c.regimen;
-      planilla.domiciliado=trabajador.domiciliado
-      
+      planilla.domiciliado = trabajador.domiciliado;
 
       // ! dias de labor, se le resta--> dias mo contatados, faltas y dias de vacaciones;
       // prettier-ignore
