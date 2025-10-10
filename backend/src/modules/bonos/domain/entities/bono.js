@@ -26,7 +26,7 @@ class Bono {
       } else if (isNaN(this.monto) || this.monto <= 0) {
          errores.push("El campo 'monto' debe ser un número positivo.");
       }
-      const options = ["simple", "bono_nocturno", "escolaridad"];
+      const options = ["simple", "bono_nocturno", "escolaridad","extraordinario"];
       if (!options.includes(this.tipo)) {
          errores.push("El tipo de bono no existe");
       }

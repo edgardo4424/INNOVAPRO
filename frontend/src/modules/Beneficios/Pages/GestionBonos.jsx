@@ -168,6 +168,12 @@ const GestionBonos = () => {
          setDialogOpen(false);
          await fetchBonos();
       } catch (e) {
+         if(e?.response?.data?.mensaje){
+            for (const er of e.response.data.mensaje) {
+               toast.error(er)
+            }
+            return;
+         }
          toast.error(
             e?.response?.data?.message ??
                e?.message ??
@@ -477,6 +483,8 @@ const GestionBonos = () => {
                               <SelectItem value={"escolaridad"}>
                                  Escolaridad
                               </SelectItem>
+                              <SelectItem value={"extraordinario"}>Extraordinario</SelectItem>
+
                            </SelectContent>
                         </Select>
                      </div>
