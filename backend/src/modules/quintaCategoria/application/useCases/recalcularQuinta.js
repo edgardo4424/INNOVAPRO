@@ -82,7 +82,7 @@ module.exports = class RecalcularQuinta {
     // Snapshot de tramos
     dto.tramos_usados_json = overrideInput.tramos_usados_json ?? {
       impuestoTotal: dto.impuesto_anual,
-      tramos_usados: overrideInput.tramos_usados ?? prev.tramos_usados ?? []
+      tramos_usados: overrideInput.tramos_usados_json.tramos_usados ?? prev.tramos_usados ?? []
     };
 
     return await this.repo.updateById(id, dto, { transaction });

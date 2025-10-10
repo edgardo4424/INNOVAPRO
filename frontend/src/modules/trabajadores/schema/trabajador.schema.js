@@ -20,7 +20,6 @@ const contratoSchema = yup.object({
          function (value) {
             if (!value) return true; // Si es null o vacío, pasa
             const { fecha_inicio } = this.parent;
-            console.log('this.parent', this.parent);
             return fecha_inicio && value > fecha_inicio;
          }
       )
@@ -223,7 +222,6 @@ export const trabajadorSchema = (isEdit = false, isGerente = false) =>
         "cuspp-afp",
         "El CUSPP debe tener máximo 13 caracteres",
         function (value) {
-         console.log('value', value);
           if(value){
             // Si tiene valor, validar longitud exacta de 13
             return value.length == 13;

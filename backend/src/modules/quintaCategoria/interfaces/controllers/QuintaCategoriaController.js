@@ -136,7 +136,7 @@ module.exports = {
         ingresos_previos_acum_filial_actual: dto.ingresos_previos_acum,
         remuneracion_mensual_filial_actual: dto.remuneracion_mensual,
         bonos: ctx.base.bonos,
-        asignacion_familiar: ctx.base.asignacion_familiar,
+        asignacion_familiar: ctx.base.asignacion_familiar_mes || 0,
         grati_julio_pagada: ctx.base.gratiJulioTrabajador,
         grati_diciembre_pagada: ctx.base.gratiDiciembreTrabajador,
         grati_pagadas_otras: ctx.base.grati_multi?.pagadas_total_otras || 0,
@@ -268,7 +268,7 @@ module.exports = {
           ingresos_previos_acum_filial_actual: dto.ingresos_previos_acum,
           remuneracion_mensual_filial_actual: dto.remuneracion_mensual,
           bonos: ctx.base.bonos,
-          asignacion_familiar: ctx.base.asignacion_familiar,
+          asignacion_familiar: ctx.base.asignacion_familiar_mes || 0,
           grati_julio_pagada: ctx.base.gratiJulioTrabajador,
           grati_diciembre_pagada: ctx.base.gratiDiciembreTrabajador,
           grati_pagadas_otras: ctx.base.grati_multi?.pagadas_total_otras || 0,
@@ -289,7 +289,11 @@ module.exports = {
           bruto_anual_proyectado: dto.bruto_anual_proyectado,
           renta_neta_anual: dto.renta_neta_anual,
           impuesto_anual: dto.impuesto_anual,
-          retencion_base_mes: dto.retencion_base_mes
+          retencion_base_mes: dto.retencion_base_mes,
+          tramos_usados_json: {
+            impuestoTotal: dto.impuesto_anual,
+            tramos_usados: dto.tramos_usados
+          },
         },
         creado_por: req.usuario.id,
       });

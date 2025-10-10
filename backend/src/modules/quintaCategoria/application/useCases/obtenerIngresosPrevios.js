@@ -177,7 +177,6 @@ class ObtenerIngresosPrevios {
     gratiOtrasProjJulioTotal = Number(gratiOtrasProjJulioTotal.toFixed(2));
     gratiOtrasProjDicTotal   = Number(gratiOtrasProjDicTotal.toFixed(2));
 
-    // INNOVA PRO+ v1.1.1 — Split consistente previos/mes-actual/proyección por contrato (otras filiales)
     const _firstDay = (y, m) => new Date(y, m - 1, 1);
     const _lastDay  = (y, m) => new Date(y, m, 0);
     const _clampToYear = (d, y) => {
@@ -193,58 +192,6 @@ class ObtenerIngresosPrevios {
     let remuOtrasPreviosTotal = 0;
     let remuOtrasProjTotal = 0;
     let remuOtrasMesActualTotal = 0;
-
-    /* for (const c of contratosTodas) {
-      const fid = Number(c.filial_id);
-      if (filialId && fid === Number(filialId)) continue; // Para omitir la actual
-
-      try {
-        const { previosMeses, proyectadosMeses } = splitMesesContratoPorCorte({
-          anio,
-          mes,
-          fechaInicioContrato: c.fecha_inicio,
-          fechaFinContrato: c.fecha_fin,
-          aplicaDesde,
-        });
-        
-        const sueldo = this._toNum(c.sueldo);
-        
-        const fIni = new Date(c.fecha_inicio);
-        const fFin = c.fecha_fin ? new Date(c.fecha_fin) : null;
-
-        // ¿Contrato vigente en el mes actual?
-        const vigenteMesActual =
-          fIni <= ultimoDiaMesActual && (fFin === null || fFin >= primerDiaDelMesActual);
-
-        const projMesesSinMesActual = vigenteMesActual
-          ? Math.max((proyectadosMeses || 0) - 1, 0)
-          : (proyectadosMeses || 0);
-
-        const previosMonto = (previosMeses || 0) * sueldo;
-        const projMontoSinMesActual = projMesesSinMesActual * sueldo;
-        const mesActualMonto = vigenteMesActual ? sueldo : 0;
-
-        remuOtrasDetalle.push({
-          filial_id: fid,
-          contrato_id: Number(c.id),
-          sueldo,
-          previos_meses: previosMeses || 0,
-          previos_monto: Number(previosMonto.toFixed(2)),
-          proj_meses: projMesesSinMesActual,
-          proj_monto: Number(projMontoSinMesActual.toFixed(2)),
-          mes_actual_monto: Number(mesActualMonto.toFixed(2)),
-        });
-
-        remuOtrasPreviosTotal += previosMonto;
-        remuOtrasProjTotal += projMontoSinMesActual;
-
-        remuOtrasMesActualTotal = (remuOtrasMesActualTotal || 0) + mesActualMonto;
-      } catch (e) {
-        console.warn("WARN multi-filial remuneraciones: ", e?.message || e);
-      }
-    }
-    remuOtrasPreviosTotal = Number(remuOtrasPreviosTotal.toFixed(2));
-    remuOtrasProjTotal = Number(remuOtrasProjTotal.toFixed(2)); */
 
     for (const c of contratosTodas) {
       const fid = Number(c.filial_id);
@@ -326,25 +273,66 @@ class ObtenerIngresosPrevios {
       trabajadorId, ymd(primerDiaDelMesActual), ymd(ultimoDiaMesActual)
     );
 
-    // --- ASIGNACIÓN FAMILIAR (previos + proyección) ---
+    // --- ASIGNACIÓN FAMILIAR (previos + mes actual + proyección) ---
     const AF_DESDE = asignacion_familiar_desde ? new Date(asignacion_familiar_desde) : null;
-  
-    // Calculamos AF para la filial actual
+
     let afPreviosActual = 0;
+    let afMesActual = 0;
     let afProjActual = 0;
 
-    if (contratoActual && AF_DESDE) {
-      const { previosMeses, proyectadosMeses } = calcularMesesAFPorContratoEnAnio({
-        anio,
-        mes,
-        afDesde: AF_DESDE,
-        fechaInicioContrato: contratoActual.fecha_inicio,
-        fechaFinContrato: contratoActual.fecha_fin,
-        aplicaDesde
-      });
-      afPreviosActual = previosMeses * Number(valorAsignacionFamiliar || 0);
-      afProjActual = proyectadosMeses * Number(valorAsignacionFamiliar || 0);
+    if (filialId && AF_DESDE) {
+      // Helpers en este mismo archivo:
+      // _clampToYear, _month, _countMonthsInclusive
+
+      // 1) Normalizamos inicio AF y corte DJ dentro del año
+      const afIniYear = _clampToYear(new Date(AF_DESDE), anio);
+      const cutoff    = aplicaDesde ? new Date(anio, aplicaDesde - 1, 1) : new Date(anio, 0, 1);
+      const startAF   = new Date(Math.max(afIniYear.getTime(), cutoff.getTime())); // inicio efectivo de AF en el año
+
+      // 2) Filtramos TODOS los contratos de la FILIAL ACTUAL en el año
+      const contratosFilial = contratosTodas.filter(c => Number(c.filial_id) === Number(filialId));
+
+      // 3) Sumamos por intervalos (evita que un cambio de contrato “corte” el acumulado)
+      let prevMesesTotal = 0;
+      let mesActualVigente = false;
+      let projMesesTotal = 0;
+
+      for (const c of contratosFilial) {
+        const cIni = _clampToYear(new Date(c.fecha_inicio), anio);
+        const cFin = c.fecha_fin
+          ? _clampToYear(new Date(c.fecha_fin), anio)
+          : new Date(anio, 11, 31);
+
+        // Rango efectivo donde AF aplica en este contrato
+        const segIni = new Date(Math.max(startAF.getTime(), cIni.getTime()));
+        const segFin = cFin;
+
+        // Si el segmento no cae en el año, saltamos
+        if (segIni > segFin) continue;
+
+        const sM = _month(segIni);
+        const eM = _month(segFin);
+        const m  = Number(mes);
+
+        // PREVIOS (hasta mes-1)
+        const prevEndM  = Math.min(eM, m - 1);
+        const prevMeses = _countMonthsInclusive(sM, prevEndM);
+        prevMesesTotal += Math.max(0, prevMeses);
+
+        // MES ACTUAL (si algún contrato cubre el mes)
+        if (m >= sM && m <= eM) mesActualVigente = true;
+
+        // PROYECCIÓN (desde mes+1)
+        const projStartM = Math.max(sM, m + 1);
+        const projMeses  = _countMonthsInclusive(projStartM, eM);
+        projMesesTotal  += Math.max(0, projMeses);
+      }
+
+      afPreviosActual = Number((prevMesesTotal * Number(valorAsignacionFamiliar || 0)).toFixed(2));
+      afMesActual     = mesActualVigente ? Number(valorAsignacionFamiliar || 0) : 0;
+      afProjActual    = Number((projMesesTotal * Number(valorAsignacionFamiliar || 0)).toFixed(2));
     }
+
 
     // Calculamos AF para otras filiales (multi)
     let afOtrasDetalle = [];
@@ -443,15 +431,11 @@ class ObtenerIngresosPrevios {
         gratiDiciembreProj,
         bonos: this._toNum(bonos),
         extraGravadoMes,
-        asignacion_familiar: asignacion_familiar_prev,
+        asignacion_familiar: this._toNum(afPreviosActual),      
+        asignacion_familiar_mes: this._toNum(afMesActual),     
+        asignacion_familiar_proj: this._toNum(afProjActual),  
         asignacion_familiar_proj,
         es_proyeccion: true,
-        /* remu_multi: {
-          detalle_por_filial: remuOtrasDetalle,
-          previos_total_otras: this._toNum(remuOtrasPreviosTotal),
-          proyeccion_total_otras: this._toNum(remuOtrasProjTotal),
-          mes_actual_otras: Number((remuOtrasMesActualTotal || 0).toFixed(2)),
-        }, */
         remu_multi: {
           detalle_por_filial: remuOtrasDetalle,
           previos_total_otras: remuOtrasPreviosTotal,

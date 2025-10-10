@@ -220,8 +220,6 @@ export default function TrabajadorForm() {
 
       const dataToSubmit = buildPayload();
 
-      console.log("dataToSubmit", dataToSubmit);
-
       if (isEditMode) {
         dataToSubmit.id = trabajador_id;
 
@@ -235,11 +233,9 @@ export default function TrabajadorForm() {
             ? dataToSubmit?.asignacion_familiar_fecha
             : null,
         };
-        console.log('dataBodyEditar', dataBodyEditar);
 
         const { esValido, errores } = validarContratos(dataToSubmit.contratos_laborales);
 
-        console.log('!esValido', !esValido);
         if (!esValido) {
           return toast.error(errores.join("\n"));
         }
@@ -261,7 +257,6 @@ export default function TrabajadorForm() {
 
          const { esValido, errores } = validarContratos(dataToSubmit.contratos_laborales);
 
-         console.log('!esValido', !esValido);
         if (!esValido) {
           return toast.error(errores.join("\n"));
         }

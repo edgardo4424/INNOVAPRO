@@ -1,4 +1,4 @@
-const { QueryTypes } = require('sequelize');
+const { QueryTypes, Op } = require('sequelize'); // <- Traemos Op correctamente
 const sequelize = require('../../../../config/db');
 
 const CalculoQuintaRepository = require('../../domain/repositories/CalculoQuintaRepository');
@@ -148,7 +148,7 @@ class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository 
   async listarCierres({ filialId, anio }) {
     const where = {};
     if (filialId) where.filial_id = filialId;
-    if (anio) where.periodo = { [sequelize.Op.like]: `${anio}-%` };
+    if (anio) where.periodo = { [Op.like]: `${anio}-%` };
     return CierreQuintaModel.findAll({ where, order: [['periodo', 'DESC']] });
   }
 
@@ -157,7 +157,7 @@ class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository 
     const per = _periodo({ anio, mes, periodo });
     const where = { filial_id: num(filialId), periodo: per };
     const row = await CierreQuintaModel.findOne({
-      where, attributes: ['id'], raw: true, transaction: options.transaction
+      where, attributes: ['id'], raw: true, transaction: options?.transaction
     });
     return !!row;
   }
@@ -179,8 +179,8 @@ class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository 
 
   // Buscamos por id en quinta_calculos
   async findById(id) { return await CalculoQuintaModel.findByPk(id); }
+
   // Buscamos todas las filas de un trabajador en un año ordenadas
-  // de manera ascendente por mes y id
   async findByWorkerYear({ dni, trabajadorId, anio }) {
     const where = {};
     if (dni) where.dni = dni;
@@ -193,18 +193,18 @@ class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository 
   }
 
   // Validador de bloqueo por mes (cierre)
-  async ultimoMesCerradoPorDniAnio({ dni, anio }) {
+  async ultimoMesCerradoPorDniAnio({ dni, anio }, options = {}) {
     try {
       const filas = await CalculoQuintaModel
-      .unscoped()
-      .findAll({
-        where: { dni, anio, fuente: 'oficial' },
-        attributes: ['mes'],
-        order: [['mes', 'DESC']],
-        raw: true,
-        transaction: options.transaction,
-      })
-    return filas ? Number(filas.mes) : 0;
+        .unscoped()
+        .findAll({
+          where: { dni, anio, fuente: 'oficial' },
+          attributes: ['mes'],
+          order: [['mes', 'DESC']],
+          raw: true,
+          transaction: options?.transaction,
+        });
+      return Array.isArray(filas) && filas.length ? Number(filas[0].mes) : 0;
     } catch (e) {
       return 0;
     }
@@ -212,11 +212,9 @@ class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository 
 
   // Método para ser usado por otros módulos
   async findUltimoVigentePorDniMes({ dni, anio, mes }) {
-      return CalculoQuintaModel.findOne({
+    return CalculoQuintaModel.findOne({
       where: { dni, anio, mes }, 
-      order: [['createdAt', 'DESC']],     // último creado = vigente del mes
-      // attributes opcionales para performance:
-      // attributes: ['id','dni','anio','mes','retencion_base_mes','es_recalculo','createdAt'],
+      order: [['createdAt', 'DESC']],
     });
   }
 
@@ -229,7 +227,7 @@ class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository 
     });
   }
 
-  // Paginado con filtros (dni/año). Retornamos filas, el contador, las paginas y el limite
+  // Paginado con filtros (dni/año)
   async list({ dni, trabajadorId, anio, page=1, limit=20 }) {
     const where = {};
     if (dni) where.dni = dni;
@@ -239,22 +237,15 @@ class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository 
     const { rows, count } = await CalculoQuintaModel.findAndCountAll({
       where, offset, limit, order: [['created_at','DESC']]
     });
-    const totalPages= Math.ceil(count / limit) || 1;
-    return { rows, count, page, limit, totalPages};
+    const totalPages = Math.ceil(count / limit) || 1;
+    return { rows, count, page, limit, totalPages };
   }
 
   /**
    * Contrato vigente al 15 del mes indicado.
-   * Filtros:
-   * - t.estado = 'activo'
-   * - cl.estado = 1
-   * - cl.fecha_inicio <= fechaRef
-   * - (cl.fecha_fin IS NULL OR cl.fecha_fin >= fechaRef)
-   * - (cl.fecha_terminacion_anticipada IS NULL OR > fechaRef)
-   * Retorna: { trabajador_id, sueldo, quinta_categoria, numero_documento, ... }
    */
   async getContratoVigente({ trabajadorId, dni, anio, mes }) {
-    const ymd = `${anio}-${String(mes).padStart(2,'0')}-15`; // AÑO-MES-DIA
+    const ymd = `${anio}-${String(mes).padStart(2,'0')}-15`;
 
     let sql = `
       SELECT
@@ -294,8 +285,7 @@ class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository 
     } else {
       return null;
     }
-    // Ordenamos por sueldo, fecha de inicio y id de manera descendente
-    // y limitamos a 1 (Priorizamos sueldoas más altos/contratos recientes)
+
     sql += ` ORDER BY cl.sueldo DESC, cl.fecha_inicio DESC, cl.id DESC LIMIT 1 `;
 
     const rows = await sequelize.query(sql, { type: QueryTypes.SELECT, replacements: reps });
