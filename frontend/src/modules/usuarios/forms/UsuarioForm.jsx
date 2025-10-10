@@ -38,8 +38,7 @@ export default function UsuarioForm({
         abortEarly: false,
       });
       setErrores({});
-      console.log(datosValidados);
-      
+  
       onSubmit(datosValidados);
       closeModal();
     } catch (err) {

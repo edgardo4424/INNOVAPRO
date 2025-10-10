@@ -106,7 +106,7 @@ class SequelizeAdelantoSueldoRepository {
       };
     }
 
-    if (tipo == "simple") {
+    if (tipo == "prestamo") {
       for (const adelanto of adelantos) {
         const aplica = isCuotaAplicable(
           adelanto.primera_cuota,
@@ -127,8 +127,7 @@ class SequelizeAdelantoSueldoRepository {
     switch (tipo) {
       case "simple":
         totalAdelantos = adelantosQueAplican.reduce(
-          (total, adelanto) =>
-            total + Number(adelanto.monto) / Number(adelanto.cuotas),
+          (total, adelanto) => total + Number(adelanto.monto),
           0
         );
         break;
@@ -141,6 +140,14 @@ class SequelizeAdelantoSueldoRepository {
       case "cts":
         totalAdelantos = adelantosQueAplican.reduce(
           (total, adelanto) => total + Number(adelanto.monto),
+          0
+        );
+        break;
+      
+      case "prestamo":
+        totalAdelantos = adelantosQueAplican.reduce(
+          (total, adelanto) =>
+            total + Number(adelanto.monto) / Number(adelanto.cuotas),
           0
         );
         break;

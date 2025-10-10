@@ -78,9 +78,6 @@ module.exports = async (
           cierreId
         );
 
-        console.log('dataPlanillaQuincenal', dataPlanillaQuincenal);
-
-
         await planillaRepository.insertarVariasPlanillaQuincenal(
           dataPlanillaQuincenal,
           transaction

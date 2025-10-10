@@ -113,6 +113,7 @@ async obtenerInformacionPdfLiquidacion(baja_trabajador_id, transaction = null){
           },
           {
             model: db.contratos_laborales,
+            where: { estado: 1 },
             as: "contrato",
           },
         ],
@@ -132,7 +133,7 @@ async obtenerInformacionPdfLiquidacion(baja_trabajador_id, transaction = null){
 
     //! Obtener la filial del trabajador con el ultimo contrato id
     const contrato_laboral = await db.contratos_laborales.findOne({
-      where: { id: trabajador_dado_de_baja.contrato_id },
+      where: { id: trabajador_dado_de_baja.contrato_id, estado: 1 },
       include: [
         {
           model: db.empresas_proveedoras,
@@ -252,6 +253,7 @@ async obtenerInformacionPdfLiquidacionv2(baja_trabajador_id, transaction = null)
           },
           {
             model: db.contratos_laborales,
+            where: { estado: 1 },
             as: "contrato",
           },
           {
@@ -275,7 +277,7 @@ async obtenerInformacionPdfLiquidacionv2(baja_trabajador_id, transaction = null)
 
     //! Obtener la filial del trabajador con el ultimo contrato id
     const contrato_laboral = await db.contratos_laborales.findOne({
-      where: { id: trabajador_dado_de_baja.contrato_id },
+      where: { id: trabajador_dado_de_baja.contrato_id, estado: 1 },
       include: [
         {
           model: db.empresas_proveedoras,

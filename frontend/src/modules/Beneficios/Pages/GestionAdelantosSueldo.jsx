@@ -180,6 +180,7 @@ const GestionAdelantoSueldo = () => {
     setErrores({}); // limpiar errores previos
 
     if (viewMode === "crear") {
+      console.log('datosValidados',datosValidados);
       await beneficiosService.crearAdelantoSaldo(datosValidados);
       toast.success("Adelanto de sueldo agregado.");
     } else if (viewMode === "editar" && editing) {
@@ -478,6 +479,7 @@ const GestionAdelantoSueldo = () => {
                         Gratificación
                       </SelectItem>
                       <SelectItem value={"cts"}>CTS</SelectItem>
+                      <SelectItem value={"prestamo"}>Préstamo</SelectItem>
                     </SelectContent>
                   </Select>
                    {errores.tipo && (
@@ -530,7 +532,7 @@ const GestionAdelantoSueldo = () => {
                   )}
                 </div>
 
-                {form.tipo == "simple" && (
+                {form.tipo == "prestamo" && (
                   <div className="flex-1 flex flex-col gap-1 ">
                     <Label>Forma Descuento</Label>
                     <Select
@@ -557,7 +559,7 @@ const GestionAdelantoSueldo = () => {
                 )}
               </section>
               {
-               form.tipo == "simple" &&(
+               form.tipo == "prestamo" &&(
                   <>
                   <section className="grid grid-cols-2 space-x-3">
                 <div className="grid gap-1">

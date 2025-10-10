@@ -206,7 +206,7 @@ export default function TrabajadorForm() {
       cargo_id: formData.cargo_id,
       contratos_laborales: formData.contratos_laborales,
       sueldo_base: ultimoContrato ? ultimoContrato.sueldo : "",
-      cuspp_afp: formData.cuspp_afp.trim(),
+      cuspp_afp: formData.cuspp_afp?.trim(),
       estado_civil: formData.estado_civil,
     };
   };
@@ -301,6 +301,23 @@ export default function TrabajadorForm() {
     }
   };
 
+  const [tieneBeneficios, setTieneBeneficios] = useState(false);
+  useEffect(() => {
+    
+  const minimoUnContratoPlanilla = formData.contratos_laborales.some((c) => c.tipo_contrato === "PLANILLA");
+   setTieneBeneficios(minimoUnContratoPlanilla);
+  if(!minimoUnContratoPlanilla){
+    setFormData((prev) => (
+      { ...prev,   
+        sistema_pension: "",
+         tipo_afp: "",
+         comision_afp: false,
+        cuspp_afp: "" 
+      }));  
+  }
+
+  }, [formData.contratos_laborales])
+  
   return (
     <div className="w-full max-w-[52rem] p-6">
       <Card className="shadow-none">
@@ -458,7 +475,7 @@ export default function TrabajadorForm() {
                    <div className="space-y-2">
                     <Label htmlFor="estado_civil">Estado Civil</Label>
                      <Select
-                      value={formData.estado_civil}
+                      value={formData.estado_civil || ""}
                       onValueChange={(value) =>
                         handleInputChange("estado_civil", value)
                       }
@@ -552,8 +569,11 @@ export default function TrabajadorForm() {
                 isEditMode={isEditMode}
               />
 
-              {/* Beneficios y Sistema de Pensión */}
-              <div className="space-y-4">
+           {/* Beneficios y Sistema de Pensión */}
+
+         {
+          tieneBeneficios && (
+             <div className="space-y-4">
                 <div className="flex items-center gap-2 text-lg font-semibold">
                   <Shield className="h-5 w-5 text-[#1b274a]" />
                   Beneficios y Sistema de Pensión
@@ -615,7 +635,7 @@ export default function TrabajadorForm() {
                       Sistema de Pensión *
                     </Label>
                     <Select
-                      value={formData.sistema_pension}
+                      value={formData.sistema_pension || ""}
                       onValueChange={(value) => {
                         handleInputChange("sistema_pension", value);
                         setFormData((prev) => ({
@@ -703,6 +723,10 @@ export default function TrabajadorForm() {
                 </div>
               </div>
 
+          )
+         }
+            
+             
               <div className="flex justify-end space-x-4">
                 <Button
                   type="button"

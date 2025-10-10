@@ -119,11 +119,8 @@ const ContratosLaborales = ({
 
   const obtenerCargosSunat = async (cargo_innova_id) => {
     try {
-      console.log("cargo_innova_id", cargo_innova_id);
       const respuesta =
         await trabajadoresService.getCargosSunat(cargo_innova_id);
-
-      console.log("respuesta de cargos sunat", respuesta);
 
       setListaCargosSunat(respuesta.data);
       setFormData((prev) => ({

@@ -14,6 +14,7 @@ function obtenerUltimoDiaDelMes(anio, mes) {
  */
 function obtenerFechasCuotas(primera_cuota, cuotas, forma_descuento) {
   const fechas = [];
+  console.log('primera_cuota', primera_cuota);
   const [anio, mes, dia] = primera_cuota.split('-').map(Number);
   let fechaBase = new Date(anio, mes - 1, dia); // mes en base 0
 

@@ -133,6 +133,7 @@ class SequelizeCtsRopository {
             filial_id: filial_id,
             trabajador_id: trabajador_id,
             fecha_terminacion_anticipada: null,
+            estado: 1,
          },
       });
       const contratos_limpios = responseContratos.map((c) =>
