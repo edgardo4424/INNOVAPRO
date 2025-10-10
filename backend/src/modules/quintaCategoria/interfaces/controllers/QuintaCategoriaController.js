@@ -1,24 +1,50 @@
 // REPOSITORIOS (INFRAESTRUCTURA)
 const SequelizeCalculoQuintaCategoriaRepository = require("../../infrastructure/repositories/SequelizeQuintaCategoriaRepository");
+const SequelizeSoporteMultiInternoRepository = require("../../infrastructure/repositories/SequelizeSoporteMultiInternoRepository");
 
 // CASOS DE USO
 const GuardarCalculoQuinta = require('../../application/useCases/guardarCalculoQuinta');
 const RecalcularQuinta = require('../../application/useCases/recalcularQuinta');
 const ObtenerRetencionBaseMesPorDni = require('../../application/useCases/obtenerRetencionBaseMesPorDni');
+const GuardarSoporteMultiInterno = require("../../application/useCases/guardarSoporteMultiInterno");
 
 // INSTANCIAS DE LOS REPOSITORIOS
 const repo = new SequelizeCalculoQuintaCategoriaRepository();
+const soporteRepo = new SequelizeSoporteMultiInternoRepository();
 
 // INSTANCIAS DE LOS CASOS DE USO
 const guardarUC = new GuardarCalculoQuinta(repo);
 const recalcularUC = new RecalcularQuinta(repo);
 const obtenerBaseMesUC = new ObtenerRetencionBaseMesPorDni({ repo });
+const guardarSoporteUC = new GuardarSoporteMultiInterno({ soporteRepo });
 
 // UTILIDADES 
 const { _absolutizeSoportes, _baseVacia } = require('../../shared/utils/helpers');
 const { mapCalculoQuintaToResponse } = require('../../shared/mappers/mapCalculoQuintaToResponse');
 // Motor de cálculo
 const _ejecutarCalculoQuinta = require('../../application/useCases/_ejecutarCalculoQuinta');
+
+function _tieneMultiInterno(ctx) {
+  try {
+    const filialActualId = Number(ctx?.filialActualId || 0);
+    const remu = ctx?.base?.remu_multi || {};
+    const det = Array.isArray(remu.detalle_por_filial) ? remu.detalle_por_filial : [];
+
+    // Si hay más de una filial en detalle, o al menos una distinta a la actual, o proyección/previos en "otras".
+    const hayFilialDistinta = det.some(x => Number(x?.filial_id || 0) && Number(x.filial_id) !== filialActualId);
+    const masDeUna = det.length > 1;
+    const proyOtras = Number(ctx?.base?.remu_multi?.proyeccion_total_otras || 0) > 0
+                   || Number(ctx?.base?.af_multi?.proyeccion_total_otras || 0) > 0
+                   || (ctx?.base?.grati_multi?.proyeccion_total_otras && (
+                        Number(ctx.base.grati_multi.proyeccion_total_otras.julio || 0) > 0 ||
+                        Number(ctx.base.grati_multi.proyeccion_total_otras.diciembre || 0) > 0
+                      ));
+
+    return hayFilialDistinta || masDeUna || proyOtras;
+  } catch {
+    return false;
+  }
+}
 
 module.exports = {
   async previsualizar(req, res) {
@@ -69,7 +95,7 @@ module.exports = {
   async crear(req, res) {
     try {
       const { dto, ctx } = await _ejecutarCalculoQuinta(req);
-      
+
       // Entradas visibles (en dto)
       dto.entradas = {
         ...(dto.entradas || {}),
@@ -80,34 +106,76 @@ module.exports = {
         extra_gravado_mes: Number(req.body.extra_gravado_mes || 0),
       };
 
-      // Datos adicionales para guardar
+       // IDs de soportes existentes
+      const soporte_multiempleo_id  = ctx?.soportes?.meta?.soporte_multiempleo_id ?? null;
+      const soporte_certificado_id  = ctx?.soportes?.meta?.soporte_certificado_id ?? null; 
+      const soporte_sin_previos_id  = ctx?.soportes?.meta?.soporte_sin_previos_id ?? null; 
+
+      // Datos para guardar
       const paraGuardar = {
-        ...dto,
-        trabajador_id: ctx.trabajadorId,
-        contrato_id: req.body.__contratoId,
-        filial_id: ctx.filialActualId,
-        dni: ctx.dni, anio: ctx.anio, mes: ctx.mes,
-        filial_retiene_id: ctx.soportes.meta.filial_retiene_id,
-        origen_retencion: ctx.soportes.meta.origen_retencion,
+        trabajador_id: dto.trabajador_id,
+        contrato_id: dto.contrato_id,
+        filial_actual_id: ctx.filialActualId,
         es_secundaria: ctx.soportes.meta.es_secundaria ? 1 : 0,
+        filial_retenedora_id: ctx.soportes.meta.filial_retiene_id,
+        dni: dto.dni,
+        anio: dto.anio,
+        mes: dto.mes,
+        uit_valor: dto.uit_valor,
+        deduccion_fija_uit: dto.deduccion_fija_uit,
+        divisor_calculo: dto.divisor_calculo,
+        creado_por: req.usuario.id,
+        es_recalculo: dto.es_recalculo,
+        soporte_multi_interno_id: null,
+        soporte_multiempleo_id,
+        soporte_certificado_id,
+        soporte_sin_previos_id,
+        fuente_previos: ctx.fuentePrevios,
         ingresos_previos_internos: ctx.soportes.meta.ingresos_previos_internos,
         ingresos_previos_externos: ctx.soportes.meta.ingresos_previos_externos,
+        ingresos_previos_acum_filial_actual: dto.ingresos_previos_acum,
+        remuneracion_mensual_filial_actual: dto.remuneracion_mensual,
+        bonos: ctx.base.bonos,
+        asignacion_familiar: ctx.base.asignacion_familiar,
+        grati_julio_pagada: ctx.base.gratiJulioTrabajador,
+        grati_diciembre_pagada: ctx.base.gratiDiciembreTrabajador,
+        grati_pagadas_otras: ctx.base.grati_multi?.pagadas_total_otras || 0,
+        asignacion_familiar_total_otras: ctx.base.af_multi?.previos_total_otras || 0,
+        grati_julio_proj: ctx.base.gratiJulioProj,
+        grati_diciembre_proj: ctx.base.gratiDiciembreProj,
+        otros_ingresos_proj: dto.otros_ingresos_proj,
+        asignacion_familiar_proj: ctx.base.asignacion_familiar_proj,
+        remu_proj_total_otras: ctx.base.remu_multi?.proyeccion_total_otras || 0,
+        grati_proj_total_otras: (ctx.base.grati_multi?.proyeccion_total_otras.julio + ctx.base.grati_multi?.proyeccion_total_otras.diciembre) || 0,
+        asignacion_familiar_proj_otras: ctx.base.af_multi?.proyeccion_total_otras || 0,
+        origen_retencion: ctx.soportes.meta.origen_retencion,
+        retenciones_previas_internas: ctx.soportes.meta.retenciones_previas_internas,
         retenciones_previas_externas: ctx.soportes.meta.retenciones_previas_externas,
-        soporte_multiempleo_id: ctx.soportes.meta.soporte_multiempleo_id,
-        soporte_certificado_id: ctx.soportes.meta.soporte_certificado_id,
-        soporte_sin_previos_id: ctx.soportes.meta.soporte_sin_previos_id,
-        soportes_json: ctx.soportes.meta.soportes_json,
-        creado_por: req.usuario.id,
-      };
+        retenciones_previas_filial_actual: ctx.retencionesPrevias,
+        extra_gravado_mes: dto.extra_gravado_mes,
+        retencion_adicional_mes: dto.retencion_adicional_mes,
+        bruto_anual_proyectado: dto.bruto_anual_proyectado,
+        renta_neta_anual: dto.renta_neta_anual,
+        impuesto_anual: dto.impuesto_anual,
+        retencion_base_mes: dto.retencion_base_mes
+      }
 
       const saved = await guardarUC.execute(paraGuardar, {
-        esRecalculo: false,
-        fuente: 'oficial',
         tramos_usados_json: {
           impuestoTotal: dto.impuesto_anual,
           tramos_usados: dto.tramos_usados
         }
       });
+
+      const saveId = Number(saved.id || saved?.toJSON?.().id);
+
+      // GUARDAR SOPORTE MULTI INTERNO
+      if (_tieneMultiInterno(ctx)) {
+        await guardarSoporteUC.execute({
+          quintaCalculoId: saveId,
+          baseCtx: ctx.base,
+        })
+      }
 
       const soportesAbs = _absolutizeSoportes(ctx.soportes, req);
 
@@ -148,12 +216,16 @@ module.exports = {
         });
       }
 
+      const filialActualId = Number(
+        prev.filial_actual_id ?? prev.filial_id ?? 0
+      ) || 0;
+
       req.body = {
         ...req.body,
         anio: Number(prev.anio),
         mes: Number(prev.mes),
-        __filialId: Number(prev.filial_id),
-        filialId: Number(prev.filial_id), // el middleware también lo usa
+        __filialId: filialActualId,
+        filialId: filialActualId, // el middleware también lo usa
       };
 
       const { dto, ctx } = await _ejecutarCalculoQuinta(req);
@@ -171,26 +243,55 @@ module.exports = {
         extra_gravado_mes: Number(req.body.extra_gravado_mes || 0),
       };
 
-      // 10) Persistir el recálculo (sólo UPDATE; no recalcular de nuevo)
       const paraGuardar = await recalcularUC.execute({
         id: req.params.id,
         overrideInput: {
-          ...dto,
-          trabajador_id: ctx.trabajadorId,
-          filial_id: ctx.filialActualId,
-          dni: ctx.dni, anio: ctx.anio, mes: ctx.mes,
-          filial_retiene_id: ctx.soportes.meta.filial_retiene_id,
-          origen_retencion: ctx.soportes.meta.origen_retencion,
+          trabajador_id: dto.trabajador_id,
+          contrato_id: dto.contrato_id,
+          filial_actual_id: ctx.filialActualId,
           es_secundaria: ctx.soportes.meta.es_secundaria ? 1 : 0,
+          filial_retenedora_id: ctx.soportes.meta.filial_retiene_id,
+          dni: dto.dni,
+          anio: dto.anio,
+          mes: dto.mes,
+          uit_valor: dto.uit_valor,
+          deduccion_fija_uit: dto.deduccion_fija_uit,
+          divisor_calculo: dto.divisor_calculo,
+          es_recalculo: dto.es_recalculo,
+          soporte_multi_interno_id: null,
+          soporte_multiempleo_id: ctx.soportes.meta.soporte_multiempleo_id ?? null,
+          soporte_certificado_id: ctx.soportes.meta.soporte_certificado_id ?? null,
+          soporte_sin_previos_id: ctx.soportes.meta.soporte_sin_previos_id ?? null,
+          fuente_previos: ctx.fuentePrevios,
           ingresos_previos_internos: ctx.soportes.meta.ingresos_previos_internos,
           ingresos_previos_externos: ctx.soportes.meta.ingresos_previos_externos,
+          ingresos_previos_acum_filial_actual: dto.ingresos_previos_acum,
+          remuneracion_mensual_filial_actual: dto.remuneracion_mensual,
+          bonos: ctx.base.bonos,
+          asignacion_familiar: ctx.base.asignacion_familiar,
+          grati_julio_pagada: ctx.base.gratiJulioTrabajador,
+          grati_diciembre_pagada: ctx.base.gratiDiciembreTrabajador,
+          grati_pagadas_otras: ctx.base.grati_multi?.pagadas_total_otras || 0,
+          asignacion_familiar_total_otras: ctx.base.af_multi?.previos_total_otras || 0,
+          grati_julio_proj: ctx.base.gratiJulioProj,
+          grati_diciembre_proj: ctx.base.gratiDiciembreProj,
+          otros_ingresos_proj: dto.otros_ingresos_proj,
+          asignacion_familiar_proj: ctx.base.asignacion_familiar_proj,
+          remu_proj_total_otras: ctx.base.remu_multi?.proyeccion_total_otras || 0,
+          grati_proj_total_otras: (ctx.base.grati_multi?.proyeccion_total_otras.julio + ctx.base.grati_multi?.proyeccion_total_otras.diciembre) || 0,
+          asignacion_familiar_proj_otras: ctx.base.af_multi?.proyeccion_total_otras || 0,
+          origen_retencion: ctx.soportes.meta.origen_retencion,
+          retenciones_previas_internas: ctx.soportes.meta.retenciones_previas_internas,
           retenciones_previas_externas: ctx.soportes.meta.retenciones_previas_externas,
-          soporte_multiempleo_id: ctx.soportes.meta.soporte_multiempleo_id,
-          soporte_certificado_id: ctx.soportes.meta.soporte_certificado_id,
-          soporte_sin_previos_id: ctx.soportes.meta.soporte_sin_previos_id,
-          soportes_json: ctx.soportes.meta.soportes_json,
+          retenciones_previas_filial_actual: ctx.retencionesPrevias,
+          extra_gravado_mes: dto.extra_gravado_mes,
+          retencion_adicional_mes: dto.retencion_adicional_mes,
+          bruto_anual_proyectado: dto.bruto_anual_proyectado,
+          renta_neta_anual: dto.renta_neta_anual,
+          impuesto_anual: dto.impuesto_anual,
+          retencion_base_mes: dto.retencion_base_mes
         },
-        creadoPor: req.user?.id
+        creado_por: req.usuario.id,
       });
 
       const soportesAbs = _absolutizeSoportes(ctx.soportes, req);

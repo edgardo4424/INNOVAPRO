@@ -176,6 +176,8 @@ const PlanillaController = {
             
          ); 
       } catch (error) {
+         console.log("Erro en el plame: ",error);
+         
          res.status(500).json({ error: error.message }); // Respondemos con un error
       }
    },

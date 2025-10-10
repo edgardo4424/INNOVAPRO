@@ -107,7 +107,7 @@ export const useAsistencia = (
   }, [trabajador.asistencia]);
 
   const limpiarAsistenciaPorEstado = (estado) => {
-    const esValido = ["presente", "tardanza"].includes(estado);
+    const esValido = ["presente", "tardanza","permiso"].includes(estado);
     setInputsDeshabilitados(!esValido);
 
     setAsistencia((prev) => ({
@@ -192,7 +192,7 @@ export const useAsistencia = (
 
   useEffect(() => {
     const estado = asistencia.estado_asistencia;
-    const esEstadoValido = ["presente", "tardanza"].includes(estado);
+    const esEstadoValido = ["presente", "tardanza","permiso"].includes(estado);
 
     setInputsDeshabilitados(!esEstadoValido);
   }, [asistencia.estado_asistencia]);

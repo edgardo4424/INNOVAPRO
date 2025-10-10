@@ -972,6 +972,7 @@ class SequelizePlanillaRepository {
       for (const p of planillasRxhObtenidas) {
          grupoRxh.trabajador_id=p.trabajador_id;
          grupoRxh.ruc=trabajador.ruc||"Ruc no disponible";
+         grupoRxh.domiciliado=trabajador.domiciliado;
          grupoRxh.tipo_contrato=p.tipo_contrato;
          grupoRxh.contrato_id=p.contrato_id
          grupoRxh.periodo=p.periodo;

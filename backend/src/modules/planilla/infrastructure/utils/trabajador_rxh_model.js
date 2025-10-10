@@ -30,4 +30,5 @@ export const trabajador_rxh_model = () => ({
    banco:"",
    numero_cuenta:"",
    ruc:"",
+   domiciliado:true,
 });

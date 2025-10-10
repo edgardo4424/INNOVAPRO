@@ -7,7 +7,6 @@ module.exports = async (payload, reciboRepository, transaction = null) => {
     throw new Error(errores);
   }
   const construccion_datos = recibo.construirDatos(true);
-  console.log("Datos contruidos: ", construccion_datos);
 
     await reciboRepository.actualizarReciboPorHonorarios(
       construccion_datos,
@@ -18,7 +17,6 @@ module.exports = async (payload, reciboRepository, transaction = null) => {
     codigo: 201,
     respuesta: {
       mensaje: "Recibo  actualizado exitosamente",
-      recibo: "Recibo dx",
     },
   };
 };

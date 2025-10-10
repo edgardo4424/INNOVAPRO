@@ -52,9 +52,9 @@ module.exports = function construirWarnings({ base, soportes, mesNum, retPrevias
 
   // 5) Lógica para Multi-empleo (Añadida para mayor claridad)
   if (metaDatos.es_secundaria) {
-      advertencias.push('Se identificó un escenario de multi-empleo. Esta filial es la secundaria, por lo que la retención de quinta categoría será de S/ 0.');
+      advertencias.push('Se identificó un escenario de multi-empleador. Esta filial es la secundaria, por lo que la retención de quinta categoría será de S/ 0.');
   } else if (metaDatos.origen_retencion === 'MULTIEMPLEO') {
-      advertencias.push('Se identificó un escenario de multi-empleo y esta es la filial principal. El cálculo incluye ingresos de otras filiales.');
+      advertencias.push('Se identificó un escenario de multi-empleador y esta es la filial principal. El cálculo incluye ingresos de otras filiales.');
   }
 
   return advertencias;
