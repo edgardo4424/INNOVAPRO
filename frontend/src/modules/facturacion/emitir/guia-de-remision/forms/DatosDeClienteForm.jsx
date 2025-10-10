@@ -57,7 +57,7 @@ const DatosDeClienteForm = () => {
                     direccion = data.direccion_completa;
                 } else if (cliente_Tipo_Doc === "6") {
                     razonSocial = data.nombre_o_razon_social;
-                    direccion = data.direccion;
+                    direccion = data.direccion_completa;
                 } else if (cliente_Tipo_Doc === "4") {
                     razonSocial = `${data.nombres} ${data.apellido_paterno} ${data.apellido_materno}`;
                 }
