@@ -59,10 +59,7 @@ export default function CompGestionTrabajadoresonent() {
          setLoading(true);
          setError(null);
          const response = await trabajadoresService.getTrabajadores();
-<<<<<<< HEAD
       
-=======
->>>>>>> c2860c1b771a16a7061c02c154c52be7dce86546
          setTrabajadores(response.data);
       } catch (error) {
          console.error("Error al cargar trabajadores", error);
