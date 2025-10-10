@@ -38,6 +38,12 @@ function pdfDatosGuiaHeader(guia, choferes, transportistas, invi = "#FFFFFF") {
                                     text: guia?.nro_contrato || "—", style: "datosGuiaValue", alignment: "left",
                                 },
                             ],
+                            [
+                                { text: "OBRA:", style: "datosGuiaLabel" },
+                                {
+                                    text: guia?.obra || "—", style: "datosGuiaValue", alignment: "left",
+                                },
+                            ],
                         ],
                     },
                     layout: "noBorders",
@@ -47,10 +53,6 @@ function pdfDatosGuiaHeader(guia, choferes, transportistas, invi = "#FFFFFF") {
                     table: {
                         widths: ["auto", "auto"],
                         body: [
-                            // [
-                            //     { text: "UBIGEO DE PARTIDA:", style: "datosGuiaLabel" },
-                            //     { text: guia.partidaUbigeo || "—", style: "datosGuiaValue" },
-                            // ],
                             [
                                 { text: "PUNTO DE PARTIDA:", style: "datosGuiaLabel" },
                                 {
@@ -58,10 +60,11 @@ function pdfDatosGuiaHeader(guia, choferes, transportistas, invi = "#FFFFFF") {
                                     style: "datosGuiaValue",
                                 },
                             ],
-                            // [
-                            //     { text: "UBIGEO DE LLEGADA:", style: "datosGuiaLabel" },
-                            //     { text: guia.llegadaUbigeo || "—", style: "datosGuiaValue" },
-                            // ],
+                            [
+                                // { text: "UBIGEO DE PARTIDA:", style: "datosGuiaLabel" },
+                                { text: "", style: "datosGuiaLabel" },
+                                { text: guia.partidaUbigeo || "—", style: "datosGuiaValue" },
+                            ],
                             [
                                 { text: "PUNTO DE LLEGADA:", style: "datosGuiaLabel" },
                                 {
@@ -70,10 +73,9 @@ function pdfDatosGuiaHeader(guia, choferes, transportistas, invi = "#FFFFFF") {
                                 },
                             ],
                             [
-                                { text: "OBRA:", style: "datosGuiaLabel" },
-                                {
-                                    text: guia?.obra || "—", style: "datosGuiaValue", alignment: "left",
-                                },
+                                // { text: "UBIGEO DE LLEGADA:", style: "datosGuiaLabel" },
+                                { text: "", style: "datosGuiaLabel" },
+                                { text: guia.llegadaUbigeo || "—", style: "datosGuiaValue" },
                             ],
                         ],
                     },
