@@ -195,7 +195,7 @@ const ModalDescarga = ({
 
       if (format === "cdr") {
         const response = await factilizaService.consultarCdr(payload);
-        await processResponse(response, `${baseName}-CDR`, "zip"); // el 'zip' sirve de hint si cambias a binario en el futuro
+        await processResponse(response, `${nombreDocumentoADdescargar(documentoADescargar, "cdr")}`, "zip"); // el 'zip' sirve de hint si cambias a binario en el futuro
         setMsg("CDR (ZIP) descargado exitosamente.");
         return;
       }

@@ -38,7 +38,7 @@ const nombreDocumentoADdescargar = (documento, tipo_archivo) => {
   switch (tipoDoc) {
     case "01":
       if (tipo_archivo == "pdf")
-        return `F_.${serie}-${correlativo} ${quitarPuntos(razonSocial)}`;
+        return `F_. ${serie}-${Number(correlativo)} ${quitarPuntos(razonSocial)}`;
       if (tipo_archivo == "xml")
         return `${numRuc}-${tipoDoc}-${serie}-${correlativo}`;
       if (tipo_archivo == "cdr")
@@ -46,15 +46,17 @@ const nombreDocumentoADdescargar = (documento, tipo_archivo) => {
 
     case "03":
       if (tipo_archivo == "pdf")
-        return `B_.${serie}-${correlativo} ${quitarPuntos(razonSocial)}`;
+        return `B_. ${serie}-${Number(correlativo)} ${quitarPuntos(razonSocial)}`;
       if (tipo_archivo == "xml")
         return `${numRuc}-${tipoDoc}-${serie}-${correlativo}`;
       if (tipo_archivo == "cdr")
         return `R-${numRuc}-${tipoDoc}-${serie}-${correlativo}`;
 
     case "07":
-      if (tipo_archivo == "pdf")
-        return `NOTA DE CREDITO ${serie}-${correlativo} ${getMotivoLabelArchivo(tipoDoc, motivo_Cod)} ${afectado_Tipo_Doc == "01" ? "F" : "B"}_.${afectado_Num_Doc}`;
+      if (tipo_archivo == "pdf") {
+        const [documentoAfectadoTipo, documentoAfectadoNum] = afectado_Num_Doc.split("-");
+        return `NOTA DE CREDITO ${serie}-${Number(correlativo)} - ${getMotivoLabelArchivo(tipoDoc, motivo_Cod)} ${afectado_Tipo_Doc == "01" ? "F" : "B"}_. ${documentoAfectadoTipo}-${Number(documentoAfectadoNum)}`;
+      }
       if (tipo_archivo == "xml")
         return `${numRuc}-${tipoDoc}-${serie}-${correlativo}`;
       if (tipo_archivo == "cdr")
@@ -62,17 +64,19 @@ const nombreDocumentoADdescargar = (documento, tipo_archivo) => {
       return "NOTA DE CRÉDITO";
 
     case "08":
-      if (tipo_archivo == "pdf")
-        return `NOTA DE DEBITO ${serie}-${correlativo} ${getMotivoLabelArchivo(tipoDoc, motivo_Cod)} ${afectado_Tipo_Doc == "01" ? "F" : "B"}_.${afectado_Num_Doc}`;
+      if (tipo_archivo == "pdf") {
+        const [documentoAfectadoTipo, documentoAfectadoNum] = afectado_Num_Doc.split("-");
+        return `NOTA DE DEBITO ${serie}-${Number(correlativo)} - ${getMotivoLabelArchivo(tipoDoc, motivo_Cod)} ${afectado_Tipo_Doc == "01" ? "F" : "B"}_. ${documentoAfectadoTipo}-${Number(documentoAfectadoNum)}`;
+      }
       if (tipo_archivo == "xml")
         return `${numRuc}-${tipoDoc}-${serie}-${correlativo}`;
       if (tipo_archivo == "cdr")
         return `R-${numRuc}-${tipoDoc}-${serie}-${correlativo}`;
-      return "NOTA DE CRÉDITO";
+      return "NOTA DE DEBITO";
 
     case "09":
       if (tipo_archivo == "pdf")
-        return `G_.${serie}-${correlativo} ${quitarPuntos(razonSocial)}`;
+        return `G.${serie}-${correlativo} - ${quitarPuntos(razonSocial)}`;
       if (tipo_archivo == "xml")
         return `${numRuc}-${tipoDoc}-${serie}-${correlativo}`;
       if (tipo_archivo == "cdr")
@@ -242,42 +246,42 @@ const getMotivoLabelArchivo = (tipoDoc, motivoCod) => {
 
 // ?? Helper para obtener la descripción del motivo de traslado
 const getMotivoTrasladoDescription = (code) => {
-    switch (code) {
-      case "01":
-        return "VENTA";
-      case "02":
-        return "VENTA SUJETA A CONFIRMACION DEL COMPRADOR";
-      case "04":
-        return "TRASLADO ENTRE ESTABLECIMIENTOS DE LA MISMA EMPRESA";
-      case "05":
-        return "CONSIGNACION";
-      case "06":
-        return "DEVOLUCION";
-      case "07":
-        return "RECOJO DE BIENES PARA TRASLADO POR PARTE DEL CLIENTE";
-      case "08":
-        return "IMPORTACION";
-      case "09":
-        return "EXPORTACION";
-      case "13":
-        return "OTROS";
-      case "14":
-        return "VENTA CON ENTREGA A TERCEROS";
-      case "15":
-        return "TRASLADO DE BIENES PARA TRANSFORMACION";
-      case "16":
-        return "TRASLADO DE BIENES TRANSFORMADOS";
-      case "17":
-        return "TRASLADO PARA REPARACION";
-      case "18":
-        return "TRASLADO EMISOR ITINERANTE DE COMPROBANTES DE PAGO";
-      case "19":
-        return "TRASLADO A ZONA PRIMARIA";
-      case "20":
-        return "TRASLADO POR EMISOR ITINERANTE (COMPROBANTE DE PAGO)";
-      default:
-        return "NO ESPECIFICADO";
-    }
+  switch (code) {
+    case "01":
+      return "VENTA";
+    case "02":
+      return "VENTA SUJETA A CONFIRMACION DEL COMPRADOR";
+    case "04":
+      return "TRASLADO ENTRE ESTABLECIMIENTOS DE LA MISMA EMPRESA";
+    case "05":
+      return "CONSIGNACION";
+    case "06":
+      return "DEVOLUCION";
+    case "07":
+      return "RECOJO DE BIENES PARA TRASLADO POR PARTE DEL CLIENTE";
+    case "08":
+      return "IMPORTACION";
+    case "09":
+      return "EXPORTACION";
+    case "13":
+      return "OTROS";
+    case "14":
+      return "VENTA CON ENTREGA A TERCEROS";
+    case "15":
+      return "TRASLADO DE BIENES PARA TRANSFORMACION";
+    case "16":
+      return "TRASLADO DE BIENES TRANSFORMADOS";
+    case "17":
+      return "TRASLADO PARA REPARACION";
+    case "18":
+      return "TRASLADO EMISOR ITINERANTE DE COMPROBANTES DE PAGO";
+    case "19":
+      return "TRASLADO A ZONA PRIMARIA";
+    case "20":
+      return "TRASLADO POR EMISOR ITINERANTE (COMPROBANTE DE PAGO)";
+    default:
+      return "NO ESPECIFICADO";
+  }
 };
 
 const getCodigoTraslado = (code) => {
