@@ -8,6 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useNota } from "@/modules/facturacion/context/NotaContext";
+import { obtenerFechaActual } from "@/modules/facturacion/utils/fechaEmisionActual";
 import { formatDateTime } from "@/modules/facturacion/utils/formateos";
 import { ListTodo, LoaderCircle, Search, SquarePen } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -197,6 +198,7 @@ const InfDocumentoForm = () => {
     notaCreditoDebito.serie,
     correlativosPendientes,
   ]);
+
 
   return (
     <div className="p-4 sm:p-6 lg:px-8 lg:py-4">

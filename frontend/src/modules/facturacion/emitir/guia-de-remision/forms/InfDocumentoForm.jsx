@@ -13,6 +13,7 @@ import { ListTodo, LoaderCircle, Search, SquarePen } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Calendar22 } from "../../factura-boleta/components/Calendar22";
 import { formatDateTime } from "@/modules/facturacion/utils/formateos";
+import { obtenerFechaActual } from "@/modules/facturacion/utils/fechaEmisionActual";
 
 const InfDocumentoForm = () => {
   const {
@@ -147,7 +148,7 @@ const InfDocumentoForm = () => {
       );
 
       setListaCorrelativos(lista.flatMap((item) => item.pendientes));
-    }else{
+    } else {
       setMostrarPendientes(false);
       setListaCorrelativos([]);
     }
@@ -157,8 +158,10 @@ const InfDocumentoForm = () => {
     correlativosPendientes,
   ]);
 
+
+
   return (
-    <div className=" p-4 sm:p-6 lg:px-8 lg:py-4">
+    <div className="p-4 sm:p-6 lg:px-8 lg:py-4">
       <h2 className="mb-2 flex text-2xl font-semibold">
         Información del Documento
       </h2>

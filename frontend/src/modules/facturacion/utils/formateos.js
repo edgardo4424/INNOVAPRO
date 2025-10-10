@@ -242,26 +242,42 @@ const getMotivoLabelArchivo = (tipoDoc, motivoCod) => {
 
 // ?? Helper para obtener la descripción del motivo de traslado
 const getMotivoTrasladoDescription = (code) => {
-  switch (code) {
-    case "01":
-      return "VENTA";
-    case "02":
-      return "COMPRA";
-    case "04":
-      return "TRASLADO ENTRE ESTABLECIMIENTOS DE LA MISMA EMPRESA";
-    case "08":
-      return "IMPORTACIÓN";
-    case "09":
-      return "EXPORTACIÓN";
-    case "18":
-      return "TRASLADO EMISOR ITINERANTE DE COMPROBANTES DE PAGO";
-    case "19":
-      return "TRASLADO A ZONA PRIMARIA";
-    case "13":
-      return "OTROS";
-    default:
-      return "NO ESPECIFICADO";
-  }
+    switch (code) {
+      case "01":
+        return "VENTA";
+      case "02":
+        return "VENTA SUJETA A CONFIRMACION DEL COMPRADOR";
+      case "04":
+        return "TRASLADO ENTRE ESTABLECIMIENTOS DE LA MISMA EMPRESA";
+      case "05":
+        return "CONSIGNACION";
+      case "06":
+        return "DEVOLUCION";
+      case "07":
+        return "RECOJO DE BIENES PARA TRASLADO POR PARTE DEL CLIENTE";
+      case "08":
+        return "IMPORTACION";
+      case "09":
+        return "EXPORTACION";
+      case "13":
+        return "OTROS";
+      case "14":
+        return "VENTA CON ENTREGA A TERCEROS";
+      case "15":
+        return "TRASLADO DE BIENES PARA TRANSFORMACION";
+      case "16":
+        return "TRASLADO DE BIENES TRANSFORMADOS";
+      case "17":
+        return "TRASLADO PARA REPARACION";
+      case "18":
+        return "TRASLADO EMISOR ITINERANTE DE COMPROBANTES DE PAGO";
+      case "19":
+        return "TRASLADO A ZONA PRIMARIA";
+      case "20":
+        return "TRASLADO POR EMISOR ITINERANTE (COMPROBANTE DE PAGO)";
+      default:
+        return "NO ESPECIFICADO";
+    }
 };
 
 const getCodigoTraslado = (code) => {
@@ -322,13 +338,47 @@ const opcionesCodigos = [
     descripcion: "TRASLADO ENTRE ESTABLECIMIENTOS DE LA MISMA EMPRESA",
     descripcionmi: "Traslado entre establecimientos de la misma empresa",
   },
+  {
+    value: "05",
+    descripcion: "CONSIGNACION",
+    descripcionmi: "Consignación",
+  },
+  {
+    value: "06",
+    descripcion: "DEVOLUCION",
+    descripcionmi: "Devolución",
+  },
+  {
+    value: "07",
+    descripcion: "RECOJO DE BIENES PARA TRASLADO POR PARTE DEL CLIENTE",
+    descripcionmi: "Recojo de bienes para traslado por parte del cliente",
+  },
   { value: "08", descripcion: "IMPORTACION", descripcionmi: "Importación" },
   { value: "09", descripcion: "EXPORTACION", descripcionmi: "Exportación" },
-  { value: "13", descripcion: "OTROS", descripcionmi: "Otros - Alquiler" },
+  {
+    value: "13",
+    descripcion: "OTROS",
+    descripcionmi: "Otros - Alquiler",
+  },
   {
     value: "14",
     descripcion: "VENTA CON ENTREGA A TERCEROS",
     descripcionmi: "Venta con entrega a terceros",
+  },
+  {
+    value: "15",
+    descripcion: "TRASLADO DE BIENES PARA TRANSFORMACION",
+    descripcionmi: "Traslado de bienes para transformación",
+  },
+  {
+    value: "16",
+    descripcion: "TRASLADO DE BIENES TRANSFORMADOS",
+    descripcionmi: "Traslado de bienes transformados",
+  },
+  {
+    value: "17",
+    descripcion: "TRASLADO PARA REPARACION",
+    descripcionmi: "Traslado para reparación",
   },
   {
     value: "18",
@@ -347,10 +397,10 @@ const opcionesCodigos = [
   },
 ];
 
+
 const opcionesOtros = [
   "PRESTAMO",
   "ENVIO DE ALQUILER",
-  "DEVOLUCION",
   "REPARACION",
   "OTROS",
 ];

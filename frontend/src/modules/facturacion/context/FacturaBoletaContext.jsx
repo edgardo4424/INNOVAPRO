@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import { validarFacturaCompleta } from "../emitir/factura-boleta/utils/validarPasos";
 import filialesService from "../service/FilialesService";
 import determinarEstadoFactura from "../utils/manejadorCodigosSunat";
+import { obtenerFechaActual } from "../utils/fechaEmisionActual";
 
 const FacturaBoletaContext = createContext();
 
@@ -75,6 +76,14 @@ export function FacturaBoletaProvider({ children }) {
   const [pagoValida, setPagoValida] = useState(PagoValidarEstados);
 
   const [filiales, setFiliales] = useState([]);
+
+  // ?? traer la fecha actual para el documento
+  useEffect(() => {
+    setFactura((prevValores) => ({
+      ...prevValores,
+      fecha_Emision: obtenerFechaActual(),
+    }));
+  }, []);
 
   const validarFactura = async () => {
     try {
@@ -508,6 +517,7 @@ export function FacturaBoletaProvider({ children }) {
   const Limpiar = () => {
     setFactura({
       ...ValorInicialFactura,
+      fecha_Emision: obtenerFechaActual(),
       empresa_Ruc: factura.empresa_Ruc,
       serie: factura.serie,
     });

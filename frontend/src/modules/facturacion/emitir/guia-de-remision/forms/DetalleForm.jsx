@@ -43,7 +43,6 @@ const DetalleForm = () => {
 
     const handleExcelDataLoaded = (data) => {
         setExcelData(data.data);
-        console.log("Datos del Excel cargados:", data);
 
         // Aquí puedes procesar los datos del Excel como necesites
         if (data && data.data.length > 0) {

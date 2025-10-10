@@ -11,6 +11,7 @@ import facturaService from "../service/FacturaService";
 import filialesService from "../service/FilialesService";
 import numeroALeyenda from "../utils/numeroALeyenda";
 import determinarEstadoFactura from "../utils/manejadorCodigosSunat";
+import { obtenerFechaActual } from "../utils/fechaEmisionActual";
 
 const NotaContext = createContext();
 
@@ -54,6 +55,14 @@ export function NotaProvider({ children }) {
   const [id_items, setid_items] = useState([]);
 
   const [filiales, setFiliales] = useState([]);
+
+  // ?? trae la fecha actual para emitir la nota
+  useEffect(() => {
+    setNotaCreditoDebito((prevValores) => ({
+      ...prevValores,
+      fecha_Emision: obtenerFechaActual(),
+    }));
+  }, []);
 
   // ?? OBTENER TODAS LAS FILIALES
 
@@ -413,6 +422,7 @@ export function NotaProvider({ children }) {
   const Limpiar = () => {
     setNotaCreditoDebito({
       ...notaInical,
+      fecha_Emision: obtenerFechaActual(),
       empresa_Ruc: notaCreditoDebito.empresa_Ruc,
       serie: notaCreditoDebito.serie,
     });

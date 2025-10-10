@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import useProducto from "../hooks/useProducto";
 import filialesService from "../service/FilialesService";
 import determinarEstadoFactura from "../utils/manejadorCodigosSunat";
+import { obtenerFechaActual } from "../utils/fechaEmisionActual";
 
 const GuiaTransporteContext = createContext();
 
@@ -23,13 +24,7 @@ export function GuiaTransporteProvider({ children }) {
 
   // ?? CORRELATIVOS
 
-  const serieGuia = [
-    { value: "T005" },
-    // { value: "T002" },
-    // { value: "T003" },
-    // { value: "T004" },
-    // { value: "T005" },
-  ];
+  const serieGuia = [{ value: "T005" }];
 
   const [correlativos, setCorrelativos] = useState([]);
   const [correlativosPendientes, setCorrelativosPendientes] = useState([]);
@@ -51,6 +46,15 @@ export function GuiaTransporteProvider({ children }) {
   const [tipoGuia, setTipoGuia] = useState("transporte-publico");
 
   const [filiales, setFiliales] = useState([]);
+
+  // ?? trae la fecha actual para emitir la guia
+  useEffect(() => {
+    setGuiaTransporte((prevValores) => ({
+      ...prevValores,
+      fecha_Emision: obtenerFechaActual(),
+      guia_Envio_Fec_Traslado: obtenerFechaActual("traslado"),
+    }));
+  }, []);
 
   // ?? OBTENER CORRELATIVOS
   const buscarCorrelativo = async (e) => {
@@ -386,6 +390,8 @@ export function GuiaTransporteProvider({ children }) {
   const Limpiar = () => {
     setGuiaTransporte({
       ...guiaInical,
+      fecha_Emision: obtenerFechaActual(),
+      guia_Envio_Fec_Traslado: obtenerFechaActual("traslado"),
       empresa_Ruc: guiaTransporte.empresa_Ruc,
       serie: guiaTransporte.serie,
     });

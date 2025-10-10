@@ -12,6 +12,7 @@ import { ListTodo, LoaderCircle, Search, SquarePen } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Calendar22 } from "../Calendar22";
 import { Calendar44 } from "../Calendar44";
+import { obtenerFechaActual } from "@/modules/facturacion/utils/fechaEmisionActual";
 
 const DatosDelComprobante = () => {
   const {
@@ -120,6 +121,8 @@ const DatosDelComprobante = () => {
       setListaCorrelativos([]);
     }
   }, [factura.empresa_Ruc, factura.serie, correlativosPendientes]);
+
+
 
   return (
     <div className="p-4 sm:p-6 lg:px-8 lg:py-4">
