@@ -38,7 +38,6 @@ module.exports = async (datoslogin, usuarioRepository ) => {
         return { codigo: 401, respuesta: { mensaje: "Credenciales inválidas" } }; // Retornamos el error si el cargo no existe
     }
 
-    console.log('cargoUsuario', cargoUsuario);
 
     const token = jwt.sign(
         { id: usuario.id, rol: cargoUsuario.nombre },

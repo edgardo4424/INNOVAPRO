@@ -70,6 +70,11 @@ class Trabajador {
     if (this.asignacion_familiar === undefined) {
       errores.push("Asignacion familiar inválida");
     }
+
+    if (!this.estado_civil) {
+      errores.push("El estado civil es obligatorio");
+    }
+
     if (
       !this.fecha_nacimiento ||
       new Date(this.fecha_nacimiento) > new Date()

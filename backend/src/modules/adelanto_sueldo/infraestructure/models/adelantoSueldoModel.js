@@ -35,7 +35,7 @@ const AdelantoSueldo = sequelize.define(
          defaultValue: true, // activo
       },
       tipo: {
-         type: DataTypes.ENUM("simple", "gratificacion", "cts"),
+         type: DataTypes.ENUM("simple", "gratificacion", "cts", "prestamo"),
          allowNull: false,
          defaultValue: "simple",
       },

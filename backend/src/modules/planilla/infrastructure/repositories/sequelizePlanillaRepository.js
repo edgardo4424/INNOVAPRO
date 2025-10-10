@@ -306,7 +306,16 @@ class SequelizePlanillaRepository {
 
       const quinta_categoria = found ? +(retencion_base_mes / 2).toFixed(2) : 0;
 
-       const {totalAdelantosSueldo, adelantos_ids} =
+       const {totalAdelantosSueldo: totalAdelantosSueldoPrestamo, adelantos_ids: adelantos_ids_prestamo} =
+                await adelantoSueldoRepository.obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
+                  trabajador.id,
+                  "prestamo",
+                  /* contrato.fecha_inicio,
+                  contrato.fecha_fin, */
+                  fecha_anio_mes_dia
+                );
+
+       const {totalAdelantosSueldo: totalAdelantosSueldoSimple, adelantos_ids: adelantos_ids_simple} =
                 await adelantoSueldoRepository.obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
                   trabajador.id,
                   "simple",
@@ -314,6 +323,9 @@ class SequelizePlanillaRepository {
                   contrato.fecha_fin, */
                   fecha_anio_mes_dia
                 );
+
+      const adelantos_ids = [...adelantos_ids_prestamo, ...adelantos_ids_simple];
+      const totalAdelantosSueldo = Number(totalAdelantosSueldoPrestamo) + Number(totalAdelantosSueldoSimple);
 
       const totalDescuentos = +(
         onp +
@@ -387,7 +399,7 @@ class SequelizePlanillaRepository {
        const {totalAdelantosSueldo, adelantos_ids} =
                 await adelantoSueldoRepository.obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
                   trabajador.id,
-                  "simple",
+                  "prestamo",
                   /* contrato.fecha_inicio,
                   contrato.fecha_fin, */
                   fecha_anio_mes_dia
