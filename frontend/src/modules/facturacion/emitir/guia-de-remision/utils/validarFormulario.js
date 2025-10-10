@@ -18,6 +18,7 @@ const camposRequeridosGlobal = [
     { key: "guia_Envio_Llegada_Ubigeo", name: "Llegada Ubigeo" },
     { key: "guia_Envio_Llegada_Direccion", name: "Llegada Dirección" },
     { key: "guia_Envio_Vehiculo_Placa", name: "Placa del Vehículo" },
+    { key: "guia_Envio_Peso_Total", name: "Peso Total" },
     {
         key: "detalle",
         camposRequeridos: [
@@ -89,7 +90,6 @@ export async function validarFormulario(tipo, Guia) {
             { key: "guia_Envio_Llegada_Cod_Local", name: "Llegada Cod Local" },
         ];
     }
-
     const camposRequeridos = [...camposRequeridosGlobal, ...camposRequeridosEspecificos];
 
     const errores = {};
@@ -130,6 +130,9 @@ export async function validarFormulario(tipo, Guia) {
                     }
                 });
             }
+            if (guia_Envio_Peso_Total !== undefined && guia_Envio_Peso_Total !== null && guia_Envio_Peso_Total !== "") {
+
+            }
         } else {
             // Es un campo simple
             if (Guia[campo.key] === undefined || Guia[campo.key] === null || Guia[campo.key] === "") {
@@ -138,6 +141,25 @@ export async function validarFormulario(tipo, Guia) {
                 validos = false;
             }
         }
+
+        // ✅ Validar que guia_Envio_Peso_Total sea mayor a 0
+        if (Guia.guia_Envio_Peso_Total !== undefined &&
+            Guia.guia_Envio_Peso_Total !== null &&
+            Guia.guia_Envio_Peso_Total !== "") {
+
+            const peso = Number(Guia.guia_Envio_Peso_Total);
+            if (isNaN(peso) || peso <= 0) {
+                errores.guia_Envio_Peso_Total = "El Peso Total debe ser un número mayor a 0.";
+                validos = false;
+            }
+        }
+
+        // ✅ Validar que guia_Envio_Vehiculo_Placa no esté vacío
+        if (!Guia.guia_Envio_Vehiculo_Placa || Guia.guia_Envio_Vehiculo_Placa.trim() === "") {
+            errores.guia_Envio_Vehiculo_Placa = "La Placa del Vehículo es requerida.";
+            validos = false;
+        }
+
     });
 
     // Nueva validación de fechas (sin cambios)

@@ -46,6 +46,12 @@ const TablaDocumentos = ({
 
   const getEstadoTexto = (estado) => {
     switch (estado) {
+      case "EMITIDA":
+        return "EMITIDO";
+      case "RECHAZADA":
+        return "RECHAZADO";
+      case "PENDIENTE":
+        return "CARGANDO";
       case "ANULADA-NOTA":
         return "ANULADA POR NOTA";
       case "MODIFICADA-NOTA":
@@ -120,9 +126,9 @@ const TablaDocumentos = ({
                 <td className="px-2 py-3 text-xs text-gray-700">
                   <span>{filialActural(factura.empresa_ruc) || ""}</span>
                 </td>
-                <td className="flex px-2 py-3 text-xs text-gray-700">
-                  <span>{`${factura.cliente_num_doc || ""} -`}</span>
+                <td className="flex flex-col px-2 py-3 text-xs text-gray-700">
                   <span>{factura.cliente_razon_social || ""}</span>
+                  <span>{`${factura.cliente_num_doc || ""}`}</span>
                 </td>
                 <td className="px-2 py-3 text-xs font-medium text-gray-700">
                   {`${factura.tipo_moneda} ${factura.monto_imp_venta}`}

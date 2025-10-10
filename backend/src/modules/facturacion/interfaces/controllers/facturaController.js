@@ -23,7 +23,12 @@ const obtenerMTC = require('../../application/useCases/factura-boleta/obtenerMTC
 const reporteVentas = require('../../application/useCases/factura-boleta/reporteVentas')
 
 const obtenerCorrelativoPendientes = require('../../application/useCases/factura-boleta/obtenerCorrelativoPendientes')
+
 const reporteDasboard = require('../../application/useCases/factura-boleta/reporteDasboard')
+
+const verificarCorrelativoRegistrado = require('../../application/useCases/factura-boleta/verificarCorrelativoRegistrado')
+const documentosPendientes = require('../../application/useCases/factura-boleta/documentosPendientes')
+
 
 const facturaRepository = new SequelizeFacturaRepository()
 
@@ -80,6 +85,18 @@ const facturaController = {
         }
     },
 
+    async verificarCorrelativoRegistrado(req, res) {
+        // * Controlador para obtener el correlativo de la factura
+        // * se encarga de llamar al caso de uso
+        // * "obtenerCorrelativo" y devolver su respuesta
+        try {
+            const { codigo, respuesta } = await verificarCorrelativoRegistrado(req.body, facturaRepository)
+            res.status(codigo).json(respuesta)
+        } catch (error) {
+            res.status(500).json({ error: error.message, estado: false })
+        }
+    },
+
     async obtenerCorrelativo(req, res) {
         // * Controlador para obtener el correlativo de la factura
         // * se encarga de llamar al caso de uso
@@ -128,12 +145,25 @@ const facturaController = {
         }
     },
 
+
     async reporteDasboard(req, res) {
         // * Controlador para emitir un reporte de dashboard de facturas - boletas - guias - notas
         // * se encarga de llamar al caso de uso
         // * "reporteDasboard" y devolver su respuesta
         try {
             const { codigo, respuesta } = await reporteDasboard(req.body, facturaRepository)
+            res.status(codigo).json(respuesta)
+        } catch (error) {
+            res.status(500).json({ error: error.message, estado: false })
+        }
+    },
+
+    async documentosPendientes(_, res) {
+        // * Controlador para emitir un reporte de ventas de facturas - boletas - guias - notas
+        // * se encarga de llamar al caso de uso
+        // * "reporteVentas" y devolver su respuesta
+        try {
+            const { codigo, respuesta } = await documentosPendientes( facturaRepository)
             res.status(codigo).json(respuesta)
         } catch (error) {
             res.status(500).json({ error: error.message, estado: false })

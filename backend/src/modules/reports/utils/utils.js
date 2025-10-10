@@ -328,6 +328,49 @@ const utils = {
         }
     },
 
+    getUnidadDeMedida(code) {
+        switch (code) {
+            case "NIU":
+                return "UNIDAD";
+            case "ZZ":
+                return "SERVICIO";
+            case "GRM":
+                return "GRAMO";
+            case "KGM":
+                return "KILOGRAMO";
+            case "LTR":
+                return "LITRO";
+            case "MTR":
+                return "METRO";
+            case "DZ":
+                return "DOCENA";
+            case "BX":
+                return "CAJA";
+            case "MLT":
+                return "MILILITRO";
+            case "MMT":
+                return "MILIMETRO";
+            case "MMK":
+                return "MILÍMETRO CUADRADO";
+            case "MMQ":
+                return "MILÍMETRO CÚBICO";
+            case "CMK":
+                return "CENTÍMETRO CUADRADO";
+            case "CMQ":
+                return "CENTÍMETRO CÚBICO";
+            case "CMT":
+                return "CENTÍMETRO LINEAL";
+            case "CEN":
+                return "CIENTO";
+            case "LEF":
+                return "HOJA";
+            case "HLT":
+                return "HECTOLITRO";
+            default:
+                return "NO ESPECIFICADO";
+        }
+    },
+
     getMotivoLabel(code, tipo_Doc) {
         const encontrado = tipo_Doc == "07" ?
             codigosMotivoCredito.find((item) => item.value === code) :

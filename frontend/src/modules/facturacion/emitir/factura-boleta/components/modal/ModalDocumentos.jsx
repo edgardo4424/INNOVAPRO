@@ -119,7 +119,7 @@ const ModalDocumentos = ({ open, setOpen }) => {
                 type="text"
                 name="nroDoc"
                 id="nroDoc"
-                placeholder="Orden de compra"
+                placeholder="EJ: GUIA-123456"
                 className="rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
                 value={documentos.nroDoc}
                 onChange={(e) =>

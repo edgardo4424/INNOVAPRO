@@ -1,3 +1,5 @@
+const { utils } = require("../../../../utils/utils");
+
 function pdfProductosGuia(
   guia,
   bg_color = "#DCDBDB",
@@ -9,7 +11,7 @@ function pdfProductosGuia(
       return acc + Number(d.cantidad ?? 0);
     }
     return acc;
-  }, 1);
+  }, 0);
 
   const body = [
     // ✅ Cabecera
@@ -22,34 +24,34 @@ function pdfProductosGuia(
     // ✅ Filas con sombreado alternado
     ...(guia.guia_detalles?.length
       ? guia.guia_detalles.map((d, index) => {
-          const isEven = index % 2 === 0;
-          return [
-            {
-              text: d.cod_Producto || "—",
-              style: "tableBody",
-              alignment: "center",
-              fillColor: isEven ? "#FFFFFF" : "#DCDBDB",
-            },
-            {
-              text: d.descripcion || "—",
-              style: "tableBody",
-              alignment: "left",
-              fillColor: isEven ? "#FFFFFF" : "#DCDBDB",
-            },
-            {
-              text: d.unidad || "—",
-              style: "tableBody",
-              alignment: "center",
-              fillColor: isEven ? "#FFFFFF" : "#DCDBDB",
-            },
-            {
-              text: d.cantidad || "—",
-              style: "tableBody",
-              alignment: "center",
-              fillColor: isEven ? "#FFFFFF" : "#DCDBDB",
-            },
-          ];
-        })
+        const isEven = index % 2 === 0;
+        return [
+          {
+            text: d.cod_Producto || "—",
+            style: "tableBody",
+            alignment: "center",
+            fillColor: isEven ? "#FFFFFF" : "#DCDBDB",
+          },
+          {
+            text: d.descripcion || "—",
+            style: "tableBody",
+            alignment: "left",
+            fillColor: isEven ? "#FFFFFF" : "#DCDBDB",
+          },
+          {
+            text: utils.getUnidadDeMedida(d.unidad) || "—",
+            style: "tableBody",
+            alignment: "center",
+            fillColor: isEven ? "#FFFFFF" : "#DCDBDB",
+          },
+          {
+            text: d.cantidad || "—",
+            style: "tableBody",
+            alignment: "center",
+            fillColor: isEven ? "#FFFFFF" : "#DCDBDB",
+          },
+        ];
+      })
       : []),
     // ✅ Fila total sin bordes
     [

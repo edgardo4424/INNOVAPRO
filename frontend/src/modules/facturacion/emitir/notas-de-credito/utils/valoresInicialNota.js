@@ -1,3 +1,4 @@
+import { obtenerFechaActual } from "@/modules/facturacion/utils/fechaEmisionActual";
 
 // ? VALORES INICIALES ---- INICIO
 const notaInical = {
@@ -6,13 +7,13 @@ const notaInical = {
     tipo_Doc: "07",
     serie: "BCT1",
     correlativo: "",
-    fecha_Emision: new Date().toISOString().split("T")[0] + "T" + new Date().toTimeString().split(" ")[0] + "-05:00",
+    fecha_Emision: obtenerFechaActual(),
     tipo_Moneda: "PEN",
     estado_Documento: "0",
     empresa_Ruc: "20562974998",
     Manual: false,
     Observacion: "",
-    estado: "EMITIDA",
+    estado: "",
 
 
     // ?Datos del cliente

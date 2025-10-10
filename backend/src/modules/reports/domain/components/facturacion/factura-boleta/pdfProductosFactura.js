@@ -10,7 +10,7 @@ function pdfProductoFactura(
     return (
         {
             table: {
-                widths: ['10%', '5%', '15%', '45%', '8%', '8%', '9%'],
+                widths: ['10%', '10%', '15%', '40%', '8%', '8%', '9%'],
                 body: [
                     [
                         { text: 'COD', style: 'tableHeaderMain', fillColor: bg_color, alignment: 'center' },
@@ -24,7 +24,7 @@ function pdfProductoFactura(
                     ...(factura.detalle_facturas?.length ? factura.detalle_facturas : []).map(d => [
                         { text: d.cod_Producto || "—", style: 'tableBody', alignment: 'center' },
                         { text: `${Number(d.cantidad ?? 0).toFixed(2)}`, style: 'tableBody', alignment: 'center' },
-                        { text: d.unidad || 'NIU', style: 'tableBody', alignment: 'center' },
+                        { text: utils.getUnidadDeMedida(d.unidad) || 'NIU', style: 'tableBody', alignment: 'center' },
                         { text: d.descripcion, style: 'tableBody' },
                         { text: utils.formatMoney(d.monto_Valor_Unitario), style: 'tableBody', alignment: 'center' },
                         { text: utils.formatMoney(d.total_Impuestos), style: 'tableBody', alignment: 'center' },

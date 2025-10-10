@@ -21,6 +21,7 @@ import { LoaderCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ValorInicialDetalleNota } from "../utils/valoresInicialNota";
 import { formatearFecha } from "@/modules/facturacion/utils/formatearFecha";
+import { formatCurrency } from "@/modules/facturacion/utils/formateos";
 
 const ListaDeDocumentosVariables = ({ closeModal }) => {
   const {
@@ -70,9 +71,11 @@ const ListaDeDocumentosVariables = ({ closeModal }) => {
               tipo_Doc: tipoDocumento,
             });
           setDocumentosRelacionados(data);
+        } else {
+          setDocumentosRelacionados([]);
         }
       } catch (error) {
-        console.error("Error al cargar piezas", error);
+        setDocumentosRelacionados([]);
       } finally {
         setFiltro("");
         setLoadingDocumentos(false);
@@ -202,20 +205,22 @@ const ListaDeDocumentosVariables = ({ closeModal }) => {
           <Table className="border-2 border-gray-200">
             <TableHeader className="border-b-2 border-gray-400 bg-gray-100">
               <TableRow>
-                <TableHead>Serie</TableHead>
-                <TableHead>Correlativo</TableHead>
+                <TableHead>Comprobante</TableHead>
                 <TableHead>Fecha Emision</TableHead>
+                <TableHead>Cliente Razon Social</TableHead>
+                <TableHead>Monto Total</TableHead>
               </TableRow>
             </TableHeader>
 
             {loadingDocumentos ? (
               <TableBody className="bg-gray-200">
                 <TableRow>
-                  <TableCell className="flex justify-center py-6 text-center text-gray-500 italic">
-                    <span className="flex items-center text-gray-600">
-                      <LoaderCircle className="h-5 w-5 animate-spin text-gray-600" />
-                      Cargando...
-                    </span>
+                  <TableCell
+                    colSpan={6}
+                    className="flex justify-center py-6 text-center text-gray-500 italic"
+                  >
+                    <LoaderCircle className="h-5 w-5 animate-spin text-gray-600" />
+                    Cargando...
                   </TableCell>
                 </TableRow>
               </TableBody>
@@ -239,10 +244,18 @@ const ListaDeDocumentosVariables = ({ closeModal }) => {
                         onClick={() => handleClick(item)}
                         className={"cursor-pointer hover:bg-gray-300"}
                       >
-                        <TableCell>{item.serie || ""} </TableCell>
-                        <TableCell>{item.correlativo || ""}</TableCell>
+                        <TableCell>
+                          {item.serie || ""} - {item.correlativo || ""}
+                        </TableCell>
                         <TableCell>
                           {formatearFecha(item.fecha_Emision) || ""}
+                        </TableCell>
+                        <TableCell>{item.cliente_Razon_Social || ""}</TableCell>
+                        <TableCell>
+                          {formatCurrency(
+                            item.monto_Imp_Venta,
+                            item.tipo_Moneda,
+                          ) || ""}
                         </TableCell>
                       </TableRow>
                     ))

@@ -127,6 +127,12 @@ const TablaNotas = ({
   // Función para obtener el texto a mostrar del estado
   const getEstadoTexto = (estado) => {
     switch (estado) {
+      case "EMITIDA":
+        return "EMITIDO";
+      case "RECHAZADA":
+        return "RECHAZADO";
+      case "PENDIENTE":
+        return "CARGANDO";
       case "ANULADA-NOTA":
         return "ANULADA POR NOTA";
       case "MODIFICADA-NOTA":
@@ -187,10 +193,9 @@ const TablaNotas = ({
               <td className="px-6 py-3 text-xs text-gray-700">
                 {filialActural(nota.empresa_Ruc)}
               </td>
-              <td className="px-6 py-3 text-xs text-gray-700">
-                {nota.cliente_Num_Doc
-                  ? `${nota.cliente_Num_Doc} - ${nota.cliente_Razon_Social}`
-                  : nota.cliente_Razon_Social}
+              <td className="flex flex-col px-2 py-3 text-xs text-gray-700">
+                <span>{nota.cliente_Razon_Social || ""}</span>
+                <span>{nota.cliente_Num_Doc || ""}</span>
               </td>
               <td className="px-6 py-3 text-xs font-medium text-gray-700">
                 {obtenerDescripcionMotivo(nota.motivo_Cod, nota.tipo_Doc)}
@@ -240,6 +245,9 @@ const TablaNotas = ({
                             tipoDoc: nota.tipo_Doc,
                             numDocumentoComprobante: nota.cliente_Num_Doc,
                             razonSocial: nota.cliente_Razon_Social,
+                            afectado_Tipo_Doc: nota.afectado_Tipo_Doc,
+                            afectado_Num_Doc: nota.afectado_Num_Doc,
+                            motivo_Cod: nota.motivo_Cod,
                           });
                         }}
                       >
@@ -275,7 +283,6 @@ const TablaNotas = ({
                       <p>Ver documento</p>
                     </TooltipContent>
                   </Tooltip>
-
                 </div>
               </td>
             </tr>

@@ -8,7 +8,7 @@ function pdfLegendNota(
             body: [
                 [
                     {
-                        text: `IMPORTE EN LETRAS: ${nota.legend_nota_cre_debs?.[0]?.legend_Value || "—"}`,
+                        text: `${nota.legend_nota_cre_debs?.[0]?.legend_Value || "—"}`,
                         style: "amountInLetters",
                         // Definimos los bordes a nivel de celda
                         border: [true, true, true, true]

@@ -12,6 +12,7 @@ import { ListTodo, LoaderCircle, Search, SquarePen } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Calendar22 } from "../Calendar22";
 import { Calendar44 } from "../Calendar44";
+import { obtenerFechaActual } from "@/modules/facturacion/utils/fechaEmisionActual";
 
 const DatosDelComprobante = () => {
   const {
@@ -23,6 +24,7 @@ const DatosDelComprobante = () => {
     setCorrelativoEstado,
     loadingCorrelativo,
     buscarCorrelativo,
+    buscarCorrelativoPendientes,
     serieFactura,
     setRetencionActivado,
     serieBoleta,
@@ -65,6 +67,11 @@ const DatosDelComprobante = () => {
       ...prevValores,
       [name]: value,
     }));
+  };
+
+  const handleCorrelativos = (value, name) => {
+    buscarCorrelativo();
+    buscarCorrelativoPendientes();
   };
 
   // Al cambiar el tipo de documento o la serie, actualizar el correlativo
@@ -115,8 +122,10 @@ const DatosDelComprobante = () => {
     }
   }, [factura.empresa_Ruc, factura.serie, correlativosPendientes]);
 
+
+
   return (
-    <div className=" p-4 sm:p-6 lg:px-8 lg:py-4">
+    <div className="p-4 sm:p-6 lg:px-8 lg:py-4">
       <h1 className="py-3 text-2xl font-bold text-gray-800">
         Datos del Comprobante
       </h1>
@@ -213,7 +222,7 @@ const DatosDelComprobante = () => {
               <div className="flex gap-x-1">
                 <button
                   className={`bg-innova-blue hover:bg-innova-blue cursor-pointer rounded-md px-2 text-white hover:scale-105`}
-                  onClick={buscarCorrelativo}
+                  onClick={handleCorrelativos}
                 >
                   {loadingCorrelativo ? (
                     <LoaderCircle className="size-5 animate-spin" />

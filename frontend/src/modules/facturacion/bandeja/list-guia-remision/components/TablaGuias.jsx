@@ -49,6 +49,12 @@ const TablaGuias = ({
   // Función para obtener el texto a mostrar del estado
   const getEstadoTexto = (estado) => {
     switch (estado) {
+      case "EMITIDA":
+        return "EMITIDO";
+      case "RECHAZADA":
+        return "RECHAZADO";
+      case "PENDIENTE":
+        return "CARGANDO";
       case "ANULADA-NOTA":
         return "ANULADA POR NOTA";
       case "MODIFICADA-NOTA":
@@ -57,6 +63,7 @@ const TablaGuias = ({
         return estado;
     }
   };
+
 
   return (
     <div className="w-full rounded-xl border-1 border-gray-200">
@@ -104,8 +111,8 @@ const TablaGuias = ({
                 {filialActural(guia.empresa_ruc)}
               </td>
               <td className="flex flex-col px-2 py-3 text-xs text-gray-700">
-                <span>{guia.cliente_num_doc || ""} -</span>
                 <span>{guia.cliente_razon_social || ""}</span>
+                <span>{guia.cliente_num_doc || ""}</span>
               </td>
               {/* <td className="py-3 px-6 text-xs text-gray-700">{guia.usuario_id}</td> */}
               <td className="py-3">

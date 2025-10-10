@@ -56,9 +56,17 @@ const factilizaService = {
 
     // XML: puede venir como texto (<?xml...) o como base64/zip. Devuelve tal cual.
     consultarXml: async (documento) => {
+        let url_xml = ''
+        if (documento.tipo_Doc == '07' || documento.tipo_Doc == '08') {
+            url_xml = `note`
+        } else if (documento.tipo_Doc == '01' || documento.tipo_Doc == '03') {
+            url_xml = `invoice`
+        } else {
+            url_xml = `despatch`
+        }
         // forzamos texto para evitar que Axios intente parsear JSON
         const res = await apiFactilizaConsultasDocumentos.post(
-            `/invoice/xml`,
+            `/${url_xml}/xml`,
             documento,
             { responseType: "text", transformResponse: [(d) => d] }
         );
@@ -67,11 +75,19 @@ const factilizaService = {
 
     // CDR: puede venir como texto (<?cdr...) o como base64/zip. Devuelve tal cual.
     consultarCdr: async (documento) => {
+        let url_xml = ''
+        if (documento.tipo_Doc == '07' || documento.tipo_Doc == '08') {
+            url_xml = `note`
+        } else if (documento.tipo_Doc == '01' || documento.tipo_Doc == '03') {
+            url_xml = `invoice`
+        } else {
+            url_xml = `despatch`
+        }
         const res = await apiFactilizaConsultasDocumentos.post(
-            `/invoice/cdr`,
+            `/${url_xml}/cdr`,
             documento,
             {
-                responseType: "arraybuffer", // 👈 clave
+                responseType: "arraybuffer",
             }
         );
         return res;

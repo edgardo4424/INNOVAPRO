@@ -1,10 +1,11 @@
+import { obtenerFechaActual } from "@/modules/facturacion/utils/fechaEmisionActual";
 
 const guiaInical = {
     tipo_Doc: "09",
-    serie: "T001",
+    serie: "T005",
     correlativo: "",
     observacion: "",
-    fecha_Emision: new Date().toISOString().split("T")[0] + "T" + new Date().toTimeString().split(" ")[0] + "-05:00",
+    fecha_Emision: obtenerFechaActual(),
 
     // ?Datos del comprobante de referencia
     obra: "",
@@ -20,7 +21,7 @@ const guiaInical = {
 
     guia_Envio_Peso_Total: 0,
     guia_Envio_Und_Peso_Total: "KGM",
-    guia_Envio_Fec_Traslado: new Date(Date.now() + 1800000).toISOString().split("T")[0] + "T" + new Date(Date.now() + 1800000).toTimeString().split(" ")[0] + "-05:00",
+    guia_Envio_Fec_Traslado: obtenerFechaActual("traslado"),
 
     guia_Envio_Partida_Ubigeo: "",
     guia_Envio_Partida_Direccion: "",

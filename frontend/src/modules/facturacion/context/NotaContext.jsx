@@ -10,6 +10,8 @@ import factilizaService from "../service/FactilizaService";
 import facturaService from "../service/FacturaService";
 import filialesService from "../service/FilialesService";
 import numeroALeyenda from "../utils/numeroALeyenda";
+import determinarEstadoFactura from "../utils/manejadorCodigosSunat";
+import { obtenerFechaActual } from "../utils/fechaEmisionActual";
 
 const NotaContext = createContext();
 
@@ -54,6 +56,14 @@ export function NotaProvider({ children }) {
 
   const [filiales, setFiliales] = useState([]);
 
+  // ?? trae la fecha actual para emitir la nota
+  useEffect(() => {
+    setNotaCreditoDebito((prevValores) => ({
+      ...prevValores,
+      fecha_Emision: obtenerFechaActual(),
+    }));
+  }, []);
+
   // ?? OBTENER TODAS LAS FILIALES
 
   useEffect(() => {
@@ -82,10 +92,25 @@ export function NotaProvider({ children }) {
 
       const { data } =
         await facturaService.obtenerCorrelativoNota(rucsAndSeries);
-      const { data: data2 } =
-        await facturaService.obtenerCorrelativoPendientesNota(rucsAndSeries);
       setCorrelativos(data);
-      setCorrelativosPendientes(data2);
+    } catch (error) {
+    } finally {
+      setLoadingCorrelativo(false);
+    }
+  };
+
+  // ?? OBTENER CORRELATIVO
+  const buscarCorrelativoPendientes = async () => {
+    try {
+      const rucsAndSeries = filiales.map((filial) => ({
+        ruc: filial.ruc,
+        serieBoleta: serieBoleta,
+        serieFactura: serieFactura,
+      }));
+
+      const { data } =
+        await facturaService.obtenerCorrelativoPendientesNota(rucsAndSeries);
+      setCorrelativosPendientes(data);
     } catch (error) {
     } finally {
       setLoadingCorrelativo(false);
@@ -116,6 +141,7 @@ export function NotaProvider({ children }) {
   useEffect(() => {
     if (filiales.length > 0) {
       buscarCorrelativo();
+      buscarCorrelativoPendientes();
     }
   }, [filiales]);
 
@@ -244,11 +270,7 @@ export function NotaProvider({ children }) {
         await factilizaService.enviarNota(notaCreditoDebito);
 
       // ? 3. Evaluar la respuesta de la API de factilización.
-      if (
-        status === 200 &&
-        (data?.sunatResponse?.cdrResponse?.code == "0" ||
-          data?.error?.code == "HTTP")
-      ) {
+      if (status === 200) {
         // ? ÉXITO en SUNAT: La nota fue aceptada.
 
         // ? a. Formatear la respuesta de SUNAT para el registro en la base de datos.
@@ -284,6 +306,7 @@ export function NotaProvider({ children }) {
           sunat_respuesta: sunat_respuest,
           factura_id: documentoAAfectar.factura_id,
           guia_id: documentoAAfectar.guia_id,
+          estado: determinarEstadoFactura({ status, success, message, data }),
           id_borrador: idBorrador ? idBorrador : null,
         };
 
@@ -399,6 +422,7 @@ export function NotaProvider({ children }) {
   const Limpiar = () => {
     setNotaCreditoDebito({
       ...notaInical,
+      fecha_Emision: obtenerFechaActual(),
       empresa_Ruc: notaCreditoDebito.empresa_Ruc,
       serie: notaCreditoDebito.serie,
     });
@@ -417,6 +441,7 @@ export function NotaProvider({ children }) {
         loadingCorrelativo,
         setLoadingCorrelativo,
         buscarCorrelativo,
+        buscarCorrelativoPendientes,
         serieCredito,
         serieDebito,
         filiales,

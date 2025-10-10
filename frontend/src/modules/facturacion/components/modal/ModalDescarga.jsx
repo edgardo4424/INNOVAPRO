@@ -7,11 +7,12 @@ import { toast } from "react-toastify";
 import facturaService from "../../service/FacturaService";
 //
 import JSZip from "jszip";
+import { nombreDocumentoADdescargar } from "../../utils/formateos";
 
 /* ================== helpers simplificados ================== */
 const toDocumentoPayload = (doc = {}) => {
   const correlativoSrc = doc.correlativo ?? doc.correlativo ?? "";
-  const correlativo = String(correlativoSrc).replace(/^0+/, "") || "0";
+  const correlativo = correlativoSrc;
   const empresa_ruc = String(
     doc.numRuc ?? doc.empresa_ruc ?? doc.empresa_Ruc ?? "",
   );
@@ -171,6 +172,7 @@ const ModalDescarga = ({
     try {
       setLoading(true);
       setMsg("");
+      console.log(documentoADescargar)
 
       const payload = toDocumentoPayload(documentoADescargar);
       if (
@@ -186,14 +188,14 @@ const ModalDescarga = ({
 
       if (format === "xml") {
         const response = await factilizaService.consultarXml(payload);
-        await processResponse(response, `${baseName}-XML`, "xml");
+        await processResponse(response, `${nombreDocumentoADdescargar(documentoADescargar, "xml")}`, "xml");
         setMsg("XML/CDR descargado exitosamente.");
         return;
       }
 
       if (format === "cdr") {
         const response = await factilizaService.consultarCdr(payload);
-        await processResponse(response, `${baseName}-CDR`, "zip"); // el 'zip' sirve de hint si cambias a binario en el futuro
+        await processResponse(response, `${nombreDocumentoADdescargar(documentoADescargar, "cdr")}`, "zip"); // el 'zip' sirve de hint si cambias a binario en el futuro
         setMsg("CDR (ZIP) descargado exitosamente.");
         return;
       }
@@ -221,7 +223,7 @@ const ModalDescarga = ({
         }
         await processResponse(
           response,
-          `${documentoADescargar.serie}-${documentoADescargar.correlativo}${documentoADescargar.numRuc ? `-${documentoADescargar.razonSocial}` : ""}-PDF`,
+          `${nombreDocumentoADdescargar(documentoADescargar, "pdf")}`,
           "pdf",
         );
         setMsg("PDF descargado exitosamente.");

@@ -3,6 +3,7 @@ import { useNota } from "../../context/NotaContext";
 import facturaService from "../../service/FacturaService";
 import { formatearBorrador } from "../../utils/formatearBorrador";
 import ModalEmitirNota from "./components/modal/ModalEmitirNota";
+import DatosDeClienteForm from "./forms/DatosDeClienteForm";
 import DetallesForm from "./forms/DetallesForm";
 import DocumentoAfectadoForm from "./forms/DocumentoAfectadoForm";
 import InfDocumentoForm from "./forms/InfDocumentoForm";
@@ -18,10 +19,9 @@ const NotasCreditoForm = () => {
     setDocumentoAAfectar,
     documentoAAfectar,
     idBorrador,
-    correlativosPendientes,
+    buscarCorrelativo,
+    buscarCorrelativoPendientes,
   } = useNota();
-
-  
 
   const handleRegister = async () => {
     if (idBorrador) {
@@ -78,11 +78,18 @@ const NotasCreditoForm = () => {
           progress: undefined,
         });
       }
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
-  const handleCancelar = () => {};
+  const handleCancelar = () => {
+    buscarCorrelativo();
+    buscarCorrelativoPendientes();
+    setNotaCreditoDebito(notaInical);
+    setDocumentoAAfectar(ValorInicialDetalleNota);
+  };
+
+
+
   return (
     <div className="container mx-auto max-w-6xl">
       {/* Form content */}
@@ -94,7 +101,7 @@ const NotasCreditoForm = () => {
         <DocumentoAfectadoForm />
 
         {/*  //? LOS DATOS DEL CLIENTE SE COLOCAN DE MANERA AUTOMATICA AL SELECCIONAR EL DOCUMENTO A AFECTAR*/}
-        {/* <DatosDeClienteForm /> */}
+        <DatosDeClienteForm />
 
         {/* Sección de Detalle de Productos */}
         <DetallesForm />
@@ -103,13 +110,13 @@ const NotasCreditoForm = () => {
           <div className="flex gap-x-8">
             <button
               onClick={handleRegister}
-              className="cursor-pointer rounded-xl bg-innova-blue px-4 py-3 font-semibold text-white"
+              className="bg-innova-blue cursor-pointer rounded-xl px-4 py-3 font-semibold text-white"
             >
               Guardar
             </button>
             <button
               onClick={handleCancelar}
-              className="cursor-pointer rounded-xl bg-innova-orange px-4 py-3 font-semibold text-white"
+              className="bg-innova-orange cursor-pointer rounded-xl px-4 py-3 font-semibold text-white"
             >
               Cancelar
             </button>
