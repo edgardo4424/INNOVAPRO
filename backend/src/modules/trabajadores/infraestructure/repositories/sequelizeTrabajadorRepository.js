@@ -328,7 +328,7 @@ class SequelizeTrabajadorRepository {
 
       return sanitizacion;
    }
-   async obtenerTrabajadoresYcontratos() {
+   async obtenerTrabajadoresYcontratos(transaction=null) {
       const trabajadores = await Trabajador.findAll({
          where: {
             estado: "activo",
@@ -341,6 +341,7 @@ class SequelizeTrabajadorRepository {
                required: false,
             },
          ],
+         transaction
       });
       const transformData = trabajadores.map((t) => {
          const tr = { ...t.get({ plain: true }) };

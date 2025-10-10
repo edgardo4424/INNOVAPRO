@@ -26,31 +26,36 @@ const CalculoCts = () => {
             return;
          }
          setIsLoad(false);
-         const hoy = new Date().toISOString().slice(0, 10);
-         const response = await ctsService.obtenerTrabajadores();
-         const trabajadores = response.data.trabajadores.filter((t) => {
-            let filial_id = 0;
-            const contratoActual = t.contratos_laborales.find((c) => {
-               return hoy >= c.fecha_inicio && hoy <= c.fecha_fin;
-            });
-            if (!contratoActual) return false;
-            filial_id = contratoActual.filial_id;
-            return filial_id == filtro.filial_id;
-         });
+         // const hoy = new Date().toISOString().slice(0, 10);
+         // const response = await ctsService.obtenerTrabajadores();
+         // const trabajadores = response.data.trabajadores.filter((t) => {
+         //    let filial_id = 0;
+         //    const contratoActual = t.contratos_laborales.find((c) => {
+         //       return hoy >= c.fecha_inicio && hoy <= c.fecha_fin;
+         //    });
+         //    if (!contratoActual) return false;
+         //    filial_id = contratoActual.filial_id;
+         //    return filial_id == filtro.filial_id;
+         // });
 
-         const cts_obtenidas = [];
-         for (const t of trabajadores) {
-            const payload = {
+         // const cts_obtenidas = [];
+         // for (const t of trabajadores) {
+         //    const payload = {
+         //       anio: filtro.anio,
+         //       filial_id: filtro.filial_id,
+         //       periodo: filtro.periodo,
+         //       trabajador_id: t.id,
+         //    };
+         //    const response_cts = await ctsService.obtenerCts(payload);
+         //    response_cts.data.map((c) => cts_obtenidas.push(c));
+         // }
+         const pazload = {
                anio: filtro.anio,
                filial_id: filtro.filial_id,
-               periodo: filtro.periodo,
-               trabajador_id: t.id,
-            };
-            const response_cts = await ctsService.obtenerCts(payload);
-            response_cts.data.map((c) => cts_obtenidas.push(c));
-         }
-
-         setCts(cts_obtenidas);
+               periodo: filtro.periodo
+            }
+         await ctsService.obtenerCtsGeneral(pazload);
+         // setCts(cts_obtenidas);
       } catch (error) {
          toast.error("Error al obtener el calculo de cts");
       } finally {

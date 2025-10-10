@@ -142,6 +142,13 @@ class SequelizeCtsRopository {
 
       const contratoInicial =
          filtrarContratosSinInterrupcion(contratos_limpios);
+         console.log(trabajador_id);
+         
+      if(trabajador_id==1){
+         console.log("Contrato inicial lucas");
+         console.log(contratoInicial);
+         
+      }
 
       // TODO: CALCULA LOS CONTRATOS QUE ENTRAN EN RANGO DE CTS Y QUE NO TENGAN INTERUPCIONES MAYORES DE 1 DIA
       const contratos_en_rango = calcularContratosComputados(
@@ -180,7 +187,11 @@ class SequelizeCtsRopository {
       const asistencias = responseAsistencias.map((a) =>
          a.get({ plain: true })
       );
-
+      if(trabajador_id==7){
+         console.log("Contratops doas meses genrao");
+         console.log(contratos_dias_meses);
+         
+      }
       for (const c of contratos_dias_meses) {
          //Definimos rangos de calculo que lo usaran bonos, he, faltas
          let inicio_c =
@@ -212,13 +223,12 @@ class SequelizeCtsRopository {
          if (computarHextras) {
             r.prom_h_extras = calcularHextrasEnCts(he_en_contrato, 10, 6) || 0;
          }
-
          const bonos_en_contrato = bonos.filter((b) => {
             return b.fecha >= inicio_c && b.fecha <= fin_c;
          });
-         const computarBonos = conteoBonosMeses(bonos_en_contrato);
-         if (computarBonos) {
-            r.prom_bono = calcularBonosEnCts(bonos_en_contrato, 6) || 0;
+         const computarTiposBono = conteoBonosMeses(bonos_en_contrato);
+         if (computarTiposBono.length>0) {
+            r.prom_bono = calcularBonosEnCts(bonos_en_contrato,computarTiposBono) || 0;
          }
 
          r.remuneracion_comp =
@@ -282,7 +292,7 @@ class SequelizeCtsRopository {
    }
 
    async calcularCtsIndividualTrunca(periodo, anio, filial_id, trabajador_id, transaction = null) {
-      console.log('entre a calcular');
+      // console.log('entre a calcular');
       const responseTrabajador = await db.trabajadores.findOne({
          where: {
             id: trabajador_id,
