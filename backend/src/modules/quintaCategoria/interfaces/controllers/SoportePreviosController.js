@@ -8,17 +8,20 @@ const ObtenerDeclaracionSinPrevios = require('../../application/useCases/obtener
 const RegistrarDeclaracionSinPrevios = require('../../application/useCases/registrarDeclaracionSinPrevios');
 const ObtenerCertificadoQuinta = require('../../application/useCases/obtenerCertificadoQuinta');
 const RegistrarCertificadoQuinta = require('../../application/useCases/registrarCertificadoQuinta');
+const ObtenerDeclaracionMultiempleo = require('../../application/useCases/obtenerDeclaracionMultiempleo');
 
 // INSTANCIAS DE LOS REPOSITORIOS
 const certificadoRepo = new SequelizeCertificadoQuintaRepository();
 const sinPrevRepo = new SequelizeDeclaracionSinPreviosRepository();
 const quintaRepo = new SequelizeQuintaCategoriaRepository();
 const multiEmpleoRepo = new SequelizeDeclaracionMultiempleoRepository();
+
 // INSTANCIAS DE LOS CASOS DE USO
 const obtenerSinPreviosUC = new ObtenerDeclaracionSinPrevios({ repo: sinPrevRepo });
 const insertarSinPreviosUC = new RegistrarDeclaracionSinPrevios({ repo: sinPrevRepo });
 const obtenerCertificadoQuinta = new ObtenerCertificadoQuinta({ repo: certificadoRepo });
 const registrarCertificadoQuinta = new RegistrarCertificadoQuinta({ repo: certificadoRepo });
+const obtenerMultiempleoUC = new ObtenerDeclaracionMultiempleo({ repo: multiEmpleoRepo });
 
 //HELPERS
 const { num, absolutize, noCache } = require('../../shared/utils/helpers');
@@ -103,7 +106,7 @@ module.exports = {
 
   async obtenerSinPrevios(req, res) {
     try {
-      const dni = String(req.body?.dni ?? "").trim();
+      const dni = String(req.query?.dni ?? "").trim();
       const anio = Number.parseInt(req.query?.anio ?? "", 10);
 
       if (!dni || Number.isNaN(anio)) {
@@ -149,6 +152,44 @@ module.exports = {
     } catch (error) { 
       console.error("[SinPrevios] registrar error:", error);
       return res.status(error.status||500).json({ ok:false, message:error.message }); 
+    }
+  },
+
+  // obtener TODOS los soportes para un DNI + AÑO
+  async obtenerTodos(req, res) {
+    try {
+      const dni  = String(req.query?.dni || '').trim();
+      const anio = Number.parseInt(req.query?.anio ?? "", 10);
+      if (!dni || Number.isNaN(anio)) {
+        return res.status(400).json({ ok:false, message: "dni y anio son requeridos" });
+      }
+
+      const [multi, cert, sinPrev] = await Promise.all([
+        obtenerMultiempleoUC.execute({ dni, anio }).catch(() => ({ found:false })),
+        obtenerCertificadoQuinta.execute({ dni, anio }).catch(() => ({ found:false })),
+        obtenerSinPreviosUC.execute({ dni, anio }).catch(() => ({ found:false })),
+      ]);
+
+      // URLs absolutas
+      if (multi?.archivo_url)   multi.archivo_url   = absolutize(multi.archivo_url, req);
+      if (cert?.archivo_url)    cert.archivo_url    = absolutize(cert.archivo_url, req);
+      if (sinPrev?.archivo_url) sinPrev.archivo_url = absolutize(sinPrev.archivo_url, req);
+
+      // Normalizamos 'found'
+      const norm = (x) => (x && x.found) ? x : { found:false };
+
+      noCache(res);
+      return res.status(200).json({
+        ok: true,
+        data: {
+          multiempleo:  norm(multi),
+          certificado:  norm(cert),
+          sin_previos:  norm(sinPrev),
+        }
+      });
+    } catch (error) {
+      console.error("[Soportes] obtenerTodos error:", error);
+      return res.status(error.status || 500).json({ ok:false, message: error.message || "Error interno" });
     }
   },
 };

@@ -45,6 +45,10 @@ router.post('/certificado', SoportePreviosController.insertarCertificado);
 router.get('/sin-previos', SoportePreviosController.obtenerSinPrevios);
 router.post('/sin-previos', SoportePreviosController.insertarSinPrevios);
 
+
+// HUB de soportes (todos en uno)
+router.get('/soportes', SoportePreviosController.obtenerTodos);
+
 /**
  * Cuando tenemos más de un get y hay uno con :id hay que ponerlo al último
  * porque va analizando de arriba a abajo y puede generar conflictos con los
