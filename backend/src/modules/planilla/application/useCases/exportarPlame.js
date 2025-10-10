@@ -42,7 +42,6 @@ module.exports = async (res, payload, planillaRepository) => {
   const desgloce_periodo = fecha_anio_mes.split("-");
   const anio = desgloce_periodo[0];
   const mes = desgloce_periodo[1];
-  const dias = new Date(anio, Number(mes), 0).getDate();
   const filial = await filialRepository.obtenerPorId(filial_id);
   if (!filial) {
     throw new Error("La filial enviada no existe.");
@@ -72,11 +71,9 @@ module.exports = async (res, payload, planillaRepository) => {
 
   for (const t of planillaMensualCerradas) {
     const tipo_documento = t.tipo_documento == "CE" ? "04" : "01";
-    const dias_falta = Number(dias) - t.dias_labor;
     const areas_dif = ["Almacen", "Montadores"];
     let horas_trabajadas = 0;
-    let minutos_trabajados=0;
-    let horas_extras_trabajadas = 0;
+    let minutos_trabajados = 0;
 
     //!Codigo para quinta Categoria
     const response_quinta = await quintaRepository.obtenerMultiempleoInferido({
@@ -124,31 +121,48 @@ module.exports = async (res, payload, planillaRepository) => {
       licencia_sin_goce,
       falta_justificada,
       vacacion_gozada,
-      horas_extras
+      horas_extras,
     } = await contadorTipoAsistenciaPorTrabajador(t.trabajador_id, inicio, fin);
 
-    const dias_restar=falta+tardanza+permiso+licencia_con_goce+licencia_sin_goce+falta_justificada+vacacion_gozada;
-    
+    //?? Jornadas laborales de los trabajadores
+    const dias_restar =
+      falta +
+      tardanza +
+      permiso +
+      licencia_con_goce +
+      licencia_sin_goce +
+      falta_justificada +
+      vacacion_gozada;
 
     if (areas_dif.includes(t.area)) {
-      horas_trabajadas = ((dias_laborales_almacen - dias_restar) * 8)+horas_sumar;
-      minutos_trabajados=minutos_sumar
-      
+      horas_trabajadas =
+        (dias_laborales_almacen - dias_restar) * 8 + horas_sumar;
+      minutos_trabajados = minutos_sumar;
     } else {
-      horas_trabajadas = ((dias_laborales_almacen - dias_restar) * 9)+horas_sumar;
-      minutos_trabajados=minutos_sumar;
+      horas_trabajadas =
+        (dias_laborales_almacen - dias_restar) * 9 + horas_sumar;
+      minutos_trabajados = minutos_sumar;
     }
+
     const { horas, minutos } = convertirHorasDecimales(horas_extras);
-    const linea_contruida_jor = `${tipo_documento}|${t.numero_documento}|${horas_trabajadas}|0|${horas}|${minutos}`;
+    const linea_contruida_jor = `${tipo_documento}|${t.numero_documento}|${horas_trabajadas}|${minutos_trabajados}|${horas}|${minutos}`;
+    if(t.trabajador_id==22){
+      console.log("Dias a restar paul: ",dias_restar);
+      console.log("DIAS ALMACEN: ",dias_laborales_almacen);
+      console.log("Resta de laborales - dias a restar *8",(dias_laborales_almacen-dias_restar)*8);
+      console.log("Horas a suamr",horas_sumar);
+      console.log("Minutoa a sumar",minutos_sumar);
+      console.log("Line construida joranda: ",linea_contruida_jor);
+    }
     jornadas_laborales.push(linea_contruida_jor);
 
-    // const {faltas,faltas_justificadas,licencia_con_goce,licencia_sin_goce,vacaciones_g}=await obtenerDatosAsistencia(inicio,fin,t.trabajador_id);
-    if (faltas) {
-      subsidiados.push(`${tipo_documento}|${t.numero_documento}|07|${faltas}`);
+    //?Datos de dias subsidiados
+    if (falta) {
+      subsidiados.push(`${tipo_documento}|${t.numero_documento}|07|${falta}`);
     }
-    if (faltas_justificadas) {
+    if (falta_justificada) {
       subsidiados.push(
-        `${tipo_documento}|${t.numero_documento}|06|${faltas_justificadas}`
+        `${tipo_documento}|${t.numero_documento}|06|${falta_justificada}`
       );
     }
     if (licencia_con_goce) {
@@ -161,9 +175,9 @@ module.exports = async (res, payload, planillaRepository) => {
         `${tipo_documento}|${t.numero_documento}|05|${licencia_sin_goce}`
       );
     }
-    if (vacaciones_g) {
+    if (vacacion_gozada) {
       subsidiados.push(
-        `${tipo_documento}|${t.numero_documento}|23|${vacaciones_g}`
+        `${tipo_documento}|${t.numero_documento}|23|${vacacion_gozada}`
       );
     }
 
@@ -202,4 +216,4 @@ module.exports = async (res, payload, planillaRepository) => {
   });
 
   archive.finalize();
-}; // Exporta la función para que pueda ser utilizada en otros módulos
+}; 

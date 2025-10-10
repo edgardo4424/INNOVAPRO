@@ -39,7 +39,7 @@ const contadorTipoAsistenciaPorTrabajador = async (
 
   for (let i = 0; i < asistencias.length; i++) {
     const estado = asistencias[i].estado_asistencia;
-    if(asistencias[i].horas_extras)horas_extras++;
+    if(asistencias[i].horas_extras)horas_extras+=asistencias[i].horas_extras;
     if (estado === "falto") falta++;
     else if (estado === "tardanza") {
       tardanza++;
