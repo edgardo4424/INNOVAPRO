@@ -86,6 +86,7 @@ const valorIncialDetracion = {
 
 const valorInicialProducto = {
     unidad: "NIU",
+    tipo_item: null,
     cantidad: 1,
     cod_Producto: "",
     descripcion: "",
@@ -122,6 +123,7 @@ const FacturaValidarEstados = {
 
 const ProductoValidarEstados = {
     unidad: false,
+    tipo_item: false,
     cantidad: false,
     cod_Producto: false,
     descripcion: false,

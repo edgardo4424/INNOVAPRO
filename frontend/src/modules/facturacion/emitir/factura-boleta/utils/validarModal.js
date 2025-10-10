@@ -16,6 +16,9 @@ export async function validarModal(tipo, item, factura, cuotasGeneradas = null) 
             } else {
                 errores[campo.key] = false
             }
+            if (factura.serie == "FT01" && item?.tipo_item == null) {
+                errores["tipo_item"] = true
+            }
         }
         const hayErrores = Object.values(errores).some((val) => val === true);
 
@@ -26,6 +29,7 @@ export async function validarModal(tipo, item, factura, cuotasGeneradas = null) 
                 message: "Verifica los datos del Producto"
             };
         }
+
 
         return {
             errores: camposRequeridos.reduce((acc, curr) => {

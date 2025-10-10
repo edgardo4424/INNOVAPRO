@@ -69,6 +69,10 @@ const DetalleFactura = sequelize.define(
             type: DataTypes.DECIMAL(5, 2),
             allowNull: false,
         },
+        tipo_item: {
+            type: DataTypes.ENUM('SERVICIO', 'ALQUILER', 'TRANSPORTE', "VENTA"),
+            allowNull: true,
+        },
     },
     {
         timestamps: false,
