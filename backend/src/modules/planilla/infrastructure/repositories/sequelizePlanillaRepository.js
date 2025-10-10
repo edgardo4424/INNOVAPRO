@@ -149,7 +149,17 @@ class SequelizePlanillaRepository {
           { fecha_terminacion_anticipada: null },
           { fecha_terminacion_anticipada: { [Op.gte]: fechaInicioMes } },
         ],
-        fecha_fin: { [Op.gte]: fechaInicioMes },
+        // 👇 Si es indefinido => se trae siempre
+    // Si no es indefinido => verificar fecha_fin >= fechaInicioMes
+        [Op.or]: [
+          { es_indefinido: true },
+          {
+            [Op.and]: [
+              { es_indefinido: false },
+              { fecha_fin: { [Op.gte]: fechaInicioMes } }
+            ]
+          }
+        ],
       },
       include: [
         {
@@ -180,6 +190,7 @@ class SequelizePlanillaRepository {
           { fecha_terminacion_anticipada: { [Op.gte]: fechaInicioMes } },
         ],
         fecha_fin: { [Op.gte]: fechaInicioMes },
+      
       },
       include: [
         {
@@ -368,6 +379,8 @@ class SequelizePlanillaRepository {
         fecha_anio_mes
       );
 
+      console.log('diasLaborados', diasLaborados);
+
       // (SUELDO/30)*DÍAS LABORADOS
       const sueldoQuincenal = +(
         (sueldoBase / 30) * diasLaborados) 
@@ -404,7 +417,9 @@ class SequelizePlanillaRepository {
         numero_cuenta: contrato.numero_cuenta,
 
         adelanto_sueldo: totalAdelantosSueldo,
-        adelantos_ids: adelantos_ids
+        adelantos_ids: adelantos_ids,
+
+         cargo: trabajador.cargo ? trabajador.cargo.nombre : null,
       });
     }
 
@@ -525,7 +540,18 @@ class SequelizePlanillaRepository {
           { fecha_terminacion_anticipada: null },
           { fecha_terminacion_anticipada: { [Op.gte]: fechaInicioMes } },
         ],
-        fecha_fin: { [Op.gte]: fechaInicioMes },
+        //fecha_fin: { [Op.gte]: fechaInicioMes },
+         // 👇 Si es indefinido => se trae siempre
+    // Si no es indefinido => verificar fecha_fin >= fechaInicioMes
+        [Op.or]: [
+          { es_indefinido: true },
+          {
+            [Op.and]: [
+              { es_indefinido: false },
+              { fecha_fin: { [Op.gte]: fechaInicioMes } }
+            ]
+          }
+        ],
       },
       include: [
         {
@@ -548,6 +574,7 @@ class SequelizePlanillaRepository {
           { fecha_terminacion_anticipada: { [Op.gte]: fechaInicioMes } },
         ],
         fecha_fin: { [Op.gte]: fechaInicioMes },
+        
       },
       include: [
         {
@@ -945,6 +972,7 @@ class SequelizePlanillaRepository {
       for (const p of planillasRxhObtenidas) {
          grupoRxh.trabajador_id=p.trabajador_id;
          grupoRxh.ruc=trabajador.ruc||"Ruc no disponible";
+         grupoRxh.domiciliado=trabajador.domiciliado;
          grupoRxh.tipo_contrato=p.tipo_contrato;
          grupoRxh.contrato_id=p.contrato_id
          grupoRxh.periodo=p.periodo;
@@ -1232,19 +1260,35 @@ class SequelizePlanillaRepository {
     const contratoInicial = filtrarContratosSinInterrupcion(
       trabajador.contratos_laborales
     );
+    if(trabajador.id==1){
+      console.log("Lucas contrato incial sin fecha",contratoInicial);
+      
+    }
 
     //Todo: Obtenemos los contratos que estan en el rango del mes
-    const contratosEnRango = trabajador.contratos_laborales.filter((c) => {
-      return (
-        c.fecha_fin >= inicio_de_mes &&
-        c.fecha_inicio <= fin_de_mes &&
-        c.filial_id == filial_id
-      );
-    });
+    const contratosEnRango = trabajador.contratos_laborales.filter(
+       (c) =>
+       c.filial_id == filial_id &&
+       (
+         c.es_indefinido
+           ? c.fecha_inicio <= fin_de_mes
+           : c.fecha_fin >= inicio_de_mes && c.fecha_inicio <= fin_de_mes
+       )
+    );
+
+    if(trabajador.id==1){
+      console.log("Lucas contratos en rango del mes incial sin fecha",contratosEnRango);
+      
+    }
+
 
     // Todo: Se traen solo los contratos que tengan un maxiomo de 1 dia de serparacion
     const contratos_tratados =
       filtrarContratosSinInterrupcion(contratosEnRango);
+    if(trabajador.id==1){
+      console.log("Lucas contratos tratados del mes incial sin fecha",contratos_tratados);
+      
+    }
 
     const { found, retencion_base_mes, registro } =
       await quintaCategoriaService.getRetencionBaseMesPorDni({
@@ -1322,6 +1366,8 @@ class SequelizePlanillaRepository {
       planilla.tipo_contrato = c.tipo_contrato;
       planilla.periodo = anio_mes_dia.slice(0, -3);
       planilla.regimen = c.regimen;
+      planilla.domiciliado=trabajador.domiciliado
+      
 
       // ! dias de labor, se le resta--> dias mo contatados, faltas y dias de vacaciones;
       // prettier-ignore
@@ -1441,17 +1487,17 @@ class SequelizePlanillaRepository {
 
     const planillaMensualCerradas = await PlanillaMensual.findAll({
       where: { cierre_planilla_mensual_id: cierrePlanillaMensual.id },
-      include:[
+      include: [
         {
-          model:db.planilla_mensual_recibo_honorario,
-          as:"recibo",
-          include:[
+          model: db.planilla_mensual_recibo_honorario,
+          as: "recibo",
+          include: [
             {
-              model:db.recibos_por_honorarios,
-              as:"recibo_por_honorario"
-            }
-          ]
-        }
+              model: db.recibos_por_honorarios,
+              as: "recibo_por_honorario",
+            },
+          ],
+        },
       ],
       transaction,
     });

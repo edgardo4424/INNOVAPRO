@@ -7,5 +7,6 @@ router.use(verificarToken); // Verificamos el token para todas las rutas
 
 // 📌 Rutas protegidas solo para Gerencia
 router.post("/crear-recibo-planilla", ReciboController.crearRecibosPlanilla);
+router.put("/actualizar-recibo-planilla", ReciboController.actualizarRecibosPlanilla);
 
 module.exports = router;

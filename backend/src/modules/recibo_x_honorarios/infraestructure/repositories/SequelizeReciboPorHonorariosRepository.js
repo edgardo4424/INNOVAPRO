@@ -10,7 +10,7 @@ class SequelizeReciboPorHonorariosRepository {
     const recibo=await ReciboPorHonorario.create(payload, options);
     return recibo;
   }
-  async editarReciboPorHonorarios(payload, transaction = null) {
+  async actualizarReciboPorHonorarios(payload, transaction = null) {
     const options = {
       where: {
         id: payload.recibo_id,

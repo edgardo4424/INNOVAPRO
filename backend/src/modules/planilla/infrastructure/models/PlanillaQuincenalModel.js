@@ -40,7 +40,7 @@ const PlanillaQuincenal = sequelize.define(
     },
     fecha_fin: {
       type: DataTypes.DATEONLY,
-      allowNull: false,
+      allowNull: true,
     },
     dias_laborados: {
       type: DataTypes.INTEGER,
@@ -157,7 +157,7 @@ const PlanillaQuincenal = sequelize.define(
       },
     tipo_afp: {
          type: DataTypes.STRING,
-         allowNull: false,
+         allowNull: true,
       },
 
   },

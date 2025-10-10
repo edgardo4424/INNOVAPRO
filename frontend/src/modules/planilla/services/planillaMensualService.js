@@ -27,12 +27,14 @@ const planillaMensualService = {
       api.get(`/data_mantenimiento/codigo-importe/${filial_id}_importe`),
    editDataMantenimiento: (id, data) => api.put(`/data_mantenimiento/${id}`, data),
 
-   exportarPlame:(payload)=>api.post("/planilla/exportar-plame",payload, {
+   exportarPlame:async(payload)=>api.post("/planilla/exportar-plame",payload, {
   responseType: 'blob', // 👈 Esto fuerza a axios a interpretar la respuesta como archivo binario
    }),
    obtenerReciboPorPlanilla:async(fecha_anio_mes,filial_id)=>api.get(`/planilla/obtener-recibos-planilla/${fecha_anio_mes}/${filial_id}`)
    ,
-   crearReciboPorPlanilla:async(data)=>api.post("/recibo_x_honorarios/crear-recibo-planilla",data)
+   crearReciboPorPlanilla:async(data)=>api.post("/recibo_x_honorarios/crear-recibo-planilla",data),
+   actualizarReciboPorPlanilla:async(data)=>api.put("/recibo_x_honorarios/actualizar-recibo-planilla",data),
+
 };
 
 export default planillaMensualService;

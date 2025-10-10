@@ -10,7 +10,9 @@ class ContratoLaboral {
       filial_id,
       numero_cuenta,
       banco,
-      es_indefinido
+      es_indefinido,
+      id_cargo_sunat,
+      numero_cuenta_cts
    }) {
       this.id = id;
       this.trabajador_id = trabajador_id;
@@ -23,6 +25,8 @@ class ContratoLaboral {
       this.numero_cuenta = numero_cuenta;
       this.banco = banco;
       this.es_indefinido = es_indefinido;
+      this.id_cargo_sunat = id_cargo_sunat;
+      this.numero_cuenta_cts=numero_cuenta_cts;
    }
 
    validar(editar = false) {
@@ -85,6 +89,10 @@ class ContratoLaboral {
       } else if (this.numero_cuenta.length < 5) {
          errores.push("El número de cuenta debe tener al menos 5 caracteres.");
       }
+      if(!this.id_cargo_sunat || isNaN(this.id_cargo_sunat)){
+        
+         errores.push("El cargo SUNAT es obligatorio.");
+      }
 
       return errores;
    }
@@ -100,7 +108,9 @@ class ContratoLaboral {
             tipo_contrato: this.tipo_contrato,
             banco: this.banco,
             numero_cuenta: this.numero_cuenta,
-            es_indefinido: this.es_indefinido
+            es_indefinido: this.es_indefinido,
+            id_cargo_sunat: this.id_cargo_sunat,
+            numero_cuenta_cts:this.numero_cuenta_cts
          };
       } else {
          return {
@@ -113,7 +123,9 @@ class ContratoLaboral {
             tipo_contrato: this.tipo_contrato,
             banco: this.banco,
             numero_cuenta: this.numero_cuenta,
-            es_indefinido: this.es_indefinido
+            es_indefinido: this.es_indefinido,
+            id_cargo_sunat: this.id_cargo_sunat,
+            numero_cuenta_cts:this.numero_cuenta_cts
          };
       }
    }

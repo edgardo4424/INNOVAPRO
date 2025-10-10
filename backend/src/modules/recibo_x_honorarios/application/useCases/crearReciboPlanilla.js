@@ -1,8 +1,6 @@
 const ReciboPorHonorario = require("../../domain/reciboPorHonorario");
 
-module.exports = async (payload, reciboRepository, transaction = null) => {
-    console.log("Entro al caso de uso",payload);
-    
+module.exports = async (payload, reciboRepository, transaction = null) => {    
     const recibo = new ReciboPorHonorario(payload);
     const errores = recibo.validarCamposObligatorios();
     if (errores.length > 0) {

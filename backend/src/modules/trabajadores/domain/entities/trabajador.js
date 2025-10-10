@@ -16,6 +16,9 @@ class Trabajador {
     fecha_baja,
     contratos_laborales,
     fecha_nacimiento,
+    cuspp_afp,
+    estado_civil,
+    ruc
   }) {
     (this.id = id),
       (this.nombres = nombres),
@@ -33,6 +36,9 @@ class Trabajador {
     this.fecha_baja = fecha_baja;
     this.contratos_laborales = contratos_laborales;
     this.fecha_nacimiento = fecha_nacimiento;
+    this.cuspp_afp = cuspp_afp;
+    this.estado_civil = estado_civil;
+    this.ruc=ruc
   }
 
   validarCamposObligatorios(editar = false) {
@@ -142,6 +148,7 @@ class Trabajador {
             ) {
                errores.push("El tipo de AFP es inválido");
             }
+
          }
          if (this.sistema_pension === "ONP") {
             this.comision_afp = false;
@@ -150,6 +157,8 @@ class Trabajador {
          this.sistema_pension = null;
          this.tipo_afp = null;
          this.comision_afp = false;
+         this.cuspp_afp = null;
+
       } 
 
     return errores;
@@ -171,6 +180,9 @@ class Trabajador {
       comision_afp: this.comision_afp,
       fecha_baja: this.fecha_baja,
       fecha_nacimiento: this.fecha_nacimiento,
+      cuspp_afp: this.cuspp_afp,
+      estado_civil: this.estado_civil,
+      ruc:this.ruc
     };
     if (editar) {
       datos.trabajador_id = this.id;

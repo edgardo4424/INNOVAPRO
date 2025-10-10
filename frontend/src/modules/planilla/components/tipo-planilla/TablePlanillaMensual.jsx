@@ -39,8 +39,7 @@ const filtrarTrabajadores = (trabajadores) => {
       .includes(filtro?.toLowerCase())
   );
 
-  console.log("Filtro aplicado:", filtro);
-  console.log("Resultados filtrados:", resultado);
+
 
   return resultado;
 };

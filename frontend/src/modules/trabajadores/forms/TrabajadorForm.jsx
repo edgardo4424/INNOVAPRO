@@ -26,6 +26,7 @@ import { mockCargos, mockFiliales } from "../mocks/mockFiliales_Cargos";
 import ContratosLaborales from "../components/ContratosLaborales";
 import { toast } from "sonner";
 import { default as SelectMultiple } from "react-select";
+import { validarContratos } from "../utils/validarContratos";
 
 const dataInicial = {
   filial_id: "",
@@ -34,6 +35,7 @@ const dataInicial = {
   tipo_documento: "",
   numero_documento: "",
   telefono: "",
+  ruc:"",
   fecha_nacimiento: "",
   asignacion_familiar: false,
   asignacion_familiar_fecha: null,
@@ -42,6 +44,8 @@ const dataInicial = {
   tipo_afp: null,
   cargo_id: "",
   comision_afp: false,
+  cuspp_afp: "",
+  estado_civil: "SOLTERO",
   contratos_laborales: [
     {
       id: Math.floor(Date.now() / 1000),
@@ -50,9 +54,11 @@ const dataInicial = {
       sueldo: "",
       regimen: "",
       tipo_contrato: "",
+      numero_cuenta_cts:"",
       banco: "",
       numero_cuenta: "",
-        es_indefinido: false,
+      es_indefinido: false,
+      id_cargo_sunat: ""
     },
   ],
 };
@@ -107,7 +113,6 @@ export default function TrabajadorForm() {
         if (ignore) return;
 
         const t = res && res.data.trabajador ? res.data.trabajador : res || {};
-        console.log('t.contratos_laborales', t.contratos_laborales);
         const contratos = Array.isArray(t.contratos_laborales)
           ? t.contratos_laborales.map((c, idx) => ({
               id: c?.id ?? idx + 1,
@@ -118,8 +123,11 @@ export default function TrabajadorForm() {
               sueldo: c?.sueldo ?? "",
               regimen: c?.regimen ?? "",
               tipo_contrato: c?.tipo_contrato ?? "",
+              numero_cuenta_cts:c?.numero_cuenta_cts??"",
               filial_id: c?.filial_id.toString() ?? "",
               es_indefinido: c?.es_indefinido ?? false,
+              id_cargo_sunat: c?.id_cargo_sunat?.toString() ?? "",
+              cargo_sunat_nombre: c?.cargo_sunat?.nombre || "",
             }))
           : dataInicial.contratos_laborales;
 
@@ -131,6 +139,7 @@ export default function TrabajadorForm() {
           tipo_documento: t.tipo_documento ?? "",
           numero_documento: t.numero_documento ?? "",
           telefono: t.telefono ?? "",
+          ruc:t.ruc??"",
           fecha_nacimiento: t.fecha_nacimiento ?? "",
           asignacion_familiar: t.asignacion_familiar ? true : false, // checkbox
           asignacion_familiar_fecha: t.asignacion_familiar ?? null, // guardamos la fecha real
@@ -138,6 +147,8 @@ export default function TrabajadorForm() {
           sistema_pension: t.sistema_pension ?? "",
           tipo_afp: t.tipo_afp ?? null,
           comision_afp: !!t.comision_afp,
+          cuspp_afp: t.cuspp_afp ?? "",
+          estado_civil: t.estado_civil,
           cargo_id: (t.cargo_id ?? "").toString(),
           contratos_laborales: contratos.length
             ? contratos
@@ -183,8 +194,11 @@ export default function TrabajadorForm() {
       tipo_documento: formData.tipo_documento,
       numero_documento: formData.numero_documento.trim(),
       telefono: formData.telefono.trim(),
+      ruc:formData.ruc.trim(),
       fecha_nacimiento: formData.fecha_nacimiento,
-      asignacion_familiar: formData.asignacion_familiar_fecha,
+      asignacion_familiar: formData.asignacion_familiar,
+      asignacion_familiar_fecha: formData.asignacion_familiar_fecha,
+
       domiciliado: formData.domiciliado,
       sistema_pension: formData.sistema_pension,
       tipo_afp: formData.tipo_afp,
@@ -192,6 +206,8 @@ export default function TrabajadorForm() {
       cargo_id: formData.cargo_id,
       contratos_laborales: formData.contratos_laborales,
       sueldo_base: ultimoContrato ? ultimoContrato.sueldo : "",
+      cuspp_afp: formData.cuspp_afp.trim(),
+      estado_civil: formData.estado_civil,
     };
   };
 
@@ -203,36 +219,68 @@ export default function TrabajadorForm() {
       setIsSubmitting(true);
 
       const dataToSubmit = buildPayload();
+
+      console.log("dataToSubmit", dataToSubmit);
+
       if (isEditMode) {
         dataToSubmit.id = trabajador_id;
+
         await trabajadorSchema(isEditMode).validate(dataToSubmit, {
           abortEarly: false,
         });
+
+        const dataBodyEditar = {
+          ...dataToSubmit,
+          asignacion_familiar: dataToSubmit?.asignacion_familiar
+            ? dataToSubmit?.asignacion_familiar_fecha
+            : null,
+        };
+        console.log('dataBodyEditar', dataBodyEditar);
+
+        const { esValido, errores } = validarContratos(dataToSubmit.contratos_laborales);
+
+        console.log('!esValido', !esValido);
+        if (!esValido) {
+          return toast.error(errores.join("\n"));
+        }
+
         const response =
-          await trabajadoresService.editarTrabajador(dataToSubmit);
+        await trabajadoresService.editarTrabajador(dataBodyEditar);
         toast.success("Trabajador actualizado con éxito");
       } else {
         await trabajadorSchema(isEditMode).validate(dataToSubmit, {
           abortEarly: false,
         });
 
-        console.log('dataToSubmit', dataToSubmit);
-        await trabajadoresService.crearTrabajador(dataToSubmit);
+        const dataBodyCrear = {
+          ...dataToSubmit,
+          asignacion_familiar: dataToSubmit.asignacion_familiar
+            ? dataToSubmit?.asignacion_familiar_fecha
+            : null,
+        };
+
+         const { esValido, errores } = validarContratos(dataToSubmit.contratos_laborales);
+
+         console.log('!esValido', !esValido);
+        if (!esValido) {
+          return toast.error(errores.join("\n"));
+        }
+
+        await trabajadoresService.crearTrabajador(dataBodyCrear);
         toast.success("Trabajador creado con éxito");
       }
-      navigate("/tabla-trabajadores");
-    } catch (error) {
+     navigate("/tabla-trabajadores");
+    } catch (error) {      
       if (error && error.name === "ValidationError") {
         const newErrors =
           error.inner?.reduce((acc, curr) => {
             acc[curr.path] = curr.message;
             return acc;
-          }, {}) || {};
+          }, {}) || {};        
         setErrors(newErrors);
       } else {
         console.error("El error encontrado es: ", error);
         if (error?.response?.data?.mensaje) {
-
           if (typeof error?.response?.data?.mensaje == "string") {
             toast.error(error?.response?.data?.mensaje);
           } else {
@@ -244,13 +292,13 @@ export default function TrabajadorForm() {
           return;
         }
         toast.error(
-           (error &&
-              error.response &&
-              error.response.data &&
-              error.response.data.message) ||
-              (isEditMode
-                 ? "Error al actualizar el trabajador"
-                 : "Error al crear el trabajador")
+          (error &&
+            error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+            (isEditMode
+              ? "Error al actualizar el trabajador"
+              : "Error al crear el trabajador"),
         );
       }
     } finally {
@@ -376,11 +424,29 @@ export default function TrabajadorForm() {
                       </p>
                     )}
                   </div>
-
+                </section>
+                <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="telefono">
-                      Teléfono
+
+                    <Label htmlFor="ruc">
+                      Ruc del empleado
                     </Label>
+                    <Input
+                      id="ruc"
+                      value={formData.ruc}
+                      onChange={(e) =>
+                        handleInputChange("ruc", e.target.value)
+                      }
+                      placeholder="No obligatorio"
+                    />
+                    {errors.ruc && (
+                      <p className="text-sm text-red-500">
+                        {errors.ruc}
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="telefono">Teléfono</Label>
                     <Input
                       id="telefono"
                       value={formData.telefono}
@@ -390,8 +456,33 @@ export default function TrabajadorForm() {
                       placeholder="Ingrese el número de teléfono"
                     />
                     {errors.telefono && (
+                      <p className="text-sm text-red-500">{errors.telefono}</p>
+                    )}
+                  </div>
+
+                   <div className="space-y-2">
+                    <Label htmlFor="estado_civil">Estado Civil</Label>
+                     <Select
+                      value={formData.estado_civil}
+                      onValueChange={(value) =>
+                        handleInputChange("estado_civil", value)
+                      }
+                    >
+                      <SelectTrigger className={"w-full"}>
+                        <SelectValue placeholder="Seleccione estado civil" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="SOLTERO">Soltero</SelectItem>
+                        <SelectItem value="CASADO">Casado</SelectItem>
+                        <SelectItem value="DIVORCIADO">Divorciado</SelectItem>
+                        <SelectItem value="VIUDO">Viudo</SelectItem>
+                        <SelectItem value="CONVIVIENTE">Conviviente</SelectItem>
+
+                      </SelectContent>
+                    </Select>
+                    {errors.estado_civil && (
                       <p className="text-sm text-red-500">
-                        {errors.telefono}
+                        {errors.estado_civil}
                       </p>
                     )}
                   </div>
@@ -463,6 +554,7 @@ export default function TrabajadorForm() {
                 setFormData={setFormData}
                 errors={errors}
                 filiales={filiales}
+                isEditMode={isEditMode}
               />
 
               {/* Beneficios y Sistema de Pensión */}
@@ -473,26 +565,54 @@ export default function TrabajadorForm() {
                 </div>
 
                 <div className="grid w-full grid-cols-1 space-y-4 md:grid-cols-2">
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center gap-4">
                     <Checkbox
                       id="asignacion_familiar"
                       checked={formData.asignacion_familiar}
                       className="border-[#1b274a]/50 data-[state=checked]:border-[#1b274a]/80 data-[state=checked]:bg-[#1b274a]"
                       onCheckedChange={(checked) => {
+                        //handleInputChange("asignacion_familiar", !!checked);
+                  
                         handleInputChange("asignacion_familiar", !!checked);
-                        handleInputChange("asignacion_familiar", !!checked);
-                        handleInputChange(
+                        if (!checked) {
+                        
+                          handleInputChange("asignacion_familiar_fecha", "");
+                        }
+                        /* handleInputChange(
                           "asignacion_familiar_fecha",
                           checked
                             ? new Date().toISOString().split("T")[0]
                             : null,
-                        );
+                        ); */
                       }}
                     />
 
                     <Label htmlFor="asignacion_familiar">
                       Asignacion Familiar
                     </Label>
+
+                    {formData.asignacion_familiar && (
+                      <div className="">
+                        <Input
+                          id="asignacion_familiar_fecha"
+                          type={"date"}
+                          value={formData.asignacion_familiar_fecha}
+                          onChange={(e) => {
+                          
+                            handleInputChange(
+                              "asignacion_familiar_fecha",
+                              e.target.value,
+                            );
+                          }}
+                          placeholder="Ingresa la fecha de asignación familiar"
+                        />
+                        {errors.asignacion_familiar_fecha && (
+                          <p className="text-sm text-red-500">
+                            {errors.asignacion_familiar_fecha}
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -563,6 +683,25 @@ export default function TrabajadorForm() {
                         <Label htmlFor="comision_afp">
                           ¿Aplica comisión AFP?
                         </Label>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="tipo_afp">CUSPP AFP</Label>
+
+                        <Input
+                          id="cuspp_afp"
+                          value={formData.cuspp_afp}
+                          onChange={(e) =>
+                            handleInputChange("cuspp_afp", e.target.value)
+                          }
+                          placeholder="Ingrese el CUSPP"
+                        />
+
+                         {errors.cuspp_afp && (
+                          <p className="text-sm text-red-500">
+                            {errors.cuspp_afp}
+                          </p>
+                        )}
                       </div>
                     </>
                   )}

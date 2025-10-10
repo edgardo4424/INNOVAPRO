@@ -20,6 +20,7 @@ const contratoSchema = yup.object({
          function (value) {
             if (!value) return true; // Si es null o vacío, pasa
             const { fecha_inicio } = this.parent;
+            console.log('this.parent', this.parent);
             return fecha_inicio && value > fecha_inicio;
          }
       )
@@ -47,8 +48,38 @@ const contratoSchema = yup.object({
          "El tipo de contrato debe ser Planilla o RxH"
       )
       .required("El tipo de contrato es obligatorio"),
-   banco: yup.string().required("El nombre es requerido"),
-   numero_cuenta: yup.string().required("El nombre es requerido"),
+   banco: yup.string().required("El banco es requerido"),
+   numero_cuenta: yup.string().required("El número de cuenta es requerido"),
+filial_id: yup
+         .number()
+         .transform((value, originalValue) => {
+            if (
+               originalValue === "" ||
+               originalValue === null ||
+               originalValue === undefined
+            ) {
+               return null;
+            }
+            const parsed = Number(originalValue);
+            return isNaN(parsed) ? null : parsed;
+         })
+         .nullable()
+         .required("La empresa es obligatorio"),
+    id_cargo_sunat: yup
+         .number()
+         .transform((value, originalValue) => {
+            if (
+               originalValue === "" ||
+               originalValue === null ||
+               originalValue === undefined
+            ) {
+               return null;
+            }
+            const parsed = Number(originalValue);
+            return isNaN(parsed) ? null : parsed;
+         })
+         .nullable()
+         .required("El cargo de la SUNAT es obligatorio"),
 });
 
 export const trabajadorSchema = (isEdit = false, isGerente = false) =>
@@ -69,6 +100,21 @@ export const trabajadorSchema = (isEdit = false, isGerente = false) =>
       numero_documento: yup
          .string()
          .required("El número de documento es requerido"),
+
+       estado_civil: yup
+      .string()
+      .oneOf(
+         ["SOLTERO", "CASADO", "DIVORCIADO", "VIUDO", "CONVIVIENTE"],
+         "El estado civil debe ser SOLTERO, CASADO, DIVORCIADO, VIUDO o CONVIVIENTE"
+      )
+      .required("El estado civil es requerido"),
+      ruc:yup.string()
+         .notRequired()
+         .nullable()
+         .test('is-empty-or-numeric', 'El RUC debe contener solo números', 
+            value => { 
+               return !value || /^\d+$/.test(value)
+            }),
       fecha_nacimiento: yup
       .date()
       .transform((value, originalValue) => new Date(originalValue))
@@ -99,7 +145,7 @@ export const trabajadorSchema = (isEdit = false, isGerente = false) =>
                return value === "AFP" || value === "ONP"; // Debe ser uno de esos si es PLANILLA
             }
          ),
-
+      
       tipo_afp: yup
          .string()
          .nullable()
@@ -143,4 +189,48 @@ export const trabajadorSchema = (isEdit = false, isGerente = false) =>
          })
          .nullable()
          .required("El cargo es obligatorio"),
+
+      
+   asignacion_familiar: yup.boolean().default(false),
+
+   asignacion_familiar_fecha: yup
+    .mixed()
+    .transform((value, originalValue) =>
+      originalValue === "" || originalValue === null
+        ? null
+        : new Date(originalValue)
+    )
+    .nullable()
+    .test(
+      "fecha-asignacion-familiar",
+      "La fecha es requerida",
+      function (value) {
+        
+        const { asignacion_familiar } = this.parent;
+        // Si asignacion_familiar es true, la fecha debe existir
+        if (asignacion_familiar) {
+          return !!value;
+        }
+        return true; // si no tiene asignación familiar, no se valida
+      }
+    )
+    .typeError("La fecha de asignación familiar no es válida"),
+
+    cuspp_afp: yup
+      .string()
+      .nullable()
+      .test(
+        "cuspp-afp",
+        "El CUSPP debe tener máximo 13 caracteres",
+        function (value) {
+         console.log('value', value);
+          if(value){
+            // Si tiene valor, validar longitud exacta de 13
+            return value.length == 13;
+          }else{
+            // Si no tiene valor, no se valida
+            return true
+          }
+        }
+      )
    });

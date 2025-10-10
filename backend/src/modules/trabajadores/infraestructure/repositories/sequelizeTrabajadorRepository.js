@@ -42,6 +42,13 @@ class SequelizeTrabajadorRepository {
                model: db.contratos_laborales,
                as: "contratos_laborales",
                where: { estado: 1 },
+               include: [
+                  {
+                     model: db.cargos_sunat,
+                     as: "cargo_sunat",
+
+                  }
+               ],
                required: false,
             },
          ],
@@ -60,6 +67,7 @@ class SequelizeTrabajadorRepository {
    }
 
    async obtenerTrabajadoresPorArea(areaId, fecha) {
+      
       const area=await Area.findByPk(areaId)
       if(!area){
          throw new Error("El area no existe")
@@ -106,22 +114,47 @@ class SequelizeTrabajadorRepository {
       });
 
       // Convertir asistencia de arreglo a objeto único (si existe)
-      const resultado = trabajadores.map((t) => {
+      const resultado = trabajadores.reduce((acc,t) => {
          const data = t.toJSON();
          data.asistencia = data.asistencias?.[0] || null;
          delete data.asistencias;
          const hoy = new Date().toISOString().split("T")[0];
-
-         const contrato_actual = data.contratos_laborales.find((c) => {
-            return c.fecha_inicio <= hoy && c.fecha_fin >= hoy;
+         const contratosVigentesEnFecha = data.contratos_laborales.filter((c) => {
+           // Paso 1: Convertimos la fecha de referencia a objeto Date
+           const fechaRef = fecha;
+         
+           // Paso 2: Convertimos las fechas del contrato a objetos Date
+           const fechaInicio =c.fecha_inicio;
+           const fechaFin = c.fecha_fin ? c.fecha_fin : null; // puede ser null en contratos indefinidos
+           const fechaTerminacion = c.fecha_terminacion_anticipada ? c.fecha_terminacion_anticipada : null;
+         
+           // Paso 3: Verificamos si el contrato ya había iniciado en esa fecha
+           const inicioValido = fechaInicio <= fechaRef;
+         
+           // Paso 4: Verificamos si el contrato NO fue terminado anticipadamente antes de esa fecha
+           const noTerminacionAnticipada = !fechaTerminacion || fechaTerminacion >= fechaRef;
+           // Paso 5: Evaluamos según el tipo de contrato
+           if (c.es_indefinido) {
+              // Contratos indefinidos: solo nos importa que ya hayan iniciado y no se hayan terminado anticipadamente
+              return inicioValido && noTerminacionAnticipada;
+           } else {
+              // Contratos definidos: además de lo anterior, también deben no haber terminado por fecha_fin
+              const finValido = fechaFin && fechaFin >= fechaRef;
+              return inicioValido && finValido && noTerminacionAnticipada;
+           }
          });
-         if (!contrato_actual) {
-            throw new Error("El trabajador no cuenta con un contrato laboral.");
-         }
-         data.filial = contrato_actual.empresa_proveedora.razon_social;
+          if (contratosVigentesEnFecha.length < 1) return acc;
+         let nombresfiliales="";
+         for (let i = 0; i < contratosVigentesEnFecha.length; i++) {
+            nombresfiliales+=i==0?"":" - ";
+            nombresfiliales+=contratosVigentesEnFecha[i].empresa_proveedora.razon_social;
+         }         
+         data.filial =nombresfiliales;
          delete data.contratos_laborales;
-         return data;
-      });
+         acc.push(data);
+         return acc;
+      },[]);
+
       return {
          trabajadores:resultado,
           area_nombre:area.nombre
@@ -133,7 +166,6 @@ class SequelizeTrabajadorRepository {
      if(!area){
       throw new Error("El area no existe")
      }
-     console.log(area.get({plain:true}));
      
      const includes = [
        {
@@ -195,22 +227,46 @@ class SequelizeTrabajadorRepository {
      // 🔹 Unión final
      const concatenado = [...trabajadoresArea, ...trabajadoresCargos];
      // Convertir asistencia de arreglo a objeto único (si existe)
-     const resultado = concatenado.map((t) => {
-       const data = t.toJSON();
-       data.asistencia = data.asistencias?.[0] || null;
-       delete data.asistencias;
-       const hoy = new Date().toISOString().split("T")[0];
-
-       const contrato_actual = data.contratos_laborales.find((c) => {
-         return c.fecha_inicio <= hoy && c.fecha_fin >= hoy;
-       });
-       if (!contrato_actual) {
-         throw new Error("El trabajador no cuenta con un contrato laboral.");
-       }
-       data.filial = contrato_actual.empresa_proveedora.razon_social;
-       delete data.contratos_laborales;
-       return data;
-     });
+      const resultado = concatenado.reduce((acc,t) => {
+         const data = t.toJSON();
+         data.asistencia = data.asistencias?.[0] || null;
+         delete data.asistencias;
+         const hoy = new Date().toISOString().split("T")[0];
+         const contratosVigentesEnFecha = data.contratos_laborales.filter((c) => {
+           // Paso 1: Convertimos la fecha de referencia a objeto Date
+           const fechaRef = fecha;
+         
+           // Paso 2: Convertimos las fechas del contrato a objetos Date
+           const fechaInicio =c.fecha_inicio;
+           const fechaFin = c.fecha_fin ? c.fecha_fin : null; // puede ser null en contratos indefinidos
+           const fechaTerminacion = c.fecha_terminacion_anticipada ? c.fecha_terminacion_anticipada : null;
+         
+           // Paso 3: Verificamos si el contrato ya había iniciado en esa fecha
+           const inicioValido = fechaInicio <= fechaRef;
+         
+           // Paso 4: Verificamos si el contrato NO fue terminado anticipadamente antes de esa fecha
+           const noTerminacionAnticipada = !fechaTerminacion || fechaTerminacion >= fechaRef;
+           // Paso 5: Evaluamos según el tipo de contrato
+           if (c.es_indefinido) {
+              // Contratos indefinidos: solo nos importa que ya hayan iniciado y no se hayan terminado anticipadamente
+              return inicioValido && noTerminacionAnticipada;
+           } else {
+              // Contratos definidos: además de lo anterior, también deben no haber terminado por fecha_fin
+              const finValido = fechaFin && fechaFin >= fechaRef;
+              return inicioValido && finValido && noTerminacionAnticipada;
+           }
+         });
+          if (contratosVigentesEnFecha.length < 1) return acc;
+         let nombresfiliales="";
+         for (let i = 0; i < contratosVigentesEnFecha.length; i++) {
+            nombresfiliales+=i==0?"":" - ";
+            nombresfiliales+=contratosVigentesEnFecha[i].empresa_proveedora.razon_social;
+         }         
+         data.filial =nombresfiliales;
+         delete data.contratos_laborales;
+         acc.push(data);
+         return acc;
+      },[]);
 
      return {
       trabajadores:resultado,

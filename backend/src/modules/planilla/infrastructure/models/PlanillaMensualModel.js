@@ -245,6 +245,11 @@ const PlanillaMensual = sequelize.define(
          type: DataTypes.STRING,
          allowNull: true,
       },
+      domiciliado: {
+         type: DataTypes.BOOLEAN,
+         allowNull: false,
+         defaultValue: true,
+      },
    },
    
    {

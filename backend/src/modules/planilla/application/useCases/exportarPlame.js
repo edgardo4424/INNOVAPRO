@@ -16,6 +16,7 @@ const contar_dias_laborables_mes  = require("../../infrastructure/utils/calcular
 const obtenerDatosAsistencia = require("../../infrastructure/services/obtener_datos_asistencia");
 const generarRem = require("../../infrastructure/utils/generaRem");
 const plame_recibo_por_honorario = require("../../infrastructure/utils/plame_recibos_honorarios");
+const  contadorTipoAsistenciaPorTrabajador  = require("../../infrastructure/services/contadorTipoAsistenciasPorTrabajador");
 const quintaRepository=new SequelizeQuintaCategoriaRepository()
 function convertirHorasDecimales(valor) {
   const horas = Math.floor(valor);
@@ -46,33 +47,28 @@ module.exports = async (res, payload, planillaRepository) => {
   if (!filial) {
     throw new Error("La filial enviada no existe.");
   }
-  const zipName = `RUC${filial.ruc}_${fecha_anio_mes}.zip`;
-  res.setHeader("Content-Type", "application/zip");
-  res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
-  res.setHeader("Content-Disposition", `attachment; filename="${zipName}"`);
+
 
   const planillaMensualCerradas =
     await planillaRepository.obtenerPlanillaMensualCerradas(
       fecha_anio_mes,
       filial_id
   );    
-  const {pl,rh}=separar_planilla_honorarios(planillaMensualCerradas)
-  // archiver("zip") → define que usarás ZIP.
-  // Definimos el nivel maximo de compresion.
-  const archive = archiver("zip", { zlib: { level: 9 } });
-  archive.pipe(res);
-  //!Crear archivo para prestadores de servicios de 4ta categoria osea recibo por honorarios;
-  const {prestadores_cuarta}=await plame_prestadores_cuarta(trabajadorRepository,rh);
-  archive.append(prestadores_cuarta.join("\n"), { name: `0601${anio}${mes}${filial.ruc}.ps4` });
 
   const {dias_laborales_oficina,dias_laborales_almacen}=contar_dias_laborables_mes(anio,mes);
   const{inicio,fin}=obtenerInicioYFinDeMes(anio,Number(mes));
 
+  // Todo:  Arreglos para el plame 
+  //?? Arreglo para trabajadores en quinta
+  let quintas=[];
+  //??Areglo para trabajadores en Honoraios
+  let prestadores_cuarta=[];
+  let recibos=[];
+  //??Arreglo que interactuan con las asistencias
   let jornadas_laborales=[];
   let subsidiados=[];
+
   let ingresos_tributos=[];
-  let quintas=[];
-  let recibos=[];
 
   for (const t of planillaMensualCerradas) {
 
@@ -81,14 +77,34 @@ module.exports = async (res, payload, planillaRepository) => {
         const areas_dif=["Almacen","Montadores"];
         let horas_trabajadas=0;
         let horas_extras_trabajadas=0;
-        //formato==== yyyy-mm
-        // console.log(fecha_anio_mes);
+
+        //!Codigo para quinta Categoria
         const response_quinta= await quintaRepository.obtenerMultiempleoInferido({trabajadorId:t.trabajador_id,fechaAnioMes:fecha_anio_mes});
          const quintas_filtradas=response_quinta.filiales.filter((f)=>f.filial_id!=filial_id);
-        for (const q of quintas_filtradas) {
+         for (const q of quintas_filtradas) {
             quintas.push(`${tipo_documento}|${t.numero_documento}|${q.ruc||"No implementado"}|${q.monto}`)
+         }
+
+        if(t.tipo_contrato==="HONORARIOS"){          
+          if(!t.recibo?.recibo_por_honorario){
+            throw new Error(`No se puede exportar el PLAME. Falta el recibo del trabajador ${t.nombres_apellidos}.`);
+          }
+          //!Traer los datos del trabajador
+          const empleado=await trabajadorRepository.obtenerTrabajadorSimplePorId(t.trabajador_id);
+            //?? Prestadores de cuarta
+            const prestador_cuarta=await  plame_prestadores_cuarta(empleado);
+            prestadores_cuarta.push(prestador_cuarta)
+            //?? Recibos por honorarios de los trabajadores 
+            const response_recibo=await plame_recibo_por_honorario(empleado,t.recibo.recibo_por_honorario);
+            recibos.push(response_recibo);
+            
         }
-         
+        console.log("Inicio de rango: ",inicio);
+        console.log("Fin de rango;",fin);
+        await contadorTipoAsistenciaPorTrabajador(t.trabajador_id,inicio,fin)
+
+
+
         
         if(areas_dif.includes(t.area)){            
             horas_trabajadas=(dias_laborales_almacen-dias_falta)*8;
@@ -103,6 +119,8 @@ module.exports = async (res, payload, planillaRepository) => {
         const {horas,minutos}=convertirHorasDecimales(horas_extras_trabajadas);
         const linea_contruida_jor=`${tipo_documento}|${t.numero_documento}|${horas_trabajadas}|0|${horas}|${minutos}`
         jornadas_laborales.push(linea_contruida_jor);
+
+
         const {faltas,faltas_justificadas,licencia_con_goce,licencia_sin_goce,vacaciones_g}=await obtenerDatosAsistencia(inicio,fin,t.trabajador_id);
         if(faltas){
             subsidiados.push(`${tipo_documento}|${t.numero_documento}|07|${faltas}`)
@@ -123,24 +141,33 @@ module.exports = async (res, payload, planillaRepository) => {
 
         ingresos_tributos.push(...generarRem(t,tipo_documento));   
         
-        if(t.tipo_contrato==="HONORARIOS"){          
-          const response_recibo=await plame_recibo_por_honorario(trabajadorRepository,t.recibo.recibo_por_honorario);
-          recibos.push(response_recibo);
-        }
-    
-    }
-    //!Agregando las jornadas laborales
-    archive.append(jornadas_laborales.join("\n"), { name: `0601${anio}${mes}${filial.ruc}.jor` });
-    //!Agregando los dias no laborados
-    archive.append(subsidiados.join("\n"), { name: `0601${anio}${mes}${filial.ruc}.snl` });
-    //!Agregando los iNGRESSOS TRIBUTOS Y DECLARACIONES
-    archive.append(ingresos_tributos.join("\n"), { name: `0601${anio}${mes}${filial.ruc}.rem` });
-     //!Agregando la quinta al plame
-    archive.append(quintas.join("\n"), { name: `0601${anio}${mes}${filial.ruc}.or5` });
-    archive.append(recibos.join("\n"), { name: `0601${anio}${mes}${filial.ruc}.4ta` });
 
     
-    console.log("Recibos",recibos);
+    }
+
+
+
+
+      const zipName = `RUC${filial.ruc}_${fecha_anio_mes}.zip`;
+      res.setHeader("Content-Type", "application/zip");
+      res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
+      res.setHeader("Content-Disposition", `attachment; filename="${zipName}"`);
+      const archive = archiver("zip", { zlib: { level: 9 } });
+      archive.pipe(res);
+
+
+      //!Crear archivo para prestadores de servicios de 4ta categoria osea recibo por honorarios;
+      archive.append(prestadores_cuarta.join("\n"), { name: `0601${anio}${mes}${filial.ruc}.ps4` });
+      //!Agregando las jornadas laborales
+      archive.append(jornadas_laborales.join("\n"), { name: `0601${anio}${mes}${filial.ruc}.jor` });
+      //!Agregando los dias no laborados
+      archive.append(subsidiados.join("\n"), { name: `0601${anio}${mes}${filial.ruc}.snl` });
+      //!Agregando los iNGRESSOS TRIBUTOS Y DECLARACIONES
+      archive.append(ingresos_tributos.join("\n"), { name: `0601${anio}${mes}${filial.ruc}.rem` });
+       //!Agregando la quinta al plame
+      archive.append(quintas.join("\n"), { name: `0601${anio}${mes}${filial.ruc}.or5` });
+      archive.append(recibos.join("\n"), { name: `0601${anio}${mes}${filial.ruc}.4ta` });
+
     
     archive.finalize();
 
