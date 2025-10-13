@@ -1178,7 +1178,7 @@ class SequelizeFacturaRepository {
                         [fn("SUM", literal("CASE WHEN tipo_doc = '03' THEN 1 ELSE 0 END")), "boleta_emitido"],
                         [fn("COUNT", literal("1")), "total_fact_doc"]
                     ],
-                    where: { estado: { [Op.notIn]: ['RECHAZADA', 'PENDIENTE'] } },
+                    where: { estado: { [Op.notIn]: ['RECHAZADA', 'PENDIENTE', 'ANULADA', 'ANULADA-NOTA'] } },
                     group: ["empresa_ruc"],
                     raw: true,
                 }),
@@ -1189,7 +1189,7 @@ class SequelizeFacturaRepository {
                         ["empresa_ruc", "empresa_ruc"],
                         [fn("COUNT", literal("1")), "guia_emitido"]
                     ],
-                    where: { estado: { [Op.notIn]: ['RECHAZADA', 'PENDIENTE'] } },
+                    where: { estado: { [Op.notIn]: ['RECHAZADA', 'PENDIENTE', 'ANULADA', 'ANULADA-NOTA'] } },
                     group: ["empresa_ruc"],
                     raw: true,
                 }),
@@ -1202,7 +1202,7 @@ class SequelizeFacturaRepository {
                         [fn("SUM", literal("CASE WHEN tipo_doc = '08' THEN 1 ELSE 0 END")), "nota_debito_emitido"],
                         [fn("COUNT", literal("1")), "total_notas_doc"]
                     ],
-                    where: { estado: { [Op.notIn]: ['RECHAZADA', 'PENDIENTE'] } },
+                    where: { estado: { [Op.notIn]: ['RECHAZADA', 'PENDIENTE', 'ANULADA', 'ANULADA-NOTA'] } },
                     group: ["empresa_ruc"],
                     raw: true,
                 }),
@@ -1316,7 +1316,7 @@ class SequelizeFacturaRepository {
                             [Op.lte]: `${endDate} 23:59:59`,
                         },
                         estado: {
-                            [Op.notIn]: ['RECHAZADA', 'PENDIENTE']
+                            [Op.notIn]: ['RECHAZADA', 'PENDIENTE', 'ANULADA', 'ANULADA-NOTA']
                         },
                     },
                     group: [literal('DATE(fecha_emision)'), 'empresa_ruc'],
@@ -1337,7 +1337,7 @@ class SequelizeFacturaRepository {
                             [Op.lte]: `${endDate} 23:59:59`,
                         },
                         estado: {
-                            [Op.notIn]: ['RECHAZADA', 'PENDIENTE']
+                            [Op.notIn]: ['RECHAZADA', 'PENDIENTE', 'ANULADA', 'ANULADA-NOTA']
                         },
                     },
                     group: [literal('DATE(fecha_emision)'), 'empresa_ruc'],
@@ -1388,15 +1388,108 @@ class SequelizeFacturaRepository {
         }
     }
 
-    async totalFacturado(startDate, endDate, serie) {
+    async totalFacturado(startDate, endDate, series) {
         try {
-            let resultado;
+            const resultado = [];
 
-            if (serie.length > 0) {
-                serie.map
+            for (const s of series) {
+                // Si la serie es FT01, se prepara estructura vacía (detalle especial)
+                if (s?.detalle) {
+                    const registros = await Factura.findAll({
+                        attributes: [
+                            "tipo_moneda",
+                            [fn("SUM", col("monto_imp_venta")), "total_imp_venta"],
+                            [fn("SUM", col("neto_pagar")), "total_neto"],
+                        ],
+                        where: {
+                            serie: s.value,
+                            estado: { [Op.notIn]: ['RECHAZADA', 'PENDIENTE', 'ANULADA', 'ANULADA-NOTA'] },
+                            fecha_emision: {
+                                [Op.gte]: `${startDate} 00:00:00`,
+                                [Op.lte]: `${endDate} 23:59:59`,
+                            },
+                            include: [
+                                {
+                                    model:db.detalle_factura,
+                                    attributes: [],
+                                }
+                            ]
+                        },
+                        group: ["tipo_moneda"],
+                        raw: true,
+                    });
+
+                    // Armamos estructura agrupada en PEN / USD
+                    const datosMoneda = {
+                        PEN: { monto_imp_venta: 0, neto_pagar: 0 },
+                        USD: { monto_imp_venta: 0, neto_pagar: 0 },
+                    };
+
+                    registros.forEach(r => {
+                        const moneda = r.tipo_moneda;
+                        if (!datosMoneda[moneda]) {
+                            datosMoneda[moneda] = { monto_imp_venta: 0, neto_pagar: 0 };
+                        }
+                        datosMoneda[moneda].monto_imp_venta = Number(r.total_imp_venta) || 0;
+                        datosMoneda[moneda].neto_pagar = Number(r.total_neto) || 0;
+                    });
+
+                    resultado.push({
+                        serie: s.value,
+                        descrip: s.descrip,
+                        detalle: !!s.detalle,
+                        monedas: datosMoneda,
+                    });
+                } else {
+
+                    // Para las demás series (FT02, FT03, FT04)
+                    const registros = await Factura.findAll({
+                        attributes: [
+                            "tipo_moneda",
+                            [fn("SUM", col("monto_imp_venta")), "total_imp_venta"],
+                            [fn("SUM", col("neto_pagar")), "total_neto"],
+                        ],
+                        where: {
+                            serie: s.value,
+                            estado: { [Op.notIn]: ['RECHAZADA', 'PENDIENTE', 'ANULADA', 'ANULADA-NOTA'] },
+                            fecha_emision: {
+                                [Op.gte]: `${startDate} 00:00:00`,
+                                [Op.lte]: `${endDate} 23:59:59`,
+                            },
+                        },
+                        group: ["tipo_moneda"],
+                        raw: true,
+                    });
+
+                    // Armamos estructura agrupada en PEN / USD
+                    const datosMoneda = {
+                        PEN: { monto_imp_venta: 0, neto_pagar: 0 },
+                        USD: { monto_imp_venta: 0, neto_pagar: 0 },
+                    };
+
+                    registros.forEach(r => {
+                        const moneda = r.tipo_moneda;
+                        if (!datosMoneda[moneda]) {
+                            datosMoneda[moneda] = { monto_imp_venta: 0, neto_pagar: 0 };
+                        }
+                        datosMoneda[moneda].monto_imp_venta = Number(r.total_imp_venta) || 0;
+                        datosMoneda[moneda].neto_pagar = Number(r.total_neto) || 0;
+                    });
+
+                    resultado.push({
+                        serie: s.value,
+                        descrip: s.descrip,
+                        detalle: !!s.detalle,
+                        monedas: datosMoneda,
+                    });
+                }
             }
 
-
+            return {
+                success: true,
+                message: "Total facturado agrupado por serie.",
+                data: resultado,
+            };
         } catch (error) {
             console.log("Error en totalFacturado:", error);
             return {
@@ -1407,7 +1500,6 @@ class SequelizeFacturaRepository {
             };
         }
     }
-
 
     async count() {
         try {

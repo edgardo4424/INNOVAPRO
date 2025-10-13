@@ -12,7 +12,7 @@ module.exports = async (body, facturaRepository) => {
 
     // ? si no se encuentra la factura
     if (!succesFactura) {
-        // dashboarContent.count = dataCount
+        dashboarContent.count = dataCount
     };
 
     // * Total emitido en factura
@@ -21,14 +21,14 @@ module.exports = async (body, facturaRepository) => {
 
     // ? si no se encuentra la factura
     if (!succesCash) {
-        // dashboarContent.cash = dataCash
+        dashboarContent.cash = dataCash
     };
 
-    // const { succes: succesFacturado, data: dataFacturado } = await facturaRepository.totalFacturado(start_date, end_date, serie);
+    const { succes: succesFacturado, data: dataFacturado } = await facturaRepository.totalFacturado(start_date, end_date, serie);
 
     console.log(dataFacturado)
 
-    if (!succesCash) {
+    if (!succesFacturado) {
         dashboarContent.total = dataFacturado
     };
 
