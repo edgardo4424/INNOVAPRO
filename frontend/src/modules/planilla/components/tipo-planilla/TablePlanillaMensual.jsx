@@ -210,8 +210,8 @@ const filtrarTrabajadores = (trabajadores) => {
 
               {/* GRUPO BONOS */}
               <th
-                colSpan="2"
-                className="px-2 py-2 text-center whitespace-nowrap"
+                colSpan="3"
+                className="px-2 py-2 text-center whitespace-nowrap bg-blue-950"
               >
                 Bonos
               </th>
@@ -259,14 +259,15 @@ const filtrarTrabajadores = (trabajadores) => {
                 rowSpan="2"
                 className="px-2 py-2 text-center whitespace-nowrap"
               >
-                Saldo x Pagar
+                Sub Total
               </th>
               <th
                 rowSpan="2"
                 className="px-2 py-2 text-center whitespace-nowrap"
               >
-                ESSALUD 9%
+                Saldo x Pagar
               </th>
+
 
               {/* GRUPO APORTES */}
               <th
@@ -292,8 +293,9 @@ const filtrarTrabajadores = (trabajadores) => {
               <th className="px-2 py-2 text-center whitespace-nowrap">2Q</th>
 
               {/* BONOS */}
-              <th className="px-2 py-2 text-center whitespace-nowrap">1Q</th>
-              <th className="px-2 py-2 text-center whitespace-nowrap">2Q</th>
+              <th className="px-2 py-2 text-center whitespace-nowrap bg-blue-900">1Q</th>
+              <th className="px-2 py-2 text-center whitespace-nowrap bg-blue-900">2Q</th>
+              <th className="px-2 py-2 text-center whitespace-nowrap bg-blue-900">Extraordinario</th>
 
               {/* DESCUENTOS */}
               <th className="px-2 py-2 text-center whitespace-nowrap">ONP</th>
@@ -311,9 +313,14 @@ const filtrarTrabajadores = (trabajadores) => {
               </th>
 
               {/* APORTES */}
+                              
+              <th className="px-2 py-2 text-center whitespace-nowrap">
+                ESSALUD 9%
+              </th>
               <th className="px-2 py-2 text-center whitespace-nowrap">
                 Vida Ley
               </th>
+
               <th className="px-2 py-2 text-center whitespace-nowrap">
                 SCTR Salud
               </th>

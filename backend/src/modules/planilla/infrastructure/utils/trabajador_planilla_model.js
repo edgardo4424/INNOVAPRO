@@ -29,7 +29,7 @@ export const trabajador_planilla_model =()=>( {
    tardanza_segunda_quincena: 0,
    bono_primera_quincena: 0,
    bono_segunda_quincena: 0,
-   bono_extraordinario:0,
+   bonos_extraordinarios:0,
    sueldo_bruto: 0,
    onp: 0,
    afp_ap_oblig: 0,

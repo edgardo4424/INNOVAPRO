@@ -1509,7 +1509,7 @@ class SequelizePlanillaRepository {
       // prettier-ignore
       planilla.bono_segunda_quincena = SUMA_BONO_SEGUNDA_Q.toFixed(2);
 
-      planilla.bono_extraordinario=SUMA_BONO_EXTRAORDINARIO;
+      planilla.bonos_extraordinarios=SUMA_BONO_EXTRAORDINARIO;
 
       planilla.sueldo_bruto = Number(
         (
