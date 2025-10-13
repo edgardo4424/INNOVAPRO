@@ -1242,6 +1242,20 @@ class SequelizePlanillaRepository {
          return planilla;
       }
 
+//TODO: ***************** CALCULO PLANILLA MENSUAL
+//TODO: ***************** CALCULO PLANILLA MENSUAL
+//TODO: ***************** CALCULO PLANILLA MENSUAL
+//TODO: ***************** CALCULO PLANILLA MENSUAL
+//TODO: ***************** CALCULO PLANILLA MENSUAL
+//TODO: ***************** CALCULO PLANILLA MENSUAL
+//TODO: ***************** CALCULO PLANILLA MENSUAL
+//TODO: ***************** CALCULO PLANILLA MENSUAL
+//TODO: ***************** CALCULO PLANILLA MENSUAL
+//TODO: ***************** CALCULO PLANILLA MENSUAL
+//TODO: ***************** CALCULO PLANILLA MENSUAL
+//TODO: ***************** CALCULO PLANILLA MENSUAL
+
+
   async obtenerPlanillaMensualPorTrabajador(
     anio_mes_dia,
     trabajador_id,
@@ -1310,9 +1324,7 @@ class SequelizePlanillaRepository {
     const contratoInicial = filtrarContratosSinInterrupcion(
       trabajador.contratos_laborales
     );
-    // if (trabajador.id == 1) {
-    //   console.log("Lucas contrato incial sin fecha", contratoInicial);
-    // }
+
 
     //Todo: Obtenemos los contratos que estan en el rango del mes
     const contratosEnRango = trabajador.contratos_laborales.filter(
@@ -1378,6 +1390,14 @@ class SequelizePlanillaRepository {
         ? c.fecha_terminacion_anticipada
         : c.fecha_fin;
       let fin_real = fin_contrato < fin_de_mes ? fin_contrato : fin_de_mes;
+      if (trabajador.id == 1) {
+      console.log(
+        "Inicio Real",
+        inicio_real
+      );
+      console.log("FIN REAL: ", fin_real);
+      
+    }
       const DIAS_NO_CONTRATADOS = calcularDiasNoContratado(
         inicio_real,
         fin_real,
@@ -1390,9 +1410,7 @@ class SequelizePlanillaRepository {
         inicio_de_mes,
         c.es_indefinido
       );
-      // console.log("DIAS CONTRTADO:   ",DIAS_CONTRATADO);
-      console.log(trabajador.nombres,DIAS_CONTRATADO);
-      
+      // console.log("DIAS CONTRTADO:   ",DIAS_CONTRATADO);      
       const {
         faltas,
         faltas_justificadas,
@@ -1411,9 +1429,12 @@ class SequelizePlanillaRepository {
         TARDANZA_SEGUNDA_Q,
         CANTIDAD_VACACIONES_GOZADAS,
         CANTIDAD_VACACIONES_VENDIDAS,
+        SUMA_BONO_EXTRAORDINARIO
       } = await obtenerDatosPorQuincena(inicio_real, fin_real, trabajador.id);
 
-
+      if (trabajador.id == 1) {
+          console.log("Bonos: ",SUMA_BONO_PRIMERA_Q,SUMA_BONO_SEGUNDA_Q,SUMA_BONO_EXTRAORDINARIO);
+        }
 
       const DIAS_FIJOS = 30;
       planilla.tipo_documento = trabajador.tipo_documento;
@@ -1487,6 +1508,8 @@ class SequelizePlanillaRepository {
 
       // prettier-ignore
       planilla.bono_segunda_quincena = SUMA_BONO_SEGUNDA_Q.toFixed(2);
+
+      planilla.bono_extraordinario=SUMA_BONO_EXTRAORDINARIO;
 
       planilla.sueldo_bruto = Number(
         (

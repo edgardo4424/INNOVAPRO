@@ -72,6 +72,7 @@ const unir_planillas_mensuales = (
       grupo_planilla.banco = p.banco;
       grupo_planilla.numero_cuenta = p.numero_cuenta;
       grupo_planilla.domiciliado=p.domiciliado;
+      grupo_planilla.bono_extraordinario+=Number(p.bono_extraordinario)
    }
 
    grupo_planilla.sueldo_bruto = Number(
@@ -164,6 +165,11 @@ const unir_planillas_mensuales = (
       grupo_planilla.sueldo_quincenal -
       grupo_planilla.adelanto_prestamo
    ).toFixed(2);
+   grupo_planilla.sub_total = (
+      grupo_planilla.sueldo_neto -
+      grupo_planilla.sueldo_quincenal -
+      grupo_planilla.adelanto_prestamo
+   )+grupo_planilla.bono_extraordinario;
    return grupo_planilla;
 };
 
