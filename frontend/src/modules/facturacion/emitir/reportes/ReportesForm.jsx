@@ -22,6 +22,9 @@ const filtroInicial = {
   cliente_razon_social: "",
   fec_des: "",
   fec_ast: "",
+  serieG: null,
+  serieN: null,
+  serieF: null,
   usuario_id: null,
 };
 
@@ -78,7 +81,7 @@ const ReportesForm = () => {
         );
 
         setExcelData({
-          nombre_libro: sanitizeSheetName(`Reporte de Ventas `,),
+          nombre_libro: sanitizeSheetName(`Reporte de Ventas `),
           datos: datos.map((doc) => ({
             ...doc,
             // 🔹 Fechas formateadas con tu helper

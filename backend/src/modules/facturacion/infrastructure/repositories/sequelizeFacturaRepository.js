@@ -698,6 +698,9 @@ class SequelizeFacturaRepository {
                 usuario_id,
                 fec_des,
                 fec_ast,
+                serieG,
+                serieN,
+                serieF,
             } = query;
             const sane = (v) => {
                 if (v === null || v === undefined) return undefined;
@@ -760,6 +763,16 @@ class SequelizeFacturaRepository {
                 whereFactura.fecha_Emision = { [Op.lte]: nFecAst };
                 whereGuia.fecha_Emision = { [Op.lte]: nFecAst };
                 whereNota.fecha_Emision = { [Op.lte]: nFecAst };
+            }
+
+            if (serieG) {
+                whereGuia.serie = serieG;
+            }
+            if (serieN) {
+                whereNota.serie = serieN;
+            }
+            if (serieF) {
+                whereFactura.serie = serieF;
             }
 
             // ? filtro tipo de documento
@@ -1374,6 +1387,27 @@ class SequelizeFacturaRepository {
             };
         }
     }
+
+    async totalFacturado(startDate, endDate, serie) {
+        try {
+            let resultado;
+
+            if (serie.length > 0) {
+                serie.map
+            }
+
+
+        } catch (error) {
+            console.log("Error en totalFacturado:", error);
+            return {
+                success: false,
+                message: "Error al calcular el total facturado.",
+                data: null,
+                error: error.message,
+            };
+        }
+    }
+
 
     async count() {
         try {

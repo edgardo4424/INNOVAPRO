@@ -142,13 +142,7 @@ const ProductoForm = ({ closeModal }) => {
     setProductoValida(ProductoValidarEstados);
   }, []);
 
-  useEffect(() => {
-    if (factura.serie == "FT01") {
-      setTipoItem(true);
-    } else {
-      setTipoItem(false);
-    }
-  }, [factura.serie]);
+
 
   console.log(productoActual);
 
@@ -192,14 +186,14 @@ const ProductoForm = ({ closeModal }) => {
         </div>
 
         {/* Unidad */}
-        <div className={`col-span-full flex flex-col gap-1 md:col-span-1 ${tipoItem ? "" : "hidden"} `}>
+        <div className={`col-span-full flex flex-col gap-1 md:col-span-1 `}>
           <Label>Tipo (valor interno)</Label>
           <Select
             name="tipo_item"
             value={productoActual.tipo_item}
             className={`${productoValida?.tipo_item ? "border-red-500" : "border-gray-400"}`}
             onValueChange={(e) => handleSelectChange(e, "tipo_item")}
-            disabled={!tipoItem}
+            // disabled={!tipoItem}
           >
             <SelectTrigger
               className={`w-full border-1 ${productoValida?.tipo_item ? "border-red-500" : "border-gray-400"}`}
@@ -411,7 +405,7 @@ const ProductoForm = ({ closeModal }) => {
         </div>
 
         {/* Factor ICBPER */}
-        <div className="col-span-full flex flex-col gap-1 md:col-span-2 lg:col-span-1">
+        {/* <div className="col-span-full flex flex-col gap-1 md:col-span-2 lg:col-span-1">
           <Label>Factor ICBPER</Label>
           <Input
             type="number"
@@ -422,7 +416,7 @@ const ProductoForm = ({ closeModal }) => {
             disabled
             className="border-1 border-gray-400"
           />
-        </div>
+        </div> */}
 
         {/* Descripción */}
         <div className={`col-span-full flex flex-col gap-1 md:col-span-${tipoItem ? "3" : "4"}`}>

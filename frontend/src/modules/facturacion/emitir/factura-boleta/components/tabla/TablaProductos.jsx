@@ -23,7 +23,7 @@ const TablaProductos = ({ setOpen }) => {
         <TableHeader className="border-b-2 border-gray-400 bg-gray-100">
           <TableRow>
             <TableHead
-              className={`w-[120px] ${factura?.serie == "FT01" ? "" : "hidden"}`}
+              className={`w-[120px]`}
             >
               Tipo
             </TableHead>
@@ -57,7 +57,7 @@ const TablaProductos = ({ setOpen }) => {
                 onClick={() => seleccionarProducto(producto, index)}
               >
                 <TableCell
-                  className={`w-[120px] ${factura?.serie == "FT01" ? "block" : "hidden"}`}
+                  className={`w-[120px]`}
                 >
                   {producto?.tipo_item || ""}
                 </TableCell>
