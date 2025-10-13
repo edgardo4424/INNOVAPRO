@@ -197,9 +197,9 @@ const InfDocumentoForm = () => {
               <SelectItem value="transporte-privado">
                 Guia de Remision - Transporte Privado
               </SelectItem>
-              <SelectItem value="traslado-misma-empresa">
+              {/* <SelectItem value="traslado-misma-empresa">
                 Nota de Remision - Traslado Interno
-              </SelectItem>
+              </SelectItem> */}
             </SelectContent>
           </Select>
         </div>

@@ -199,6 +199,14 @@ const DatosGuiaEnvioForm = () => {
       [name]: value.toUpperCase(),
     }));
   };
+  
+  const handleChangePrivado = (e) => {
+    const { name, value } = e.target;
+    setGuiaDatosPrivado((prevGuiaTransporte) => ({
+      ...prevGuiaTransporte,
+      [name]: value.toUpperCase(),
+    }));
+  };
 
   const handleSelectChangePrv = (value, name) => {
     setGuiaDatosPrivado((prevValores) => ({
@@ -643,6 +651,47 @@ const DatosGuiaEnvioForm = () => {
                 <Select
                   onValueChange={(value) =>
                     handleChangePublico({
+                      target: { name: "guia_Envio_Des_Traslado", value },
+                    })
+                  }
+                >
+                  <SelectTrigger className="w-10 shrink-0 rounded-md border border-gray-300 shadow-sm"></SelectTrigger>
+
+                  <SelectContent>
+                    {opcionesOtros.map((opcion, index) => (
+                      <SelectItem key={index} value={opcion}>
+                        {opcion}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+          </div>
+        )}
+
+        {tipoGuia == "transporte-privado" && (
+          <div>
+            <Label
+              htmlFor="guia_Envio_Cod_Traslado"
+              className="mb-1 block text-left text-sm font-semibold text-gray-700"
+            >
+              Descripción de Traslado
+            </Label>
+            <div className="flex gap-x-2">
+              <Input
+                type="text"
+                id="guia_Envio_Des_Traslado"
+                name="guia_Envio_Des_Traslado"
+                value={guiaDatosPrivado.guia_Envio_Des_Traslado}
+                onChange={handleChangePrivado}
+                // disabled
+                className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+              />
+              {guiaDatosPrivado.guia_Envio_Cod_Traslado == "13" && (
+                <Select
+                  onValueChange={(value) =>
+                    handleChangePrivado({
                       target: { name: "guia_Envio_Des_Traslado", value },
                     })
                   }

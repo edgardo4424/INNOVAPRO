@@ -40,6 +40,7 @@ const guiaInical = {
 // ? GUIA DE REMISION PRIVADA
 const ValoresPrivado = {
     guia_Envio_Cod_Traslado: "01",
+    guia_Envio_Des_Traslado: "VENTA",
     guia_Envio_Mod_Traslado: "02",
 };
 
