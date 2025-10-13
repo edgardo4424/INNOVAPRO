@@ -29,6 +29,7 @@ const ProductoForm = ({ closeModal }) => {
   } = useFacturaBoleta();
 
   const [activeButton, setActiveButton] = useState(false);
+  const [tipoItem, setTipoItem] = useState(false);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
@@ -116,8 +117,7 @@ const ProductoForm = ({ closeModal }) => {
 
   const handleAgregar = async () => {
     setActiveButton(true);
-
-    let validar = await validarModal("producto", productoActual);
+    let validar = await validarModal("producto", productoActual, factura);
 
     if (!validar.validos) {
       if (validar.message) {
@@ -141,6 +141,10 @@ const ProductoForm = ({ closeModal }) => {
     setActiveButton(false);
     setProductoValida(ProductoValidarEstados);
   }, []);
+
+
+
+  console.log(productoActual);
 
   return (
     <div className="max-h-[45dvh] min-h-[40dvh] w-full overflow-y-scroll md:max-h-[unset] md:overflow-y-hidden">
@@ -182,7 +186,31 @@ const ProductoForm = ({ closeModal }) => {
         </div>
 
         {/* Unidad */}
-        <div className="col-span-full flex flex-col gap-1 md:col-span-2">
+        <div className={`col-span-full flex flex-col gap-1 md:col-span-1 `}>
+          <Label>Tipo (valor interno)</Label>
+          <Select
+            name="tipo_item"
+            value={productoActual.tipo_item}
+            className={`${productoValida?.tipo_item ? "border-red-500" : "border-gray-400"}`}
+            onValueChange={(e) => handleSelectChange(e, "tipo_item")}
+            // disabled={!tipoItem}
+          >
+            <SelectTrigger
+              className={`w-full border-1 ${productoValida?.tipo_item ? "border-red-500" : "border-gray-400"}`}
+            >
+              <SelectValue placeholder="Tipo" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALQUILER">ALQUILER</SelectItem>
+              <SelectItem value="TRANSPORTE">TRANSPORTE</SelectItem>
+              <SelectItem value="SERVICIO">SERVICIO</SelectItem>
+              <SelectItem value="VENTA">VENTA</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Unidad */}
+        <div className="col-span-full flex flex-col gap-1 md:col-span-1">
           <Label>Unidad</Label>
           <Select
             name="unidad"
@@ -377,7 +405,7 @@ const ProductoForm = ({ closeModal }) => {
         </div>
 
         {/* Factor ICBPER */}
-        <div className="col-span-full flex flex-col gap-1 md:col-span-2 lg:col-span-1">
+        {/* <div className="col-span-full flex flex-col gap-1 md:col-span-2 lg:col-span-1">
           <Label>Factor ICBPER</Label>
           <Input
             type="number"
@@ -388,10 +416,10 @@ const ProductoForm = ({ closeModal }) => {
             disabled
             className="border-1 border-gray-400"
           />
-        </div>
+        </div> */}
 
         {/* Descripción */}
-        <div className="col-span-full flex flex-col gap-1 md:col-span-3">
+        <div className={`col-span-full flex flex-col gap-1 md:col-span-${tipoItem ? "3" : "4"}`}>
           <Label>Descripción</Label>
           <div className="relative w-full">
             <textarea

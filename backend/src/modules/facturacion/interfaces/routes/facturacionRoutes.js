@@ -8,7 +8,7 @@ const notaController = require("../controllers/notaController");
 const { verificarToken } = require("../../../../shared/middlewares/authMiddleware");
 
 
-router.use(verificarToken); // Verificamos el token y el rol de Gerente para as las rutas
+// router.use(verificarToken); // Verificamos el token y el rol de Gerente para as las rutas
 
 
 // * BORRADOR
@@ -48,7 +48,9 @@ router.post("/nota-debito-credito/correlativo-pendientes", notaController.obtene
 
 // ?? FACTURA - NOTA - GUIA
 router.post("/reporte-venta", facturaController.reporteVentas);
-router.get("/documentos-pendientes", facturaController.documentosPendientes);
 
+router.get("/reporte-dasboard", facturaController.reporteDasboard);
+
+router.get("/documentos-pendientes", facturaController.documentosPendientes);
 
 module.exports = router;

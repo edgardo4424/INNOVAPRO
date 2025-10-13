@@ -16,6 +16,7 @@ import { validarFacturaCompleta } from "../emitir/factura-boleta/utils/validarPa
 import filialesService from "../service/FilialesService";
 import determinarEstadoFactura from "../utils/manejadorCodigosSunat";
 import { obtenerFechaActual } from "../utils/fechaEmisionActual";
+import procesarDetallePorSerie from "../utils/procesarProductos";
 
 const FacturaBoletaContext = createContext();
 
@@ -419,13 +420,22 @@ export function FacturaBoletaProvider({ children }) {
             ? JSON.stringify(facturaAEmitir.relDocs)
             : null;
 
-        // ?? Si se agregaron detalles esta
+        // ** Procesar Productos
+        const detalleProcesado = procesarDetallePorSerie(
+          facturaAEmitir.serie,
+          facturaAEmitir.detalle,
+          serieFactura,
+          serieBoleta,
+        );
+
+        // ?? Si se agregaron detalles exta
         if (detallesExtra.length > 0) {
           facturaAEmitir.extraDetails = JSON.stringify(detallesExtra);
         }
 
         const facturaCopia = {
           ...facturaAEmitir,
+          detalle: detalleProcesado,
           usuario_id: id_logeado,
           estado: determinarEstadoFactura({ status, success, message, data }),
           precio_dolar: precioDolarActual,

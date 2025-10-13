@@ -47,7 +47,7 @@ const TablaDocumentos = ({ documentos, loading }) => {
         <tbody>
           {loading ? (
             <tr>
-              <td colspan={20}>
+              <td colSpan={20}>
                 <LoaderCircle className="mx-auto size-20 animate-spin" />
               </td>
             </tr>
@@ -116,7 +116,7 @@ const TablaDocumentos = ({ documentos, loading }) => {
             ))
           ) : (
             <tr>
-              <td colspan={20} className="text-center">
+              <td colSpan={20} className="text-center">
                 Sin resultados
               </td>
             </tr>

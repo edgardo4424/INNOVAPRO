@@ -1,10 +1,10 @@
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
 
@@ -22,22 +22,18 @@ const TablaProductos = ({ setOpen }) => {
       <Table className={"border-2 border-gray-200"}>
         <TableHeader className="border-b-2 border-gray-400 bg-gray-100">
           <TableRow>
-            <TableHead className="w-[120px]">Item</TableHead>
+            <TableHead
+              className={`w-[120px]`}
+            >
+              Tipo
+            </TableHead>
             <TableHead className="">Código</TableHead>
-            <TableHead >Descripción</TableHead>
+            <TableHead>Descripción</TableHead>
             <TableHead>Unidad</TableHead>
             <TableHead>Cantidad</TableHead>
             <TableHead>Valor Unitario</TableHead>
-            {/* <TableHead>Precio Unitario</TableHead> */}
-            <TableHead>Valor de Venta</TableHead>
-
-            {/* <TableHead>% IGV</TableHead> */}
             <TableHead>IGV</TableHead>
-            {/* <TableHead>Base IGV</TableHead> */}
-            {/* <TableHead>Tip. Afección IGV</TableHead> */}
-            {/* <TableHead>Total Impuestos</TableHead> */}
-
-            {/* <TableHead>Factor ICBPER</TableHead> */}
+            <TableHead>Valor de Venta</TableHead>
           </TableRow>
         </TableHeader>
 
@@ -60,9 +56,13 @@ const TablaProductos = ({ setOpen }) => {
                 className={"cursor-pointer hover:bg-gray-100"}
                 onClick={() => seleccionarProducto(producto, index)}
               >
-                <TableCell>{index + 1}</TableCell>
+                <TableCell
+                  className={`w-[120px]`}
+                >
+                  {producto?.tipo_item || ""}
+                </TableCell>
                 <TableCell>{producto.cod_Producto || ""}</TableCell>
-                <TableCell className="min-w-[200px] max-w-sm whitespace-normal">
+                <TableCell className="max-w-sm min-w-[200px] whitespace-normal">
                   {producto.descripcion || ""}
                 </TableCell>
                 <TableCell>{producto.unidad || ""}</TableCell>
@@ -72,30 +72,14 @@ const TablaProductos = ({ setOpen }) => {
                   {tipo_Moneda == "USD" ? "$ " : "S/. "}{" "}
                   {producto.monto_Valor_Unitario ?? 0}
                 </TableCell>
-                {/* <TableCell> */}
-                  {/* {tipo_Moneda == "USD" ? "$ " : "S/. "}{" "} */}
-                  {/* {producto.monto_Precio_Unitario ?? 0} */}
-                {/* </TableCell> */}
-                <TableCell>
-                  {tipo_Moneda == "USD" ? "$ " : "S/. "}{" "}
-                  {producto.monto_Valor_Venta ?? 0}
-                </TableCell>
-
-                {/* <TableCell>{producto.porcentaje_Igv ?? ""}%</TableCell> */}
                 <TableCell>
                   {tipo_Moneda == "USD" ? "$ " : "S/. "} {producto.igv ?? 0}
                 </TableCell>
-                {/* <TableCell>
-                  {tipo_Moneda == "USD" ? "$ " : "S/. "}{" "}
-                  {producto.monto_Base_Igv ?? 0}
-                </TableCell> */}
-                {/* <TableCell>{producto.tip_Afe_Igv || ""}</TableCell> */}
-                {/* <TableCell>
-                  {tipo_Moneda == "USD" ? "$ " : "S/. "}{" "}
-                  {producto.total_Impuestos ?? 0}
-                </TableCell> */}
 
-                {/* <TableCell>{producto.factor_Icbper ?? ""}</TableCell> */}
+                <TableCell>
+                  {tipo_Moneda == "USD" ? "$ " : "S/. "}{" "}
+                  {producto.monto_Precio_Unitario ?? 0}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

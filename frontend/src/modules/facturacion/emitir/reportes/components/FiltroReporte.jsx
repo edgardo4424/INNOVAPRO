@@ -9,7 +9,7 @@ const FiltroReporte = ({
   handleAplicarFiltros,
   handleLimpiarFiltros,
 }) => {
-  const { filiales } = useBandeja();
+  const { filiales, serieFactura, serieGuia, serieNota } = useBandeja();
 
   const toggleCheckbox = (key) => {
     setFiltro({
@@ -81,6 +81,81 @@ const FiltroReporte = ({
             {filiales.map((fil) => (
               <option key={fil.ruc} value={fil.ruc}>
                 {fil.razon_social}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Serie (Nuevo Campo) */}
+        <div className="flex flex-col">
+          <label
+            htmlFor="serie"
+            className="mb-1 text-xs font-semibold text-gray-600"
+          >
+            Serie Factura / Boleta
+          </label>
+          <select
+            id="serie"
+            value={filtro.serieF}
+            onChange={(e) =>
+              setFiltro({ ...filtro, serieF: e.target.value })
+            }
+            className="rounded-md border border-gray-300 bg-white p-2 text-xs focus:border-blue-500 focus:ring-blue-500"
+          >
+            <option value="">Todas las Series</option>
+            {serieFactura.map((serie) => (
+              <option key={serie.value} value={serie.value}>
+                {serie.value} - {serie.descrip}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Serie (Nuevo Campo) */}
+        <div className="flex flex-col">
+          <label
+            htmlFor="serie"
+            className="mb-1 text-xs font-semibold text-gray-600"
+          >
+            Serie Nota Credito / Debito
+          </label>
+          <select
+            id="serie"
+            value={filtro.serieN}
+            onChange={(e) =>
+              setFiltro({ ...filtro, serieN: e.target.value })
+            }
+            className="rounded-md border border-gray-300 bg-white p-2 text-xs focus:border-blue-500 focus:ring-blue-500"
+          >
+            <option value="">Todas las Series</option>
+            {serieNota.map((serie) => (
+              <option key={serie.value} value={serie.value}>
+                {serie.value} - {serie.descrip}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Serie (Nuevo Campo) */}
+        <div className="flex flex-col">
+          <label
+            htmlFor="serie"
+            className="mb-1 text-xs font-semibold text-gray-600"
+          >
+            Serie Guia
+          </label>
+          <select
+            id="serie"
+            value={filtro.serieG}
+            onChange={(e) =>
+              setFiltro({ ...filtro, serieG: e.target.value })
+            }
+            className="rounded-md border border-gray-300 bg-white p-2 text-xs focus:border-blue-500 focus:ring-blue-500"
+          >
+            <option value="">Todas las Series</option>
+            {serieGuia.map((serie) => (
+              <option key={serie.value} value={serie.value}>
+                {serie.value} - {serie.descrip}
               </option>
             ))}
           </select>

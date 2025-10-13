@@ -23,8 +23,12 @@ const obtenerMTC = require('../../application/useCases/factura-boleta/obtenerMTC
 const reporteVentas = require('../../application/useCases/factura-boleta/reporteVentas')
 
 const obtenerCorrelativoPendientes = require('../../application/useCases/factura-boleta/obtenerCorrelativoPendientes')
+
+const reporteDasboard = require('../../application/useCases/factura-boleta/reporteDasboard')
+
 const verificarCorrelativoRegistrado = require('../../application/useCases/factura-boleta/verificarCorrelativoRegistrado')
 const documentosPendientes = require('../../application/useCases/factura-boleta/documentosPendientes')
+
 
 const facturaRepository = new SequelizeFacturaRepository()
 
@@ -135,6 +139,19 @@ const facturaController = {
         // * "reporteVentas" y devolver su respuesta
         try {
             const { codigo, respuesta } = await reporteVentas(req.body, facturaRepository)
+            res.status(codigo).json(respuesta)
+        } catch (error) {
+            res.status(500).json({ error: error.message, estado: false })
+        }
+    },
+
+
+    async reporteDasboard(req, res) {
+        // * Controlador para emitir un reporte de dashboard de facturas - boletas - guias - notas
+        // * se encarga de llamar al caso de uso
+        // * "reporteDasboard" y devolver su respuesta
+        try {
+            const { codigo, respuesta } = await reporteDasboard(req.body, facturaRepository)
             res.status(codigo).json(respuesta)
         } catch (error) {
             res.status(500).json({ error: error.message, estado: false })
