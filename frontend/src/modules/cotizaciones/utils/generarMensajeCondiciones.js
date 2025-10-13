@@ -5,11 +5,11 @@ export function generarMensajeCondiciones(cotizacion, camposExtras = {}) {
   const tiempo = camposExtras.tiempo || "—";
 
   return `
-📄 CONDICIONES DE ALQUILER
+    CONDICIONES DE ALQUILER
 
-EQUIPO: ${equipo}
-TIEMPO: ${tiempo}
-REFERENCIA: ${referencia}
-NOTA: ${nota}
-`.trim();
+    EQUIPO: ${equipo}
+    TIEMPO: ${tiempo}
+    REFERENCIA: ${referencia}
+    NOTA: ${nota}
+    `.trim();
 }

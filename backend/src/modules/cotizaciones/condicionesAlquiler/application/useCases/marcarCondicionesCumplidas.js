@@ -4,7 +4,7 @@ module.exports = async (cotizacionId, condicionesCumplidas, condicionRepository,
     return { codigo: 404, respuesta: { mensaje: "No se encontró la condición" } };
   }
 
-  const condicionesRawCompleto = condicion.condiciones.split("✅ CONDICIONES AUTORIZADAS:")[1] || "";
+  const condicionesRawCompleto = condicion.condiciones.split("CONDICIONES AUTORIZADAS:")[1] || "";
 
   // Eliminamos todo lo que venga después de OBSERVACIÓN:
   const condicionesLimpias = condicionesRawCompleto.split("OBSERVACIÓN:")[0] || "";
@@ -19,20 +19,13 @@ module.exports = async (cotizacionId, condicionesCumplidas, condicionRepository,
   const todasCumplidas = faltantes.length === 0;
 
   // Actualizamos las condiciones 
-  await condicionRepository.actualizarCondicionesCumplidas(cotizacionId, condicionesCumplidas);
+  await condicionRepository.actualizarCondicionesCumplidas(cotizacionId, condicionesCumplidas, todasCumplidas);
 
   // Si están todas cumplidas, también actualizamos el estado de la cotización
   if (todasCumplidas) {
     await cotizacionRepository.actualizarEstado(cotizacionId, 9); // 9 significa "Condiciones Cumplidas"
   }
   
-    console.log("💬 Condición encontrada:", condicion);
-    console.log("💬 Condiciones definidas:", definidas);
-    console.log("💬 Condiciones cumplidas:", condicionesCumplidas);
-    console.log("💬 Todas cumplidas:", todasCumplidas);
-    console.log("💬 Faltantes:", faltantes);
-
-
   return {
     codigo: 200,
     respuesta: {

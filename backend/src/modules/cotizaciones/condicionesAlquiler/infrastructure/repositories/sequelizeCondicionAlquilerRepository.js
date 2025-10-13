@@ -16,23 +16,14 @@ class SequelizeCondicionAlquilerRepository {
     return condicion;
   }
 
-  async actualizarCondicionesCumplidas(cotizacionId, nuevasCumplidas) {
+  async actualizarCondicionesCumplidas(cotizacionId, nuevasCumplidas, todasCumplidas) {
     const condicion = await CondicionAlquiler.findOne({
       where: { cotizacion_id: cotizacionId },
     });
 
     if (!condicion) return null;
 
-    // Obtener las condiciones definidas
-    const definidas = (condicion.condiciones || "")
-      .split("•")
-      .map(c => c.trim())
-      .filter(Boolean);
-
-    // Validar si ya se cumplieron todas
-    const faltantes = definidas.filter(c => !nuevasCumplidas.includes(c));
-
-    const nuevoEstado = faltantes.length === 0 ? "CUMPLIDAS" : condicion.estado;
+    const nuevoEstado = todasCumplidas === true ? "CUMPLIDAS" : condicion.estado;
 
     await condicion.update({
       condiciones_cumplidas: nuevasCumplidas,
