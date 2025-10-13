@@ -6,22 +6,19 @@ module.exports = async (periodo, anio, filial_id, ctsRepository,trabajadorReposi
       return { codigo: 400, respuesta: "Periodo no valido" }
     }
     const trabajadores= await trabajadorRepository.obtenerTrabajadoresYcontratos();
-    
+    let cts_calculadas=[]
     for (const t of trabajadores) {
-      if(t.id<10){
         const contratoActual = t.contratos_laborales.find((c) => {
                return hoy >= c.fecha_inicio && (c.es_indefinido?true:hoy <= c.fecha_fin);
         }); 
         if(contratoActual){
           const cts=await ctsRepository.calcularCtsIndividual(periodo,anio,filial_id,t.id);
-          console.log("Cts obtenida",cts);
-            
+          cts_calculadas.push(cts[0])
         }
-      }
-
-
+      
     }
+    console.log("LAS CTS CALCULADAS SON: \n",cts_calculadas);
     
     const cts = await ctsRepository.calcularCts(periodo, anio, filial_id); 
-    return { codigo: 200, respuesta: cts } 
+    return { codigo: 200, respuesta: cts_calculadas } 
 } 
