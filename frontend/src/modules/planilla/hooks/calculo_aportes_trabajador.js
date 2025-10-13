@@ -10,6 +10,7 @@ export const calculo_aportes_trabajador = (planillas = []) => {
    let sumatoria_vida_ley = 0;
    let sumatoria_sctr_salud = 0;
    let sumatoria_sctr_pension = 0;
+   let sumatoria_sub_total=0
 
    for (const p of planillas) {
       sumatoria_sueldo_basico += Number(p.sueldo_basico);
@@ -21,6 +22,7 @@ export const calculo_aportes_trabajador = (planillas = []) => {
       sumatoria_vida_ley += Number(p.seguro_vida_ley);
       sumatoria_sctr_salud += Number(p.sctr_salud);
       sumatoria_sctr_pension += Number(p.sctr_pension);
+      sumatoria_sub_total+=Number(p.sub_total)
    }
 
    return {
@@ -34,6 +36,7 @@ export const calculo_aportes_trabajador = (planillas = []) => {
          sumatoria_vida_ley,
          sumatoria_sctr_salud,
          sumatoria_sctr_pension,
+         sumatoria_sub_total
       },
    };
 };

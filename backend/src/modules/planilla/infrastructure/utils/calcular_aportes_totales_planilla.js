@@ -6,6 +6,7 @@ const calculo_aportes_totales_planilla = (planillas = [], importes) => {
    let sctr_salud = 0;
    let sctr_pension = 0;
    let sumatoria_sueldo_basico = 0;
+   let sumatoria_sub_total=0
 
    for (const importe of importes) {
       if (importe.codigo.includes("seguro_vida")) {
@@ -20,6 +21,7 @@ const calculo_aportes_totales_planilla = (planillas = [], importes) => {
    }
    for (const p of planillas) {
       sumatoria_sueldo_basico += Number(p.sueldo_basico);
+      sumatoria_sub_total += Number(p.sub_total);
    }
 
    let recalculo_planillas = planillas.map((p) => {
@@ -55,13 +57,14 @@ const calculo_aportes_totales_planilla = (planillas = [], importes) => {
       sumatoria_sctr_pension += Number(p.sctr_pension);
    }
 
-
+   console.log("Sumatoria del sueldo bruto: ",sumatoria_sueldo_bruto);
    
    
    return {
       recalculo_planillas,
       datos_totales: {
          sumatoria_sueldo_basico,
+         sumatoria_sub_total,
          sumatoria_sueldo_mensual,
          sumatoria_sueldo_bruto,
          sumatoria_sueldo_neto,

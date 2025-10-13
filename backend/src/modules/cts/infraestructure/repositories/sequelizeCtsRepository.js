@@ -142,13 +142,7 @@ class SequelizeCtsRopository {
 
       const contratoInicial =
          filtrarContratosSinInterrupcion(contratos_limpios);
-         console.log(trabajador_id);
          
-      if(trabajador_id==1){
-         console.log("Contrato inicial lucas");
-         console.log(contratoInicial);
-         
-      }
 
       // TODO: CALCULA LOS CONTRATOS QUE ENTRAN EN RANGO DE CTS Y QUE NO TENGAN INTERUPCIONES MAYORES DE 1 DIA
       const contratos_en_rango = calcularContratosComputados(
@@ -160,8 +154,8 @@ class SequelizeCtsRopository {
 
 
       // TODO: Union de contratos que tienen el mismo regimen
-      const contratos_unidos = unificarContratos(contratos_en_rango);
-
+      const contratos_unidos = unificarContratos(contratos_en_rango,fechaFinCTS);
+      
       //Conteo de cuantod ias y meses da cada contrato
       const contratos_dias_meses = calcularDiasMesesPorContrato(
          fechaInicioCTS,
@@ -187,11 +181,7 @@ class SequelizeCtsRopository {
       const asistencias = responseAsistencias.map((a) =>
          a.get({ plain: true })
       );
-      if(trabajador_id==7){
-         console.log("Contratops doas meses genrao");
-         console.log(contratos_dias_meses);
-         
-      }
+
       for (const c of contratos_dias_meses) {
          //Definimos rangos de calculo que lo usaran bonos, he, faltas
          let inicio_c =
@@ -201,7 +191,7 @@ class SequelizeCtsRopository {
          r.fecha_fin=c.fecha_fin
          r.contrato_id = c.id;
          r.banco = c.banco || "no registrado";
-         r.numero_cuenta = c.numero_cuenta || "no registrado";
+         r.numero_cuenta = c.numero_cuenta_cts || "no registrado";
          r.trabajador_id = c.trabajador_id;
          r.tipo_documento = trabajador.tipo_documento;
          r.numero_documento = trabajador.numero_documento;
@@ -292,7 +282,6 @@ class SequelizeCtsRopository {
    }
 
    async calcularCtsIndividualTrunca(periodo, anio, filial_id, trabajador_id, transaction = null) {
-      // console.log('entre a calcular');
       const responseTrabajador = await db.trabajadores.findOne({
          where: {
             id: trabajador_id,
@@ -356,9 +345,6 @@ class SequelizeCtsRopository {
          const gratificaciones = filtrarGratificacionesSinInterrupcion(
             gratificacionesLimpias
          );
-         if (trabajador_id == 7) {
-            console.log("Numero de gratificaciones: ", gratificaciones.length);
-         }
          for (const grati of gratificaciones) {
             MONTO_GRATIFICACION += Number(grati.total_pagar);
          }
