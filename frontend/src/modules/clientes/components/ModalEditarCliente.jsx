@@ -37,10 +37,12 @@ export default function ModalEditarCliente({
          clienteEditado.tipo === "Persona Jurídica"
             ? validarClienteJuridico(clienteEditado)
             : validarClienteNatural(clienteEditado);
-
+      
       if (Object.keys(erroresValidados).length > 0) {
          setErrores(erroresValidados);
-         toast.warning("Completa los campos correctamente");
+         console.log("Los errores validados son: ",erroresValidados);
+
+         toast.warning("Completa los campos correctamensasaste");
          return;
       }
 

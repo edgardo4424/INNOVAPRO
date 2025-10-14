@@ -16,7 +16,6 @@ export default function GestionClientes() {
       setBusqueda,
       obras,
       contactos,
-      setContactos,
       paginaActual,
       setPaginaActual,
       totalPaginas,
@@ -55,7 +54,7 @@ export default function GestionClientes() {
             obras={obras}
             actualizarCliente={actualizarCliente}
          />
-
+{/* 
          <Paginacion
             paginaActual={paginaActual}
             totalPaginas={totalPaginas}
@@ -64,7 +63,7 @@ export default function GestionClientes() {
             setPaginaActual={setPaginaActual}
             usuariosPorPagina={clientesPorPagina}
             setUsuariosPorPagina={setClientesPorPagina}
-         />
+         /> */}
       </div>
    );
 }
