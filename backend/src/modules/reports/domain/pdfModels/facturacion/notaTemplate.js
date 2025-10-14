@@ -196,7 +196,7 @@ function notaTemplate(data) {
             return {
                 columns: [
                     {
-                        text: `Emitido desde ${nota.empresa_link_website}`,
+                        text: `Emitido desde https://erp.grupoinnova.pe`,
                         style: "footer",
                         alignment: "center",
                         margin: [0, 0, 0, 0]

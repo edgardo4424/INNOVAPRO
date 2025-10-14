@@ -185,7 +185,7 @@ function facturaTemplate(data) {
             return {
                 columns: [
                     {
-                        text: `Emitido desde ${factura.empresa_link_website}`,
+                        text: `Emitido desde https://erp.grupoinnova.pe`,
                         style: "footer",
                         alignment: "center",
                         margin: [0, 0, 0, 0]

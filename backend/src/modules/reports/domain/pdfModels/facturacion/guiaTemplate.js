@@ -71,7 +71,7 @@ function guiaTemplate(data) {
         content: content,
         styles: {
             // ** estilos pdfHeader
-            companyName: { fontSize: 8, fontWeight: '800', color: text_innova_gray, },
+            companyName: { fontSize: 12, fontWeight: '800', color: text_innova_gray, },
             companyAddress: { fontSize: 7, margin: [0, 1, 0, 0], color: text_innova_gray, },
             companyContact: { fontSize: 7, margin: [0, 1, 0, 0], color: text_innova_gray, },
             docTypeHeader: {
@@ -110,10 +110,11 @@ function guiaTemplate(data) {
             // ** estilo pdfDatosGuia final
 
             // ** estilo pdfProductosGuia
-            tableHeaderMain: { fontSize: 6, bold: true, color: text_innova_gray, margin: [2, 3, 2, 3] },
+            tableHeaderMain: { fontSize: 8, bold: true, color: text_innova_gray, margin: [2, 3, 2, 3] },
             tableBody: { fontSize: 6, color: text_innova_gray, margin: [2, 0, 2, 0.5] },
             datoMedidaPeso: { fontSize: 8, margin: [3, 6, 0, 0], bold: true, color: text_innova_gray },
             datoPesoButo: { fontSize: 8, margin: [3, 6, 0, 0], color: text_innova_gray },
+            observacion: { fontSize: 6, margin: [0, 2, 0, 0], bold: true, color: text_innova_gray },
             // ** estilo pdfProductosGuia final
 
             footer: { fontSize: 8, color: '#666666' }
@@ -135,7 +136,7 @@ function guiaTemplate(data) {
             return {
                 columns: [
                     {
-                        text: `Emitido desde ${guia.empresa_link_website}`,
+                        text: `Emitido desde https://erp.grupoinnova.pe`,
                         style: "footer",
                         alignment: "center",
                         margin: [0, 5, 0, 0]

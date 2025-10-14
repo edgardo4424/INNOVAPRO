@@ -15,7 +15,7 @@ function pdfObservacionesGuia(
                         [
                             {
                                 stack: [
-                                    { text: 'OBSERVACIONES:', fontSize: 6, margin: [0, 0, 0, 5], color: text_color },
+                                    { text: 'OBSERVACIONES:', fontSize: 6, margin: [0, 0, 0, 5], style: 'observacion' },
                                     { text: `${guia.observacion}`, fontSize: 6, color: text_color },
                                 ],
                                 border: [true, true, true, true],
