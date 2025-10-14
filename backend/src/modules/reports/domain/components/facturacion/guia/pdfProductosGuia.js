@@ -72,7 +72,7 @@ function pdfProductosGuia(
     stack: [
       {
         table: {
-          widths: ["10%", "70%", "10%", "10%"],
+          widths: ["10%", "65%", "10%", "15%"],
           headerRows: 1,
           body,
         },
