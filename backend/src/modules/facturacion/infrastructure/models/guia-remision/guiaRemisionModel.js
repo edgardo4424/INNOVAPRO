@@ -153,7 +153,11 @@ const GuiaRemision = sequelize.define(
         anulacion_Motivo: {
             type: DataTypes.STRING,
             allowNull: true,
-        }
+        },
+        nroCirculacion: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
     },
     {
         timestamps: false,

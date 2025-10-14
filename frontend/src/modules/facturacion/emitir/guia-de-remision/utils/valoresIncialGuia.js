@@ -29,6 +29,7 @@ const guiaInical = {
     guia_Envio_Llegada_Direccion: "",
 
     guia_Envio_Vehiculo_Placa: "",
+    nroCirculacion: "",
 
     detalle: [
     ],

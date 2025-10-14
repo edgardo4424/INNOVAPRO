@@ -70,6 +70,7 @@ const PlacasForm = ({ closeModal }) => {
     setGuiaTransporte((prevGuiaTransporte) => ({
       ...prevGuiaTransporte,
       guia_Envio_Vehiculo_Placa: item.nro_placa,
+      nroCirculacion: item.tuce_certificado,
     }));
     closeModal();
   };
@@ -117,6 +118,7 @@ const PlacasForm = ({ closeModal }) => {
             <TableHeader className="border-b-2 border-gray-400 bg-gray-100">
               <TableRow>
                 <TableHead className="w-[120px]">Placa</TableHead>
+                <TableHead>Tuce o Certificado</TableHead>
                 <TableHead>Transportista</TableHead>
                 <TableHead>Mtc</TableHead>
                 <TableHead>Chofer</TableHead>
@@ -141,13 +143,14 @@ const PlacasForm = ({ closeModal }) => {
                     className="cursor-pointer hover:bg-gray-300"
                   >
                     <TableCell>{item.nro_placa || "N/A"}</TableCell>
+                    <TableCell>{item.tuce_certificado || "N/A"}</TableCell>
                     <TableCell className={"max-w-sm whitespace-normal"}>
                       {item?.transportista?.razon_Social || "N/A"}
                     </TableCell>
                     <TableCell>
                       {item?.transportista?.nro_mtc || "N/A"}
                     </TableCell>
-                    <TableCell>{item?.chofere?.nombres || "N/A"}</TableCell>
+                    <TableCell className={"max-w-sm whitespace-normal"}>{item?.chofere?.nombres || "N/A"} {item?.chofere?.apellidos || ""}</TableCell>
                     {/* <TableCell>
                       {item?.chofere?.licencia || "N/A"}
                     </TableCell> */}

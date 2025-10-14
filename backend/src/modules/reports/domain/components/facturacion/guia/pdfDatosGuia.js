@@ -37,23 +37,23 @@ function pdfDatosGuia(guia, choferes, transportistas, invi = "#FFFFFF") {
                             },
                             layout: "noBorders",
                         },
-                            // {
-                            //     width: "60%",
-                            //     table: {
-                            //         widths: ["40%", "60%"],
-                            //         body: [
-                            //             [
-                            //                 { text: "NRO DOC:", style: "datosGuiaChoferLabel" },
-                            //                 { text: choferData.nro_doc || "—", style: "datosGuiaChoferValue" },
-                            //             ],
-                            //             [
-                            //                 { text: "NOMBRE COMPLETO:", style: "datosGuiaChoferLabel" },
-                            //                 { text: nombreCompleto || "—", style: "datosGuiaChoferValue" },
-                            //             ],
-                            //         ],
-                            //     },
-                            //     layout: "noBorders",
-                            // },
+                        // {
+                        //     width: "60%",
+                        //     table: {
+                        //         widths: ["40%", "60%"],
+                        //         body: [
+                        //             [
+                        //                 { text: "NRO DOC:", style: "datosGuiaChoferLabel" },
+                        //                 { text: choferData.nro_doc || "—", style: "datosGuiaChoferValue" },
+                        //             ],
+                        //             [
+                        //                 { text: "NOMBRE COMPLETO:", style: "datosGuiaChoferLabel" },
+                        //                 { text: nombreCompleto || "—", style: "datosGuiaChoferValue" },
+                        //             ],
+                        //         ],
+                        //     },
+                        //     layout: "noBorders",
+                        // },
                     ],
                     margin: [0, 0, 0, 5],
                 };
@@ -84,65 +84,50 @@ function pdfDatosGuia(guia, choferes, transportistas, invi = "#FFFFFF") {
                 {
                     width: "100%",
                     table: {
-                        widths: ["25%", "15%", "15%", "15%", "10%", "10%"],
+                        widths: ["25%", "25%", "25%", "25%", "25%", "25%"],
                         body: [
                             [
                                 { text: "MODALIDAD DE TRASLADO:", style: "datosGuiaLabel" },
                                 {
                                     text:
-                                        utils.getModalidadTrasladoDescription(guia.guia_Envio_Mod_Traslado) ||
+                                        utils.getModalidadTrasladoDescription(guia?.guia_Envio_Mod_Traslado) ||
                                         "—",
                                     style: "datosGuiaValue",
                                 },
 
                                 { text: "PESO TOTAL:", style: "datosGuiaLabel" },
                                 {
-                                    text: `${guia.guia_Envio_Peso_Total || "—"} ${guia.guia_Envio_Und_Peso_Total || ""
+                                    text: `${guia?.guia_Envio_Peso_Total || "—"} ${guia?.guia_Envio_Und_Peso_Total || ""
                                         }`,
                                     style: "datosGuiaValue",
                                 },
-                                { text: "VEHÍCULO:", style: "datosGuiaLabel" },
-                                { text: guia.guia_Envio_Vehiculo_Placa || "—", style: "datosGuiaValue" },
                             ],
                         ],
                     },
                     layout: "noBorders",
                 },
-                // {
-                //     width: "50%",
-                //     table: {
-                //         widths: ["40%", "60%"],
-                //         body: [
-                //             [
-                //                 { text: "VEHÍCULO:", style: "datosGuiaLabel" },
-                //                 { text: guia.guia_Envio_Vehiculo_Placa || "—", style: "datosGuiaValue" },
-                //             ],
-                // [
-                //     { text: "UBIGEO DE PARTIDA:", style: "datosGuiaLabel" },
-                //     { text: guia.partidaUbigeo || "—", style: "datosGuiaValue" },
-                // ],
-                // [
-                //     { text: "PUNTO DE PARTIDA:", style: "datosGuiaLabel" },
-                //     {
-                //         text: guia.guia_Envio_Partida_Direccion || "—",
-                //         style: "datosGuiaValue",
-                //     },
-                // ],
-                // [
-                //     { text: "UBIGEO DE LLEGADA:", style: "datosGuiaLabel" },
-                //     { text: guia.llegadaUbigeo || "—", style: "datosGuiaValue" },
-                // ],
-                // [
-                //     { text: "PUNTO DE LLEGADA:", style: "datosGuiaLabel" },
-                //     {
-                //         text: guia.guia_Envio_Llegada_Direccion || "—",
-                //         style: "datosGuiaValue",
-                //     },
-                // ],
-                //         ],
-                //     },
-                //     layout: "noBorders",
-                // },
+            ],
+            columnGap: 10,
+            margin: [0, 0, 0, 10],
+        },
+        { text: "DATOS DEL VEHICULO", style: "tituloDatosGuia" },
+        {
+            columns: [
+                {
+                    width: "100%",
+                    table: {
+                        widths: ["10%", "10%", "25%", "10%"],
+                        body: [
+                            [
+                                { text: "VEHÍCULO:", style: "datosGuiaLabel" },
+                                { text: guia?.guia_Envio_Vehiculo_Placa || "—", style: "datosGuiaValue" },
+                                { text: "TUCE O CERTIFICADO VEHICULAR:", style: "datosGuiaLabel" },
+                                { text: guia?.nroCirculacion || "—", style: "datosGuiaValue" },
+                            ],
+                        ],
+                    },
+                    layout: "noBorders",
+                },
             ],
             columnGap: 10,
             margin: [0, 0, 0, 10],

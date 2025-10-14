@@ -7,7 +7,7 @@ class SequelizeVehiculosRepository {
     async listar() {
         try {
             const listaVehiculos = await Vehiculos.findAll({
-                attributes: ['id', 'nro_placa', 'id_transportista', 'id_chofer'],
+                attributes: ['id', 'nro_placa', 'id_transportista', 'id_chofer', 'tuce_certificado'],
                 include: [{
                     model: Transportistas,
                     attributes: ['nro_doc', ['razon_social', 'razon_Social'], 'nro_mtc']

@@ -18,6 +18,7 @@ const camposRequeridosGlobal = [
     { key: "guia_Envio_Llegada_Ubigeo", name: "Llegada Ubigeo" },
     { key: "guia_Envio_Llegada_Direccion", name: "Llegada Dirección" },
     { key: "guia_Envio_Vehiculo_Placa", name: "Placa del Vehículo" },
+    // { key: "nroCirculacion", name: "N° de Tuce o N° de Circulación" },
     { key: "guia_Envio_Peso_Total", name: "Peso Total" },
     {
         key: "detalle",

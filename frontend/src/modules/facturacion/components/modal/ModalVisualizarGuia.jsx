@@ -54,7 +54,7 @@ export default function ModalVisualizarGuia({
 
   const numeroDoc = useMemo(() => {
     if (!guia) return "";
-    return `${guia.serie ?? ""}-${String(guia.correlativo ?? "").padStart(1, "0")}`;
+    return `${guia?.serie ?? ""}-${String(guia?.correlativo ?? "").padStart(1, "0")}`;
   }, [guia]);
 
   if (!isOpen) return null;
@@ -90,25 +90,25 @@ export default function ModalVisualizarGuia({
                 <div className="grid grid-cols-1 items-start gap-6 px-6 py-6 md:grid-cols-3 md:py-8">
                   <div className="col-span-2">
                     <h1 className="text-2xl font-bold text-blue-700 md:text-3xl">
-                      {guia.empresa_nombre}
+                      {guia?.empresa_nombre}
                     </h1>
                     <p className="mt-2 text-sm text-gray-700">
-                      RUC: {guia.empresa_Ruc}
+                      RUC: {guia?.empresa_Ruc}
                     </p>
                     <p className="text-sm text-gray-700">
-                      {guia.empresa_direccion}
+                      {guia?.empresa_direccion}
                     </p>
                   </div>
                   <div className="md:text-center">
                     <p className="text-lg font-semibold text-gray-700">
-                      {getTipoDocDescription(guia.tipo_Doc)}
+                      {getTipoDocDescription(guia?.tipo_Doc)}
                     </p>
                     <p className="text-2xl font-extrabold tracking-wide text-gray-700">
                       {numeroDoc}
                     </p>
                     <p className="mt-4 text-sm text-gray-600">
                       <span className="font-semibold">Fecha de emisión: </span>
-                      {formatDateTime(guia.fecha_Emision)}
+                      {formatDateTime(guia?.fecha_Emision)}
                     </p>
                   </div>
                 </div>
@@ -120,45 +120,43 @@ export default function ModalVisualizarGuia({
                   DATOS DEL CLIENTE
                 </h3>
                 <div className="grid grid-cols-1 space-y-1 text-sm text-gray-800 md:grid-cols-2">
-                  <div className="grid grid-cols-[120px_1fr] gap-x-2">
+                  <div className="grid grid-cols-[auto_1fr] gap-x-2">
                     <span className="font-semibold text-gray-700">
                       Razón social:
                     </span>
                     <span className="font-medium">
-                      {guia.cliente_Razon_Social || "—"}
+                      {guia?.cliente_Razon_Social || "—"}
                     </span>
                     <span className="font-semibold text-gray-700">
                       Dirección:
                     </span>
                     <span className="font-medium">
-                      {guia.cliente_Direccion || "—"}
+                      {guia?.cliente_Direccion || "—"}
                     </span>
                   </div>
-                  <div className="flex flex-col md:flex-row justify-around">
-                    <div className="grid grid-cols-2 gap-x-2">
-                      <span className="font-semibold text-gray-700">
-                        Tipo doc.:
-                      </span>
-                      <span className="font-medium">
-                        {getTipoDocCliente(guia.cliente_Tipo_Doc)}
-                      </span>
-                      <span className="font-semibold text-gray-700">
-                        Número doc.:
-                      </span>
-                      <span className="font-medium">
-                        {guia.cliente_Num_Doc || "—"}
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-x-2">
-                      <span className="font-semibold text-gray-700">Obra:</span>
-                      <span className="font-medium">{guia.obra || "—"}</span>
-                      <span className="font-semibold text-gray-700">
-                        Contrato:
-                      </span>
-                      <span className="font-medium">
-                        {guia.nro_contrato || "—"}
-                      </span>
-                    </div>
+                  <div className="grid grid-cols-2 gap-x-2">
+                    <span className="font-semibold text-gray-700">
+                      Tipo doc.:
+                    </span>
+                    <span className="font-medium">
+                      {getTipoDocCliente(guia?.cliente_Tipo_Doc)}
+                    </span>
+                    <span className="font-semibold text-gray-700">
+                      Número doc.:
+                    </span>
+                    <span className="font-medium">
+                      {guia?.cliente_Num_Doc || "—"}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-x-2">
+                    <span className="font-semibold text-gray-700">Obra:</span>
+                    <span className="font-medium">{guia?.obra || "—"}</span>
+                    <span className="font-semibold text-gray-700">
+                      Contrato:
+                    </span>
+                    <span className="font-medium">
+                      {guia?.nro_contrato || "—"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -170,78 +168,89 @@ export default function ModalVisualizarGuia({
                 </h3>
                 <div className="grid grid-cols-1 gap-x-10 gap-y-4 text-sm text-gray-800 md:grid-cols-3">
                   <div className="space-y-1">
-                    <div className="grid grid-cols-[140px_1fr] gap-x-2">
+                    <div className="flex justify-between gap-x-2">
                       <span className="font-semibold text-gray-700">
                         Fecha de traslado:
                       </span>
                       <span className="font-medium">
-                        {formatDateTime(guia.guia_Envio_Fec_Traslado)}
+                        {formatDateTime(guia?.guia_Envio_Fec_Traslado)}
                       </span>
                     </div>
-                    <div className="grid grid-cols-[140px_1fr] gap-x-2">
+                    <div className="flex justify-between gap-x-2">
                       <span className="font-semibold text-gray-700">
                         Modalidad de traslado:
                       </span>
                       <span className="font-medium">
                         {getModalidadTrasladoLabel(
-                          guia.guia_Envio_Mod_Traslado,
+                          guia?.guia_Envio_Mod_Traslado,
                         )}
                       </span>
                     </div>
-                    <div className="grid grid-cols-[140px_1fr] gap-x-2">
+                    <div className="flex justify-between gap-x-2">
                       <span className="font-semibold text-gray-700">
                         Motivo de traslado:
                       </span>
                       <span className="font-medium">
-                        {getCodigoTraslado(guia.guia_Envio_Cod_Traslado)}
+                        {getCodigoTraslado(guia?.guia_Envio_Cod_Traslado)}
                       </span>
                     </div>
-                    <div className="grid grid-cols-[140px_1fr] gap-x-2">
+                    <div className="flex justify-between gap-x-2">
                       <span className="font-semibold text-gray-700">
                         Peso total:
                       </span>
                       <span className="font-medium">
-                        {guia.guia_Envio_Peso_Total}{" "}
-                        {guia.guia_Envio_Und_Peso_Total}
+                        {guia?.guia_Envio_Peso_Total}{" "}
+                        {guia?.guia_Envio_Und_Peso_Total}
                       </span>
                     </div>
                   </div>
                   <div className="space-y-1 md:col-span-2">
-                    <div className="grid grid-cols-[140px_1fr] gap-x-2">
+                    <div className="grid grid-cols-[auto_1fr] gap-x-2">
                       <span className="font-semibold text-gray-700">
                         Punto de partida:
                       </span>
                       <span className="font-medium">
-                        {guia.guia_Envio_Partida_Direccion}
+                        {guia?.guia_Envio_Partida_Direccion}
                       </span>
                     </div>
-                    <div className="grid grid-cols-[140px_1fr] gap-x-2">
+                    <div className="grid grid-cols-[auto_1fr] gap-x-2">
                       <span className="font-semibold text-gray-700">
                         Punto de llegada:
                       </span>
                       <span className="font-medium">
-                        {guia.guia_Envio_Llegada_Direccion}
+                        {guia?.guia_Envio_Llegada_Direccion}
                       </span>
                     </div>
-                    <div className="grid grid-cols-[140px_1fr] gap-x-2">
+                    <div className="grid grid-cols-[auto_1fr] gap-x-2">
                       <span className="font-semibold text-gray-700">
                         Placa de vehículo:
                       </span>
                       <span className="font-medium">
-                        {guia.guia_Envio_Vehiculo_Placa || "—"}
+                        {guia?.guia_Envio_Vehiculo_Placa || "—"}
                       </span>
                     </div>
-                    {(guia.guia_choferes && guia.guia_choferes.length > 0) ||
-                    (guia.guia_transportista &&
-                      Object.keys(guia.guia_transportista).length > 0) ? (
+                    <div className="grid grid-cols-[auto_1fr] gap-x-2">
+                      <span className="font-semibold text-gray-700">
+                        Tuce o N° de circulación:
+                      </span>
+                      <span className="font-medium">
+                        {guia?.nroCirculacion || "—"}
+                      </span>
+                    </div>
+                    {(guia?.guia_choferes && guia?.guia_choferes.length > 0) ||
+                    (guia?.guia_transportista &&
+                      Object.keys(guia?.guia_transportista).length > 0) ? (
                       <Fragment>
-                        {guia.guia_choferes &&
-                          guia.guia_choferes.length > 0 &&
-                          guia.guia_choferes.map((chofer, index) => (
+                        {guia?.guia_choferes &&
+                          guia?.guia_choferes.length > 0 &&
+                          guia?.guia_choferes.map((chofer, index) => (
                             <Fragment key={index}>
-                              <div className="grid grid-cols-[140px_1fr] gap-x-2">
+                              <div className="grid grid-cols-[auto_1fr] gap-x-2">
                                 <span className="font-semibold text-gray-700">
-                                  {chofer.razon_Social ? "Transportista" : "Chofer"}:
+                                  {chofer.razon_Social
+                                    ? "Transportista"
+                                    : "Chofer"}
+                                  :
                                 </span>
                                 <p className="grid grid-cols-1 font-medium">
                                   {chofer.nombres && (
@@ -265,21 +274,21 @@ export default function ModalVisualizarGuia({
                               </div>
                             </Fragment>
                           ))}
-                        {guia.guia_transportista &&
-                          Object.keys(guia.guia_transportista).length > 0 && (
-                            <div className="grid grid-cols-[140px_1fr] gap-x-2">
+                        {guia?.guia_transportista &&
+                          Object.keys(guia?.guia_transportista).length > 0 && (
+                            <div className="grid grid-cols-[auto_1fr] gap-x-2">
                               <span className="font-semibold text-gray-700">
                                 Transportista:
                               </span>
                               <span className="font-medium">
-                                {guia.guia_transportista.Razon_Social} (
-                                {guia.guia_transportista.Num_Doc})
+                                {guia?.guia_transportista.Razon_Social} (
+                                {guia?.guia_transportista.Num_Doc})
                               </span>
                             </div>
                           )}
                       </Fragment>
                     ) : (
-                      <div className="grid grid-cols-[140px_1fr] gap-x-2">
+                      <div className="grid grid-cols-[auto_1fr] gap-x-2">
                         <span className="font-semibold text-gray-700">
                           Transportista/Chofer:
                         </span>
@@ -300,7 +309,7 @@ export default function ModalVisualizarGuia({
                 </div>
 
                 <div className="divide-y divide-gray-200">
-                  {(guia.guia_detalles?.length ? guia.guia_detalles : []).map(
+                  {(guia?.guia_detalles?.length ? guia?.guia_detalles : []).map(
                     (it, idx) => {
                       const { cod_Producto, descripcion, cantidad, unidad } =
                         it;
@@ -325,7 +334,7 @@ export default function ModalVisualizarGuia({
                     },
                   )}
 
-                  {!guia.guia_detalles?.length && (
+                  {!guia?.guia_detalles?.length && (
                     <div className="px-6 py-6 text-center text-sm text-gray-500">
                       No hay productos en el detalle.
                     </div>
@@ -334,12 +343,12 @@ export default function ModalVisualizarGuia({
               </div>
 
               {/* Observacion */}
-              {guia.observacion && (
+              {guia?.observacion && (
                 <div className="mt-4 rounded-md border border-gray-200 p-4 pt-2">
                   <h3 className="text-md mb-2 font-bold text-gray-600">
                     Observaciones:
                   </h3>
-                  <p className="text-sm text-gray-800">{guia.observacion}</p>
+                  <p className="text-sm text-gray-800">{guia?.observacion}</p>
                 </div>
               )}
             </div>

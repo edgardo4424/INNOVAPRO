@@ -49,7 +49,7 @@ const DatosGuiaEnvioForm = () => {
     guia_Envio_Partida_Direccion,
     guia_Envio_Llegada_Ubigeo,
     guia_Envio_Llegada_Direccion,
-
+    nroCirculacion,
     guia_Envio_Vehiculo_Placa,
   } = guiaTransporte;
 
@@ -199,7 +199,7 @@ const DatosGuiaEnvioForm = () => {
       [name]: value.toUpperCase(),
     }));
   };
-  
+
   const handleChangePrivado = (e) => {
     const { name, value } = e.target;
     setGuiaDatosPrivado((prevGuiaTransporte) => ({
@@ -623,6 +623,26 @@ const DatosGuiaEnvioForm = () => {
             id="guia_Envio_Vehiculo_Placa"
             name="guia_Envio_Vehiculo_Placa"
             value={guia_Envio_Vehiculo_Placa}
+            onChange={handleChange}
+            maxLength={6}
+            className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
+
+        <div className="col-span-1 md:col-span-2 lg:col-span-1">
+          <div className="flex items-center gap-x-4">
+            <Label
+              htmlFor="guia_Envio_Llegada_Direccion"
+              className="mb-1 block text-left text-sm font-semibold text-gray-700"
+            >
+              Tuce o Certificado Vehicular
+            </Label>
+          </div>
+          <Input
+            type="text"
+            id="nroCirculacion"
+            name="nroCirculacion"
+            value={nroCirculacion}
             onChange={handleChange}
             maxLength={6}
             className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
