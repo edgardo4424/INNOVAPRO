@@ -90,7 +90,8 @@ export default function ModalAgregarCliente({ agregarCliente, obras, contactos }
 
       if (Object.keys(erroresValidados).length > 0) {
          setErrores(erroresValidados);
-         toast.warning("Completa los campos correctamente");
+         console.log(erroresValidados);
+         toast.warning("Completa los campos correctsaamente");
          return;
       }
 

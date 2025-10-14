@@ -30,7 +30,7 @@ class ContratoLaboral {
    }
 
    validar(editar = false) {
-      const errores = [];
+      let errores = [];
 
       if (editar) {
          if (!this.id) {
