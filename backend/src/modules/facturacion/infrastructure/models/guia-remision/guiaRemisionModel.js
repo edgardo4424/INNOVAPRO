@@ -66,7 +66,7 @@ const GuiaRemision = sequelize.define(
             allowNull: true,
         },
         guia_Envio_Peso_Total: {
-            type: DataTypes.DECIMAL(10, 2),
+            type: DataTypes.DECIMAL(10, 4),
             allowNull: true,
         },
         guia_Envio_Und_Peso_Total: {
