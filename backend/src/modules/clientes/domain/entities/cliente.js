@@ -91,7 +91,7 @@ class Cliente {
                 ruc: null,
                 domicilio_fiscal: null,
                 representante_legal: null,
-                tipo_documento: null,
+                tipo_documento: datos.tipo_documento,
                 dni_representante: null,
             }
         }
