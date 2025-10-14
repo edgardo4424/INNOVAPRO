@@ -2603,7 +2603,7 @@ function calcularPinGravedad12mm() {
 function calcularPinGravedad8mm() {
    return 0;
 }
-// CON.0100 – Pernos de expansión c/ argolla - M12 x 80: suma los valores de F93 y F94
+// CO.0010 – Pernos de expansión c/ argolla - M12 x 80: suma los valores de F93 y F94
 function calcularPernosExpansionM12x80(tubo1m, tubo05m) {
    return tubo1m + tubo05m;
 }

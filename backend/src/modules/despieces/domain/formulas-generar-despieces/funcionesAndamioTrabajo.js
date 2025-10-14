@@ -1384,7 +1384,7 @@ function calcularPinGravedad9mm({ paraIzaje, altura, longitud, cantidadAndamios,
     return total;
 }
 
-// 81. Pieza: CON.0100 - PERNOS DE EXPANSION C/ ARGOLLA - M12 x 80
+// 81. Pieza: CO.0010 - PERNOS DE EXPANSION C/ ARGOLLA - M12 x 80
 function calcularPernosExpansionArgolla(cantidadAndamios, valorCalcularTuboGancho100, valorCalcularTuboGancho050) {
     if(cantidadAndamios == 1){
         return valorCalcularTuboGancho100 + valorCalcularTuboGancho050;
@@ -1393,7 +1393,7 @@ function calcularPernosExpansionArgolla(cantidadAndamios, valorCalcularTuboGanch
     }
    
 }
-// 82. Pieza: CON.0200 - PERNOS DE EXPANSION - M16 x 145
+// 82. Pieza: CO.0015 - PERNOS DE EXPANSION - M16 x 145
 function calcularPernosExpansion() { return 0; }
 
 module.exports = { 

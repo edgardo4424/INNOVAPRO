@@ -394,7 +394,7 @@ function calcularCantidadesPorCadaPiezaDeAndamioFachada(datosAtributos) {
             ),
          },
          {
-            pieza: "CON.0100",
+            pieza: "CO.0010",
             cantidad: calcularPernosExpansionM12x80(
                valorTuboGancho1m,
                valorTuboGancho05m

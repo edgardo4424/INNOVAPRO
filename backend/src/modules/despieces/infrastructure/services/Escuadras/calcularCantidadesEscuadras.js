@@ -27,10 +27,11 @@ function calcularCantidadesPorCadaPiezaDeEscuadras(datosCantidadEscuadras) {
         { pieza: "EC.0100", cantidad: calcularEC0100(dato) },
         { pieza: "EC.0300", cantidad: calcularEC0300(dato) },
         { pieza: "EC.0800", cantidad: calcularEC0800(calcularEC0100(dato)) },
-        { pieza: "CON.0200", cantidad: calcularCON0200({...dato, valorCalcularEC0800: calcularEC0800(calcularEC0100(dato)), valorCalcularEC0300: calcularEC0300(dato)}) },
-        { pieza: "CON.0300", cantidad: calcularCON0300(calcularEC0800(calcularEC0100(dato))) },
-        { pieza: "EN.0310", cantidad: calcularEN0310({...dato,valorCalcularEC0300: calcularEC0300(dato)}) },
-        { pieza: "EN.0400", cantidad: calcularEN0400(calcularEN0310({...dato,valorCalcularEC0300: calcularEC0300(dato)}) ) },
+        { pieza: "CO.0015", cantidad: calcularCON0200({...dato, valorCalcularEC0800: calcularEC0800(calcularEC0100(dato)), valorCalcularEC0300: calcularEC0300(dato)}) },
+        //{ pieza: "CON.0300", cantidad: calcularCON0300(calcularEC0800(calcularEC0100(dato))) },
+        { pieza: "EC.0810", cantidad: calcularCON0300(calcularEC0800(calcularEC0100(dato))) },
+        { pieza: "EN.0010", cantidad: calcularEN0310({...dato,valorCalcularEC0300: calcularEC0300(dato)}) },
+        { pieza: "EN.0030", cantidad: calcularEN0400(calcularEN0310({...dato,valorCalcularEC0300: calcularEC0300(dato)}) ) },
       ];
 
       return resultados.filter((item) => item.cantidad > 0);

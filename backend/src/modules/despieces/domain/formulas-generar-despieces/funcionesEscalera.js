@@ -2003,17 +2003,17 @@ function calcularEA2000(valorCalcularEA1500 = 0, valorCalcularEA1900 = 0) {
   return valorCalcularEA1500 * 2 + valorCalcularEA1900 * 2;
 }
 
-// 110. CON.0100 - PERNOS DE EXPANSION C/ ARGOLLA - M12 x 80
+// 110. CO.0010 - PERNOS DE EXPANSION C/ ARGOLLA - M12 x 80
 function calcularCON0100(valorCalcularAM8500 = 0, valorCalcularAM8600 = 0) {
   return valorCalcularAM8500 + valorCalcularAM8600;
 }
 
-// 111. CON.0200 - PERNOS DE EXPANSION - M16 x 145
+// 111. CO.0015 - PERNOS DE EXPANSION - M16 x 145
 function calcularCON0200(valorCalcularAM8700 = 0) {
   return valorCalcularAM8700 * 2;
 }
 
-// 112. AE.11400 - PERNO HEXAGONAL G.5.8 - M8 x 70
+// 112. AE.0630 - PERNO HEXAGONAL G.5.8 - M8 x 70
 function calcularAE11400({ alturaEscaleraObra, tipoAnclaje }) {
   if (alturaEscaleraObra > 0) return 0;
 
