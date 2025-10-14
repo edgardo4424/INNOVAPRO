@@ -87,6 +87,11 @@ const BandejaRoutes = lazy(() =>
    import("../modules/facturacion/routes/BandejaRoutes")
 );
 
+const Pedidos = lazy(() =>
+   import("../modules/facturacion/pages/Pedidos")
+);
+
+
 const Borrador = lazy(() =>
    import("../modules/facturacion/pages/Borrador")
 );
@@ -254,6 +259,11 @@ export default function AppRoutes() {
                         <Route
                            path="facturacion/bandeja/*"
                            element={<BandejaRoutes />}
+                        />
+
+                        <Route
+                           path="facturacion/lista-pedidos"
+                           element={<Pedidos />}
                         />
 
                         <Route
