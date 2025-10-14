@@ -22,6 +22,8 @@ export function useGestionClientes() {
           contactosService.obtenerObras(),
         ]);
         setContactos(contactos);
+        console.log("Clientes obtenidos: ",clientes);
+        
         setClientes(clientes);
         setObras(obras);
       } catch (error) {

@@ -50,11 +50,13 @@ import { toast } from "sonner";
 import trabajadoresDadosDeBajaService from "../services/trabajadoresDadosDeBaja";
 import { formatearFecha } from "@/modules/gratificacion/utils/formatearFecha";
 import TrabajadorCombobox from "@/modules/retenciones/components/TrabajadorCombobox";
+import SelectorConBuscador from "@/components/SelectorConBuscador";
 
 const GestionTrabajadoresDadosDeBaja = () => {
   const [loading, setLoading] = useState(true);
   const [filiales, setFiliales] = useState([]);
   const [trabajadores, setTrabajadores] = useState([]);
+  const [motivosLiquidacion, setMotivosLiquidacion] = useState([])
   const [trabajadorElegido, setTrabajadorElegido] = useState(null);
 
   const [trabajadoresDadosDeBaja, setTrabajadoresDadosDeBaja] = useState([]);
@@ -67,11 +69,14 @@ const GestionTrabajadoresDadosDeBaja = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [viewMode, setViewMode] = useState("crear"); // "crear" | "editar" | "ver"
 
+  // Estado para seleccionar motivo
+  const [selectorIdMotivo, setSelectorIdMotivo] = useState(null);
+
   const [form, setForm] = useState({
     filial_id: "",
     trabajador_id: "",
     fecha_baja: "",
-    motivo: "",
+    motivo_liquidacion_id: "",
     observacion: "",
   });
 
@@ -104,12 +109,23 @@ const GestionTrabajadoresDadosDeBaja = () => {
     }
   };
 
+  const obtenerMotivosLiquidacion = async () => {
+    try {
+      const res =
+        await trabajadoresDadosDeBajaService.getMotivosLiquidacion();
+
+      setMotivosLiquidacion(res.data);
+    } catch (e) {
+      console.error(e?.message ?? "No se pudo cargar la lista de trabajadores");
+    } finally {
+    }
+  };
+
   const fetchTrabajadoresDadosDeBaja = async () => {
     try {
       setLoading(true);
       const res =
         await trabajadoresDadosDeBajaService.getTrabajadoresDadosDeBaja();
-
       setTrabajadoresDadosDeBaja(res.data);
     } catch (e) {
       console.error(e?.message ?? "No se pudo cargar la lista de trabajadores");
@@ -127,6 +143,7 @@ const GestionTrabajadoresDadosDeBaja = () => {
     Promise.all([
       fetchFiliales(),
       obtenerTrabajadores(form?.filial_id || ""),
+      obtenerMotivosLiquidacion()
     ]).finally(() => {
       setLoading(false);
     });
@@ -135,10 +152,11 @@ const GestionTrabajadoresDadosDeBaja = () => {
       filial_id: "",
       trabajador_id: "",
       fecha_baja: "",
-      motivo: "",
+      motivo_liquidacion_id: "",
       observacion: "",
     });
     setTrabajadorElegido(null);
+    setSelectorIdMotivo("");
     setDialogOpen(true);
   };
 
@@ -146,7 +164,6 @@ const GestionTrabajadoresDadosDeBaja = () => {
     try {
       setErrorMsg(null);
 
-      console.log('form', form);
       if (viewMode === "crear") {
         await trabajadoresDadosDeBajaService.darDeBajaTrabajador(form);
         toast.success("Trabajador dado de baja correctamente");
@@ -175,8 +192,6 @@ const GestionTrabajadoresDadosDeBaja = () => {
   try {
     const response = await trabajadoresDadosDeBajaService.reporteLiquidacion(id);
 
-    console.log("response completo", response);
-
     let blob;
     if (response.data instanceof Blob) {
       // 👌 Ya viene como Blob
@@ -199,8 +214,6 @@ const GestionTrabajadoresDadosDeBaja = () => {
     toast.error("Error al tratar de descargar la liquidación del trabajador");
   }
 };
-
-
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -264,14 +277,14 @@ const GestionTrabajadoresDadosDeBaja = () => {
             <table className="w-full text-left">
               <thead className="bg-gray-50 text-gray-700 text-sm">
                 <tr>
-                  <th className="px-4 py-3 font-medium">DNI</th>
-                  <th className="px-4 py-3 font-medium">Trabajador</th>
-                  <th className="px-4 py-3 font-medium">Fecha de Ingreso</th>
-                  <th className="px-4 py-3 font-medium">Fecha de Baja</th>
-                  <th className="px-4 py-3 font-medium">Motivo</th>
-                  <th className="px-4 py-3 font-medium">Estado liquidación</th>
-                  <th className="px-4 py-3 font-medium">Neto a Liquidar</th>
-                  <th className="px-4 py-3 font-medium">Liquidación</th>
+                  <th className="px-4 py-3 font-medium text-center">DNI</th>
+                  <th className="px-4 py-3 font-medium text-center">Trabajador</th>
+                  <th className="px-4 py-3 font-medium text-center">Fecha de Ingreso</th>
+                  <th className="px-4 py-3 font-medium text-center">Fecha de Baja</th>
+                  <th className="px-4 py-3 font-medium text-center">Motivo</th>
+                  <th className="px-4 py-3 font-medium text-center">Estado liquidación</th>
+                  <th className="px-4 py-3 font-medium text-center">Neto a Liquidar</th>
+                  <th className="px-4 py-3 font-medium text-center">Liquidación</th>
                 </tr>
               </thead>
               <tbody className="divide-y">
@@ -305,11 +318,12 @@ const GestionTrabajadoresDadosDeBaja = () => {
                         <td className="px-4 py-3">
                           {formatearFecha(t.fecha_baja)}
                         </td>
-                        <td className="px-4 py-3 ">{t.motivo}</td>
+                        <td className="px-4 py-3 max-w-[300px]">{/* <p className="truncate"> */}{t.motivo_liquidacion.descripcion_corta}{/* </p> */}</td>
                         <td className="px-4 py-3 ">{t.estado_liquidacion}</td>
                         <td className="px-4 py-3 ">{t.total_liquidacion}</td>
-                        <td className="px-4 py-3 flex justify-center items-center">
-                          <button
+                        <td className="px-4 py-3">
+                          <div className="flex flex-col justify-center items-center">
+ <button
                                 onClick={() => handleDownload(t.id, t.trabajador.numero_documento, `${t.trabajador.nombres ?? ""} ${
                             t.trabajador.apellidos ?? ""
                           }`.trim())}
@@ -317,6 +331,8 @@ const GestionTrabajadoresDadosDeBaja = () => {
                             >
                                 <FileText size={20} />
                             </button>
+                          </div>
+                         
                         </td>
                       </tr>
                     );
@@ -371,33 +387,7 @@ const GestionTrabajadoresDadosDeBaja = () => {
               {/* Trabajador */}
               <div className="grid gap-1">
                 <Label>Trabajador</Label>
-                {/*   <Select
-                  value={form.trabajador_id}
-                  onValueChange={(val) => {
-                    const trabajadorElegido = trabajadores.find(
-                      (t) => t.id === val
-                    );
-
-                    setTrabajadorElegido(trabajadorElegido);
-                    setForm((prevForm) => ({
-                      ...prevForm,
-                      trabajador_id: val,
-                      contrato_id: trabajadorElegido?.ultimo_contrato?.id,
-                    }));
-                  }}
-                  disabled={viewMode === "ver" || viewMode === "editar"}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Seleccione un trabajador" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {trabajadores.map((t, i) => (
-                      <SelectItem key={i} value={t.id}>
-                        {t.nombres} {t.apellidos}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select> */}
+                
 
                 <TrabajadorCombobox
                   trabajadores={trabajadores}
@@ -446,28 +436,22 @@ const GestionTrabajadoresDadosDeBaja = () => {
 
               <div className="grid gap-1">
                 <Label>Motivo</Label>
-                <Select
-                  value={form.motivo}
-                  onValueChange={(val) =>
+                
+                <SelectorConBuscador
+                  listado={motivosLiquidacion}
+                  value={selectorIdMotivo}
+                  onSelect={(id) => {
+                    setSelectorIdMotivo(id)
                     setForm((prevForm) => ({
                       ...prevForm,
-                      motivo: val,
-                    }))
-                  }
-                  disabled={viewMode === "ver" || viewMode === "editar"}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Seleccione un motivo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="RENUNCIA">Renuncia</SelectItem>
+                      motivo_liquidacion_id: id,
+                    }));
+                    }}
+                  labelFn={(m) => `${m.descripcion_corta}`} // si quieres mostrar más info
+                  /* idField="codigo"  // si en lugar de id usas "codigo" */
+                  placeholder="Selecciona un motivo"
+                />
 
-                    <SelectItem value="DESPIDO">Despido</SelectItem>
-
-                    <SelectItem value="FIN CONTRATO">Fin Contrato</SelectItem>
-                    <SelectItem value="MUTUO ACUERDO">Mutuo Acuerdo</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
 
               {/* Observación */}

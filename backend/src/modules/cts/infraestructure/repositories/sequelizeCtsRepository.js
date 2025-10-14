@@ -133,6 +133,7 @@ class SequelizeCtsRopository {
             filial_id: filial_id,
             trabajador_id: trabajador_id,
             fecha_terminacion_anticipada: null,
+            estado: 1,
          },
       });
       const contratos_limpios = responseContratos.map((c) =>
@@ -141,6 +142,7 @@ class SequelizeCtsRopository {
 
       const contratoInicial =
          filtrarContratosSinInterrupcion(contratos_limpios);
+         
 
       // TODO: CALCULA LOS CONTRATOS QUE ENTRAN EN RANGO DE CTS Y QUE NO TENGAN INTERUPCIONES MAYORES DE 1 DIA
       const contratos_en_rango = calcularContratosComputados(
@@ -149,12 +151,11 @@ class SequelizeCtsRopository {
          contratos_limpios
       );
 
-      if (trabajador.id == 7)
-         console.log("Los contrtos en rango de valeria: ", contratos_en_rango);
+
 
       // TODO: Union de contratos que tienen el mismo regimen
-      const contratos_unidos = unificarContratos(contratos_en_rango);
-
+      const contratos_unidos = unificarContratos(contratos_en_rango,fechaFinCTS);
+      
       //Conteo de cuantod ias y meses da cada contrato
       const contratos_dias_meses = calcularDiasMesesPorContrato(
          fechaInicioCTS,
@@ -190,7 +191,7 @@ class SequelizeCtsRopository {
          r.fecha_fin=c.fecha_fin
          r.contrato_id = c.id;
          r.banco = c.banco || "no registrado";
-         r.numero_cuenta = c.numero_cuenta || "no registrado";
+         r.numero_cuenta = c.numero_cuenta_cts || "no registrado";
          r.trabajador_id = c.trabajador_id;
          r.tipo_documento = trabajador.tipo_documento;
          r.numero_documento = trabajador.numero_documento;
@@ -212,13 +213,12 @@ class SequelizeCtsRopository {
          if (computarHextras) {
             r.prom_h_extras = calcularHextrasEnCts(he_en_contrato, 10, 6) || 0;
          }
-
          const bonos_en_contrato = bonos.filter((b) => {
             return b.fecha >= inicio_c && b.fecha <= fin_c;
          });
-         const computarBonos = conteoBonosMeses(bonos_en_contrato);
-         if (computarBonos) {
-            r.prom_bono = calcularBonosEnCts(bonos_en_contrato, 6) || 0;
+         const computarTiposBono = conteoBonosMeses(bonos_en_contrato);
+         if (computarTiposBono.length>0) {
+            r.prom_bono = calcularBonosEnCts(bonos_en_contrato,computarTiposBono) || 0;
          }
 
          r.remuneracion_comp =
@@ -269,7 +269,7 @@ class SequelizeCtsRopository {
          }
          r.cts_depositar =
             r.cts_meses + r.cts_dias - r.faltas_importe - r.no_computable;
-         if (trabajador.domiciliado) {
+         if (!trabajador.domiciliado) {
             r.no_domiciliado = r.cts_depositar * 0.3;
          }
 
@@ -282,7 +282,6 @@ class SequelizeCtsRopository {
    }
 
    async calcularCtsIndividualTrunca(periodo, anio, filial_id, trabajador_id, transaction = null) {
-      console.log('entre a calcular');
       const responseTrabajador = await db.trabajadores.findOne({
          where: {
             id: trabajador_id,
@@ -346,9 +345,6 @@ class SequelizeCtsRopository {
          const gratificaciones = filtrarGratificacionesSinInterrupcion(
             gratificacionesLimpias
          );
-         if (trabajador_id == 7) {
-            console.log("Numero de gratificaciones: ", gratificaciones.length);
-         }
          for (const grati of gratificaciones) {
             MONTO_GRATIFICACION += Number(grati.total_pagar);
          }

@@ -253,6 +253,7 @@ class SequelizeGratificacionRepository {
 
   async calcularGratificacionTruncaPorTrabajador(periodo, anio, filial_id, trabajador_id, transaction = null) {
 
+
     const MONTO_ASIGNACION_FAMILIAR = Number(
       (
         await dataMantenimientoRepository.obtenerPorCodigo(

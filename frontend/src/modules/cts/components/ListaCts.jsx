@@ -151,6 +151,12 @@ const ListaCts = ({ cts }) => {
                      rowSpan={2}
                      className="text-center border-r text-white border-black"
                   >
+                     No domiciliado
+                  </TableHead>
+                  <TableHead
+                     rowSpan={2}
+                     className="text-center border-r text-white border-black"
+                  >
                      CTS a Depositar
                   </TableHead>
                   <TableHead
@@ -163,7 +169,7 @@ const ListaCts = ({ cts }) => {
                      rowSpan={2}
                      className="text-center border-r text-white border-black"
                   >
-                     N° cuenta
+                     N° cuenta CTS
                   </TableHead>
                </TableRow>
 

@@ -6,6 +6,12 @@ import { Switch } from "@/components/ui/switch";
 import { useSinPrevios } from "../hooks/useSinPrevios";
 import { resolveFileUrl } from "@/utils/files";
 
+// INNOVA PRO+ v1.1.2 — Sin Previos: selector con nombres de meses
+const MESES = [
+  "Enero","Febrero","Marzo","Abril","Mayo","Junio",
+  "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"
+];
+
 export default function SinPreviosModal({ open, onClose, dni, anio, onSaved, prefill }) {
   const sinPrevios = useSinPrevios({ open, dni, anio, prefill });
 
@@ -16,12 +22,11 @@ export default function SinPreviosModal({ open, onClose, dni, anio, onSaved, pre
   };
 
   return (
-    <Dialog 
-      open={open} 
+    <Dialog
+      open={open}
       onOpenChange={(v)=>{
         if (!v) { sinPrevios.reset(); onClose?.(); }
-        // si se abre manualmente:
-        if (v) { sinPrevios.reload?.(); }
+        if (v)   { sinPrevios.reload?.(); }
       }}
     >
       <DialogContent className="sm:max-w-[560px]">
@@ -50,9 +55,13 @@ export default function SinPreviosModal({ open, onClose, dni, anio, onSaved, pre
               disabled={!sinPrevios.sinPrevios || sinPrevios.loading}
             >
               <option value="">-- Seleccionar --</option>
-              {Array.from({length:12},(_,i)=>i+1).map(m=>(<option key={m} value={m}>{String(m).padStart(2,"0")}</option>))}
+              {MESES.map((mes, i) => (
+                <option key={i+1} value={String(i+1)}>
+                  {mes}
+                </option>
+              ))}
             </select>
-            <p className="text-[11px] text-muted-foreground mt-1">Formato 1...12</p>
+            <p className="text-[11px] text-muted-foreground mt-1">Ej.: Mayo, Junio, Julio…</p>
           </div>
           <div>
             <Label className="block">Observaciones (opcional)</Label>
@@ -77,16 +86,16 @@ export default function SinPreviosModal({ open, onClose, dni, anio, onSaved, pre
 
         <DialogFooter>
           <Button variant="ghost" onClick={onClose} disabled={sinPrevios.loading}>Cancelar</Button>
-          <Button 
-            onClick={handleSave} 
+          <Button
+            onClick={handleSave}
             disabled={
-              sinPrevios.loading || 
+              sinPrevios.loading ||
               !sinPrevios.sinPrevios ||
               !sinPrevios.aplicaDesdeMes
-              }
-            >
-              {sinPrevios.loading ? "Guardando..." : "Guardar"}
-            </Button>
+            }
+          >
+            {sinPrevios.loading ? "Guardando..." : "Guardar"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

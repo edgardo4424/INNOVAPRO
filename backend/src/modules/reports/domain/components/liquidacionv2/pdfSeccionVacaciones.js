@@ -6,6 +6,8 @@ const {
 function pdfSeccionVacaciones({ contrato, detalles_liquidacion, trabajador }) {
   const { informacionLiquidacion, vacacionesTrunca } = detalles_liquidacion;
 
+  console.log('vacacionesTrunca', vacacionesTrunca);
+
   if(vacacionesTrunca == null) return; 
 
   const mensaje_vacaciones_tiempo_computado = construirMensajeTiempo({
@@ -32,7 +34,6 @@ function pdfSeccionVacaciones({ contrato, detalles_liquidacion, trabajador }) {
     totalAnios + totalMeses + totalDias - descuentos_vacaciones_gozadas
   );
 
-  console.log('subtotalVacacionesTrunca', subtotalVacacionesTrunca);
   const descuento_ley = redondear2(vacacionesTrunca.descuentos_ley);
 
   const totalFinal = redondear2(subtotalVacacionesTrunca - descuento_ley);

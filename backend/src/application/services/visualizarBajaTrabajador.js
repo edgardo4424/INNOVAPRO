@@ -32,6 +32,7 @@ module.exports = async function darBajaTrabajador(baja_trabajador_id) {
           },
           {
             model: db.contratos_laborales,
+            where: { estado: 1},
             as: "contrato",
           },
         ],
@@ -51,7 +52,7 @@ module.exports = async function darBajaTrabajador(baja_trabajador_id) {
 
     //! Obtener la filial del trabajador con el ultimo contrato id
     const contrato_laboral = await db.contratos_laborales.findOne({
-      where: { id: trabajador_dado_de_baja.contrato_id },
+      where: { id: trabajador_dado_de_baja.contrato_id, estado: 1 },
       include: [
         {
           model: db.empresas_proveedoras,

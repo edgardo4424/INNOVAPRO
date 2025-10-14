@@ -29,6 +29,9 @@ try {
       <TableCell className="text-right">
         {e.nombres} {e.apellidos}
       </TableCell>
+      <TableCell className="text-right">{e.cargo}</TableCell>
+      <TableCell className="text-right">{e.tipo_afp}</TableCell>
+
       <TableCell className="text-right">{formatearFecha(e.fecha_ingreso)}</TableCell>
 
       <TableCell className="text-right">{e.dias_laborados}</TableCell>

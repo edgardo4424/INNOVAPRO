@@ -30,6 +30,7 @@ const RowCts = ({ e, num }) => {
          <TableCell className="text-right">{e.faltas_dias}</TableCell>
          <TableCell className="text-right">{e.faltas_importe}</TableCell>
          <TableCell className="text-right">{e.no_computable}</TableCell>
+         <TableCell className="text-right">{e.no_domiciliado}</TableCell>
          <TableCell className="text-right">{e.cts_depositar}</TableCell>
          <TableCell className="text-right">{e.banco}</TableCell>
          <TableCell className="text-right">{e.numero_cuenta}</TableCell>

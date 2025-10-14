@@ -39,6 +39,7 @@ import trabajadoresService from "../services/trabajadoresService";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { obtenerContratoActual } from "@/modules/Beneficios/utils/contrato_actual";
+import { formatearFecha } from "@/utils/formatearFecha";
 
 export default function CompGestionTrabajadoresonent() {
    const [trabajadores, setTrabajadores] = useState([]);
@@ -47,7 +48,10 @@ export default function CompGestionTrabajadoresonent() {
    const [searchTerm, setSearchTerm] = useState("");
    const [areaFilter, setAreaFilter] = useState("all");
    const [pensionFilter, setPensionFilter] = useState("all");
+   const [filialFilter, setFilialFilter] = useState("all");
    const navigate = useNavigate();
+
+   const [listaFiliales, setListaFiliales] = useState([])
 
    // Función para cargar trabajadores
    const fetchTrabajadores = async () => {
@@ -55,6 +59,7 @@ export default function CompGestionTrabajadoresonent() {
          setLoading(true);
          setError(null);
          const response = await trabajadoresService.getTrabajadores();
+      
          setTrabajadores(response.data);
       } catch (error) {
          console.error("Error al cargar trabajadores", error);
@@ -66,8 +71,22 @@ export default function CompGestionTrabajadoresonent() {
       }
    };
 
+   const fetchFiliales = async () => {
+      try {
+         setLoading(true);
+         setError(null);
+         const response = await trabajadoresService.getFiliales();
+   
+         setListaFiliales(response.data);
+      } catch (error) {
+         setListaFiliales([]);
+      } finally {
+      }
+   };
+
    // Cargar datos al montar el componente
    useEffect(() => {
+      fetchFiliales();
       fetchTrabajadores();
    }, []);
 
@@ -95,10 +114,17 @@ export default function CompGestionTrabajadoresonent() {
          const matchesPension =
             pensionFilter === "all" ||
             employee.sistema_pension === pensionFilter;
+         
+          // 🔹 Nueva validación: filtrar por filial dentro de los contratos laborales
+    const matchesFilial =
+      filialFilter === "all" ||
+      employee.filiales_ids?.some(
+        (id_contrato) => id_contrato === filialFilter
+      );
 
-         return matchesSearch && matchesArea && matchesPension;
+        return matchesSearch && matchesArea && matchesPension && matchesFilial;
       });
-   }, [trabajadores, searchTerm, areaFilter, pensionFilter]);
+   }, [trabajadores, searchTerm, areaFilter, pensionFilter, filialFilter, filialFilter]);
 
    // Calculate statistics
    const stats = useMemo(() => {
@@ -166,6 +192,8 @@ export default function CompGestionTrabajadoresonent() {
          </div>
       );
    }
+
+  
 
    return (
       <div className="space-y-6 p-6">
@@ -279,6 +307,26 @@ export default function CompGestionTrabajadoresonent() {
                         <SelectItem value="ONP">ONP</SelectItem>
                      </SelectContent>
                   </Select>
+
+                  <Select
+                     value={filialFilter}
+                     onValueChange={setFilialFilter}
+                  >
+                     <SelectTrigger className="w-full md:w-[200px]">
+                        <SelectValue placeholder="Empresa" />
+                     </SelectTrigger>
+                     <SelectContent>
+                          <SelectItem value="all">Todos las empresas</SelectItem>
+                        {
+                           listaFiliales.map((filial) => (
+                              <SelectItem key={filial.id} value={filial.id}>
+                                 {filial.razon_social}
+                              </SelectItem>
+                           ))
+                        }
+                       
+                     </SelectContent>
+                  </Select>
                </div>
             </CardContent>
          </Card>
@@ -309,9 +357,10 @@ export default function CompGestionTrabajadoresonent() {
                      </TableHeader>
                      <TableBody>
                         {filteredEmployees.map((employee) => {
-                           const filialActual = obtenerContratoActual(
+                           const filiales_nombres = obtenerContratoActual(
                               employee.contratos_laborales
                            );
+                           
                            return (
                               <TableRow key={employee.id}>
                                  <TableCell>
@@ -320,11 +369,15 @@ export default function CompGestionTrabajadoresonent() {
                                           {employee.nombres}{" "}
                                           {employee.apellidos}
                                        </div>
-                                       <div className="text-sm text-muted-foreground">
+                                       <div className="text-sm text-muted-foreground flex flex-col">
                                           Filial:{" "}
-                                          <span className="text-xs truncate lowercase">
-                                             {filialActual?.razon_social}
-                                          </span>
+                                          {
+                                             filiales_nombres.map((f,i)=>(
+                                                 <span key={i} className="text-xs truncate ">
+                                                    - {f??"CONTRATO NO ENCONTRADO"}
+                                                 </span>
+                                             ))
+                                          }
                                        </div>
                                     </div>
                                  </TableCell>
@@ -355,7 +408,7 @@ export default function CompGestionTrabajadoresonent() {
                                  </TableCell>
 
                                  <TableCell>
-                                    {formatDate(
+                                    {formatearFecha(
                                        employee.contrato_mas_antiguo
                                           ?.fecha_inicio
                                     )}

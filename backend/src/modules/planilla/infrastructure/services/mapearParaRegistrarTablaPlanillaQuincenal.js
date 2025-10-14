@@ -41,7 +41,9 @@ function mapearParaRegistrarTablaPlanillaQuincenal(
       data_mantenimiento_detalle: data_mantenimiento_detalle,
       registro_planilla_quincenal_detalle: r.registro_planilla_quincenal_detalle,
       adelanto_sueldo: r.adelanto_sueldo || 0,
-      adelantos_ids: r.adelantos_ids
+      adelantos_ids: r.adelantos_ids,
+      cargo: r.cargo,
+      tipo_afp: r.tipo_afp,
     };
   });
 }

@@ -11,6 +11,7 @@ module.exports = async function name(
 
    const errores = contrato_laboral.validar(true);
 
+   console.log('errores', errores);
    if (errores.length > 0) {
       return {
          codigo: 400,

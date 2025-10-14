@@ -5,8 +5,8 @@ const calcularContratosComputados = (
    fechaFinRango,
    objetos
 ) => {
-   console.log('Inicio de rango en el filtro: ',fechaInicioRango);
-   console.log('Fin de rango en el filtro: ',fechaFinRango);
+   // console.log('Inicio de rango en el filtro: ',fechaInicioRango);
+   // console.log('Fin de rango en el filtro: ',fechaFinRango);
    
    
    //Retorna los contratos que se encuentran dentro del periodo de la cts

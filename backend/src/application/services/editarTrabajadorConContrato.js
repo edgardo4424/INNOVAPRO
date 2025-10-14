@@ -13,7 +13,9 @@ const trabajadorRepository = new SequelizeTrabajadorRepository();
 module.exports = async function editarTrabajadorConContrato(data) {
    const transaction = await sequelize.transaction();
    const { id: trabajadorId, contratos_laborales } = data;
+ 
    try {
+      console.log('data', data);
       const response_edit = await editarTrabajador(
          data,
          trabajadorRepository,
@@ -25,6 +27,12 @@ module.exports = async function editarTrabajadorConContrato(data) {
       }
 
       const contratosFront = contratos_laborales ?? [];
+      
+      const contratosFrontFormateado = contratosFront.map((contrato) => ({
+         ...contrato,
+          fecha_fin: contrato.es_indefinido ? null : (contrato.fecha_fin == "" ? null : contrato.fecha_fin) // puede ser null por ser contrato indefinido
+      }))
+
       const res = await obtenerContratosPorTrabajadorId(
          trabajadorId,
          contratoLaboralRepository,
@@ -33,14 +41,14 @@ module.exports = async function editarTrabajadorConContrato(data) {
       const contratosDb = res.respuesta.contratos;
       const contratosBdIds = new Set(contratosDb.map((c) => String(c.id)));
       const contratosFrontIds = new Set(
-         contratosFront.map((c) => String(c.id))
+         contratosFrontFormateado.map((c) => String(c.id))
       );
       const contratos_crear = [];
       const contratos_actualizar = [];
       const contratos_eliminar = [];
     
       
-      for (const contrato of contratosFront) {
+      for (const contrato of contratosFrontFormateado) {
          if (contratosBdIds.has(String(contrato.id))) {
             contratos_actualizar.push(contrato);
          } else {
@@ -84,7 +92,7 @@ module.exports = async function editarTrabajadorConContrato(data) {
             transaction
          );
          if (response.codigo !== 200) {
-            throw new Error("Error al crear comtrato");
+            throw new Error("Error al crear contrato");
          }
       }
   
@@ -97,6 +105,7 @@ module.exports = async function editarTrabajadorConContrato(data) {
          },
       };
    } catch (error) {
+      console.log('error', error);
       await transaction.rollback();
       return {
          codigo: 500,

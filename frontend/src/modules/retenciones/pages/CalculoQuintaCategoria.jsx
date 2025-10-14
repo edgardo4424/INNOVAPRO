@@ -8,8 +8,8 @@ import { toast } from "react-toastify";
 
 import { currency } from "../utils/ui";
 import { useQuintaCategoria } from "../hooks/useQuintaCategoria";
-import { useCierreQuinta } from '../hooks/useCierreQuinta';
-import { cerrarPeriodoQuinta, getEstadoCierre } from "../service/cierreQuintaService";
+import { useCierreQuinta } from "../hooks/useCierreQuinta";
+import { cerrarPeriodoQuinta } from "../service/cierreQuintaService";
 
 import TrabajadorCombobox from "../components/TrabajadorCombobox";
 import HistorialTabla from "../components/HistorialTabla";
@@ -18,12 +18,9 @@ import PreviewResultados from "../components/PreviewResultados";
 import TramosDetalle from "../components/TramosDetalle";
 import RetencionMetaBanner from "../components/RetencionMetaBanner";
 import MultiempleoResumen from "../components/MultiempleoResumen";
-import MultiempleoModal from "../components/MultiempleoModal";
-import CertificadoQuintaModal from "../components/CertificadoQuintaModal";
-import SinPreviosModal from "../components/SinPreviosModal";
 import MasivoQuintaModal from "../components/MasivoQuintaModal";
+import SoportesPreviosModal from "../components/SoportesPreviosModal";
 import CierreQuintaBanner from '../components/CierreQuintaBanner';
-
 
 export default function CalculoQuintaCategoria() {
   const {
@@ -37,20 +34,14 @@ export default function CalculoQuintaCategoria() {
   const filialId = Number(form.filial_id);
   const anio = form.anio;
   const mes = form.mes;
-  console.log("PREVIEW QUE LLEGA AL FRONTEND: ", preview)
-  const { cerrado, loading: closing, cerrar, periodo } = useCierreQuinta({ filialId, anio, mes });
+
+  const { cerrado, periodo } = useCierreQuinta({ filialId, anio, mes });
 
   const [loadingClose, setLoadingClose] = useState(false);
   const [cerradoOV, setCerradoOV] = useState(false);
 
-  const [openMulti, setOpenMulti] = useState(false);
-  const [openCert, setOpenCert] = useState(false);
-  const [openSP, setOpenSP] = useState(false);
+  const [openSoportes, setOpenSoportes] = useState(false);
   const [openMasivo, setOpenMasivo] = useState(false);
-
-  const abrirMulti = () => { setOpenMulti(true); handleChange("fuentePrevios", "AUTO"); };
-  const abrirCert  = () => { setOpenCert(true); };
-  const abrirSP    = () => { setOpenSP(true); };
 
   const onAnioChange = (valor) => { handleChange("anio", valor); resetPreview?.(); };
   const onMesChange  = (valor) => { handleChange("mes", valor);  resetPreview?.(); };
@@ -74,19 +65,22 @@ export default function CalculoQuintaCategoria() {
     []
   );
 
-  const obtenerSinPreviosDelPreview = (out) =>
-    out?.soportes?.sinPrevios || out?.retencion_meta?.soportes_json?.sin_previos || null;
-
-  //const dense = true;
+  const openSoportesGuardado = () => {
+    if (!form.trabajadorId || !form.dni || !form.anio) {
+      toast.warning("Selecciona año, mes y trabajador para gestionar soportes.");
+      return;
+    }
+    setOpenSoportes(true);
+  };
 
   return (
     <div className="p-2 sm:p-3 xl:p-4 min-h-[calc(100vh-70px)] overflow-auto">
       <CierreQuintaBanner
-        cerrado={cerrado || cerradoOV}          
+        cerrado={cerrado || cerradoOV}
         periodo={periodo}
         loading={loadingClose}
-        filialesGenerales={filialesGenerales}   
-        filialId={form.filial_id}             
+        filialesGenerales={filialesGenerales}
+        filialId={form.filial_id}
         onSelectFilial={(v, obj) => handleFilialSelect(v, obj)}
         onCloseClick={async ({ periodo, filial_id }) => {
           try {
@@ -94,11 +88,7 @@ export default function CalculoQuintaCategoria() {
             const r = await cerrarPeriodoQuinta({ periodo, filial_id });
             const ok = (r.status >= 200 && r.status < 300) || r?.data?.ok;
             if (ok) {
-              // Forzamos naranja inmediato
               setCerradoOV(true);
-              // Opcional: validar estado real
-              const estado = await getEstadoCierre({ filialId: filial_id, periodo });
-              if (!estado) console.warn("Cierre aparentemente OK pero el estado devolvió abierto");
               toast.success(`Se cerró ${periodo} para la filial ${filial_id}.`);
               return true;
             }
@@ -112,9 +102,9 @@ export default function CalculoQuintaCategoria() {
           }
         }}
       />
-      
+
       <div className="flex flex-col xl:flex-row gap-3 h-full">
-        {/* Izquierda: fija */}
+        {/* Izquierda */}
         <div className="w-full xl:w-[605px] shrink-0 flex flex-col gap-2 min-h-0">
           <Card className="shadow-sm">
             <CardHeader className="py-1">
@@ -130,9 +120,7 @@ export default function CalculoQuintaCategoria() {
                       <SelectTrigger className="h-6 w-full text-[11px]">
                         <SelectValue placeholder="Selecciona el año" />
                       </SelectTrigger>
-                      <SelectContent>
-                        {YEARS.map(y => <SelectItem key={y} value={y}>{y}</SelectItem>)}
-                      </SelectContent>
+                      <SelectContent>{YEARS.map(y => <SelectItem key={y} value={y}>{y}</SelectItem>)}</SelectContent>
                     </Select>
                     {errors?.anio && <p className="text-[11px] text-red-600">{errors?.anio}</p>}
                   </div>
@@ -145,7 +133,8 @@ export default function CalculoQuintaCategoria() {
                       </SelectTrigger>
                       <SelectContent>
                         {Array.from({length:12}).map((_,i)=>(
-                          <SelectItem key={i+1} value={String(i+1)}>{MESES[i]}</SelectItem>))}
+                          <SelectItem key={i+1} value={String(i+1)}>{MESES[i]}</SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     {errors?.mes && <p className="text-[11px] text-red-600">{errors?.mes}</p>}
@@ -155,10 +144,11 @@ export default function CalculoQuintaCategoria() {
                 <div className="grid grid-cols-2 gap-2">
                   <div className="grid gap-0.5 min-w-0">
                     <Label className="text-[10px]">Trabajador</Label>
-                    <TrabajadorCombobox 
-                      trabajadores={trabajadores} 
-                      value={form.trabajadorId || ""} 
-                      onSelect={onTrabSelect} dense 
+                    <TrabajadorCombobox
+                      trabajadores={trabajadores}
+                      value={form.trabajadorId || ""}
+                      onSelect={onTrabSelect}
+                      dense
                     />
                     {errors?.trabajadorId && <p className="text-[11px] text-red-600">{errors?.trabajadorId}</p>}
                   </div>
@@ -189,24 +179,23 @@ export default function CalculoQuintaCategoria() {
                 </Button>
 
                 <Button
+                  onClick={openSoportesGuardado}
+                  className="h-7 px-3 text-[11px] bg-amber-600 text-white hover:opacity-95"
+                >
+                  Soportes de ingresos previos
+                </Button>
+
+                <Button
                   onClick={() => setOpenMasivo(true)}
-                  className="
-                    h-7 px-3 text-[11px]
-                    bg-gradient-to-r from-innova-blue to-black text-white
-                    border-0 rounded-sm shadow-sm 
-                    hover:shadow-lg hover:opacity-95
-                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-innova-orange/60
-                    transition-transform duration-200 active:translate-y-[1px]
-                  "
+                  className="h-7 px-3 text-[11px] bg-gradient-to-r from-innova-blue to-black text-white hover:opacity-95"
                 >
                   <Calculator className="w-4 h-4 mr-1.5" />
                   Cálculo masivo
                 </Button>
 
-
                 {yaExisteOficialEnMes ? (
-                  <Button 
-                    className="h-7 px-2 text-[11px]" 
+                  <Button
+                    className="h-7 px-2 text-[11px]"
                     onClick={() => vigenteDelMes && handleRecalcular(vigenteDelMes)}
                     disabled={cerrado}
                     variant="secondary"
@@ -214,10 +203,10 @@ export default function CalculoQuintaCategoria() {
                     Recalcular vigente
                   </Button>
                 ) : (
-                  <Button 
-                    className="h-7 px-2 text-[11px]" 
-                    onClick={handleGuardar} 
-                    variant="secondary" 
+                  <Button
+                    className="h-7 px-2 text-[11px]"
+                    onClick={handleGuardar}
+                    variant="secondary"
                     disabled={cerrado || !preview || saving}
                   >
                     {saving ? "Guardando..." : "Guardar como oficial"}
@@ -232,14 +221,12 @@ export default function CalculoQuintaCategoria() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 min-h-0">
               <div className="min-h-0">
                 <IngresosPreviosCard
-                  dense 
-                  preview={preview} 
-                  fuentePrevios={form.fuentePrevios} 
+                  dense
+                  preview={preview}
+                  fuentePrevios={form.fuentePrevios}
                   filiales={filiales}
-                  onClickAuto={onClickAuto} 
-                  onOpenMulti={abrirMulti} 
-                  onOpenCertificado={abrirCert} 
-                  onOpenSinPrevios={abrirSP}
+                  onClickAuto={onClickAuto}
+                  onOpenSoportes={openSoportesGuardado}
                   className="h-full overflow-auto"
                 />
               </div>
@@ -266,48 +253,28 @@ export default function CalculoQuintaCategoria() {
             </div>
           )}
 
-          {/* Modales */}
-          <MultiempleoModal 
-            open={openMulti} 
-            onClose={()=>setOpenMulti(false)} 
-            dni={form.dni} 
-            anio={form.anio} 
-            filiales={filiales}
-            currentFilialId={form.filial_id || undefined} 
-            onSaved={onSoportesGuardado}
-          />
-          <CertificadoQuintaModal 
-            open={openCert} 
-            onClose={() => {
-              setOpenCert(false); 
-              handleChange("fuentePrevios", "CERTIFICADO");
-            }}
-            dni={form.dni} 
-            anio={form.anio} 
-            onSaved={onSoportesGuardado}
-          />
-          <SinPreviosModal 
-            open={openSP} 
-            onClose={()=>setOpenSP(false)} 
-            dni={form.dni} 
-            anio={form.anio}
-            prefill={obtenerSinPreviosDelPreview(preview)}
-            onSaved={onSoportesGuardado}
-          />
-
+          {/* MODALES */}
           <MasivoQuintaModal
             open={openMasivo}
             onClose={() => setOpenMasivo(false)}
             defaultAnio={form.anio}
             defaultMes={form.mes}
-            trabajadores={trabajadores}  
-            /* filiales={filialesGlobales}  // opcional; si no las pasas, el modal hace GET /filiales */
-            onDone={() => {/* refrescos si aplica */}}
+            trabajadores={trabajadores}
+            onDone={() => {}}
           />
 
+          <SoportesPreviosModal
+            open={openSoportes}
+            onClose={() => setOpenSoportes(false)}
+            dni={form.dni}
+            anio={form.anio}
+            filiales={filiales}
+            currentFilialId={form.filial_id || undefined}
+            onSaved={onSoportesGuardado}
+          />
         </div>
 
-        {/* Derecha: flexible con un único scroll interno */}
+        {/* Derecha */}
         <div className="flex-1 min-w-0 grid gap-3 min-h-0 overflow-auto p-0.5">
           {preview?.retencion_meta && (
             <RetencionMetaBanner retencionMeta={preview.retencion_meta} trabajador={preview.trabajador} />

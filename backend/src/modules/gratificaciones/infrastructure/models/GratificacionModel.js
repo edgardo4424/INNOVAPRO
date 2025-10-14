@@ -150,7 +150,7 @@ const Gratificacion = sequelize.define(
     },
     fecha_fin: {
       type: DataTypes.DATEONLY,
-      allowNull: false,
+      allowNull: true,
     },
     banco: {
       type: DataTypes.STRING,

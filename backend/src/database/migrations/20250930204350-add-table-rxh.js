@@ -14,10 +14,11 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "trabajadores", // Ajusta si tu tabla se llama distinto
+          model: "trabajadores", 
           key: "id",
         },
-        onDelete: "CASCADE",
+        onDelete: "RESTRICT",
+        onUpdate:"RESTRICT"
       },
       tipo_comprobante_emitido: {
         // Texto (Ver Tabla 23), longitud 1

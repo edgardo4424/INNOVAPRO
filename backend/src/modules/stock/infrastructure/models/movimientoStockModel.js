@@ -27,8 +27,8 @@ const MovimientoStock = sequelize.define(
             "Ingreso",
             "Baja",
             "Venta",
-            "Ingreso reparacion",
-            "Salida reparacion"
+            "Ingreso-reparacion",
+            "Salida-reparacion"
          ),
          allowNull: false,
       },

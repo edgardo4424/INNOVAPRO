@@ -1,10 +1,21 @@
-const calcularBonosEnCts = (bonos, meses_computados) => {
-   let sumatoriaBonos = 0;
+const calcularBonosEnCts = (bonos,tipos_admitidos, ) => {
+   const sumaTipoBono=new Map();
    for (const b of bonos) {
-      sumatoriaBonos += Number(b.monto);
+      if(tipos_admitidos.includes(b.tipo)){
+         if(!sumaTipoBono.has(b.tipo)){
+            sumaTipoBono.set(b.tipo,0);
+         }
+          sumaTipoBono.set(b.tipo, sumaTipoBono.get(b.tipo) +parseInt(b.monto));
+      }
    }
-   const promedioBonosCts = sumatoriaBonos / meses_computados;
-   return parseFloat(promedioBonosCts.toFixed(2));
+   const montos = Array.from(sumaTipoBono.values());
+   let MONTO_FINAL=0;
+   for (const m of montos){
+      const promedio=m/6;
+      MONTO_FINAL+=promedio;
+   }
+   
+   return MONTO_FINAL;
 };
 
 module.exports = calcularBonosEnCts;

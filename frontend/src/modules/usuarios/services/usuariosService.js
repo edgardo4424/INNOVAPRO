@@ -8,7 +8,6 @@ const usuariosService = {
 
   crearUsuario: async (data) => {
     const res = await api.post("/usuarios", data);
-    console.log('data sin parsear: ',res.data.usuario);
     return res.data.usuario;
   },
 
