@@ -15,9 +15,8 @@ export default function CondicionesCard({ cotizacionId, onCumplidas, onClose, on
   if (loading) return <p className="text-sm text-muted">Cargando condiciones...</p>;
   if (!condicion || !condicion.condiciones) return null;
   
-  const condicionesRaw = condicion.condiciones.split("✅ CONDICIONES AUTORIZADAS:")[1] || "";
+  const condicionesRaw = condicion.condiciones.split("CONDICIONES AUTORIZADAS:")[1] || "";
 
-  // Nueva lógica: separamos líneas
   const lineas = condicionesRaw.split("•").map((c) => c.trim()).filter(Boolean);
 
   let definidas = [];

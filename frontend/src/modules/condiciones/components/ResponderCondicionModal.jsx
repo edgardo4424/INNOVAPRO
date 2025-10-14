@@ -38,7 +38,7 @@ export default function ResponderCondicionModal({ condicion, onGuardar }) {
   const handleGuardar = () => {
     if (seleccionadas.length === 0) return;
 
-    const mensaje = `✅ CONDICIONES AUTORIZADAS:\n\n${seleccionadas
+    const mensaje = `CONDICIONES AUTORIZADAS:\n\n${seleccionadas
       .map((c) => "• " + c)
       .join("\n")}${nota.trim() ? `\n\n OBSERVACIÓN:\n${nota}` : ""}`;
 

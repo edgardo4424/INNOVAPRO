@@ -3,7 +3,6 @@ import {
   obtenerCondicionesPorCotizacion,
   marcarCondicionesCumplidas,
 } from "../services/condicionesService";
-import { data } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export default function useCondicionesComercial(cotizacionId) {
