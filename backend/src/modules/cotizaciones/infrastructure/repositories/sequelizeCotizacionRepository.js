@@ -1,6 +1,6 @@
 const { Cotizacion } = require("../models/cotizacionModel");
 
-const db = require("../../../../models"); // Llamamos los modelos sequalize de la base de datos
+const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos // Llamamos los modelos sequalize de la base de datos
 
 class SequelizeCotizacionRepository {
   getModel() {
@@ -13,6 +13,8 @@ class SequelizeCotizacionRepository {
 
   async obtenerCotizaciones() {
     return await Cotizacion.findAll({
+      attributes: ["id", "codigo_documento", "tipo_cotizacion", "createdAt"],
+      
       include: [
         /*         {
           model: db.contactos,
@@ -22,12 +24,12 @@ class SequelizeCotizacionRepository {
         {
           model: db.clientes,
           as: "cliente",
-          attributes: ["id", "razon_social"],
+          attributes: ["id", "razon_social", "ruc"],
         },
         {
           model: db.obras,
           as: "obra",
-          attributes: ["id", "nombre"],
+          attributes: ["id", "nombre", "direccion"],
         },
         /*          {
           model: db.empresas_proveedoras,
@@ -36,7 +38,11 @@ class SequelizeCotizacionRepository {
         {
           model: db.usuarios,
           as: "usuario",
-          attributes: ["id", "nombre"],
+          attributes: ["id"],
+          include: [{
+            model: db.trabajadores,
+            as: "trabajador",
+          }],
         },
         {
           model: db.estados_cotizacion,
@@ -52,8 +58,9 @@ class SequelizeCotizacionRepository {
           model: db.despieces,
           as: "despiece",
           attributes: ["id", "cp"],
-        }
+        },
       ],
+      order: [["createdAt", "DESC"]], //Ordenar del más nuevo al más viejo
     });
   }
 
@@ -78,6 +85,17 @@ class SequelizeCotizacionRepository {
 
     return cotizacion;
   }
+
+  // Este método se usa para actualizar el estado de una cotización de acuerdo a los parámetros que recibe
+  async actualizarEstado(id, nuevoEstado) {
+    const cotizacion = await this.obtenerPorId(id);
+    console.log("📦 Actualizando estado de cotización ID", id, "de la cotizacion: ", cotizacion, "a:", nuevoEstado);
+    if (!cotizacion) return null;
+    cotizacion.estados_cotizacion_id = nuevoEstado;
+    await cotizacion.save();
+    return cotizacion;
+  }
+
 
   async eliminarCotizacion(id) {
     const cotizacion = await this.obtenerPorId(id); // Llama al método del repositorio para obtener la cotizacion por ID

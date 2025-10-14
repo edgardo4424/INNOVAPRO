@@ -34,7 +34,7 @@ export default function ModuloNavegacion() {
       "Registrar Cotización": FileEdit,
    };
    const modulesByRole = {
-      Gerencia: [
+      CEO: [
          { name: "Gestión de Usuarios", path: "/gestion-usuarios" },
          { name: "Gestión de Filiales de Innova", path: "/gestion-empresas" },
          { name: "Gestión de Clientes", path: "/gestion-clientes" },
@@ -45,7 +45,7 @@ export default function ModuloNavegacion() {
          { name: "Cotizaciones", path: "/cotizaciones" },
          { name: "Registrar Cotización", path: "/cotizaciones/registrar" },
       ],
-      Ventas: [
+      "Técnico Comercial": [
          { name: "Gestión de Clientes", path: "/gestion-clientes" },
          { name: "Gestión de Contactos", path: "/gestion-contactos" },
          { name: "Gestión de Obras", path: "/gestion-obras" },
@@ -54,7 +54,10 @@ export default function ModuloNavegacion() {
          { name: "Cotizaciones", path: "/cotizaciones" },
          { name: "Registrar Cotización", path: "/cotizaciones/registrar" },
       ],
-      "Oficina Técnica": [
+      "Jefe de OT": [
+         { name: "Centro de Atención", path: "/centro-atencion" },
+      ],
+      "OT": [
          { name: "Centro de Atención", path: "/centro-atencion" },
       ],
       // Agrega otros roles si aplica

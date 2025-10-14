@@ -24,7 +24,7 @@ export default function useRegistrarTarea() {
   const [clientes, setClientes] = useState([]);
   const [obras, setObras] = useState([]);
   const [empresas, setEmpresas] = useState([]);
-  const [clientesFiltrados, setClientesFiltrados] = useState([]);
+  const [contactosFiltrados, setContactosFiltrados] = useState([]);
   const [obrasFiltradas, setObrasFiltradas] = useState([]);
   const [obraSeleccionada, setObraSeleccionada] = useState(null);
 
@@ -171,8 +171,8 @@ export default function useRegistrarTarea() {
     clientes,
     obras,
     empresas,
-    clientesFiltrados,
-    setClientesFiltrados,
+    contactosFiltrados,
+    setContactosFiltrados,
     obrasFiltradas,
     setObrasFiltradas,
     obraSeleccionada,

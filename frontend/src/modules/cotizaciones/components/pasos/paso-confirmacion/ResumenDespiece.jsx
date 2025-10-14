@@ -8,18 +8,14 @@ export default function ResumenDespiece({ formData }) {
   if (!formData) return <p>No se pudo cargar la información del despiece.</p>;
 
   const { 
-    duracion_alquiler, 
-    despiece, 
-    resumenDespiece, 
-    tipo_cotizacion, 
-    uso_id, 
-    detalles_escaleras
+    cotizacion,
+    uso,
   } = formData;
 
-  const resumen = resumenDespiece;
-  const dias = duracion_alquiler || 30;
+  const resumen = uso.resumenDespiece;
+  const dias = cotizacion.duracion_alquiler || 30;
 
-  if (!Array.isArray(despiece) || despiece.length === 0 || !resumen) {
+  if (!Array.isArray(uso.despiece) || uso.despiece.length === 0 || !resumen) {
     return <p>No se pudo generar el despiece correctamente.</p>;
   }
 
@@ -32,7 +28,7 @@ export default function ResumenDespiece({ formData }) {
   return (
     <>
     {/* Solo en caso de que sea escalera de acceso en alquiler con CP0 no mostraremos el resumen del despiece */}
-    {(uso_id !== 3 || tipo_cotizacion === "Venta" || formData.id) && (
+    {(uso.id !== 3 || cotizacion.tipo === "Venta" || cotizacion.id) && (
       <>
       <h4 style={{ color: "#004aad", marginBottom: "1rem" }}>Resumen del Despiece:</h4>
 
@@ -47,13 +43,13 @@ export default function ResumenDespiece({ formData }) {
                 </tr>
               </thead>
               <tbody>
-                {despiece
+                {uso.despiece
                   .filter(pieza => pieza.incluido !== false)
                   .map((pieza, i) => {
                     let precioUnitario = 0;
                     let precioTotal = 0;
 
-                    if (tipo_cotizacion === "Alquiler") {
+                    if (cotizacion.tipo === "Alquiler") {
                       const precioDiario = 
                           pieza.precio_diario_manual !== undefined
                             ? parseFloat(pieza.precio_diario_manual)
@@ -83,14 +79,14 @@ export default function ResumenDespiece({ formData }) {
 
       <div className="wizard-section" style={{ marginTop: "2rem" }}>
         {/* Solo en caso de que sea escalera de acceso en alquiler con CP0 no mostraremos todos los detalles del despiece */}
-        {(uso_id !== 3 || tipo_cotizacion === "Venta" || formData.id) && (
+        {(uso.id !== 3 || cotizacion.tipo === "Venta" || cotizacion.id) && (
           <>
             <div className="wizard-key-value">
               <strong>🧱 Total de piezas:</strong>{" "}
               {formatear(
                 resumen.total_piezas !== undefined
                   ? resumen.total_piezas
-                  : despiece.reduce((acc, pieza) => acc + (pieza.incluido === false ? 0 : parseFloat(pieza.total || 0)), 0)
+                  : uso.despiece.reduce((acc, pieza) => acc + (pieza.incluido === false ? 0 : parseFloat(pieza.total || 0)), 0)
               )}
             </div>
             <div className="wizard-key-value"><strong>⚖️ Peso total (kg):</strong> {formatear(resumen.peso_total_kg)}</div>
@@ -99,10 +95,10 @@ export default function ResumenDespiece({ formData }) {
           </>
         )}
         {/* Solo en caso de que sea escalera de acceso el subtotal se calculará en base a los tramos por el precio por tramo */}
-        {uso_id === 3 && detalles_escaleras?.precio_tramo ? (
+        {uso.id === 3 && uso.detalles_escaleras?.precio_tramo ? (
           <div className="wizard-key-value">
             <strong>🛠️ Subtotal alquiler (S/):</strong> S/{" "}
-            {formatear((detalles_escaleras.precio_tramo || 0) * ((detalles_escaleras.tramos_1m || 0) + (detalles_escaleras.tramos_2m || 0)))}
+            {formatear((uso.detalles_escaleras.precio_tramo || 0) * ((uso.detalles_escaleras.tramos_1m || 0) + (uso.detalles_escaleras.tramos_2m || 0)))}
           </div>
         ) : (
           <div className="wizard-key-value">

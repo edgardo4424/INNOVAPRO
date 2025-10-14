@@ -17,8 +17,8 @@ export default function RegistrarTarea() {
     clientes,
     obras,
     empresas,
-    clientesFiltrados,
-    setClientesFiltrados,
+    contactosFiltrados,
+    setContactosFiltrados,
     obrasFiltradas,
     setObrasFiltradas,
     obraSeleccionada,
@@ -28,7 +28,7 @@ export default function RegistrarTarea() {
     onChangeCampo,
     onChangeDetalles,
     registrarTarea,
-  } = useRegistrarTarea();
+  } = useRegistrarTarea(); 
 
   const avanzar = () => setPaso((prev) => Math.min(prev +1 , 3));
   const retroceder = () => setPaso((prev) => Math.max(prev - 1, 1));
@@ -54,8 +54,8 @@ export default function RegistrarTarea() {
         clientes={clientes}
         obras={obras}
         empresas={empresas}
-        clientesFiltrados={clientesFiltrados}
-        setClientesFiltrados={setClientesFiltrados}
+        contactosFiltrados={contactosFiltrados}
+        setContactosFiltrados={setContactosFiltrados}
         obrasFiltradas={obrasFiltradas}
         setObrasFiltradas={setObrasFiltradas}
         obraSeleccionada={obraSeleccionada}

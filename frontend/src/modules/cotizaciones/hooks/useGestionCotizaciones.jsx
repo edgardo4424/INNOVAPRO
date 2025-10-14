@@ -3,6 +3,8 @@ import { jsPDF } from "jspdf";
 import { toast } from "react-toastify";
 import * as cotizacionesService from "../services/cotizacionesService";
 import generarPDFPorUso from "../pdf/generadorPDFModular";
+import { generarMensajeCondiciones } from "../utils/generarMensajeCondiciones";
+import { useAuth } from "@/context/AuthContext";
 
 // Este hook maneja la lógica de negocio para la gestión de cotizaciones, incluyendo la descarga de PDFs y la paginación de las cotizaciones.
 // Utiliza el servicio de cotizaciones para obtener los datos necesarios y generar PDFs personalizados.
@@ -10,9 +12,8 @@ import generarPDFPorUso from "../pdf/generadorPDFModular";
 // @returns {Object} Un objeto con las cotizaciones paginadas y la función para descargar PDFs.
 
 export function useGestionCotizaciones() {
+  const { user } = useAuth();
   const [cotizaciones, setCotizaciones] = useState([]);
-  console.log('cotizaciones en el hook',cotizaciones);
-  
 
   // Este estado controla si el modal de confirmación está abierto y qué cotización se va a descargar.
   // `abierto` indica si el modal está visible, y `cotizacionId` es el ID de la cotización seleccionada para descargar el PDF.
@@ -61,6 +62,20 @@ export function useGestionCotizaciones() {
     }
   };
 
+  const solicitarCondiciones = async (cotizacion, extras) => {
+    try {
+      const comentario = generarMensajeCondiciones(cotizacion, extras);
+      await cotizacionesService.solicitarCondiciones(cotizacion.id, comentario);
+      toast.success("Condiciones de alquiler solicitadas correctamente");
+
+      const res = await cotizacionesService.obtenerTodos();
+      setCotizaciones( res || [])
+    } catch (error) {
+      console.error("Error al solicitar condiciones:", error);
+      toast.error("No se pudo enviar la solicitud.");
+    }
+  }
+
 
   // 🔄 Cargar cotizaciones al iniciar
   useEffect(() => {
@@ -82,5 +97,7 @@ export function useGestionCotizaciones() {
     modalConfirmacion,
     cerrarModal,
     ejecutarDescarga,
+    solicitarCondiciones,
+    user
   };
 }

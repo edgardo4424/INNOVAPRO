@@ -5,7 +5,8 @@ const obtenerUsuarios = require('../../application/useCases/obtenerUsuarios'); /
 const obtenerUsuarioPorId = require('../../application/useCases/obtenerUsuarioPorId'); // Importamos el caso de uso para obtener un Usuario por ID
 const actualizarUsuario = require('../../application/useCases/actualizarUsuario'); // Importamos el caso de uso para actualizar un Usuario
 const eliminarUsuario = require('../../application/useCases/eliminarUsuario'); // Importamos el caso de uso para eliminar un Usuario
-const actualizarIdChatTelegramUsuario = require('../../application/useCases/actualizarIdChatTelegramUsuario')
+const actualizarIdChatTelegramUsuario = require('../../application/useCases/actualizarIdChatTelegramUsuario');
+const obtenerTrabajadoresSinUsuario = require('../../application/useCases/obtenerTrabajadoresSinUsuario');
 
 const usuarioRepository = new sequelizeUsuarioRepository(); // Instancia del repositorio de usuarios
 
@@ -16,6 +17,7 @@ const UsuarioController = {
             const nuevoUsuario = await crearUsuario(req.body, usuarioRepository ); // Llamamos al caso de uso para crear un usuario
             res.status(nuevoUsuario.codigo).json(nuevoUsuario.respuesta); // Respondemos con el usuario creado
         } catch (error) {
+            console.log('error', error);
             res.status(500).json({ error: error.message }); // Respondemos con un error
         }
     },
@@ -64,6 +66,15 @@ const UsuarioController = {
         } catch (error) {
             res.status(500).json({ error: error.message }); // Respondemos con un error
         }
+    },
+    async  obtenerTrabajadoresSinUsuario(req, res) {
+        try {
+            const trabajadoresSinUsuario = await obtenerTrabajadoresSinUsuario(usuarioRepository); // Llamamos al caso de uso para eliminar un usuario
+            res.status(trabajadoresSinUsuario.codigo).json(trabajadoresSinUsuario.respuesta); // Respondemos con el usuario eliminado
+        } catch (error) {
+            res.status(500).json({ error: error.message }); // Respondemos con un error
+        }
+        
     }
 };
 

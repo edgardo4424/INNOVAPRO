@@ -10,6 +10,7 @@ import { useWizardContext } from "../context/WizardCotizacionContext";
 import "../styles/wizard.css";
 import "../styles/exito.css";
 import { toast } from "react-toastify";
+import { USOS_SIN_DESPIECE } from "../constants/usos";
 
 // Este componente es un wizard para registrar una cotización, dividido en varios pasos.
 // Cada paso es un componente separado que se renderiza según el estado actual del wizard.
@@ -21,7 +22,7 @@ import { toast } from "react-toastify";
 
 // Definimos los pasos del wizard, cada uno con su título y componente asociado.
 // Los componentes de cada paso se importan desde su respectivo archivo.
-const pasos = [
+const pasos_cotizacion = [
   { id: 1, titulo: "Contacto", componente: PasoContacto },
   { id: 2, titulo: "Uso del Equipo", componente: PasoUso },
   { id: 3, titulo: "Atributos del Equipo", componente: PasoAtributos },
@@ -41,31 +42,39 @@ export default function RegistrarCotizacionWizard() {
     guardarCotizacionDesdeOT,
     guardando,
     exito,
-  } = useRegistrarCotizacion(pasos.length);
+  } = useRegistrarCotizacion(pasos_cotizacion.length);
+
+  const handleSiguientePaso = () => {
+    const erroresValidacion = validarPaso();
+    setErrores(erroresValidacion);
+
+    if (Object.keys(erroresValidacion).length > 0) {
+      toast.error("Completa los campos obligatorios antes de continuar.");
+      return;
+    }
+        
+    // Bloqueamos avance si es un uso sin despiece
+    if (
+      pasoActual === 2 && // Está en PasoAtributos y quiere pasar a PasoConfirmación
+      USOS_SIN_DESPIECE.includes(formData.uso_id)
+    ) {
+      toast.warning("Este uso no permite generar despiece. Registra una tarea de apoyo técnico.");
+      return;
+    }
+    avanzarPaso();
+  }
 
   // Detectamos si es cotización con despiece de OT
-  const cotizacionConDespieceOT = formData.id ? true : false;
-  console.log("validacion para guardar por OT", cotizacionConDespieceOT)
-  console.log("Id de la cotizacion:", formData.id)
+  const cotizacionConDespieceOT = formData.cotizacion.id ? true : false;
 
   return (
     <WizardLayout
       titulo="Registrar Cotización"
-      pasos={pasos}
+      pasos={pasos_cotizacion}
       pasoActual={pasoActual}
       onPasoClick={setPasoActual}
       onAtras={retrocederPaso}
-      onSiguiente={() => {
-        const erroresValidacion = validarPaso();
-        setErrores(erroresValidacion);
-
-        if (Object.keys(erroresValidacion).length > 0) {
-          toast.error("Completa los campos obligatorios antes de continuar.");
-          return;
-        }
-
-        avanzarPaso();
-      }}
+      onSiguiente={handleSiguientePaso}
       onGuardar={cotizacionConDespieceOT ? guardarCotizacionDesdeOT : guardarCotizacion}
       guardando={guardando}
       exito={exito}

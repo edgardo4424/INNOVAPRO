@@ -1,5 +1,5 @@
 const { Tarea } = require("../models/tareaModel");
-const db = require("../../../../models"); // Llamamos los modelos sequalize de la base de datos
+const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos // Llamamos los modelos sequalize de la base de datos
 
 class SequelizeTareaRepository {
   getModel() {
@@ -30,12 +30,20 @@ class SequelizeTareaRepository {
         {
           model: db.usuarios,
           as: "usuario_solicitante",
-          attributes: ["id", "nombre"],
+          attributes: ["id", ],
+          include:[{
+            model:db.trabajadores,
+            as:"trabajador"
+          }]
         },
         {
           model: db.usuarios,
           as: "tecnico_asignado",
-          attributes: ["id", "nombre"],
+          attributes: ["id", ],
+          include:[{
+            model:db.trabajadores,
+            as:"trabajador"
+          }]
         },
         {
           model: db.empresas_proveedoras,
@@ -59,7 +67,11 @@ class SequelizeTareaRepository {
         {
           model: db.usuarios,
           as: "usuario_solicitante",
-          attributes: ["id", "nombre"],
+          attributes: ["id", ],
+          include:[{
+            model:db.trabajadores,
+            as:"trabajador"
+          }]
         },
         {
           model: db.empresas_proveedoras,
@@ -91,7 +103,11 @@ class SequelizeTareaRepository {
         {
           model: db.usuarios,
           as: "tecnico_asignado", // este alias debe coincidir con tu asociación
-          attributes: ["id", "nombre"]
+          attributes: ["id"],
+          include:[{
+            model:db.trabajadores,
+            as:"trabajador"
+          }]
         }
       ]
     });
@@ -113,7 +129,11 @@ class SequelizeTareaRepository {
         {
           model: db.usuarios,
           as: "tecnico_asignado", // este alias debe coincidir con tu asociación
-          attributes: ["id", "nombre"]
+          attributes: ["id"],
+          include:[{
+            model:db.trabajadores,
+            as:"trabajador"
+          }]
         }
       ]
     });
@@ -133,7 +153,11 @@ class SequelizeTareaRepository {
         {
           model: db.usuarios,
           as: "tecnico_asignado", // este alias debe coincidir con tu asociación
-          attributes: ["id", "nombre"]
+          attributes: ["id"],
+          include:[{
+            model:db.trabajadores,
+            as:"trabajador"
+          }]
         }
       ]
     });
@@ -153,7 +177,11 @@ class SequelizeTareaRepository {
         {
           model: db.usuarios,
           as: "tecnico_asignado", // este alias debe coincidir con tu asociación
-          attributes: ["id", "nombre"]
+          attributes: ["id"],
+          include:[{
+            model:db.trabajadores,
+            as:"trabajador"
+          }]
         }
       ]
     });
@@ -173,12 +201,20 @@ class SequelizeTareaRepository {
         {
           model: db.usuarios,
           as: "tecnico_asignado", // este alias debe coincidir con tu asociación
-          attributes: ["id", "nombre"]
+          attributes: ["id"],
+          include:[{
+            model:db.trabajadores,
+            as:"trabajador"
+          }]
         },
         {
           model: db.usuarios,
           as: "usuario_solicitante", // este alias debe coincidir con tu asociación
-          attributes: ["id", "nombre"]
+          attributes: ["id"],
+          include:[{
+            model:db.trabajadores,
+            as:"trabajador"
+          }]
         }
       ]
     });

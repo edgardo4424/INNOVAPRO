@@ -27,17 +27,17 @@ export const WizardProvider = ({ children }) => {
   }
 
   return (
-    <WizardContext.Provider
+    <WizardContext.Provider // Devolvemos vía contexto
       value={{
-        formData,
-        setFormData,
-        errores,
-        setErrores,
-        validarPaso,
-        resetFormData,
+        formData, // Objeto completo de cotización
+        setFormData, // Setter reactivo
+        errores, // Errores
+        setErrores, // Setter de errores reactivo
+        validarPaso, // Función de validación del paso actual
+        resetFormData, // Función para limpiar el wizard
       }}
     >
-      {children}
+      {children} {/*  ( Recibimos todos los pasos del wizard con sus componentes) */}
     </WizardContext.Provider>
   );
 };

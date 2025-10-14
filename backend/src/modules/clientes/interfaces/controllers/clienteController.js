@@ -6,7 +6,7 @@ const obtenerClientes = require('../../application/useCases/obtenerClientes'); /
 const obtenerClientePorId = require('../../application/useCases/obtenerClientePorId'); // Importamos el caso de uso para obtener un cliente por ID
 const actualizarCliente = require('../../application/useCases/actualizarCliente'); // Importamos el caso de uso para actualizar un cliente
 const eliminarCliente = require('../../application/useCases/eliminarCliente'); // Importamos el caso de uso para eliminar un cliente
-
+const obtenerClientesContactosObras = require('../../application/useCases/obtenerClientesContactosObras') // Importamos el caso de uso para obtener clientes con todos sus contactos y obras asociadas
 const clienteRepository = new sequelizeClienteRepository(); // Instancia del repositorio de clientes
 
 const ClienteController = {
@@ -23,6 +23,16 @@ const ClienteController = {
     async obtenerClientes(req, res) {
         try {
             const clientes = await obtenerClientes(clienteRepository); // Llamamos al caso de uso para obtener todos los clientes
+          
+            res.status(200).json(clientes.respuesta); // Respondemos con un json de clientes
+        } catch (error) {
+            res.status(500).json({ error: error.message }); // Respondemos con un error
+        }
+    },
+
+    async obtenerClientesContactosObras(req, res) {
+        try {
+            const clientes = await obtenerClientesContactosObras(clienteRepository); // Llamamos al caso de uso para obtener todos los clientes
           
             res.status(200).json(clientes.respuesta); // Respondemos con un json de clientes
         } catch (error) {

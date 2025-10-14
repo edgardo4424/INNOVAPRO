@@ -6,22 +6,24 @@ import {
    validarClienteNatural,
 } from "../validaciones/validarCliente";
 import { toast } from "react-toastify";
+import { buscarDatosPorRUC } from "../../sunat/services/sunatService";
+import { useAuth } from "../../../context/AuthContext";
 import { parsearError } from "../../../utils/parsearError";
-
 import {
    AlertDialog,
    AlertDialogContent,
    AlertDialogDescription,
-   AlertDialogFooter,
    AlertDialogHeader,
    AlertDialogTitle,
    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { BadgePlus, Edit } from "lucide-react";
+import { Edit } from "lucide-react";
 
 export default function ModalEditarCliente({
    cliente,
+   contactos,
+   obras,
    actualizarCliente,
 }) {
    const [clienteEditado, setClienteEditado] = useState({ ...cliente });
@@ -94,6 +96,8 @@ export default function ModalEditarCliente({
                cliente={clienteEditado}
                setCliente={setClienteEditado}
                errores={errores}
+               contactos={contactos}
+               obras={obras}
                setErrores={setErrores}
                handleCancel={handleCancel}
                handleSubmit={handleSubmit}

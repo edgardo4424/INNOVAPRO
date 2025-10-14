@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const db = require("../../models");
+const db = require("../../database/models");
 
 // 🔹 Middleware para verificar token
 async function verificarToken(req, res, next) {
@@ -14,13 +14,33 @@ async function verificarToken(req, res, next) {
   try {
     const verificado = jwt.verify(token, process.env.JWT_SECRET);
     
-    const usuario = await db.usuarios.findByPk(verificado.id);
+    const usuario = await db.usuarios.findByPk(verificado.id, {
+      include: [
+        {
+          model: db.trabajadores,
+          as: "trabajador",
+          include: [
+            {
+              model: db.cargos,
+              as: "cargo",
+            },
+          ],
+        },
+      ],
+    });
 
-    if (!usuario){
+    const usuarioVerificado = {
+      id: usuario.id,
+      email: usuario.email,
+      id_chat: usuario.id_chat,
+      rol: usuario.trabajador?.cargo?.nombre,
+    }
+
+    if (!usuarioVerificado){
       return res.status(401).json({ mensaje: "Usuario no encontrado"});
     }
 
-    req.usuario = usuario;
+    req.usuario = usuarioVerificado;
 
     next();
   } catch (error) {

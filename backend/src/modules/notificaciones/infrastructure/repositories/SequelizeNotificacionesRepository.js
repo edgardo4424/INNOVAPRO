@@ -1,5 +1,5 @@
 const { Notificaciones } = require("../models/notificacionModel");
-const db = require("../../../../models"); // Llamamos los modelos sequalize de la base de datos
+const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos // Llamamos los modelos sequalize de la base de datos
 
 class SequelizeNotificacionesRepository {
   constructor(modelo) {
@@ -35,7 +35,13 @@ class SequelizeNotificacionesRepository {
         include: {
           model: db.usuarios, // o models.Usuario
           as: "usuario",
-          attributes: ["id", "nombre", "telefono"], // 👈 solo lo necesario
+          attributes: ["id"], // 👈 solo lo necesario
+          include: [
+            {
+              model: db.trabajadores,
+              as: "trabajador",
+            },
+          ],
         },
       }
     );

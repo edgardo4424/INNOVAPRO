@@ -36,7 +36,7 @@ module.exports = async (idTarea, idUsuario, tareaRepository) => {
 
   const notificacionParaElCreador = {
     usuarioId: tarea.usuarioId, // id del creador de tarea
-    mensaje: `El técnico ${tarea.tecnico_asignado.nombre} ha cancelado la tarea #${tarea.id}.`,
+    mensaje: `El técnico ${tarea.tecnico_asignado.trabajador?.nombres} ha cancelado la tarea #${tarea.id}.`,
     tipo: "info",
   };
 

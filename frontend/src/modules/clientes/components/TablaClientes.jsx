@@ -15,6 +15,8 @@ export default function TablaClientes({
    clientes,
    onEliminar,
    actualizarCliente,
+   contactos,
+   obras,
 }) {
    if (clientes.length === 0) {
       return <p>No hay clientes para mostrar.</p>;
@@ -136,6 +138,8 @@ export default function TablaClientes({
             <div className="flex gap-2">
                <ModalEditarCliente
                   cliente={row}
+                  contactos={contactos}
+                  obras={obras}
                   actualizarCliente={actualizarCliente}
                />
                <Button

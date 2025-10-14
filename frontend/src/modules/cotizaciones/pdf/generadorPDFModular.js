@@ -15,10 +15,12 @@ export default function generarPDFPorUso({ uso_id, data, doc }) {
       // Andamio de Fachada y Escalera de acceso comparten plantilla
       return generarPDFEscaleraAndamioFachada(doc, data);
     case 4:
+    case 11:
+      // Escuadras con y sin plataformas comparten plantilla
       return generarPDFEscuadras(doc, data);
     case 5:
       return generarPDFPuntales(doc, data);
-    case 6:
+    case 8:
       return generarPDFColgante(doc, data);
     case 7:
       return generarPDFPlataformaDescarga(doc, data);

@@ -1,15 +1,15 @@
 class Contacto {
-  constructor(nombre, email, telefono, cargo, clientes, obras) {
+  constructor(nombre, email, telefono, cargo/* , clientes, obras */) {
     this.nombre = nombre;
     this.email = email;
     this.telefono = telefono;
     this.cargo = cargo;
-    this.clientes = clientes;
-    this.obras = obras;
+   /*  this.clientes = clientes;
+    this.obras = obras; */
   }
 
   static validarCamposObligatorios(datos, modo = "crear") {
-    const camposValidos = ["nombre", "email", "telefono", "cargo", "clientes", "obras"];
+    const camposValidos = ["nombre", "email", "telefono", "cargo"/* , "clientes", "obras" */];
     
     if (modo === "crear") {
       if (!datos.nombre || !datos.email) {

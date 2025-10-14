@@ -54,11 +54,11 @@ const Obra = sequelize.define(
   });
 
 Obra.associate = (models) => {
-  Obra.belongsToMany(models.contactos, {
-      through: "contacto_obras",
+    Obra.belongsToMany(models.clientes, {
+      through: "cliente_obras",
       foreignKey: "obra_id",
-      otherKey: "contacto_id",
-      as: "contactos_asociados",
+      otherKey: "cliente_id",
+      as: "clientes_asociados",
   });
 
    Obra.hasMany(models.cotizaciones,{

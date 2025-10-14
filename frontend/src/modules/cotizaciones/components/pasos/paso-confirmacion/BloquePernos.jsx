@@ -4,27 +4,39 @@
 
 export default function BloquePernos({ formData, setFormData, errores }) {
 
+  const pernos = formData.atributos_opcionales.pernos;
 
-  const incluirPernos = formData.tiene_pernos;
-  const perno = formData.despiece.find(p => p.esPerno);
+  // En caso no haya pernos disponibles en el despiece, no renderizamos nada
+  if (pernos.tiene_pernos_disponibles === false) return;
 
+  const incluirPernos = pernos.tiene_pernos;
+  const perno = formData.uso.despiece.find(p => p.esPerno);
+
+  
   return (
     <>
-      {formData.tiene_pernos_disponibles && (
+      {pernos.tiene_pernos_disponibles && (
         <div className="wizard-section">
           <label>¿Desea incluir a la cotización los PERNOS DE EXPANSIÓN?</label>
           <select
             value={
-                formData.tiene_pernos === true
+                incluirPernos === true
                 ? "TRUE"
-                : formData.tiene_pernos === false
+                : incluirPernos === false
                 ? "FALSE"
                 : ""
             }
             onChange={(e) =>
                 setFormData((prev) => ({
                 ...prev,
-                tiene_pernos: e.target.value === "TRUE",
+                atributos_opcionales:{
+                  ...prev.atributos_opcionales,
+                  pernos: {
+                    ...prev.pernos,
+                    tiene_pernos: e.target.value === "TRUE",
+                    tiene_pernos_disponibles: true,
+                  }
+                }
                 }))
             }
             >
@@ -42,31 +54,82 @@ export default function BloquePernos({ formData, setFormData, errores }) {
         <div className="wizard-section">
           <label>💸 Precio de venta de los PERNOS DE EXPANSIÓN (S/)</label>
           <input
-            type="number"
-            onWheel={(e) => e.target.blur()}
-            min="0"
-            value={perno.precio_u_venta_soles || 0}
+            type="text"
+            inputMode="decimal"
+            pattern="^[0-9]*[.,]?[0-9]{0,2}$" // opcional, para móviles y validación ligera
+            placeholder="0.00"
+            className="border p-2 rounded w-[120px]"
+            value={perno.precio_u_venta_soles ?? ""}
+            onWheel={(e) => e.target.blur()} // Previene scroll accidental
             onChange={(e) => {
-              const nuevoPrecio = parseFloat(e.target.value);
+              const valor = e.target.value;
+
+              // Permitimos campo vacío temporalmente
+              if (valor === "") {
+                const nuevoDespiece = formData.uso.despiece.map(p =>
+                  p.esPerno ? { ...p, precio_u_venta_soles: "", precio_venta_soles: "" } : p
+                );
+
+                setFormData(prev => ({
+                  ...prev,
+                  uso: {
+                    ...prev.uso,
+                    despiece: nuevoDespiece,
+                  }
+                }));
+                return;
+              }
+
+              // Validación en vivo
+              const nuevoPrecio = parseFloat(valor.replace(",", "."));
               if (isNaN(nuevoPrecio) || nuevoPrecio < 0) return;
 
-              const nuevoDespiece = formData.despiece.map(p =>
+              const nuevoDespiece = formData.uso.despiece.map(p =>
                 p.esPerno
                   ? {
                       ...p,
                       incluido: true,
                       precio_u_venta_soles: nuevoPrecio,
-                      precio_venta_soles: nuevoPrecio * p.total
+                      precio_venta_soles: nuevoPrecio * p.total,
                     }
                   : p
               );
 
-              setFormData((prev) => ({
+              setFormData(prev => ({
                 ...prev,
-                despiece: nuevoDespiece
+                uso: {
+                  ...prev.uso,
+                  despiece: nuevoDespiece,
+                }
+              }));
+            }}
+            onBlur={(e) => {
+              const valor = e.target.value;
+
+              const nuevoPrecio = parseFloat(valor.replace(",", "."));
+              const precioFinal = isNaN(nuevoPrecio) ? 0 : nuevoPrecio;
+
+              const nuevoDespiece = formData.uso.despiece.map(p =>
+                p.esPerno
+                  ? {
+                      ...p,
+                      incluido: true,
+                      precio_u_venta_soles: precioFinal,
+                      precio_venta_soles: precioFinal * p.total,
+                    }
+                  : p
+              );
+
+              setFormData(prev => ({
+                ...prev,
+                uso: {
+                  ...prev.uso,
+                  despiece: nuevoDespiece,
+                }
               }));
             }}
           />
+
           <div style={{ fontSize: "13px", marginTop: "1rem", color: "#666" }}>
             {errores?.precio_pernos && <p className="error-text">{errores.precio_pernos}</p>}
           </div>

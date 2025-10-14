@@ -1,4 +1,4 @@
-const db = require("../../../../../models");
+const db = require("../../../../../database/models");
 const {
   agruparPuntalesPorZonaYAtributos,
 } = require("../mapearAtributosDelPdfService");
@@ -158,9 +158,6 @@ async function generarPdfPuntales({ idDespiece, tipo_cotizacion, porcentajeDescu
           pieza_id: Number(piezaArgolla.id),
         },
       });
-
-      //console.log(`✅ (${i}) IDs buscados: pin=${piezaPinPresion.id}, argolla=${piezaArgolla.id}`);
-      //console.log(`✅ (${i}) Encontrado: pin=${!!pinPresion}, argolla=${!!argolla}`);
 
       const ventaPin = pinPresion
         ? (pinPresion.precio_venta_soles / pinPresion.cantidad).toFixed(2)

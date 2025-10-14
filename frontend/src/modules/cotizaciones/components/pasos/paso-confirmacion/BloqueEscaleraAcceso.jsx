@@ -1,13 +1,27 @@
 import { useEffect, useState } from "react";
 
+// Este componente maneja el detalle técnico de las escaleras de acceso en alquiler
+// Su propósito es permitir que el comercial indique cuántos tramos de escalera de 2m y 1m necesita, 
+// y que el sistema verifique automáticamente que la suma de estos tramos coincida con la altura total requerida. 
+// Aquí es donde se asegura que el número de módulos de escalera coincida con lo que se necesita montar en obra, 
+// y donde también se define el precio unitario por cada tramo, lo que influye directamente en el cálculo final del costo.
+
 export default function BloqueEscaleraAcceso({ formData, setFormData }) {
+  
   const [errorTramos, setErrorTramos] = useState(false);
 
-  const alturaTotal = formData.detalles_escaleras?.altura_total_general || 0;
-  const tramos2m = parseInt(formData.detalles_escaleras?.tramos_2m || 0);
-  const tramos1m = parseInt(formData.detalles_escaleras?.tramos_1m || 0);
+  // Almacenamos la altura total de la escalera que viene desde el backend
+  const alturaTotal = formData.uso.detalles_escaleras?.altura_total_general || 0;
+
+  // Tramos que permitiremos que el comercial modifique para cuadrar la altura total
+  const tramos2m = parseInt(formData.uso.detalles_escaleras?.tramos_2m || 0);
+  const tramos1m = parseInt(formData.uso.detalles_escaleras?.tramos_1m || 0);
+
+  // Guardamos el total y si es inválido mostramos "-"
   const totalCalculado = isNaN(tramos2m * 2 + tramos1m) ? "—" : tramos2m * 2 + tramos1m;
 
+  // Cada vez que cambian los tramos o la altura, revisamos si la suma es correcta
+  // Si no coincide mostramos el error
   useEffect(() => {
     const alturaEsperada = parseInt(alturaTotal);
     const alturaTramos = parseInt(totalCalculado);
@@ -33,14 +47,17 @@ export default function BloqueEscaleraAcceso({ formData, setFormData }) {
           <input
             type="number"
             onWheel={(e) => e.target.blur()}
-            value={formData.detalles_escaleras?.precio_tramo || ""}
+            value={formData.uso.detalles_escaleras?.precio_tramo || ""}
             onChange={(e) =>
               setFormData((prev) => ({
                 ...prev,
-                detalles_escaleras: {
-                  ...prev.detalles_escaleras,
-                  precio_tramo: parseFloat(e.target.value) || 0,
-                },
+                uso: {
+                  ...prev.uso,
+                  detalles_escaleras: {
+                    ...prev.uso.detalles_escaleras,
+                    precio_tramo: parseFloat(e.target.value) || 0,
+                  },
+                }
               }))
             }
           />
@@ -62,14 +79,17 @@ export default function BloqueEscaleraAcceso({ formData, setFormData }) {
             type="number"
             onWheel={(e) => e.target.blur()}
             min={0}
-            value={formData.detalles_escaleras?.tramos_2m ?? ""}
+            value={formData.uso.detalles_escaleras?.tramos_2m ?? ""}
             onChange={(e) =>
               setFormData((prev) => ({
                 ...prev,
-                detalles_escaleras: {
-                  ...prev.detalles_escaleras,
-                  tramos_2m: e.target.value === "" ? "" : parseInt(e.target.value),
-                },
+                uso: {
+                  ...prev.uso,
+                  detalles_escaleras: {
+                    ...prev.uso.detalles_escaleras,
+                    tramos_2m: e.target.value === "" ? "" : parseInt(e.target.value),
+                  },
+                }
               }))
             }
           />
@@ -81,14 +101,17 @@ export default function BloqueEscaleraAcceso({ formData, setFormData }) {
             type="number"
             onWheel={(e) => e.target.blur()}
             min={0}
-            value={formData.detalles_escaleras?.tramos_1m ?? ""}
+            value={formData.uso.detalles_escaleras?.tramos_1m ?? ""}
             onChange={(e) =>
               setFormData((prev) => ({
                 ...prev,
-                detalles_escaleras: {
-                  ...prev.detalles_escaleras,
-                  tramos_1m: e.target.value === "" ? "" : parseInt(e.target.value),
-                },
+                uso: {
+                  ...prev.uso,
+                  detalles_escaleras: {
+                    ...prev.uso.detalles_escaleras,
+                    tramos_1m: e.target.value === "" ? "" : parseInt(e.target.value),
+                  },
+                }
               }))
             }
           />

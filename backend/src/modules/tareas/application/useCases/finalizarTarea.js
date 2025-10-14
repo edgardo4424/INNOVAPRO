@@ -41,7 +41,7 @@ module.exports = async (idTarea, idUsuario, tareaRepository) => {
   try {
     const notificacionParaElCreador = {
       usuarioId: tarea.usuarioId, // id del creador de tarea
-      mensaje: `El técnico ${tarea.tecnico_asignado.nombre} ha finalizado la tarea #${tarea.id}.`,
+      mensaje: `El técnico ${tarea.tecnico_asignado.trabajador?.nombres} ha finalizado la tarea #${tarea.id}.`,
       tipo: "exito",
     };
 
@@ -52,7 +52,7 @@ module.exports = async (idTarea, idUsuario, tareaRepository) => {
     await enviarMensajeWhatsAppFinalizaTarea(
      // `51${notiCreador.usuario.telefono}`, // formato internacional, ejemplo: "51987654321"
      '51912617842',
-      notiCreador.usuario.nombre,
+      notiCreador.usuario.trabajador?.nombres,
       tarea.id
     );
 
@@ -62,7 +62,7 @@ module.exports = async (idTarea, idUsuario, tareaRepository) => {
   }
   const notificacionParaElCreador = {
     usuarioId: tarea.usuarioId, // id del creador de tarea
-    mensaje: `El técnico ${tarea.tecnico_asignado.nombre} ha finalizado la tarea #${tarea.id}.`,
+    mensaje: `El técnico ${tarea.tecnico_asignado.trabajador?.nombres} ha finalizado la tarea #${tarea.id}.`,
     tipo: "exito",
   };
 

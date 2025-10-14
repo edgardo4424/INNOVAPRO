@@ -1,5 +1,5 @@
 const CotizacionesTransporte = require("../../domain/entities/cotizaciones_transporte"); // Importamos la clase Obra
-const db = require("../../../../models");
+const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 const { Op } = require("sequelize");
 
 module.exports = async (
@@ -171,26 +171,34 @@ module.exports = async (
       cantidadTotal = cantidad;
       break;
 
-    case "escuadras":
+    case "escuadras_sin_plataforma":
       const { transporte_escuadras } = cotizacionTransporteData;
 
-      if (transporte_escuadras.length == 1) {
+      if (transporte_escuadras?.length == 1) {
         // Si hay un tipo de escuadra, el costo de tarifa transporte se calcula automaticamente
-
+        console.log('******')
+        console.log({
+          grupo_tarifa: uso.grupo_tarifa,
+          subtipo: transporte_escuadras[0].tipo_escuadra,
+          rango_desde: transporte_escuadras[0]?.cantidad ,
+          rango_hasta: transporte_escuadras[0]?.cantidad ,
+        });
         tarifa_transporte_encontrado = await db.tarifas_transporte.findOne({
           where: {
             grupo_tarifa: uso.grupo_tarifa,
             subtipo: transporte_escuadras[0].tipo_escuadra,
-            rango_desde: { [Op.lt]: transporte_escuadras.cantidad },
-            rango_hasta: { [Op.gte]: transporte_escuadras.cantidad },
+            rango_desde: { [Op.lte]: transporte_escuadras[0]?.cantidad },
+            rango_hasta: { [Op.gte]: transporte_escuadras[0]?.cantidad },
           },
         });
+
+        console.log('tarifa_transporte_encontrado', tarifa_transporte_encontrado);
 
         costo_tarifas_transporte = Number(
           tarifa_transporte_encontrado?.precio_soles || 0
         );
         unidad = "Und";
-        cantidadTotal = transporte_escuadras.cantidad;
+        cantidadTotal = transporte_escuadras[0]?.cantidad;
       } else {
         costo_tarifas_transporte = 0;
         unidad = "Und";

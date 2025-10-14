@@ -16,7 +16,6 @@ const ContactoController = {
            
             res.status(nuevoContacto.codigo).json(nuevoContacto.respuesta);
         } catch (error) {
-            console.log('error',error);
             res.status(500).json({ error: error.message }); 
         }
     },
@@ -27,7 +26,6 @@ const ContactoController = {
           
             res.status(200).json(contactos.respuesta);
         } catch (error) {
-            console.log('error',error);
             res.status(500).json({ error: error.message }); 
         }
     },
@@ -37,7 +35,6 @@ const ContactoController = {
             const contacto = await obtenerContactoPorId(req.params.id, contactoRepository); 
             res.status(contacto.codigo).json(contacto.respuesta);
         } catch (error) {
-            console.log('error',error);
             res.status(500).json({ error: error.message }); 
         }
     },
@@ -47,7 +44,7 @@ const ContactoController = {
             const contactoActualizado = await actualizarContacto(req.params.id, req.body, contactoRepository, entidadService);
             res.status(contactoActualizado.codigo).json(contactoActualizado.respuesta); 
         } catch (error) {
-            console.log('error',error);
+             console.log('error', error);
             res.status(500).json({ error: error.message }); 
         }
     },
@@ -57,7 +54,6 @@ const ContactoController = {
             const contactoEliminado = await eliminarContacto(req.params.id, contactoRepository); 
             res.status(contactoEliminado.codigo).json(contactoEliminado.respuesta); 
         } catch (error) {
-            console.log('error',error);
             res.status(500).json({ error: error.message }); 
         }
     }

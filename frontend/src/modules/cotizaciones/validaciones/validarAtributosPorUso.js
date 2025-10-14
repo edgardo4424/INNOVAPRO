@@ -8,8 +8,8 @@ const ATRIBUTOS_REQUERIDOS_POR_USO = {
 };
 
 export function validarAtributosPorUso(formData) {
-  const usoId = formData.uso_id;
-  const zonas = formData.zonas || [];
+  const usoId = formData.uso.id;
+  const zonas = formData.uso.zonas || [];
 
   const requeridos = ATRIBUTOS_REQUERIDOS_POR_USO[usoId];
   if (!requeridos) return { valido: true }; // si no hay reglas definidas, se permite

@@ -1,4 +1,4 @@
-const db = require("../../../../models");
+const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 const {
   formatearFechaIsoADMY,
 } = require("../../infrastructure/helpers/formatearFecha");
@@ -47,6 +47,11 @@ module.exports = async (idCotizacion) => {
       {
         model: db.usuarios,
         as: "usuario",
+        include: 
+          [{
+            model: db.trabajadores,
+            as: "trabajador",
+          }]
       },
       {
         model: db.cotizaciones_transporte,
@@ -142,8 +147,8 @@ module.exports = async (idCotizacion) => {
       direccion: cotizacionEncontrado.empresas_proveedora.direccion,
     },
     usuario: {
-      nombre: cotizacionEncontrado.usuario.nombre,
-      telefono: cotizacionEncontrado.usuario.telefono,
+      nombre: cotizacionEncontrado.usuario.trabajador.nombres + " " + cotizacionEncontrado.usuario.trabajador.apellidos,
+      telefono: cotizacionEncontrado.usuario.trabajador.telefono,
       correo: cotizacionEncontrado.usuario.email,
     },
     cotizacion: {
@@ -265,7 +270,7 @@ module.exports = async (idCotizacion) => {
     case "8":
       // COLGANTE
 
-       const pdfColgante = await generarPdfColgante({idDespiece: despieceEncontrado.id, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
+       const pdfColgante = await generarPdfColgante({dataDespiece: despieceEncontrado, idDespiece: despieceEncontrado.id, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,

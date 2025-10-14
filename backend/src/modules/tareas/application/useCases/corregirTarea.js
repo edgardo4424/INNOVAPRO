@@ -25,7 +25,7 @@ module.exports = async (idTarea, correcion, tareaRepository) => {
 
   const notificacionAlTecnico = {
     usuarioId: usuarioIdTecnico.asignadoA,
-    mensaje: `La tarea #${tarea.id} ha sido corregida por el comercial ${tarea.usuario_solicitante?.nombre || "desconocido"
+    mensaje: `La tarea #${tarea.id} ha sido corregida por el comercial ${tarea.usuario_solicitante?.trabajador?.nombres || "desconocido"
       }.`,
     tipo: "info",
   };

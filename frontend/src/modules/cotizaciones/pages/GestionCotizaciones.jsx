@@ -19,6 +19,8 @@ export default function GestionCotizaciones() {
       modalConfirmacion,
       cerrarModal,
       ejecutarDescarga,
+      solicitarCondiciones,
+      user,
    } = useGestionCotizaciones();
    
    const [cotizacionSeleccionadaId, setCotizacionSeleccionadaId] =
@@ -27,8 +29,6 @@ export default function GestionCotizaciones() {
    const continuarCotizacion = (idCotizacion) => {
       navigate(`/cotizaciones/wizard/${idCotizacion}`);
    }
-
-   console.log('cotizaciones en gstion',cotizaciones);
    
    return (
       <div className="min-h-full flex-1  flex flex-col items-center">
@@ -39,6 +39,8 @@ export default function GestionCotizaciones() {
             onDownloadPDF={confirmarDescargaPDF}
             setCotizacionPrevisualizada={setCotizacionSeleccionadaId}
             onContinuarWizard={continuarCotizacion}
+            onSolicitarCondicionesAlquiler={solicitarCondiciones}
+            user={user}
          />
 
           <AlertDialog open={modalConfirmacion.abierto} onOpenChange={cerrarModal}>

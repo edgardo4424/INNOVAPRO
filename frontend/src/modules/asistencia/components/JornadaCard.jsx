@@ -9,21 +9,30 @@ import {
    SelectTrigger,
    SelectValue,
 } from "@/components/ui/select";
-import { Briefcase, Save } from "lucide-react";
+import { Briefcase, RefreshCw, Save } from "lucide-react";
 import GastosModal from "./GastosModal";
 import { useJornada } from "../hooks/useJornada";
 import { useAsistencia } from "../hooks/useAsistencia";
 import { useTiposTrabajo } from "../hooks/useTiposTrabajo";
+import {
+   Tooltip,
+   TooltipContent,
+   TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { estadosAsistencia } from "./AsistenciaSimple";
 
-
-const JornadaCard = ({ trabajador }) => {
+const JornadaCard = ({ trabajador, obtenerTrabajadores, fecha,asistenciasSincronizacion }) => {
    const {
       asistencia,
       actualizarAsistencia,
       actualizarJornada,
       agregarSegundaJornada,
       eliminarSegundaJornada,
-   } = useAsistencia(trabajador);
+      guardarAsistencia,
+      inputsDeshabilitados,
+      actualizarEstadoAsistencia,
+      
+   } = useAsistencia(trabajador, obtenerTrabajadores, fecha,asistenciasSincronizacion);
 
    const {
       jornadaPrincipal,
@@ -50,21 +59,19 @@ const JornadaCard = ({ trabajador }) => {
                         <SelectValue placeholder="Selecciona" />
                      </SelectTrigger>
                      <SelectContent>
-                        <SelectItem value="presente">Presente</SelectItem>
-                        <SelectItem value="falto">Falto</SelectItem>
-                        <SelectItem value="tardanza">Tardanza</SelectItem>
-
-                        <SelectItem value="permiso">Permiso</SelectItem>
-                        <SelectItem value="licencia">Licencia</SelectItem>
-                        <SelectItem value="vacaciones">Vacaciones</SelectItem>
-                        <SelectItem value="falta-justificada">
-                           Falta Justificada
-                        </SelectItem>
+                        {estadosAsistencia.map((estado) => (
+                           <SelectItem key={estado.value} value={estado.value}>
+                              <div className="flex items-center gap-2">
+                                 <div
+                                    className={`w-3 h-3 rounded-full ${estado.color}`}
+                                 />
+                                 {estado.label}
+                              </div>
+                           </SelectItem>
+                        ))}
                      </SelectContent>
                   </Select>
                </div>
-
-               {/* Tardanza */}
 
                {/* Horas */}
                <div>
@@ -74,14 +81,14 @@ const JornadaCard = ({ trabajador }) => {
                      min="0"
                      max="12"
                      step="0.5"
-                     value={asistencia.horas_trabajadas}
+                     value={asistencia.horas_trabajadas || 0}
                      onChange={(e) =>
                         actualizarAsistencia(
                            "horas_trabajadas",
                            Number.parseFloat(e.target.value) || 0
                         )
                      }
-                     disabled={asistencia.estado_asistencia === "falto"}
+                     disabled={inputsDeshabilitados}
                      className="w-full"
                   />
                </div>
@@ -92,14 +99,14 @@ const JornadaCard = ({ trabajador }) => {
                      min="0"
                      max="12"
                      step="0.5"
-                     value={asistencia.horas_extras||0}
+                     value={asistencia.horas_extras || 0}
                      onChange={(e) =>
                         actualizarAsistencia(
                            "horas_extras",
                            Number.parseFloat(e.target.value) || 0
                         )
                      }
-                     disabled={asistencia.estado_asistencia === "falto"}
+                     disabled={inputsDeshabilitados}
                      className="w-full"
                   />
                </div>
@@ -116,7 +123,7 @@ const JornadaCard = ({ trabajador }) => {
                            eliminarSegundaJornada();
                         }
                      }}
-                     disabled={asistencia.estado_asistencia === "falto"}
+                     disabled={inputsDeshabilitados}
                   >
                      <SelectTrigger className={"w-full"}>
                         <SelectValue />
@@ -141,7 +148,7 @@ const JornadaCard = ({ trabajador }) => {
                            e.target.value
                         )
                      }
-                     disabled={asistencia.estado_asistencia === "falto"}
+                     disabled={inputsDeshabilitados}
                   />
                </div>
 
@@ -150,7 +157,8 @@ const JornadaCard = ({ trabajador }) => {
                   <Label className="text-xs">Tipo de Trabajo</Label>
                   <Select
                      value={
-                        jornadaPrincipal?.tipo_trabajo_id?.toString() || "1"
+                        jornadaPrincipal?.tipo_trabajo_id?.toString() ??
+                        undefined
                      }
                      onValueChange={(value) =>
                         actualizarJornada(
@@ -159,10 +167,13 @@ const JornadaCard = ({ trabajador }) => {
                            Number.parseInt(value)
                         )
                      }
-                     disabled={asistencia.estado_asistencia === "falto"}
+                     disabled={inputsDeshabilitados}
                   >
                      <SelectTrigger className="w-full truncate">
-                        <SelectValue className="truncate" />
+                        <SelectValue
+                           placeholder="Seleccione un tipo de trabajo"
+                           className="truncate"
+                        />
                      </SelectTrigger>
                      <SelectContent align="end">
                         {tiposTrabajo.map((tipo) => (
@@ -177,8 +188,8 @@ const JornadaCard = ({ trabajador }) => {
 
             {/* Checkbox para Segunda Jornada - Solo aparece si primera jornada es "mañana" */}
             {puedeAgregarSegundaJornada && (
-               <div className=" pt-4 mb-4">
-                  <div className="flex items-center space-x-2 mb-4">
+               <div className="my-4 flex flex-wrap space-x-4  items-center min-h-[67px]">
+                  <div className="flex items-center space-x-2 ">
                      <input
                         type="checkbox"
                         checked={tieneSegundaJornada}
@@ -190,6 +201,7 @@ const JornadaCard = ({ trabajador }) => {
                            }
                         }}
                         className="rounded"
+                        disabled={inputsDeshabilitados}
                      />
                      <Label className="text-sm font-medium">
                         Agregar Segunda Jornada (Turno Tarde)
@@ -197,9 +209,9 @@ const JornadaCard = ({ trabajador }) => {
                   </div>
 
                   {tieneSegundaJornada && segundaJornada && (
-                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 bg-blue-50 p-4 rounded-lg">
+                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1">
                         {/* Lugar Segunda Jornada */}
-                        <div>
+                        <div className="">
                            <Label className="text-xs">
                               Lugar Segunda Jornada
                            </Label>
@@ -217,12 +229,15 @@ const JornadaCard = ({ trabajador }) => {
                         </div>
 
                         {/* Tipo de Trabajo Segunda Jornada */}
-                        <div>
+                        <div className="">
                            <Label className="text-xs">
                               Tipo de Trabajo Segunda Jornada
                            </Label>
                            <Select
-                              value={segundaJornada.tipo_trabajo_id.toString()}
+                              value={
+                                 segundaJornada?.tipo_trabajo_id?.toString() ??
+                                 undefined
+                              }
                               onValueChange={(value) =>
                                  actualizarJornada(
                                     segundaJornada.id,
@@ -231,8 +246,8 @@ const JornadaCard = ({ trabajador }) => {
                                  )
                               }
                            >
-                              <SelectTrigger>
-                                 <SelectValue />
+                              <SelectTrigger className="w-full">
+                                 <SelectValue placeholder="Seleccione un tipo de trabajo" />
                               </SelectTrigger>
                               <SelectContent>
                                  {tiposTrabajo.map((tipo) => (
@@ -259,14 +274,28 @@ const JornadaCard = ({ trabajador }) => {
                   onUpdateGastos={(gastos) =>
                      actualizarAsistencia("gastos", gastos)
                   }
+                  inputsDeshabilitados={inputsDeshabilitados}
                />
-               <Button
-                  size="sm"
-                  className="flex items-center gap-1 bg-[#1b274a]"
-               >
-                  <Save className="h-3 w-3" />
-                  Guardar
-               </Button>
+               {trabajador.asistencia ? (
+                  <Button
+                     size={"sm"}
+                     variant="outline"
+                     className="flex items-center gap-2 border-blue-500 text-blue-600 hover:bg-blue-50 bg-transparent"
+                     onClick={actualizarEstadoAsistencia}
+                  >
+                     <RefreshCw className="w-4 h-4" />
+                     Actualizar
+                  </Button>
+               ) : (
+                  <Button
+                     size="sm"
+                     className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+                     onClick={guardarAsistencia}
+                  >
+                     <Save className="h-3 w-3" />
+                     Guardar
+                  </Button>
+               )}
             </div>
          </CardContent>
       </Card>

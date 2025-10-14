@@ -9,31 +9,38 @@ import useDespieceManual from "../../../hooks/useDespieceManual";
 
 export default function DespieceAdicional({ formData, setFormData }) {
 
-  // En éstos estados del componente manejamos las piezas de la API, las pieza que escribe el comercial y la cantidad.
-  const [piezasDisponibles, setPiezasDisponibles] = useState([]);
-  const [piezaSeleccionada, setPiezaSeleccionada] = useState(null);
-  const [cantidad, setCantidad] = useState("");
-  const [precioManual, setPrecioManual ] = useState("");
+  // Estados donde guardamos lo que el usuario está haciendo
+  const [piezasDisponibles, setPiezasDisponibles] = useState([]); // Para almacenar las piezas desde la API
+  const [piezaSeleccionada, setPiezaSeleccionada] = useState(null); // Para almacenar la pieza que está buscando o eligiendo
+  const [cantidad, setCantidad] = useState(""); // Para almacenar cuántas unidades desea agregar
+  const [precioManual, setPrecioManual ] = useState(""); // Para almacenar el precio, que también puede ser manual
 
-  const tipoCotizacion = formData.tipo_cotizacion;
+  // Almacenamos el tipo de cotización 
+  // Ya que el precio base varía según si es Alquiler o Venta
+  const tipoCotizacion = formData.cotizacion.tipo; 
 
   const {
     despieceManual,
     agregarPieza,
     eliminarPieza
-  } = useDespieceManual({
+  } = useDespieceManual({ 
     tipoCotizacion,
     formData,
     onResumenChange: ({ nuevoDespiece, resumen }) => {
-      const despieceOriginal = formData.despiece || [];
+      // Guardamos el despiece original para no perder las piezas que no son adicionales
+      const despieceOriginal = formData.uso.despiece || [];
 
-      const despieceFinal = [ // Reconstruímos el despiece
+      // Actualizamos el formData con el nuevo despiece y resumen 
+      // Marcamos las piezas nuevas con "esAdicional"
+      const despieceFinal = [ 
         ...despieceOriginal.filter((p) => !p.esAdicional), //protegiendo todo el despiece original
         ...nuevoDespiece.map((p) => ({ //agregamos solo las piezas adicionales con su propiedad 'esAdicional'
           ...p,
           esAdicional: true
         }))
       ];
+
+      // En base al despieceFinal recalculamos el resumen 
 
       const resumenFinal = {
         total_piezas: despieceFinal.reduce((acc, p) => acc + (parseFloat(p.total) || 0), 0),
@@ -44,16 +51,19 @@ export default function DespieceAdicional({ formData, setFormData }) {
         precio_subtotal_venta_dolares: 0
       };
 
+      // Y guardamos en el formData tanto el despiece final como el resumen final
       setFormData((prev) => ({
         ...prev,
-        despiece: despieceFinal,
-        resumenDespiece: resumenFinal
+        uso: {
+          ...prev.uso,
+          despiece: despieceFinal,
+          resumenDespiece: resumenFinal
+        }
       }));
     }
   });
 
-  // Carga inicial de piezas desde la API
-
+  // Al montar el componente solicitamos todas las piezas a la API del backend
   useEffect(() => {
     const cargarPiezas = async () => {
       try {
@@ -66,18 +76,20 @@ export default function DespieceAdicional({ formData, setFormData }) {
     cargarPiezas();
   }, []);
 
-  // Lógica para agregar cada pieza: validamos si existe y hay una cantidad válida.
-  // Luego la agregamos con el helper del hook DespieceManual
-
+  // Manejamos el agregar piezas con este handle
   const handleAgregar = () => {
+    // Buscamos si la pieza que el usuario escribió, existe en nuestra lista de piezas
     const piezaEncontrada = piezasDisponibles.find(
       (p) =>
         `${p.item} - ${p.descripcion}`.toLowerCase() ===
         piezaSeleccionada?.busqueda?.toLowerCase()
     );
+
+    // Si existe, verificamos si la cantidad es mayor a 0 
     if (piezaEncontrada && cantidad > 0) {
-      const éxito = agregarPieza(piezaEncontrada, parseInt(cantidad), parseFloat(precioManual || 0));
-      if (éxito) {
+      // La agregamos con el método del hook useDespieceManual
+      const exito = agregarPieza(piezaEncontrada, parseInt(cantidad), parseFloat(precioManual || 0));
+      if (exito) {
         setCantidad("");
         setPiezaSeleccionada(null);
         setPrecioManual("");
@@ -85,7 +97,7 @@ export default function DespieceAdicional({ formData, setFormData }) {
     }
   };
 
-  const piezasVisuales = (formData.despiece || []).filter(p => p.esAdicional);
+  const piezasVisuales = (formData.uso.despiece || []).filter(p => p.esAdicional);
 
   return (
     <div className="wizard-section">

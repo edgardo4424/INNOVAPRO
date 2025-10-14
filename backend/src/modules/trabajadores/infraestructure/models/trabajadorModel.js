@@ -1,19 +1,14 @@
-const { DataTypes, INTEGER, STRING, BOOLEAN } = require("sequelize");
+const { DataTypes } = require("sequelize");
 const sequelize = require("../../../../config/db");
 
 const Trabajador = sequelize.define(
    "trabajadores",
    {
-      id: {
-         type: DataTypes.INTEGER,
-         autoIncrement: true,
-         primaryKey: true,
-      },
-      filial_id: {
+      cargo_id: {
          type: DataTypes.INTEGER,
          allowNull: false,
          references: {
-            model: "empresas_proveedoras",
+            model: "cargos",
             key: "id",
          },
       },
@@ -33,12 +28,8 @@ const Trabajador = sequelize.define(
          type: DataTypes.STRING,
          allowNull: false,
       },
-      fecha_ingreso: {
-         type: DataTypes.DATE,
-         allowNull: false,
-      },
-      fecha_salida: {
-         type: DataTypes.DATE,
+      telefono: {
+         type: DataTypes.STRING,
          allowNull: true,
       },
       sueldo_base: {
@@ -46,21 +37,39 @@ const Trabajador = sequelize.define(
          allowNull: false,
       },
       asignacion_familiar: {
-         type: DataTypes.BOOLEAN,
-         allowNull: false,
+         type: DataTypes.DATEONLY,
+         allowNull: true,
       },
       sistema_pension: {
          type: DataTypes.ENUM("AFP", "ONP"),
-         allowNull: false,
-      },
-      quinta_categoria: {
-         type: DataTypes.BOOLEAN,
-         allowNull: false,
+         allowNull: true,
       },
       estado: {
          type: DataTypes.ENUM("activo", "inactivo"),
          allowNull: false,
          defaultValue: "activo",
+      },
+      domiciliado: {
+         type: DataTypes.BOOLEAN,
+         allowNull: false,
+         defaultValue: false,
+      },
+      tipo_afp: {
+         type: DataTypes.ENUM("HABITAT", "INTEGRA", "PRIMA", "PROFUTURO"),
+         allowNull: true,
+      },
+      comision_afp: {
+         type: DataTypes.BOOLEAN,
+         allowNull: false,
+         defaultValue: false,
+      },
+      fecha_nacimiento: {
+         type: DataTypes.DATEONLY,
+         allowNull: true,
+      },
+      fecha_baja: {
+         type: DataTypes.DATEONLY,
+         allowNull: true,
       },
    },
    {
@@ -70,15 +79,55 @@ const Trabajador = sequelize.define(
 );
 
 Trabajador.associate = (models) => {
-   
    Trabajador.hasMany(models.asistencias, {
       foreignKey: "trabajador_id",
-      as:"asistencias"
+      as: "asistencias",
+   });
+   Trabajador.hasMany(models.contratos_laborales, {
+      foreignKey: "trabajador_id",
+      as: "contratos_laborales",
+   });
+   Trabajador.hasMany(models.vacaciones, {
+      foreignKey: "trabajador_id",
+      as: "vacaciones",
+   });
+   Trabajador.hasMany(models.bonos, {
+      foreignKey: "trabajador_id",
+      as: "bonos",
+   });
+   Trabajador.hasMany(models.adelanto_sueldo, {
+      foreignKey: "trabajador_id",
+      as: "adelanto_sueldo",
+   });
+   Trabajador.belongsTo(models.cargos, {
+      foreignKey: "cargo_id",
+      as: "cargo",
+   });
+   Trabajador.hasMany(models.cts, {
+      foreignKey: "trabajador_id",
+      as: "cts",
+   });
+   Trabajador.hasMany(models.gratificaciones, {
+      foreignKey: "trabajador_id",
+      as: "gratificaciones",
+   });
+   Trabajador.hasMany(models.planilla_quincenal, {
+      foreignKey: "trabajador_id",
+      as: "planilla_quincenal",
+   });
+   Trabajador.hasMany(models.bajas_trabajadores, {
+      foreignKey: "trabajador_id",
+      as: "bajas_trabajadores",
+   });
+   Trabajador.hasMany(models.recibos_por_honorarios, {
+      foreignKey: "trabajador_id",
+   });
+   
+   // Un trabajador tiene un usuario
+   Trabajador.hasOne(models.usuarios, {
+      foreignKey: "trabajador_id",
+      as: "usuario",  // alias para acceder al usuario desde trabajador
    });
 
-   Trabajador.belongsTo(models.empresas_proveedoras, {
-      foreignKey: "filial_id",
-      as: "empresa_proveedora",
-   });
 };
 module.exports = { Trabajador };

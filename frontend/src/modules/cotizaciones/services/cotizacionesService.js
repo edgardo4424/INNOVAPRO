@@ -17,8 +17,14 @@ export async function obtenerAtributosPorUso(usoId) {
 export async function generarDespiece(atributos, usoId) {
   let uso = "";
   switch (usoId) {
+    case 1: // Andamio de fachada
+      uso = "andamio-de-fachada";
+      break;
     case 2: // Andamio de trabajo
       uso = "andamio-de-trabajo";
+      break;
+    case 3: // Escalera de acceso
+      uso = "escalera-de-acceso";
       break;
     case 4: // Escuadras con plataformas
       uso = "escuadras-con-plataformas";
@@ -26,14 +32,11 @@ export async function generarDespiece(atributos, usoId) {
     case 5: // Puntales
       uso = "puntales";
       break;
-    case 3: // Escalera de acceso
-      uso = "escalera-de-acceso";
-      break;
-    case 1: // Andamio de fachada
-      uso = "andamio-de-fachada";
-      break;
     case 7: // Plataforma de descarga
       uso = "plataforma-de-descarga";
+      break;
+    case 8: // Andamios colgantes
+      uso = "colgantes";
       break;
     case 11: // Escuadras sin plataformas
       uso = "escuadras-sin-plataformas";
@@ -95,4 +98,12 @@ export async function crearCotizacionDesdeOT(data) {
     console.error(" Error al crear cotización desde OT: ", error);
     throw error.response?.data || error;
   }
+}
+
+// Solicitar condiciones de alquiler al área de administración
+export async function solicitarCondiciones(idCotizacion, comentario="") {
+  const res = await api.put(`/cotizaciones/${idCotizacion}/solicitar-condiciones`, {
+    comentario,
+  })
+  return res.data;
 }

@@ -18,8 +18,11 @@ import {
    Boxes,
    ChevronDown,
    LogOut,
-   Settings,
+   ShieldCheck,
    ScrollText,
+   Receipt,
+   Truck,
+   Building,
 } from "lucide-react";
 import {
    Sidebar,
@@ -65,12 +68,14 @@ const iconMap = {
    "Registrar Cotización": FileEdit,
    "Stock de Piezas": Boxes,
    Trabajadores: Users,
-   "Facturación":ScrollText
-
+   "Facturación": Receipt,
+   "Gestión de Condiciones": ShieldCheck,
+   "Gestión de Transporte": Truck,
+   "Asistencia general":Building
 };
 
 const modulesByRole = {
-   Gerencia: [
+   CEO: [
       {
          group: "Centro de gestión ",
          items: [
@@ -87,6 +92,7 @@ const modulesByRole = {
       { name: "Centro de Atención", path: "/centro-atencion" },
       { name: "Registrar Tarea", path: "/registrar-tarea" },
       { name: "Cotizaciones", path: "/cotizaciones" },
+      { name: "Gestión de condiciones", path: "/condiciones" },
       { name: "Registrar Cotización", path: "/cotizaciones/registrar" },
       { name: "Stock de Piezas", path: "/stock/piezas" },
       {
@@ -94,26 +100,58 @@ const modulesByRole = {
          items: [
             { name: "Crear Trabajador", path: "/crear-trabajador" },
             { name: "Tabla de Trabajadores", path: "/tabla-trabajadores" },
+            { name: "Dar de Baja", path: "/trabajadores-dados-de-baja" },
          ],
       },
       {
-         group: "Asistencia",
+         group: "Gestión de Transporte",
          items: [
-            { name: "Encofrados ", path: "/asistencia/encofrados" },
-            {
-               name: "Andamios Eléctricos",
-               path: "/asistencia/andamios-electricos",
-            },
-            { name: "Indek Andina", path: "/asistencia/indek-andina" },
-            {
-               name: "Innova Rental",
-               path: "/innova-rental",
-            },
+            { name: "Choferes", path: "/transporte/choferes" },
+            { name: "Transportistas", path: "/transporte/transportistas" },
          ],
       },
-      { name: "Facturación", path: "/facturacion" },
+      {
+         group: "Beneficios",
+         items: [
+            { name: "Vacaciones", path: "/vacaciones" },
+            { name: "Cts", path: "/gestion-cts" },
+            { name: "Gratificacion", path: "/gratificacion" },
+            { name: "Bonos", path: "/bonos" },
+            { name: "Adelanto de sueldo", path: "/adelanto-sueldo" },
+
+         ],
+      },
+      {
+         group: "Retenciones",
+         items: [
+            { name: "Quinta Categoría", path: "/retenciones/calculoQuintaCategoria" },
+         ],
+      },
+      { name: "Asistencia", path: "/asistencia-general" },
+
+      {
+         group: "Facturación",
+         items: [
+            { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
+            { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
+            { name: "Guia de Remision", path: "/facturacion/emitir/guia" },
+            { name: "Reporte", path: "/facturacion/reportes-venta" },
+            { name: "Bandeja", path: "/facturacion/bandeja" },
+            { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
+         ],
+      },
+      {
+         group: "Planilla",
+         items: [
+            { name: "Planilla quincenal", path: "/planilla-quincenal" },
+            { name: "Planilla mensual", path: "/planilla-mensual" },
+
+         ],
+      },
+      { name: "Datos de mantenimiento", path: "/data-mantenimiento" },
+
    ],
-   Ventas: [
+   "Técnico Comercial": [
       { name: "Gestión de Clientes", path: "/gestion-clientes" },
       { name: "Gestión de Contactos", path: "/gestion-contactos" },
       { name: "Gestión de Obras", path: "/gestion-obras" },
@@ -123,19 +161,156 @@ const modulesByRole = {
       { name: "Registrar Cotización", path: "/cotizaciones/registrar" },
       { name: "Stock de Piezas", path: "/stock/piezas" },
    ],
-   "Oficina Técnica": [
+   "Jefe de OT": [
+      { name: "Centro de Atención", path: "/centro-atencion" },
+      { name: "Stock de Piezas", path: "/stock/piezas" },
+      { name: "Asistencia",path: "/asistencia-area"},
+   ],
+   "OT": [
       { name: "Centro de Atención", path: "/centro-atencion" },
       { name: "Stock de Piezas", path: "/stock/piezas" },
    ],
-   Almacén: [],
-   Administración: [],
-   Clientes: [],
+   Administración: [
+      { name: "Gestión de condiciones", path: "/condiciones" },
+      {
+         group: "Retenciones",
+         items: [
+            { name: "Quinta Categoría", path: "/retenciones/calculoQuintaCategoria" },
+         ],
+      },
+   ],
+   //!Kimberly
+   Contadora:[
+      {
+         group: "Facturación",
+         items: [
+            { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
+            { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
+            { name: "Reporte", path: "/facturacion/reportes-venta" },
+            { name: "Bandeja", path: "/facturacion/bandeja" },
+            { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
+         ],
+      },
+   ],
+   //
+   "Asistente Facturación":[
+      {
+         group: "Facturación",
+         items: [
+            { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
+            { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
+            { name: "Reporte", path: "/facturacion/reportes-venta" },
+            { name: "Bandeja", path: "/facturacion/bandeja" },
+            { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
+         ],
+      },
+   ],
+   "Jefa de Almacén":[
+      {
+         group: "Gestión de Transporte",
+         items: [
+            { name: "Choferes", path: "/transporte/choferes" },
+            { name: "Transportistas", path: "/transporte/transportistas" },
+         ],
+      },
+      {
+         group: "Facturación",
+         items: [
+              { name: "Guía de Remisión", path: "/facturacion/emitir/guia" },
+            { name: "Lista de guías", path: "/facturacion/bandeja/guia-remision?page=1&limit=10" },
+         ],
+      },
+      { name: "Asistencia",path: "/asistencia-area"},
+
+
+   ],
+   "Gerente de administración":[
+      {
+         group: "Facturación",
+         items: [
+            { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
+            { name: "Guia de Remision", path: "/facturacion/emitir/guia" },
+            { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
+            { name: "Reporte", path: "/facturacion/reportes-venta" },
+            { name: "Bandeja", path: "/facturacion/bandeja" },
+            { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
+         ],
+      },
+      {
+         group: "Gestión de Transporte",
+         items: [
+            { name: "Choferes", path: "/transporte/choferes" },
+            { name: "Transportistas", path: "/transporte/transportistas" },
+         ],
+      },
+      {         
+         name: "Asistencia del area",
+         path: "/asistencia-area",
+      },
+      { name: "Asistencia general", path: "/asistencia-general" },
+      {
+         group: "Trabajadores",
+         items: [
+            { name: "Crear Trabajador", path: "/crear-trabajador" },
+            { name: "Tabla de Trabajadores", path: "/tabla-trabajadores" },
+            { name: "Dar de Baja", path: "/trabajadores-dados-de-baja" },
+         ],
+      },
+      {   group: "Gestión de Transporte",
+         items: [
+            { name: "Choferes", path: "/transporte/choferes" },
+            { name: "Transportistas", path: "/transporte/transportistas" },
+         ],
+      },
+      {
+         group: "Beneficios",
+         items: [
+            { name: "Vacaciones", path: "/vacaciones" },
+            { name: "Cts", path: "/gestion-cts" },
+            { name: "Gratificacion", path: "/gratificacion" },
+            { name: "Bonos", path: "/bonos" },
+            { name: "Adelanto de sueldo", path: "/adelanto-sueldo" },
+
+         ],
+      },
+      {
+         group: "Retenciones",
+         items: [
+            { name: "Quinta Categoría", path: "/retenciones/calculoQuintaCategoria" },
+         ],
+      },
+      {
+         group: "Planilla",
+         items: [
+            { name: "Planilla quincenal", path: "/planilla-quincenal" },
+            { name: "Planilla mensual", path: "/planilla-mensual" },
+
+         ],
+      },
+      { name: "Datos de mantenimiento", path: "/data-mantenimiento" },
+
+
+   ],
+   "Gerente de comercialización":[
+        {         
+         name: "Asistencia",
+         path: "/asistencia-area",
+      },
+   ],
+   "Jefe montadores y operadores":[
+        {         
+         name: "Asistencia",
+         path: "/asistencia-area",
+      },
+   ]
+
 };
 
+// { name: "Guia de Remision", path: "/facturacion/emitir/guia" },
+
 const isPathActive = (currentPath, itemPath) => {
-   if (itemPath === "/" && currentPath === "/") return true;
-   if (itemPath !== "/" && currentPath.startsWith(itemPath)) return true;
-   return false;
+   const itemUrl = new URL(itemPath, window.location.origin); // para extraer pathname de itemPath
+   return currentPath.startsWith(itemUrl.pathname);
 };
 
 const getUserInitials = (name) => {
@@ -182,7 +357,7 @@ export function AppSidebar() {
          <Collapsible
             key={group.group}
             defaultOpen={hasActiveItem}
-            className="group/collapsible"
+            className="group/collapsible scroll-hidden"
          >
             <SidebarMenuItem>
                <CollapsibleTrigger asChild>
@@ -204,6 +379,7 @@ export function AppSidebar() {
                               <SidebarMenuSubButton
                                  onClick={() => navigate(subItem.path)}
                                  isActive={isActive}
+                                 className="cursor-pointer"
                               >
                                  <span>{subItem.name}</span>
                               </SidebarMenuSubButton>
@@ -218,7 +394,7 @@ export function AppSidebar() {
    };
 
    return (
-      <Sidebar collapsible="icon" variant="inset">
+      <Sidebar collapsible="icon" variant="inset" className="no-scrollbar">
          <SidebarHeader>
             <SidebarMenu>
                <SidebarMenuItem>
@@ -250,7 +426,7 @@ export function AppSidebar() {
             </SidebarMenu>
          </SidebarHeader>
 
-         <SidebarContent>
+         <SidebarContent className="no-scrollbar">
             <SidebarGroup>
                <SidebarGroupContent>
                   <SidebarMenu>

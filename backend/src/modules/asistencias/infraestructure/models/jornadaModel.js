@@ -30,7 +30,7 @@ const Jornada = sequelize.define(
          allowNull: false,
       },
       lugar: {
-         type: DataTypes.ENUM("almacen", "obra"),
+         type: DataTypes.STRING,
          allowNull: false,
       },
    },

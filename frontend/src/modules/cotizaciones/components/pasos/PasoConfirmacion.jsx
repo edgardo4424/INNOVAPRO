@@ -13,7 +13,8 @@ import BloqueInstalacion from "./paso-confirmacion/BloqueInstalacion";
 import BloqueDescuento from "./paso-confirmacion/BloqueDescuento";
 import BloqueEscaleraAcceso from "./paso-confirmacion/BloqueEscaleraAcceso";
 import BloqueEscaleraAccesoOT from "./paso-confirmacion/BloqueEscaleraAccesoOT";
-import DespieceAdicional from "./paso-confirmacion/DespieceAdicional"
+import BloqueColgantes from "./paso-confirmacion/BloqueColgantes";
+import DespieceAdicional from "./paso-confirmacion/DespieceAdicional";
 import Loader from "../../../../shared/components/Loader";
 
 // Este componente representa el quinto paso del Wizard. Muestra el resumen del despiece generado automáticamente.
@@ -24,30 +25,39 @@ import Loader from "../../../../shared/components/Loader";
 
 export default function PasoConfirmacion() {
   const { formData, setFormData, errores } = useWizardContext();
-
+  console.log("FORMDATA en PASO CONFIRMACIÓN: ", formData)
   useGenerarDespiece(formData, setFormData); // Hook personalizado para generar el despiece
   useCalculoTransporte(formData, setFormData); // Hook personalizado para calcular el transporte
 
   // Validación básica para determinar si todos los datos mínimos están listos 
-  
   const datosListos =
-    formData.uso_id &&
-    formData.zonas?.length &&
-    Array.isArray(formData.despiece) &&
-    formData.resumenDespiece !== undefined;
-
+    formData.uso.id &&
+    formData.uso.zonas?.length &&
+    (
+      (Array.isArray(formData.uso?.despiece) && formData.uso?.despiece.length > 0) ||
+      formData.uso.id === 8 // Si es caso andamios colgantes, no requiere despiece
+    ) &&
+    (
+      formData.uso.id === 8 || formData.uso.resumenDespiece !== undefined // Si no es andamio colgante, debe tener un resumen de despiece
+    )
 
   // Si el comercial desactiva los pernos, se eliminan del despiece
 
   useEffect(() => {
-    if (!formData.despiece?.length) return;
-    const despieceActualizado = formData.despiece.map(pieza => 
+    if (!formData.uso.despiece?.length) return;
+    const despieceActualizado = formData.uso.despiece.map(pieza => 
       pieza.esPerno 
-      ? { ...pieza, incluido: formData.tiene_pernos } 
+      ? { ...pieza, incluido: formData.atributos_opcionales.pernos.tiene_pernos } 
       : pieza
     );
-    setFormData(prev => ({ ...prev, despiece: despieceActualizado }));
-  }, [formData.tiene_pernos]);
+    setFormData(prev => ({ 
+      ...prev, 
+      uso: {
+        ...prev.uso,
+        despiece: despieceActualizado 
+      }
+    }));
+  }, [formData.atributos_opcionales.pernos.tiene_pernos]);
 
   if (!datosListos) return <Loader texto="Generando despiece..." />
 
@@ -55,14 +65,22 @@ export default function PasoConfirmacion() {
     <div className="paso-formulario">
       <h3>Paso 5: Confirmación Final</h3>
 
-      {/* La lógica del renderizado de este bloque se encuentra dentro del mismo */}
-      <BloquePuntales formData={formData} setFormData={setFormData} />
+      {/* Si es andamio colgante renderizamos el siguiente bloque*/}
+      {formData.uso.id === 8 && (
+        <BloqueColgantes formData={formData} setFormData={setFormData} />
+      )}
 
-      {formData.uso_id === 7 && ( // Si es caso plataforma de descarga mostrar este bloque
+      {/* La lógica del renderizado de este bloque se encuentra dentro del mismo 
+        Menos cuando el uso sea colgantes. En este caso lo evitamos directamente*/}
+      {formData.uso.id !== 8 && (
+        <BloquePuntales formData={formData} setFormData={setFormData} />   
+      )}
+
+      {formData.uso.id === 7 && ( // Si es caso plataforma de descarga mostrar este bloque
         <BloquePlataformaDescarga formData={formData} setFormData={setFormData} />
       )}
 
-      {formData.uso_id === 4 && ( // Si es caso escuadras mostrar este bloque
+      {(formData.uso.id === 4 || formData.uso.id === 11) && ( // Si es caso escuadras mostrar este bloque
         <BloqueEscuadras formData={formData} setFormData={setFormData} />
       )}
 
@@ -70,15 +88,17 @@ export default function PasoConfirmacion() {
         Si es escalera de acceso en alquiler generado por el comercial con CP0,
         renderizamos este bloque
       */}
-      {formData.uso_id === 3 && formData.tipo_cotizacion === "Alquiler" && !formData.id && (
+      {formData.uso.id === 3 && formData.cotizacion.tipo === "Alquiler" && !formData.cotizacion.id && (
         <BloqueEscaleraAcceso formData={formData} setFormData={setFormData} />
       )}
 
       {/* Siempre mostraremos el resumen del despiece con sus condiciones dentro del mismo bloque */}
-      <ResumenDespiece formData={formData} />
-      
+      {formData.uso.id !== 8 && ( // Si no es andamio colgante, que es el unico uso que no requiere despiece
+        <ResumenDespiece formData={formData} />
+      )}
+
       {/* Si es escalera de acceso generado por Despiece de Oficina Técnica */}
-      {formData.uso_id === 3 && formData.id && (
+      {formData.uso.id === 3 && formData.cotizacion.id && (
         <BloqueEscaleraAccesoOT formData={formData} setFormData={setFormData} />
       )}
 
@@ -86,11 +106,14 @@ export default function PasoConfirmacion() {
       <div className="wizard-section">
         <label>¿Desea agregar más piezas al despiece?</label>
         <select
-          value={formData.agregar_mas_piezas ?? ""}
+          value={formData.uso.agregar_mas_piezas ?? ""}
           onChange={(e) =>
             setFormData((prev) => ({
               ...prev,
-              agregar_mas_piezas: e.target.value === "true",
+              uso: {
+                ...prev.uso,
+                agregar_mas_piezas: e.target.value === "true",
+              }
             }))
           }
         >
@@ -104,32 +127,32 @@ export default function PasoConfirmacion() {
       </div>
 
       {/* En caso la sección previa sea afirmativa, mostramos este bloque */}
-      {formData.agregar_mas_piezas && (
+      {formData.uso.agregar_mas_piezas && (
         <DespieceAdicional formData={formData} setFormData={setFormData} />
       )}
 
-      {/*
-        Siempre que exista pernos en el despiece renderiza el BloquePernos.
-        Además siempre consultaremos mediante el BloqueTransporte si se desea incluir o no.
-      */}
+      {/* Siempre que exista pernos en el despiece renderiza el BloquePernos. */}
       <BloquePernos formData={formData} setFormData={setFormData} errores={errores} />
-      <BloqueTransporte formData={formData} setFormData={setFormData} errores={errores} />
+
+      {/* Consultaremos mediante el BloqueTransporte si se desea incluir o no. */}
+      {formData.uso.id !== 8 && ( // Si no es andamio colgante, que es el unico uso que no requiere esta pregunta
+        <BloqueTransporte formData={formData} setFormData={setFormData} errores={errores} />
+      )}
       
       {/* Solo para los usos que sean instalables renderizamos el BloqueInstalacion */}
-      {USOS_INSTALABLES.includes(formData.uso_id) && (
+      {USOS_INSTALABLES.includes(formData.uso.id) && (
         <BloqueInstalacion formData={formData} setFormData={setFormData} errores={errores} />
       )}
 
       {/* Solo para los usos que dependan exclusivamente del despiece se permitirá hacer descuento en % */}
-      {!USOS_SIN_DESCUENTO.includes(formData.uso_id) && (
+      {!USOS_SIN_DESCUENTO.includes(formData.uso.id) && (
         <BloqueDescuento formData={formData} setFormData={setFormData} errores={errores} />
       )}
 
       {/*En caso de que la cotización sea Escalera de Acceso en Venta para que apliquen descuento*/}
-      {formData.uso_id === 3 && formData.tipo_cotizacion === "Venta" && (
+      {formData.uso.id === 3 && formData.cotizacion.tipo === "Venta" && (
         <BloqueDescuento formData={formData} setFormData={setFormData} errores={errores} />
       )}
-      {console.log("FormData en Paso Confirmación viniendo de OT: ", formData)}
 
     </div>
   );

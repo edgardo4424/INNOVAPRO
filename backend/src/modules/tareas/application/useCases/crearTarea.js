@@ -1,5 +1,5 @@
 const Tarea = require("../../domain/entities/tarea"); // Importamos la clase Tarea
-const db = require("../../../../models");
+const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 
 const sequelizeObraRepository = require("../../../obras/infrastructure/repositories/sequelizeObraRepository"); // Importamos el repositorio de obras
 const obraRepository = new sequelizeObraRepository(); // Instancia del repositorio de obras

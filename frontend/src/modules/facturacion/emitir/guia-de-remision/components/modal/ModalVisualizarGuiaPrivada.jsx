@@ -1,0 +1,535 @@
+import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext"; // Importamos el contexto correcto
+import {
+  formatDateTime,
+  getModalidadTrasladoDescription,
+  getMotivoTrasladoDescription,
+  getTipoDocCliente,
+  getTipoDocGuiaDescription,
+} from "@/modules/facturacion/utils/formateos";
+import { Eye, X } from "lucide-react"; // Solo necesitamos Eye y X para previsualizar
+import { useState } from "react";
+import ModalEnviarGuia from "./ModalEnviarGuia";
+
+export default function ModalVisualizarGuiaPrivada() {
+  // ?? Obtenemos el objeto 'guiaTransporte' de nuestro contexto
+  const {
+    guiaTransporte,
+    guiaDatosPrivado,
+    guiaDatosPublico,
+    guiaDatosInternos,
+    tipoGuia,
+    filiales,
+  } = useGuiaTransporte();
+
+  //? Filtro para obtener la filial que coincide con el ruc de la factura
+  const filialActual = filiales.find(
+    (filial) => filial.ruc === guiaTransporte.empresa_Ruc,
+  );
+
+  // ?? Estado para controlar la visibilidad del modal
+  const [open, setOpen] = useState(false);
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  // ?? Funciones para abrir y cerrar el modal
+  const closeModal = () => {
+    setIsOpen(false);
+  };
+
+  const openModal = () => {
+    setIsOpen(true);
+  };
+
+  return (
+    <>
+      {/* Botón para abrir el modal de previsualización */}
+      <button
+        type="button"
+        onClick={openModal}
+        className="focus:ring-opacity-75 flex items-center justify-center gap-x-2 rounded-lg bg-green-600 px-6 py-3 text-lg font-semibold text-white shadow-md transition duration-300 ease-in-out hover:bg-green-700 hover:shadow-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
+      >
+        <Eye size={24} />
+        <span className="hidden md:block">Previsualizar </span>
+      </button>
+
+      {/* Overlay y Contenido del Modal */}
+      {isOpen && (
+        <div className="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs">
+          <div className="animate-scale-in relative max-h-[95vh] w-full max-w-5xl overflow-y-auto rounded-2xl border border-gray-100 bg-white p-1 shadow-2xl">
+            {/* Botón para cerrar el modal */}
+            <button
+              className="absolute top-2 right-2 cursor-pointer rounded-full p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none"
+              onClick={closeModal}
+              aria-label="Cerrar"
+            >
+              <X size={24} />
+            </button>
+
+            <div className="p-4 md:px-8 md:pt-8">
+              {/* --- Detalle de la Guía --- */}
+              <div className="space-y-2 md:space-y-6">
+                {/* Encabezado de la Empresa y Documento */}
+                <div className="rounded-xl border border-gray-200 bg-white">
+                  <div className="grid grid-cols-1 items-start gap-6 px-6 py-6 md:grid-cols-4">
+                    <div className="col-span-2">
+                      <h1 className="text-lg font-bold text-blue-700 md:text-3xl">
+                        {filialActual.razon_social}
+                      </h1>
+                      <p className="text-xs md:text-sm">{filialActual.ruc}</p>
+                      <p className="text-xs md:text-sm">
+                        DIRECCIÓN: {filialActual.direccion}
+                      </p>{" "}
+                      {/* Placeholder */}
+                    </div>
+                    <div className="col-span-2 flex justify-end space-y-2 md:space-y-0 md:text-center">
+                      <div>
+                        <p className="text-sm font-bold md:text-lg">
+                          {getTipoDocGuiaDescription(guiaTransporte.tipo_Doc)}
+                        </p>
+                        <p className="text-sm font-extrabold tracking-wide text-gray-700 md:text-2xl">
+                          {guiaTransporte.serie}-{guiaTransporte.correlativo}
+                        </p>
+                        <p className="text-xs md:text-sm">
+                          Fecha de Emisión:{" "}
+                          {formatDateTime(guiaTransporte.fecha_Emision)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Información del Cliente/Destinatario */}
+                <div className="rounded-xl border border-gray-200 bg-white">
+                  <div className="grid grid-cols-1 p-4 md:p-6">
+                    <div>
+                      <h3 className="mb-3 text-sm font-bold text-gray-600">
+                        DATOS DEL DESTINATARIO:
+                      </h3>
+
+                      <div className="grid grid-cols-1 gap-4 text-sm text-gray-800 md:grid-cols-2">
+                        {/* Razón Social y Dirección */}
+                        <div className="grid grid-cols-1 gap-y-2 gap-x-2 md:col-span-1 md:grid-cols-[auto_1fr]">
+                          <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                            Razón Social/Nombre:
+                          </span>
+                          <span className="text-xs font-medium break-words md:text-sm">
+                            {guiaTransporte?.cliente_Razon_Social || "N/A"}
+                          </span>
+
+                          <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                            Dirección:
+                          </span>
+                          <span className="text-xs font-medium break-words md:text-sm">
+                            {guiaTransporte?.cliente_Direccion || "N/A"}
+                          </span>
+                        </div>
+
+                        {/* Documento */}
+                        <div className="grid grid-cols-2 gap-x-2 gap-y-2">
+                          <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                            Tipo Doc.:
+                          </span>
+                          <span className="text-xs font-medium md:text-sm">
+                            {getTipoDocCliente(
+                              guiaTransporte?.cliente_Tipo_Doc,
+                            ) || "N/A"}
+                          </span>
+
+                          <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                            Nro. Doc.:
+                          </span>
+                          <span className="text-xs font-medium md:text-sm">
+                            {guiaTransporte?.cliente_Num_Doc || "N/A"}
+                          </span>
+                        </div>
+
+                        {/* Obra y Contrato */}
+                        <div className="grid grid-cols-2 gap-x-2 gap-y-2">
+                          <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                            Obra:
+                          </span>
+                          <span className="text-xs font-medium break-words md:text-sm">
+                            {guiaTransporte?.obra || "N/A"}
+                          </span>
+
+                          <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                            Contrato:
+                          </span>
+                          <span className="text-xs font-medium break-words md:text-sm">
+                            {guiaTransporte?.nro_contrato || "N/A"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Datos del Traslado */}
+
+                <div className="rounded-xl border border-gray-200 bg-white">
+                  <div className="p-4 md:p-6">
+                    <div>
+                      <h3 className="mb-3 text-sm font-bold text-gray-600">
+                        DATOS DEL TRASLADO:
+                      </h3>
+                      <div className="grid grid-cols-1 space-y-1 text-sm text-gray-800 md:grid-cols-2">
+                        <div className="grid grid-cols-1 gap-2 text-sm md:grid-cols-[auto_1fr]">
+                          {/* //?privado */}
+                          {tipoGuia === "transporte-privado" && (
+                            <>
+                              <span className="text-xs text-gray-700 md:text-sm">
+                                Mod. de Traslado:
+                              </span>
+                              <span className="text-xs md:text-sm">
+                                {" "}
+                                {getModalidadTrasladoDescription(
+                                  guiaDatosPrivado.guia_Envio_Mod_Traslado,
+                                )}
+                              </span>
+
+                              <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                                Placa del Vehiculo:
+                              </span>
+                              <span className="text-xs font-medium md:text-sm">
+                                {guiaTransporte.guia_Envio_Vehiculo_Placa ||
+                                  "N/A"}
+                              </span>
+
+                              <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                                Motivo de Traslado:
+                              </span>
+                              <span className="text-xs font-medium md:text-sm">
+                                {getMotivoTrasladoDescription(
+                                  guiaDatosPrivado.guia_Envio_Cod_Traslado,
+                                )}
+                              </span>
+                            </>
+                          )}
+                          {tipoGuia === "transporte-publico" && (
+                            <>
+                              <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                                Descripción de Traslado:
+                              </span>
+                              <span className="text-xs font-medium md:text-sm">
+                                {" "}
+                                {guiaDatosPublico.guia_Envio_Des_Traslado}
+                              </span>
+
+                              <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                                Modalidad de Traslado:
+                              </span>
+                              <span className="text-xs font-medium md:text-sm">
+                                {guiaDatosPublico.guia_Envio_Mod_Traslado ||
+                                  "N/A"}
+                              </span>
+
+                              <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                                Motivo de Traslado:
+                              </span>
+                              <span className="text-xs font-medium md:text-sm">
+                                {getMotivoTrasladoDescription(
+                                  guiaDatosPublico.guia_Envio_Cod_Traslado,
+                                )}
+                              </span>
+                            </>
+                          )}
+                          {tipoGuia === "traslado-misma-empresa" && (
+                            <>
+                              <span className="font-semibold text-gray-700">
+                                Destino de Traslado:
+                              </span>
+                              <span className="text-xs font-medium md:text-sm">
+                                {" "}
+                                {getModalidadTrasladoDescription(
+                                  guiaDatosInternos.guia_Envio_Des_Traslado,
+                                )}
+                              </span>
+
+                              <span className="text-xs text-gray-700 md:text-sm">
+                                Modalidad de Traslado:
+                              </span>
+                              <span className="text-xs md:text-sm">
+                                {guiaDatosInternos.guia_Envio_Mod_Traslado ||
+                                  "N/A"}
+                              </span>
+
+                              <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                                Motivo de Traslado:
+                              </span>
+                              <span className="text-xs md:text-sm">
+                                {getMotivoTrasladoDescription(
+                                  guiaDatosInternos.guia_Envio_Cod_Traslado,
+                                )}
+                              </span>
+                            </>
+                          )}
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-2 text-sm md:grid-cols-[auto_1fr]">
+                          <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                            Feca de Traslado:
+                          </span>
+                          <span className="text-xs font-medium md:text-sm">
+                            {formatDateTime(
+                              guiaTransporte.guia_Envio_Fec_Traslado,
+                            )}
+                          </span>
+                          <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                            Peso Total Bruto:
+                          </span>
+                          <span className="text-xs font-medium md:text-sm">
+                            {guiaTransporte.guia_Envio_Peso_Total || "0"}{" "}
+                            {guiaTransporte.guia_Envio_Und_Peso_Total || "N/A"}
+                          </span>
+                          <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                            Placa:
+                          </span>
+                          <span className="text-xs font-medium md:text-sm">
+                            {guiaTransporte?.guia_Envio_Vehiculo_Placa || "0"}
+                          </span>
+                          <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                            Tuce o Certificado Vehicular:
+                          </span>
+                          <span className="text-xs font-medium md:text-sm">
+                            {guiaTransporte?.nroCirculacion || "-"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-gray-200 bg-white">
+                  <div className="grid grid-cols-1 p-4 md:grid-cols-2 md:p-6">
+                    {/* Punto de Partida */}
+                    <div>
+                      <h3 className="mb-3 text-sm font-bold text-gray-600">
+                        PUNTO DE PARTIDA:
+                      </h3>
+                      <div className="space-y-1 text-sm text-gray-800">
+                        <div className="grid grid-cols-1 gap-2 text-sm md:grid-cols-[auto_1fr]">
+                          <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                            Ubigeo:
+                          </span>
+                          <span className="text-xs font-medium md:text-sm">
+                            {guiaTransporte.guia_Envio_Partida_Ubigeo || "—"}
+                          </span>
+                          <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                            Dirección:
+                          </span>
+                          <span className="text-xs font-medium md:text-sm">
+                            {guiaTransporte.guia_Envio_Partida_Direccion || "—"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Punto de Llegada */}
+                    <div>
+                      <h3 className="mb-3 text-sm font-bold text-gray-600">
+                        PUNTO DE LLEGADA:
+                      </h3>
+                      <div className="space-y-1 text-sm text-gray-800">
+                        <div className="grid grid-cols-1 gap-2 text-sm md:grid-cols-[auto_1fr]">
+                          <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                            Ubigeo:
+                          </span>
+                          <span className="text-xs font-medium md:text-sm">
+                            {guiaTransporte.guia_Envio_Llegada_Ubigeo || "—"}
+                          </span>
+                          <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                            Dirección:
+                          </span>
+                          <span className="text-xs font-medium md:text-sm">
+                            {guiaTransporte.guia_Envio_Llegada_Direccion || "—"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Datos del Conductor (Chofer) */}
+                {tipoGuia == "transporte-publico" && (
+                  <div className="rounded-xl border border-gray-200 bg-white">
+                    <div className="p-4 md:p-6">
+                      <h3 className="mb-3 text-sm font-bold text-gray-600">
+                        DATOS DEL TRANSPORTISTA:
+                      </h3>
+                      {guiaDatosPublico.transportista && (
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                          <div className="grid grid-cols-1 gap-2 text-sm md:grid-cols-[auto_1fr]">
+                            <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                              Tipo Doc.:
+                            </span>
+                            <span className="text-xs font-medium md:text-sm">
+                              {getTipoDocCliente(
+                                guiaDatosPublico.transportista.tipo_doc,
+                              )}
+                            </span>
+                            <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                              Nro. Doc.:
+                            </span>
+                            <span className="text-xs font-medium md:text-sm">
+                              {guiaDatosPublico.transportista.nro_doc || "N/A"}
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-1 gap-2 text-sm md:grid-cols-[auto_1fr]">
+                            <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                              Razón Social:
+                            </span>
+                            <span className="text-xs font-medium md:text-sm">
+                              {guiaDatosPublico.transportista.razon_Social ||
+                                "N/A"}
+                            </span>
+                            <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                              Nro. MTC:
+                            </span>
+                            <span className="text-xs font-medium md:text-sm">
+                              {guiaDatosPublico.transportista.nro_mtc || "N/A"}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Datos del Conductor (Chofer) */}
+                {Array.isArray(guiaTransporte?.chofer) &&
+                  guiaTransporte.chofer.length > 0 && (
+                    <div className="rounded-xl border border-gray-200 bg-white">
+                      <div className="p-4 md:p-6">
+                        <h3 className="mb-3 text-sm font-bold text-gray-600">
+                          DATOS DEL CHOFER:
+                        </h3>
+
+                        {(() => {
+                          const chofer = guiaTransporte.chofer[0];
+
+                          return (
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                              <div className="grid grid-cols-1 gap-2 text-sm md:grid-cols-[auto_1fr]">
+                                <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                                  Tipo Doc.:
+                                </span>
+                                <span className="text-xs font-medium md:text-sm">
+                                  {getTipoDocCliente(chofer?.tipo_doc) || "N/A"}
+                                </span>
+
+                                <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                                  Nro. Doc.:
+                                </span>
+                                <span className="text-xs font-medium md:text-sm">
+                                  {chofer?.nro_doc || "N/A"}
+                                </span>
+                              </div>
+
+                              <div className="grid grid-cols-1 gap-2 text-sm md:grid-cols-[auto_1fr]">
+                                <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                                  Nombre Apellido:
+                                </span>
+                                <span className="text-xs font-medium md:text-sm">
+                                  {(chofer?.nombres || "") +
+                                    " " +
+                                    (chofer?.apellidos || "")}
+                                </span>
+
+                                <span className="text-xs font-semibold text-gray-700 md:text-sm">
+                                  Nro. Licencia:
+                                </span>
+                                <span className="text-xs font-medium md:text-sm">
+                                  {chofer?.licencia || "N/A"}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })()}
+                      </div>
+                    </div>
+                  )}
+
+                {/* Tabla de Detalle de Productos */}
+                <div className="mb-6">
+                  <div className="overflow-x-auto rounded-md border border-gray-200">
+                    <table className="min-w-full bg-white">
+                      <thead className="bg-gray-100">
+                        <tr>
+                          <th className="border-b px-4 py-2 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase">
+                            Código
+                          </th>
+                          <th className="border-b px-4 py-2 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase">
+                            Descripción
+                          </th>
+                          <th className="border-b px-4 py-2 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase">
+                            Unidad
+                          </th>
+                          <th className="border-b px-4 py-2 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase">
+                            Cant.
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {guiaTransporte.detalle &&
+                        guiaTransporte.detalle.length > 0 ? (
+                          guiaTransporte.detalle.map((item, index) => (
+                            <tr
+                              key={index}
+                              className="border-b last:border-b-0 hover:bg-gray-50"
+                            >
+                              <td className="px-4 py-2 text-xs md:text-sm">
+                                {item.cod_Producto || "N/A"}
+                              </td>
+                              <td className="px-4 py-2 text-xs md:text-sm">
+                                {item.descripcion || "N/A"}
+                              </td>
+                              <td className="px-4 py-2 text-xs md:text-sm">
+                                {item.unidad || "N/A"}
+                              </td>
+                              <td className="px-4 py-2 text-xs md:text-sm">
+                                {item.cantidad || "0"}
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td
+                              colSpan="4"
+                              className="py-4 text-center text-gray-500"
+                            >
+                              No hay productos en el detalle.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Sección de Observacion */}
+                <div className="">
+                  <h3 className="md:text-md mb-2 border-b pb-1 text-sm font-bold text-gray-600">
+                    OBSERVACION:
+                  </h3>
+                  <div className="rounded-md border border-gray-200 bg-white p-4 text-sm text-gray-800">
+                    {guiaTransporte.observacion ||
+                      "No hay observacion registradas."}
+                  </div>
+                </div>
+              </div>
+
+              {/* --- Fin Detalle de la Guía --- */}
+              <div className="flex w-full justify-end py-5">
+                <ModalEnviarGuia
+                  open={open}
+                  setOpen={setOpen}
+                  ClosePreviu={closeModal}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}

@@ -35,9 +35,9 @@ export default function TablaContactos({
       { id: "nombre", label: "Nombre" },
       { id: "email", label: "Email" },
       { id: "telefono", label: "Teléfono" },
-      { id: "cargo", label: "Cargo" },
+      { id: "cargo", label: "Cargo" },/* 
       { id: "clientes", label: "Clientes" },
-      { id: "obras", label: "Obras" },
+      { id: "obras", label: "Obras" }, */
       { id: "acciones", label: "Acciones" },
    ];
 
@@ -88,7 +88,7 @@ export default function TablaContactos({
          grow: 1,
          omit: !visibleColumns.cargo
       },
-      {
+      /* {
          name: "Clientes",
          selector: (row) => row.clientes_asociados ?? "",
          sortable: true,
@@ -127,7 +127,7 @@ export default function TablaContactos({
             </Tooltip>
          ),
          omit: !visibleColumns.obras
-      },
+      }, */
       {
          name: "Acciones",
          cell: (row) => (

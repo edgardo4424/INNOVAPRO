@@ -1,4 +1,4 @@
-const db = require("../../../../models")
+const db = require("../../../../database/models")
 
 async function mapearValoresAtributos({ uso_id, despiece_id, zonas }) {
 

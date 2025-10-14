@@ -14,7 +14,7 @@ import { Briefcase } from "lucide-react";
 import { useState } from "react";
 import { useGastos } from "../hooks/useGastos";
 
-const GastosModal = ({ trabajador, asistencia, onUpdateGastos }) => {
+const GastosModal = ({ trabajador, asistencia, onUpdateGastos,inputsDeshabilitados }) => {
 
    const { nuevaDescripcion,
       setNuevaDescripcion,
@@ -23,9 +23,9 @@ const GastosModal = ({ trabajador, asistencia, onUpdateGastos }) => {
       agregarGasto,
       eliminarGasto } = useGastos(asistencia, onUpdateGastos)
    return (
-      <AlertDialog>
-         <AlertDialogTrigger asChild>
-            <Button variant={'outline'} size={'sm'}>
+      <AlertDialog >
+         <AlertDialogTrigger asChild >
+            <Button variant={'outline'} size={'sm'}    disabled={inputsDeshabilitados} >
                <Briefcase className="h-3 w-3" />
                Gastos ({asistencia.gastos.length})
             </Button>

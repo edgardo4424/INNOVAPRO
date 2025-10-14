@@ -17,7 +17,7 @@ export default async function generarPDFAndamio(doc, data) {
   generarHeader(doc, data); // Siempre fijo arriba en la primera página
 
   let currentY = 50;
-  console.log("generarPDFPuntales", data);
+
   if (data.cotizacion?.tipo_servicio === "Venta") {
     // Si es una cotización de venta, usamos el cuerpo específico para venta
     currentY = await generarCuerpoPuntalesVenta(doc, data, currentY); // Genera el cuerpo del PDF para escuadras en venta

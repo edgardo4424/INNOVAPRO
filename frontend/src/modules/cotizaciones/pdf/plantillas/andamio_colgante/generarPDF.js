@@ -18,8 +18,10 @@ export default async function generarPDFColgante(doc, data) {
   generarHeader(doc, data);
 
   let currentY = 50;
-
-  const plan = data.tipo_plan_colgante?.toUpperCase();
+  console.log("Generando PDF para Andamio Colgante con datos:", data);
+  // Lo ideal es mejorar la estructura de data para que sea más clara
+  //const plan = data.tipo_plan_colgante?.toUpperCase();
+  const plan = data.zonas?.[0]?.atributos?.[0]?.tipoServicio?.toUpperCase() || "BASICO";
 
   switch (plan) {
     case "BASICO":

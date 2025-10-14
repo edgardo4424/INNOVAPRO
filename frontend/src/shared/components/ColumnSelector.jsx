@@ -1,3 +1,4 @@
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -54,17 +55,17 @@ export function ColumnSelector({
    };
 
    return (
-      <Dialog open={open} onOpenChange={setOpen}>
-         <DialogTrigger asChild>
+      <AlertDialog open={open} onOpenChange={setOpen}>
+         <AlertDialogTrigger asChild>
             <Button variant="outline" size="sm" className={`mb-6 ${className}`}>
                <Settings className="h-4 w-4 mr-2 " />
                Columnas
             </Button>
-         </DialogTrigger>
-         <DialogContent className="!max-w-80">
-            <DialogHeader>
-               <DialogTitle>Seleccionar columnas visibles</DialogTitle>
-            </DialogHeader>
+         </AlertDialogTrigger>
+         <AlertDialogContent className="!max-w-80">
+            <AlertDialogHeader>
+               <AlertDialogTitle>Seleccionar columnas visibles</AlertDialogTitle>
+            </AlertDialogHeader>
             <div className="py-4 space-y-2">
                <div className="flex items-center space-x-2 mb-2 border-b pb-2">
                   <Checkbox
@@ -105,7 +106,7 @@ export function ColumnSelector({
                </Button>
                <Button onClick={handleSave}>Guardar</Button>
             </div>
-         </DialogContent>
-      </Dialog>
+         </AlertDialogContent>
+      </AlertDialog>
    );
 }

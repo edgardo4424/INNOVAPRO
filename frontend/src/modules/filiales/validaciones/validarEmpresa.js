@@ -16,9 +16,13 @@ export function validarEmpresa(empresa) {
     if (!empresa.representante_legal || empresa.representante_legal.trim() === "") {
       errores.representante_legal = "El representante legal es obligatorio";
     }
+
+     if (!empresa.tipo_documento || empresa.representante_legal.trim() === "") {
+      errores.representante_legal = "El tipo de documento es obligatorio";
+    }
   
-    if (!empresa.dni_representante || empresa.dni_representante.length !== 8) {
-      errores.dni_representante = "El DNI del representante debe tener 8 dígitos";
+    if (!empresa.dni_representante || empresa.dni_representante.trim() === "") {
+      errores.dni_representante = "El número de documento es obligatorio";
     }
   
     if (!empresa.cargo_representante || empresa.cargo_representante.trim() === "") {

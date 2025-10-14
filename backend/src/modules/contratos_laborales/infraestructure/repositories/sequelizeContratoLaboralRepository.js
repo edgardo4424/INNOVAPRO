@@ -1,0 +1,161 @@
+const { Op } = require("sequelize");
+const { ContratoLaboral } = require("../models/contratoLaboralModel");
+const { Trabajador } = require("../../../trabajadores/infraestructure/models/trabajadorModel");
+
+// Helper
+function periodoMes(anio, mes) {
+  const A = Number(anio), M = Number(mes);
+  if (!Number.isInteger(A) || !Number.isInteger(M) || M < 1 || M > 12) {
+    throw new Error(`periodoMes inválido: anio=${anio}, mes=${mes}`);
+  }
+  const pad2 = (n) => String(n).padStart(2, '0');
+  const ymd  = (d) => `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+  const desdeDate = new Date(A, M - 1, 1); // primer día del mes
+  const hastaDate = new Date(A, M, 0);     // último día real (28/29/30/31)
+  return { desde: ymd(desdeDate), hasta: ymd(hastaDate) };
+}
+
+class SequelizeContratoLaboralRepository {
+   async obtenerContratosActivosPorDniEnMes(dni, anio, mes, transaction = null) {
+      const { desde, hasta } = periodoMes(anio, mes);
+
+      const options = {
+         where: {
+            estado: 1,
+            [Op.and]: [
+               {fecha_inicio: { [Op.lte]: hasta } },
+               { [Op.or]: [{ fecha_fin: null}, {fecha_fin: { [Op.gte]: desde } }] },
+            ],
+         },
+         include: [
+            {
+               model: Trabajador,
+               as: "trabajador",
+               attributes: ["id", "numero_documento"],
+               where: { numero_documento: dni },
+               required: true,
+            },
+         ],
+         order: [["fecha_inicio", "ASC"]],
+      };
+      if (transaction) options.transaction = transaction;
+      
+      return await ContratoLaboral.findAll(options);
+   }
+   async obtenerContratosActivosPorTrabajadorEnMes(trabajadorId, anio, mes, transaction = null) {
+      const { desde, hasta } = periodoMes(anio, mes);
+
+      const options = {
+         where: {
+            estado: 1,
+            trabajador_id: trabajadorId,
+            [Op.and]: [
+               { fecha_inicio: { [Op.lte]: hasta } },
+               { [Op.or]: [{ fecha_fin: null }, { fecha_fin: { [Op.gte]: desde } }] },
+            ],
+         },
+         order: [["fecha_inicio", "ASC"]],
+      };
+      if(transaction) options.transaction = transaction;
+
+      return await ContratoLaboral.findAll(options);
+   }
+
+  async crear(contratoLaboralData, transaction = null) {
+    const options = {};
+    if (transaction) {
+      options.transaction = transaction;
+    }
+    const contratoLaboral = await ContratoLaboral.create(
+      contratoLaboralData,
+      options
+    );
+    return contratoLaboral;
+  }
+  async editarContratoLaboral(contratoLaboralData, transaction = null) {
+    const options = { where: { id: contratoLaboralData.contrato_id } };
+    if (transaction) {
+      options.transaction = transaction;
+    }
+
+    const contratoLaboral = await ContratoLaboral.update(
+      contratoLaboralData,
+      options
+    );
+    return contratoLaboral;
+  }
+  async obtenerContratosPorTrabajadorId(id, transaction = null) {
+    const options = {
+      where: {
+        trabajador_id: id,
+        estado: 1,
+      },
+    };
+    if (transaction) {
+      options.transaction = transaction;
+    }
+    const contratos = await ContratoLaboral.findAll(options);
+    return contratos;
+  }
+  async eliminarContratoPorId(id, transaction = null) {
+    const options = {
+      where: { id },
+    };
+    if (transaction) options.transaction = transaction;
+    await ContratoLaboral.update({ estado: 0 }, options);
+  }
+
+ async obtenerUltimoContratoVigentePorTrabajadorId(id, transaction = null) {
+  const hoy = new Date().toISOString().split("T")[0];
+
+  const options = {
+    where: {
+      trabajador_id: id,
+      estado: 1,
+      fecha_inicio: { [Op.lte]: hoy },
+      fecha_fin: { [Op.gte]: hoy }
+    },
+    order: [["fecha_inicio", "DESC"]],
+  };
+
+  if (transaction) {
+    options.transaction = transaction;
+  }
+
+  const contrato = await ContratoLaboral.findOne(options);
+  
+  return contrato.get({plain:true});
+}
+
+
+async obtenerHistoricoContratosDesdeUltimaAlta(trabajador_id, transaction = null) {
+  const options = {
+    where: {
+      trabajador_id,
+      estado: 1,
+    },
+    order: [['fecha_inicio', 'DESC']],
+  };
+
+  if (transaction) {
+    options.transaction = transaction;
+  }
+
+  const contratos = await ContratoLaboral.findAll(options);
+
+  if (!contratos || contratos.length === 0) return [];
+
+  const contratosFiltrados = [];
+
+  for (const contrato of contratos) {
+    // Si hubo baja, ya no consideramos más contratos hacia atrás
+    if (contrato.fecha_terminacion_anticipada) break;
+
+    contratosFiltrados.push(contrato);
+  }
+
+  return contratosFiltrados;
+}
+}
+
+module.exports = SequelizeContratoLaboralRepository;

@@ -16,6 +16,7 @@ module.exports = async (datoslogin, usuarioRepository ) => {
     }
 
     const usuario = await usuarioRepository.obtenerPorEmail(email); // Buscamos el usuario por email
+
     if (!usuario) {
         return { codigo: 401, respuesta: { mensaje: "Credenciales inválidas" } }; // Retornamos el error si el usuario no existe
     }
@@ -25,12 +26,26 @@ module.exports = async (datoslogin, usuarioRepository ) => {
         return { codigo: 401, respuesta: { mensaje: "Credenciales inválidas" } }; // Retornamos el error si la contraseña no es correcta
     }
 
+    const cargoId = usuario.trabajador?.cargo_id;
+
+    if (!cargoId) {
+        return { codigo: 401, respuesta: { mensaje: "Credenciales inválidas" } }; // Retornamos el error si el usuario no tiene un cargo asociado
+    }
+
+    const cargoUsuario = await usuarioRepository.obtenerCargoPorId(cargoId);
+
+    if (!cargoUsuario) {
+        return { codigo: 401, respuesta: { mensaje: "Credenciales inválidas" } }; // Retornamos el error si el cargo no existe
+    }
+
+    console.log('cargoUsuario', cargoUsuario);
+
     const token = jwt.sign(
-        { id: usuario.id, rol: usuario.rol },
+        { id: usuario.id, rol: cargoUsuario.nombre },
         process.env.JWT_SECRET, // Usamos la variable de entorno para la clave secreta del token
-        { expiresIn: '8h' } // El token expirará en 8 horas
+        { expiresIn: process.env.EXPIRE_IN } // El token expirará en 8 horas
     )
 
-    return { codigo: 200, respuesta: { token, usuario: { id: usuario.id, nombre: usuario.nombre, email: usuario.email,id_chat:usuario.id_chat, rol: usuario.rol } } }; // Retornamos el token y los datos del usuario
+    return { codigo: 200, respuesta: { token, usuario: { id: usuario.id, nombre: usuario.trabajador.nombres+" "+usuario.trabajador.apellidos, email: usuario.email,id_chat:usuario.id_chat, rol: cargoUsuario.nombre } } }; // Retornamos el token y los datos del usuario
 
 }
