@@ -11,6 +11,7 @@ const ContratoController={
             const contratoResponse= await crearContrato(contratoRepository,payload);
             res.status(contratoResponse.codigo).json(contratoResponse.respuesta)
         } catch (error) {
+            console.log("Ocurrio el siguiente error: ",error)
             res.status(500).json({error:error.message})
         }
     },
@@ -21,6 +22,7 @@ const ContratoController={
             const contratoResponse=await actualizarContrato(contratoRepository,payload);
             res.status(contratoResponse.codigo).json(contratoResponse.respuesta)
         } catch (error) {
+            console.log("Ocurrio el siguiente error: ",error)
             res.status(500).json({error:error.message})
         }
     }

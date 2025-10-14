@@ -10,8 +10,6 @@ module.exports =async(contratoRepository,payload,transaction=null)=>{
         }
     }
     const contrato_validado=contrato.get(true);
-    console.log("Data validada en actualizar contrato: ",contrato_validado);
-
     await contratoRepository.actualizarContrato(contrato_validado,transaction);
     return{
         codigo:200,

@@ -17,7 +17,7 @@ class Contrato{
         if(!this.notas_legales){
             errores.push("Ingrese las notas legales")
         }
-
+        return errores;
     }
     
     get(editar=false){

@@ -9,9 +9,7 @@ module.exports = async (contratoRepository,payload,transaction=null)=>{
             respuesta:errores
         }
     }
-    const contrato_validado=contrato.get();
-    console.log("Data validada en creacion de contrato: ",contrato_validado);
-    
+    const contrato_validado=contrato.get();    
     const contrato_creado=await contratoRepository.crearContrato(contrato_validado,transaction);
     return{
         codigo:200,
