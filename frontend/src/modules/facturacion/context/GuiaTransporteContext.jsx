@@ -163,7 +163,7 @@ export function GuiaTransporteProvider({ children }) {
       const totalEnUnidad = fromKg(totalKg, unidadTotal);
 
       // 3) Guardar
-      setPesoTotalCalculado(round(totalEnUnidad, 3));
+      setPesoTotalCalculado(round(totalEnUnidad, 4));
     };
 
     actualizarPesoTotal();
