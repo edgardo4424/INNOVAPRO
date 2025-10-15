@@ -4,6 +4,14 @@
 module.exports = {
   async up (queryInterface, Sequelize) {
     const queries = [
+      `DELETE FROM stock`,
+      
+    
+      `DELETE FROM piezas WHERE (id = '308')`,
+      `DELETE FROM piezas WHERE (id = '309')`,
+      `DELETE FROM piezas WHERE (id = '310')`,
+      `DELETE FROM piezas WHERE (id = '311')`,
+
       `UPDATE piezas SET item = 'EN.0015', peso_kg = '5.14' WHERE (id = '304')`,
       `UPDATE piezas SET item = 'EN.0020', peso_kg = '4.28' WHERE (id = '305')`,
       `UPDATE piezas SET item = 'EN.0025', peso_kg = '2.00' WHERE (id = '306')`,
@@ -63,13 +71,8 @@ module.exports = {
       
     ];
 
-    /*
     
-      `DELETE FROM piezas WHERE (id = '308')`,
-      `DELETE FROM piezas WHERE (id = '309')`,
-      `DELETE FROM piezas WHERE (id = '310')`,
-      `DELETE FROM piezas WHERE (id = '311')`
-    */
+    
     for (const sql of queries) {
       await queryInterface.sequelize.query(sql);
     }

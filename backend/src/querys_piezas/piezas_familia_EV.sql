@@ -148,3 +148,124 @@ UPDATE piezas SET item = 'EV.0860', descripcion = 'PERNO HEX HILO CORRIDO G.8.8 
 UPDATE piezas SET item = 'EV.0865', descripcion = 'PERNO HEX HILO CORRIDO G.8.8 M8 x 25 (RIEL C/ TUERCA NYLON)', peso_kg = '0.95' WHERE (id = '538');
 UPDATE piezas SET item = 'EV.0840', descripcion = 'PERNO HEX G.8.8 M8 x 70 (BARANDA C/ TUERCA DE NYLON)', peso_kg = '0.95' WHERE (id = '536');
 UPDATE piezas SET item = 'EV.0870', descripcion = 'PERNO \"J\" G.8.8  M10 x 80 (P/ BARRAS LIMITADORAS)', peso_kg = '0.95' WHERE (id = '534');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+UPDATE piezas SET descripcion = 'EXTENCION BASE ELEVADOR 1070mm x 770mm - C/ANGULO' WHERE (id = '429');
+UPDATE piezas SET descripcion = 'EXTENCION BASE ELEVADOR 1070mm x 770mm - S/ANGULO' WHERE (id = '430');
+UPDATE piezas SET descripcion = 'EXTENCION BASE P/ RESORTES - 1570mm', peso_kg = '158.81' WHERE (id = '435');
+UPDATE piezas SET peso_kg = '222.34' WHERE (id = '486');
+UPDATE piezas SET peso_kg = '1387.50', precio_venta_dolares = '7500.00', precio_venta_soles = '27750.00', precio_alquiler_soles = '1387.50' WHERE (id = '575');
+UPDATE piezas SET item = 'EV.0285', descripcion = 'CABINA [320] ELEVADOR - IZQUIERDA' WHERE (id = '382');
+UPDATE piezas SET item = 'EV.0290', descripcion = 'CABINA [250] ELEVADOR - DERECHA' WHERE (id = '383');
+INSERT INTO piezas (item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles) VALUES ('EV.0295', '10', 'CABINA [250] ELEVADOR - IZQUIERDA', '3049.20', '16482.16', '60984.00', '3049.20');
+UPDATE piezas SET peso_kg = '158.81' WHERE (id = '415');
+INSERT INTO piezas (item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles) VALUES ('EV.0425', '10', 'BOTIQUIN PRIMEROS AUXILIOS', '17.50', '94.59', '350.00', '17.50');
+
+
+DELETE FROM piezas WHERE (id = '539');
+DELETE FROM piezas WHERE (id = '543');
+DELETE FROM piezas WHERE (id = '544');
+DELETE FROM piezas WHERE (id = '399');
+DELETE FROM piezas WHERE (id = '401');
+DELETE FROM piezas WHERE (id = '424');
+DELETE FROM piezas WHERE (id = '425');
+DELETE FROM piezas WHERE (id = '445');
+DELETE FROM piezas WHERE (id = '446');
+DELETE FROM piezas WHERE (id = '447');
+DELETE FROM piezas WHERE (id = '448');
+DELETE FROM piezas WHERE (id = '449');
+DELETE FROM piezas WHERE (id = '450');
+DELETE FROM piezas WHERE (id = '451');
+DELETE FROM piezas WHERE (id = '452');
+DELETE FROM piezas WHERE (id = '453');
+DELETE FROM piezas WHERE (id = '454');
+DELETE FROM piezas WHERE (id = '455');
+DELETE FROM piezas WHERE (id = '456');
+DELETE FROM piezas WHERE (id = '457');
+DELETE FROM piezas WHERE (id = '458');
+DELETE FROM piezas WHERE (id = '459');
+DELETE FROM piezas WHERE (id = '460');
+DELETE FROM piezas WHERE (id = '461');
+DELETE FROM piezas WHERE (id = '462');
+DELETE FROM piezas WHERE (id = '463');
+DELETE FROM piezas WHERE (id = '464');
+DELETE FROM piezas WHERE (id = '465');
+DELETE FROM piezas WHERE (id = '466');
+DELETE FROM piezas WHERE (id = '467');
+DELETE FROM piezas WHERE (id = '468');
+DELETE FROM piezas WHERE (id = '469');
+DELETE FROM piezas WHERE (id = '470');
+DELETE FROM piezas WHERE (id = '471');
+DELETE FROM piezas WHERE (id = '472');
+DELETE FROM piezas WHERE (id = '473');
+DELETE FROM piezas WHERE (id = '480');
+DELETE FROM piezas WHERE (id = '482');
+DELETE FROM piezas WHERE (id = '487');
+DELETE FROM piezas WHERE (id = '488');
+DELETE FROM piezas WHERE (id = '492');
+DELETE FROM piezas WHERE (id = '493');
+DELETE FROM piezas WHERE (id = '496');
+DELETE FROM piezas WHERE (id = '504');
+DELETE FROM piezas WHERE (id = '519');
+DELETE FROM piezas WHERE (id = '520');
+
+
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0540', '10', 'CERCO [320+250] PUERTA MANTENIMIENTO (L=0.74m - H=2.00m)', '152.46', '824.11', '3049.20', '152.46', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0545', '10', 'CERCO [320+250] ESQUINA LADO PUERTA PRINCIPAL (L=0.50m - H=2.00m) - DERECHA', '222.34', '1201.82', '4446.75', '222.34', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0550', '10', 'CERCO [320+250] ESQUINA LADO PUERTA PRINCIPAL (L=0.50m - H=2.00m) - IZQUIERDA', '222.34', '1201.82', '4446.75', '222.34', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0555', '10', 'CERCO [320+250] ESQUINA LADO PUERTA MANTENIMIENTO (L=0.44m - H=2.00m) - DERECHA', '222.34', '1201.82', '4446.75', '222.34', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0560', '10', 'CERCO [320+250] ESQUINA LADO PUERTA MANTENIMIENTO (L=0.44m - H=2.00m) - IZQUIERDA', '222.34', '1201.82', '4446.75', '222.34', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0565', '10', 'CERCO [320+250] LATERAL (L=1.20m - H=2.00m)', '317.63', '1716.89', '6352.50', '317.63', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0570', '10', 'CERCO [320] PUERTA PRINCIPAL (L=1.81m - H=3.30m) - DERECHA', '412.91', '2231.96', '8258.25', '412.91', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0575', '10', 'CERCO [320] PUERTA PRINCIPAL (L=1.81m - H=3.30m) - IZQUIERDA', '412.91', '2231.96', '8258.25', '412.91', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0580', '10', 'CERCO [320] LADO PUERTA MANTENIMIENTO (L=1.74m - H=2.00m) - DERECHA', '192.80', '1042.16', '3856.00', '192.80', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0585', '10', 'CERCO [320] LADO PUERTA MANTENIMIENTO (L=1.74m - H=2.00m) - IZQUIERDA', '192.80', '1042.16', '3856.00', '192.80', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0590', '10', 'CERCO [320] P/ TABLERO FUERZA (L=0.70m - H=2.00m)', '60.35', '326.21', '1206.98', '60.35', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0595', '10', 'CERCO [320] LATERAL (L=1.15m - H=2.00m)', '317.63', '1716.89', '6352.50', '317.63', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0600', '10', 'CERCO [320] LATERAL C/ MUESCA P/ RIEL (L=1.15m - H=2.00m) - DERECHA', '317.63', '1716.89', '6352.50', '317.63', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0605', '10', 'CERCO [320] LATERAL C/ MUESCA P/ RIEL (L=1.15m - H=2.00m) - IZQUIERDA', '317.63', '1716.89', '6352.50', '317.63', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0610', '10', 'CERCO [320] SOPORTE PUERTA-TABLERO - DERECHA', '101.64', '549.41', '2032.80', '101.64', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0615', '10', 'CERCO [320] SOPORTE PUERTA-TABLERO - IZQUIERDA', '101.64', '549.41', '2032.80', '101.64', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0620', '10', 'CERCO [320] LORO CON RESORTE PARA CERCO', '0.00', '0.00', '0.00', '0.00', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0625', '10', 'CERCO [250] PUERTA PRINCIPAL (L=1.81m - H=3.30m) - DERECHA', '412.91', '2231.96', '8258.25', '412.91', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0630', '10', 'CERCO [250] PUERTA PRINCIPAL (L=1.81m - H=3.30m) - IZQUIERDA', '412.91', '2231.96', '8258.25', '412.91', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0635', '10', 'CERCO [250] P/ TABLERO FUERZA (L=0.70m - H=2.00m)', '60.35', '326.21', '1206.98', '60.35', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0640', '10', 'CERCO [250] LADO PUERTA MANTENIMIENTO (L=1.74m - H=2.00m) - DERECHA', '317.63', '1716.89', '6352.50', '317.63', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0645', '10', 'CERCO [250] LADO PUERTA MANTENIMIENTO (L=1.74m - H=2.00m) - IZQUIERDA', '317.63', '1716.89', '6352.50', '317.63', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0650', '10', 'CERCO [250] LATERAL (L=1.30m - H=2.00m)', '317.63', '1716.89', '6352.50', '317.63', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0655', '10', 'CERCO [250] LATERAL TIPO 1 (L=0.80m - H=2.00m)', '152.46', '824.11', '3049.20', '152.46', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0660', '10', 'CERCO [250] LATERAL TIPO 2 (L=0.80m - H=2.00m) - DERECHA', '152.46', '824.11', '3049.20', '152.46', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0665', '10', 'CERCO [250] LATERAL TIPO 2 (L=0.80m - H=2.00m) - IZQUIERDA', '152.46', '824.11', '3049.20', '152.46', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0670', '10', 'CERCO [250] LATERAL (L=0.66m - H=2.00m)', '222.34', '1201.82', '4446.75', '222.34', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0675', '10', 'CERCO [250] LATERAL C/ MUESCA P/ RIEL (L=0.80m - H=2.00m) - DERECHA', '152.46', '824.11', '3049.20', '152.46', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0680', '10', 'CERCO [250] LATERAL C/ MUESCA P/ RIEL (L=0.80m - H=2.00m) - IZQUIERDA', '152.46', '824.11', '3049.20', '152.46', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0685', '10', 'CERCO [250] SOPORTE PUERTA-TABLERO - DERECHA', '101.64', '549.41', '2032.80', '101.64', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0690', '10', 'CERCO [250] SOPORTE PUERTA-TABLERO - IZQUIERDA', '101.64', '549.41', '2032.80', '101.64', '0');
+INSERT INTO piezas (id, item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES (NULL, 'EV.0695', '10', 'CERCO [250] LORO CON RESORTE PARA CERCO', '0.00', '0.00', '0.00', '0.00', '0');
