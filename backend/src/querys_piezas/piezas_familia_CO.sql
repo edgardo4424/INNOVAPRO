@@ -1,3 +1,5 @@
+DELETE FROM stock;
+DELETE FROM piezas WHERE (id = '152');
 UPDATE piezas SET item = 'CO.0010' WHERE (id = '149');
 UPDATE piezas SET item = 'CO.0015' WHERE (id = '150');
 UPDATE piezas SET item = 'CO.0030' WHERE (id = '153');

@@ -1,3 +1,10 @@
+DELETE FROM stock;
+
+DELETE FROM piezas WHERE (id = '308');
+DELETE FROM piezas WHERE (id = '309');
+DELETE FROM piezas WHERE (id = '310');
+DELETE FROM piezas WHERE (id = '311');
+
 UPDATE piezas SET item = 'EN.0015', peso_kg = '5.14' WHERE (id = '304');
 UPDATE piezas SET item = 'EN.0020', peso_kg = '4.28' WHERE (id = '305');
 UPDATE piezas SET item = 'EN.0025', peso_kg = '2.00' WHERE (id = '306');
@@ -54,8 +61,3 @@ UPDATE piezas SET item = 'EN.0270', peso_kg = '79.41' WHERE (id = '360');
 UPDATE piezas SET item = 'EN.0275', peso_kg = '2.70' WHERE (id = '361');
 UPDATE piezas SET item = 'EN.0280', peso_kg = '7.70', precio_venta_soles = '153.99' WHERE (id = '362');
 UPDATE piezas SET item = 'EN.0285', peso_kg = '3.84' WHERE (id = '363');
-
-DELETE FROM piezas WHERE (`id` = '308');
-DELETE FROM piezas WHERE (`id` = '309');
-DELETE FROM piezas WHERE (`id` = '310');
-DELETE FROM piezas WHERE (`id` = '311');
