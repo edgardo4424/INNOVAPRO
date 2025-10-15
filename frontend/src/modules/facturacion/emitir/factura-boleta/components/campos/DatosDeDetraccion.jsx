@@ -66,9 +66,12 @@ const DatosDeDetraccion = () => {
     }));
   };
 
-
   const activar = () => {
     setActivarMonto(!activarMonto);
+  };
+
+  const redondeoNumero = (numero) => {
+    return Math.ceil(numero);
   };
 
   // ?? Función para resetear el monto de detracción al valor calculado por defecto
@@ -95,7 +98,7 @@ const DatosDeDetraccion = () => {
       }
       setDetraccion((prev) => ({
         ...prev,
-        detraccion_mount: nuevoMontoCalculado,
+        detraccion_mount: redondeoNumero(nuevoMontoCalculado),
       }));
     }
   };
@@ -118,7 +121,7 @@ const DatosDeDetraccion = () => {
       ...prev,
       detraccion_percent: Number(value),
       detraccion_cod_bien_detraccion: "",
-      detraccion_mount: rawDetraccionMount,
+      detraccion_mount: redondeoNumero(rawDetraccionMount),
     }));
 
     setDetraccionesValores(
@@ -146,7 +149,7 @@ const DatosDeDetraccion = () => {
 
       setDetraccion((prev) => ({
         ...prev,
-        detraccion_mount: rawDetraccionMount,
+        detraccion_mount: redondeoNumero(rawDetraccionMount),
       }));
     }
   }, [sub_Total, detraccion.detraccion_percent, factura.tipo_Moneda]);
@@ -233,15 +236,14 @@ const DatosDeDetraccion = () => {
                 </Select>
               </div>
 
-              <div className="justify-self-end">
+              <div className="">
                 {/* Monto de detracción */}
                 <Label htmlFor="detraccion_mount">
                   Monto de Detracción{" "}
                   {tipo_Moneda == "PEN" ? "(S/)" : "(SOLES)"}
                   <span className="text-red-500">*</span>
                 </Label>
-                <div className="justi flex items-center gap-x-1">
-                  <div className="relative">
+                <div className="">
                     <Input
                       type="number"
                       id="detraccion_mount"
@@ -249,26 +251,20 @@ const DatosDeDetraccion = () => {
                       step="0.01"
                       min="0"
                       value={detraccion.detraccion_mount || ""}
-                      disabled={!activarMonto}
-                      onChange={(e) =>
-                        handleInputChange("detraccion_mount", e.target.value)
-                      }
-                      className=" no-spinners"
+                      // disabled={!activarMonto}
+                      // onChange={(e) =>
+                        // handleInputChange("detraccion_mount", e.target.value)
+                      // }
+                      readOnly
+                      className="no-spinners"
                     />
-                    <button
-                      onClick={activar}
-                      className={`absolute top-1/2 right-2 -translate-y-1/2 transform ${activarMonto ? "text-innova-blue" : "text-gray-400"}`}
-                    >
-                      <SquarePen />
-                    </button>
-                  </div>
-                  <button
+                  {/* <button
                     // Se cambió onClick={activar} a la nueva función de reseteo
                     onClick={resetearMontoDetraccion}
                     className="bg-innova-blue hover:bg-innova-blue-hover cursor-pointer rounded-md p-1 text-white transition-all duration-150"
                   >
                     <RotateCcw className="size-5 rotate-90 transition-transform duration-250 hover:-rotate-90" />
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>
