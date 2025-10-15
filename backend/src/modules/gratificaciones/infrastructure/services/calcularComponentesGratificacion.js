@@ -23,6 +23,8 @@ const {
 const {
   umbral_monto_hora_extra,
 } = require("../../../../shared/utils/constantes.");
+const calcularBonosEnGratificacion = require("./calcularBonosEnGratificacion");
+const conteoBonosMeses = require("./conteoBonosMeses");
 
 const asistenciaRepository = new SequelizeAsistenciaRepository();
 const bonoRepository = new SequelizeBonoRepository();
@@ -90,14 +92,22 @@ async function calcularComponentesGratificaciones(
             const bonosDelTrabajador = bonosDelTrabajadorPorFecha.map(
               (b) => b.dataValues
             );
+
             const asistenciasDelTrabajador = asistencias.map(
               (b) => b.dataValues
             );
 
-            const promedioBonoObra = calculaPromedioBonos(
+            /* const promedioBonoObra = calculaPromedioBonos(
               bonosDelTrabajador,
               6
-            );
+            ); */
+
+            let promedioBonoObra = 0;
+
+             const computarBonos = conteoBonosMeses(bonosDelTrabajador);
+         if (computarBonos.length > 0) {
+            promedioBonoObra = calcularBonosEnGratificacion(bonosDelTrabajador, computarBonos)|| 0;
+         }
 
             const valor_hora_extra =
               p.sueldo_base >= umbral_monto_hora_extra
@@ -247,6 +257,7 @@ async function calcularComponentesGratificaciones(
             const info_detalle = mapearInfoDetalleGratificacion({
               asistencias: asistenciasDelTrabajador,
               bonos: bonosDelTrabajador,
+              tipos_admitidos: computarBonos,
             });
 
             return {

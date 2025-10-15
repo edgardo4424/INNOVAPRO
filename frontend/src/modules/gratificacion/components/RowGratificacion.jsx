@@ -96,19 +96,22 @@ try {
                       <table className="mt-2 w-full">
                         <thead>
                           <tr className="border-b border-gray-200">
-                            <th className="text-left px-2 py-1">Fecha</th>
-                            <th className="text-left px-2 py-1">Monto</th>
+                            <th className="px-2 py-1 text-center">Fecha</th>
+                            <th className="px-2 py-1 text-center">Tipo</th>
+                            <th className="px-2 py-1 text-center">Monto</th>
                           </tr>
                         </thead>
                         <tbody>
                           {infoDetalle?.info_bonos?.map(i => (
                             <tr key={i.mes} className="">
                               <td className="px-2 py-1 text-center">{formatearFecha(i.fecha)}</td>
+                              <td className="px-2 py-1 text-center">{i.tipo}</td>
                               <td className="px-2 py-1 text-center">{i.monto}</td>
                             </tr>
                           ))}
                           <tr className="border-t border-gray-200">
                               <td className="px-2 py-1 text-center">Total</td>
+                              <td className="px-2 py-1 text-center"></td>
                               <td className="px-2 py-1 text-center">
                                 {(infoDetalle?.info_bonos
                                   ?.reduce((total, item) => total + +(item.monto), 0)).toFixed(2)}

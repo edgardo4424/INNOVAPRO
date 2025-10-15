@@ -302,6 +302,7 @@ class SequelizeCtsRopository {
             )
          ).valor
       );
+      
       const MONTO_NO_COMPUTABLE = Number(
          (
             await dataMantenimientoRepository.obtenerPorCodigo(
