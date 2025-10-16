@@ -252,7 +252,7 @@ export default function AppRoutes() {
                      {/*    //************************INICIO-FACTURACION************************* */}
 
 
-                     <Route element={<RoleGuard roles={["CEO", "Gerente de administración","Jefa de Almacén","Asistente Facturación","Contadora"]} />}>
+                     <Route element={<RoleGuard roles={["CEO", "Gerente de administración","Jefa de Almacén","Asistente Facturación","Contadora","Auxiliar de oficina"]} />}>
 
                         <Route
                            path="facturacion/emitir/*"
@@ -296,7 +296,7 @@ export default function AppRoutes() {
                      {/*    //************************FINAL-FACTURACION************************* */}
 
                      {/* // ! RUTAS DE TRANSPORTE */}
-                     <Route element={<RoleGuard roles={["CEO","Jefa de Almacén","Gerente de administración"]} />}>
+                     <Route element={<RoleGuard roles={["CEO","Jefa de Almacén","Gerente de administración","Auxiliar de oficina"]} />}>
                         <Route
                            path="transporte/*"
                            element={
@@ -306,7 +306,7 @@ export default function AppRoutes() {
                      </Route>
                      {/* // ! RUTAS DE TRANSPORTE FIN */}
 
-                     <Route element={<RoleGuard roles={["CEO","Jefa de Almacén","Gerente de administración"]} />}>
+                     <Route element={<RoleGuard roles={["CEO","Jefa de Almacén","Gerente de administración",,"Auxiliar de oficina"]} />}>
                         <Route
                            path="pase-pedidos"
                            element={

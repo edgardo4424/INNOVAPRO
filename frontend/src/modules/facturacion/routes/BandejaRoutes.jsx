@@ -69,6 +69,7 @@ const BandejaRoutes = () => {
                 "Jefa de Almacén",
                 "Contadora",
                 "Asistente Facturación",
+                "Auxiliar de oficina"
               ]}
             />
           }

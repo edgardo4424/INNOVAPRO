@@ -9,11 +9,9 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext";
+import { formatDateTime } from "@/modules/facturacion/utils/formateos";
 import { ListTodo, LoaderCircle, Search, SquarePen } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Calendar22 } from "../../factura-boleta/components/Calendar22";
-import { formatDateTime } from "@/modules/facturacion/utils/formateos";
-import { obtenerFechaActual } from "@/modules/facturacion/utils/fechaEmisionActual";
 
 const InfDocumentoForm = () => {
   const {

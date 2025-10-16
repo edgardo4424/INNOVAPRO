@@ -44,7 +44,7 @@ const BandejaRoutes = () => {
         <Route
           element={
             <RoleGuard
-              roles={["CEO", "Gerente de administración", "Jefa de Almacén"]}
+              roles={["CEO", "Gerente de administración", "Jefa de Almacén","Auxiliar de oficina"]}
             />
           }
         >
