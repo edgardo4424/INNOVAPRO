@@ -1,6 +1,7 @@
 const { GuiaRemision } = require("../models/guia-remision/guiaRemisionModel");
 const { GuiaDetalles } = require("../models/guia-remision/guiaDetallesModel");
 const { GuiaChoferes } = require("../models/guia-remision/guiaChoferesModel");
+const { GuiaTranportista } = require("../models/guia-remision/guiaTransportistaModel");
 const { Filial } = require("../../../filiales/infrastructure/models/filialModel");
 const { Ubigeo } = require("../../../ubigeo/infrastructure/models/ubigeoModel");
 const { Pieza } = require("../../../piezas/infrastructure/models/piezaModel");
@@ -92,7 +93,23 @@ class SequelizeGuiaRemisionRepository {
             }
             createdGuia.choferes = createdChoferes;
 
-            // * 4. Crear la SunatRespuesta
+
+            // * 4. Crear los Choferes de la Guia, solo si se proporcionaron choferes
+            const transportista = await GuiaTranportista.create(
+                {
+                    guia_id: guia.id,
+                    ...data.transportista,
+                },
+                { transaction }
+            );
+            if (!transportista) {
+                throw new Error(
+                    `No se pudo crear el transportista.`
+                );
+            }
+            createdGuia.transportista = transportista;
+
+            // * 5. Crear la SunatRespuesta
             const sunat = await SunatRespuesta.create(
                 {
                     guia_id: guia.id,

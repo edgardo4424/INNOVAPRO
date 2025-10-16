@@ -1,8 +1,14 @@
+const emitirGuia = require("../../application/emitirGuia");
+
 const verificarEstadoSunat = require("../../application/verificarEstadoSunat");
 
 const sequelizFactilizaRepository = require("../../infrastructure/repositories/sequelizeFactilizaRepository");
 
+const SequelizeGuiaRemisionRepository = require("../../../facturacion/infrastructure/repositories/sequelizeGuiaRemisionRepository");
+
 const factilizaRepository = new sequelizFactilizaRepository()
+
+const guiaRemisionRepository = new SequelizeGuiaRemisionRepository()
 
 
 const factilizaController = {
@@ -27,7 +33,9 @@ const factilizaController = {
 
     async emitirGuia(req, res) {
         try {
-            res.status(200).json({ estado: true, mensaje: "Guia emitida correctamente" })
+            console.log("dwawa")
+            const { codigo, respuesta } = await emitirGuia(req.body, guiaRemisionRepository)
+            res.status(codigo).json(respuesta)
         } catch (error) {
             res.status(500).json({ error: error.message, estado: false })
         }

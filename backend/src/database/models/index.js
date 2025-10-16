@@ -227,6 +227,9 @@ db.guia_detalles = GuiaDetalles
 const { GuiaChoferes } = require('../../modules/facturacion/infrastructure/models/guia-remision/guiaChoferesModel')
 db.guia_choferes = GuiaChoferes
 
+const { GuiaTranportista } = require('../../modules/facturacion/infrastructure/models/guia-remision/guiaTransportistaModel')
+db.guia_transportista = GuiaTranportista
+
 const { Vehiculos } = require('../../modules/transporte/insfrastructure/models/vehiculosModel')
 db.vehiculos = Vehiculos
 
@@ -338,6 +341,7 @@ if (db.forma_pago_factura.associate) db.forma_pago_factura.associate(db);
 if (db.legend_factura.associate) db.legend_factura.associate(db)
 if (db.guias_de_remision.associate) db.guias_de_remision.associate(db)
 if (db.guia_detalles.associate) db.guia_detalles.associate(db)
+if (db.guia_transportista.associate) db.guia_transportista.associate(db)
 if (db.guia_choferes.associate) db.guia_choferes.associate(db)
 if (db.transportistas.associate) db.transportistas.associate(db)
 if (db.vehiculos.associate) db.vehiculos.associate(db)
