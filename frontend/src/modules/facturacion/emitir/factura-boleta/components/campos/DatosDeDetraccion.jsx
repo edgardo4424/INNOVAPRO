@@ -71,7 +71,8 @@ const DatosDeDetraccion = () => {
   };
 
   const redondeoNumero = (numero) => {
-    return Math.ceil(numero);
+    const decimal = numero - Math.floor(numero);
+    return decimal > 0.4499999 ? Math.ceil(numero) : Math.floor(numero);
   };
 
   // ?? Función para resetear el monto de detracción al valor calculado por defecto
@@ -107,14 +108,14 @@ const DatosDeDetraccion = () => {
     let rawDetraccionMount;
     if (factura.tipo_Moneda === "PEN") {
       rawDetraccionMount = Number(
-        ((montoBase * Number(detraccion.detraccion_percent)) / 100).toFixed(2),
+        ((montoBase * Number(detraccion.detraccion_percent)) / 100),
       );
     } else {
       rawDetraccionMount = Number(
         (
           (montoBaseDolares * Number(detraccion.detraccion_percent)) /
           100
-        ).toFixed(2),
+        ),
       );
     }
     setDetraccion((prev) => ({
@@ -134,16 +135,14 @@ const DatosDeDetraccion = () => {
       let rawDetraccionMount;
       if (factura.tipo_Moneda === "PEN") {
         rawDetraccionMount = Number(
-          ((montoBase * Number(detraccion.detraccion_percent)) / 100).toFixed(
-            2,
-          ),
+          ((montoBase * Number(detraccion.detraccion_percent)) / 100),
         );
       } else {
         rawDetraccionMount = Number(
           (
             (montoBaseDolares * Number(detraccion.detraccion_percent)) /
             100
-          ).toFixed(2),
+          ),
         );
       }
 
@@ -244,20 +243,20 @@ const DatosDeDetraccion = () => {
                   <span className="text-red-500">*</span>
                 </Label>
                 <div className="">
-                    <Input
-                      type="number"
-                      id="detraccion_mount"
-                      placeholder="Ej: 120.00"
-                      step="0.01"
-                      min="0"
-                      value={detraccion.detraccion_mount || ""}
-                      // disabled={!activarMonto}
-                      // onChange={(e) =>
-                        // handleInputChange("detraccion_mount", e.target.value)
-                      // }
-                      readOnly
-                      className="no-spinners"
-                    />
+                  <Input
+                    type="number"
+                    id="detraccion_mount"
+                    placeholder="Ej: 120.00"
+                    step="0.01"
+                    min="0"
+                    value={detraccion.detraccion_mount || ""}
+                    // disabled={!activarMonto}
+                    // onChange={(e) =>
+                    // handleInputChange("detraccion_mount", e.target.value)
+                    // }
+                    readOnly
+                    className="no-spinners"
+                  />
                   {/* <button
                     // Se cambió onClick={activar} a la nueva función de reseteo
                     onClick={resetearMontoDetraccion}

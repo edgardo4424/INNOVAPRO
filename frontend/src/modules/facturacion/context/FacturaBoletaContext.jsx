@@ -328,9 +328,18 @@ export function FacturaBoletaProvider({ children }) {
         index < prevFactura.detalle.length
       ) {
         nuevoDetalle = [...prevFactura.detalle];
-        nuevoDetalle[index] = productDataToSave;
+        nuevoDetalle[index] = {
+          ...productDataToSave,
+          descripcion: productDataToSave.descripcion.toUpperCase(),
+        };
       } else {
-        nuevoDetalle = [...prevFactura.detalle, productDataToSave];
+        nuevoDetalle = [
+          ...prevFactura.detalle,
+          {
+            ...productDataToSave,
+            descripcion: productDataToSave.descripcion.toUpperCase(),
+          },
+        ];
       }
       return {
         ...prevFactura,
