@@ -10,8 +10,16 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext";
 import { formatDateTime } from "@/modules/facturacion/utils/formateos";
-import { ListTodo, LoaderCircle, Search, SquarePen } from "lucide-react";
+import {
+  Construction,
+  ListTodo,
+  LoaderCircle,
+  Pickaxe,
+  Search,
+  SquarePen,
+} from "lucide-react";
 import { useEffect, useState } from "react";
+import ModalObras from "../components/modal/ModalObras";
 
 const InfDocumentoForm = () => {
   const {
@@ -32,6 +40,7 @@ const InfDocumentoForm = () => {
   } = useGuiaTransporte();
 
   const [listaCorrelativos, setListaCorrelativos] = useState([]);
+  const [openModalObras, setOpenModalObras] = useState(false);
 
   // ? ... otros estados
   const [mostrarPendientes, setMostrarPendientes] = useState(false);
@@ -155,8 +164,6 @@ const InfDocumentoForm = () => {
     guiaTransporte.serie,
     correlativosPendientes,
   ]);
-
-
 
   return (
     <div className="p-4 sm:p-6 lg:px-8 lg:py-4">
@@ -387,14 +394,18 @@ const InfDocumentoForm = () => {
           >
             Obra
           </Label>
-          <Input
-            type="text"
-            id="obra"
-            name="obra"
-            value={obra}
-            onChange={handleChange}
-            className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
-          />
+          <div className="flex gap-x-2">
+            <Input
+              type="text"
+              id="obra"
+              name="obra"
+              value={obra}
+              onChange={handleChange}
+              className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+            />
+
+            <ModalObras open={openModalObras} setOpen={setOpenModalObras} />
+          </div>
         </div>
 
         <div className="col-span-1 md:col-span-2 lg:col-span-1">
