@@ -23,6 +23,8 @@ import {
    Receipt,
    Truck,
    Building,
+   BaggageClaim,
+   Shuffle,
 } from "lucide-react";
 import {
    Sidebar,
@@ -71,7 +73,8 @@ const iconMap = {
    "Facturación": Receipt,
    "Gestión de Condiciones": ShieldCheck,
    "Gestión de Transporte": Truck,
-   "Asistencia general":Building
+   "Asistencia general":Building,
+   "Pase Pedidos":Shuffle
 };
 
 const modulesByRole = {
@@ -129,6 +132,7 @@ const modulesByRole = {
       },
       { name: "Asistencia", path: "/asistencia-general" },
 
+      { name: "Pase Pedidos", path: "/pase-pedidos" },
       {
          group: "Facturación",
          items: [

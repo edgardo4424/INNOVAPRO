@@ -87,7 +87,7 @@ const BandejaRoutes = lazy(() =>
    import("../modules/facturacion/routes/BandejaRoutes")
 );
 
-const Pedidos = lazy(() =>
+const PorEmitir = lazy(() =>
    import("../modules/facturacion/pages/Pedidos")
 );
 
@@ -107,6 +107,11 @@ const GestionGratificacion = lazy(() =>
 const GestionPlanillaQuincenal = lazy(() =>
    import("../modules/planilla/pages/GestionPlanillaQuincenal")
 );
+
+const PasePedidos = lazy(() =>
+   import("../modules/pasePedidos/pages/PasePedidos")
+);
+
 
 //* Facturacion
 const CalculoQuintaCategoria = lazy(() =>
@@ -263,7 +268,7 @@ export default function AppRoutes() {
 
                         <Route
                            path="facturacion/lista-pedidos"
-                           element={<Pedidos />}
+                           element={<PorEmitir />}
                         />
 
                         <Route
@@ -300,6 +305,15 @@ export default function AppRoutes() {
                         />
                      </Route>
                      {/* // ! RUTAS DE TRANSPORTE FIN */}
+
+                     <Route element={<RoleGuard roles={["CEO","Jefa de Almacén","Gerente de administración"]} />}>
+                        <Route
+                           path="pase-pedidos"
+                           element={
+                              <PasePedidos />
+                           }
+                        />
+                     </Route>
 
 
                      <Route element={<RoleGuard roles={["CEO","Gerente de administración"]} />}>

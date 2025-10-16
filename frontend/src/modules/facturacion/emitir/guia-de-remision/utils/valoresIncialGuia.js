@@ -86,7 +86,7 @@ const choferInicialPrivado = {
 const detalleInicial = {
     index: null,
     unidad: "KGM",
-    cantidad: "",
+    cantidad: null,
     cod_Producto: "",
     descripcion: "",
 };
