@@ -10,8 +10,6 @@ const trabajadorRepository = new SequelizeTrabajadorRepository();
 module.exports = async function registrarTrabajadorConContrato(data) {
    const transaction = await sequelize.transaction();
 
-   console.log('data', data);
-
    try {
 
       // 1. Crear trabajador
@@ -33,7 +31,6 @@ module.exports = async function registrarTrabajadorConContrato(data) {
          };
       }
 
-      console.log('resultadoTrabajador', resultadoTrabajador);
       const trabajador_id = resultadoTrabajador.respuesta.trabajador.id;
       if (!trabajador_id) {
          await transaction.rollback();

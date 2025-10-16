@@ -54,6 +54,9 @@ const {
 } = require("../utils/ajustarMesesDiasPorFaltasCTS");
 const { calcularTiempoLaborado } = require("../utils/calcularTiempoEnEmpresa");
 
+const calcularBonosEnLiquidacion = require("../utils/calcularBonosEnLiquidacion");
+const conteoBonosMesesLiquidacion = require("../utils/conteoBonosMesesLiquidacion");
+
 module.exports = async function darBajaTrabajador(dataBody) {
   const transaction = await sequelize.transaction();
 
@@ -105,7 +108,6 @@ module.exports = async function darBajaTrabajador(dataBody) {
       .map((contrato) => contrato.get({ plain: true }))
       ?.filter((c) => c.tipo_contrato == "PLANILLA");
 
-    console.log("contratosDelTrabajador", contratosDelTrabajador);
 
     //* Comparar si la fecha de baja es menor a la fecha de fin contrato, tomar la fecha de baja como fecha_terminacion_anticipada
     //* sino tomar la fecha fin contrato como fecha_terminacion_anticipada
@@ -118,7 +120,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
 
     if (fechaBaja.isAfter(fechaFinContrato, "day")) {
       //* Si fecha_baja es mayor a la fechaFinContrato
-      await transaction.commit();
+      await transaction.rollback();
       return {
         codigo: 400,
         respuesta: {
@@ -149,11 +151,6 @@ module.exports = async function darBajaTrabajador(dataBody) {
           };
         }
       }
-    );
-
-    console.log(
-      "contratosParaCalcularTiempoLaborado",
-      contratosParaCalcularTiempoLaborado
     );
 
     //* Calculando tiempo laborado
@@ -299,7 +296,17 @@ module.exports = async function darBajaTrabajador(dataBody) {
       (b) => b.dataValues
     );
 
-    promedioBonoObra = calculaPromedioBonos(bonosDelTrabajador, 6) || 0;
+    console.log('holaaaaaaaaaaa');
+    
+    const computarBonos = conteoBonosMesesLiquidacion(bonosDelTrabajador);
+    console.log('computar bonos', computarBonos);
+    if (computarBonos.length > 0) {
+      promedioBonoObra = calcularBonosEnLiquidacion(bonosDelTrabajador, computarBonos)|| 0;
+    }
+
+    console.log('promedio bonos', promedioBonoObra);
+
+    //promedioBonoObra = calculaPromedioBonos(bonosDelTrabajador, 6) || 0;
 
     //! 10. Calcular la remuneracion computable (OJOOOOOOOO)
     remuneracionComputable =
@@ -308,7 +315,6 @@ module.exports = async function darBajaTrabajador(dataBody) {
       promedioHorasExtras +
       promedioBonoObra;
 
-    console.log("Remuneracion computable: ", remuneracionComputable);
 
     //! 6. Verificar si el trabajador cumple con los beneficios (minimo 1 mes en la empresa)
 
@@ -323,6 +329,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
 
       let periodo = mes_gratificacion <= 6 ? "JULIO" : "DICIEMBRE";
 
+    
       // Verificar si ya hay un registro en cierres_Gratificaciones
       const cierreGratificacion =
         await gratificacionRepository.obtenerCierreGratificacion(
@@ -331,23 +338,43 @@ module.exports = async function darBajaTrabajador(dataBody) {
           filial_id,
           transaction
         );
+        
+const dia_baja = Number(moment(fecha_baja).format("DD"));
 
-      if (!cierreGratificacion) {
-        const corresponde = correspondeGratiTrunca(
+       // Solo bloquear si la baja es en diciembre
+if (mes_gratificacion == 12 && dia_baja >= 15 && !cierreGratificacion) {
+  await transaction.rollback();
+  return {
+    codigo: 404,
+    respuesta: {
+      mensaje: "Cerrar primero la gratificación de diciembre antes de dar de baja al trabajador",
+    },
+  };
+}
+
+
+          const fechaCese = moment(fecha_baja, "YYYY-MM-DD");
+          const mesCese = fechaCese.month() + 1; // diciembre = 12
+          const diaCese = fechaCese.date();
+       
+      if (!cierreGratificacion || mesCese < 12) {
+        // Si aun no se cierra
+      /*   const corresponde = await correspondeGratiTrunca(
           fechaBaja,
           trabajador_id,
           filial_id,
           transaction
-        );
-
-        if (corresponde) {
+        ); */
+/* 
+        console.log('corresponde: ', corresponde);
+ */
+       /*  if (corresponde) { */
           // 👉 aquí haces el cálculo de la gratificación trunca
           const fechaInicioGrati = obtenerFechaInicioGrati(
             fechaBaja,
             fecha_ingreso_trabajador
           );
 
-          console.log("fechaInicioGrati: ", fechaInicioGrati);
 
           const { mesesComputados } = calcularMesesComputadosGratificacion(
             fechaInicioGrati,
@@ -428,26 +455,23 @@ module.exports = async function darBajaTrabajador(dataBody) {
             ),
           };
  
-        } else {
+       /*  } else {
 
           console.log('que paso')
-        }
-      } else {
+        } */
+      } else if (mesCese == 12) {
 //* Calcular la gratificación que se debe restar si el trabajador se va entre el 16 y el 31 de diciembre (incluye ambas fechas extremas)
 
-     
-          const fechaCese = moment(fecha_baja, "YYYY-MM-DD");
-          const mesCese = fechaCese.month() + 1; // diciembre = 12
-          const diaCese = fechaCese.date();
 
-          console.log({
-            fechaCese,
-            mesCese,
-            diaCese,
-          })
+            // CAlcular la cantidad de faltas en el rango de fecha (16/12/2022 - fechaBaja)
+            const cantidadFaltasRangoFecha = (await asistenciaRepository.obtenerCantidadFaltasPorRangoFecha(
+              trabajador_id,
+              "2022-12-16",
+              fechaBaja
+            )) || 0;
 
-          if (mesCese === 12/*  && diaCese >= 16 && diaCese <= 31 */) {
-            const diasNoLaborados = 31 - diaCese;
+
+            const diasNoLaborados = 31 - diaCese + cantidadFaltasRangoFecha;
 
             const descuentoBase = redondear2(
               ((remuneracionComputable * factorRegimen) / 6 / 30) *
@@ -461,8 +485,6 @@ module.exports = async function darBajaTrabajador(dataBody) {
             descuentoGratificacion = redondear2(
               descuentoBase + descuentoEssalud
             );
-            console.log('diasNoLaborados', diasNoLaborados)
-            console.log('descuentoGratificacion', descuentoGratificacion)
             gratificacionTrunca = {
               tipo_calculo: "descuento_grati_diciembre",
               gratificacion_dias_descuento: descuentoBase,
@@ -471,23 +493,23 @@ module.exports = async function darBajaTrabajador(dataBody) {
               dias_no_laborados_diciembre: diasNoLaborados
             }; 
 
-          }
+          
         
       }
 
       //! 12. Calcular cts trunca
 
       const mes = fechaBaja.month() + 1; // moment cuenta meses desde 0
-      const año = fechaBaja.year();
+      const anio = fechaBaja.year();
 
       let ultimaGratiPeriodo;
 
       if (mes >= 7) {
-        // De julio a diciembre → última grati fue en julio del mismo año
-        ultimaGratiPeriodo = moment(`${año}-07`, "YYYY-MM");
+        // De julio a diciembre → última grati fue en julio del mismo anio
+        ultimaGratiPeriodo = moment(`${anio}-07`, "YYYY-MM");
       } else {
-        // De enero a junio → última grati fue en diciembre del año anterior
-        ultimaGratiPeriodo = moment(`${año - 1}-12`, "YYYY-MM");
+        // De enero a junio → última grati fue en diciembre del anio anterior
+        ultimaGratiPeriodo = moment(`${anio - 1}-12`, "YYYY-MM");
       }
 
       const gratificacionPorTrabajador = await db.gratificaciones.findOne({
@@ -936,7 +958,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
     trabajadorActualizado.fecha_baja = fechaBaja.format("YYYY-MM-DD");
     await trabajadorActualizado.save({ transaction });
 
-    asd;
+
     await transaction.commit();
 
     return {
