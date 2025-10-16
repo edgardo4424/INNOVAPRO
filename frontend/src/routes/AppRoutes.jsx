@@ -7,6 +7,7 @@ import GestionAdelantoSueldo from "@/modules/Beneficios/Pages/GestionAdelantosSu
 import GestionBonos from "@/modules/Beneficios/Pages/GestionBonos";
 import GestionVacaciones from "@/modules/Beneficios/Pages/GestionVacaciones";
 import { WizardProvider } from "@/modules/cotizaciones/context/WizardCotizacionContext";
+import { WizardContratoProvider } from "@/modules/contratos/context/WizardContratoContext";
 import PlanillaEnConstruccion from "@/modules/planilla/pages/planilla";
 import EditarTrabajador from "@/modules/trabajadores/pages/EditarTrabajador";
 import GestionTrabajadores from "@/modules/trabajadores/pages/GestionTrabajadores";
@@ -58,12 +59,26 @@ const CentroAtencion = lazy(() =>
 const RegistrarTarea = lazy(() =>
    import("@/modules/tareas/pages/RegistrarTarea")
 );
+
+/* RUTAS PARAS CONTRATOS */
+const RegistrarContratoWizard = lazy(() =>
+   import("@/modules/contratos/pages/RegistrarContratoWizard")
+);
+const GestionContratos = lazy(() =>
+   import("@/modules/contratos/pages/GestionContratos")
+);
+const DetalleContrato = lazy(() =>
+   import("@/modules/contratos/pages/DetalleContrato")
+);
+
+/* RUTAS PARA COTIZACIONES */
 const RegistrarCotizacionWizard = lazy(() =>
    import("@/modules/cotizaciones/pages/RegistrarCotizacionWizard")
 );
 const GestionCotizaciones = lazy(() =>
    import("../modules/cotizaciones/pages/GestionCotizaciones")
 );
+
 const GestionCondiciones = lazy(() =>
    import("../modules/condiciones/pages/GestionCondiciones")
 );
@@ -208,6 +223,30 @@ export default function AppRoutes() {
                                  <RegistrarCotizacionWizard />
                               </WizardProvider>
                            }
+                        />
+                         {/* CONTRATOS */}
+                        <Route
+                           path="contratos"
+                           element={<GestionContratos />}
+                        />
+                        <Route
+                           path="contratos/registrar"
+                           element={
+                              <WizardContratoProvider>
+                                 <RegistrarContratoWizard />
+                              </WizardContratoProvider>}
+                        />
+                        <Route
+                           path="contratos/wizard/:cotizacionId"
+                           element={
+                              <WizardContratoProvider>
+                                 <RegistrarContratoWizard />
+                              </WizardContratoProvider>
+                           }
+                        />
+                        <Route
+                           path="contratos/:id"
+                           element={<DetalleContrato />}
                         />
                      </Route>
 

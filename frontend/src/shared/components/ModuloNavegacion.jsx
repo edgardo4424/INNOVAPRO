@@ -9,11 +9,13 @@ import {
    Contact,
    FileEdit,
    FileText,
+   FileSignature,
    Hammer,
    Headset,
    LayoutDashboard,
    UserCheck,
    Users,
+   ScrollText
 } from "lucide-react";
 
 export default function ModuloNavegacion() {
@@ -32,6 +34,8 @@ export default function ModuloNavegacion() {
       "Registrar Tarea": ClipboardPlus,
       Cotizaciones: FileText,
       "Registrar Cotización": FileEdit,
+      Contratos: ScrollText,
+      "Registrar Contrato": FileSignature,
    };
    const modulesByRole = {
       CEO: [
@@ -44,6 +48,8 @@ export default function ModuloNavegacion() {
          { name: "Registrar Tarea", path: "/registrar-tarea" },
          { name: "Cotizaciones", path: "/cotizaciones" },
          { name: "Registrar Cotización", path: "/cotizaciones/registrar" },
+         { name: "Contratos", path: "/contratos" },
+         { name: "Registrar Contrato", path: "/contratos/registrar" },
       ],
       "Técnico Comercial": [
          { name: "Gestión de Clientes", path: "/gestion-clientes" },
@@ -53,6 +59,8 @@ export default function ModuloNavegacion() {
          { name: "Centro de Atención", path: "/centro-atencion" },
          { name: "Cotizaciones", path: "/cotizaciones" },
          { name: "Registrar Cotización", path: "/cotizaciones/registrar" },
+         { name: "Contratos", path: "/contratos" },
+         { name: "Registrar Contrato", path: "/contratos/registrar" },
       ],
       "Jefe de OT": [
          { name: "Centro de Atención", path: "/centro-atencion" },
