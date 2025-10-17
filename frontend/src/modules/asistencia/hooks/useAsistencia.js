@@ -2,6 +2,11 @@
 import { useEffect, useState } from "react";
 import asistenciaService from "../services/asistenciaService";
 import { toast } from "react-toastify";
+function esSabado(fechaStr) {
+  const [year, month, day] = fechaStr.split("-").map(Number);
+  const fecha = new Date(year, month - 1, day); // ← crea fecha en hora local
+  return fecha.getDay() === 6;
+}
 
 export const useAsistencia = (
   trabajador,
@@ -12,7 +17,7 @@ export const useAsistencia = (
   const [asistencia, setAsistencia] = useState({
     trabajador_id: trabajador.id,
     estado_asistencia: "",
-    horas_trabajadas: 8,
+    horas_trabajadas: 9,
     minutos_trabajados:0,
     horas_extras: 0,
     fecha: date,
@@ -86,7 +91,7 @@ export const useAsistencia = (
          const {horas,minutos,segundos}=asistencia_marcate.asistencia.tiempo_trabajado
          
          if(horas){
-            payload.horas_trabajadas=horas
+            payload.horas_trabajadas=esSabado(date)?horas:horas-1;
          }
          if (minutos) {
             payload.minutos_trabajados=minutos;

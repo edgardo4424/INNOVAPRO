@@ -15,8 +15,6 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/
 import { FolderOpenIcon } from "lucide-react";
 
 const GestionAsistencia = () => {
-   const [searchParams] = useSearchParams();
-   // const area_id = searchParams.get("area_id");
 
    const [fechaSeleccionada, setFechaSeleccionada] = useState(
       new Date().toISOString().split("T")[0]
@@ -51,12 +49,11 @@ const GestionAsistencia = () => {
          const response = await asistenciaService.obtenerTrabajadoresPorFilial(
             area_id,
             fechaSeleccionada
-         );
-        
-         
+         );         
          setTrabajadoresFiltrados([...response.data.datos.trabajadores] || [])
          setTrabajadores([...response.data.datos.trabajadores] || []);
-         setNombreArea(response.data.datos.area_nombre??"-")
+         setNombreArea(response.data.datos.area_nombre??"-");
+         setAsistenciasSincronizacion(null)
       } catch (err) {
          console.log(err);
          setError("Error al cargar los trabajadores.");
@@ -122,6 +119,7 @@ const GestionAsistencia = () => {
          lista_dni
       }
        const response=  await asistenciaService.sincronizarAsistencia(payload);
+       
        if(response.data.datos.length>0){
          setAsistenciasSincronizacion(response.data.datos);      
          toast.success("Asistencias de marcate obtenidas correctamente.")
