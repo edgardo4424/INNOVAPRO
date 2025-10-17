@@ -64,25 +64,25 @@ module.exports = {
           id: 10,
           codigo: "10",
           descripcion_corta: "SUSPENSIÓN DE LA PENSIÓN",
-          descripcion_larga: "SUSPENSIÓN DE LA PENSIÓN (1)",
+          descripcion_larga: "SUSPENSIÓN DE LA PENSIÓN",
         },
         {
           id: 11,
           codigo: "11",
           descripcion_corta: "REASIGNACIÓN",
-          descripcion_larga: "REASIGNACIÓN SERVIDOR DE LA ADMINISTRACIÓN PÚBLICA(2)",
+          descripcion_larga: "REASIGNACIÓN SERVIDOR DE LA ADMINISTRACIÓN PÚBLICA",
         },
         {
           id: 12,
           codigo: "12",
           descripcion_corta: "PERMUTA",
-          descripcion_larga: "PERMUTA SERVIDOR DE LA ADMINISTRACIÓN PÚBLICA (2)",
+          descripcion_larga: "PERMUTA SERVIDOR DE LA ADMINISTRACIÓN PÚBLICA",
         },
         {
           id: 13,
           codigo: "13",
           descripcion_corta: "TRANSFERENCIA",
-          descripcion_larga: "TRANSFERENCIA SERVIDOR DE LA ADMINISTRACIÓN PÚBLICA (2)",
+          descripcion_larga: "TRANSFERENCIA SERVIDOR DE LA ADMINISTRACIÓN PÚBLICA",
         },
         {
           id: 14,
@@ -100,7 +100,7 @@ module.exports = {
           id: 16,
           codigo: "16",
           descripcion_corta: "OTR MOTIV CADUC PENSIÓN",
-          descripcion_larga: "OTROS MOTIVOS DE CADUCIDAD DE LA PENSIÓN (1)",
+          descripcion_larga: "OTROS MOTIVOS DE CADUCIDAD DE LA PENSIÓN",
         },
         {
           id: 17,
@@ -129,7 +129,7 @@ module.exports = {
         {
           id: 21,
           codigo: "99",
-          descripcion_corta: "SVL -HABILITADO PARA PDT PLAME (3)",
+          descripcion_corta: "SVL -HABILITADO PARA PDT PLAME",
           descripcion_larga: "SIN VÍNCULO LABORAL - HABILITADO PARA PDT PLAME",
         }
       ],

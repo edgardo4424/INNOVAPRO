@@ -1408,6 +1408,7 @@ class SequelizePlanillaRepository {
         inicio_real,
         fin_contrato,
         inicio_de_mes,
+        fin_de_mes,
         c.es_indefinido
       );
       // console.log("DIAS CONTRTADO:   ",DIAS_CONTRATADO);      
