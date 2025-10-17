@@ -24,7 +24,7 @@ export function GuiaTransporteProvider({ children }) {
 
   // ?? CORRELATIVOS
 
-  const serieGuia = [{ value: "T022" }];
+  const serieGuia = [{ value: "T005" }];
 
   const [correlativos, setCorrelativos] = useState([]);
   const [correlativosPendientes, setCorrelativosPendientes] = useState([]);

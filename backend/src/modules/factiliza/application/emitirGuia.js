@@ -7,23 +7,17 @@ module.exports = async (guia, repository) => {
     // ? 0 ver si la guia no existe
 
     const guiaReguistrada = await repository.obtenerGuiaPorInformacion(guia.correlativo, guia.serie, guia.empresa_Ruc, guia.tipo_Doc);
-    console.log(guiaReguistrada)
     if (guiaReguistrada?.length > 0) {
       return {
         codigo: 400,
         respuesta: {
           success: false,
           data: guiaReguistrada,
-          message: 'Guia ya se encuentra emitida por nosotros',
+          message: 'eL documento ya se encuentra emitido / registrado',
           status: 400
         },
       };
     }
-
-    // ! 🪵 Registar lo enviado
-    registrarLogFactiliza('FRONTEND_REQUEST', {
-      content: guia
-    });
 
     // ? 1 Enviar la guía a Factiliza
     const response = await factilizaService.enviarGuia(guia);
@@ -33,6 +27,7 @@ module.exports = async (guia, repository) => {
       tipo: 'GUIA',
       serie: guia.serie,
       correlativo: guia.correlativo,
+      ruc: guia.empresa_Ruc,
       response,
     });
 
@@ -45,7 +40,8 @@ module.exports = async (guia, repository) => {
         tipo: 'GUIA',
         serie: guia.serie,
         correlativo: guia.correlativo,
-        response,
+        ruc: guia.empresa_Ruc,
+        content: guia,
       })
       return {
         codigo: status || 500,
@@ -98,7 +94,7 @@ module.exports = async (guia, repository) => {
     });
 
     if (!resultado?.success) {
-      registrarLogFactiliza('ERROR_BD', {
+      registrarLogFactiliza('ERROR_BD_GUIA', {
         tipo: 'GUIA',
         serie: guia.serie,
         correlativo: guia.correlativo,
@@ -142,12 +138,15 @@ module.exports = async (guia, repository) => {
     };
 
   } catch (error) {
-    registrarLogFactiliza('EXCEPCION', {
+    registrarLogFactiliza('EXCEPCION_GUIA', {
       tipo: 'GUIA',
       serie: guia?.serie,
       correlativo: guia?.correlativo,
-      error: error,
+      message: error?.response?.data?.message || error?.message,
+      error_factiliza: error?.response?.data,
+      content: guia
     });
+
     // ? 9 Manejo de errores genéricos o de red
     return {
       codigo: 400,
@@ -157,11 +156,8 @@ module.exports = async (guia, repository) => {
           error?.response?.data?.message ||
           error?.message ||
           'Error interno al emitir la guía de remisión.',
-        detailed_message:
-          error?.response?.data?.error ||
-          error?.stack?.substring(0, 200) ||
-          null,
-        data: null,
+        detailed_message: null,
+        error_factiliza: error?.response?.data,
         status: 500,
       },
     };

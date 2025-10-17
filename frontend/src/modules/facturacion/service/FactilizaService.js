@@ -26,7 +26,7 @@ const factilizaService = {
     // !!! FACTURACION
 
     enviarFactura: async (factura) => {
-        const res = await apiFactilizaFacturacion.post("/invoice/send", factura);
+        const res = await api.post("/factiliza/emitir-factura", factura);
         return res.data;
     },
 

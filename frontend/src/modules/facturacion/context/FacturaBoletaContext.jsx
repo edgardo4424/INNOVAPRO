@@ -375,7 +375,6 @@ export function FacturaBoletaProvider({ children }) {
     };
     try {
       let facturaAEmitir;
-
       if (
         retencionActivado &&
         !detraccionActivado &&
@@ -400,127 +399,41 @@ export function FacturaBoletaProvider({ children }) {
         facturaAEmitir = factura;
       }
       const { status, success, message, data } =
-        await factilizaService.enviarFactura(facturaAEmitir);
-
-      if (status === 200) {
-        const sunat_respuest = {
-          hash: data?.hash ?? null,
-          // cdr_zip: data?.sunatResponse?.cdrZip ?? null, // Descomentar si es necesario
-          cdr_zip: null,
-          sunat_success: data?.sunatResponse?.success ?? null,
-          cdr_response_id: data?.sunatResponse?.cdrResponse?.id ?? null,
-          cdr_response_code: data?.sunatResponse?.cdrResponse?.code ?? null,
-          cdr_response_description:
-            data?.sunatResponse?.cdrResponse?.description ?? null,
-        };
-
-        // ?? Transformamos los documentos relacionados a texto
-        facturaAEmitir.relDocs =
-          factura.relDocs.length > 0
-            ? JSON.stringify(facturaAEmitir.relDocs)
-            : null;
-
-        // ** Procesar Productos
-        const detalleProcesado = procesarDetallePorSerie(
-          facturaAEmitir.serie,
-          facturaAEmitir.detalle,
-          serieFactura,
-          serieBoleta,
-        );
-
-        // ?? Si se agregaron detalles exta
-        if (detallesExtra.length > 0) {
-          facturaAEmitir.extraDetails = JSON.stringify(detallesExtra);
-        }
-
-        const facturaCopia = {
+        await factilizaService.enviarFactura({
           ...facturaAEmitir,
-          detalle: detalleProcesado,
           usuario_id: id_logeado,
-          estado: determinarEstadoFactura({ status, success, message, data }),
-          precio_dolar: precioDolarActual,
-          cuotas_Real: JSON.stringify(facturaAEmitir.cuotas_Real),
-          sunat_respuesta: sunat_respuest,
-          id_borrador: idBorrador ? idBorrador : null,
-        };
-        // ?Intentar registrar en base de datos
-        const dbResult = await registrarBaseDatos(facturaCopia);
-
-        if (dbResult.success) {
-          result = {
-            success: true,
-            message: message || "Factura emitida y registrada con éxito.",
-            data: facturaCopia,
-            detailed_message:
-              data?.sunatResponse?.cdrResponse?.description || null,
-          };
-        } else {
-          result = {
-            success: false,
-            message:
-              dbResult.mensaje ||
-              "Factura emitida a SUNAT, pero no se pudo registrar en la base de datos.",
-            data: facturaCopia,
-          };
-        }
-      } else {
-        result = {
-          success: false,
-          message: message,
-          detailed_message:
-            `${data.error.code} - ${data.error.message}` ||
-            "Error desconocido al enviar la factura.",
-          data: null,
-        };
+        });
+      result = {
+        status,
+        success,
+        message,
+        data,
+      };
+      if (status == 200 || status == 201 || status == 400) {
+        Limpiar();
       }
     } catch (error) {
       if (error.response) {
+        const { success, message, detailed_message, data, status } =
+          error.response.data;
         result = {
           success: false,
           message:
-            error.response.data?.message ||
-            error.response.data?.error ||
-            "Error al comunicarse con la API.",
-          data: error.response.data,
+            message || detailed_message || "Error al comunicarse con la API.",
+          data,
+          status,
         };
+        return result;
       } else {
-        result = {
+        return {
           success: false,
           message: error.message || "Ocurrió un error inesperado.",
           data: null,
+          status: 500,
         };
       }
     } finally {
       return result;
-    }
-  };
-
-  const registrarBaseDatos = async (documento) => {
-    try {
-      if (!documento) {
-        return { success: false, mensaje: "No se pudo registrar la factura" };
-      }
-      if (documento.estado !== "EMITIDA") {
-        const esValido = await validarFactura("validarBorrador");
-        if (!esValido) {
-          return toast.error(
-            "Para crear un borrador, por favor complete los datos del comprobante y del cliente.",
-          );
-        }
-      }
-      const { status, success } =
-        await facturaService.registrarFactura(documento);
-      if (status === 201) {
-        Limpiar();
-      }
-      return { status, success };
-    } catch (error) {
-      if (error.response) {
-        const { status, data } = error.response;
-        if (status === 409) {
-          toast.error(data?.mensaje);
-        }
-      }
     }
   };
 
@@ -536,7 +449,10 @@ export function FacturaBoletaProvider({ children }) {
     setPagoActual(valorIncialPago);
     setTotalProducto(0);
     setDetraccionActivado(false);
-    setDetraccion(valorIncialDetracion);
+    setDetraccion({
+      ...valorIncialDetracion,
+      detraccion_cta_banco: detraccion.detraccion_cta_banco,
+    });
     setRetencion(valorIncialRetencion);
     setRetencionActivado(false);
     setIdBorrador(null);
@@ -595,7 +511,6 @@ export function FacturaBoletaProvider({ children }) {
         pagoValida,
         setPagoActual,
         emitirFactura,
-        registrarBaseDatos,
         Limpiar,
       }}
     >
