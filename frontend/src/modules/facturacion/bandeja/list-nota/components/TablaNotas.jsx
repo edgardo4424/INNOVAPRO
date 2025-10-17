@@ -216,6 +216,7 @@ const TablaNotas = ({
                           setIdDocumento(nota.id);
                           setModalOpen(true);
                           setDocumentoAVisualizar({
+                            id: nota.id,
                             correlativo: String(nota.correlativo),
                             serie: nota.serie,
                             empresa_ruc: nota.empresa_Ruc,
@@ -239,6 +240,7 @@ const TablaNotas = ({
                           setIdDocumento(nota.id);
                           setModalDescargar(true);
                           setDocumentoADescargar({
+                            id: nota.id,
                             serie: nota.serie,
                             correlativo: nota.correlativo,
                             numRuc: nota.empresa_Ruc,
@@ -268,6 +270,7 @@ const TablaNotas = ({
                           const [serie, correlativo] =
                             nota.afectado_Num_Doc.split("-");
                           setDocumentoAfectadoVisualizar({
+                            id: nota.id,
                             serie: serie,
                             correlativo: correlativo,
                             empresa_ruc: nota.empresa_Ruc,

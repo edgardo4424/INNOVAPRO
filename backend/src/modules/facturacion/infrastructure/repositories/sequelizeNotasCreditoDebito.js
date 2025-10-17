@@ -276,15 +276,11 @@ class SequelizeNotasCreditoDebitoRepository {
             };
         }
     }
-    async obtenerNotaDetallada(correlativo, serie, empresa_ruc, tipo_doc) {
-
+    async obtenerNotaDetallada(correlativo, serie, empresa_ruc, tipo_doc, id) {
+        let whereNota = { correlativo: correlativo, serie: serie, empresa_ruc: empresa_ruc, tipo_doc: tipo_doc };
+        if (id) whereNota.id = id
         const nota = await NotasCreditoDebito.findAll({
-            where: {
-                correlativo: correlativo,
-                serie: serie,
-                empresa_ruc: empresa_ruc,
-                tipo_doc: tipo_doc,
-            },
+            where: whereNota,
             include: [
                 { model: LegendNotaCreditoDebito },
                 { model: DetalleNotaCreditoDebito },
@@ -296,6 +292,10 @@ class SequelizeNotasCreditoDebitoRepository {
                 id: nota[0]?.dataValues?.factura_id,
             },
         });
+
+        if (!nota || nota.length === 0) {
+            return [];
+        }
 
         const empresa = await Filial.findOne({
             where: { ruc: empresa_ruc },

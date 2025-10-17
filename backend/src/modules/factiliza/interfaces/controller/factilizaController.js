@@ -13,11 +13,13 @@ const SequelizeNotasCreditoDebitoRepository = require("../../../facturacion/infr
 
 const sequelizeBorradorRespository = require("../../../facturacion/infrastructure/repositories/sequelizeBorradorRespository");
 
+const emitirNota = require("../../application/emitirNota");
+
 const factilizaRepository = new sequelizFactilizaRepository()
 
 const facturaRepository = new SequelizeFacturaRepository()
 
-const notasCreditoDebitoRepository = new SequelizeNotasCreditoDebitoRepository()
+const notaRepository = new SequelizeNotasCreditoDebitoRepository()
 
 const guiaRemisionRepository = new SequelizeGuiaRemisionRepository()
 
@@ -57,7 +59,8 @@ const factilizaController = {
 
     async emitirNota(req, res) {
         try {
-            res.status(200).json({ estado: true, mensaje: "Nota emitida correctamente" })
+            const { codigo, respuesta } = await emitirNota(req.body, notaRepository, borradorRepository)
+            res.status(codigo).json(respuesta)
         } catch (error) {
             res.status(500).json({ error: error.message, estado: false })
         }

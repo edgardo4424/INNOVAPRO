@@ -1,32 +1,32 @@
 const { registrarLogFactiliza } = require('../helpers/loggerFactiliza')
 const factilizaService = require('../service/factilizaService');
 const { determinarEstadoFactura } = require('../helpers/manejoCodigosSunat');
-const { procesarItem } = require('../helpers/procesarItem');
 
-module.exports = async (factura, repository, borradorRepository) => {
+module.exports = async (nota, repository, borradorRepository) => {
     try {
-        const facturaRegistrada = await repository.obtenerFacturaPorInformacion(factura.correlativo, factura.serie, factura.empresa_Ruc, factura.tipo_Doc);
-        if (facturaRegistrada?.length > 0) {
+        const notaRegistrada = await repository.obtenerNotaDetallada(nota.correlativo, nota.serie, nota.empresa_Ruc, nota.tipo_Doc)
+        
+        if (notaRegistrada?.length > 0) {
             return {
                 codigo: 400,
                 respuesta: {
                     success: false,
-                    data: facturaRegistrada,
+                    data: notaRegistrada,
                     message: 'eL documento ya se encuentra emitido / registrado',
                     status: 400
                 },
             };
         }
 
-        // ? 1 Enviar la factura a Factiliza
-        const response = await factilizaService.enviarFactura(factura);
+        // ? 1 Enviar la nota a Factiliza
+        const response = await factilizaService.enviarNota(nota);
 
         // ! 🪵 Registrar siempre lo que devuelve Factiliza
         registrarLogFactiliza('FACTILIZA_RESPONSE', {
-            tipo: factura.tipo_Doc === '01' ? 'FACTURA' : 'BOLETA',
-            serie: factura.serie,
-            correlativo: factura.correlativo,
-            ruc: factura.empresa_Ruc,
+            tipo: nota.tipo_Doc == '07' ? 'CREDITO' : 'DEBITO',
+            serie: nota.serie,
+            correlativo: nota.correlativo,
+            ruc: nota.empresa_Ruc,
             response,
         });
 
@@ -35,17 +35,17 @@ module.exports = async (factura, repository, borradorRepository) => {
         // ? 2 Validar respuesta HTTP
         if (status !== 200) {
             registrarLogFactiliza('FACTILIZA_ERROR', {
-                tipo: factura.tipo_Doc === '01' ? 'FACTURA' : 'BOLETA',
-                serie: factura.serie,
-                correlativo: factura.correlativo,
-                ruc: factura.empresa_Ruc,
-                content: factura,
+                tipo: nota.tipo_Doc == '07' ? 'CREDITO' : 'DEBITO',
+                serie: nota.serie,
+                correlativo: nota.correlativo,
+                ruc: nota.empresa_Ruc,
+                content: nota,
             })
             return {
                 codigo: status || 500,
                 respuesta: {
                     success: false,
-                    message: message || 'Error desconocido al emitir la factura.',
+                    message: message || 'Error desconocido al emitir la nota.',
                     detailed_message:
                         data?.error
                             ? `${data.error.code} - ${data.error.message}`
@@ -55,7 +55,6 @@ module.exports = async (factura, repository, borradorRepository) => {
                 },
             };
         }
-
         // ? 3 Construir respuesta SUNAT
         const sunat_respuesta = {
             hash: data?.hash ? data.hash : null,
@@ -68,38 +67,52 @@ module.exports = async (factura, repository, borradorRepository) => {
                 data?.sunatResponse?.cdrResponse?.description ?? null,
         };
 
-
         // ? 4 Determinar estado final
         const estado = determinarEstadoFactura({ status, success, data, message });
 
+        let detalleFormateado = [];
+
+        if (nota.motivo_Cod == "05") {
+            nota.detalle.forEach((detalle) => {
+                detalleFormateado.push({
+                    ...detalle,
+                    Descuentos: detalle.Descuentos
+                        ? JSON.stringify(detalle.Descuentos)
+                        : null,
+                });
+            });
+        } else {
+            detalleFormateado = nota.detalle;
+        }
+
         // ? 5 Juntar el resultado 
-        const facturaEstructurada = {
-            ...factura,
-            estado,
-            cuotas_Real: factura.cuotas_Real ? JSON.stringify(factura.cuotas_Real) : null,
-            relDocs: factura.relDocs ? JSON.stringify(factura.relDocs) : null,
+        const notaEstructurada = {
+            ...nota,
+            detalle: detalleFormateado,
+            factura_id: nota.factura_id,
+            guia_id: null,
+            estado: estado,
         }
 
         // ? 6 estructurar para la bd
-        const { detalle = [], forma_pago = [], legend = [], id_borrador, ...facturaData } = facturaEstructurada;
+        const { detalle = [], legend = [], id_borrador, ...notaData } = notaEstructurada;
 
         // ? 7 Guardar en la BD
         const resultado = await repository.crear({
-            factura: facturaData,
+            nota: notaData,
             detalle: detalle,
-            formas_pagos: forma_pago,
-            leyendas: legend,
-            sunat_respuesta: sunat_respuesta,
-        });
+            legend: legend,
+            sunat_respuesta: sunat_respuesta
+        })
 
         if (!resultado?.success) {
-            registrarLogFactiliza('ERROR_BD_FACTURA', {
-                tipo: factura.tipo_Doc === '01' ? 'FACTURA' : 'BOLETA',
-                serie: factura.serie,
-                correlativo: factura.correlativo,
-                ruc: factura.empresa_Ruc,
+            registrarLogFactiliza('ERROR_BD_NOTA', {
+                tipo: nota.tipo_Doc == '07' ? 'CREDITO' : 'DEBITO',
+                serie: nota.serie,
+                correlativo: nota.correlativo,
+                ruc: nota.empresa_Ruc,
                 mensaje: resultado?.message,
-                content: facturaEstructurada,
+                content: notaEstructurada,
                 sunat: sunat_respuesta
             });
             return {
@@ -108,7 +121,7 @@ module.exports = async (factura, repository, borradorRepository) => {
                     success: false,
                     message:
                         resultado?.message ||
-                        'La factura fue enviada, pero no se pudo registrar en la base de datos.',
+                        'La nota fue enviada, pero no se pudo registrar en la base de datos.',
                     data: null,
                     status: 400,
                 },
@@ -117,13 +130,13 @@ module.exports = async (factura, repository, borradorRepository) => {
         let messageParaElCliente = message || '';
         let statusParaElCliente = 200;
         if (estado == 'PENDIENTE') {
-            messageParaElCliente = 'La factura fue emitida, pero se encuentra pendiente de autorización en la SUNAT.'
+            messageParaElCliente = 'La nota fue emitida, pero se encuentra pendiente de autorización en la SUNAT.'
             statusParaElCliente = 200
         } else if (estado == 'RECHAZADA') {
-            messageParaElCliente = 'La factura fue rechazada por la SUNAT, verifique los detalles para obtener mas información.'
+            messageParaElCliente = 'La nota fue rechazada por la SUNAT, verifique los detalles para obtener mas información.'
             statusParaElCliente = 400
         } else if (estado == 'EMITIDA') {
-            messageParaElCliente = 'La factura fue emitida y registrada correctamente.'
+            messageParaElCliente = 'La nota fue emitida y registrada correctamente.'
             statusParaElCliente = 201
         }
 
@@ -143,14 +156,13 @@ module.exports = async (factura, repository, borradorRepository) => {
         };
     } catch (error) {
         registrarLogFactiliza('EXCEPTION_FACTURA', {
-            tipo: factura?.tipo_Doc === '01' ? 'FACTURA' : 'BOLETA',
-            serie: factura?.serie,
-            correlativo: factura?.correlativo,
+            tipo: nota.tipo_Doc == '07' ? 'CREDITO' : 'DEBITO',
+            serie: nota?.serie,
+            correlativo: nota?.correlativo,
             message: error?.response?.data?.message || error?.message,
             error_factiliza: error?.response?.data,
-            content: factura
+            content: nota
         });
-        // ? 9 Manejo de errores genéricos o de red
         return {
             codigo: 400,
             respuesta: {
@@ -158,7 +170,7 @@ module.exports = async (factura, repository, borradorRepository) => {
                 message:
                     error?.response?.data?.message ||
                     error?.message ||
-                    'Error interno al emitir la factura.',
+                    'Error interno al emitir la nota.',
                 detailed_message: null,
                 error_factiliza: error?.response?.data,
                 status: 500,

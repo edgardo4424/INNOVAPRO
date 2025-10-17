@@ -23,7 +23,7 @@ export function NotaProvider({ children }) {
   const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
   // Notas de crédito
   const serieCredito = [
-    { value: "FCT1", doc: "01" }, // Nota de crédito sobre factura
+    { value: "FCT8", doc: "01" }, // Nota de crédito sobre factura
     { value: "FCT2", doc: "01" }, // (opcional segunda serie)
     { value: "BCT1", doc: "03" }, // Nota de crédito sobre boleta
     { value: "BCT2", doc: "03" },
