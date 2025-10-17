@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -64,6 +64,12 @@ export default function CalculoQuintaCategoria() {
     () => ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"],
     []
   );
+
+  useEffect(() => {
+    // cuando cambie de mes o filial, resetea el override
+    setCerradoOV(false);
+  }, [periodo, form.filial_id]);
+
 
   const openSoportesGuardado = () => {
     if (!form.trabajadorId || !form.dni || !form.anio) {

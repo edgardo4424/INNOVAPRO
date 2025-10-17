@@ -59,8 +59,8 @@ function mergeRangosConRegimen(contratos = [], periodo = "JULIO", anio) {
 
       // ✅ Solo si el contrato empieza dentro del semestre
       if (r.ini.isBefore(periodoFin, "day")) {
-        last.sueldo_base = r.sueldo_base;
-        //last.sueldo_base = Math.max(last.sueldo_base ?? 0, r.sueldo_base ?? 0);
+        //last.sueldo_base = r.sueldo_base;
+        last.sueldo_base = Math.max(last.sueldo_base ?? 0, r.sueldo_base ?? 0);
         last.fecha_fin = r.fecha_fin;
         last.regimen = r.regimen;
       }
