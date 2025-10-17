@@ -42,6 +42,7 @@ export default function useEmpresas() {
 
    const guardarEdicion = async (empresaNew) => {
       try {
+         console.log("DATOS A ACTUALZAR: ", empresaNew)
          await empresasService.actualizarEmpresa(empresaNew.id, empresaNew);
          setEmpresas((prev) =>
             prev.map((e) => (e.id === empresaNew.id ? empresaNew : e))

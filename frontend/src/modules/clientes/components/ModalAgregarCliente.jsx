@@ -6,7 +6,6 @@ import {
    validarClienteNatural,
 } from "../validaciones/validarCliente";
 import { toast } from "react-toastify";
-import { buscarDatosPorRUC } from "../../sunat/services/sunatService";
 import { useAuth } from "../../../context/AuthContext";
 import { parsearError } from "../../../utils/parsearError";
 import {
@@ -31,6 +30,8 @@ const initialForm = {
    domicilio_fiscal: "",
    representante_legal: "",
    dni_representante: "",
+   cargo_representante: "",
+   domicilio_representante: "",
 };
 export default function ModalAgregarCliente({ agregarCliente, obras, contactos }) {
    const { user } = useAuth();
@@ -39,42 +40,8 @@ export default function ModalAgregarCliente({ agregarCliente, obras, contactos }
 
    const [errores, setErrores] = useState({});
 
-   const [rucNoEncontrado, setRucNoEncontrado] = useState(false);
-
    const [open, setOpen] = useState(false);
 
-   const handleBuscarRUC = async () => {
-      const rucLimpio = cliente.ruc?.trim();
-      if (!rucLimpio || rucLimpio.length !== 11) {
-         setRucNoEncontrado(false);
-         return;
-      }
-
-      try {
-
-         const resultado = await buscarDatosPorRUC(rucLimpio);
-
-         if (!resultado || !resultado.razon_social) {
-            setRucNoEncontrado(true);
-            setCliente((prev) => ({
-               ...prev,
-               razon_social: "",
-               domicilio_fiscal: "",
-            }));
-            return;
-         }
-
-         setRucNoEncontrado(false);
-         setCliente((prev) => ({
-            ...prev,
-            razon_social: resultado.razon_social,
-            domicilio_fiscal: resultado.domicilio_fiscal,
-         }));
-      } catch (error) {
-         console.error("Error buscando en SUNAT:", error);
-         setRucNoEncontrado(true);
-      }
-   };
 
    const handleSubmit = async (e) => {
       e.preventDefault();
@@ -103,13 +70,12 @@ export default function ModalAgregarCliente({ agregarCliente, obras, contactos }
          if (user && user.id) {
             clienteLimpio.creado_por = user.id;
          } else {
-            console.error("⚠️ Usuario no encontrado en AuthContext");
+            console.error("Usuario no encontrado en AuthContext");
             toast.error(
                "Error de autenticación. Cierra sesión e ingresa de nuevo."
             );
             return;
          }
-
          const res = await clientesService.crear(clienteLimpio);
          if (res.data && res.data.cliente) {
             agregarCliente(res.data.cliente);
@@ -150,8 +116,6 @@ export default function ModalAgregarCliente({ agregarCliente, obras, contactos }
                obras={obras}
                setCliente={setCliente}
                errores={errores}
-               handleBuscarRUC={handleBuscarRUC}
-               rucNoEncontrado={rucNoEncontrado}
                handleCancel={handleCancel}
                handleSubmit={handleSubmit}
             />

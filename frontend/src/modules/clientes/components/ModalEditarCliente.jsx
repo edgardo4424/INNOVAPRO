@@ -6,8 +6,6 @@ import {
    validarClienteNatural,
 } from "../validaciones/validarCliente";
 import { toast } from "react-toastify";
-import { buscarDatosPorRUC } from "../../sunat/services/sunatService";
-import { useAuth } from "../../../context/AuthContext";
 import { parsearError } from "../../../utils/parsearError";
 import {
    AlertDialog,
@@ -29,10 +27,9 @@ export default function ModalEditarCliente({
    const [clienteEditado, setClienteEditado] = useState({ ...cliente });
    const [errores, setErrores] = useState({});
    const [open, setOpen] = useState(false);
-
    const handleSubmit = async (e) => {
       e.preventDefault();
-       
+      
       const erroresValidados =
          clienteEditado.tipo === "Persona Jurídica"
             ? validarClienteJuridico(clienteEditado)
@@ -49,7 +46,6 @@ export default function ModalEditarCliente({
          Object.keys(clienteLimpio).forEach((key) => {
             if (clienteLimpio[key] === "") clienteLimpio[key] = null;
          });
-
          const res = await clientesService.actualizar(
             clienteEditado.id,
             clienteLimpio
