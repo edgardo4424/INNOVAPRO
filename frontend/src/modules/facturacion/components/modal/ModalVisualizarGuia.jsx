@@ -275,11 +275,11 @@ export default function ModalVisualizarGuia({
                                   {chofer.razon_Social && (
                                     <span>
                                       {" "}
-                                      {chofer.razon_Social}-{chofer.nro_doc}
+                                      {chofer.razon_Social}-{chofer.nro_Doc}
                                     </span>
                                   )}
-                                  {chofer.nro_doc && !chofer.razon_Social && (
-                                    <span> ({chofer.nro_doc})</span>
+                                  {chofer.nro_Doc && !chofer.razon_Social && (
+                                    <span> ({chofer.nro_Doc})</span>
                                   )}
                                   {chofer.nro_mtc && (
                                     <span> (MTC {chofer.nro_mtc})</span>

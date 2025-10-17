@@ -20,6 +20,11 @@ module.exports = async (guia, repository) => {
       };
     }
 
+    // ! 🪵 Registar lo enviado
+    registrarLogFactiliza('FRONTEND_REQUEST', {
+      content: guia
+    });
+
     // ? 1 Enviar la guía a Factiliza
     const response = await factilizaService.enviarGuia(guia);
 

@@ -266,7 +266,7 @@ export function GuiaTransporteProvider({ children }) {
         message,
         data,
       };
-      if (status === 200) {
+      if (status == 200 || status == 201 || status == 400) {
         Limpiar();
       }
     } catch (error) {

@@ -364,14 +364,14 @@ export default function ModalVisualizarGuiaPrivada() {
                             </span>
                             <span className="text-xs font-medium md:text-sm">
                               {getTipoDocCliente(
-                                guiaDatosPublico.transportista.tipo_doc,
+                                guiaDatosPublico.transportista.tipo_Doc,
                               )}
                             </span>
                             <span className="text-xs font-semibold text-gray-700 md:text-sm">
                               Nro. Doc.:
                             </span>
                             <span className="text-xs font-medium md:text-sm">
-                              {guiaDatosPublico.transportista.nro_doc || "N/A"}
+                              {guiaDatosPublico.transportista.nro_Doc || "N/A"}
                             </span>
                           </div>
                           <div className="grid grid-cols-1 gap-2 text-sm md:grid-cols-[auto_1fr]">
@@ -414,14 +414,14 @@ export default function ModalVisualizarGuiaPrivada() {
                                   Tipo Doc.:
                                 </span>
                                 <span className="text-xs font-medium md:text-sm">
-                                  {getTipoDocCliente(chofer?.tipo_doc) || "N/A"}
+                                  {getTipoDocCliente(chofer?.tipo_Doc) || "N/A"}
                                 </span>
 
                                 <span className="text-xs font-semibold text-gray-700 md:text-sm">
                                   Nro. Doc.:
                                 </span>
                                 <span className="text-xs font-medium md:text-sm">
-                                  {chofer?.nro_doc || "N/A"}
+                                  {chofer?.nro_Doc || "N/A"}
                                 </span>
                               </div>
 

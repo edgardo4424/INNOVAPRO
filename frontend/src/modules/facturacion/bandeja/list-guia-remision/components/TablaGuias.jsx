@@ -64,7 +64,6 @@ const TablaGuias = ({
     }
   };
 
-
   return (
     <div className="w-full rounded-xl border-1 border-gray-200">
       <table className="min-w-full overflow-hidden rounded-xl bg-white shadow-md">
@@ -154,6 +153,7 @@ const TablaGuias = ({
                           setIdDocumento(guia.id);
                           setModalDescargar(true);
                           setGuiaADescargar({
+                            id: guia.id,
                             serie: guia.serie,
                             correlativo: guia.correlativo,
                             numRuc: guia.empresa_ruc,

@@ -16,11 +16,11 @@ const GuiaChoferes = sequelize.define(
                 key: "id",
             },
         },
-        tipo_doc: {
+        tipo_Doc: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        nro_doc: {
+        nro_Doc: {
             type: DataTypes.STRING,
             allowNull: true,
         },
