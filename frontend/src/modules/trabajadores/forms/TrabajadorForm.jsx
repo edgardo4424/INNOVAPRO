@@ -88,6 +88,8 @@ export default function TrabajadorForm() {
       const res = await trabajadoresService.dataMantenimiento();
       const res_ = await trabajadoresService.getFiliales();
 
+      console.log("filialesss", res_.data)
+
       setFiliales(res_.data);
       setValorUit(res.data.valor);
     } catch (error) {
@@ -234,7 +236,7 @@ export default function TrabajadorForm() {
             : null,
         };
 
-        const { esValido, errores } = validarContratos(dataToSubmit.contratos_laborales);
+        const { esValido, errores } = validarContratos(dataToSubmit.contratos_laborales, filiales);
 
         if (!esValido) {
           return toast.error(errores.join("\n"));
@@ -255,7 +257,9 @@ export default function TrabajadorForm() {
             : null,
         };
 
-         const { esValido, errores } = validarContratos(dataToSubmit.contratos_laborales);
+        
+        console.log('filial', filiales);
+         const { esValido, errores } = validarContratos(dataToSubmit.contratos_laborales, filiales);
 
         if (!esValido) {
           return toast.error(errores.join("\n"));

@@ -332,6 +332,7 @@ class SequelizeTrabajadorRepository {
       const trabajadores = await Trabajador.findAll({
          where: {
             estado: "activo",
+            fecha_baja: null,
          },
          include: [
             {

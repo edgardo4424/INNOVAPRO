@@ -9,6 +9,7 @@ import {
 import RowCts from "./RowCts";
 // import RowCts from "./RowCts";
 const ListaCts = ({ cts }) => {
+   console.log("cts: ", cts);
    return (
       <div className="relative py-4 ">
          <Table>

@@ -19,6 +19,5 @@ module.exports = async (periodo, anio, filial_id, ctsRepository,trabajadorReposi
     }
     console.log("LAS CTS CALCULADAS SON: \n",cts_calculadas);
     
-    const cts = await ctsRepository.calcularCts(periodo, anio, filial_id); 
     return { codigo: 200, respuesta: cts_calculadas } 
 } 

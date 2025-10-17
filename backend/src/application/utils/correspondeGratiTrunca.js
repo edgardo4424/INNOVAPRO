@@ -1,7 +1,8 @@
 
 const moment = require("moment");
+const db = require("../../database/models");
 
-function correspondeGratiTrunca(fechaBaja, trabajador_id, filial_id, transaction) {
+async function correspondeGratiTrunca(fechaBaja, trabajador_id, filial_id, transaction) {
   const baja = moment(fechaBaja, "YYYY-MM-DD");
   const mes = baja.month() + 1; // moment empieza en 0
   const anio = baja.year();
