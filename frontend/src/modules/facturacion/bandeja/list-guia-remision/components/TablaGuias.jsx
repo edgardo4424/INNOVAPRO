@@ -131,6 +131,7 @@ const TablaGuias = ({
                           setIdDocumento(guia.id);
                           setModalOpen(true);
                           setDocumentoAVisualizar({
+                            id: guia.id,
                             correlativo: String(guia.correlativo),
                             serie: guia.serie,
                             empresa_ruc: guia.empresa_ruc,

@@ -33,7 +33,6 @@ const factilizaController = {
 
     async emitirGuia(req, res) {
         try {
-            console.log("dwawa")
             const { codigo, respuesta } = await emitirGuia(req.body, guiaRemisionRepository)
             res.status(codigo).json(respuesta)
         } catch (error) {

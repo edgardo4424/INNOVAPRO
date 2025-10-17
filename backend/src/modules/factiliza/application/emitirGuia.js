@@ -1,14 +1,47 @@
+const { registrarLogFactiliza } = require('../helpers/loggerFactiliza')
 const factilizaService = require('../service/factilizaService');
 const { determinarEstadoFactura } = require('../helpers/manejoCodigosSunat');
 
 module.exports = async (guia, repository) => {
   try {
-    // 1️⃣ Enviar la guía a Factiliza
+    // ? 0 ver si la guia no existe
+
+    const guiaReguistrada = await repository.obtenerGuiaPorInformacion(guia.correlativo, guia.serie, guia.empresa_Ruc, guia.tipo_Doc);
+    console.log(guiaReguistrada)
+    if (guiaReguistrada?.length > 0) {
+      return {
+        codigo: 400,
+        respuesta: {
+          success: false,
+          data: guiaReguistrada,
+          message: 'Guia ya se encuentra emitida por nosotros',
+          status: 400
+        },
+      };
+    }
+
+    // ? 1 Enviar la guía a Factiliza
     const response = await factilizaService.enviarGuia(guia);
+
+    // ! 🪵 Registrar siempre lo que devuelve Factiliza
+    registrarLogFactiliza('FACTILIZA_RESPONSE', {
+      tipo: 'GUIA',
+      serie: guia.serie,
+      correlativo: guia.correlativo,
+      response,
+    });
+
+
     const { status, success, message, data } = response || {};
 
-    // 2️⃣ Validar respuesta HTTP
+    // ? 2 Validar respuesta HTTP
     if (status !== 200) {
+      registrarLogFactiliza('FACTILIZA_ERROR', {
+        tipo: 'GUIA',
+        serie: guia.serie,
+        correlativo: guia.correlativo,
+        response,
+      })
       return {
         codigo: status || 500,
         respuesta: {
@@ -24,10 +57,10 @@ module.exports = async (guia, repository) => {
       };
     }
 
-    // 3️⃣ Construir respuesta SUNAT
+    // ? 3 Construir respuesta SUNAT
     const sunat_respuesta = {
-      hash: data?.hash ?? null,
-      mensaje: message ?? null,
+      hash: data?.hash ? data.hash : null,
+      mensaje: message ? message : null,
       cdr_zip: null, // ⚠️ Ya no se guarda
       sunat_success: data?.sunatResponse?.success ?? null,
       cdr_response_id: data?.sunatResponse?.cdrResponse?.id ?? null,
@@ -36,21 +69,21 @@ module.exports = async (guia, repository) => {
         data?.sunatResponse?.cdrResponse?.description ?? null,
     };
 
-    // 4️⃣ Determinar estado final
+    // ? 4 Determinar estado final
     const estado = determinarEstadoFactura({ status, success, data, message });
 
-    // 5️⃣ Estructurar guía completa para BD
+    // ? 5 Estructurar guía completa para BD
     const guiaEstructurada = {
       ...guia,
       estado,
       sunat_respuesta,
     };
 
-    // 6️⃣ Separar campos antes de guardar
+    // ? 6 Separar campos antes de guardar
     const { detalle, chofer, transportista, sunat_respuesta: sr, ...guiaBase } =
       guiaEstructurada;
 
-    // 7️⃣ Guardar en BD
+    // ? 7 Guardar en BD
     const resultado = await repository.crear({
       guia: guiaBase,
       detalle,
@@ -60,6 +93,13 @@ module.exports = async (guia, repository) => {
     });
 
     if (!resultado?.success) {
+      registrarLogFactiliza('ERROR_BD', {
+        tipo: 'GUIA',
+        serie: guia.serie,
+        correlativo: guia.correlativo,
+        mensaje: resultado?.message,
+        guiaBase,
+      });
       return {
         codigo: 400,
         respuesta: {
@@ -73,24 +113,39 @@ module.exports = async (guia, repository) => {
       };
     }
 
-    // 8️⃣ Retornar éxito total
+    let messageParaElCliente = message || '';
+    let statusParaElCliente = 200;
+    if (estado == 'PENDIENTE') {
+      messageParaElCliente = 'La guía de remisión fue emitida, pero se encuentra pendiente de autorización en la SUNAT.'
+      statusParaElCliente = 200
+    } else if (estado == 'RECHAZADA') {
+      messageParaElCliente = 'La guía de remisión fue rechazada por la SUNAT, verifique los detalles para obtener mas información.'
+      statusParaElCliente = 400
+    } else if (estado == 'EMITIDA') {
+      messageParaElCliente = 'La guía de remisión fue emitida y registrada correctamente.'
+      statusParaElCliente = 201
+    }
+    // ? 8 Retornar éxito total
     return {
       codigo: 201,
       respuesta: {
         success: true,
-        message:
-          message ||
-          'La guía de remisión fue emitida y registrada correctamente.',
+        message: messageParaElCliente,
         data: resultado?.data || null,
-        status: 201,
+        status: statusParaElCliente,
       },
     };
-  } catch (error) {
-    console.error('[Error emitirGuia]:', error);
 
-    // 9️⃣ Manejo de errores genéricos o de red
+  } catch (error) {
+    registrarLogFactiliza('EXCEPCION', {
+      tipo: 'GUIA',
+      serie: guia?.serie,
+      correlativo: guia?.correlativo,
+      error: error,
+    });
+    // ? 9 Manejo de errores genéricos o de red
     return {
-      codigo: 500,
+      codigo: 400,
       respuesta: {
         success: false,
         message:

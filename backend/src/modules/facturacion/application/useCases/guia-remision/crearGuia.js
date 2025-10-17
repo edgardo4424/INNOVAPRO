@@ -3,7 +3,6 @@ module.exports = async (body, guiaRemisionRepository) => {
     const { detalle, chofer, transportista, sunat_respuesta, ...guia } = body
 
 
-
     const { success, message, data: resultadoCreacion } = await guiaRemisionRepository.crear({
         guia,
         detalle,

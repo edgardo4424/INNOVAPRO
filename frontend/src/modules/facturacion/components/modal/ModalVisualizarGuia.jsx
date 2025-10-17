@@ -237,6 +237,20 @@ export default function ModalVisualizarGuia({
                         {guia?.nroCirculacion || "—"}
                       </span>
                     </div>
+                    {guia?.guia_transportista?.length > 0 && (
+                      <div className="grid grid-cols-[auto_1fr] gap-x-2">
+                        <span className="font-semibold text-gray-700">
+                          Transportista:
+                        </span>
+                        <ul className="list-disc font-medium">
+                          {guia?.guia_transportista.map((t) => (
+                            <span key={t.id} className="">
+                              {t.razon_Social} ({t.nro_Doc})
+                            </span>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                     {(guia?.guia_choferes && guia?.guia_choferes.length > 0) ||
                     (guia?.guia_transportista &&
                       Object.keys(guia?.guia_transportista).length > 0) ? (
@@ -274,18 +288,6 @@ export default function ModalVisualizarGuia({
                               </div>
                             </Fragment>
                           ))}
-                        {guia?.guia_transportista &&
-                          Object.keys(guia?.guia_transportista).length > 0 && (
-                            <div className="grid grid-cols-[auto_1fr] gap-x-2">
-                              <span className="font-semibold text-gray-700">
-                                Transportista:
-                              </span>
-                              <span className="font-medium">
-                                {guia?.guia_transportista.Razon_Social} (
-                                {guia?.guia_transportista.Num_Doc})
-                              </span>
-                            </div>
-                          )}
                       </Fragment>
                     ) : (
                       <div className="grid grid-cols-[auto_1fr] gap-x-2">

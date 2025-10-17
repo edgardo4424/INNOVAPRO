@@ -94,32 +94,38 @@ class SequelizeGuiaRemisionRepository {
             createdGuia.choferes = createdChoferes;
 
 
-            // * 4. Crear los Choferes de la Guia, solo si se proporcionaron choferes
-            const transportista = await GuiaTranportista.create(
-                {
-                    guia_id: guia.id,
-                    ...data.transportista,
-                },
-                { transaction }
-            );
-            if (!transportista) {
-                throw new Error(
-                    `No se pudo crear el transportista.`
+            // * 4. Crear los Transportistas de la Guia, solo si se proporcionaron choferes
+            if (data.transportista) {
+
+                const transportista = await GuiaTranportista.create(
+                    {
+                        guia_id: guia.id,
+                        ...data.transportista,
+                    },
+                    { transaction }
                 );
+                if (!transportista) {
+                    throw new Error(
+                        `No se pudo crear el transportista.`
+                    );
+                }
+                createdGuia.transportista = transportista;
             }
-            createdGuia.transportista = transportista;
 
             // * 5. Crear la SunatRespuesta
-            const sunat = await SunatRespuesta.create(
-                {
-                    guia_id: guia.id,
-                    ...data.sunat_respuesta,
-                },
-                { transaction });
-            if (!sunat) {
-                throw new Error("No se pudo crear la SunatRespuesta.");
+            if (data.sunat_respuesta) {
+
+                const sunat = await SunatRespuesta.create(
+                    {
+                        guia_id: guia.id,
+                        ...data.sunat_respuesta,
+                    },
+                    { transaction });
+                if (!sunat) {
+                    throw new Error("No se pudo crear la SunatRespuesta.");
+                }
+                createdGuia.sunat_respuesta = sunat;
             }
-            createdGuia.sunat_respuesta = sunat;
             // * Si todas las operaciones fueron exitosas, confirma la transacción.
             await transaction.commit();
             return {
@@ -385,20 +391,24 @@ class SequelizeGuiaRemisionRepository {
     }
 
 
-    async obtenerGuiaPorInformacion(correlativo, serie, empresa_ruc, tipo_doc) {
+    async obtenerGuiaPorInformacion(correlativo, serie, empresa_ruc, tipo_doc, id) {
+        const whereGuia = { correlativo: correlativo, serie: serie, empresa_ruc: empresa_ruc, tipo_doc: tipo_doc };
+        if (id) whereGuia.id = id
 
         const guias = await GuiaRemision.findAll({
-            where: {
-                correlativo: correlativo,
-                serie: serie,
-                empresa_ruc: empresa_ruc,
-                tipo_doc: tipo_doc
-            },
+            where: whereGuia,
             include: [
                 { model: GuiaDetalles },
                 { model: GuiaChoferes },
+                { model: GuiaTranportista },
             ],
         });
+
+
+        // 🚨 Si no hay resultados, retornamos arreglo vacío inmediatamente
+        if (!guias || guias.length === 0) {
+            return [];
+        }
 
         const empresa = await Filial.findOne({
             where: { ruc: empresa_ruc },
