@@ -296,15 +296,12 @@ module.exports = async function darBajaTrabajador(dataBody) {
       (b) => b.dataValues
     );
 
-    console.log('holaaaaaaaaaaa');
-    
     const computarBonos = conteoBonosMesesLiquidacion(bonosDelTrabajador);
-    console.log('computar bonos', computarBonos);
+   
     if (computarBonos.length > 0) {
       promedioBonoObra = calcularBonosEnLiquidacion(bonosDelTrabajador, computarBonos)|| 0;
     }
 
-    console.log('promedio bonos', promedioBonoObra);
 
     //promedioBonoObra = calculaPromedioBonos(bonosDelTrabajador, 6) || 0;
 
