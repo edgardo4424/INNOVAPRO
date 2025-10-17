@@ -27,8 +27,6 @@ const calcularDiasContratado = (
       }
    }
 
-
-
    const inicio = Math.max(diaInicioContrato, diaInicioMes);
    const fin = Math.min(diaFinContrato, diaFinMes);
 
