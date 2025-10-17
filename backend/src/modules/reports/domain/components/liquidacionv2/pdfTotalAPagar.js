@@ -5,7 +5,15 @@ function pdfTotalAPagar({  detalles_liquidacion }) {
 
   const totalCtsTrunca = ctsTrunca?.total || 0;
   const totalVacacionesTrunca = vacacionesTrunca?.total || 0;
-  const totalGratificacionTrunca = gratificacionTrunca?.total || 0;
+
+  let totalGratificacionTrunca = 0;
+
+  if(gratificacionTrunca?.tipo_calculo != "descuento_grati_diciembre") {
+    totalGratificacionTrunca = gratificacionTrunca?.total || 0;
+  }else{
+    totalGratificacionTrunca = -gratificacionTrunca?.total_descuento_gratificacion_por_dias_no_laborados_diciembre || 0
+  }
+
   const totalRemuneracionTrunca = remuneracion_trunca?.total || 0;
   const totalAdelantosSimple = descuentos_adicionales?.totalAdelantosSimple || 0
   const totalAdelantosGratificacion = descuentos_adicionales?.totalAdelantosGratificacion || 0

@@ -1,4 +1,4 @@
-const calcularBonosEnGratificacion = (bonos,tipos_admitidos, ) => {
+const conteoBonosMesesLiquidacion = (bonos,tipos_admitidos, ) => {
    
    const sumaTipoBono=new Map();
    for (const b of bonos) {
@@ -19,4 +19,4 @@ const calcularBonosEnGratificacion = (bonos,tipos_admitidos, ) => {
    return MONTO_FINAL;
 };
 
-module.exports = calcularBonosEnGratificacion;
+module.exports = conteoBonosMesesLiquidacion;

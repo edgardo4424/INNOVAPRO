@@ -32,8 +32,8 @@ export function AuthProvider({ children }) {
         });
         // Si es válido, guardamos el usuario en el estado local "user"
         if (res.data.valid) {
-          const storedUser = JSON.parse(localStorage.getItem("user"));
-          setUser(storedUser);
+          localStorage.setItem("user", JSON.stringify(res.data.usuario));
+          setUser(res.data.usuario);
         } else { // Si no es válido, cerramos sesión automáticamente
           console.warn("⚠️ Sesión inválida. Cerrando sesión...");
           logout(); 

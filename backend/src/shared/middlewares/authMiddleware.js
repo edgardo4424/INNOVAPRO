@@ -34,6 +34,7 @@ async function verificarToken(req, res, next) {
       email: usuario.email,
       id_chat: usuario.id_chat,
       rol: usuario.trabajador?.cargo?.nombre,
+      nombre: usuario.trabajador?.nombres+" "+usuario.trabajador?.apellidos
     }
 
     if (!usuarioVerificado){

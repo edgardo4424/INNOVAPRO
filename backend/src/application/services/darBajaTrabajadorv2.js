@@ -29,7 +29,8 @@ const SequelizeAdelantoSueldoRepository = require("../../modules/adelanto_sueldo
 const adelantoSueldoRepository = new SequelizeAdelantoSueldoRepository();
 
 const SequelizeMotivosLiquidacionRepository = require("../../modules/motivos_liquidacion/infrastructure/repositories/sequelizeMotivosLiquidacionRepository");
-const motivosLiquidacionRepository = new SequelizeMotivosLiquidacionRepository();
+const motivosLiquidacionRepository =
+  new SequelizeMotivosLiquidacionRepository();
 
 const db = require("../../database/models");
 const sequelize = require("../../database/sequelize");
@@ -53,9 +54,11 @@ const {
 } = require("../utils/ajustarMesesDiasPorFaltasCTS");
 const { calcularTiempoLaborado } = require("../utils/calcularTiempoEnEmpresa");
 
+const calcularBonosEnLiquidacion = require("../utils/calcularBonosEnLiquidacion");
+const conteoBonosMesesLiquidacion = require("../utils/conteoBonosMesesLiquidacion");
+
 module.exports = async function darBajaTrabajador(dataBody) {
   const transaction = await sequelize.transaction();
-
 
   const {
     usuario_cierre_id,
@@ -101,12 +104,10 @@ module.exports = async function darBajaTrabajador(dataBody) {
         transaction
       );
 
-    const contratosDelTrabajador = contratos.map((contrato) =>
-      contrato.get({ plain: true })
-    )?.filter((c) => c.tipo_contrato == "PLANILLA");
+    const contratosDelTrabajador = contratos
+      .map((contrato) => contrato.get({ plain: true }))
+      ?.filter((c) => c.tipo_contrato == "PLANILLA");
 
-
-    console.log('contratosDelTrabajador', contratosDelTrabajador);
 
     //* Comparar si la fecha de baja es menor a la fecha de fin contrato, tomar la fecha de baja como fecha_terminacion_anticipada
     //* sino tomar la fecha fin contrato como fecha_terminacion_anticipada
@@ -119,7 +120,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
 
     if (fechaBaja.isAfter(fechaFinContrato, "day")) {
       //* Si fecha_baja es mayor a la fechaFinContrato
-      await transaction.commit();
+      await transaction.rollback();
       return {
         codigo: 400,
         respuesta: {
@@ -152,8 +153,6 @@ module.exports = async function darBajaTrabajador(dataBody) {
       }
     );
 
-    console.log('contratosParaCalcularTiempoLaborado', contratosParaCalcularTiempoLaborado);
-
     //* Calculando tiempo laborado
     const { tiempoLaborado } = calcularTiempoLaborado(
       contratosParaCalcularTiempoLaborado
@@ -170,16 +169,18 @@ module.exports = async function darBajaTrabajador(dataBody) {
         fecha_ingreso_trabajador,
         fechaBaja.format("YYYY-MM-DD")
       );
-    
+
     const cantidadDiasNoComputadosTodoElTiempoDeServicio =
       await asistenciaRepository.obtenerDiasNoComputablesPorRangoFecha(
         trabajador_id,
         fecha_ingreso_trabajador,
         fechaBaja.format("YYYY-MM-DD")
       );
-    
-    const total_faltas_y_no_computados = cantidadFaltasInjustificadasDeTodoElTiempoDeServicio + cantidadDiasNoComputadosTodoElTiempoDeServicio;
-        //! 5. Calcular el PERIODO COMPUTABLE
+
+    const total_faltas_y_no_computados =
+      cantidadFaltasInjustificadasDeTodoElTiempoDeServicio +
+      cantidadDiasNoComputadosTodoElTiempoDeServicio;
+    //! 5. Calcular el PERIODO COMPUTABLE
     const periodoComputable = restarDias(
       tiempoLaborado,
       total_faltas_y_no_computados
@@ -224,7 +225,6 @@ module.exports = async function darBajaTrabajador(dataBody) {
     const asignacionFamiliarRemuneracion =
       trabajadorEncontrado.asignacion_familiar ? MONTO_ASIGNACION_FAMILIAR : 0;
 
-      
     const PORCENTAJE_DESCUENTO_AFP = Number(
       (await dataMantenimientoRepository.obtenerPorCodigo("valor_afp")).valor
     );
@@ -244,72 +244,78 @@ module.exports = async function darBajaTrabajador(dataBody) {
     let promedioHorasExtras = 0;
     let promedioBonoObra = 0;
     let remuneracionComputable = 0;
+    let descuentoGratificacion = 0;
 
-     //! Calculando la remuneracion computable
-      const ultimoSueldo = contratoLaboralEncontrado.sueldo;
 
-      //! 7. Obteniendo los datos de mantenimiento
+    //! Calculando la remuneracion computable
+    const ultimoSueldo = contratoLaboralEncontrado.sueldo;
 
-      const MONTO_POR_HORA_EXTRA = Number(
-        (await dataMantenimientoRepository.obtenerPorCodigo("valor_hora_extra"))
-          .valor
+    //! 7. Obteniendo los datos de mantenimiento
+
+    const MONTO_POR_HORA_EXTRA = Number(
+      (await dataMantenimientoRepository.obtenerPorCodigo("valor_hora_extra"))
+        .valor
+    );
+
+    const asignacionFamiliar = trabajadorEncontrado.asignacion_familiar
+      ? MONTO_ASIGNACION_FAMILIAR
+      : 0;
+
+    //! 8. Obteniendo el promedio horas extras en base a las asistencias
+
+    const fechaFinCalculo = moment(fechaBaja);
+    const fechaInicioCalculo = moment(fechaBaja)
+      .subtract(5, "months") // restamos 5, porque septiembre cuenta como un mes
+      .startOf("month"); // inicio del mes (abril)
+
+    const asistencias =
+      await asistenciaRepository.obtenerAsistenciasPorRangoFecha(
+        trabajador_id,
+        fechaInicioCalculo,
+        fechaFinCalculo
       );
 
-      const asignacionFamiliar = trabajadorEncontrado.asignacion_familiar
-        ? MONTO_ASIGNACION_FAMILIAR
-        : 0;
+    const asistenciasDelTrabajador = asistencias.map((b) => b.dataValues);
 
-      //! 8. Obteniendo el promedio horas extras en base a las asistencias
+    promedioHorasExtras =
+      calcularPromedioHorasExtras(
+        asistenciasDelTrabajador,
+        MONTO_POR_HORA_EXTRA,
+        6
+      ) || 0;
 
-      const fechaFinCalculo = moment(fechaBaja);
-      const fechaInicioCalculo = moment(fechaBaja)
-        .subtract(5, "months") // restamos 5, porque septiembre cuenta como un mes
-        .startOf("month"); // inicio del mes (abril)
-
-      const asistencias =
-        await asistenciaRepository.obtenerAsistenciasPorRangoFecha(
-          trabajador_id,
-          fechaInicioCalculo,
-          fechaFinCalculo
-        );
-
-      const asistenciasDelTrabajador = asistencias.map((b) => b.dataValues);
-
-      promedioHorasExtras =
-        calcularPromedioHorasExtras(
-          asistenciasDelTrabajador,
-          MONTO_POR_HORA_EXTRA,
-          6
-        ) || 0;
-
-      //! 9. Cacular bonos
-      const bonosDelTrabajadorPorFecha =
-        await bonoRepository.obtenerBonosDelTrabajadorEnRango(
-          trabajador_id,
-          fechaInicioCalculo,
-          fechaFinCalculo
-        );
-
-      const bonosDelTrabajador = bonosDelTrabajadorPorFecha.map(
-        (b) => b.dataValues
+    //! 9. Cacular bonos
+    const bonosDelTrabajadorPorFecha =
+      await bonoRepository.obtenerBonosDelTrabajadorEnRango(
+        trabajador_id,
+        fechaInicioCalculo,
+        fechaFinCalculo
       );
 
-      promedioBonoObra = calculaPromedioBonos(bonosDelTrabajador, 6) || 0;
+    const bonosDelTrabajador = bonosDelTrabajadorPorFecha.map(
+      (b) => b.dataValues
+    );
 
-      //! 10. Calcular la remuneracion computable (OJOOOOOOOO)
-      remuneracionComputable =
-        ultimoSueldo +
-        asignacionFamiliar +
-        promedioHorasExtras +
-        promedioBonoObra;
+    const computarBonos = conteoBonosMesesLiquidacion(bonosDelTrabajador);
+   
+    if (computarBonos.length > 0) {
+      promedioBonoObra = calcularBonosEnLiquidacion(bonosDelTrabajador, computarBonos)|| 0;
+    }
 
-      console.log('Remuneracion computable: ', remuneracionComputable);
+
+    //promedioBonoObra = calculaPromedioBonos(bonosDelTrabajador, 6) || 0;
+
+    //! 10. Calcular la remuneracion computable (OJOOOOOOOO)
+    remuneracionComputable =
+      ultimoSueldo +
+      asignacionFamiliar +
+      promedioHorasExtras +
+      promedioBonoObra;
+
 
     //! 6. Verificar si el trabajador cumple con los beneficios (minimo 1 mes en la empresa)
 
     if (tiempoLaborado.anios >= 1 || tiempoLaborado.meses >= 1) {
-     
-
       //! 11.Calcular gratificcion trunca
 
       //* Verificar si ya fue cerrado la gratificacion
@@ -320,6 +326,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
 
       let periodo = mes_gratificacion <= 6 ? "JULIO" : "DICIEMBRE";
 
+    
       // Verificar si ya hay un registro en cierres_Gratificaciones
       const cierreGratificacion =
         await gratificacionRepository.obtenerCierreGratificacion(
@@ -328,21 +335,43 @@ module.exports = async function darBajaTrabajador(dataBody) {
           filial_id,
           transaction
         );
+        
+const dia_baja = Number(moment(fecha_baja).format("DD"));
 
-      if (!cierreGratificacion) {
-        const corresponde = correspondeGratiTrunca(
+       // Solo bloquear si la baja es en diciembre
+if (mes_gratificacion == 12 && dia_baja >= 15 && !cierreGratificacion) {
+  await transaction.rollback();
+  return {
+    codigo: 404,
+    respuesta: {
+      mensaje: "Cerrar primero la gratificación de diciembre antes de dar de baja al trabajador",
+    },
+  };
+}
+
+
+          const fechaCese = moment(fecha_baja, "YYYY-MM-DD");
+          const mesCese = fechaCese.month() + 1; // diciembre = 12
+          const diaCese = fechaCese.date();
+       
+      if (!cierreGratificacion || mesCese < 12) {
+        // Si aun no se cierra
+      /*   const corresponde = await correspondeGratiTrunca(
           fechaBaja,
           trabajador_id,
           filial_id,
           transaction
-        );
-
-        if (corresponde) {
+        ); */
+/* 
+        console.log('corresponde: ', corresponde);
+ */
+       /*  if (corresponde) { */
           // 👉 aquí haces el cálculo de la gratificación trunca
           const fechaInicioGrati = obtenerFechaInicioGrati(
             fechaBaja,
             fecha_ingreso_trabajador
           );
+
 
           const { mesesComputados } = calcularMesesComputadosGratificacion(
             fechaInicioGrati,
@@ -422,26 +451,62 @@ module.exports = async function darBajaTrabajador(dataBody) {
               calculoGratificacionNetoTrunca + calculoBonificacionEssalud
             ),
           };
-        } else {
+ 
+       /*  } else {
 
-        }
-      } else {
+          console.log('que paso')
+        } */
+      } else if (mesCese == 12) {
+//* Calcular la gratificación que se debe restar si el trabajador se va entre el 16 y el 31 de diciembre (incluye ambas fechas extremas)
 
+
+            // CAlcular la cantidad de faltas en el rango de fecha (16/12/2022 - fechaBaja)
+            const cantidadFaltasRangoFecha = (await asistenciaRepository.obtenerCantidadFaltasPorRangoFecha(
+              trabajador_id,
+              "2022-12-16",
+              fechaBaja
+            )) || 0;
+
+
+            const diasNoLaborados = 31 - diaCese + cantidadFaltasRangoFecha;
+
+            const descuentoBase = redondear2(
+              ((remuneracionComputable * factorRegimen) / 6 / 30) *
+                diasNoLaborados
+            );
+
+            const descuentoEssalud = redondear2(
+              descuentoBase * (PORCENTAJE_BONIFICACION_ESSALUD / 100)
+            );
+
+            descuentoGratificacion = redondear2(
+              descuentoBase + descuentoEssalud
+            );
+            gratificacionTrunca = {
+              tipo_calculo: "descuento_grati_diciembre",
+              gratificacion_dias_descuento: descuentoBase,
+              bonificacion_essalud_descuento: descuentoEssalud,
+              total_descuento_gratificacion_por_dias_no_laborados_diciembre: descuentoGratificacion,
+              dias_no_laborados_diciembre: diasNoLaborados
+            }; 
+
+          
+        
       }
 
       //! 12. Calcular cts trunca
 
       const mes = fechaBaja.month() + 1; // moment cuenta meses desde 0
-      const año = fechaBaja.year();
+      const anio = fechaBaja.year();
 
       let ultimaGratiPeriodo;
 
       if (mes >= 7) {
-        // De julio a diciembre → última grati fue en julio del mismo año
-        ultimaGratiPeriodo = moment(`${año}-07`, "YYYY-MM");
+        // De julio a diciembre → última grati fue en julio del mismo anio
+        ultimaGratiPeriodo = moment(`${anio}-07`, "YYYY-MM");
       } else {
-        // De enero a junio → última grati fue en diciembre del año anterior
-        ultimaGratiPeriodo = moment(`${año - 1}-12`, "YYYY-MM");
+        // De enero a junio → última grati fue en diciembre del anio anterior
+        ultimaGratiPeriodo = moment(`${anio - 1}-12`, "YYYY-MM");
       }
 
       const gratificacionPorTrabajador = await db.gratificaciones.findOne({
@@ -542,97 +607,94 @@ module.exports = async function darBajaTrabajador(dataBody) {
         total: calculoCtsNetoTrunca,
       };
 
-      
-    //! 13. Calcular vacaciones truncas
+      //! 13. Calcular vacaciones truncas
 
-    const calculoVacacionesTruncaAnios =
-      redondear2(
-        remuneracionComputable * factorRegimen * periodoComputable.anios
-      ) || 0;
+      const calculoVacacionesTruncaAnios =
+        redondear2(
+          remuneracionComputable * factorRegimen * periodoComputable.anios
+        ) || 0;
 
-    const calculoVacacionesTruncaMeses =
-      redondear2(
-        ((remuneracionComputable * factorRegimen) / 12) *
-          periodoComputable.meses
-      ) || 0;
+      const calculoVacacionesTruncaMeses =
+        redondear2(
+          ((remuneracionComputable * factorRegimen) / 12) *
+            periodoComputable.meses
+        ) || 0;
 
-    const calculoVacacionesTruncaDias =
-      redondear2(
-        ((remuneracionComputable * factorRegimen) / 12 / 30) *
-          periodoComputable.dias
-      ) || 0;
+      const calculoVacacionesTruncaDias =
+        redondear2(
+          ((remuneracionComputable * factorRegimen) / 12 / 30) *
+            periodoComputable.dias
+        ) || 0;
 
-    //* Obtener descuentos vacaciones gozadas
+      //* Obtener descuentos vacaciones gozadas
 
-    const cantidadDiasVacacionesGozadas =
-      await vacacionesRepository.obtenerCantidadDiasVacacionesGozadas(
-        trabajador_id,
-        fecha_ingreso_trabajador,
-        fechaBaja,
-        transaction
+      const cantidadDiasVacacionesGozadas =
+        await vacacionesRepository.obtenerCantidadDiasVacacionesGozadas(
+          trabajador_id,
+          fecha_ingreso_trabajador,
+          fechaBaja,
+          transaction
+        );
+
+      const montoPorDiaVacacionesGozadas = redondear2(
+        contratoLaboralEncontrado.sueldo / 30
       );
 
-    const montoPorDiaVacacionesGozadas = redondear2(
-      contratoLaboralEncontrado.sueldo / 30
-    );
+      const descuentos_vacaciones_gozadas = redondear2(
+        montoPorDiaVacacionesGozadas * cantidadDiasVacacionesGozadas
+      );
 
-    const descuentos_vacaciones_gozadas = redondear2(
-      montoPorDiaVacacionesGozadas * cantidadDiasVacacionesGozadas
-    );
+      const subtotal_vacaciones_truncas = redondear2(
+        calculoVacacionesTruncaAnios +
+          calculoVacacionesTruncaMeses +
+          calculoVacacionesTruncaDias -
+          descuentos_vacaciones_gozadas
+      );
 
-    const subtotal_vacaciones_truncas = redondear2(
-      calculoVacacionesTruncaAnios +
-        calculoVacacionesTruncaMeses +
-        calculoVacacionesTruncaDias -
-        descuentos_vacaciones_gozadas
-    );
+      //* Verificar que tipo de pension pertenece
 
-    //* Verificar que tipo de pension pertenece
+      let descuentos_ley_vacaciones_trunca = 0;
 
-    let descuentos_ley_vacaciones_trunca = 0;
+      switch (trabajadorEncontrado.sistema_pension) {
+        case "AFP":
+          descuentos_ley_vacaciones_trunca = redondear2(
+            (subtotal_vacaciones_truncas * PORCENTAJE_DESCUENTO_AFP_Y_SEGURO) /
+              100
+          );
+          break;
+        case "ONP":
+          descuentos_ley_vacaciones_trunca = redondear2(
+            (subtotal_vacaciones_truncas * PORCENTAJE_DESCUENTO_ONP) / 100
+          );
+          break;
 
+        default:
+          break;
+      }
 
-    switch (trabajadorEncontrado.sistema_pension) {
-      case "AFP":
-        descuentos_ley_vacaciones_trunca = redondear2(
-          (subtotal_vacaciones_truncas * PORCENTAJE_DESCUENTO_AFP_Y_SEGURO) /
-            100
-        );
-        break;
-      case "ONP":
-        descuentos_ley_vacaciones_trunca = redondear2(
-          (subtotal_vacaciones_truncas * PORCENTAJE_DESCUENTO_ONP) / 100
-        );
-        break;
-
-      default:
-        break;
-    }
-
-     vacacionesTrunca = {
-      anios_computados: periodoComputable.anios,
-      meses_computados: periodoComputable.meses,
-      dias_computados: periodoComputable.dias,
-      fechaInicioVacaciones: fecha_ingreso_trabajador,
-      fechaFinVacaciones: fechaBaja.format("YYYY-MM-DD"),
-      sueldo: remuneracionComputable,
-      calculoVacacionesTruncaAnios,
-      calculoVacacionesTruncaMeses,
-      calculoVacacionesTruncaDias,
-      descuentos_vacaciones_gozadas,
-      dias_vacaciones_gozadas: cantidadDiasVacacionesGozadas,
-      /*  subtotal_vacaciones_truncas: subtotal_vacaciones_truncas, */
-      /*  porcentaje_descuento_sistema_pension:
+      vacacionesTrunca = {
+        anios_computados: periodoComputable.anios,
+        meses_computados: periodoComputable.meses,
+        dias_computados: periodoComputable.dias,
+        fechaInicioVacaciones: fecha_ingreso_trabajador,
+        fechaFinVacaciones: fechaBaja.format("YYYY-MM-DD"),
+        sueldo: remuneracionComputable,
+        calculoVacacionesTruncaAnios,
+        calculoVacacionesTruncaMeses,
+        calculoVacacionesTruncaDias,
+        descuentos_vacaciones_gozadas,
+        dias_vacaciones_gozadas: cantidadDiasVacacionesGozadas,
+        /*  subtotal_vacaciones_truncas: subtotal_vacaciones_truncas, */
+        /*  porcentaje_descuento_sistema_pension:
         trabajadorEncontrado.sistema_pension == "AFP"
           ? PORCENTAJE_DESCUENTO_AFP_Y_SEGURO
           : PORCENTAJE_DESCUENTO_ONP, */
-      descuentos_ley: descuentos_ley_vacaciones_trunca,
-      total: redondear2(
-        subtotal_vacaciones_truncas - descuentos_ley_vacaciones_trunca
-      ),
-    };
+        descuentos_ley: descuentos_ley_vacaciones_trunca,
+        total: redondear2(
+          subtotal_vacaciones_truncas - descuentos_ley_vacaciones_trunca
+        ),
+      };
     }
-
 
     //! 14. Calcular Remuneracion Trunca
 
@@ -745,7 +807,8 @@ module.exports = async function darBajaTrabajador(dataBody) {
         dias_laborados: cantidadDiasRemuneracion,
         sueldo_base_remuneracion: sueldoBaseRemuneracion,
         asignacion_familiar: asignacionFamiliarRemuneracion,
-        dias_faltas_y_no_computados: faltas_injustificadas_y_no_computados_remuneracion,
+        dias_faltas_y_no_computados:
+          faltas_injustificadas_y_no_computados_remuneracion,
         monto_dias_faltas_y_no_computados: montoFaltaRemuneracion,
         descuentos_ley: descuentos_ley_remuneracion,
         descuento_planilla_quincenal: descuento_planilla_quincenal,
@@ -753,10 +816,11 @@ module.exports = async function darBajaTrabajador(dataBody) {
       };
     }
 
-    const motivoLiquidacion = await motivosLiquidacionRepository.obtenerMotivoLiquidacionPorId(
-      motivo_liquidacion_id,
-      transaction
-    );
+    const motivoLiquidacion =
+      await motivosLiquidacionRepository.obtenerMotivoLiquidacionPorId(
+        motivo_liquidacion_id,
+        transaction
+      );
 
     const informacionLiquidacion = {
       trabajador_id: trabajador_id,
@@ -830,7 +894,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
     const totalAdelantosCts = redondear2(totalAdelantos_cts);
 
     const totalDescuentosAdicionales =
-      totalAdelantosSimple + totalAdelantosGratificacion + totalAdelantosCts;
+      totalAdelantosSimple + totalAdelantosGratificacion + totalAdelantosCts + descuentoGratificacion;
 
     const descuentos_adicionales = {
       totalAdelantosSimple,
@@ -890,8 +954,8 @@ module.exports = async function darBajaTrabajador(dataBody) {
 
     trabajadorActualizado.fecha_baja = fechaBaja.format("YYYY-MM-DD");
     await trabajadorActualizado.save({ transaction });
-    
-    
+
+
     await transaction.commit();
 
     return {
@@ -902,7 +966,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
       },
     };
   } catch (error) {
-    console.log('error', error);
+    console.log("error", error);
     await transaction.rollback();
     return {
       codigo: 500,

@@ -15,7 +15,6 @@ module.exports = async function editarTrabajadorConContrato(data) {
    const { id: trabajadorId, contratos_laborales } = data;
  
    try {
-      console.log('data', data);
       const response_edit = await editarTrabajador(
          data,
          trabajadorRepository,

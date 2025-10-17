@@ -8,7 +8,8 @@ router.post("/login", authController.login);
 
 // Verificar sesión (protegido con token)
 router.get("/verify-session", verificarToken, (req, res) => {
-  res.json({ valid: true });
+ 
+  res.json({ valid: true, usuario: req.usuario });
 });
 
 module.exports = router;
