@@ -1,4 +1,3 @@
-// INNOVA PRO+ v1.3.0 - Modelo alineado a 20251009-crear-quinta_calculos-v2.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../../../config/db');
 
