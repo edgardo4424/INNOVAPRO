@@ -286,3 +286,7 @@ UPDATE piezas SET descripcion = 'PIEZA EN \"U\" PARA TRACCION DE CABLE DE ACERO'
 UPDATE piezas SET precio_alquiler_soles = '7.85' WHERE (id = '255');
 UPDATE piezas SET precio_alquiler_soles = '15.60' WHERE (id = '258');
 UPDATE piezas SET precio_alquiler_soles = '7.85' WHERE (id = '299');
+
+UPDATE piezas SET precio_venta_dolares = '301.32' WHERE (id = '183');
+UPDATE piezas SET precio_venta_dolares = '625.93' WHERE (id = '180');
+

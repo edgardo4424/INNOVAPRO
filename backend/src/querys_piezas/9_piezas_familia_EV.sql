@@ -255,3 +255,5 @@ UPDATE piezas SET peso_kg = '1184.93' WHERE (id = '410');
 
 UPDATE piezas SET descripcion = 'BASE ELEVADOR - 2840mm x 930mm' WHERE (id = '427');
 UPDATE piezas SET descripcion = 'VENTILADOR CABINA' WHERE (id = '396');
+
+UPDATE piezas SET descripcion = 'ESCALERA METALICA - 2270mm x 40mm' WHERE (id = '395');
