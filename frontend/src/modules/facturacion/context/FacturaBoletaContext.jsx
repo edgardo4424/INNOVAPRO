@@ -402,6 +402,14 @@ export function FacturaBoletaProvider({ children }) {
       if (detallesExtra.length > 0) {
         facturaAEmitir.extraDetails = JSON.stringify(detallesExtra);
       }
+      // ?? Si se agrego el precio del dolar
+      if (precioDolarActual) {
+        facturaAEmitir.precio_dolar = precioDolarActual;
+      }
+
+      if (idBorrador > 0) {
+        facturaAEmitir.id_borrador = idBorrador;
+      }
 
       const { status, success, message, data } =
         await factilizaService.enviarFactura({
