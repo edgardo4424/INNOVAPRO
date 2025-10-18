@@ -4,7 +4,7 @@ const { determinarEstadoFactura } = require('../helpers/manejoCodigosSunat');
 
 module.exports = async (nota, repository, borradorRepository) => {
     try {
-        const notaRegistrada = await repository.obtenerNotaDetallada(nota.correlativo, nota.serie, nota.empresa_Ruc, nota.tipo_Doc)
+        const notaRegistrada = await repository.obtenerNotaDetallada(nota.correlativo, nota.serie, nota.empresa_Ruc, nota.tipo_Doc);
         
         if (notaRegistrada?.length > 0) {
             return {
@@ -155,7 +155,7 @@ module.exports = async (nota, repository, borradorRepository) => {
             },
         };
     } catch (error) {
-        registrarLogFactiliza('EXCEPTION_FACTURA', {
+        registrarLogFactiliza('EXCEPTION_NOTA', {
             tipo: nota.tipo_Doc == '07' ? 'CREDITO' : 'DEBITO',
             serie: nota?.serie,
             correlativo: nota?.correlativo,

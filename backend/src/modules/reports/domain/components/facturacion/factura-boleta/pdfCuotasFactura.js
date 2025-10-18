@@ -1,6 +1,10 @@
 const { utils } = require('../../../../utils/utils')
 
 function pdfCuotasFactura(factura) {
+    let plan = factura.forma_pago_facturas[0]?.tipo?.toUpperCase()
+    if (plan == 'CONTADO') {
+        return
+    }
     // 1. Parsear cuotas_Real si viene como string JSON
     let cuotasReal = [];
     try {

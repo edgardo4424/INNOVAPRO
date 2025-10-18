@@ -398,6 +398,11 @@ export function FacturaBoletaProvider({ children }) {
       } else {
         facturaAEmitir = factura;
       }
+      // ?? Si se agregaron detalles exta
+      if (detallesExtra.length > 0) {
+        facturaAEmitir.extraDetails = JSON.stringify(detallesExtra);
+      }
+
       const { status, success, message, data } =
         await factilizaService.enviarFactura({
           ...facturaAEmitir,

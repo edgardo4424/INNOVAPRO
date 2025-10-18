@@ -270,7 +270,7 @@ const TablaNotas = ({
                           const [serie, correlativo] =
                             nota.afectado_Num_Doc.split("-");
                           setDocumentoAfectadoVisualizar({
-                            id: nota.id,
+                            // id: nota.factura_id ? nota.factura_id : null,
                             serie: serie,
                             correlativo: correlativo,
                             empresa_ruc: nota.empresa_Ruc,

@@ -23,7 +23,7 @@ export function NotaProvider({ children }) {
   const [loadingCorrelativo, setLoadingCorrelativo] = useState(false);
   // Notas de crédito
   const serieCredito = [
-    { value: "FCT8", doc: "01" }, // Nota de crédito sobre factura
+    { value: "FCT1", doc: "01" }, // Nota de crédito sobre factura
     { value: "FCT2", doc: "01" }, // (opcional segunda serie)
     { value: "BCT1", doc: "03" }, // Nota de crédito sobre boleta
     { value: "BCT2", doc: "03" },
@@ -269,153 +269,38 @@ export function NotaProvider({ children }) {
       const { status, success, message, data } =
         await factilizaService.enviarNota(notaCreditoDebito);
 
-      // ? 3. Evaluar la respuesta de la API de factilización.
-      if (status === 200) {
-        // ? ÉXITO en SUNAT: La nota fue aceptada.
-
-        // ? a. Formatear la respuesta de SUNAT para el registro en la base de datos.
-        const sunat_respuest = {
-          hash: data.hash,
-          cdr_zip: data.sunatResponse.cdrZip,
-          sunat_success: data.sunatResponse.success,
-          cdr_response_id: data.sunatResponse.cdrResponse.id,
-          cdr_response_code: data.sunatResponse.cdrResponse.code,
-          cdr_response_description: data.sunatResponse.cdrResponse.description,
-        };
-        let detalleFormateado = [];
-
-        if (notaCreditoDebito.motivo_Cod == "05") {
-          notaCreditoDebito.detalle.forEach((detalle) => {
-            detalleFormateado.push({
-              ...detalle,
-              Descuentos: detalle.Descuentos
-                ? JSON.stringify(detalle.Descuentos)
-                : null,
-            });
-          });
-        } else {
-          detalleFormateado = notaCreditoDebito.detalle;
-        }
-
-        // ? b. Preparar el objeto final a registrar.
-        const notaEmitida = {
-          ...notaCreditoDebito,
-          precio_dolar: precioDolarActual,
-          usuario_id: id_logeado,
-          detalle: detalleFormateado,
-          sunat_respuesta: sunat_respuest,
-          factura_id: documentoAAfectar.factura_id,
-          guia_id: documentoAAfectar.guia_id,
-          estado: determinarEstadoFactura({ status, success, message, data }),
-          id_borrador: idBorrador ? idBorrador : null,
-        };
-
-        // ? c. ¡Ahora sí! Intentar registrar la nota en la base de datos.
-        const {
-          status: dbStatus,
-          success: dbSuccess,
-          message: dbMessage,
-        } = await registrarBaseDatos(notaEmitida);
-
-        // ? d. Evaluar el resultado del registro en la base de datos.
-        if (dbStatus) {
-          // ? ÉXITO TOTAL: Se emitió y se registró correctamente.
-          result = {
-            success: true,
-            message: "Nota de crédito/débito emitida y registrada con éxito.",
-            data: notaEmitida,
-          };
-        } else {
-          // ÉXITO PARCIAL: Se emitió a SUNAT, pero falló el registro local.
-          result = {
-            success: false,
-            message:
-              "La nota fue emitida a SUNAT, pero no se pudo registrar en la base de datos.",
-            detailed_message: dbMessage,
-            data: notaEmitida,
-          };
-        }
-      } else if (
-        status === 200 &&
-        data?.sunatResponse?.cdrResponse?.code != "0"
-      ) {
-        // ? ERROR LÓGICO: La API respondió, pero SUNAT rechazó el documento.
-        result = {
-          success: false,
-          message: message,
-          detailed_message:
-            `${data.error.code} - ${data.error.message}` ||
-            "Error desconocido al enviar la nota.",
-          data: data,
-        };
-      } else {
-        // ? ERROR DE SERVICIO: La API no pudo procesar la solicitud.
-        result = {
-          success: false,
-          message: message || "Error desconocido en el servicio de emisión.",
-          data: data,
-        };
+      result = {
+        status,
+        success,
+        message,
+        data,
+      };
+      if (status == 200 || status == 201 || status == 400) {
+        Limpiar();
       }
     } catch (error) {
-      // ? ERROR DE RED o EXCEPCIÓN: Fallo de conexión o problema inesperado.
       if (error.response) {
+        const { success, message, detailed_message, data, status } =
+          error.response.data;
         result = {
           success: false,
           message:
-            error.response.data?.message ||
-            error.response.data?.error ||
-            "Error al comunicarse con la API.",
-          data: error.response.data,
+            message || detailed_message || "Error al comunicarse con la API.",
+          data,
+          status,
         };
+        return result;
       } else {
-        result = {
+        return {
           success: false,
           message: error.message || "Ocurrió un error inesperado.",
           data: null,
+          status: 500,
         };
       }
     } finally {
       // ? 4. Devolver el resultado final del proceso.
       return result;
-    }
-  };
-
-  const registrarBaseDatos = async (documento) => {
-    if (!documento) {
-      return {
-        success: false,
-        mensaje: "No se pudo registrar la nota: documento vacío.",
-        status: 400,
-      };
-    }
-
-    try {
-      const { success, message, status } =
-        await facturaService.registrarNota(documento);
-
-      if (status === 201 && success) {
-        Limpiar();
-      }
-
-      return { status, success, message };
-    } catch (error) {
-      // ? En caso de que toast.promise no capture el error, lo manejamos aquí
-      if (error.response) {
-        return {
-          success: false,
-          message:
-            error.response.data?.mensaje || "Error al registrar la nota.",
-          data: error.response.data,
-          status: error.response.status,
-        };
-      } else {
-        return {
-          success: false,
-          message: "Ocurrió un error inesperado al registrar la nota.",
-          data: null,
-          status: 500,
-        };
-      }
     }
   };
 
