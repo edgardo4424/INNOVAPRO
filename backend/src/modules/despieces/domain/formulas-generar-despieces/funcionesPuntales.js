@@ -7,32 +7,32 @@ function calcularPU0100({ tipoPuntal, cantidad }) {
 function calcularPU0400({ tipoPuntal, cantidad }) {
   return tipoPuntal == "4.00 m" ? cantidad : 0;
 }
-// 7. PU.0600 - PUNTAL 5.00m
+// 7. PU.0300 - PUNTAL 5.00m
 function calcularPU0600({ tipoPuntal, cantidad }) {
   return tipoPuntal == "5.00 m" ? cantidad : 0;
 }
 
-// 8. PU.0700 - PIN PRESION - 11mm
+// 8. PU.0350 - PIN PRESION - 11mm
 function calcularPU0700(valorCalcularPU0100, valorCalcularPU0400 ) {
   return valorCalcularPU0100 + valorCalcularPU0400 ;
 }
 
-// 9. PU.0800 - PIN PRESION - 12mm
+// 9. PU.0400 - PIN PRESION - 12mm
 function calcularPU0800(valorCalcularPU0600) {
   return valorCalcularPU0600;
 }
 
-// 10. PU.0900 - ARGOLLA - 48/40mm
+// 10. PU.0450 - ARGOLLA - 48/40mm
 function calcularPU0900(valorCalcularPU0100, valorCalcularPU0400 ) {
   return valorCalcularPU0100 + valorCalcularPU0400 ;
 }
 
-// 11. PU.1000 - ARGOLLA - 60/52mm
+// 11. PU.0500 - ARGOLLA - 60/52mm
 function calcularPU1000(valorCalcularPU0600) {
   return valorCalcularPU0600;
 }
 
-// 12. PU.1100 - TRIPODE
+// 12. PU.0550 - TRIPODE
 function calcularPU1100({ tripode, cantidad }) {
   return tripode === "SI" ? cantidad : 0;
 }

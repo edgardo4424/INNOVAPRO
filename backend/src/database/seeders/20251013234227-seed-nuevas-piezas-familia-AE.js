@@ -275,7 +275,25 @@ module.exports = {
       `UPDATE piezas SET peso_kg = '4.45' WHERE (id = '301')`,
       `UPDATE piezas SET peso_kg = '10.00' WHERE (id = '302')`,
       `UPDATE piezas SET peso_kg = '10.00' WHERE (id = '303')`,
-      `UPDATE piezas SET item = 'AE.0070', peso_kg = '115.80', precio_venta_soles = '2315.95' WHERE (id = '180')`
+      `UPDATE piezas SET item = 'AE.0070', peso_kg = '115.80', precio_venta_soles = '2315.95' WHERE (id = '180')`,
+      
+       `UPDATE piezas SET descripcion = 'CABLE DE ACERO D=8.6mm - 100m' WHERE (id = '182')`,
+  `UPDATE piezas SET descripcion = 'CABLE DE ACERO D=8.6mm - 90m', precio_venta_soles = '1114.87' WHERE (id = '183')`,
+  `UPDATE piezas SET descripcion = 'CABLE DE ACERO D=8.6mm - 80m' WHERE (id = '184')`,
+  `UPDATE piezas SET descripcion = 'CABLE DE ACERO D=8.6mm - 70m' WHERE (id = '185')`,
+  `UPDATE piezas SET descripcion = 'CABLE DE ACERO D=8.6mm - 60m' WHERE (id = '186')`,
+  `UPDATE piezas SET descripcion = 'CABLE DE ACERO D=8.6mm - 50m' WHERE (id = '187')`,
+  `UPDATE piezas SET descripcion = 'CABLE DE ACERO D=8.6mm - 40m' WHERE (id = '188')`,
+  `UPDATE piezas SET descripcion = 'CABLE DE ACERO D=8.6mm - 30m' WHERE (id = '189')`,
+  `UPDATE piezas SET descripcion = 'CABLE DE ACERO D=8.6mm - 20m' WHERE (id = '190')`,
+  `UPDATE piezas SET descripcion = 'CABLE DE ACERO D=8.6mm PARA ARRIOSTRE' WHERE (id = '191')`,
+  `UPDATE piezas SET descripcion = 'CABLE DE ACERO D=8.6mm PARA TRACCION' WHERE (id = '192')`,
+  `UPDATE piezas SET descripcion = 'PIEZA EN "U" PARA COLGAR CABLE DE ACERO - ABIERTA' WHERE (id = '194')`,
+  `UPDATE piezas SET descripcion = 'PIEZA EN "U" PARA COLGAR CABLE DE ACERO - CERRADA' WHERE (id = '195')`,
+  `UPDATE piezas SET descripcion = 'PIEZA EN "U" PARA TRACCION DE CABLE DE ACERO' WHERE (id = '196')`,
+  `UPDATE piezas SET precio_alquiler_soles = '7.85' WHERE (id = '255')`,
+  `UPDATE piezas SET precio_alquiler_soles = '15.60' WHERE (id = '258')`,
+  `UPDATE piezas SET precio_alquiler_soles = '7.85' WHERE (id = '299')`
     ];
 
     for (const sql of queries) {

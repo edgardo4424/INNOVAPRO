@@ -4,8 +4,7 @@
 module.exports = {
   async up (queryInterface, Sequelize) {
     const queries = [
-      `DELETE FROM stock`,
-      
+
     
       `DELETE FROM piezas WHERE (id = '308')`,
       `DELETE FROM piezas WHERE (id = '309')`,
@@ -68,6 +67,17 @@ module.exports = {
       `UPDATE piezas SET item = 'EN.0275', peso_kg = '2.70' WHERE (id = '361')`,
       `UPDATE piezas SET item = 'EN.0280', peso_kg = '7.70', precio_venta_soles = '153.99' WHERE (id = '362')`,
       `UPDATE piezas SET item = 'EN.0285', peso_kg = '3.84' WHERE (id = '363')`,
+
+       `UPDATE piezas SET precio_venta_dolares = '8.59' WHERE (id = '326')`,
+  `UPDATE piezas SET precio_venta_dolares = '100.72' WHERE (id = '344')`,
+  `UPDATE piezas SET precio_venta_dolares = '68.44' WHERE (id = '346')`,
+  `UPDATE piezas SET precio_venta_dolares = '153.67' WHERE (id = '354')`,
+  `UPDATE piezas SET precio_venta_soles = '128.52' WHERE (id = '307')`,
+  `UPDATE piezas SET precio_venta_soles = '102.83' WHERE (id = '304')`,
+  `UPDATE piezas SET precio_venta_soles = '40.03' WHERE (id = '306')`,
+  `UPDATE piezas SET precio_venta_soles = '1003.92' WHERE (id = '332')`,
+  `UPDATE piezas SET precio_venta_soles = '285.87' WHERE (id = '349')`,
+  `UPDATE piezas SET precio_alquiler_soles = '12.71' WHERE (id = '348')`
       
     ];
 

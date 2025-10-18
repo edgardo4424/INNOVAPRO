@@ -33,8 +33,8 @@ async function generarPdfPuntales({ idDespiece, tipo_cotizacion, porcentajeDescu
 
           let puntal;
           if (tipoPuntal === "3.00 m") puntal = "PU.0100";
-          else if (tipoPuntal === "4.00 m") puntal = "PU.0400";
-          else if (tipoPuntal === "5.00 m") puntal = "PU.0600";
+          else if (tipoPuntal === "4.00 m") puntal = "PU.0200";
+          else if (tipoPuntal === "5.00 m") puntal = "PU.0300";
 
           const piezaPuntal = await db.piezas.findOne({
             where: { item: puntal },
@@ -112,17 +112,17 @@ async function generarPdfPuntales({ idDespiece, tipo_cotizacion, porcentajeDescu
       let itemArgolla;
       switch (tipo) {
         case "5.00 m":
-          itemPiezaPinPresion = "PU.0800";
-          itemArgolla = "PU.1000";
+          itemPiezaPinPresion = "PU.0400";
+          itemArgolla = "PU.0500";
           break;
 
         case "4.00 m":
-          itemPiezaPinPresion = "PU.0700";
-          itemArgolla = "PU.0900";
+          itemPiezaPinPresion = "PU.0350";
+          itemArgolla = "PU.0450";
           break;
         case "3.00 m":
-          itemPiezaPinPresion = "PU.0700";
-          itemArgolla = "PU.0900";
+          itemPiezaPinPresion = "PU.0350";
+          itemArgolla = "PU.0450";
           break;
         default:
          /*  console.warn("❌ Tipo de puntal no reconocido:", tipo); */
@@ -178,7 +178,7 @@ async function generarPdfPuntales({ idDespiece, tipo_cotizacion, porcentajeDescu
 
   const piezaTripodeEncontrado = await db.piezas.findOne({
     where: {
-      item: "PU.1100",
+      item: "PU.0550",
     },
   });
 

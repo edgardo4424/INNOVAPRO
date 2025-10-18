@@ -4,9 +4,7 @@
 module.exports = {
   async up (queryInterface, Sequelize) {
     const queries = [
-    
-  `DELETE FROM stock`,
-
+ 
       `DELETE FROM piezas WHERE (id = '381')`,
 
       `UPDATE piezas SET item = 'XX.0001' WHERE (id = '382')`,
@@ -258,7 +256,24 @@ module.exports = {
       `INSERT INTO piezas (item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES ('EV.0680', '10', 'CERCO [250] LATERAL C/ MUESCA P/ RIEL (L=0.80m - H=2.00m) - IZQUIERDA', '152.46', '824.11', '3049.20', '152.46', '0')`,
       `INSERT INTO piezas (item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES ('EV.0685', '10', 'CERCO [250] SOPORTE PUERTA-TABLERO - DERECHA', '101.64', '549.41', '2032.80', '101.64', '0')`,
       `INSERT INTO piezas (item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES ('EV.0690', '10', 'CERCO [250] SOPORTE PUERTA-TABLERO - IZQUIERDA', '101.64', '549.41', '2032.80', '101.64', '0')`,
-      `INSERT INTO piezas (item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES ('EV.0695', '10', 'CERCO [250] LORO CON RESORTE PARA CERCO', '0.00', '0.00', '0.00', '0.00', '0')`
+      `INSERT INTO piezas (item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES ('EV.0695', '10', 'CERCO [250] LORO CON RESORTE PARA CERCO', '0.00', '0.00', '0.00', '0.00', '0')`,
+
+      `UPDATE piezas SET descripcion = 'BASE ELEVADOR - 3540mm x 930mm' WHERE (id = '426')`,
+  `UPDATE piezas SET descripcion = 'BASE ELEVADOR - 2000mm x 930mm' WHERE (id = '428')`,
+  `UPDATE piezas SET descripcion = 'PLACA UNION MOTOR-CABINA - 230mm x 110mm' WHERE (id = '406')`,
+  `UPDATE piezas SET descripcion = 'MANDO CONTROL P/ PRUEBA DE GOTA (CAIDA)' WHERE (id = '525')`,
+  `UPDATE piezas SET descripcion = 'PUERTA CARGA - 2300mm x 1400mm' WHERE (id = '404')`,
+  `UPDATE piezas SET descripcion = 'PUERTA DESCARGA - 1340mm x 1400mm' WHERE (id = '405')`,
+  `UPDATE piezas SET descripcion = 'PLATAFORMA DESCARGA - 1000mm x 1400mm' WHERE (id = '402')`,
+  `UPDATE piezas SET descripcion = 'GRILLETES DE 5/8"' WHERE (id = '408')`,
+  `UPDATE piezas SET descripcion = 'POLINES DE GUIA PARA MASTIL' WHERE (id = '394')`,
+  `UPDATE piezas SET descripcion = 'ESCALERA METALICA - 2270mm x 40mm' WHERE (id = '395')`,
+  `UPDATE piezas SET descripcion = 'EXTINTOR CABINA 6KG' WHERE (id = '398')`,
+  `UPDATE piezas SET peso_kg = '1184.93' WHERE (id = '409')`,
+  `UPDATE piezas SET peso_kg = '1184.93' WHERE (id = '410')`,
+
+   `UPDATE piezas SET descripcion = 'BASE ELEVADOR - 2840mm x 930mm' WHERE (id = '427')`,
+  `UPDATE piezas SET descripcion = 'VENTILADOR CABINA' WHERE (id = '396')`
     ];
 
     try {

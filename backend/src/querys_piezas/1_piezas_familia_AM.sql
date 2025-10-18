@@ -110,3 +110,17 @@ INSERT INTO piezas (item, familia_id, descripcion, peso_kg, precio_venta_dolares
 INSERT INTO piezas (item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES ('AM.0550', '1', 'ROSETA MOVIL', '1.78', '9.63', '35.60', '1.78', '100');
 INSERT INTO piezas (item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES ('AM.7445', '1', 'PLATAFORMA DE ALUMINIO C/ ACCESO DE 3072mm (INC. ESCALERA) - C', '132.91', '718.44', '2658.21', '132.91', '100');
 INSERT INTO piezas (item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES ('AM.7449', '1', 'PLATAFORMA DE ALUMINIO C/ ACCESO DE 2572mm (INC. ESCALERA) - C', '132.91', '718.44', '2658.21', '132.91', '100');
+
+UPDATE piezas SET precio_venta_dolares = '9.62' WHERE (id = '560');
+UPDATE piezas SET precio_venta_dolares = '218.48' WHERE (id = '34');
+UPDATE piezas SET precio_venta_dolares = '140.30' WHERE (id = '35');
+UPDATE piezas SET precio_venta_soles = '485.53' WHERE (id = '5');
+UPDATE piezas SET precio_venta_soles = '428.33' WHERE (id = '6');
+UPDATE piezas SET precio_venta_soles = '261.64' WHERE (id = '7');
+UPDATE piezas SET precio_venta_soles = '212.51' WHERE (id = '8');
+UPDATE piezas SET precio_venta_dolares = '718.44' WHERE (id = '83');
+UPDATE piezas SET precio_venta_dolares = '718.44' WHERE (id = '84');
+UPDATE piezas SET precio_venta_dolares = '718.44' WHERE (id = '85');
+UPDATE piezas SET precio_venta_dolares = '718.44' WHERE (id = '86');
+UPDATE piezas SET precio_alquiler_soles = '4.51' WHERE (id = '96');
+UPDATE piezas SET descripcion = 'GARRUCHA CON FRENO DE 8\" ROJO - 700 Kg' WHERE (id = '2');

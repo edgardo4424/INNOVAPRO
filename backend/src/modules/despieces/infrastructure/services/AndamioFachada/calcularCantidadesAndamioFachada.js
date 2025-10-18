@@ -405,11 +405,11 @@ function calcularCantidadesPorCadaPiezaDeAndamioFachada(datosAtributos) {
             cantidad: valorPuntal3mAzul,
          },
          {
-            pieza: "PU.0700",
+            pieza: "PU.0350",
             cantidad: valorPuntal3mAzul,
          },
          {
-            pieza: "PU.0900",
+            pieza: "PU.0450",
             cantidad: valorPuntal3mAzul,
          },
       ];

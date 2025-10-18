@@ -14,3 +14,11 @@ UPDATE piezas SET item = 'RE.0070', peso_kg = '12.67' WHERE (id = '376');
 UPDATE piezas SET item = 'RE.0075', peso_kg = '0.90', precio_venta_soles = '18.01' WHERE (id = '377');
 UPDATE piezas SET item = 'RE.0080', peso_kg = '0.10' WHERE (id = '378');
 UPDATE piezas SET item = 'RE.0085', peso_kg = '12.45', precio_venta_soles = '249.01' WHERE (id = '379');
+
+UPDATE piezas SET descripcion = 'BOCA METALICA' WHERE (id = '366');
+UPDATE piezas SET precio_venta_dolares = '60.82' WHERE (id = '371');
+UPDATE piezas SET precio_venta_dolares = '4.87' WHERE (id = '377');
+
+UPDATE piezas SET descripcion = 'BAJANTE BOCA' WHERE (id = '366');
+UPDATE piezas SET descripcion = 'BOCA METALICA' WHERE (id = '369');
+UPDATE piezas SET descripcion = 'CARTUCHO PVC' WHERE (id = '378');
