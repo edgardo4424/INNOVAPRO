@@ -82,6 +82,8 @@ module.exports = async (
          contratoSeleccionadoHonorarios = contratosHonorarios[0];
       }
 
+      let trabajadores_ids_que_recibieron_adelantos = [];
+
 
       // 4. Devolver uno de cada uno si existen
       if (contratoSeleccionadoPlanilla) {         
@@ -89,7 +91,8 @@ module.exports = async (
             await planillaRepository.obtenerPlanillaMensualPorTrabajador(
                anio_mes_dia,
                t.id,
-               filial_id
+               filial_id,
+               trabajadores_ids_que_recibieron_adelantos
             );
 
          
@@ -102,7 +105,8 @@ module.exports = async (
             await planillaRepository.calcularPlanillaMensualPorTrabajadorRXH(
                anio_mes_dia,
                t.id,
-               filial_id
+               filial_id,
+               trabajadores_ids_que_recibieron_adelantos
             );
          payload.honorarios.trabajadores.push(res);
       }
