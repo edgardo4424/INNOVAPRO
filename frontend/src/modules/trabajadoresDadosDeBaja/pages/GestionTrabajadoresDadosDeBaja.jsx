@@ -195,7 +195,7 @@ const GestionTrabajadoresDadosDeBaja = () => {
       return;
     }
       toast.error(
-        "No se pudo dar de baja al trabajador"
+        e?.response?.data?.mensaje ?? "No se pudo dar de baja al trabajador"
       );
     }
   };

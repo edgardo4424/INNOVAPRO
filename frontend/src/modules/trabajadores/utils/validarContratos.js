@@ -19,8 +19,6 @@ export function validarContratos(contratos = [], filiales, permitirContinuidad =
     contratosPorFilial[filial].push(c);
   }
 
-  console.log("contratosPorFilial", contratosPorFilial);
-  console.log('filiales', filiales);
 
   // Validar dentro de cada filial
   for (const [filial, lista] of Object.entries(contratosPorFilial)) {

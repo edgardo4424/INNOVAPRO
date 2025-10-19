@@ -13,7 +13,7 @@ import { Eye } from "lucide-react";
 import { formatearFecha } from "../../utils/formatearFecha";
 
 export default function ModalInfoDetallesQuincenal({ data }) {
-   console.log('data', data);
+  
    return (
       <AlertDialog>
          <AlertDialogTrigger asChild className="">

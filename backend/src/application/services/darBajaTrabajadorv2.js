@@ -108,6 +108,10 @@ module.exports = async function darBajaTrabajador(dataBody) {
       .map((contrato) => contrato.get({ plain: true }))
       ?.filter((c) => c.tipo_contrato == "PLANILLA");
 
+    if( contratosDelTrabajador.length == 0 ){
+      await transaction.rollback();
+      return { codigo: 404, respuesta: { mensaje: "No se encontraron contratos de planilla para el trabajador" } };
+    }
 
     //* Comparar si la fecha de baja es menor a la fecha de fin contrato, tomar la fecha de baja como fecha_terminacion_anticipada
     //* sino tomar la fecha fin contrato como fecha_terminacion_anticipada
@@ -153,6 +157,7 @@ module.exports = async function darBajaTrabajador(dataBody) {
       }
     );
 
+    console.log('contratosParaCalcularTiempoLaborado: ', contratosParaCalcularTiempoLaborado);
     //* Calculando tiempo laborado
     const { tiempoLaborado } = calcularTiempoLaborado(
       contratosParaCalcularTiempoLaborado
@@ -162,6 +167,18 @@ module.exports = async function darBajaTrabajador(dataBody) {
 
     const fecha_ingreso_trabajador =
       contratosParaCalcularTiempoLaborado.reverse()[0].fecha_inicio;
+
+    // Validar que la fecha de cese no sea menor a la fecha de ingreso
+    if (fechaBaja.isBefore(fecha_ingreso_trabajador, "day")) {
+      await transaction.rollback();
+      return {
+        codigo: 400,
+        respuesta: {
+          mensaje:
+            "La fecha de baja no puede ser menor a la fecha de ingreso del trabajador",
+        },
+      };
+    }
 
     const cantidadFaltasInjustificadasDeTodoElTiempoDeServicio =
       await asistenciaRepository.obtenerCantidadFaltasPorRangoFecha(
@@ -711,6 +728,7 @@ if (mes_gratificacion == 12 && dia_baja >= 15 && !cierreGratificacion) {
         transaction
       );
 
+
     if (!planillaMensualEncontrada) {
       const fecha_inicio_remuneracion = moment(fechaBaja)
         .startOf("month")
@@ -814,6 +832,8 @@ if (mes_gratificacion == 12 && dia_baja >= 15 && !cierreGratificacion) {
         descuento_planilla_quincenal: descuento_planilla_quincenal,
         total: total_remuneracion,
       };
+    }else{
+      console.log('La planilla mensual ya fue cerrada, no se calcula remuneracion trunca');
     }
 
     const motivoLiquidacion =
@@ -954,7 +974,6 @@ if (mes_gratificacion == 12 && dia_baja >= 15 && !cierreGratificacion) {
 
     trabajadorActualizado.fecha_baja = fechaBaja.format("YYYY-MM-DD");
     await trabajadorActualizado.save({ transaction });
-
 
     await transaction.commit();
 
