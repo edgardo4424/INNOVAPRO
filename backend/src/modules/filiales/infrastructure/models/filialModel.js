@@ -67,6 +67,10 @@ const Filial = sequelize.define(
          type: DataTypes.STRING(6),
          allowNull: true,
       },
+      direccion_almacen: {
+         type: DataTypes.STRING,
+         allowNull: true,
+      },
    },
    {
       timestamps: false,
