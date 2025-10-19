@@ -148,6 +148,7 @@ const ContratosLaborales = ({
 
   const canRemove = formData.contratos_laborales.length > 1;
 
+
   return (
     <>
       <div className="flex items-center justify-between">
@@ -321,9 +322,16 @@ const ContratosLaborales = ({
                 <Label>Cargo en la SUNAT *</Label>
                 <Select
                   value={c?.id_cargo_sunat || ""}
-                  onValueChange={(value) =>
-                    handleInputChange(i, "id_cargo_sunat", value)
-                  }
+                  onValueChange={(e) =>{
+                  
+                    handleInputChange(i, "id_cargo_sunat", e)
+                    setFormData((prev) => ({
+                      ...prev,
+                      contratos_laborales: prev.contratos_laborales.map((contrato, index) =>
+                        index === i ? { ...contrato, cargo_sunat_nombre: listaCargosSunat.find(cargo => cargo.id.toString() === e)?.nombre || "" } : contrato,
+                      ),
+                    }));
+                  }}
                 >
                   <SelectTrigger className={"w-full"}>
                     <SelectValue placeholder="Seleccione un cargo de la SUNAT" />

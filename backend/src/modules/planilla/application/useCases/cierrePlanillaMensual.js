@@ -17,6 +17,7 @@ module.exports = async (
          filial_id,
          transaction
       )
+
    if(!planillaQuincenal){
       return {
          codigo: 400,
@@ -28,6 +29,26 @@ module.exports = async (
          fecha_anio_mes,
          filial_id
       );
+   
+
+   if(array_trabajadores.length>0){
+      //Obtener los nombres de los trabajadores por tipo honorarios sin ruc
+      const trabajadoresHonorariosSinRuc = array_trabajadores.filter(
+         (t) => t.tipo_contrato === "HONORARIOS" && (!t.ruc || t.ruc == "Ruc no disponible")
+      );
+      if(trabajadoresHonorariosSinRuc.length>0){
+         const nombresTrabajadores = trabajadoresHonorariosSinRuc
+         .map((t) => t.nombres_apellidos)
+         .join(", ");
+         return {
+            codigo: 400,
+            respuesta: {
+               mensaje: `Los siguientes trabajadores por honorarios no tienen RUC registrado: ${nombresTrabajadores}. Por favor, actualice su información antes de cerrar la planilla mensual.`,
+            },
+         };
+      }
+   }
+
    if (planillaMensualCerrada && planillaMensualCerrada?.locked_at) {
       return {
          codigo: 400,

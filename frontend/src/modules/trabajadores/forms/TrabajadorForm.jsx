@@ -321,6 +321,16 @@ export default function TrabajadorForm() {
   }
 
   }, [formData.contratos_laborales])
+
+  // mostrar los errors tambien en el toast, cuando voy completando el formulario quitar los toasts de error
+  useEffect(() => {
+    Object.values(errors).forEach((errorMsg) => {
+      if (errorMsg) {
+        toast.error(errorMsg);
+      }
+    });
+  }, [errors]);
+  
   
   return (
     <div className="w-full max-w-[52rem] p-6">
@@ -501,6 +511,7 @@ export default function TrabajadorForm() {
                         {errors.estado_civil}
                       </p>
                     )}
+
                   </div>
                 </section>
                 <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
