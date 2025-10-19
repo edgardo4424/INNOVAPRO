@@ -7,3 +7,6 @@ UPDATE piezas SET item = 'CO.0035' WHERE (id = '154');
 UPDATE piezas SET item = 'CO.0040' WHERE (id = '155');
 INSERT INTO piezas (item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES ('CO.0050', '5', 'BARRA ASTM DE 1 1/4 x 400mm', '0', '0', '0', '0', '100');
 INSERT INTO piezas (item, familia_id, descripcion, peso_kg, precio_venta_dolares, precio_venta_soles, precio_alquiler_soles, stock_actual) VALUES ('CO.0055', '5', 'BASE PERDIDA (Inc. 4 barra ASTM)', '0', '0', '0', '0', '100');
+UPDATE piezas SET descripcion = 'PERNOS DE EXPANSION - 1\" x 10\"' WHERE (id = '153');
+UPDATE piezas SET descripcion = 'PERNOS DE EXPANSION - 1\" x 8\"' WHERE (id = '154');
+UPDATE piezas SET descripcion = 'PERNOS DE EXPANSION - 1\" x 6\"' WHERE (id = '155');
