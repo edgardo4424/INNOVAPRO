@@ -427,56 +427,9 @@ class SequelizeGuiaRemisionRepository {
         const ubigeoPartida = await Ubigeo.findOne({ where: { Codigo: guias[0]?.guia_Envio_Partida_Ubigeo } });
         const ubigeoDestino = await Ubigeo.findOne({ where: { Codigo: guias[0]?.guia_Envio_Llegada_Ubigeo } });
 
-        //? Procesar cada guía para calcular el peso
-        const guiasConPeso = await Promise.all(guias.map(async (guia) => {
-            let pesoTotalGuia = 0;
-
-            //? Procesar cada detalle de la guía
-            const detallesConPeso = await Promise.all(
-                guia.dataValues.guia_detalles?.map(async (detalle) => {
-                    const pesoItem = await this.obtenerPeso(detalle.dataValues);
-
-                    //? Calcular peso para este item
-                    let pesoCalculado = 0;
-                    let pesoUnitario = 0;
-
-                    if (pesoItem && pesoItem.length > 0) {
-                        //? Intentar diferentes nombres de campos para peso
-                        pesoUnitario = pesoItem[0].peso_kg || pesoItem[0].peso || pesoItem[0].weight || 0;
-
-                        //? Solo multiplicar por cantidad si la unidad es NIU
-                        if (detalle.dataValues.unidad === 'NIU') {
-                            pesoCalculado = pesoUnitario * parseFloat(detalle.dataValues.cantidad || 1);
-                        } else {
-                            pesoCalculado = pesoUnitario;
-                        }
-
-                    } else {
-                    }
-
-                    //? Sumar al peso total de la guía
-                    pesoTotalGuia += pesoCalculado;
-
-                    //? Retornar el detalle con el peso calculado
-                    return {
-                        ...detalle.dataValues,
-                        peso_kg: pesoCalculado,
-                        peso_unitario: pesoUnitario
-                    };
-                }) || []
-            );
-
-            //? Retornar la guía con los detalles actualizados y peso total
-            return {
-                ...guia.dataValues,
-                guia_detalles: detallesConPeso,
-                peso_total_kg: pesoTotalGuia
-            };
-        }));
-
         //? Mapear el resultado final con la información adicional
-        return guiasConPeso.map(guia => ({
-            ...guia,
+        return guias.map(guia => ({
+            ...guia.dataValues,
             empresa_nombre: empresa?.razon_social,
             empresa_direccion: empresa?.direccion,
             empresa_telefono: empresa?.telefono_oficina || null,
