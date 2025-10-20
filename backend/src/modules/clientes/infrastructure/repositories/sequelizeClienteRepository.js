@@ -57,7 +57,7 @@ class SequelizeClienteRepository {
         return await Cliente.findAll({
             attributes: [
                 "id", "razon_social", "tipo", "ruc", "tipo_documento", "dni", "telefono", "email",
-                "domicilio_fiscal", "representante_legal", "dni_representante", "creado_por", "fecha_creacion"
+                "domicilio_fiscal", "representante_legal", "dni_representante", "creado_por", "fecha_creacion", "cargo_representante", "domicilio_representante"
             ],
             include: [
                 {

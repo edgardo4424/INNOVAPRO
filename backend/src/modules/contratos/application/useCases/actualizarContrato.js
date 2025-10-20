@@ -9,8 +9,8 @@ module.exports =async(contratoRepository,payload,transaction=null)=>{
             respuesta:errores
         }
     }
-    const contrato_validado=contrato.get(true);
-    await contratoRepository.actualizarContrato(contrato_validado,transaction);
+
+    await contratoRepository.actualizarContrato(contrato,transaction);
     return{
         codigo:200,
         respuesta:{
