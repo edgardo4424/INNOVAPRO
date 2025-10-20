@@ -19,9 +19,45 @@ const Contrato = sequelize.define(
             key:"id"
          }
       },
-      notas_legales: {
+      ref_contrato: {
+         type: DataTypes.STRING,
+         allowNull: false,
+      },
+      fecha_inicio: {
+         type: DataTypes.DATEONLY,
+         allowNull: false, 
+      },
+      fecha_fin: {
+         type: DataTypes.DATEONLY,
+         allowNull: false,
+      },
+      clausulas_adicionales: {
          type: DataTypes.JSON,
          allowNull: true,
+      },
+      requiere_valo_adelantada: {
+         type: DataTypes.BOOLEAN,
+         allowNull: false,
+         defaultValue: false,
+      },
+      notas_legales: {
+         type: DataTypes.STRING,
+         allowNull: true,
+      },
+      renovaciones: {
+         type: DataTypes.TEXT,
+         allowNull: true,
+      },
+      estado: {
+         type: DataTypes.ENUM(
+            'PROGRAMADO',
+            'VIGENTE',
+            'POR VENCER',
+            'VENCIDO',
+            'FIRMADO'
+         ),
+         allowNull: false,
+         defaultValue: 'PROGRAMADO',
       },
    },
    {

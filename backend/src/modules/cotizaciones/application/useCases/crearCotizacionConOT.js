@@ -101,7 +101,8 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
       estado_cotizacion: cotizacionEncontrada.estados_cotizacion_id,
 
       cotizacion: cotizacionEncontrada,
-      cp: despieceEncontrado.cp
+      cp: despieceEncontrado.cp,
+      usuario_id: usuarioEncontrado.trabajador.id,
     };
 
     const codigoDocumento = await generarCodigoDocumentoCotizacion(

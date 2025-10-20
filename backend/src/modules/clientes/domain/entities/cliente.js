@@ -1,5 +1,5 @@
 class Cliente { 
-    constructor(razon_social, tipo, ruc, dni, telefono, email, domicilio_fiscal, representante_legal, dni_representante, creado_por) {
+    constructor(razon_social, tipo, ruc, dni, telefono, email, domicilio_fiscal, representante_legal, dni_representante, creado_por, cargo_representante, domicilio_representante) {
         this.razon_social = razon_social;
         this.tipo = tipo;
         this.ruc = ruc;
@@ -10,12 +10,14 @@ class Cliente {
         this.representante_legal = representante_legal;
         this.dni_representante = dni_representante;
         this.creado_por = creado_por;
+        this.cargo_representante = cargo_representante;
+        this.domicilio_representante = domicilio_representante;
     }
 
     static validarCamposObligatorios(datos, modo = "crear") {
         const camposValidos = [
             "razon_social", "tipo", "ruc", "dni", "telefono", "email", "tipo_documento",
-            "domicilio_fiscal", "representante_legal", "dni_representante", "creado_por"
+            "domicilio_fiscal", "representante_legal", "dni_representante", "creado_por", "cargo_representante", "domicilio_representante"
         ]
         
         if (modo === "crear") {
@@ -68,6 +70,8 @@ class Cliente {
             creado_por: datos.creado_por,
             obras_asociadas: datos.obras_asociadas || [],
             contactos_asociados: datos.contactos_asociados || [],
+            cargo_representante: datos.cargo_representante || "",
+            domicilio_representante: datos.domicilio_representante || ""
         }
 
         if (!base.email.trim()) delete base.email; // Eliminar el campo email si está vacío

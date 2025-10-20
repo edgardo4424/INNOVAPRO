@@ -1,36 +1,65 @@
-class Contrato{
-    constructor({id,cotizacion_id,notas_legales}){
-        this.id=id;
-        this.cotizacion_id=cotizacion_id;
-        this.notas_legales=notas_legales;
+class Contrato {
+  constructor({
+    id,
+    cotizacion_id,
+    ref_contrato,
+    fecha_inicio,
+    fecha_fin,
+    clausulas_adicionales,
+    requiere_valo_adelantada,
+    notas_legales,
+    renovaciones,
+    estado,
+  }) {
+    this.id = id;
+    this.cotizacion_id = cotizacion_id;
+    this.ref_contrato = ref_contrato;
+    this.fecha_inicio = fecha_inicio;
+    this.fecha_fin = fecha_fin;
+    this.clausulas_adicionales = clausulas_adicionales;
+    this.requiere_valo_adelantada = requiere_valo_adelantada;
+    this.notas_legales = notas_legales;
+    this.renovaciones = renovaciones;
+    this.estado = estado;
+  }
+  validar(editar = false) {
+    let errores = [];
+    if (editar) {
+      if (!this.id) {
+        errores.push("Al actualizar un contrato id es requerrido");
+      }
     }
-    validar(editar=false){
-        let errores=[]
-        if(editar){
-            if(!this.id){
-                errores.push("Al actualizar un contrato id es requerrido")
-            }
-        }
-        if(!this.cotizacion_id){
-            errores.push("Para crear un contrato es necesario una cotización")
-        }
-        if(!this.notas_legales){
-            errores.push("Ingrese las notas legales")
-        }
-        return errores;
+    if (!this.cotizacion_id) {
+      errores.push("Para crear un contrato es necesario una cotización");
     }
-    
-    get(editar=false){
-        const payload={
-            notas_legales:this.notas_legales,
-            cotizacion_id:this.cotizacion_id
-        }
-        if(editar){
-            delete payload.cotizacion_id;
-            payload.contrato_id=this.id;
-        }
-        return payload;
+    if (!this.ref_contrato) {
+      errores.push("El codigo del contrato es obligatoria");
     }
+    if (!this.fecha_inicio) {
+      errores.push("La fecha de inicio del contrato es obligatoria");
+    }
+
+    if (!this.fecha_fin) {
+      errores.push("La fecha de fin del contrato es obligatoria");
+    }
+
+    const listaEstadosPermitidos = [
+      "PROGRAMADO",
+      "VIGENTE",
+      "POR VENCER",
+      "VENCIDO",
+      "FIRMADO",
+    ];
+    if (this.estado && !listaEstadosPermitidos.includes(this.estado)) {
+      errores.push(
+        `El estado del contrato debe ser uno de los siguientes: ${listaEstadosPermitidos.join(
+          ", "
+        )}`
+      );
+    }
+    return errores;
+  }
+
 }
 
-module.exports =Contrato;
+module.exports = Contrato;
