@@ -116,7 +116,7 @@ const HistoricoPlanillaMensual = () => {
    const renderTipoPlanilla = () => {
       if (planillaMensualTipoPlanilla) {
          return (
-            <div className="w-full px-7 ">
+            <div className="w-full p ">
                <TablePlanillaMensual
                   planillaMensualTipoPlanilla={planillaMensualTipoPlanilla}
                   datosTotalesPlanilla={datosTotalesPlanilla}
@@ -129,7 +129,7 @@ const HistoricoPlanillaMensual = () => {
    const renderTipoRh = () => {
       if (planillaMensualTipoRh) {
          return (
-            <div className="w-full px-7 ">
+            <div className="w-full ">
                <TableRHMensual planillaMensualTipoRh={planillaMensualTipoRh} />
             </div>
          );
@@ -138,7 +138,7 @@ const HistoricoPlanillaMensual = () => {
 
    return (
       <div className="min-h-full flex-1  flex flex-col items-center space-y-6">
-         <div className="w-full px-7 flex justify-between">
+         <div className="w-full  flex justify-between">
                <Filtro
                   filiales={filiales}
                   filtro={filtro}

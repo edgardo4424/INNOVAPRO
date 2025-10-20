@@ -256,98 +256,31 @@ export function GuiaTransporteProvider({ children }) {
           break;
       }
       const { status, success, message, data } =
-        await factilizaService.enviarGuia(guiaAEmitir);
-      if (status === 200) {
-        let sunat_respuest = {
-          hash: data?.hash ?? null,
-          mensaje: message ?? null,
-          // cdr_zip: data?.sunatResponse?.cdrZip ?? null,
-          cdr_zip: null,
-          sunat_success: data?.sunatResponse?.success ?? null,
-          cdr_response_id: data?.sunatResponse?.cdrResponse.id,
-          cdr_response_code: data?.sunatResponse?.cdrResponse.code,
-          cdr_response_description:
-            data.sunatResponse?.cdrResponse?.description,
-        };
-        let guiaEstructurada = {
-          ...guiaTransporte,
-          estado: determinarEstadoFactura({ status, success, data, message }),
-        };
-        if (tipoGuia == "transporte-privado") {
-          guiaEstructurada = {
-            ...guiaEstructurada,
-            ...guiaDatosPrivado,
-          };
-        } else if (tipoGuia == "traslado-misma-empresa") {
-          guiaEstructurada = {
-            ...guiaEstructurada,
-            ...guiaDatosInternos,
-          };
-        } else {
-          const { transportista, ...guiaDPublico } = guiaDatosPublico;
-          guiaEstructurada = {
-            ...guiaEstructurada,
-            ...guiaDPublico,
-            chofer: [transportista, ...guiaEstructurada.chofer],
-          };
-        }
-        let guiaCopia = {
-          ...guiaEstructurada,
+        await factilizaService.enviarGuia({
+          ...guiaAEmitir,
           usuario_id: id_logeado,
-          sunat_respuesta: sunat_respuest,
-        };
-
-        const { success: successBD, message: messageBD } =
-          await RegistrarBaseDatos(guiaCopia);
-
-        if (successBD) {
-          result = {
-            success: true,
-            message:
-              messageBD || "Guía de remisión emitida y registrada con éxito.",
-            status: 200,
-          };
-        } else {
-          result = {
-            success: false,
-            message:
-              messageBD ||
-              "Guia emitida, pero no se pudo registrar en la base de datos.",
-            data: guiaTransporte,
-            status: 400,
-          };
-        }
-      } else {
-        result = {
-          success: false,
-          message: message,
-          detailed_message:
-            `${data.error.code} - ${data.error.message}` ||
-            "Error desconocido al enviar la guia.",
-          data: null,
-          status: status,
-        };
+        });
+      result = {
+        status,
+        success,
+        message,
+        data,
+      };
+      if (status == 200 || status == 201 || status == 400) {
+        Limpiar();
       }
     } catch (error) {
       if (error.response) {
+        const { success, message, detailed_message, data, status } =
+          error.response.data;
         result = {
           success: false,
           message:
-            error.response.data?.message ||
-            error.response.data?.error ||
-            "Error al comunicarse con la API.",
-          data: error.response.data,
-          status: error.response.status,
+            message || detailed_message || "Error al comunicarse con la API.",
+          data,
+          status,
         };
-        return {
-          success: false,
-          message:
-            error.response.data?.message ||
-            error.response.data?.error ||
-            "Error al comunicarse con la API.",
-          data: error.response.data,
-          status: error.response.status,
-        };
+        return result;
       } else {
         return {
           success: false,
@@ -358,32 +291,6 @@ export function GuiaTransporteProvider({ children }) {
       }
     } finally {
       return result;
-    }
-  };
-
-  const RegistrarBaseDatos = async (documento) => {
-    try {
-      const { status, success, message } =
-        await facturaService.registrarGuiaRemision(documento);
-      if (status === 201) {
-        Limpiar();
-        if (tipoGuia == "transporte-privado") {
-          setGuiaDatosPrivado(ValoresPrivado);
-        } else if (tipoGuia == "transporte-publico") {
-          setGuiaDatosPublico(ValoresPublico);
-        } else if (tipoGuia == "traslado-misma-empresa") {
-          setGuiaDatosInternos(ValoresInterno);
-        }
-      }
-      return { status, success, message };
-    } catch (error) {
-      if (error.response) {
-        const { status, data } = error.response;
-        if (status === 400) {
-          toast.error(data.mensaje);
-        }
-      }
-      return { status: 500, success: false, message: error.message };
     }
   };
 

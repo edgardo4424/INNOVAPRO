@@ -48,9 +48,11 @@ const TrabajadorController = {
    },
    async crearTrabajadorConContrato(req, res) {
       try {
+         console.log('req.body', req.body);
          const nuevaContratacion = await crearTrabajadorConContrato(req.body);
          res.status(nuevaContratacion.codigo).json(nuevaContratacion.respuesta);
       } catch (error) {
+                  console.log('error', error);
          res.status(500).json({ error: error.message });
       }
    },
@@ -198,6 +200,7 @@ const TrabajadorController = {
          );
          res.status(response.codigo).json(response.respuesta);
       } catch (error) {
+
          res.status(502).json({ error: error.message });
       }
    },

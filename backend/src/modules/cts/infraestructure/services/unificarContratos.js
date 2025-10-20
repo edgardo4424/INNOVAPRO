@@ -1,4 +1,15 @@
-const unificarContratos = (contratos) => {
+const unificarContratos = (contratos,fecha_fin_rango) => {
+
+  contratos = contratos.map(c => {
+    if (c.es_indefinido && !c.fecha_fin) {
+      return {
+        ...c,
+        fecha_fin: fecha_fin_rango
+      };
+    }
+    return c;
+  });
+
   // Ordenamos por fecha_inicio para detectar consecutivos
   contratos.sort((a, b) => new Date(a.fecha_inicio) - new Date(b.fecha_inicio));
 

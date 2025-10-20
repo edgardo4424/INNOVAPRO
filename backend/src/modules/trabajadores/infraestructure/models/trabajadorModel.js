@@ -71,6 +71,18 @@ const Trabajador = sequelize.define(
          type: DataTypes.DATEONLY,
          allowNull: true,
       },
+      ruc: {
+         type: DataTypes.STRING,
+         allowNull: true,
+      },
+      cuspp_afp: {
+         type: DataTypes.STRING(20),
+         allowNull: true,
+      },
+      estado_civil: {
+         type: DataTypes.ENUM('SOLTERO', 'CASADO', 'DIVORCIADO', 'VIUDO', 'CONVIVIENTE'),
+         defaultValue: 'SOLTERO',
+      },
    },
    {
       tableName: "trabajadores",

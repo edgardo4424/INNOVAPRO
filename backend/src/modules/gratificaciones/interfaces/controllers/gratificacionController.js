@@ -11,6 +11,7 @@ const gratificacionRepository = new sequelizeGratificacionRepository(); // Insta
 const db = require("../../../../database/models");
 const cierreGratificacionTruncaPorTrabajador = require('../../application/useCases/cierreGratificacionTruncaPorTrabajador');
 const obtenerTotalGratificacionPorTrabajador = require('../../application/useCases/obtenerTotalGratificacionPorTrabajador');
+const calcularGratificacionPorTrabajador = require('../../application/useCases/calcularGratificacionPorTrabajador');
 
 const GratificacionController = {
    
@@ -30,12 +31,6 @@ const GratificacionController = {
     async calcularGratificaciones(req, res) {
         try {
             const { periodo, anio, filial_id } = req.body;
-
-            console.log({
-                periodo,
-                anio,
-                filial_id
-            });
 
             const gratificaciones = await calcularGratificaciones(periodo, anio, filial_id, gratificacionRepository); // Llamamos al caso de uso para obtener todos los gratificaciones
            
@@ -101,7 +96,20 @@ const GratificacionController = {
             console.log('error',error);
             res.status(500).json({ error: error.message }); // Respondemos con un error
         }
-    }
+    },
+
+    async calcularGratificacionPorTrabajador(req, res) {
+        try {
+            const { periodo, anio, filial_id, trabajador_id } = req.body;
+
+            const gratificacion = await calcularGratificacionPorTrabajador(periodo, anio, filial_id, trabajador_id, gratificacionRepository); // Llamamos al caso de uso para obtener todos los gratificacion
+           
+            res.status(gratificacion.codigo).json(gratificacion.respuesta); // 🔥 Siempre devuelve un array, aunque esté vacío
+        } catch (error) {
+            console.log('error',error);
+            res.status(500).json({ error: error.message }); // Respondemos con un error
+        }
+    },
 };
 
 module.exports = GratificacionController; // Exportamos el controlador de Gratificaciones

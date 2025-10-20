@@ -74,7 +74,7 @@ module.exports = async (
 
    let planillas_creadas = [];
    for (const t of transform_data) {
-      if (t.trabajador_id == 8) {
+      if (t.trabajador_id == 7) {
          console.log("datos del trabajador x honorarios:", t);
       }
       const response = await planillaRepository.crearRegistroPlanilla(

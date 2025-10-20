@@ -23,7 +23,8 @@ function guiaTemplate(data) {
     const innova_black = '#AAAAAA'   //? Texto fuerte o títulos
 
     const choferes = guia.guia_choferes.filter(item => item.nro_mtc === null);
-    const transportistas = guia.guia_choferes.filter(item => item.nro_mtc !== null);
+    const transportistas = guia.guia_transportista[0]?.dataValues ?? null;
+
 
     const content = [
         // ! seccion de identificadores de la guia y empresa emisora
@@ -56,7 +57,7 @@ function guiaTemplate(data) {
             stack: [pdfDatosGuia(
                 guia,
                 choferes,
-                transportistas
+                transportistas,
             )]
         },
         { text: '\n' },

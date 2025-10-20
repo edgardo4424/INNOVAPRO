@@ -50,12 +50,12 @@ class AdelantoSueldo {
       } else if (isNaN(this.monto) || this.monto <= 0) {
          errores.push("El campo 'monto' debe ser un número positivo.");
       }
-      const options = ["simple", "gratificacion", "cts"];
+      const options = ["simple", "gratificacion", "cts", "prestamo"];
       if (!options.includes(this.tipo)) {
          errores.push("El tipo de adelanto de sueldo no existe");
       }
 
-      if(this.tipo == "simple"){
+      if(this.tipo == "prestamo"){
          const f_desc = ["mensual", "quincenal"];
       if (!f_desc.includes(this.forma_descuento)) {
          errores.push("El tipo de forma de pago no ");

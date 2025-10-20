@@ -75,19 +75,28 @@ const obtenerDatosPorQuincena = async (
    const bonos = responseBonos.map((a) => a.get({ plain: true }));
    let SUMA_BONO_PRIMERA_Q = 0;
    let SUMA_BONO_SEGUNDA_Q = 0;
+   let SUMA_BONO_EXTRAORDINARIO=0
 
    for (const b of bonos) {
       if (
          b.fecha >= fecha_inicio_periodo &&
          b.fecha <= `${fecha_cierre_periodo.slice(0, -2)}15`
       ) {
+         if(b.tipo==="extraordinario"){
+            SUMA_BONO_EXTRAORDINARIO+= Number(b.monto);
+         }else{
          SUMA_BONO_PRIMERA_Q += Number(b.monto);
+          }
       }
       if (
          b.fecha > `${fecha_cierre_periodo.slice(0, -2)}15` &&
          b.fecha <= fecha_cierre_periodo
       ) {
+         if(b.tipo==="extraordinario"){
+            SUMA_BONO_EXTRAORDINARIO+= Number(b.monto);
+         }else{
          SUMA_BONO_SEGUNDA_Q += Number(b.monto);
+         }
       }
    }
    return {
@@ -100,7 +109,8 @@ const obtenerDatosPorQuincena = async (
       SUMA_BONO_PRIMERA_Q,
       SUMA_BONO_SEGUNDA_Q,
       CANTIDAD_VACACIONES_GOZADAS,
-      CANTIDAD_VACACIONES_VENDIDAS
+      CANTIDAD_VACACIONES_VENDIDAS,
+      SUMA_BONO_EXTRAORDINARIO
    };
 };
 

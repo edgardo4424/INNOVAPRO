@@ -13,6 +13,7 @@ const obtenerPlanillaMensualCerradas = require("../../application/useCases/obten
 const calcularPlanillaMensualTruncaPorTrabajador = require("../../application/useCases/calcularPlanillaMensualTruncaPorTrabajador");
 const SequelizeDataRepository = require("../../../data_mantenimiento/infrastructure/repositories/sequelizeDataMantenimientoRepository");
 const exportarPlame = require("../../application/useCases/exportarPlame");
+const obtenerReciboPorPlanilla = require("../../application/useCases/obtenerReciboPorPlanilla");
 
 const planillaRepository = new sequelizePlanillaRepository();
 const trabajadorRepository = new SequelizeTrabajadorRepository();
@@ -102,6 +103,8 @@ const PlanillaController = {
          const { fecha, filial_id, array_trabajadores } = req.body;
          const usuario_cierre_id = req.usuario.id;
 
+         console.log("Array de trabajadores",array_trabajadores);
+         
          const cierrePM = await cierrePlanillaMensual(
             usuario_cierre_id,
             planillaRepository,
@@ -136,6 +139,19 @@ const PlanillaController = {
       }
    },
 
+   async obtenerReciboPorPlanilla(req,res){
+      try {
+         const planillas_recibos=await obtenerReciboPorPlanilla(
+            req.params,
+            planillaRepository,
+            
+         ); 
+         res.status(planillas_recibos.codigo).json(planillas_recibos.respuesta)
+      } catch (error) {
+         res.status(500).json({ error: error.message }); // Respondemos con un error
+      }
+   },
+
    async obtenerPlanillaMensualCerradas(req, res) {
       try {
          const planillaMensualCerradas = await obtenerPlanillaMensualCerradas(
@@ -153,8 +169,6 @@ const PlanillaController = {
    },
    async exportarPlame(req, res) {
       try {
-         console.log("Funcion para descargar el plame ejecutandose");
-         
          await exportarPlame(
             res,
             req.body,
@@ -162,7 +176,8 @@ const PlanillaController = {
             
          ); 
       } catch (error) {
-         console.log("error", error);
+         console.log("Erro en el plame: ",error);
+         
          res.status(500).json({ error: error.message }); // Respondemos con un error
       }
    },

@@ -55,8 +55,8 @@ const ValoresPublico = {
 
     transportista:
     {
-        tipo_doc: "6",
-        nro_doc: "",
+        tipo_Doc: "6",
+        nro_Doc: "",
         razon_Social: "",
         nro_mtc: "",
     },
@@ -77,8 +77,8 @@ const ValoresInterno = {
 
 const choferInicialPrivado = {
     tipo: "Principal",
-    tipo_doc: "1",
-    nro_doc: "",
+    tipo_Doc: "1",
+    nro_Doc: "",
     licencia: "",
     nombres: "",
     apellidos: "",

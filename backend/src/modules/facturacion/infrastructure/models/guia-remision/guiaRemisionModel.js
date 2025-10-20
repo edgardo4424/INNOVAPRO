@@ -172,6 +172,9 @@ GuiaRemision.associate = (models) => {
     GuiaRemision.hasMany(models.guia_choferes, {
         foreignKey: "guia_id",
     })
+    GuiaRemision.hasMany(models.guia_transportista, {
+        foreignKey: "guia_id",
+    })
     GuiaRemision.hasMany(models.sunat_respuesta, {
         foreignKey: "guia_id",
     })

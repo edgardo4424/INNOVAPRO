@@ -1,6 +1,7 @@
 import apiFactilizaConsultas from "@/shared/services/factilizaConsultas";
 import apiFactilizaConsultasDocumentos from "@/shared/services/factilizaConsultasDocumentos";
 import apiFactilizaFacturacion from "@/shared/services/factilizaFacturacion";
+import api from "@/shared/services/api";
 
 const getRequest = async (api, endpoint) => {
     const res = await api.get(endpoint);
@@ -25,22 +26,19 @@ const factilizaService = {
     // !!! FACTURACION
 
     enviarFactura: async (factura) => {
-        const res = await apiFactilizaFacturacion.post("/invoice/send", factura);
+        const res = await api.post("/factiliza/emitir-factura", factura);
         return res.data;
     },
 
     // !!! NOTA DE CREDITO o DEBITO
     enviarNota: async (nota) => {
-        const res = await apiFactilizaFacturacion.post("/note/send", nota);
+        const res = await api.post("/factiliza/emitir-nota", nota);
         return res.data;
     },
 
-
     // !!! Guia de Remision
-
-    // ?? CONSULTA DE DOCUMENTOS FACTILIZA
     enviarGuia: async (guia) => {
-        const res = await apiFactilizaFacturacion.post("/despatch/send", guia);
+        const res = await api.post("/factiliza/emitir-guia", guia);
         return res.data;
     },
 

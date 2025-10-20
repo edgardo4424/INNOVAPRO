@@ -10,6 +10,9 @@ class ContratoLaboral {
       filial_id,
       numero_cuenta,
       banco,
+      es_indefinido,
+      id_cargo_sunat,
+      numero_cuenta_cts
    }) {
       this.id = id;
       this.trabajador_id = trabajador_id;
@@ -21,10 +24,13 @@ class ContratoLaboral {
       this.filial_id = filial_id;
       this.numero_cuenta = numero_cuenta;
       this.banco = banco;
+      this.es_indefinido = es_indefinido;
+      this.id_cargo_sunat = id_cargo_sunat;
+      this.numero_cuenta_cts=numero_cuenta_cts;
    }
 
    validar(editar = false) {
-      const errores = [];
+      let errores = [];
 
       if (editar) {
          if (!this.id) {
@@ -42,25 +48,28 @@ class ContratoLaboral {
          errores.push("El ID de la filial debe ser un número válido.");
       }
       const inicio = new Date(this.fecha_inicio);
-      const fin = new Date(this.fecha_fin);
-
+     
       if (isNaN(inicio.getTime())) {
          errores.push("La fecha de inicio no es válida.");
       }
 
+      /* if (isNaN(fin.getTime())) {
+         errores.push("La fecha de fin no es válida.");
+      } */
+
+      // Validar fecha_fin SOLO si tiene valor
+   if (this.fecha_fin) {
+      const fin = new Date(this.fecha_fin);
+
       if (isNaN(fin.getTime())) {
          errores.push("La fecha de fin no es válida.");
+      } else if (!isNaN(inicio.getTime()) && inicio >= fin) {
+         errores.push("La fecha de fin debe ser posterior a la fecha de inicio.");
       }
-
-      if (!isNaN(inicio.getTime()) && !isNaN(fin.getTime()) && inicio >= fin) {
-         errores.push(
-            "La fecha de fin debe ser posterior a la fecha de inicio."
-         );
-      }
-
-      if (this.sueldo <= 1130) {
+   }
+      /* if (this.sueldo <= 1130) {
          errores.push("El sueldo debe ser un número mayor a 1130.");
-      }
+      } */
 
       const regimenValido = ["MYPE", "GENERAL"];
       if (!regimenValido.includes(this.regimen)) {
@@ -80,6 +89,10 @@ class ContratoLaboral {
       } else if (this.numero_cuenta.length < 5) {
          errores.push("El número de cuenta debe tener al menos 5 caracteres.");
       }
+      if(!this.id_cargo_sunat || isNaN(this.id_cargo_sunat)){
+        
+         errores.push("El cargo SUNAT es obligatorio.");
+      }
 
       return errores;
    }
@@ -95,6 +108,9 @@ class ContratoLaboral {
             tipo_contrato: this.tipo_contrato,
             banco: this.banco,
             numero_cuenta: this.numero_cuenta,
+            es_indefinido: this.es_indefinido,
+            id_cargo_sunat: this.id_cargo_sunat,
+            numero_cuenta_cts:this.numero_cuenta_cts
          };
       } else {
          return {
@@ -107,6 +123,9 @@ class ContratoLaboral {
             tipo_contrato: this.tipo_contrato,
             banco: this.banco,
             numero_cuenta: this.numero_cuenta,
+            es_indefinido: this.es_indefinido,
+            id_cargo_sunat: this.id_cargo_sunat,
+            numero_cuenta_cts:this.numero_cuenta_cts
          };
       }
    }

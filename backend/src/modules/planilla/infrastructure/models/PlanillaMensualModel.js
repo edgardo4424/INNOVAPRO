@@ -142,6 +142,10 @@ const PlanillaMensual = sequelize.define(
          type: DataTypes.FLOAT,
          defaultValue: 0,
       },
+      bonos_extraordinarios: {
+         type: DataTypes.FLOAT,
+         defaultValue: 0,
+      },
       sueldo_bruto: {
          type: DataTypes.FLOAT,
          allowNull:false
@@ -180,6 +184,10 @@ const PlanillaMensual = sequelize.define(
       adelanto_prestamo: {
          type: DataTypes.FLOAT,
          defaultValue: 0,
+      },
+      sub_total: {
+         type: DataTypes.FLOAT,
+         allowNull:false
       },
       saldo_por_pagar: {
          type: DataTypes.FLOAT,
@@ -241,7 +249,17 @@ const PlanillaMensual = sequelize.define(
             key: "id",
          },
       },
+      ruc: {
+         type: DataTypes.STRING,
+         allowNull: true,
+      },
+      domiciliado: {
+         type: DataTypes.BOOLEAN,
+         allowNull: false,
+         defaultValue: true,
+      },
    },
+   
    {
       timestamps: true,
       tableName: "planilla_mensual",
@@ -269,6 +287,10 @@ PlanillaMensual.associate = (models) => {
       foreignKey: "cierre_planilla_mensual_id",
       as: "cierrePlanillaMensual",
    });
+   PlanillaMensual.hasOne(models.planilla_mensual_recibo_honorario, {
+      foreignKey: 'planilla_mensual_id',
+      as: 'recibo'
+});
 };
 
 module.exports = { PlanillaMensual };

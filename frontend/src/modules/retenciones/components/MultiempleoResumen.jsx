@@ -1,6 +1,21 @@
 import React, { useMemo } from "react";
 
-export default function MultiempleoResumen({ ingresosPrevios, filiales = [], retencionMeta, currentFilialId, mesActual }) {
+export default function MultiempleoResumen({ 
+  ingresosPrevios, 
+  filiales = [], 
+  retencionMeta, 
+  currentFilialId, 
+  mesActual 
+}) {
+  const meta = retencionMeta || {};
+  const origen = String(meta?.origen_retencion || "").toUpperCase();
+  const aplicaDesde =
+    Number(meta?.detalle_json?.aplica_desde_mes ?? meta?.aplica_desde_mes ?? NaN);
+  const mes = Number(mesActual || 1);
+
+  if (!origen || origen === "NINGUNO") return null;
+  if (!Number.isNaN(aplicaDesde) && mes < aplicaDesde) return null;
+
   const remu = ingresosPrevios?.remu_multi;
   const grati = ingresosPrevios?.grati_multi;
   const af   = ingresosPrevios?.af_multi;
@@ -59,7 +74,8 @@ export default function MultiempleoResumen({ ingresosPrevios, filiales = [], ret
     const mostrarDiciembreUsado   = mesActual >= 12;     // en Diciembre mostramos USADO
 
     // Totales por tipo
-    const totJulioUsado = filas.reduce((a, f) => a + Number(f?.julio?.usado || 0), 0); const totJulioProj  = filas.reduce((a, f) => a + Number(f?.julio?.proj  || 0), 0);
+    const totJulioUsado = filas.reduce((a, f) => a + Number(f?.julio?.usado || 0), 0); 
+    const totJulioProj  = filas.reduce((a, f) => a + Number(f?.julio?.proj  || 0), 0);
     const totDicUsado   = filas.reduce((a, f) => a + Number(f?.diciembre?.usado || 0), 0);
     const totDicProj    = filas.reduce((a, f) => a + Number(f?.diciembre?.proj  || 0), 0);
 

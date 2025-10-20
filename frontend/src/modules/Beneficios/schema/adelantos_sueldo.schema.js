@@ -17,16 +17,16 @@ export const adelantosSueldoSchema = yup.object().shape({
   forma_descuento: yup
     .string()
     .nullable()
-    .test("forma-de-descuento-es-requerida-si-el-tipo-es-simple", "La forma de descuento es requerida", function(value) {
-      return this.parent.tipo === "simple" ? value !== null : true;
+    .test("forma-de-descuento-es-requerida-si-el-tipo-es-prestamo", "La forma de descuento es requerida", function(value) {
+      return this.parent.tipo === "prestamo" ? value !== null : true;
     }),
    primera_cuota: yup
     .string()
     .nullable()
-    .test("primera-cuota-es-requerida-si-el-tipo-es-simple", "La fecha de primera cuota es requerida", function(value) {
+    .test("primera-cuota-es-requerida-si-el-tipo-es-prestamo", "La fecha de primera cuota es requerida", function(value) {
         console.log('this.parent.tipo', this.parent.tipo);
         console.log('value', value);
-      return this.parent.tipo === "simple" ? value !== null : true;
+      return this.parent.tipo === "prestamo" ? value !== null : true;
     }),
   cuotas: yup
     .number()

@@ -2,37 +2,49 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import CalculoPlanillaMensual from "./CalculoPlanillaMensual";
 import HistoricoPlanillaMensual from "./HistoricoPlanillaMensual";
 import ExportacionPlame from "./ExportacionPlame";
+import { Button } from "@/components/ui/button";
 
 const GestionPlanillaMensual = () => {
-   return (
-      <div className="min-h-full px-6 flex-1 flex flex-col items-center">
-         <div className="w-full my-5 md:mt-5 flex flex-col items-center md:flex-row md:justify-between gap-4">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 self-start">
-               Gestión de Planilla Mensual
-            </h2>
-         </div>
+  return (
+    <div className="max-h-[calc(100vh-80px)] overflow-y-auto flex flex-col items-center"> 
+      <Tabs
+        defaultValue="calcular"
+        className="w-full flex flex-col items-center"
+      >
+        {/* Sticky Header */}
+        <article className="w-full flex justify-center sticky top-0 z-50 bg-white shadow-md">
+          <div className="grid grid-cols-2 w-full max-w-7xl pb-2 px-4">
+            <section className="flex flex-col items-start space-y-2">
+              <h2 className="text-2xl font-bold text-gray-800 md:text-3xl">
+                Gestión de Planilla Mensual
+              </h2>
+              <TabsList>
+                <TabsTrigger value="calcular">Calcular Planilla Mensual</TabsTrigger>
+                <TabsTrigger value="historico">Histórico</TabsTrigger>
+                <TabsTrigger value="plame">Buscar Plame</TabsTrigger>
+              </TabsList>
+            </section>
+            <section className="flex justify-end items-center">
+              <Button>Guardar Planilla</Button>
+            </section>
+          </div>
+        </article>
 
-         <Tabs defaultValue="calcular" className="w-full">
-            <TabsList className="">
-               <TabsTrigger value="calcular">
-                  Calcular Planilla Mensual
-               </TabsTrigger>
-               <TabsTrigger value="historico">Histórico</TabsTrigger>
-               <TabsTrigger value="plame">Buscar Plame</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="calcular" className=" rounded-lg shadow-sm">
-               <CalculoPlanillaMensual />
-            </TabsContent>
-            <TabsContent value="historico" className=" rounded-lg shadow-sm">
-               <HistoricoPlanillaMensual />
-            </TabsContent>
-            <TabsContent value="plame" className=" rounded-lg shadow-sm">
-               <ExportacionPlame />
-            </TabsContent>
-         </Tabs>
-      </div>
-   );
+        {/* Contenido debajo del sticky */}
+        <div className="w-full max-w-7xl mt-6 px-4 pb-20">
+          <TabsContent value="calcular">
+            <CalculoPlanillaMensual />
+          </TabsContent>
+          <TabsContent value="historico">
+            <HistoricoPlanillaMensual />
+          </TabsContent>
+          <TabsContent value="plame">
+            <ExportacionPlame />
+          </TabsContent>
+        </div>
+      </Tabs>
+    </div>
+  );
 };
 
 export default GestionPlanillaMensual;

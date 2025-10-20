@@ -13,8 +13,6 @@ const notaInical = {
     empresa_Ruc: "20562974998",
     Manual: false,
     Observacion: "",
-    estado: "",
-
 
     // ?Datos del cliente
     cliente_Tipo_Doc: "",

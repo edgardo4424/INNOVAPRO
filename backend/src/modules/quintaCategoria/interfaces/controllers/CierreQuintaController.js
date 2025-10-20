@@ -18,7 +18,6 @@ module.exports = {
         return res.status(401).json({ ok: false, message: 'Usuario no autenticado.' });
       }
 
-      // Caso de uso (maneja crear/actualizar el cierre)
       const resp = await cierreQuintaCategoria(
         usuarioId,
         periodo,
@@ -33,14 +32,14 @@ module.exports = {
     }
   },
 
-  async listar(req, res) {
+  async listar(req, res) { 
     try {
       const { filialId, anio } = req.query || {};
-      const list = await repo.listarCierres({
+      const lista = await repo.listarCierres({
         filialId: filialId ? Number(filialId) : undefined,
         anio: anio ? String(anio) : undefined,
       });
-      return res.status(200).json({ ok: true, data: list });
+      return res.status(200).json({ ok: true, data: lista });
     } catch (error) {
       console.error('Error listando cierres de quinta:', error);
       return res.status(500).json({ ok: false, message: 'Error interno listando cierres.' });

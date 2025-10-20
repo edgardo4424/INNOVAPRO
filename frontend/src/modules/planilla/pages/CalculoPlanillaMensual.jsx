@@ -58,6 +58,7 @@ const CalculoPlanillaMensual = () => {
          const res = await planillaMensualService.obtenerPlanillaMensual(
             payload
          );         
+         
          setPlanillaMensualTipoPlanilla(res.payload.planilla.trabajadores);
          setDatosTotalesPlanilla(res.payload.planilla.datos_totales)
          setPlanillaMensualTipoRh(res.payload.honorarios.trabajadores);
@@ -107,7 +108,7 @@ const CalculoPlanillaMensual = () => {
    const renderTipoPlanilla = () => {
       if (planillaMensualTipoPlanilla) {
          return (
-            <div className="w-full px-7">
+            <div className="w-full ">
                <TablePlanillaMensual
                   planillaMensualTipoPlanilla={planillaMensualTipoPlanilla}
                   filial_id={filtro.filial_id}
@@ -122,7 +123,7 @@ const CalculoPlanillaMensual = () => {
    const renderTipoRh = () => {
       if (planillaMensualTipoRh) {
          return (
-            <div className="w-full px-7">
+            <div className="w-full ">
                <TableRHMensual planillaMensualTipoRh={planillaMensualTipoRh} />
             </div>
          );
@@ -140,12 +141,6 @@ const CalculoPlanillaMensual = () => {
                planillaMensualTipoRh
             ),
          };
-         const jsonString = JSON.stringify(payload);
-const sizeInBytes = new TextEncoder().encode(jsonString).length;
-const sizeInKB = sizeInBytes / 1024;
-const sizeInMB = sizeInKB / 1024;
-
-
          setLoading(true);
          const response =
             await planillaMensualService.generarCierreRegistroPlanillaMensual(
@@ -165,9 +160,8 @@ const sizeInMB = sizeInKB / 1024;
    };
 
    return (
-      <div className="min-h-full flex-1  flex flex-col items-center">
-         <div className="w-full px-4 max-w-7xl py-6 flex justify-between">
-            <div className="flex flex-col w-full">
+      <div className="min-h-full flex-1  flex flex-col items-center space-y-6">
+            <div className="w-full  flex justify-between">
                <Filtro
                   filiales={filiales}
                   filtro={filtro}
@@ -175,7 +169,6 @@ const sizeInMB = sizeInKB / 1024;
                   Buscar={buscarPlanillaMensual}
                />
             </div>
-         </div>
          {loading ? (
             <div className="w-full px-20  max-w-8xl min-h-[50vh] flex items-center">
                <div className="w-full flex flex-col items-center justify-center">

@@ -90,7 +90,8 @@ export default function ModalAgregarCliente({ agregarCliente, obras, contactos }
 
       if (Object.keys(erroresValidados).length > 0) {
          setErrores(erroresValidados);
-         toast.warning("Completa los campos correctamente");
+         console.log(erroresValidados);
+         toast.warning("Completa los campos correctsaamente");
          return;
       }
 
@@ -114,6 +115,7 @@ export default function ModalAgregarCliente({ agregarCliente, obras, contactos }
          if (res.data && res.data.cliente) {
             agregarCliente(res.data.cliente);
             toast.success("Cliente agregado correctamente");
+            setCliente(initialForm)
             setOpen(false);
          } else {
             toast.error("Error al guardar el cliente");

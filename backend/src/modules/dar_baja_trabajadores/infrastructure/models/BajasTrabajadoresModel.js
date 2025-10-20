@@ -33,15 +33,13 @@ const BajasTrabajadores = sequelize.define(
       type: DataTypes.DATEONLY,
       allowNull: false,
     },
-    motivo: {
-      type: DataTypes.ENUM(
-        "RENUNCIA",
-        "DESPIDO",
-        "FIN CONTRATO",
-        "MUTUO ACUERDO"
-      ),
+    motivo_liquidacion_id: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: "FIN CONTRATO",
+      references: {
+        model: "motivos_liquidacion",
+        key: "id",
+      },
     },
     observacion: {
       type: DataTypes.TEXT,
@@ -105,6 +103,11 @@ BajasTrabajadores.associate = (models) => {
   BajasTrabajadores.belongsTo(models.usuarios, {
     foreignKey: "usuario_registro_id",
     as: "registrado_por",
+  });
+
+  BajasTrabajadores.belongsTo(models.motivos_liquidacion, {
+    foreignKey: "motivo_liquidacion_id",
+    as: "motivo_liquidacion",
   });
 };
 

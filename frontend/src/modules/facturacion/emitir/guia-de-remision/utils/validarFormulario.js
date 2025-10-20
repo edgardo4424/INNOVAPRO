@@ -47,8 +47,8 @@ export async function validarFormulario(tipo, Guia) {
                 name: "Chofer", // Agregado el nombre para el objeto chofer
                 camposRequeridos: [
                     { key: "tipo", name: "Tipo de Chofer" },
-                    { key: "tipo_doc", name: "Tipo de Documento del Chofer" },
-                    { key: "nro_doc", name: "N° Documento del Chofer" },
+                    { key: "tipo_Doc", name: "Tipo de Documento del Chofer" },
+                    { key: "nro_Doc", name: "N° Documento del Chofer" },
                     { key: "licencia", name: "Licencia del Chofer" },
                     { key: "nombres", name: "Nombres del Chofer" },
                     { key: "apellidos", name: "Apellidos del Chofer" },
@@ -63,8 +63,8 @@ export async function validarFormulario(tipo, Guia) {
                 key: "transportista",
                 name: "Transportista",
                 camposRequeridos: [
-                    { key: "tipo_doc", name: "Tipo de Documento del Transportista" },
-                    { key: "nro_doc", name: "N° Documento del Transportista" },
+                    { key: "tipo_Doc", name: "Tipo de Documento del Transportista" },
+                    { key: "nro_Doc", name: "N° Documento del Transportista" },
                     { key: "razon_Social", name: "Nombres del Transportista" },
                     // { key: "nro_mtc", name: "N° MTC del Transportista" },
                 ]
@@ -74,8 +74,8 @@ export async function validarFormulario(tipo, Guia) {
                 name: "Chofer", // Agregado el nombre para el objeto chofer
                 camposRequeridos: [
                     { key: "tipo", name: "Tipo de Chofer" },
-                    { key: "tipo_doc", name: "Tipo de Documento del Chofer" },
-                    { key: "nro_doc", name: "N° Documento del Chofer" },
+                    { key: "tipo_Doc", name: "Tipo de Documento del Chofer" },
+                    { key: "nro_Doc", name: "N° Documento del Chofer" },
                     { key: "licencia", name: "Licencia del Chofer" },
                     { key: "nombres", name: "Nombres del Chofer" },
                     { key: "apellidos", name: "Apellidos del Chofer" },

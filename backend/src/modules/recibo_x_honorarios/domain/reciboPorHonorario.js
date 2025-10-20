@@ -86,7 +86,7 @@ class ReciboPorHonorario {
          fecha_emision: this.fecha_emision,
          fecha_pago: this.fecha_pago,
          indicador_retencion_cuarta_categoria:
-            this.indicador_retencion_cuarta_categoria,
+            this.indicador_retencion_cuarta_categoria?1:0,
          indicador_retencion_regimen_pensionario:
             this.indicador_retencion_regimen_pensionario,
          importe_aporte_regimen_pensionario:

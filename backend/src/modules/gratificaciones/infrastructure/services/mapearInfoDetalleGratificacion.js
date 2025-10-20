@@ -1,4 +1,4 @@
-function mapearInfoDetalleGratificacion({asistencias, bonos}) {
+function mapearInfoDetalleGratificacion({asistencias, bonos, tipos_admitidos}) {
 
     // obtener info de horas extras
 
@@ -13,10 +13,12 @@ function mapearInfoDetalleGratificacion({asistencias, bonos}) {
     // Obtener info de bonos
 
     const info_bonos = bonos
+        .filter( b => tipos_admitidos.includes(b.tipo))
         .map(b => ({
             trabajador_id: b.trabajador_id,
             fecha: b.fecha,
-            monto: b.monto
+            monto: b.monto,
+            tipo: b.tipo
         }))
         .sort((a, b) => a.fecha.localeCompare(b.fecha))
 

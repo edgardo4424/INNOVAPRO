@@ -29,6 +29,7 @@ export const trabajador_planilla_model =()=>( {
    tardanza_segunda_quincena: 0,
    bono_primera_quincena: 0,
    bono_segunda_quincena: 0,
+   bonos_extraordinarios:0,
    sueldo_bruto: 0,
    onp: 0,
    afp_ap_oblig: 0,
@@ -40,6 +41,7 @@ export const trabajador_planilla_model =()=>( {
    sueldo_quincenal: 0,
    adelanto_prestamo: 0,
    adelantos_ids:[],
+   sub_total:0,
    saldo_por_pagar: 0,
    filial_id:"",
    banco:"",
@@ -49,5 +51,6 @@ export const trabajador_planilla_model =()=>( {
    sctr_salud:0,
    sctr_pension:0,
    info_detalle:[],
+   domiciliado:true,
 }
 )

@@ -14,5 +14,6 @@ router.post("/trunca", gratificacionController.cierreGratificacionTruncaPorTraba
 router.post("/total-por-trabajador", gratificacionController.obtenerTotalGratificacionPorTrabajador)
 
 router.post("/por-trabajador", gratificacionController.obtenerGratificacionPorTrabajador)
+router.post("/calcular-por-trabajador", gratificacionController.calcularGratificacionPorTrabajador)
 
 module.exports = router;

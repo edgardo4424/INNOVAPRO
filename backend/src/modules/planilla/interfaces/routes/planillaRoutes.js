@@ -26,4 +26,6 @@ router.post("/planilla-mensual-trunca", planillaController.calcularPlanillaMensu
 
 router.post("/exportar-plame",planillaController.exportarPlame);
 
+router.get("/obtener-recibos-planilla/:fecha_anio_mes/:filial_id",planillaController.obtenerReciboPorPlanilla)
+
 module.exports = router; 
