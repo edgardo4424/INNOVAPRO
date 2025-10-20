@@ -3,7 +3,9 @@ const router = express.Router();
 const {
    verificarToken,
 } = require("../../../../shared/middlewares/authMiddleware");
+const PasePedidoController = require("../controllers/pasePedidoControlle");
 router.use(verificarToken); // Verificamos el token para todas las rutas
 
+router.get("/",PasePedidoController.obtenerPasesPedidosConfirmados)
 
 module.exports = router;
