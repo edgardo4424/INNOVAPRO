@@ -210,14 +210,14 @@ function calcularCantidadesPorCadaPiezaDeAndamioTrabajo(datosConCantidadAndamios
         { pieza: "AM.9200", cantidad: calcularPinGravedad12mm(dato) },
         { pieza: "AM.9300", cantidad: calcularPinGravedad9mm(dato) },
         {
-          pieza: "CON.0100",
+          pieza: "CO.0010",
           cantidad: calcularPernosExpansionArgolla(
             dato.cantidadAndamios,
             calcularTuboGancho100(dato),
             calcularTuboGancho050(dato)
           ),
         },
-        { pieza: "CON.0200", cantidad: calcularPernosExpansion(dato) },
+        { pieza: "CO.0015", cantidad: calcularPernosExpansion(dato) },
   
       ];
   

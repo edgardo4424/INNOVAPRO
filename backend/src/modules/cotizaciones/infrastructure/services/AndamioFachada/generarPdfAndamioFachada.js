@@ -9,7 +9,7 @@ async function generarPdfAndamioFachada({ dataDespiece, tiene_pernos, porcentaje
   if (tiene_pernos) {
     pernoExpansionConArgolla = await db.piezas.findOne({
       where: {
-        item: "CON.0100",
+        item: "CO.0010",
       },
     });
 
@@ -103,10 +103,10 @@ async function generarPdfAndamioFachada({ dataDespiece, tiene_pernos, porcentaje
   })
 
   const piezaPinPresion = await db.piezas.findOne({
-    where: { item: "PU.0700" },
+    where: { item: "PU.0350" },
   });
   const piezaArgolla = await db.piezas.findOne({
-    where: { item: "PU.0900" },
+    where: { item: "PU.0450" },
   });
 
   const puntal = await db.despieces_detalle.findOne({
