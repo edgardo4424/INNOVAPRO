@@ -159,6 +159,11 @@ const modulesByRole = {
       { name: "Datos de mantenimiento", path: "/data-mantenimiento" },
 
    ],
+
+   "Gerente general":[
+            { name: "Asistencia", path: "/asistencia-general" },
+
+   ],
    "Técnico Comercial": [
       { name: "Gestión de Clientes", path: "/gestion-clientes" },
       { name: "Gestión de Contactos", path: "/gestion-contactos" },

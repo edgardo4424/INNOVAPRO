@@ -319,7 +319,7 @@ export default function AppRoutes() {
 
                      <>
                         {/* Rutas para el modulo de aistencia */}
-                        <Route element={<RoleGuard roles={["CEO","Gerente de administración"]} />}>
+                        <Route element={<RoleGuard roles={["CEO","Gerente de administración","Gerente general"]} />}>
                            <Route
                               path="asistencia-general"
                               element={<GestionAsistencia />}
