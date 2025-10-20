@@ -61,6 +61,16 @@ db.contratos=Contrato;
 const {PasePedido}=require("../../modules/pases_pedidos/infraestructure/models/pasePedidoModel");
 db.pases_pedidos=PasePedido
 
+const {PedidoGuia}=require("../../modules/pedidos_guias/infraestructure/models/pedidoGuiaModel")
+db.pedidos_guias=PedidoGuia;
+
+const {StockPedidoPieza}=require("../../modules/stock_pedido_pieza/infraestructure/models/stockPedidoPiezaModel")
+db.stock_pedidos_piezas=StockPedidoPieza;
+
+const {MovimientoStockPedido}=require("../../modules/stock_pedido_pieza/infraestructure/models/movimientoStockPedidoModel")
+db.movimientos_stock_pedido=MovimientoStockPedido;
+
+
 const {
    Vacaciones,
 } = require("../../modules/vacaciones/infraestructure/models/vacacionesModel");
@@ -312,6 +322,9 @@ if (db.contratos_laborales.associate) db.contratos_laborales.associate(db);
 if (db.stock.associate) db.stock.associate(db);
 if (db.movimiento_stock.associate) db.movimiento_stock.associate(db);
 if (db.pases_pedidos.associate) db.pases_pedidos.associate(db);
+if (db.pedidos_guias.associate) db.pedidos_guias.associate(db);
+if (db.stock_pedidos_piezas.associate) db.stock_pedidos_piezas.associate(db);
+if (db.movimientos_stock_pedido.associate) db.movimientos_stock_pedido.associate(db);
 if (db.contratos.associate) db.contratos.associate(db);
 if (db.bonos.associate) db.bonos.associate(db);
 if (db.adelanto_sueldo.associate) db.adelanto_sueldo.associate(db);
