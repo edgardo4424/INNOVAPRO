@@ -40,7 +40,7 @@ const BandejaRoutes = () => {
           />
         </Route>
 
-        {/* Ruta protegida: Guía de Remisión */}
+        {/* Ruta protegida:-+ Guía de Remisión */}
         <Route
           element={
             <RoleGuard
