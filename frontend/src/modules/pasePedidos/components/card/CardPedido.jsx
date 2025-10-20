@@ -29,7 +29,7 @@ const CardPedido = ({ pedido }) => {
     // Diseño de la tarjeta: Sombra, borde más sutil, fondo blanco
     <div className="flex cursor-pointer flex-col rounded-xl border border-gray-200 bg-white px-4 shadow-md transition duration-300 ease-in-out">
       {/* Encabezado y Etiqueta de Estado */}
-      <div className=" flex justify-between">
+      <div className=" flex items-center justify-between">
         <h3 className="text-md font-extrabold tracking-tight text-gray-900">
           {pedido.razon_social}
         </h3>

@@ -126,7 +126,7 @@ const ContentPedidosTv = () => {
           </div>
 
           {/* Contenedor de las Tarjetas (Scrollable) */}
-          <div className="custom-scrollbar flex flex-grow flex-col gap-y-4 overflow-y-auto p-4">
+          <div className="custom-scrollbar flex flex-grow flex-col gap-y-4 overflow-y-auto p-3">
             {columna.list.length > 0 ? (
               columna.list.map((pedido) => (
                 <CardPedido key={pedido.id} pedido={pedido} />

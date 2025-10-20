@@ -1,9 +1,10 @@
 // src/modules/facturacion/routes/BandejaRoutes.jsx
 import RoleGuard from "@/routes/rol.guard";
 import { Route, Routes } from "react-router-dom";
+import { PedidosProvider } from "../context/PedidosContenxt";
 import PedidosLayout from "../layout/PedidosLayout";
-import PedidosTv from "../pages/PedidosTv";
 import PasePedidos from "../pages/PasePedidos";
+import PedidosTv from "../pages/PedidosTv";
 
 const PedidosRoutes = () => {
   return (
@@ -25,7 +26,14 @@ const PedidosRoutes = () => {
             />
           }
         >
-          <Route path="pedidos-tv" element={<PedidosTv />} />
+          <Route
+            path="pedidos-tv"
+            element={
+              <PedidosProvider>
+                <PedidosTv />
+              </PedidosProvider>
+            }
+          />
         </Route>
 
         {/* Pedidos para Emitir */}
@@ -41,7 +49,14 @@ const PedidosRoutes = () => {
             />
           }
         >
-          <Route path="pase-pedidos" element={<PasePedidos />} />
+          <Route
+            path="pase-pedidos"
+            element={
+              <PedidosProvider>
+                <PasePedidos />
+              </PedidosProvider>
+            }
+          />
         </Route>
       </Route>
     </Routes>
