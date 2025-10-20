@@ -201,7 +201,6 @@ const GestionAsistencia = () => {
                      </div>
                   ) : area_id == 6 || area_id == 2 ? (
                      trabajadoresFiltrados.map((trabajador) => (
-                          <>
                           <JornadaCard
                              key={trabajador.id}
                              trabajador={trabajador}
@@ -209,8 +208,6 @@ const GestionAsistencia = () => {
                              fecha={fechaSeleccionada}
                              asistenciasSincronizacion={asistenciasSincronizacion}
                           />
-                          qweqw
-                          </>
                      ))
                   ) : (
                      trabajadoresFiltrados.map((trabajador) => (

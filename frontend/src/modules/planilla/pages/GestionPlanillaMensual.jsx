@@ -25,7 +25,7 @@ const GestionPlanillaMensual = () => {
               </TabsList>
             </section>
             <section className="flex justify-end items-center">
-              <Button>Guardar Planilla</Button>
+              {/* <Button>Guardar Planilla</Button> */}
             </section>
           </div>
         </article>
