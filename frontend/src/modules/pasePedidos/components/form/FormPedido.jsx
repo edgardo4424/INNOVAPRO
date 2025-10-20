@@ -109,12 +109,12 @@ const FormPedido = ({ pedidoView: pedido }) => {
           </div>
           <div className="col-span-3 flex flex-col justify-center bg-gray-50 p-2 text-center font-bold">
             <span className="text-xs text-gray-600 uppercase">
-              Tarifario / Plan
+              Estado Equipo / Plan
             </span>
             <span className="mt-0.5 text-sm">
-              {pedido?.tarifario || "N/A"} /
+              {pedido?.estado_Equipo || "N/A"} /
               <span className="text-innova-blue ml-1 font-extrabold underline">
-                {pedido?.plan_Tarifario || "N/A"}
+                {pedido?.tipo_Plan_Equipo || "N/A"}
               </span>
             </span>
           </div>
@@ -179,33 +179,33 @@ const FormPedido = ({ pedidoView: pedido }) => {
       <div className="grid grid-cols-2 px-10 py-3">
         <div className="grid grid-cols-2">
           <span className="font-bold">Ref. contrato:</span>
-          <span>Contrato 1</span>
+          <span>{pedido?.nro_contrato || "N/A"}</span>
           <span className="font-bold">Dirección Obra:</span>
-          <span>Dirección 1</span>
-          <span className="font-bold">Proyecto:</span>
-          <span>Proyecto 1</span>
+          <span>{pedido?.obra_Direccion || "N/A"}</span>
+          <span className="font-bold">Proyecto / Obra:</span>
+          <span>{pedido?.obra || "N/A"}</span>
           <span className="font-bold">Fecha:</span>
           <span>10/10/2025</span>
           <span className="font-bold">Telf:</span>
-          <span>9999999</span>
+          <span>{pedido?.cm_Telefono || "N/A"}</span>
           <span className="font-bold">Comercial:</span>
-          <span>Miguel</span>
+          <span>{pedido?.cm_Usuario || "N/A"}</span>
           <span className="font-bold">E-mail:</span>
-          <span>azul@innova</span>
+          <span>{pedido?.cm_Email || "N/A"}</span>
         </div>
         <div className="grid grid-cols-2">
           <span className="font-bold">Razon Social:</span>
-          <span>cliente</span>
+          <span>{pedido?.cliente_Razon_Social || "N/A"}</span>
           <span className="font-bold">Ruc:</span>
-          <span>4999999999</span>
+          <span>{pedido?.cliente_Num_Doc || "N/A"}</span>
           <span className="font-bold">A/A:</span>
-          <span>Ing. Miguel</span>
+          <span>{pedido?.nombre_Contacto || "N/A"}</span>
           <span className="font-bold">Domicilio Fiscal:</span>
           <span>
-            AV. 28 DE JULIO MZ E LT18 URB. BALNEARIO PUNTA HERMOSA SUR
+            {pedido?.dom_Fiscal || "N/A"}
           </span>
           <span className="font-bold">E-mail:</span>
-          <span>dad@innova</span>
+          <span>{pedido?.cli_Email || "N/A"}</span>
         </div>
       </div>
 
