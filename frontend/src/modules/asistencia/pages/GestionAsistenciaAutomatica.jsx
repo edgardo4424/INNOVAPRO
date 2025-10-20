@@ -7,6 +7,9 @@ import BadgeEstadoAsistencia from "../components/BadgeEstadoAsistencia";
 import { useParams, useSearchParams } from "react-router-dom";
 import AsistenciaSimple from "../components/AsistenciaSimple";
 import InputTest from "../components/InputTest";
+import { toast } from "sonner";
+import { FaSpinner } from "react-icons/fa";
+import { Button } from "@/components/ui/button";
 
 const GestionAsistenciaAutomatica = () => {
 
@@ -19,6 +22,9 @@ const GestionAsistenciaAutomatica = () => {
    const [trabajadoresFiltrados,setTrabajadoresFiltrados]=useState([]);
    const [area_id,setAreaId]=useState(null);
    const [nombreArea,setNombreArea]=useState("")
+   const [asistenciasSincronizacion,setAsistenciasSincronizacion]=useState(null);
+   const [isLoadinSync,setIsLoadinSync]=useState(false)
+
 
    const obtenerTrabajadores = async () => {
       try {
@@ -26,12 +32,12 @@ const GestionAsistenciaAutomatica = () => {
          const response = await asistenciaService.obtenerTrabajadoresPorArea(
             fechaSeleccionada
          );
-         console.log('La respuesta fue: ',response.data.datos);
          
          setTrabajadoresFiltrados([...response.data.datos.trabajadores] || [])
          setTrabajadores([...response.data.datos.trabajadores] || []);
          setAreaId(response.data.datos.area_id)
          setNombreArea(response.data.datos.area_nombre);
+         setAsistenciasSincronizacion(null)
       } catch (err) {
          setError("Error al cargar los trabajadores.");
       } finally {
@@ -80,88 +86,103 @@ const GestionAsistenciaAutomatica = () => {
       return stats;
    }, [trabajadores]);
 
-   return (
-      <div className="min-h-full flex-1 flex flex-col items-center p-8">
-         <div className="max-w-7xl mx-auto space-y-6 w-full">
-            {error && (
-               <div className="text-red-500 text-center font-semibold">
-                  {error}
-               </div>
-            )}
+   const sincronizacion=async()=>{
+      setIsLoadinSync(true)
+      try {
+      setAsistenciasSincronizacion(null)
+      let lista_dni=[];
+      for (const t of trabajadores) {
+            lista_dni.push(t.numero_documento);
+      }
+         const payload={
+         fecha:fechaSeleccionada,
+         lista_dni
+      }
+       const response=  await asistenciaService.sincronizarAsistencia(payload);
+       
+       if(response.data.datos.length>0){
+         setAsistenciasSincronizacion(response.data.datos);      
+         toast.success("Asistencias de marcate obtenidas correctamente.")
+       }
+       else{
+          toast.info("No hay asistencias registradas en marcate para esta área")
+       }
+      } catch (error) {
+         console.log("Error en el front: ",error);
+         toast.error("Error: contacte con soporte TI")
+      }
+      finally{
+         setIsLoadinSync(false)
+      }
+   }
 
-            <AsistenciaHeader
-               trabajadores={trabajadores}
-               estadisticas={estadisticas}
-               fechaSeleccionada={fechaSeleccionada}
-               setFechaSeleccionada={setFechaSeleccionada}
-               title={nombreArea}
-            />
-            <div className="grid grid-cols-1 md:grid-cols-3">
-               <InputTest trabajadores={trabajadores} setTrabajadoresFiltrados={setTrabajadoresFiltrados}/> 
-            </div>
-            {loading ? (
-               <div className="text-center py-6 text-gray-500">
-                  Cargando trabajadores...
-               </div>
+  return (
+    <div className="flex min-h-full flex-1 flex-col items-center p-8">
+      <div className="mx-auto w-full max-w-7xl space-y-6">
+        {error && (
+          <div className="text-center font-semibold text-red-500">{error}</div>
+        )}
+
+        <AsistenciaHeader
+          trabajadores={trabajadores}
+          estadisticas={estadisticas}
+          fechaSeleccionada={fechaSeleccionada}
+          setFechaSeleccionada={setFechaSeleccionada}
+          title={nombreArea}
+        />
+        <div className="grid grid-cols-1 md:grid-cols-3 space-y-2 space-x-8">
+          <InputTest
+            trabajadores={trabajadores}
+            setTrabajadoresFiltrados={setTrabajadoresFiltrados}
+          />
+            {((area_id == 6 || area_id == 2)&&(trabajadores&&trabajadores.length>0))&&
+               <Button 
+                  onClick={sincronizacion} 
+                  className=" bg-innova-blue hover:bg-innova-blue/90 w-auto"
+                  disabled={isLoadinSync}
+               >
+                  {
+                     isLoadinSync&&<FaSpinner className="animate-spin"/>
+                  } 
+                  Sincronizar con marcate
+               </Button>
+            }
+        </div>
+        {loading ? (
+          <div className="py-6 text-center text-gray-500">
+            Cargando trabajadores...
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {trabajadoresFiltrados.length === 0 || !area_id ? (
+              <div className="text-center text-gray-400">
+                No hay trabajadores disponibles para esta área.
+              </div>
+            ) : area_id == 6 || area_id == 2 ? (
+              trabajadoresFiltrados.map((trabajador) => (
+                <JornadaCard
+                  key={trabajador.id}
+                  trabajador={trabajador}
+                  obtenerTrabajadores={obtenerTrabajadores}
+                  fecha={fechaSeleccionada}
+                  asistenciasSincronizacion={asistenciasSincronizacion}
+                />
+              ))
             ) : (
-               <div className="space-y-4">
-                  {(trabajadoresFiltrados.length === 0 || !area_id) ? (
-                     <div className="text-center text-gray-400">
-                        No hay trabajadores disponibles para esta área.
-                     </div>
-                  ) : area_id == 6 || area_id == 2 ? (
-                     trabajadoresFiltrados.map((trabajador) => (
-                        <Card key={trabajador.id} className={"py-3 gap-2"}>
-                           <CardHeader className={""}>
-                              <CardTitle className="flex items-center justify-start gap-8 ">
-                                 <div>
-                                    <h3 className="text-lg font-semibold !mt-0">
-                                       {trabajador.nombres}{" "}
-                                       {trabajador.apellidos}
-                                    </h3>
-                                    <div>
-                                       <p className="text-[9px] text-neutral-500">
-                                          {trabajador.tipo_documento}:{" "}
-                                          {trabajador.numero_documento}
-                                       </p>
-                                       <p className="text-xs lowercase text-neutral-500">
-                                          {trabajador.filial}
-                                       </p>
-                                    </div>
-                                 </div>
-                                 <div className="">
-                                    <BadgeEstadoAsistencia
-                                       trabajador={trabajador}
-                                    />
-                                 </div>
-                              </CardTitle>
-                           </CardHeader>
-                           <CardContent className={""}>
-                              <div className="grid grid-cols-1 gap-4">
-                                 <JornadaCard
-                                    trabajador={trabajador}
-                                    obtenerTrabajadores={obtenerTrabajadores}
-                                    fecha={fechaSeleccionada}
-                                 />
-                              </div>
-                           </CardContent>
-                        </Card>
-                     ))
-                  ) : (
-                     trabajadoresFiltrados.map((trabajador) => (
-                        <AsistenciaSimple
-                           key={trabajador.id}
-                           trabajador={trabajador}
-                           fecha={fechaSeleccionada}
-                           obtenerTrabajadores={obtenerTrabajadores}
-                        />
-                     ))
-                  )}
-               </div>
+              trabajadoresFiltrados.map((trabajador) => (
+                <AsistenciaSimple
+                  key={trabajador.id}
+                  trabajador={trabajador}
+                  fecha={fechaSeleccionada}
+                  obtenerTrabajadores={obtenerTrabajadores}
+                />
+              ))
             )}
-         </div>
+          </div>
+        )}
       </div>
-   );
+    </div>
+  );
 };
 
 export default GestionAsistenciaAutomatica;

@@ -118,7 +118,7 @@ export const useAsistencia = (
     setAsistencia((prev) => ({
       ...prev,
       estado_asistencia: estado,
-      horas_trabajadas: esValido ? 8 : 0,
+      horas_trabajadas: esValido ? 9 : 0,
       horas_extras: 0,
       jornadas: esValido
         ? [
@@ -177,7 +177,7 @@ export const useAsistencia = (
       }
       toast.error("Hubo un error descocnocido");
     } finally {
-      await obtenerTrabajadores();
+      // await obtenerTrabajadores();
     }
   };
 

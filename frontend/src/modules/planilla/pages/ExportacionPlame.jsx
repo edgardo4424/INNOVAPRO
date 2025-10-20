@@ -15,6 +15,7 @@ const ExportacionPlame = () => {
   const [loading, setLoading] = useState(false);
   const [loadPlame, setLoadPlame] = useState(false);
   const [recibos, setRecibos] = useState(null);
+  const [verificacionRecibos,setVerificacionRecibos]=useState(false);
 
   // ?? Filtro para la peticion
   const [filtro, setFiltro] = useState({
@@ -96,14 +97,22 @@ const ExportacionPlame = () => {
     setRecibos(null);
     setLoading(true);
     try {
+      setVerificacionRecibos(false)
       const respuesta = await planillaMensualService.obtenerReciboPorPlanilla(
         `${filtro.anio}-${filtro.mes}`,
         filtro.filial_id,
       );
       setRecibos(respuesta.data);
+      if(respuesta.data.length===0){
+        toast.info("No se detectaron recibos por honorario")
+      }
+      setVerificacionRecibos(true)
     } catch (error) {
-      toast.error(error);
-      console.error("Error recibido: ", error);
+      if(error?.response?.data?.mensaje){
+        toast.error(error.response.data.mensaje);
+        return
+      }
+      toast.error("Error desconocido")
     } finally {
       setLoading(false);
     }
@@ -117,7 +126,7 @@ const ExportacionPlame = () => {
           filtro={filtro}
           setFiltro={setFiltro}
           Buscar={buscarPlame}
-          nombre_button="Buscar Plame"
+          nombre_button="Obtener Plame"
         />
       </section>
       <section className="w-full">
@@ -130,7 +139,7 @@ const ExportacionPlame = () => {
           </div>
         ) : (
           <article className="flex w-full flex-col">
-            <section className="min-h-[30vh] space-y-6">
+            <section className="space-y-6">
               {recibos &&
                 recibos.length > 0 &&
                 recibos.map((r, index) => (
@@ -142,17 +151,19 @@ const ExportacionPlame = () => {
                   />
                 ))}
             </section>
-            {recibos && recibos.length > 0 && (
+            <section className="w-full grid grid-cols-3 ">
+              {verificacionRecibos&&(
               <Button
                 onClick={() => exportarPlame()}
                 disabled={loadPlame}
-                className="mt-6 self-end"
+                className="mt-6 self-end bg-green-700 hover:bg-green-600 col-start-2"
                 size="lg"
               >
                 {loadPlame && <FaSpinner className="animate-spin" />}
                 Exportar Plame
               </Button>
             )}
+            </section>
           </article>
         )}
       </section>

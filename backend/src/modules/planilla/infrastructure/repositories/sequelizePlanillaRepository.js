@@ -1220,10 +1220,10 @@ class SequelizePlanillaRepository {
    ) {
       console.log('dento funcion',fecha_anio_mes,filial_id);
       
-      const cierrePlanillaQuincenal = await CierresPlanillaMensual.findOne({
+      const cierrePlanillaMensual = await CierresPlanillaMensual.findOne({
          where: { periodo: fecha_anio_mes, filial_id }
       });
-      return cierrePlanillaQuincenal;
+      return cierrePlanillaMensual;
    }
   // prettier-ignore
   async generarRegistroCierrePeriodoPlanillaMensual(

@@ -12,6 +12,7 @@ import {
    Users,
 } from "lucide-react";
 import { formatearFecha } from "../libs/formatearFecha";
+import { toast } from "sonner";
 
 const AsistenciaHeader = ({
    trabajadores,
@@ -39,9 +40,16 @@ const AsistenciaHeader = ({
                         id="fecha"
                         type="date"
                         value={fechaSeleccionada}
-                        onChange={(e) => setFechaSeleccionada(e.target.value)}
-                        className="w-auto"
-                        
+                      onChange={(e) => {
+                        const fecha = e.target.value
+                        const dia = new Date(fecha).getUTCDay()
+                        if (dia === 0) {
+                          toast.info("La selección de domingos no está permitida.")
+                          return
+                        }
+                        setFechaSeleccionada(fecha)
+                      }}                        
+                      className="w-auto"  
                      />
                   </div>
                </div>
