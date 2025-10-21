@@ -30,6 +30,7 @@ const ContratosLaborales = ({
   setFormData,
   errors,
   filiales,
+  listaCargosSunat,
   isEditMode,
 }) => {
 
@@ -38,8 +39,7 @@ const ContratosLaborales = ({
   const [editIndex, setEditIndex] = useState(null);
   const [prevSueldo, setPrevSueldo] = useState("");
   const [tempSueldo, setTempSueldo] = useState("");
-  const [listaCargosSunat, setListaCargosSunat] = useState([]);
-
+ 
   const handleInputChange = (index, field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -117,34 +117,6 @@ const ContratosLaborales = ({
     setEditIndex(null);
   };
 
-  const obtenerCargosSunat = async (cargo_innova_id) => {
-    try {
-      const respuesta =
-        await trabajadoresService.getCargosSunat(cargo_innova_id);
-
-      setListaCargosSunat(respuesta.data);
-      setFormData((prev) => ({
-  ...prev,
-  contratos_laborales: prev.contratos_laborales.map((contrato) => {
-    // Si ya tiene id_cargo_sunat, no lo sobrescribas
-    if (isEditMode && contrato.id_cargo_sunat) {
-      return contrato;
-    }
-    return {
-      ...contrato,
-      id_cargo_sunat: respuesta.data.length > 0 ? respuesta.data[0].id : "",
-      cargo_sunat_nombre: respuesta.data.length > 0 ? respuesta.data[0].nombre : "",
-    };
-  }),
-}));
-    } catch (error) {
-      setListaCargosSunat([]);
-    }
-  };
-
-  useEffect(() => {
-      obtenerCargosSunat(formData.cargo_id);
-  }, [formData.cargo_id]);
 
   const canRemove = formData.contratos_laborales.length > 1;
 
@@ -161,6 +133,7 @@ const ContratosLaborales = ({
       <div className="mt-4 space-y-5">
         {formData.contratos_laborales.map((c, i) => 
          {
+
             return ( <div
             key={c.id ?? i}
             className="border-muted rounded-lg border p-4 md:p-5"
@@ -325,59 +298,21 @@ const ContratosLaborales = ({
                   onValueChange={(e) =>{
                   
                     handleInputChange(i, "id_cargo_sunat", e)
-                    setFormData((prev) => ({
-                      ...prev,
-                      contratos_laborales: prev.contratos_laborales.map((contrato, index) =>
-                        index === i ? { ...contrato, cargo_sunat_nombre: listaCargosSunat.find(cargo => cargo.id.toString() === e)?.nombre || "" } : contrato,
-                      ),
-                    }));
+                  
                   }}
                 >
                   <SelectTrigger className={"w-full"}>
                     <SelectValue placeholder="Seleccione un cargo de la SUNAT" />
                   </SelectTrigger>
                   <SelectContent>
-            {!isEditMode ? (
-            listaCargosSunat.map((cargo_sunat) => (
-               <SelectItem
-               key={cargo_sunat.id}
-               value={cargo_sunat?.id.toString()}
-               >
-               {cargo_sunat.nombre}
-               </SelectItem>
-            ))
-         ) : String(c?.id).length === 10 ? (
-            listaCargosSunat.map((cargo_sunat) => (
-               <SelectItem
-               key={cargo_sunat.id}
-               value={cargo_sunat.id.toString()}
-               >
-               {cargo_sunat.nombre}
-               </SelectItem>
-            ))
-         ) : (
-            c?.id_cargo_sunat
-         ? (
-          listaCargosSunat.map((cargo) =>
+  
+          {listaCargosSunat.map((cargo) =>
 
             <SelectItem checked={c.id_cargo_sunat.toString() === cargo.id.toString()} key={cargo.id} value={cargo.id.toString()}>
                {cargo.nombre}
             </SelectItem>
-          )
+          )}
 
-             
-         )
-         : (
-             listaCargosSunat.map((carg) => (
-               <SelectItem
-               key={carg.id}
-               value={carg.id.toString()}
-               >
-               {carg.nombre}
-               </SelectItem>
-            ))
-         )
-         )}
          </SelectContent>
                 </Select>
                 {errors?.[`contratos_laborales[${i}].id_cargo_sunat`] && (

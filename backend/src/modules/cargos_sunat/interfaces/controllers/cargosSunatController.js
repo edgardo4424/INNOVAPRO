@@ -4,6 +4,7 @@ const sequelizeCargosSunatRepository = require('../../infrastructure/repositorie
 const cargosSunatRepository = new sequelizeCargosSunatRepository();
 
 const obtenerCargosSunat = require('../../application/useCases/obtenerCargosSunat');
+const obtenerTodosLosCargosSunat = require('../../application/useCases/obtenerTodosLosCargosSunat');
 
 const CargosSunatController = {
    
@@ -21,6 +22,18 @@ const CargosSunatController = {
         }
     },
 
+      async obtenerTodosLosCargosSunat(req, res) {
+    
+            try {
+              
+                const response = await obtenerTodosLosCargosSunat(cargosSunatRepository); 
+               
+                res.status(response.codigo).json(response.respuesta); 
+            } catch (error) {
+                console.log('error',error);
+                res.status(500).json({ error: error.message }); 
+            }
+        },
     
 
 };
