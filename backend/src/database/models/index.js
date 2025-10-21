@@ -203,6 +203,7 @@ const {
 } = require("../../modules/cotizaciones/infrastructure/models/cotizacionesInstalacionesModel");
 db.cotizaciones_instalacion = CotizacionesInstalacion;
 
+
 // ? Facturacion
 // todo de factura - boleta
 const { Factura } = require('../../modules/facturacion/infrastructure/models/factura-boleta/facturaModel')
@@ -355,7 +356,6 @@ if (db.cargos) db.cargos.associate(db);
 if (db.areas) db.areas.associate(db);
 if (db.planilla_mensual) db.planilla_mensual.associate(db);
 if (db.cierres_planilla_mensual) db.cierres_planilla_mensual.associate(db);
-
 
 // Sequelize
 db.sequelize = sequelize;
