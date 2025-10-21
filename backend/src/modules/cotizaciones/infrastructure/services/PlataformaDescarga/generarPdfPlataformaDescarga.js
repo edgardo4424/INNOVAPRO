@@ -79,7 +79,7 @@ async function generarPdfPlataformaDescarga({
 
 if(piezasDetalleAdicionalesPlataformaDescargaConDescuento.length>0){
 
-  const listaItemsPuntales = ['PU.0100', 'PU.0400', 'PU.0600']
+  const listaItemsPuntales = ['PU.0100', 'PU.0200', 'PU.0300']
     const listaPuntales = piezasDetalleAdicionalesPlataformaDescargaConDescuento.filter(p => listaItemsPuntales.includes(p.pieza.item))
       
     const listaItemsPuntalesAdicionales = listaPuntales.map(p => p.pieza.item)
@@ -91,23 +91,23 @@ if(piezasDetalleAdicionalesPlataformaDescargaConDescuento.length>0){
           let itemArgolla;
           let tipo;
           switch (item) {
-            case "PU.0600":  // Puntal de 5m
-              itemPiezaPinPresion = "PU.0800";
-              itemArgolla = "PU.1000";
+            case "PU.0300":  // Puntal de 5m
+              itemPiezaPinPresion = "PU.0400";
+              itemArgolla = "PU.0500";
 
               tipo = "5.00 m"
               break;
     
-            case "PU.0400":  // Puntal 4m
-              itemPiezaPinPresion = "PU.0700";
-              itemArgolla = "PU.0900";
+            case "PU.0200":  // Puntal 4m
+              itemPiezaPinPresion = "PU.0350";
+              itemArgolla = "PU.0450";
 
               tipo = "4.00 m"
               break;
 
             case "PU.0100":  // Puntal 3m
-              itemPiezaPinPresion = "PU.0700";
-              itemArgolla = "PU.0900";
+              itemPiezaPinPresion = "PU.0350";
+              itemArgolla = "PU.0450";
 
               tipo = "3.00 m"
               break;

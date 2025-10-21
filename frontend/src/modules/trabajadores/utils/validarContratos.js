@@ -8,7 +8,7 @@ import { formatearFecha } from "@/utils/formatearFecha";
  * @param {boolean} permitirContinuidad - Si true, permite que un contrato termine el mismo día que otro inicia.
  * @returns {{ esValido: boolean, errores: string[] }}
  */
-export function validarContratos(contratos = [], permitirContinuidad = false) {
+export function validarContratos(contratos = [], filiales, permitirContinuidad = false) {
   const errores = [];
 
   // Agrupar contratos por filial
@@ -19,15 +19,18 @@ export function validarContratos(contratos = [], permitirContinuidad = false) {
     contratosPorFilial[filial].push(c);
   }
 
+
   // Validar dentro de cada filial
   for (const [filial, lista] of Object.entries(contratosPorFilial)) {
     const indefinidos = lista.filter((c) => c.es_indefinido);
+    
+    const nombre_filial = filiales.find((f) => f.id == filial)?.razon_social;
 
     // 🧩 Validar si hay más de un contrato indefinido por filial
     if (indefinidos.length > 1) {
       const ids = indefinidos.map((c) => c.id).join(", ");
       errores.push(
-        `La filial ${filial} tiene múltiples contratos indefinidos (IDs: ${ids}). Solo se permite uno por filial.`
+        `La filial ${nombre_filial} tiene múltiples contratos indefinidos. Solo se permite uno por filial.`
       );
     }
 
@@ -48,9 +51,9 @@ export function validarContratos(contratos = [], permitirContinuidad = false) {
 
         if (dentroDelIndefinido) {
           errores.push(
-            `En la filial ${filial}, ya existe un contrato indefinido (ID ${indefinido.id}) desde ${formatearFecha(
+            `En la filial ${nombre_filial}, ya existe un contrato indefinido desde ${formatearFecha(
               indefinido.fecha_inicio
-            )}. No se puede crear el contrato (ID ${c.id}) que inicia el ${formatearFecha(
+            )}. No se puede crear el contrato que inicia el ${formatearFecha(
               c.fecha_inicio
             )}.`
           );
@@ -74,7 +77,7 @@ export function validarContratos(contratos = [], permitirContinuidad = false) {
 
       if (!permitirContinuidad && actual.fecha_fin === siguiente.fecha_inicio) {
         errores.push(
-          `En la filial ${filial}, el contrato N° ${siguiente.posicion_contrato_sin_ordenar} inicia el ${formatearFecha(
+          `En la filial ${nombre_filial}, el contrato N° ${siguiente.posicion_contrato_sin_ordenar} inicia el ${formatearFecha(
             siguiente.fecha_inicio
           )} y termina el mismo día que el contrato N° ${actual.posicion_contrato_sin_ordenar}.`
         );
@@ -82,7 +85,7 @@ export function validarContratos(contratos = [], permitirContinuidad = false) {
 
       if (actual.fecha_fin && actual.fecha_fin > siguiente.fecha_inicio) {
         errores.push(
-          `En la filial ${filial}, el contrato N° ${siguiente.posicion_contrato_sin_ordenar} inicia el ${formatearFecha(
+          `En la filial ${nombre_filial}, el contrato N° ${siguiente.posicion_contrato_sin_ordenar} inicia el ${formatearFecha(
             siguiente.fecha_inicio
           )} y hay conflicto con el contrato anterior.`
         );

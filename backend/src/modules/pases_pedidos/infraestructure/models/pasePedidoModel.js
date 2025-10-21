@@ -44,6 +44,10 @@ PasePedido.associate = (models) => {
       foreignKey: "contrato_id",
       as: "contrato",
    });
+   PasePedido.hasOne(models.stock_pedidos_piezas,{
+      foreignKey:"pase_pedido_id",
+      as:"stock_pedido_pieza"
+   })
    
 };
 

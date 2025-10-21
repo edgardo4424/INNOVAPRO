@@ -214,6 +214,7 @@ class SequelizePlanillaRepository {
 
     const fecha_inicio_mes = `${anio}-${mes}-01`;
     
+    let trabajadores_ids_que_recibieron_adelantos = [];
 
     for (const contrato of contratosPlanilla) {
       const trabajador = contrato.trabajador;
@@ -250,6 +251,8 @@ class SequelizePlanillaRepository {
         (sueldoBase / 30) * diasLaborados) 
       .toFixed(2);
 
+     
+
       const sueldoBruto = +(sueldoQuincenal + asignacionFamiliar).toFixed(2);
 
       if (sistema_pension === "ONP") {
@@ -257,6 +260,7 @@ class SequelizePlanillaRepository {
           (sueldoBruto * dataMantenimiento.PORCENTAJE_DESCUENTO_ONP) /
           100
         ).toFixed(2);
+
       } else if (sistema_pension === "AFP") {
         afp = +(
           (sueldoBruto * dataMantenimiento.PORCENTAJE_DESCUENTO_AFP) /
@@ -327,7 +331,11 @@ class SequelizePlanillaRepository {
                   contrato.fecha_fin, */
                   fecha_anio_mes_dia
                 );
-
+        
+        if (adelantos_ids_prestamo.length > 0 || adelantos_ids_simple.length > 0){
+          trabajadores_ids_que_recibieron_adelantos.push(trabajador.id)
+        }
+      
       const adelantos_ids = [...adelantos_ids_prestamo, ...adelantos_ids_simple];
       const totalAdelantosSueldo = Number(totalAdelantosSueldoPrestamo) + Number(totalAdelantosSueldoSimple);
 
@@ -418,8 +426,10 @@ class SequelizePlanillaRepository {
                   fecha_anio_mes_dia
                 );
 
-        const adelantos_ids = [...adelantos_ids_prestamo, ...adelantos_ids_simple];
-      const totalAdelantosSueldo = Number(totalAdelantosSueldoPrestamo) + Number(totalAdelantosSueldoSimple);
+                console.log('trabajadores_ids_que_recibieron_adelantos.includes(trabajador.id)', trabajadores_ids_que_recibieron_adelantos.includes(trabajador.id));
+
+        const adelantos_ids = trabajadores_ids_que_recibieron_adelantos.includes(trabajador.id) ? [] : [...adelantos_ids_prestamo, ...adelantos_ids_simple];
+      const totalAdelantosSueldo = trabajadores_ids_que_recibieron_adelantos.includes(trabajador.id) ? 0 : Number(totalAdelantosSueldoPrestamo) + Number(totalAdelantosSueldoSimple);
 
       const totalAPagar = sueldoQuincenal - totalAdelantosSueldo;
       listaPlanillaTipoHonorarios.push({
@@ -875,7 +885,7 @@ class SequelizePlanillaRepository {
   }
 
   // prettier-ignore
-  async calcularPlanillaMensualPorTrabajadorRXH(anio_mes_dia, trabajador_id,filial_id) {
+  async calcularPlanillaMensualPorTrabajadorRXH(anio_mes_dia, trabajador_id,filial_id, trabajadores_ids_que_recibieron_adelantos=[]) {
       const responseQuicenas = await this.obtenerPlanillaQuincenalPorTrabajador(
          `${anio_mes_dia.slice(0, -3)}`,
          filial_id,
@@ -972,15 +982,14 @@ class SequelizePlanillaRepository {
             trabajador.id
          );
 
-         const DIAS_NO_CONTRATADOS = calcularDiasNoContratado(
-            inicio_real,
-            fin_real,
-            inicio_de_mes,
-            fin_de_mes
-         );
+        
          const DIAS_CONTRATADO=calcularDiasContratado(inicio_real,
             fin_contrato,
-            inicio_de_mes);
+            inicio_de_mes, 
+            fin_de_mes,
+            c.es_indefinido
+          );
+
         console.log("dIAS CONTRATADO EN RXH",DIAS_CONTRATADO);
         
          const SUMA_FALTAS=FALTAS_PRIMERA_Q+FALTAS_SEGUNDA_Q;
@@ -1011,12 +1020,27 @@ class SequelizePlanillaRepository {
          data.numero_cuenta=c.numero_cuenta
          planillasRxhObtenidas.push(data)
       }
-      const { totalAdelantosSueldo, adelantos_ids } =
+      const { totalAdelantosSueldo: totalAdelantosSueldoPrestamo, adelantos_ids: adelantos_ids_prestamo } =
+         await adelantoSueldoRepository.obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
+            trabajador.id,
+            "prestamo",
+            fin_de_mes
+         );
+
+         const { totalAdelantosSueldo: totalAdelantosSueldoSimple, adelantos_ids: adelantos_ids_simple } =
          await adelantoSueldoRepository.obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
             trabajador.id,
             "simple",
             fin_de_mes
          );
+
+       /*        const adelantos_ids = [...adelantos_ids_prestamo, ...adelantos_ids_simple];
+      const totalAdelantosSueldo = Number(totalAdelantosSueldoPrestamo) + Number(totalAdelantosSueldoSimple);
+ */
+
+          const adelantos_ids = trabajadores_ids_que_recibieron_adelantos.includes(trabajador.id) ? [] : [...adelantos_ids_prestamo, ...adelantos_ids_simple];
+      const totalAdelantosSueldo = trabajadores_ids_que_recibieron_adelantos.includes(trabajador.id) ? 0 : Number(totalAdelantosSueldoPrestamo) + Number(totalAdelantosSueldoSimple);
+
       const grupoRxh=trabajador_rxh_model();
       for (const p of planillasRxhObtenidas) {
          grupoRxh.trabajador_id=p.trabajador_id;
@@ -1063,6 +1087,7 @@ class SequelizePlanillaRepository {
       grupoRxh.adelantos_ids=adelantos_ids||[];
       grupoRxh.saldo_por_pagar=(grupoRxh.sueldo_neto-MONTO_QUINCENAS)-grupoRxh.adelanto_prestamo;      
       
+      grupoRxh.sub_total =(grupoRxh.sueldo_neto-MONTO_QUINCENAS)-grupoRxh.adelanto_prestamo;
       return grupoRxh;
    }
   // prettier-ignore
@@ -1195,10 +1220,10 @@ class SequelizePlanillaRepository {
    ) {
       console.log('dento funcion',fecha_anio_mes,filial_id);
       
-      const cierrePlanillaQuincenal = await CierresPlanillaMensual.findOne({
+      const cierrePlanillaMensual = await CierresPlanillaMensual.findOne({
          where: { periodo: fecha_anio_mes, filial_id }
       });
-      return cierrePlanillaQuincenal;
+      return cierrePlanillaMensual;
    }
   // prettier-ignore
   async generarRegistroCierrePeriodoPlanillaMensual(
@@ -1260,6 +1285,7 @@ class SequelizePlanillaRepository {
     anio_mes_dia,
     trabajador_id,
     filial_id,
+    trabajadores_ids_que_recibieron_adelantos = [],
     transaction = null
   ) {
     const responseQuicenas = await this.obtenerPlanillaQuincenalPorTrabajador(
@@ -1408,6 +1434,7 @@ class SequelizePlanillaRepository {
         inicio_real,
         fin_contrato,
         inicio_de_mes,
+        fin_de_mes,
         c.es_indefinido
       );
       // console.log("DIAS CONTRTADO:   ",DIAS_CONTRATADO);      
@@ -1536,12 +1563,29 @@ class SequelizePlanillaRepository {
       planilla.numero_cuenta = c.numero_cuenta;
       planillas_obtenidas.push(planilla);
     }
-    const { totalAdelantosSueldo, adelantos_ids } =
+
+     const {totalAdelantosSueldo: totalAdelantosSueldoPrestamo, adelantos_ids: adelantos_ids_prestamo} =
+                await adelantoSueldoRepository.obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
+                  trabajador.id,
+                  "prestamo",
+                 
+                  fin_de_mes
+                );
+
+    const { totalAdelantosSueldo: totalAdelantosSueldoSimple, adelantos_ids: adelantos_ids_simple } =
       await adelantoSueldoRepository.obtenerTotalAdelantosDelTrabajadorPorRangoFecha(
         trabajador.id,
         "simple",
         fin_de_mes
       );
+
+       if (adelantos_ids_prestamo.length > 0 || adelantos_ids_simple.length > 0){
+          trabajadores_ids_que_recibieron_adelantos.push(trabajador.id)
+        }
+
+      
+        const adelantos_ids = [...adelantos_ids_prestamo, ...adelantos_ids_simple];
+      const totalAdelantosSueldo = Number(totalAdelantosSueldoPrestamo) + Number(totalAdelantosSueldoSimple);
 
     const SUMATORIA_PLANILLA = unir_planillas_mensuales(
       planillas_obtenidas,

@@ -161,7 +161,7 @@ function calcularEC0800(valorCalcularEC0100) {
   return valorCalcularEC0100;
 }
 
-// 23. CON.0200 - PERNOS DE EXPANSION - M16 x 145
+// 23. CO.0015 - PERNOS DE EXPANSION - M16 x 145
 function calcularCON0200({ escuadra, tipoAnclaje, valorCalcularEC0800, valorCalcularEC0300 }) {
   if (escuadra === 3 && tipoAnclaje === "ESPARRAGO") return "ERROR";
   let total = 0;

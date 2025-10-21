@@ -13,16 +13,110 @@ const Contrato = sequelize.define(
       cotizacion_id: {
          type: DataTypes.INTEGER,
          allowNull: false,
-         unique:true,
+         unique:false,
          references:{
             model:"cotizaciones",
             key:"id"
          }
       },
-      notas_legales: {
+       despiece_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+              model: "despieces",
+              key: "id",
+            },
+          },
+        contacto_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+              model: "contactos",
+              key: "id",
+            },
+          },
+          cliente_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+              model: "clientes",
+              key: "id",
+            },
+          },
+          obra_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+              model: "obras",
+              key: "id",
+            },
+          },
+          filial_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+              model: "empresas_proveedoras",
+              key: "id",
+            },
+          },
+          usuario_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+              model: "usuarios",
+              key: "id",
+            },
+          },
+      ref_contrato: {
+         type: DataTypes.STRING,
+         allowNull: false,
+      },
+      fecha_inicio: {
+         type: DataTypes.DATEONLY,
+         allowNull: false, 
+      },
+      fecha_fin: {
+         type: DataTypes.DATEONLY,
+         allowNull: false,
+      },
+      clausulas_adicionales: {
          type: DataTypes.JSON,
          allowNull: true,
       },
+      requiere_valo_adelantada: {
+         type: DataTypes.BOOLEAN,
+         allowNull: false,
+         defaultValue: false,
+      },
+      condiciones_alquiler: {
+         type: DataTypes.JSON,
+         allowNull: true,
+      },
+     
+      renovaciones: {
+         type: DataTypes.STRING,
+         allowNull: true,
+      },
+      firmas: {
+         type: DataTypes.JSON,
+         allowNull: true,
+      },
+      envio: {
+         type: DataTypes.JSON,
+         allowNull: true,
+      },
+      estado: {
+         type: DataTypes.ENUM(
+            'PROGRAMADO',
+            'VIGENTE',
+            'POR VENCER',
+            'VENCIDO',
+            'FIRMADO'
+         ),
+         allowNull: false,
+         defaultValue: 'PROGRAMADO',
+      },
+      
    },
    {
       tableName: "contratos",
@@ -38,7 +132,23 @@ Contrato.associate = (models) => {
    Contrato.belongsTo(models.cotizaciones,{
         foreignKey:"cotizacion_id",
         as:"cotizacion"
-   })
+   });
+   Contrato.belongsTo(models.clientes,{
+         foreignKey:"cliente_id",
+         as:"cliente"
+   });
+   Contrato.belongsTo(models.obras,{
+         foreignKey:"obra_id",
+         as:"obra"
+   });
+   Contrato.belongsTo(models.empresas_proveedoras, {
+      foreignKey: "filial_id",
+      as: "filial",
+   });
+   Contrato.belongsTo(models.usuarios, {
+      foreignKey: "usuario_id",
+      as: "usuario",
+   });
 };
 
 module.exports = { Contrato };

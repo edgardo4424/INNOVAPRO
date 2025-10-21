@@ -52,7 +52,15 @@ const Cliente = sequelize.define('clientes', {
     fecha_creacion: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
-    }
+    },
+    cargo_representante: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    domicilio_representante: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
 }, {
     timestamps: false,
     tableName: "clientes",

@@ -1,5 +1,5 @@
 const calcularBonosEnGratificacion = (bonos,tipos_admitidos, ) => {
-   console.log('bonos',bonos);
+   
    const sumaTipoBono=new Map();
    for (const b of bonos) {
       if(tipos_admitidos.includes(b.tipo)){

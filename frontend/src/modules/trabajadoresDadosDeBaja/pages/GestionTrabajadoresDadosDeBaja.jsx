@@ -51,6 +51,7 @@ import trabajadoresDadosDeBajaService from "../services/trabajadoresDadosDeBaja"
 import { formatearFecha } from "@/modules/gratificacion/utils/formatearFecha";
 import TrabajadorCombobox from "@/modules/retenciones/components/TrabajadorCombobox";
 import SelectorConBuscador from "@/components/SelectorConBuscador";
+import { trabajadoresDadosDeBajaSchema } from "../schema/trabajadores_dados_de_baja.schema";
 
 const GestionTrabajadoresDadosDeBaja = () => {
   const [loading, setLoading] = useState(true);
@@ -71,6 +72,9 @@ const GestionTrabajadoresDadosDeBaja = () => {
 
   // Estado para seleccionar motivo
   const [selectorIdMotivo, setSelectorIdMotivo] = useState(null);
+
+  const [errores, setErrores] = useState({});
+
 
   const [form, setForm] = useState({
     filial_id: "",
@@ -139,6 +143,7 @@ const GestionTrabajadoresDadosDeBaja = () => {
   }, []);
 
   const openCreate = () => {
+    setErrores({});
     setViewMode("crear");
     Promise.all([
       fetchFiliales(),
@@ -164,13 +169,31 @@ const GestionTrabajadoresDadosDeBaja = () => {
     try {
       setErrorMsg(null);
 
+      // Validar con yup
+      const datosValidados = await trabajadoresDadosDeBajaSchema.validate(
+        form,
+        { abortEarly: false }
+      );
+      setErrores({});
+
       if (viewMode === "crear") {
-        await trabajadoresDadosDeBajaService.darDeBajaTrabajador(form);
+        await trabajadoresDadosDeBajaService.darDeBajaTrabajador(datosValidados);
         toast.success("Trabajador dado de baja correctamente");
         await fetchTrabajadoresDadosDeBaja();
       }
       setDialogOpen(false);
     } catch (e) {
+
+      // 🔹 Errores de Yup
+    if (e.name === "ValidationError") {
+      const newErrors = {};
+      e.inner.forEach(err => {
+        newErrors[err.path] = err.message;
+        //toast.error(err.message); // mostrar en toast cada error
+      });
+      setErrores(newErrors);
+      return;
+    }
       toast.error(
         e?.response?.data?.mensaje ?? "No se pudo dar de baja al trabajador"
       );
@@ -382,6 +405,9 @@ const GestionTrabajadoresDadosDeBaja = () => {
                     ))}
                   </SelectContent>
                 </Select>
+             {errores.filial_id && (
+                     <p className="error-message">{errores.filial_id}</p>
+                  )}
               </div>
 
               {/* Trabajador */}
@@ -395,6 +421,9 @@ const GestionTrabajadoresDadosDeBaja = () => {
                   onSelect={onTrabSelect}
                   //dense
                 />
+              {errores.trabajador_id && (
+                      <p className="error-message">{errores.trabajador_id}</p>
+                   )}
               </div>
 
               {/* Contrato */}
@@ -432,6 +461,9 @@ const GestionTrabajadoresDadosDeBaja = () => {
                   }
                   disabled={viewMode === "ver"}
                 />
+              {errores.fecha_baja && (
+                      <p className="error-message">{errores.fecha_baja}</p>
+                   )}
               </div>
 
               <div className="grid gap-1">
@@ -451,6 +483,10 @@ const GestionTrabajadoresDadosDeBaja = () => {
                   /* idField="codigo"  // si en lugar de id usas "codigo" */
                   placeholder="Selecciona un motivo"
                 />
+
+              {errores.motivo_liquidacion_id && (
+                      <p className="error-message">{errores.motivo_liquidacion_id}</p>
+                   )}
 
               </div>
 

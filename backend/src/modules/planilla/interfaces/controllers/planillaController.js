@@ -184,6 +184,7 @@ const PlanillaController = {
 
    async obtenerPlanillaQuincenalPorTrabajador(req, res) {
       try {
+         console.log('e');
          const { fecha_anio_mes, filial_id, trabajador_id } = req.body;
 
          const planillaQuincenalPorTrabajador =

@@ -67,9 +67,9 @@ class AdelantoSueldo {
          const hoy = new Date().toISOString().split("T")[0];
          const { anio, mes, dia } = destruturarFecha(fecha_recibida);
          const { anio: anio_h, mes: mes_h, dia: dia_h } = destruturarFecha(hoy);
-         if (fecha_recibida < hoy) {
+     /*     if (fecha_recibida < hoy) {
             errores.push("La fecha de la primera cuota es menor a hoy.");
-         }
+         } */
 
          const quincena_dia_laboral = obtenerUltimoDiaLaboralDeQuincena(anio,mes);
          const ultimo_dia_laboral = obtenerUltimoDiaLaboral(anio,mes);

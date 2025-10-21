@@ -4,8 +4,8 @@ function calcularCantidadesPorCadaPiezaDeElevador(datosAtributos) {
   
     return datosAtributos.map((dato) => {
       const resultados = [
-        { pieza: "CON.0700", cantidad: calcularCON(dato) },
-        { pieza: "EV.0300", cantidad: calcularEV0300(dato) },
+        { pieza: "CO.0040", cantidad: calcularCON(dato) },
+        { pieza: "EV.0230", cantidad: calcularEV0300(dato) },
         
       ];
 

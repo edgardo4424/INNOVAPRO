@@ -78,7 +78,7 @@ export default function UsuarioForm({
                   {trabajadores &&
                     trabajadores.map((t, i) => (
                       <SelectItem value={t.id.toString()} key={i}>
-                        {t.nombres}
+                        {t.nombres} {" "} {t.apellidos}
                       </SelectItem>
                     ))}
                 </SelectContent>

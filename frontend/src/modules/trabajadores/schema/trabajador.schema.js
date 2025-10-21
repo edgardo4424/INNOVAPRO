@@ -105,8 +105,10 @@ export const trabajadorSchema = (isEdit = false, isGerente = false) =>
       numero_documento: yup
          .string()
          .required("El número de documento es requerido"),
-
-       estado_civil: yup
+      telefono: yup
+         .string()
+         .required("El número de teléfono es requerido"),
+      estado_civil: yup
       .string()
       .oneOf(
          ["SOLTERO", "CASADO", "DIVORCIADO", "VIUDO", "CONVIVIENTE"],

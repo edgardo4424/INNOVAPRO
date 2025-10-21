@@ -7,7 +7,10 @@ const {
 function pdfSeccionGratificacionTrunca({ contrato, detalles_liquidacion }) {
   const { gratificacionTrunca, informacionLiquidacion } = detalles_liquidacion;
 
-  if(gratificacionTrunca == null) return; 
+  console.log("gratificacionTrunca", gratificacionTrunca);
+
+  if (gratificacionTrunca == null) return;
+
   const mensaje_gratificacion_tiempo_computado = construirMensajeTiempo({
     meses: gratificacionTrunca.meses_computados,
     dias: gratificacionTrunca.dias_computados,
@@ -15,20 +18,26 @@ function pdfSeccionGratificacionTrunca({ contrato, detalles_liquidacion }) {
 
   const totalMeses = redondear2(gratificacionTrunca.gratificacion_meses) || 0;
   const totalDias = redondear2(gratificacionTrunca.gratificacion_dias) || 0;
-  
+
   const subtotal_gratificacion = redondear2(totalMeses + totalDias);
 
-  const bonificacion_extra = redondear2(gratificacionTrunca.bonificacion_essalud) || 0;
+  const bonificacion_extra =
+    redondear2(gratificacionTrunca.bonificacion_essalud) || 0;
 
-  const totalFinal = redondear2(subtotal_gratificacion + bonificacion_extra);
+    console.log("gratificacionTrunca", gratificacionTrunca);
+
+    console.log('gratificacionTrunca?.total_descuento_gratificacion_por_dias_no_laborados_diciembre', gratificacionTrunca?.total_descuento_gratificacion_por_dias_no_laborados_diciembre);
+
+    console.log('redondear2(gratificacionTrunca?.total_descuento_gratificacion_por_dias_no_laborados_diciembre);', redondear2(gratificacionTrunca?.total_descuento_gratificacion_por_dias_no_laborados_diciembre || 0));
+  const totalFinal = redondear2(subtotal_gratificacion + bonificacion_extra) - redondear2(gratificacionTrunca?.total_descuento_gratificacion_por_dias_no_laborados_diciembre || 0);
 
   let decorationUnderlineMeses = false;
   let decorationUnderlineDias = false;
 
-  if(gratificacionTrunca.meses_computados != 0) {
+  if (gratificacionTrunca.meses_computados != 0) {
     decorationUnderlineMeses = true;
   }
-  if(gratificacionTrunca.dias_computados != 0) {
+  if (gratificacionTrunca.dias_computados != 0) {
     decorationUnderlineMeses = false;
     decorationUnderlineDias = true;
   }
@@ -38,7 +47,7 @@ function pdfSeccionGratificacionTrunca({ contrato, detalles_liquidacion }) {
 
   console.log({
     ultimaFechaDeposito,
-    ultimoBancoDeposito
+    ultimoBancoDeposito,
   });
 
   let divisorDelRegimen;
@@ -54,7 +63,6 @@ function pdfSeccionGratificacionTrunca({ contrato, detalles_liquidacion }) {
       break;
   }
 
-
   return {
     stack: [
       // Cabecera
@@ -64,7 +72,7 @@ function pdfSeccionGratificacionTrunca({ contrato, detalles_liquidacion }) {
             width: "65%",
             stack: [
               {
-                text: `GRATIFICACIONES TRUNCAS: ${mensaje_gratificacion_tiempo_computado}`,
+                text: `GRATIFICACIONES TRUNCAS: ${gratificacionTrunca?.tipo_calculo != "descuento_grati_diciembre" ? mensaje_gratificacion_tiempo_computado : ""}`,
                 style: "tableSectionTitle",
               },
             ],
@@ -85,12 +93,18 @@ function pdfSeccionGratificacionTrunca({ contrato, detalles_liquidacion }) {
       },
       // Subcabecera
       {
-        text: (ultimoBancoDeposito && ultimaFechaDeposito)
-          ? `Depositado al ${ultimoBancoDeposito} el ${formatearFecha(ultimaFechaDeposito)}`
-          : '',
+        text:
+          ultimoBancoDeposito && ultimaFechaDeposito
+            ? `Depositado al ${ultimoBancoDeposito} el ${formatearFecha(
+                ultimaFechaDeposito
+              )}`
+            : "",
         style: "infoTable",
         bold: true,
-        margin: (ultimoBancoDeposito && ultimaFechaDeposito) ? [0, 0, 0, 8] : [0, 0, 0, 0],
+        margin:
+          ultimoBancoDeposito && ultimaFechaDeposito
+            ? [0, 0, 0, 8]
+            : [0, 0, 0, 0],
       },
       // Remuneración computable
       {
@@ -98,64 +112,154 @@ function pdfSeccionGratificacionTrunca({ contrato, detalles_liquidacion }) {
           {
             width: "65%",
             stack: [
-              
               {
                 table: {
                   widths: ["33.33%", "33.33%", "*"],
                   body: [
-                    ...(gratificacionTrunca.meses_computados == 0
-                      ? []
-                      : [
+                    ...(gratificacionTrunca?.tipo_calculo !==
+                    "descuento_grati_diciembre"
+                      ? [
+                          // 👉 Bloque normal de gratificación trunca (MES + DÍA + BONIFICACIÓN)
+                          ...(gratificacionTrunca.meses_computados == 0
+                            ? []
+                            : [
+                                [
+                                  { text: "POR LOS MESES" },
+                                  {
+                                    text: `S/ ${informacionLiquidacion.remuneracion_computable.toFixed(
+                                      2
+                                    )} ${
+                                      contrato.regimen == "MYPE"
+                                        ? `/ ${divisorDelRegimen} `
+                                        : ""
+                                    }/ 6 x ${
+                                      gratificacionTrunca.meses_computados
+                                    } MESES`,
+                                    alignment: "right",
+                                  },
+                                  {
+                                    text: totalMeses.toFixed(2),
+                                    alignment: "right",
+                                    decoration: decorationUnderlineMeses
+                                      ? "underline"
+                                      : null,
+                                  },
+                                ],
+                              ]),
+                          ...(gratificacionTrunca.dias_computados == 0
+                            ? []
+                            : [
+                                [
+                                  { text: "POR LOS DIAS" },
+                                  {
+                                    text: `S/ ${informacionLiquidacion.remuneracion_computable.toFixed(
+                                      2
+                                    )} ${
+                                      contrato.regimen == "MYPE"
+                                        ? `/ ${divisorDelRegimen} `
+                                        : ""
+                                    }/ 6 / 30 x ${
+                                      gratificacionTrunca.dias_computados
+                                    } DIAS`,
+                                    alignment: "right",
+                                  },
+                                  {
+                                    text: totalDias.toFixed(2),
+                                    alignment: "right",
+                                    decoration: decorationUnderlineDias
+                                      ? "underline"
+                                      : null,
+                                  },
+                                ],
+                              ]),
                           [
-                            { text: "POR LOS MESES" },
+                            {},
+                            {},
                             {
-                              text: `S/ ${informacionLiquidacion.remuneracion_computable.toFixed(2)} ${contrato.regimen == "MYPE" ? `/ ${divisorDelRegimen} `: ''}/ 6 x ${gratificacionTrunca.meses_computados} MESES`, alignment: "right",
+                              text: subtotal_gratificacion.toFixed(2),
+                              alignment: "right",
+                              bold: true,
                             },
-                            { text: totalMeses.toFixed(2), alignment: "right", decoration: decorationUnderlineMeses ? "underline" : null },
                           ],
-                        ]),
-                    ...(gratificacionTrunca.dias_computados == 0
-                      ? []
-                      : [
                           [
-                            { text: "POR LOS DIAS" },
+                            { text: "BONIF. EXTR." },
                             {
-                              text: `S/ ${informacionLiquidacion.remuneracion_computable.toFixed(2)} ${contrato.regimen == "MYPE" ? `/ ${divisorDelRegimen} `: ''}/ 6 / 30 x ${gratificacionTrunca.dias_computados} DIAS`,
+                              text: `S/ ${subtotal_gratificacion.toFixed(
+                                2
+                              )} x ${
+                                informacionLiquidacion.porcentaje_bonificacion_essalud
+                              } %`,
                               alignment: "right",
                             },
                             {
-                              text: totalDias.toFixed(2),
-                              alignment: "right",
-                              decoration: decorationUnderlineDias ? "underline" : null
-                            },
-                          ],
-                        ]),
-                   [
-                      {},
-                      {},
-                      {
-                        text: subtotal_gratificacion.toFixed(2),
-                        alignment: "right",
-                        bold: true,
-                      },
-                    ],
-                    [
-                       { text: "BONIF. EXTR." },
-                            {
-                              text: `S/ ${subtotal_gratificacion.toFixed(2)} x ${informacionLiquidacion.porcentaje_bonificacion_essalud} %`,
-                              alignment: "right",
-                            },
-                            {
-                              text: gratificacionTrunca.bonificacion_essalud.toFixed(2),
+                              text: gratificacionTrunca.bonificacion_essalud.toFixed(
+                                2
+                              ),
                               alignment: "right",
                               decoration: "underline",
                             },
-                    ],
-                      [
-                      "",
-                      "",
-                      { text: totalFinal.toFixed(2), alignment: "right", bold: true },
-                    ],
+                          ],
+                          [
+                            "",
+                            "",
+                            {
+                              text: totalFinal.toFixed(2),
+                              alignment: "right",
+                              bold: true,
+                            },
+                          ],
+                        ]
+                      : [
+                          // 👉 Alternativa cuando tipo_calculo = 'descuento_grati_diciembre'
+                          [
+                            {
+                              text: "DESCUENTO GRATIFICACIÓN POR LOS DIAS NO LABORADOS EN DICIEMBRE",
+                            
+                            },
+                               {
+                                    text: `S/ ${informacionLiquidacion.remuneracion_computable.toFixed(
+                                      2
+                                    )} ${
+                                      contrato.regimen == "MYPE"
+                                        ? `/ ${divisorDelRegimen} `
+                                        : ""
+                                    }/ 6 / 30 x ${
+                                      gratificacionTrunca.dias_no_laborados_diciembre
+                                    } DIAS`,
+                                    alignment: "right",
+                                  },
+                            {
+                              text: `-${gratificacionTrunca?.gratificacion_dias_descuento.toFixed(2)}`,
+                              alignment: "right",
+                            
+                            },
+                          ],
+                           [
+                            { text: "DESCUENTO BONIF. EXTR." },
+                            {
+                              text: `S/ ${gratificacionTrunca?.gratificacion_dias_descuento.toFixed(
+                                2
+                              )} x ${
+                                informacionLiquidacion.porcentaje_bonificacion_essalud
+                              } %`,
+                              alignment: "right",
+                            },
+                             {
+                              text: `-${gratificacionTrunca?.bonificacion_essalud_descuento.toFixed(2)}`,
+                              alignment: "right",
+                              decoration: "underline",
+                            },
+                          ],
+                            [
+                            "",
+                            "",
+                            {
+                              text: totalFinal.toFixed(2),
+                              alignment: "right",
+                              bold: true,
+                            },
+                          ],
+                        ]),
                   ],
                 },
                 layout: "noBorders",

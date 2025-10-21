@@ -14,7 +14,7 @@ async function generarPdfAndamioTrabajo({
   if (tiene_pernos) {
     pernoExpansionConArgolla = await db.piezas.findOne({
       where: {
-        item: "CON.0100",
+        item: "CO.0010",
       },
     });
 

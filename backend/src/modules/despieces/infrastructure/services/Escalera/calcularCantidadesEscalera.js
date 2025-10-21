@@ -124,10 +124,10 @@ function calcularCantidadesPorCadaPiezaDeEscalera(datosAtributos) {
         { pieza: "EA.1950", cantidad: calcularEA1950() },
 
         { pieza: "EA.2000", cantidad: calcularEA2000(calcularEA1500(dato), calcularAM1900(dato)) },
-        { pieza: "CON.0100", cantidad: calcularCON0100(calcularAM8500(dato), calcularAM8600(dato)) },
-        { pieza: "CON.0200", cantidad: calcularCON0200(calcularAM8700(dato), calcularAM8600(dato)) },
+        { pieza: "CO.0010", cantidad: calcularCON0100(calcularAM8500(dato), calcularAM8600(dato)) },
+        { pieza: "CO.0015", cantidad: calcularCON0200(calcularAM8700(dato), calcularAM8600(dato)) },
 
-        { pieza: "AE.11400", cantidad: calcularAE11400(dato) },
+        { pieza: "AE.0630", cantidad: calcularAE11400(dato) },
 
       ];
       return resultados.filter((item) => item.cantidad > 0);

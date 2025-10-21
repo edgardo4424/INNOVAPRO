@@ -23,8 +23,16 @@ import {
    Receipt,
    Truck,
    Building,
+
    Shuffle,
    ReceiptText,
+
+   Gift,
+   HeartHandshake,
+   FileMinus,
+   FileSpreadsheet,
+   ClipboardList,
+
 } from "lucide-react";
 import {
    Sidebar,
@@ -76,6 +84,11 @@ const iconMap = {
    "Asistencia general":Building,
    "Pase Pedidos":Shuffle,
    "Emitir Guía":ReceiptText
+
+   "Beneficios":HeartHandshake,
+   "Retenciones":FileMinus,
+   "Planilla":ClipboardList 
+
 };
 
 const modulesByRole = {
@@ -171,8 +184,6 @@ const modulesByRole = {
       { name: "Stock de Piezas", path: "/stock/piezas" },
    ],
    "Jefe de OT": [
-      { name: "Centro de Atención", path: "/centro-atencion" },
-      { name: "Stock de Piezas", path: "/stock/piezas" },
       { name: "Asistencia",path: "/asistencia-area"},
    ],
    "OT": [
@@ -188,8 +199,41 @@ const modulesByRole = {
          ],
       },
    ],
-   //!Kimberly
    Contadora:[
+      {
+         group: "Trabajadores",
+         items: [
+            { name: "Crear Trabajador", path: "/crear-trabajador" },
+            { name: "Tabla de Trabajadores", path: "/tabla-trabajadores" },
+            { name: "Dar de Baja", path: "/trabajadores-dados-de-baja" },
+         ],
+      },
+      {
+         group: "Beneficios",
+         items: [
+            { name: "Vacaciones", path: "/vacaciones" },
+            { name: "Cts", path: "/gestion-cts" },
+            { name: "Gratificacion", path: "/gratificacion" },
+            { name: "Bonos", path: "/bonos" },
+            { name: "Adelanto de sueldo", path: "/adelanto-sueldo" },
+
+         ],
+      },
+      {
+         group: "Retenciones",
+         items: [
+            { name: "Quinta Categoría", path: "/retenciones/calculoQuintaCategoria" },
+         ],
+      },
+      {
+         group: "Planilla",
+         items: [
+            { name: "Planilla quincenal", path: "/planilla-quincenal" },
+            { name: "Planilla mensual", path: "/planilla-mensual" },
+
+         ],
+      },
+      { name: "Datos de mantenimiento", path: "/data-mantenimiento" },
       {
          group: "Facturación",
          items: [
@@ -201,7 +245,42 @@ const modulesByRole = {
          ],
       },
    ],
-   //
+   "Contadora / RRHH":[
+      {
+         group: "Trabajadores",
+         items: [
+            { name: "Crear Trabajador", path: "/crear-trabajador" },
+            { name: "Tabla de Trabajadores", path: "/tabla-trabajadores" },
+            { name: "Dar de Baja", path: "/trabajadores-dados-de-baja" },
+         ],
+      },
+      {
+         group: "Beneficios",
+         items: [
+            { name: "Vacaciones", path: "/vacaciones" },
+            { name: "Cts", path: "/gestion-cts" },
+            { name: "Gratificacion", path: "/gratificacion" },
+            { name: "Bonos", path: "/bonos" },
+            { name: "Adelanto de sueldo", path: "/adelanto-sueldo" },
+
+         ],
+      },
+      {
+         group: "Retenciones",
+         items: [
+            { name: "Quinta Categoría", path: "/retenciones/calculoQuintaCategoria" },
+         ],
+      },
+      {
+         group: "Planilla",
+         items: [
+            { name: "Planilla quincenal", path: "/planilla-quincenal" },
+            { name: "Planilla mensual", path: "/planilla-mensual" },
+
+         ],
+      },
+      { name: "Datos de mantenimiento", path: "/data-mantenimiento" },
+   ],
    "Asistente Facturación":[
       {
          group: "Facturación",
@@ -271,23 +350,17 @@ const modulesByRole = {
             { name: "Transportistas", path: "/transporte/transportistas" },
          ],
       },
+      { name: "Asistencia general", path: "/asistencia-general" },
       {         
          name: "Asistencia del area",
          path: "/asistencia-area",
       },
-      { name: "Asistencia general", path: "/asistencia-general" },
       {
          group: "Trabajadores",
          items: [
             { name: "Crear Trabajador", path: "/crear-trabajador" },
             { name: "Tabla de Trabajadores", path: "/tabla-trabajadores" },
             { name: "Dar de Baja", path: "/trabajadores-dados-de-baja" },
-         ],
-      },
-      {   group: "Gestión de Transporte",
-         items: [
-            { name: "Choferes", path: "/transporte/choferes" },
-            { name: "Transportistas", path: "/transporte/transportistas" },
          ],
       },
       {
@@ -330,7 +403,13 @@ const modulesByRole = {
          name: "Asistencia",
          path: "/asistencia-area",
       },
-   ]
+   ],
+      "Jefe TI":[
+        {         
+         name: "Asistencia",
+         path: "/asistencia-area",
+      },
+   ],
 
 };
 

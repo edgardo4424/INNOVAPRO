@@ -7,7 +7,7 @@ const RowCts = ({ e, num }) => {
       <TableRow className="text-xs">
          <TableCell className="text-right">{num}</TableCell>
 
-         <TableCell className="text-right">{e.tipo_documento}</TableCell>
+         <TableCell className="text-right">{e?.tipo_documento || "-"}</TableCell>
 
          <TableCell className="text-right">{e.numero_documento}</TableCell>
          <TableCell className="text-right">{e.nombre}</TableCell>

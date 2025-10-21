@@ -64,8 +64,10 @@ class SequelizeCotizacionRepository {
     });
   }
 
-  async obtenerPorId(id) {
-    return await Cotizacion.findByPk(id); // Llama al método del repositorio para obtener una cotizacion por ID
+  async obtenerPorId(id, transaction = null) {
+    return await Cotizacion.findByPk(id, {
+      ...(transaction && { transaction }),
+    }); // Llama al método del repositorio para obtener una cotizacion por ID
   }
 
   async actualizarCotizacion(id, cotizacionData, transaction = null) {

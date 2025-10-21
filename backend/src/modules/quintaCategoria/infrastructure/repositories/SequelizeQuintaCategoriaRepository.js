@@ -198,7 +198,7 @@ class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository 
       const filas = await CalculoQuintaModel
         .unscoped()
         .findAll({
-          where: { dni, anio, fuente: 'oficial' },
+          where: { dni, anio, /* fuente: 'oficial' */ },
           attributes: ['mes'],
           order: [['mes', 'DESC']],
           raw: true,
@@ -221,7 +221,7 @@ class SequelizeCalculoQuintaCategoriaRepository extends CalculoQuintaRepository 
   // Para upsert idempotente en masivo
   async findOficialByPeriodo({ dni, anio, mes }, options = {}) {
     return CalculoQuintaModel.findOne({
-      where: { dni, anio, mes, fuente: 'oficial' },
+      where: { dni, anio, mes, /* fuente: 'oficial' */ },
       order: [['updated_at', 'DESC'], ['created_at','DESC'], ['id','DESC']],
       transaction: options.transaction
     });

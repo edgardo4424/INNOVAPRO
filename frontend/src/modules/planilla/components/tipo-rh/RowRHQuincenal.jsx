@@ -17,6 +17,8 @@ const RowRHQuincenal = ({ key, e, index }) => {
       <TableCell className="text-right">{formatearFecha(e.fecha_ingreso)}</TableCell>
       <TableCell className="text-right">{e.dias_laborados}</TableCell>
       <TableCell className="text-right">{e.sueldo_base}</TableCell>
+      <TableCell className="text-right">{e.sueldo_quincenal}</TableCell>
+
       <TableCell className="text-right">{e.adelanto_sueldo}</TableCell>
       <TableCell className="text-right">{e.total_a_pagar}</TableCell>
         <TableCell className="text-right">{e.banco}</TableCell>

@@ -9,16 +9,22 @@ module.exports = async (periodo, anio, filial_id, ctsRepository,trabajadorReposi
     let cts_calculadas=[]
     for (const t of trabajadores) {
         const contratoActual = t.contratos_laborales.find((c) => {
-               return hoy >= c.fecha_inicio && (c.es_indefinido?true:hoy <= c.fecha_fin);
+               return c.filial_id == filial_id&&hoy >= c.fecha_inicio && (c.es_indefinido?true:hoy <= c.fecha_fin);
         }); 
         if(contratoActual){
           const cts=await ctsRepository.calcularCtsIndividual(periodo,anio,filial_id,t.id);
+          if(!cts[0]){
+            return{
+              codigo:402,
+              respuesta:{
+                mensaje:"Hubo un error en el caluclo de la cts "
+              }
+            }
+          }
           cts_calculadas.push(cts[0])
         }
       
     }
-    console.log("LAS CTS CALCULADAS SON: \n",cts_calculadas);
     
-    const cts = await ctsRepository.calcularCts(periodo, anio, filial_id); 
     return { codigo: 200, respuesta: cts_calculadas } 
 } 

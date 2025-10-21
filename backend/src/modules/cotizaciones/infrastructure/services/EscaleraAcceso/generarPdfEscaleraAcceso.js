@@ -13,7 +13,7 @@ async function generarPdfEscaleraAcceso({ dataDespiece, tiene_pernos, porcentaje
   if (tiene_pernos) {
     pernoExpansionConArgolla = await db.piezas.findOne({
       where: {
-        item: "CON.0100",
+        item: "CO.0010",
       },
     });
 
@@ -31,7 +31,7 @@ async function generarPdfEscaleraAcceso({ dataDespiece, tiene_pernos, porcentaje
 
     pernoExpansionSinArgolla = await db.piezas.findOne({
       where: {
-        item: "CON.0200",
+        item: "CO.0015",
       },
     });
 

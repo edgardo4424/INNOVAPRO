@@ -16,25 +16,45 @@ module.exports = async (
   }
   const dataConstruida = adelanto_sueldo.construirDatosAdelantoSueldo();
 
+  //* Obtener primero los contratos del trabajador
+    const contratos =
+      await contratoLaboralRepository.obtenerHistoricoContratosDesdeUltimaAlta(
+        dataConstruida.trabajador_id
+      );
+
+      
+    const contratosDelTrabajador = contratos
+      .map((contrato) => contrato.get({ plain: true }))
+
+      console.log('contratos', contratosDelTrabajador);
+
+      console.log('adelantoSueldoData', adelantoSueldoData);
+
   // Validar el ultimo contrato vigente del trabajador
 
-  const contrato_laboral =
+/*   const contrato_laboral =
     await contratoLaboralRepository.obtenerUltimoContratoVigentePorTrabajadorId(
       dataConstruida.trabajador_id
     );
+ */
+   /*  console.log('contrato_laboral', contrato_laboral); */
 
-  if (!contrato_laboral) {
+   //! OJO Los contratos estan ordenandos de forma DECRECIENTEEEEEEEEE
+  const ultimoContrato = contratosDelTrabajador[0];
+  const primerContrato = contratosDelTrabajador[contratosDelTrabajador.length - 1];
+
+  if (contratosDelTrabajador.length == 0) {
     return {
       codigo: 400,
-      respuesta: { mensaje: ["No existe contrato vigente para el trabajador"] },
+      respuesta: { mensaje: ["El trabajador no tiene contrato"] },
     };
   }
 
   // Validar que la fecha de primera_cuota este entre el rango del contrato vigente
 
   const cuota = moment(dataConstruida.primera_cuota);
-  const inicio = moment(contrato_laboral.fecha_inicio);
-  const fin = moment(contrato_laboral.fecha_fin);
+  const inicio = moment(primerContrato.fecha_inicio);
+  const fin = moment(ultimoContrato.fecha_fin);
 
   if (cuota.isBefore(inicio) || cuota.isAfter(fin)) {
     return {

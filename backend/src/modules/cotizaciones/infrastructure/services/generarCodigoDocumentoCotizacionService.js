@@ -7,6 +7,7 @@ async function generarCodigoDocumentoCotizacion({
   usuario_nombre,
   cotizacion,
   cp,
+  usuario_id
 }) {
 
   console.log({
@@ -156,7 +157,7 @@ async function generarCodigoDocumentoCotizacion({
     if (!codigo_documento) {
       correlativo = "0001";
       version = "1";
-      return `${filialAbv}-${tipoDocumento}-${codRolUsuario}-${usuarioAbv}-${correlativo}_${version}`;
+      return `${filialAbv}-${tipoDocumento}-${codRolUsuario}-${usuarioAbv}${usuario_id}-${correlativo}_${version}`;
     }
 
     // Extraer correlativo y versión actuales del código_documento
@@ -198,7 +199,7 @@ async function generarCodigoDocumentoCotizacion({
   }
 
   // 🔹 Construcción del código
-  const codigo = `${filialAbv}-${tipoDocumento}-${codRolUsuario}-${usuarioAbv}-${correlativo}_${version}`;
+  const codigo = `${filialAbv}-${tipoDocumento}-${codRolUsuario}-${usuarioAbv}${usuario_id}-${correlativo}_${version}`;
 
 
   return codigo;
