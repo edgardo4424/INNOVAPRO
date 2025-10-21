@@ -1,8 +1,8 @@
 module.exports = async (asistenciaData, asistenciaRepository) => {
-   await asistenciaRepository.actualizarAsistenciaSimple(asistenciaData);
+   const asistencia=await asistenciaRepository.actualizarAsistenciaSimple(asistenciaData);
 
    return {
       codigo: 201,
-      respuesta: { mensaje: "La asistencia Simple se actualizo exitosamente" },
+      respuesta: { mensaje: "La asistencia Simple se actualizo exitosamente",asistencia },
    };
 };

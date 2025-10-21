@@ -85,6 +85,7 @@ const GestionAsistencia = () => {
       trabajadores.forEach((trabajador) => {
          if (trabajador.asistencia) {
             switch (trabajador.asistencia.estado_asistencia) {
+               case "teletrabajo":
                case "presente":
                   stats.presentes++;
                   break;
@@ -103,7 +104,6 @@ const GestionAsistencia = () => {
             stats.no_registrado++; // Si no tiene asistencia
          }
       });
-
       return stats;
    }, [trabajadores]);
    const sincronizacion=async()=>{
@@ -203,7 +203,7 @@ const GestionAsistencia = () => {
                      trabajadoresFiltrados.map((trabajador) => (
                           <JornadaCard
                              key={trabajador.id}
-                             trabajador={trabajador}
+                             t={trabajador}
                              obtenerTrabajadores={obtenerTrabajadores}
                              fecha={fechaSeleccionada}
                              asistenciasSincronizacion={asistenciasSincronizacion}

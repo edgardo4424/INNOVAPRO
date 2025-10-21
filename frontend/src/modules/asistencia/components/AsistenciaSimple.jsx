@@ -16,20 +16,19 @@ import asistenciaService from "../services/asistenciaService";
 import { toast } from "react-toastify";
 
 export const estadosAsistencia = [
-   { value: "presente", label: "Presente", color: "bg-green-500" },
-   { value: "falto", label: "Falto", color: "bg-red-500" },
-   { value: "tardanza", label: "Tardanza", color: "bg-yellow-500" },
-   { value: "permiso", label: "Permiso", color: "bg-blue-500" },
-   { value: "licencia_con_goce", label: "Licencia con goce", color: "bg-pink-500" },
-   { value: "licencia_sin_goce", label: "Licencia sin goce", color: "bg-purple-500" },
-   {
-      value: "falta-justificada",
-      label: "Falta Justificada",
-      color: "bg-orange-500",
-   },
-      { value: "vacacion-vendida", label: "Vacación vendida", color: "bg-indigo-500" },
-   { value: "vacacion-gozada", label: "Vacación gozada", color: "bg-indigo-500" },
-
+  { value: "presente", label: "Presente", color: "bg-green-500" },
+  { value: "falto", label: "Falto", color: "bg-red-500" },
+  { value: "tardanza", label: "Tardanza", color: "bg-yellow-500" },
+  { value: "permiso", label: "Permiso", color: "bg-blue-500" },
+  { value: "licencia_con_goce", label: "Licencia con goce", color: "bg-pink-500" },
+  { value: "licencia_sin_goce", label: "Licencia sin goce", color: "bg-purple-500" },
+  { value: "falta-justificada", label: "Falta Justificada", color: "bg-orange-500" },
+  { value: "vacacion-gozada", label: "Vacación gozada", color: "bg-indigo-500" },
+  { value: "vacacion-vendida", label: "Vacación vendida", color: "bg-teal-500" },
+  { value: "subsidio-maternidad", label: "Subsidio por maternidad", color: "bg-rose-500" },
+  { value: "subsidio-parternidad", label: "Subsidio por paternidad", color: "bg-lime-500" },
+  { value: "subsidio-accidente", label: "Subsidio por accidente", color: "bg-cyan-500" },
+  { value: "teletrabajo", label: "Teletrabajo", color: "bg-amber-500" },
 ];
 
 export default function AsistenciaSimple({
@@ -44,6 +43,7 @@ export default function AsistenciaSimple({
    const [currentAttendance, setCurrentAttendance] = useState(
       trabajador.asistencia
    );
+   
 
    const hasExistingAttendance = currentAttendance !== null;
 
@@ -59,7 +59,9 @@ export default function AsistenciaSimple({
             fecha: fecha,
             estado_asistencia: selectedEstado,
          };
-         await asistenciaService.crearAsistenciaSimple(nuevaAsistencia);
+         const response=await asistenciaService.crearAsistenciaSimple(nuevaAsistencia);
+         console.log(response);
+         setCurrentAttendance(response.data.asistencia);
          toast.success("Asistencia guardada corrrectamente");
       } catch (error) {
           if(error?.response?.data?.error){
@@ -68,7 +70,7 @@ export default function AsistenciaSimple({
          }
          toast.error("Hubo un error descocnocido");
       } finally {
-         await obtenerTrabajadores();
+         // await obtenerTrabajadores();
          setIsLoading(false);
       }
    };
@@ -82,10 +84,11 @@ export default function AsistenciaSimple({
             estado_asistencia: selectedEstado,
          };
 
-         await asistenciaService.actualizarAsistenciaSimple(
+         const response=await asistenciaService.actualizarAsistenciaSimple(
             asistenciaActualizada
          );
-         await obtenerTrabajadores();
+         // await obtenerTrabajadores();
+         setCurrentAttendance(response.data.asistencia);
          toast.success("Asistencia Actualizada corrrectamente");
       } catch (error) {
           if(error?.response?.data?.error){
@@ -98,9 +101,6 @@ export default function AsistenciaSimple({
       }
    };
 
-   const getEstadoInfo = (estado) => {
-      return estadosAsistencia.find((e) => e.value === estado);
-   };   
    return (
       <Card className="transition-all hover:shadow-md border-l-3 border-l-blue-500 py-2 ">
          <CardContent className="">
