@@ -6,7 +6,7 @@ import {
    TooltipProvider,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { Edit, Eye, FileDown, SquareCheckBig  } from "lucide-react";
+import { Edit, Eye, FileDown, SquareCheckBig, FileSignature } from "lucide-react";
 import { ColumnSelector } from "@/shared/components/ColumnSelector";
 import { Input } from "@/components/ui/input";
 
@@ -40,6 +40,7 @@ export default function TablaCotizacion({
    setCotizacionPrevisualizada,
    onContinuarWizard,
    onSolicitarCondicionesAlquiler,
+   onCrearContrato,
    user,
 }) {
    const [text, setText] = useState("");
@@ -145,7 +146,7 @@ export default function TablaCotizacion({
             {
                headerName: "Acciones",
                sortable: false,
-               width: 150,
+               width: 200,
                cellRenderer: (params) => {
                   const row = params.data;
 
@@ -245,6 +246,24 @@ export default function TablaCotizacion({
                            >
                               <Edit />
                            </Button>
+                        )}
+
+                        {/* Crear contrato (Cuando ya las condiciones están cumplidas) */}
+                        {row.estado_nombre === "Condiciones Cumplidas" && typeof onCrearContrato === "function" && (
+                           <Tooltip>
+                              <TooltipTrigger asChild>
+                                 <Button 
+                                    variant="outline"
+                                    size="icon"
+                                    onClick={()=> onCrearContrato(row.id)}
+                                 >
+                                    <FileSignature />
+                                 </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                 <p>Crear Contrato</p>
+                              </TooltipContent>
+                           </Tooltip>
                         )}
                      </div>
                   );

@@ -29,6 +29,13 @@ export default function GestionCotizaciones() {
    const continuarCotizacion = (idCotizacion) => {
       navigate(`/cotizaciones/wizard/${idCotizacion}`);
    }
+
+   const crearContrato = (idCotizacion) => {
+      navigate("/contratos/registrar", {
+         state: { cotizacionId: idCotizacion },
+         replace: false,
+      });
+   };
    
    return (
       <div className="min-h-full flex-1  flex flex-col items-center">
@@ -40,6 +47,7 @@ export default function GestionCotizaciones() {
             setCotizacionPrevisualizada={setCotizacionSeleccionadaId}
             onContinuarWizard={continuarCotizacion}
             onSolicitarCondicionesAlquiler={solicitarCondiciones}
+            onCrearContrato={crearContrato}
             user={user}
          />
 

@@ -17,6 +17,11 @@ export const obtenerEmpresaSchema = () =>
          .trim()
          .required("La dirección fiscal es obligatoria"),
 
+      direccion_almacen: yup
+         .string()
+         .trim()
+         .required("La dirección del almacén es obligatoria"),
+
       representante_legal: yup
          .string()
          .trim()

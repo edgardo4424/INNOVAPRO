@@ -9,8 +9,7 @@ import {
    SelectValue,
 } from "@/components/ui/select";
 import Select from "react-select";
-import React, { useEffect, useState } from "react";
-import { obtenerClienteSchema } from "../schema/cliente.schema";
+import React from "react";
 import { Button } from "@/components/ui/button";
 
 export default function ClienteForm({
@@ -19,8 +18,6 @@ export default function ClienteForm({
    obras,
    setCliente,
    errores,
-   handleBuscarRUC,
-   rucNoEncontrado,
    handleCancel,
    handleSubmit,
 }) {
@@ -30,10 +27,9 @@ export default function ClienteForm({
    };
 
    const getError = (campo) => errores?.[campo] || "";
-
    return (
       <>
-         <div className="max-h-96 overflow-y-auto px-2">
+         <div className="max-h-96 overflow-y-auto px-2 ">
             <form
                id="form-cliente"
                className="space-y-2"
@@ -102,20 +98,7 @@ export default function ClienteForm({
                            onChange={(e) =>
                               setCliente({ ...cliente, ruc: e.target.value })
                            }
-                           onBlur={handleBuscarRUC}
                         />
-
-                        <small className="form-text-info">
-                           Ingresa el RUC y sal del campo para completar los
-                           datos automáticamente desde SUNAT.
-                        </small>
-
-                        {rucNoEncontrado && (
-                           <p className="error-message">
-                              Este RUC no se encuentra en SUNAT. Por favor
-                              complétalo manualmente.
-                           </p>
-                        )}
                      </div>
 
                      {/* Representante Legal */}
@@ -172,6 +155,40 @@ export default function ClienteForm({
                         {getError("dni_representante") && (
                            <p className="error-message">
                               {getError("dni_representante")}
+                           </p>
+                        )}
+                     </div>
+
+                     {/* Cargo del representante */}
+                     <div className="flex flex-col gap-1">
+                        <Label>Cargo del representante</Label>
+                        <Input
+                           name="cargo_representante"
+                           type="text"
+                           placeholder="Cargo del Representante"
+                           value={cliente.cargo_representante}
+                           onChange={handleChange}
+                        />
+                        {getError("cargo_representante") && (
+                           <p className="error-message">
+                              {getError("cargo_representante")}
+                           </p>
+                        )}
+                     </div>
+
+                     {/* Domicilio del representante */}
+                     <div className="flex flex-col gap-1">
+                        <Label>Domicilio del representante</Label>
+                        <Input
+                           name="domicilio_representante"
+                           type="text"
+                           placeholder="Domicilio del Representante"
+                           value={cliente.domicilio_representante}
+                           onChange={handleChange}
+                        />
+                        {getError("domicilio_representante") && (
+                           <p className="error-message">
+                              {getError("domicilio_representante")}
                            </p>
                         )}
                      </div>

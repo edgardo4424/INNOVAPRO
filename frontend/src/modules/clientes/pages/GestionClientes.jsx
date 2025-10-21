@@ -1,12 +1,10 @@
 import React from "react";
 import TablaClientes from "../components/TablaClientes";
 import ModalAgregarCliente from "../components/ModalAgregarCliente";
-import ModalEditarCliente from "../components/ModalEditarCliente";
 import { useGestionClientes } from "../hooks/useGestionClientes";
 import ModuloNavegacion from "@/shared/components/ModuloNavegacion";
 import Paginacion from "@/shared/components/Paginacion";
-import { Button } from "@/components/ui/button";
-import { BadgePlus, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 export default function GestionClientes() {

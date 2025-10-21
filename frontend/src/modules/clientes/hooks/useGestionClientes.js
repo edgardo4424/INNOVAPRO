@@ -12,7 +12,7 @@ export function useGestionClientes() {
   const [paginaActual, setPaginaActual] = useState(1);
   const [clientesPorPagina,setClientesPorPagina] = useState(5);
 
-  // 🔄 Cargar datos iniciales
+  // Cargar datos iniciales
   useEffect(() => {
     async function cargarDatos() {
       try {
@@ -58,7 +58,7 @@ export function useGestionClientes() {
     })
   }; 
 
-  // 🔍 Filtro de búsqueda
+  // Filtro de búsqueda
   const clientesFiltrados = clientes.filter((c) =>
     [c.razon_social, c.ruc, c.representante_legal, c.dni]
       .filter(Boolean)
