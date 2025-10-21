@@ -1,4 +1,4 @@
-const factilizaClient = require('../service/apifactiliza');
+const factilizaClient = require('../api/apifactiliza');
 
 module.exports = async (documentos_pendiente, repository) => {
     try {

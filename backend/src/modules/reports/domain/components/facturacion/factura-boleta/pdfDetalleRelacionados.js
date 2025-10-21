@@ -29,7 +29,7 @@ function pdfDetalleRelacionados(
                                         { text: 'DOCUMENTOS RELACIONADOS:', fontSize: 6, margin: [0, 0, 0, 5], color: text_color },
                                         {
                                             table: {
-                                                widths: ['auto', '65%'],
+                                                widths: ['30%', '40%'],
                                                 body: documentosRelacionados.map(d => [
                                                     { text: `${utils.formatTypeDoc(d.tipoDoc)}:`, fontSize: 6, color: text_color },
                                                     { text: `${d.nroDoc}`, fontSize: 6, color: text_color, alignment: 'right' }
@@ -45,7 +45,7 @@ function pdfDetalleRelacionados(
                                         { text: 'DETALLES ADICIONALES:', fontSize: 6, margin: [0, 0, 0, 5], color: text_color },
                                         {
                                             table: {
-                                                widths: ['auto', '65%'],
+                                                widths: ['30%', '40%'],
                                                 body: detallesExtra.map(d => [
                                                     { text: `${d.detalle}:`, fontSize: 6, color: text_color },
                                                     { text: `${d.valor}`, fontSize: 6, color: text_color, alignment: 'right' }

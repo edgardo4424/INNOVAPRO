@@ -99,6 +99,14 @@ const ProductoForm = ({ closeModal }) => {
     }));
   };
 
+  const handleDescripcion = (e) => {
+    const { value } = e.target;
+    setProductoActual((prevValores) => ({
+      ...prevValores,
+      descripcion: value,
+    }));
+  };
+
   useEffect(() => {
     handleInputChange({
       target: {
@@ -142,9 +150,6 @@ const ProductoForm = ({ closeModal }) => {
     setProductoValida(ProductoValidarEstados);
   }, []);
 
-
-
-  console.log(productoActual);
 
   return (
     <div className="max-h-[45dvh] min-h-[40dvh] w-full overflow-y-scroll md:max-h-[unset] md:overflow-y-hidden">
@@ -426,9 +431,9 @@ const ProductoForm = ({ closeModal }) => {
               type="text"
               name="descripcion"
               value={productoActual.descripcion}
-              onChange={handleInputChange}
+              onChange={handleDescripcion}
               maxLength={250}
-              className={`h-40 w-full resize-none rounded-xl border-1 p-2 ${productoValida?.descripcion ? "border-red-500" : "border-gray-400"}`}
+              className={`h-40 w-full resize-none rounded-xl uppercase border-1 p-2 ${productoValida?.descripcion ? "border-red-500" : "border-gray-400"}`}
             />
             <p className="absolute right-4 bottom-2 mt-2 text-right text-sm text-gray-500">
               {productoActual.descripcion.length}/250

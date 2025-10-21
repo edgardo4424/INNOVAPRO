@@ -34,7 +34,6 @@ module.exports = async (body, notaRepository, borradorRepository) => {
             nota: notaData,
             detalle: modifiedDetalle, // Usamos el array modificado
             legend: legend,
-            id_borrador,
             sunat_respuesta,
         });
 

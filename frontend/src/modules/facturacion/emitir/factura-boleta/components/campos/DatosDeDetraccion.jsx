@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useFacturaBoleta } from "@/modules/facturacion/context/FacturaBoletaContext";
-import { RotateCcw, SquarePen } from "lucide-react";
+import { Pencil, RotateCcw, SquarePen } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   Arraydetracciones,
@@ -66,9 +66,13 @@ const DatosDeDetraccion = () => {
     }));
   };
 
-
   const activar = () => {
     setActivarMonto(!activarMonto);
+  };
+
+  const redondeoNumero = (numero) => {
+    const decimal = numero - Math.floor(numero);
+    return decimal > 0.4499999 ? Math.ceil(numero) : Math.floor(numero);
   };
 
   // ?? Función para resetear el monto de detracción al valor calculado por defecto
@@ -95,7 +99,7 @@ const DatosDeDetraccion = () => {
       }
       setDetraccion((prev) => ({
         ...prev,
-        detraccion_mount: nuevoMontoCalculado,
+        detraccion_mount: redondeoNumero(nuevoMontoCalculado),
       }));
     }
   };
@@ -104,21 +108,18 @@ const DatosDeDetraccion = () => {
     let rawDetraccionMount;
     if (factura.tipo_Moneda === "PEN") {
       rawDetraccionMount = Number(
-        ((montoBase * Number(detraccion.detraccion_percent)) / 100).toFixed(2),
+        (montoBase * Number(detraccion.detraccion_percent)) / 100,
       );
     } else {
       rawDetraccionMount = Number(
-        (
-          (montoBaseDolares * Number(detraccion.detraccion_percent)) /
-          100
-        ).toFixed(2),
+        (montoBaseDolares * Number(detraccion.detraccion_percent)) / 100,
       );
     }
     setDetraccion((prev) => ({
       ...prev,
       detraccion_percent: Number(value),
       detraccion_cod_bien_detraccion: "",
-      detraccion_mount: rawDetraccionMount,
+      detraccion_mount: redondeoNumero(rawDetraccionMount),
     }));
 
     setDetraccionesValores(
@@ -131,22 +132,17 @@ const DatosDeDetraccion = () => {
       let rawDetraccionMount;
       if (factura.tipo_Moneda === "PEN") {
         rawDetraccionMount = Number(
-          ((montoBase * Number(detraccion.detraccion_percent)) / 100).toFixed(
-            2,
-          ),
+          (montoBase * Number(detraccion.detraccion_percent)) / 100,
         );
       } else {
         rawDetraccionMount = Number(
-          (
-            (montoBaseDolares * Number(detraccion.detraccion_percent)) /
-            100
-          ).toFixed(2),
+          (montoBaseDolares * Number(detraccion.detraccion_percent)) / 100,
         );
       }
 
       setDetraccion((prev) => ({
         ...prev,
-        detraccion_mount: rawDetraccionMount,
+        detraccion_mount: redondeoNumero(rawDetraccionMount),
       }));
     }
   }, [sub_Total, detraccion.detraccion_percent, factura.tipo_Moneda]);
@@ -233,41 +229,35 @@ const DatosDeDetraccion = () => {
                 </Select>
               </div>
 
-              <div className="justify-self-end">
+              <div className="">
                 {/* Monto de detracción */}
                 <Label htmlFor="detraccion_mount">
                   Monto de Detracción{" "}
                   {tipo_Moneda == "PEN" ? "(S/)" : "(SOLES)"}
                   <span className="text-red-500">*</span>
                 </Label>
-                <div className="justi flex items-center gap-x-1">
-                  <div className="relative">
-                    <Input
-                      type="number"
-                      id="detraccion_mount"
-                      placeholder="Ej: 120.00"
-                      step="0.01"
-                      min="0"
-                      value={detraccion.detraccion_mount || ""}
-                      disabled={!activarMonto}
-                      onChange={(e) =>
-                        handleInputChange("detraccion_mount", e.target.value)
-                      }
-                      className=" no-spinners"
-                    />
-                    <button
-                      onClick={activar}
-                      className={`absolute top-1/2 right-2 -translate-y-1/2 transform ${activarMonto ? "text-innova-blue" : "text-gray-400"}`}
-                    >
-                      <SquarePen />
-                    </button>
-                  </div>
+                <div className="flex items-end gap-x-3">
+                  <Input
+                    type="number"
+                    id="detraccion_mount"
+                    placeholder="Ej: 120.00"
+                    step="0.01"
+                    min="0"
+                    value={detraccion.detraccion_mount || ""}
+                    disabled={!activarMonto}
+                    onChange={(e) =>
+                      handleInputChange("detraccion_mount", e.target.value)
+                    }
+                    // readOnly
+                    className="no-spinners"
+                  />
                   <button
-                    // Se cambió onClick={activar} a la nueva función de reseteo
-                    onClick={resetearMontoDetraccion}
-                    className="bg-innova-blue hover:bg-innova-blue-hover cursor-pointer rounded-md p-1 text-white transition-all duration-150"
+                    onClick={() => setActivarMonto(!activarMonto)}
+                    id="detraccion-edit-button"
+                    aria-label="Editar monto"
+                    className={`flex p-2 rounded-md items-center justify-center  ${!activarMonto ? "bg-innova-blue text-white" : "bg-gray-200 text-black"}`}
                   >
-                    <RotateCcw className="size-5 rotate-90 transition-transform duration-250 hover:-rotate-90" />
+                    <Pencil className="h-5 w-5"/>
                   </button>
                 </div>
               </div>

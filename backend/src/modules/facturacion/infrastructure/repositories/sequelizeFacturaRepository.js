@@ -242,15 +242,22 @@ class SequelizeFacturaRepository {
         return facturaTransformada;
     }
 
-    async obtenerFacturaPorInformacion(correlativo, serie, empresa_ruc, tipo_doc) {
+    async obtenerFacturaPorInformacion(correlativo, serie, empresa_ruc, tipo_doc, id) {
+        const whereFactura = { correlativo: correlativo, serie: serie, empresa_ruc: empresa_ruc, tipo_doc: tipo_doc };
+        if (id) whereFactura.id = id
+
         const facturas = await Factura.findAll({
-            where: { correlativo, serie, tipo_doc, empresa_ruc },
+            where: whereFactura,
             include: [
                 { model: DetalleFactura },
                 { model: FormaPagoFactura },
                 { model: LegendFactura },
             ],
         });
+
+        if (!facturas || facturas.length === 0) {
+            return [];
+        }
 
         const empresa = await Filial.findOne({
             where: { ruc: empresa_ruc },
