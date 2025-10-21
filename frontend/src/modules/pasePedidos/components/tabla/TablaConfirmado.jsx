@@ -3,7 +3,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { EyeIcon, FileInput } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { Badge, BadgeCheck, EyeIcon, FileInput } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const bgEstado = (estado) => {
@@ -24,6 +25,7 @@ const bgEstado = (estado) => {
 
 const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const plasmarPedido = async (doc) => {
     const guiaIncial = {
@@ -138,7 +140,7 @@ const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
                   {pedido.estado}
                 </td>
                 <td className="py-3 pl-2 text-xs text-gray-700">
-                  <div className="flex justify-center gap-x-2">
+                  <div className="gap-x-auto flex justify-start">
                     <Tooltip side="bottom" align="center" className="mr-2">
                       <TooltipTrigger asChild>
                         <button
@@ -156,21 +158,63 @@ const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
                       </TooltipContent>
                     </Tooltip>
 
-                    <Tooltip side="bottom" align="center" className="mr-2">
+                    {
+                      (user.rol === "CEO" && (
+                        <Tooltip side="bottom" align="center" className="mr-2">
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => {
+                                setOpen(true);
+                                setPedidoView(pedido);
+                              }}
+                              className="rounded p-1 transition-colors hover:bg-orange-100"
+                            >
+                              <Badge className="h-5 w-5 cursor-pointer text-orange-600 hover:text-orange-800" />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Validar Pedido</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      ))}
+
+                    {/* <Tooltip side="bottom" align="center" className="mr-2">
                       <TooltipTrigger asChild>
                         <button
                           onClick={() => {
-                            plasmarPedido(pedido);
+                            setOpen(true);
+                            setPedidoView(pedido);
                           }}
-                          className="rounded p-1 transition-colors hover:bg-yellow-100"
+                          className="rounded p-1 transition-colors hover:bg-green-100"
                         >
-                          <FileInput className="h-5 w-5 cursor-pointer text-yellow-600 hover:text-yellow-700" />
+                          <BadgeCheck className="h-5 w-5 cursor-pointer text-green-600 hover:text-green-800" />
                         </button>
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>Emitir Pedido</p>
+                        <p>Pedido Validado</p>
                       </TooltipContent>
-                    </Tooltip>
+                    </Tooltip> */}
+
+                    {user.rol === "Jefe de Almacén" ||
+                      user.rol === "Auxiliar de oficina" ||
+                      user.rol === "Auxiliar de Almacén" ||
+                      (user.rol === "CEO" && (
+                        <Tooltip side="bottom" align="center" className="mr-2">
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => {
+                                plasmarPedido(pedido);
+                              }}
+                              className="rounded p-1 transition-colors hover:bg-yellow-100"
+                            >
+                              <FileInput className="h-5 w-5 cursor-pointer text-yellow-600 hover:text-yellow-700" />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Emitir Pedido</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      ))}
                   </div>
                 </td>
               </tr>
