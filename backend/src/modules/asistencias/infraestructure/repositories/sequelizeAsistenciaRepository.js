@@ -3,12 +3,15 @@ const sequelize = require("../../../../config/db");
 const { Asistencia } = require("../models/asistenciaModel");
 const { Gasto } = require("../models/gastoModel");
 const { Jornada } = require("../models/jornadaModel");
+const db = require("../../../../database/models");
 const {
   AsistenciaVacaciones,
 } = require("../../../vacaciones/infraestructure/models/asistenciasVacacionesModel");
 
 class SequelizeAsistenciaRepository {
   async crearAsistencia(asistenciaData) {
+    console.log("AsistenciaData", asistenciaData);
+
     const t = await sequelize.transaction();
     try {
       const estado_asistencia_values = ["vacacion-gozada", "vacacion-vendida"];
@@ -19,7 +22,7 @@ class SequelizeAsistenciaRepository {
         {
           trabajador_id: asistenciaData.trabajador_id,
           horas_trabajadas: asistenciaData.horas_trabajadas || null,
-          minutos_trabajados: asistenciaData.minutos_trabajados || null,          
+          minutos_trabajados: asistenciaData.minutos_trabajados || null,
           horas_extras: asistenciaData.horas_extras || null,
           estado_asistencia: asistenciaData.estado_asistencia,
           fecha: asistenciaData.fecha,
@@ -44,8 +47,8 @@ class SequelizeAsistenciaRepository {
       }
       if (asistenciaData.jornadas && asistenciaData.jornadas.length > 0) {
         for (const jornada of [...asistenciaData.jornadas]) {
-          if(!jornada.turno||!jornada.lugar||!jornada.tipo_trabajo_id){
-              throw new Error("Complete los datos correctamente")
+          if (!jornada.turno || !jornada.lugar || !jornada.tipo_trabajo_id) {
+            throw new Error("Complete los datos correctamente");
           }
           await Jornada.create(
             {
@@ -60,7 +63,19 @@ class SequelizeAsistenciaRepository {
           );
         }
       }
+      const asistencia_creada = await Asistencia.findByPk(asistencia.id, {
+        include: [
+          { model: db.gastos, as: "gastos" },
+          {
+            model: db.jornadas,
+            as: "jornadas",
+            include: [{ model: db.tipos_trabajo, as: "tipo_trabajo" }],
+          },
+        ],
+        transaction: t,
+      });
       await t.commit();
+      return asistencia_creada;
     } catch (error) {
       await t.rollback();
       throw new Error(error.message);
@@ -185,8 +200,8 @@ class SequelizeAsistenciaRepository {
       }
       if (asistenciaData.jornadas && asistenciaData.jornadas.length > 0) {
         for (const jornada of [...asistenciaData.jornadas]) {
-          if(!jornada.turno||!jornada.lugar||!jornada.tipo_trabajo_id){
-              throw new Error("Complete los datos correctamente")
+          if (!jornada.turno || !jornada.lugar || !jornada.tipo_trabajo_id) {
+            throw new Error("Complete los datos correctamente");
           }
           await Jornada.create(
             {
@@ -201,8 +216,19 @@ class SequelizeAsistenciaRepository {
           );
         }
       }
-
+      const asistencia_creada = await Asistencia.findByPk(asistenciaData.id, {
+        include: [
+          { model: db.gastos, as: "gastos" },
+          {
+            model: db.jornadas,
+            as: "jornadas",
+            include: [{ model: db.tipos_trabajo, as: "tipo_trabajo" }],
+          },
+        ],
+        transaction: t,
+      });
       await t.commit();
+      return asistencia_creada;
     } catch (error) {
       await t.rollback();
       throw new Error(error.message);
@@ -215,13 +241,14 @@ class SequelizeAsistenciaRepository {
       if (estado_asistencia_values.includes(asistenciaData.estado_asistencia)) {
         throw new Error("No se pueden crear vacaciones desde este módulo");
       }
-      await Asistencia.create({
+      const asistencia = await Asistencia.create({
         trabajador_id: asistenciaData.trabajador_id,
         horas_trabajadas: 9,
-        minutos_trabajados:0,
+        minutos_trabajados: 0,
         estado_asistencia: asistenciaData.estado_asistencia,
         fecha: asistenciaData.fecha,
       });
+      return asistencia;
     } catch (error) {
       console.error(error);
       throw new Error(error.message);
@@ -308,7 +335,13 @@ class SequelizeAsistenciaRepository {
           }
         );
       }
+
+      const asistencia_actualizada = await Asistencia.findByPk(
+        asistenciaData.id,
+        { transaction: t }
+      );
       await t.commit();
+      return asistencia_actualizada;
     } catch (error) {
       await t.rollback();
       throw new Error(error.message);
@@ -324,7 +357,7 @@ class SequelizeAsistenciaRepository {
       {
         trabajador_id: asistenciaData.trabajador_id,
         horas_trabajadas: 0,
-        minutos_trabajados:0,
+        minutos_trabajados: 0,
         estado_asistencia: asistenciaData.estado_asistencia,
         fecha: asistenciaData.fecha,
       },
@@ -491,7 +524,7 @@ class SequelizeAsistenciaRepository {
       throw new Error(error.message);
     }
   }
-    async obtenerCantidadVacaciones(trabajador_id, fechaInicio, fechaFin) {
+  async obtenerCantidadVacaciones(trabajador_id, fechaInicio, fechaFin) {
     try {
       const cantidadFaltas = await Asistencia.count({
         where: {
