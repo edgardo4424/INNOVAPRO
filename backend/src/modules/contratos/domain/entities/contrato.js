@@ -2,24 +2,25 @@ class Contrato {
   constructor({
     id,
     cotizacion_id,
-    ref_contrato,
     fecha_inicio,
     fecha_fin,
     clausulas_adicionales,
     requiere_valo_adelantada,
-    notas_legales,
+    condiciones_alquiler,
     renovaciones,
+    firmas,
+    envio,
     estado,
   }) {
     this.id = id;
     this.cotizacion_id = cotizacion_id;
-    this.ref_contrato = ref_contrato;
     this.fecha_inicio = fecha_inicio;
     this.fecha_fin = fecha_fin;
     this.clausulas_adicionales = clausulas_adicionales;
     this.requiere_valo_adelantada = requiere_valo_adelantada;
-    this.notas_legales = notas_legales;
     this.renovaciones = renovaciones;
+    this.firmas = firmas;
+    this.envio = envio;
     this.estado = estado;
   }
   validar(editar = false) {
@@ -32,9 +33,9 @@ class Contrato {
     if (!this.cotizacion_id) {
       errores.push("Para crear un contrato es necesario una cotización");
     }
-    if (!this.ref_contrato) {
+   /*  if (!this.ref_contrato) {
       errores.push("El codigo del contrato es obligatoria");
-    }
+    } */
     if (!this.fecha_inicio) {
       errores.push("La fecha de inicio del contrato es obligatoria");
     }

@@ -1,26 +1,62 @@
 const Contrato = require("../../domain/entities/contrato");
 const { generarCodigoDocumentoContrato } = require("../../infraestructure/services/generarCodigoDocumentoContrato");
- 
-module.exports = async (contratoRepository,payload,transaction=null)=>{
-    const contrato=new Contrato(payload);
-    const errores=contrato.validar();
-    if(errores.length>0){
+
+
+const SequelizeCotizacionRepository = require("../../../cotizaciones/infrastructure/repositories/sequelizeCotizacionRepository");
+
+const cotizacionRepository = new SequelizeCotizacionRepository();
+
+const CONST_ESTADO_COTIZACION_CONDICIONES_CUMPLIDAS = 9; // Asumiendo que 9 es el ID del estado "Condiciones cumplidas"
+
+module.exports = async (payload,usuario_id, contratoRepository,transaction=null)=>{
+  
+
+    // Validar que una cotizacion existe
+    const cotizacionExiste = await cotizacionRepository.obtenerPorId(payload.cotizacion_id,transaction);
+
+    if (!cotizacionExiste) {
+        return {
+            codigo:404,
+            respuesta: { mensaje: "La cotización asociada no existe" }
+        }
+    }
+
+    if(cotizacionExiste.estados_cotizacion_id != CONST_ESTADO_COTIZACION_CONDICIONES_CUMPLIDAS){
+        return {
+            codigo:400,
+            respuesta: { mensaje: "La cotización debe cumplir con todas las condiciones de alquiler" }
+        }
+    }
+
+    // Validar si la cotizacion_id esta asociado a un contrato
+    const contratoExistente= await contratoRepository.buscarContratoPorCotizacionId(payload.cotizacion_id,transaction);
+
+    if(contratoExistente){
         return{
             codigo:400,
-            respuesta:errores
+            respuesta:{mensaje:"La cotización ya tiene un contrato asociado"}
         }
     }
 
-    const codigo_documento_contrato = await generarCodigoDocumentoContrato({cotizacion_id:contrato.cotizacion_id, usuario_id:contrato.usuario_id});
+    const codigo_documento_contrato = await generarCodigoDocumentoContrato({cotizacion_id:payload.cotizacion_id, usuario_id: usuario_id});
 
-    if(!codigo_documento_contrato){
-        return{
-            codigo:404,
-            respuesta:{mensaje:"Cotización no encontrada para generar el código del contrato"}
-        }
+    console.log("Código de documento de contrato generado:", codigo_documento_contrato);
+    
+    const contratoData = {
+        ...payload,
+        ref_contrato: codigo_documento_contrato,
+
+        contacto_id: cotizacionExiste.contacto_id,
+        cliente_id: cotizacionExiste.cliente_id,
+        obra_id: cotizacionExiste.obra_id,
+        uso_id: cotizacionExiste.uso_id,
+        filial_id: cotizacionExiste.filial_id,
+        despiece_id: cotizacionExiste?.despiece_id || null,
+        usuario_id: usuario_id
     }
 
-    const contrato_creado=await contratoRepository.crearContrato(contrato,transaction);
+
+    const contrato_creado=await contratoRepository.crearContrato(contratoData,transaction);
     return{
         codigo:200,
         respuesta:{

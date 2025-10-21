@@ -10,7 +10,10 @@ module.exports = {
        console.log("La columna notas_legales no existe en la tabla contratos, no se puede eliminar");
      });
 
+
     // Agregar nuevas columnas a la tabla contratos
+
+    
     await queryInterface.addColumn('contratos', 'ref_contrato', {
       // Codigo del contrato
       type: Sequelize.STRING,
@@ -39,7 +42,7 @@ module.exports = {
     });
 
     await queryInterface.addColumn('contratos', 'renovaciones', {
-      type: Sequelize.TEXT,
+      type: Sequelize.STRING,
       allowNull: true,
     });
 
@@ -54,6 +57,94 @@ module.exports = {
       allowNull: false,
       defaultValue: 'PROGRAMADO',
     });
+
+    // 'Creado' y todo los demas
+
+    await queryInterface.addColumn('contratos', 'despiece_id', {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'despieces',
+        key: 'id',
+      },
+
+      onUpdate: 'CASCADE',
+      onDelete: 'RESTRICT',
+    });
+
+    await queryInterface.addColumn('contratos', 'contacto_id', {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'contactos',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'RESTRICT',
+    });
+
+    await queryInterface.addColumn('contratos', 'cliente_id', {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'clientes',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'RESTRICT',
+    });
+
+    await queryInterface.addColumn('contratos', 'obra_id', {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'obras',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'RESTRICT',
+    });
+
+    await queryInterface.addColumn('contratos', 'filial_id', {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'empresas_proveedoras',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'RESTRICT',
+    });
+
+    await queryInterface.addColumn('contratos', 'usuario_id', {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'usuarios',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'RESTRICT',
+    });
+
+        await queryInterface.addColumn("contratos", "condiciones_alquiler", {
+      type: Sequelize.JSON,
+      allowNull: true,
+      after: "clausulas_adicionales",
+    });
+
+    await queryInterface.addColumn("contratos", "firmas", {
+      type: Sequelize.JSON,
+      allowNull: true,
+      after: "renovaciones",
+    });
+
+    await queryInterface.addColumn("contratos", "envio", {
+      type: Sequelize.JSON,
+      allowNull: true,
+      after: "firmas",
+    });
+
 
      await queryInterface.removeColumn('contratos', 'createdAt');
     await queryInterface.removeColumn('contratos', 'updatedAt');
