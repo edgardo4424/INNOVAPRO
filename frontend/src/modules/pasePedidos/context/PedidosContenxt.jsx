@@ -8,7 +8,7 @@ const ArrayPedidos = [
   {
     id_pedido: 52,
     filial: "ENCOFRADOS INNOVA S.A.C.",
-    ruc_Filial: "20562974998",
+    empresa_Ruc: "20562974998",
     nro_Pedido: "PED-00101",
     estado: "Confirmado",
     tipo_Servicio: "Alquiler",

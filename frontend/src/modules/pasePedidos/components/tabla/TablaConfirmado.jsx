@@ -4,6 +4,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { EyeIcon, FileInput } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const bgEstado = (estado) => {
   switch (estado) {
@@ -22,6 +23,18 @@ const bgEstado = (estado) => {
 };
 
 const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
+
+    const navigate = useNavigate();
+  const plasmarBorrador = async (doc) => {
+    const { success, message, data } =
+      await facturaService.obtenerBorradorConId(doc.id);
+
+    if (!success) {
+      toast.error("No se pudo plasmar el borrador");
+      return;
+    }
+  };
+
   return (
     <div className="w-full rounded-xl border-1 border-gray-200">
       <table className="min-w-full overflow-hidden rounded-xl bg-white shadow-md">
