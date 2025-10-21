@@ -232,7 +232,7 @@ export function FacturaBoletaProvider({ children }) {
         }
       });
 
-      const subTotal = gravadas + igvTotal + exoneradas;
+      const subTotal = gravadas + parseFloat(igvTotal.toFixed(2)) + exoneradas;
 
       setTotalProducto(gravadas);
 

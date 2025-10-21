@@ -63,8 +63,8 @@ const ProductoForm = ({ closeModal }) => {
 
     if (["10", "11", "12", "13", "14", "15", "16", "17"].includes(tipAfeIgv)) {
       igv = +(monto_Base_Igv * 0.18).toFixed(2);
-      total_Impuestos = igv;
-      monto_Precio_Unitario = +(valorUnitario * 1.18).toFixed(2);
+      total_Impuestos = igv.toFixed(2);
+      monto_Precio_Unitario = +(valorUnitario + igv).toFixed(2);
     } else if (
       ["20", "21", "30", "31", "32", "33", "34", "35", "36", "40"].includes(
         tipAfeIgv,
