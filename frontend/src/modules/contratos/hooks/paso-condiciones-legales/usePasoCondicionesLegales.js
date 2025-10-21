@@ -1,59 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
-import { toast } from "react-toastify";
+import { useEffect, useMemo } from "react";
 import { useWizardContratoContext } from "../../context/WizardContratoContext";
-import { obtenerCondicionesPorCotizacion } from "@/modules/cotizaciones/services/condicionesService";
-import mapearCondicionesAClausulas from "../../utils/mapearCondicionesAClausulas";
-import TERMINOS_FIJOS from "../../constants/terminosFijos";
 
-// helpers
-const sumarDias = (fecha, numeroDias) => {
-  if (!fecha) return "";
-  const date = new Date(fecha + "T00:00:00");
-  date.setDate(date.getDate() + numeroDias);
-  const mes = String(date.getMonth() + 1).padStart(2, "0");
-  const dia = String(date.getDate()).padStart(2, "0");
-  return `${date.getFullYear()}-${mes}-${dia}`;
-};
-const hoyEnFormatoISO = () => {
-  const date = new Date();
-  const mes = String(date.getMonth() + 1).padStart(2, "0");
-  const dia = String(date.getDate()).padStart(2, "0");
-  return `${date.getFullYear()}-${mes}-${dia}`;
-};
+import { sumarDias, hoyEnFormatoISO } from "../../utils/helpers";
 
-function parsearCondicionesBackend(condicionRaw) {
-  if (!condicionRaw?.condiciones)
-    return { definidas: [], observacion: null, cumplidasIniciales: [] };
-
-  const textoCondiciones = (condicionRaw.condiciones.split("CONDICIONES AUTORIZADAS:")[1] || "");
-  const lineas = textoCondiciones.split("•").map((c) => c.trim()).filter(Boolean);
-
-  let definidas = [];
-  let observacion = null;
-
-  lineas.forEach((linea) => {
-    if (/OBSERVACIÓN:/i.test(linea)) {
-      const partes = linea.split(/OBSERVACIÓN:/i);
-      if (partes[0].trim()) definidas.push(partes[0].trim());
-      observacion = (partes[1] || "").trim();
-    } else {
-      definidas.push(linea);
-    }
-  });
-
-  const cumplidasIniciales = condicionRaw.condiciones_cumplidas || [];
-  return { definidas, observacion, cumplidasIniciales };
-}
 
 export default function usePasoCondicionesLegales() {
-  const { formData, setFormData } = useWizardContratoContext();
-
-  const [loading, setLoading] = useState(false);
-  const [condicionesDefinidas, setCondicionesDefinidas] = useState([]);
-  const [condicionesCumplidas, setCondicionesCumplidas] = useState([]);
-  const [observacion, setObservacion] = useState(null);
-
-  const cotizacionId = formData?.cotizacion?.id;
+  const { formData, setFormData } = useWizardContratoContext(); 
 
   // VIGENCIA con política de 15 días
   const vigencia = formData?.legales?.vigencia || { inicio: "", fin: "", politica: "FIJA_15D" };
@@ -102,11 +54,16 @@ export default function usePasoCondicionesLegales() {
       if (usarFija && next.legales.vigencia.inicio) {
         next.legales.vigencia.fin = sumarDias(next.legales.vigencia.inicio, 15);
       }
+      // si activamos fija y no hay inicio, seteamos inicio con fecha de hoy y recalculamos el fin
+      if (usarFija && !next.legales.vigencia.inicio) {
+        next.legales.vigencia.inicio = hoyEnFormatoISO();
+        next.legales.vigencia.fin = sumarDias(next.legales.vigencia.inicio, 15);
+      }
       return next;
     });
   };
 
-  // Efecto 1: al montar, si no hay inicio, poner HOY; si está en FIJA_15D y no hay fin, calcularlo
+  // al montar, si no hay inicio, ponemos HOY; si está en FIJA_15D y no hay fin, calcularlo
   useEffect(() => {
     if (!vigencia?.inicio) {
       setVigencia("inicio", hoyEnFormatoISO());
@@ -123,7 +80,7 @@ export default function usePasoCondicionesLegales() {
     }
   }, []);
 
-  // Efecto 2: recalcular SIEMPRE que cambie inicio o la política (cubre precargas asincrónicas)
+  // recalculamos SIEMPRE que cambie inicio o la política (cubre precargas asincrónicas)
   useEffect(() => {
     if (!usarFija15) return;
     if (!vigencia?.inicio) return;
@@ -138,56 +95,6 @@ export default function usePasoCondicionesLegales() {
       });
     }
   }, [vigencia?.inicio, usarFija15, setFormData, vigencia?.fin]);
-
-  // --------- CARGA CONDICIONES -> SUGERENCIAS DE CLÁUSULAS ----------
-  useEffect(() => {
-    if (!cotizacionId) return;
-    let cancelado = false;
-
-    (async () => {
-      try {
-        setLoading(true);
-        const data = await obtenerCondicionesPorCotizacion(cotizacionId);
-        const { definidas, observacion, cumplidasIniciales } = parsearCondicionesBackend(data);
-        if (cancelado) return;
-
-        setCondicionesDefinidas(definidas);
-        setCondicionesCumplidas(cumplidasIniciales || []);
-        setObservacion(observacion || null);
-
-        const sugeridas = mapearCondicionesAClausulas(definidas, cumplidasIniciales);
-
-        setFormData((prev) => {
-          const prevVig = prev?.legales?.vigencia || { inicio: vigencia.inicio, fin: vigencia.fin, politica: vigencia.politica };
-          return {
-            ...prev,
-            legales: {
-              ...prev.legales,
-              vigencia: prevVig,
-              clausulas: [
-                ...TERMINOS_FIJOS.map((t) => ({ ...t, fija: true, activo: true })),
-                ...sugeridas.map((c) => ({ ...c, fija: false })),
-              ],
-              condiciones_alquiler: definidas.map((texto) => ({
-                texto,
-                cumplida: (cumplidasIniciales || []).includes(texto),
-              })),
-              observacion_condiciones: observacion || "",
-            },
-          };
-        });
-      } catch (e) {
-        if (!cancelado) {
-          console.error(e);
-          toast.error("No se pudieron cargar las condiciones de alquiler.");
-        }
-      } finally {
-        if (!cancelado) setLoading(false);
-      }
-    })();
-
-    return () => { cancelado = true; };
-  }, [cotizacionId]);
 
   // Clausulas del formData
   const clausulas = formData?.legales?.clausulas || [];
@@ -230,7 +137,6 @@ export default function usePasoCondicionesLegales() {
   };
 
   return {
-    loading,
     // vigencia
     vigencia,
     usarFija15,
@@ -238,11 +144,6 @@ export default function usePasoCondicionesLegales() {
     setPoliticaVigencia,
     estadoProyectado,
     diasRestantes,
-
-    // condiciones & clausulas
-    condicionesDefinidas,
-    condicionesCumplidas,
-    observacion,
 
     clausulas,
     toggleClausula,

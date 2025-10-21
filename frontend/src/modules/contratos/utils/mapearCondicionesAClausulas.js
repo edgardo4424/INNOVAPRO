@@ -12,7 +12,7 @@ export default function mapearCondicionesAClausulas(definidas = [], cumplidas = 
     cumplidas.some((c) => c.toLowerCase().includes(needle));
 
   // Ejemplos de reglas. Ajusta/añade según tus políticas:
-  if (incluye("pago por adelantado")) {
+  if (incluye("pago adelantado")) {
     out.push({
       id: "pago-adelantado",
       titulo: "Forma de pago",
@@ -22,7 +22,7 @@ export default function mapearCondicionesAClausulas(definidas = [], cumplidas = 
     });
   }
 
-  if (incluye("título valor") || incluye("cheque") || incluye("letra de cambio")) {
+  if (incluye("título valor") || incluye("cheque") || incluye("letra")) {
     out.push({
       id: "titulo-valor-garantia",
       titulo: "Garantía mediante título valor",
@@ -52,12 +52,12 @@ export default function mapearCondicionesAClausulas(definidas = [], cumplidas = 
     });
   }
 
-  if (incluye("cuentas de banco") || incluye("transferencia")) {
+  if (incluye("contrato firmado")) {
     out.push({
-      id: "cuentas-bancarias",
-      titulo: "Cuentas bancarias",
+      id: "contrato-firmado",
+      titulo: "Contrato firmado",
       texto:
-        "Los pagos se realizarán exclusivamente mediante transferencia bancaria a las cuentas del proveedor detalladas en el anexo del presente contrato.",
+        "Se debe firmar y sellar EL CONTRATO por los representantes legales de ambas partes.",
       activo: true,
     });
   }

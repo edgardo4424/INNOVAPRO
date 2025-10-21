@@ -1,169 +1,117 @@
-// INNOVA PRO+ v1.2.0 — Contratos: Paso 5 (Revisión y Envío con preview del payload)
 import { useWizardContratoContext } from "../../context/WizardContratoContext";
 import { useRegistrarContrato } from "../../hooks/useRegistrarContrato";
 import { useMemo, useState } from "react";
 
-export default function PasoRevisionEnvio() {
-  const { formData, setFormData } = useWizardContratoContext();
-  const { payloadContrato } = useRegistrarContrato(5); // obtenemos el payload armado
-  const envio = formData.envio || {};
+function Item({ label, children }) {
+  return (
+    <div className="space-y-1">
+      <p className="text-xs uppercase tracking-wide text-gray-500">{label}</p>
+      <div className="text-sm font-medium text-gray-900">{children ?? "—"}</div>
+    </div>
+  );
+}
 
+export default function PasoRevisionEnvio() {
+  const { formData } = useWizardContratoContext();
+  const { payloadContrato } = useRegistrarContrato(5);
   const [mostrarJSON, setMostrarJSON] = useState(false);
 
-  const onToggle = (path, checked) => {
-    setFormData((prev) => {
-      const next = structuredClone(prev);
-      const seg = path.split(".");
-      let ref = next;
-      for (let i = 0; i < seg.length - 1; i++) ref = ref[seg[i]];
-      ref[seg.at(-1)] = checked;
-      return next;
-    });
-  };
-
-  const onChange = (path, value) => {
-    setFormData((prev) => {
-      const next = structuredClone(prev);
-      const seg = path.split(".");
-      let ref = next;
-      for (let i = 0; i < seg.length - 1; i++) ref = ref[seg[i]];
-      ref[seg.at(-1)] = value;
-      return next;
-    });
-  };
-
-  // Serialización legible del payload (formateado)
   const jsonPretty = useMemo(() => {
-    try {
-      return JSON.stringify(payloadContrato, null, 2);
-    } catch {
-      return "// Error generando vista previa del payload";
-    }
+    try { return JSON.stringify(payloadContrato, null, 2); }
+    catch { return "// Error generando vista previa del payload"; }
   }, [payloadContrato]);
+
+  const cot = formData?.cotizacion || {};
+  const legales = formData?.legales || {};
+  const val = formData?.valorizacion || {};
+  const firmas = formData?.firmas || {};
+  const envio = formData?.envio || {};
+
+  const totalClausulas = (legales?.clausulas || []).filter(c=>c?.activo).length;
+  const totalCondiciones = (legales?.condiciones_alquiler || []).length;
+
+  const resumenValo = val?.renovaciones
+    ? `${val?.requiere_adelantada ? "Adelantada" : "Regular"} · ${val.renovaciones}`
+    : "No definida";
 
   return (
     <div className="space-y-6">
-      {/* ==================== RESUMEN ==================== */}
-      <section className="rounded-xl border p-4">
-        <h3 className="font-semibold">Resumen</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm mt-3">
-          <div>
-            <p className="text-muted-foreground">Cotización</p>
-            <p className="font-semibold">
-              #{formData?.cotizacion?.codigo_documento || formData?.cotizacion?.id || "—"}
-            </p>
+      {/* ====== RESUMEN GENERAL ====== */}
+      <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <h3 className="mb-4 text-lg font-semibold text-gray-900">Resumen</h3>
+
+        {/* Cabecera */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Item label="Cotización">
+            #{cot?.codigo_documento || cot?.id}
+          </Item>
+          <Item label="Cliente">
+            {cot?.entidad?.cliente?.razon_social}
+          </Item>
+          <Item label="Obra">
+            {cot?.entidad?.obra?.nombre}
+          </Item>
+        </div>
+
+        {/* Fechas / Totales */}
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Item label="Totales">
+            S/ {cot?.totales?.subtotal ?? 0} · S/ {cot?.totales?.igv ?? 0} ·{" "}
+            <span className="font-semibold">S/ {cot?.totales?.total ?? 0}</span>
+          </Item>
+          <Item label="Valorización">
+            {resumenValo}
+          </Item>
+          <Item label="Filial">
+            {cot?.entidad?.filial?.razon_social}
+          </Item>
+        </div>
+
+        {/* Legales / Firmas */}
+        <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="rounded-xl border border-gray-200 p-4">
+            <p className="mb-3 text-sm font-semibold text-gray-900">Legales</p>
+            <ul className="text-sm text-gray-700 space-y-1 list-disc pl-5">
+              <li><strong>Cláusulas activas:</strong> {totalClausulas}</li>
+              <li><strong>Vigencia:</strong> {(legales?.vigencia?.inicio || "—") + " — " + (legales?.vigencia?.fin || "—")}</li>
+            </ul>
           </div>
-          <div>
-            <p className="text-muted-foreground">Cliente</p>
-            <p className="font-semibold">
-              {formData?.cotizacion?.entidad?.cliente?.razon_social || "—"}
-            </p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">Obra</p>
-            <p className="font-semibold">
-              {formData?.cotizacion?.entidad?.obra?.nombre || "—"}
-            </p>
+
+          <div className="rounded-xl border border-gray-200 p-4">
+            <p className="mb-3 text-sm font-semibold text-gray-900">Firmas a imprimir en PDF</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="text-gray-500 text-xs uppercase">Emisor (Filial)</p>
+                <div className="font-medium">{firmas?.firmante_emisor?.nombre || "—"}</div>
+                <div className="text-gray-600">{firmas?.firmante_emisor?.cargo}</div>
+                <div className="text-gray-600">{firmas?.firmante_emisor?.documento}</div>
+              </div>
+              <div>
+                <p className="text-gray-500 text-xs uppercase">Receptor (Cliente)</p>
+                <div className="font-medium">{firmas?.firmante_receptor?.nombre || "—"}</div>
+                <div className="text-gray-600">{firmas?.firmante_receptor?.cargo}</div>
+                <div className="text-gray-600">{firmas?.firmante_receptor?.documento}</div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm mt-3">
-          <div>
-            <p className="text-muted-foreground">Vigencia</p>
-            <p>
-              {formData?.legales?.vigencia?.inicio || "—"} —{" "}
-              {formData?.legales?.vigencia?.fin || "—"}
-            </p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">Subtotal / IGV / Total</p>
-            <p>
-              S/ {formData?.cotizacion?.totales?.subtotal ?? 0} · S/{" "}
-              {formData?.cotizacion?.totales?.igv ?? 0} ·{" "}
-              <span className="font-semibold">
-                S/ {formData?.cotizacion?.totales?.total ?? 0}
-              </span>
-            </p>
-          </div>
-        </div>
       </section>
 
-      {/* ==================== ENVÍO ==================== */}
-      <section className="rounded-xl border p-4">
-        <h3 className="font-semibold">Envío (opcional)</h3>
-        <div className="mt-3 space-y-3">
-          <div className="flex items-center gap-2">
-            <input
-              id="enviar_correo"
-              type="checkbox"
-              className="rounded"
-              checked={!!envio.enviar_correo}
-              onChange={(e) =>
-                onToggle("envio.enviar_correo", e.target.checked)
-              }
-            />
-            <label htmlFor="enviar_correo" className="text-sm">
-              Enviar correo automáticamente
-            </label>
-          </div>
-
-          {envio.enviar_correo && (
-            <>
-              <div>
-                <label className="text-sm">Destinatarios (coma “,” para separar)</label>
-                <input
-                  className="mt-1 w-full rounded-lg border px-3 py-2"
-                  placeholder="cliente@dominio.com, admin@innova.com"
-                  value={envio.destinatarios?.join(", ") || ""}
-                  onChange={(e) =>
-                    onChange(
-                      "envio.destinatarios",
-                      e.target.value
-                        .split(",")
-                        .map((s) => s.trim())
-                        .filter(Boolean)
-                    )
-                  }
-                />
-              </div>
-
-              <div>
-                <label className="text-sm">Asunto</label>
-                <input
-                  className="mt-1 w-full rounded-lg border px-3 py-2"
-                  value={envio.asunto || ""}
-                  onChange={(e) => onChange("envio.asunto", e.target.value)}
-                />
-              </div>
-
-              <div>
-                <label className="text-sm">Cuerpo</label>
-                <textarea
-                  className="mt-1 w-full rounded-lg border px-3 py-2 min-h-[120px]"
-                  value={envio.cuerpo || ""}
-                  onChange={(e) => onChange("envio.cuerpo", e.target.value)}
-                />
-              </div>
-            </>
-          )}
-        </div>
-      </section>
-
-      {/* ==================== PREVIEW DEL PAYLOAD ==================== */}
-      <section className="rounded-xl border p-4 bg-muted/40">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="font-semibold">Vista previa del payload</h3>
+      {/* ====== PREVIEW DEL PAYLOAD ====== */}
+      <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="mb-2 flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-gray-900">Vista previa del payload</h3>
           <button
             type="button"
-            onClick={() => setMostrarJSON((p) => !p)}
-            className="rounded-lg border px-3 py-2 text-sm hover:bg-muted"
+            onClick={() => setMostrarJSON(p => !p)}
+            className="rounded-md border px-3 py-2 text-sm hover:bg-gray-50"
           >
-            {mostrarJSON ? "Ocultar" : "Mostrar JSON"}
+            {mostrarJSON ? "Ocultar JSON" : "Mostrar JSON"}
           </button>
         </div>
-
         {mostrarJSON && (
-          <pre className="text-xs bg-background border rounded-lg p-3 overflow-x-auto max-h-[400px]">
+          <pre className="text-xs bg-gray-50 border rounded-lg p-3 overflow-x-auto max-h-[420px]">
             {jsonPretty}
           </pre>
         )}

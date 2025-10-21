@@ -1,13 +1,8 @@
-// Reglas de validación por PASO para el Wizard de Contratos.
-// paso: 1..5 (Origen, Condiciones Legales, Cronograma & Garantías, Firmas, Revisión/Envío)
-// datos: formData completo del contrato (incluye la cotización origen)
-
 const isEmail = (v = "") =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v).trim());
 
 export default function validarContratoPorPaso(paso, datos) {
   const errores = {};
-  console.log("DATOS EN VALIDACIONES:", datos)
   const { cotizacion = {}, legales = {}, valorizacion = {}, firmas = {}, envio = {} } = datos || {};
 
   // Paso 1: Origen (Cotización)
@@ -33,25 +28,21 @@ export default function validarContratoPorPaso(paso, datos) {
       if (fin < ini) errores.vigencia_rango = "La fecha fin no puede ser menor a la fecha inicio.";
     }
 
-    if (!Array.isArray(clausulas) || clausulas.length === 0)
-      errores.clausulas = "Agrega al menos una cláusula.";
-    else if (clausulas.some((c) => !c?.titulo || !c?.texto))
+    if (clausulas.some((c) => !c?.titulo || !c?.texto))
       errores.clausulas_incompletas = "Hay cláusulas sin título o sin texto.";
   }
 
-  // Paso 3: Valorización
   if (paso === 3) {
-    const {
-      renovaciones,
-      requiere_adelantada
-    } = valorizacion;
+    const { renovaciones, requiere_adelantada } = valorizacion;
 
-    if (!requiere_adelantada)
+    // Solo error si NO está definido (null/undefined). false es válido.
+    if (requiere_adelantada === undefined || requiere_adelantada === null) {
       errores.requiere_adelantada = "Indica si requiere valorización adelantada";
-    
-    if (!renovaciones)
-      errores.renovaciones = "Indica el período para las renovaciones.";
+    }
+
+    if (!renovaciones) errores.renovaciones = "Indica el período para las renovaciones.";
   }
+
 
   // Paso 4: Firmas
   if (paso === 4) {

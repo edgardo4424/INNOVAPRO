@@ -1,16 +1,19 @@
+// Pasos del Wizard
 import PasoOrigenCotizacion from "../components/pasos/PasoOrigenCotizacion.jsx";
 import PasoCondicionesLegales from "../components/pasos/PasoCondicionesLegales.jsx";
 import PasoValorizacion from "../components/pasos/PasoValorizacion.jsx";
 import PasoFirmas from "../components/pasos/PasoFirmas.jsx";
 import PasoRevisionEnvio from "../components/pasos/PasoRevisionEnvio.jsx";
-
+// Componente que renderiza el éxito del proceso
 import ExitoContrato from "../components/ExitoContrato.jsx";
+// Layout del Wizard de contratos
 import WizardLayoutContrato from "../components/WizardLayoutContrato.jsx";
-
+// Hooks
 import { useWizardContratoContext } from "../context/WizardContratoContext.jsx";
 import { useRegistrarContrato } from "../hooks/useRegistrarContrato.js";
+// librería para alertas bien bonitas xd
 import { toast } from "react-toastify";
-
+// constante de pasos para el flujo del wizard
 const pasos_contrato = [
   { id: 1, titulo: "Origen (Cotización)", componente: PasoOrigenCotizacion },
   { id: 2, titulo: "Condiciones Legales", componente: PasoCondicionesLegales },
@@ -21,7 +24,7 @@ const pasos_contrato = [
 
 export default function RegistrarContratoWizard() {
   const { formData, validarPaso, setErrores } = useWizardContratoContext();
-  console.log("FORM DATA EN REGISTRAR: ", formData)
+  
   const {
     pasoActual,
     setPasoActual,

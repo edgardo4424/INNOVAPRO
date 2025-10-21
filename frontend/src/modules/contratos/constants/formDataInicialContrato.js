@@ -50,7 +50,6 @@ const formDataInicialContrato = {
     moneda: "",
     duracion_alquiler: null,
     descuento: null,
-    condiciones_alquiler: [],
     totales: { subtotal: null, igv: null, total: null },
   },
 
@@ -61,6 +60,7 @@ const formDataInicialContrato = {
       fin: "", // YYYY-MM-DD
     },
     clausulas: [],
+    condiciones_alquiler: [],
   },
 
   // VALORIZACIONES

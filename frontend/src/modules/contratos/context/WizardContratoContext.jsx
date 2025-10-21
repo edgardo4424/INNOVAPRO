@@ -1,5 +1,8 @@
+// librerías de contextos de react
 import { createContext, useContext, useState } from "react";
+// objeto del formData inicial para el flujo de contrato
 import formDataInicialContrato from "../constants/formDataInicialContrato";
+// hook que maneja las validaciones en cada paso
 import { useValidacionPasoContrato } from "../hooks/useValidacionPasoContrato";
 
 /**
@@ -9,7 +12,7 @@ import { useValidacionPasoContrato } from "../hooks/useValidacionPasoContrato";
  *   y expone validaciones por paso específicas de contratos.
  */
 
-const WizardContratoContext = createContext();
+const WizardContratoContext = createContext(); 
 
 export const WizardContratoProvider = ({ children }) => {
   // Estado principal del wizard de contrato

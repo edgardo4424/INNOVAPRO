@@ -2,17 +2,12 @@ import usePasoCondicionesLegales from "../../hooks/paso-condiciones-legales/useP
 
 export default function PasoCondicionesLegales() {
   const {
-    loading,
     vigencia,
     usarFija15,
     setVigencia,
-    setPoliticaVigencia,
+    setPoliticaVigencia, 
     estadoProyectado,
     diasRestantes,
-
-    condicionesDefinidas,
-    condicionesCumplidas,
-    observacion,
 
     clausulas,
     toggleClausula,
@@ -20,7 +15,7 @@ export default function PasoCondicionesLegales() {
     editarClausula,
     eliminarClausula,
 
-  } = usePasoCondicionesLegales();
+  } = usePasoCondicionesLegales();  
 
   return (
     <div className="space-y-6">
@@ -49,6 +44,7 @@ export default function PasoCondicionesLegales() {
 
         <div className="mt-3 flex items-center gap-2">
           <input
+          disabled
             id="vig15"
             type="checkbox"
             className="rounded"
@@ -64,8 +60,9 @@ export default function PasoCondicionesLegales() {
           <div>
             <label className="text-sm">Inicio</label>
             <input
+            disabled
               type="date"
-              className="mt-1 w-full rounded-lg border px-3 py-2"
+              className="mt-1 w-full rounded-lg border px-3 py-2 disabled:bg-muted"
               value={vigencia?.inicio || ""}
               onChange={(e) => setVigencia("inicio", e.target.value)}
             />
@@ -83,43 +80,14 @@ export default function PasoCondicionesLegales() {
         </div>
 
         <div className="mt-3 px-3 py-2 rounded-lg border bg-muted/40 text-sm">
-          <strong>Nota: </strong>Transcurrido ese periodo, deberá generarse un <strong>nuevo contrato</strong>. Los estados
+          <strong>OBSERVACIÓN IMPORTANTE: </strong> Hasta que no se defina la regla general, toda la lógica es "teórica". Como
+          por ejemplo la <b>NOTA</b> siguiente.
+        </div>
+
+        <div className="mt-3 px-3 py-2 rounded-lg border bg-muted/40 text-sm">
+          <strong>NOTA: </strong>Transcurrido ese periodo, deberá generarse un <strong>nuevo contrato</strong>. Los estados
           del contrato se calcularán automáticamente (Vigente / Por vencer / Vencido).
         </div>
-      </section>
-
-      {/* Condiciones de Alquiler */}
-      <section className="rounded-xl border p-4">
-        <div className="flex items-center justify-between">
-          <h3 className="font-semibold">Condiciones de Alquiler (definidas)</h3>
-          {loading && <span className="text-xs text-muted-foreground">Cargando…</span>}
-        </div>
-
-        {observacion && (
-          <div className="mt-2 px-3 py-1 bg-yellow-50 text-yellow-800 rounded-md border text-sm">
-            <strong>📝 Observación:</strong> {observacion}
-          </div>
-        )}
-
-        {condicionesDefinidas.length ? (
-          <ul className="mt-3 space-y-1 text-sm">
-            {condicionesDefinidas.map((c, i) => {
-              const ok = condicionesCumplidas.includes(c);
-              return (
-                <li key={i} className="flex items-start gap-2">
-                  <span className={`mt-1 h-2 w-2 rounded-full ${ok ? "bg-emerald-500" : "bg-gray-300"}`} />
-                  <span className={`${ok ? "text-emerald-700" : "text-foreground/80"}`}>{c}</span>
-                </li>
-              );
-            })}
-          </ul>
-        ) : (
-          <p className="text-sm text-muted-foreground mt-2">No hay condiciones definidas para esta cotización.</p>
-        )}
-
-        <p className="text-xs text-muted-foreground mt-3">
-          * Las cláusulas sugeridas se activan automáticamente en función de estas condiciones.
-        </p>
       </section>
 
       {/* Términos y Condiciones */}

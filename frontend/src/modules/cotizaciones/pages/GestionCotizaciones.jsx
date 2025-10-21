@@ -31,8 +31,11 @@ export default function GestionCotizaciones() {
    }
 
    const crearContrato = (idCotizacion) => {
-      navigate(`/contratos/registrar?cotizacionId=${idCotizacion}`);
-   }
+      navigate("/contratos/registrar", {
+         state: { cotizacionId: idCotizacion },
+         replace: false,
+      });
+   };
    
    return (
       <div className="min-h-full flex-1  flex flex-col items-center">
