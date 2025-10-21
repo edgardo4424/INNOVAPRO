@@ -94,7 +94,7 @@ const Contrato = sequelize.define(
       },
      
       renovaciones: {
-         type: DataTypes.TEXT,
+         type: DataTypes.STRING,
          allowNull: true,
       },
       firmas: {

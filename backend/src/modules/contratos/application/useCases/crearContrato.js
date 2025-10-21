@@ -6,7 +6,7 @@ const SequelizeCotizacionRepository = require("../../../cotizaciones/infrastruct
 
 const cotizacionRepository = new SequelizeCotizacionRepository();
 
-const CONST_ESTADO_COTIZACION_APROBADO = 4; // Asumiendo que 4 es el ID del estado "Aprobado"
+const CONST_ESTADO_COTIZACION_CONDICIONES_CUMPLIDAS = 9; // Asumiendo que 9 es el ID del estado "Condiciones cumplidas"
 
 module.exports = async (payload,usuario_id, contratoRepository,transaction=null)=>{
   
@@ -21,10 +21,10 @@ module.exports = async (payload,usuario_id, contratoRepository,transaction=null)
         }
     }
 
-    if(cotizacionExiste.estados_cotizacion_id != CONST_ESTADO_COTIZACION_APROBADO){
+    if(cotizacionExiste.estados_cotizacion_id != CONST_ESTADO_COTIZACION_CONDICIONES_CUMPLIDAS){
         return {
             codigo:400,
-            respuesta: { mensaje: "La cotización asociada no está en estado aprobado" }
+            respuesta: { mensaje: "La cotización debe cumplir con todas las condiciones de alquiler" }
         }
     }
 

@@ -42,7 +42,7 @@ module.exports = {
     });
 
     await queryInterface.addColumn('contratos', 'renovaciones', {
-      type: Sequelize.TEXT,
+      type: Sequelize.STRING,
       allowNull: true,
     });
 
@@ -57,6 +57,8 @@ module.exports = {
       allowNull: false,
       defaultValue: 'PROGRAMADO',
     });
+
+    // 'Creado' y todo los demas
 
     await queryInterface.addColumn('contratos', 'despiece_id', {
       type: Sequelize.INTEGER,
