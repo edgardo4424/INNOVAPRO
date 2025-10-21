@@ -532,7 +532,7 @@ export default function TrabajadorForm() {
                     )}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="cargo_id">Cargo *</Label>
+                    <Label htmlFor="cargo_id">Rol en INNOVA*</Label>
                     <Select
                       value={formData.cargo_id}
                       onValueChange={(value) =>

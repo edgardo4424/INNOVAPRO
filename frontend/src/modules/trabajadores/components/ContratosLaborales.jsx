@@ -358,9 +358,14 @@ const ContratosLaborales = ({
          ) : (
             c?.id_cargo_sunat
          ? (
-            <SelectItem value={c.id_cargo_sunat.toString()}>
-               {c.cargo_sunat_nombre}
+          listaCargosSunat.map((cargo) =>
+
+            <SelectItem checked={c.id_cargo_sunat.toString() === cargo.id.toString()} key={cargo.id} value={cargo.id.toString()}>
+               {cargo.nombre}
             </SelectItem>
+          )
+
+             
          )
          : (
              listaCargosSunat.map((carg) => (
