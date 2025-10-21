@@ -83,7 +83,7 @@ const iconMap = {
    "Gestión de Transporte": Truck,
    "Asistencia general":Building,
    "Pase Pedidos":Shuffle,
-   "Emitir Guía":ReceiptText
+   "Emitir Guía":ReceiptText,
 
    "Beneficios":HeartHandshake,
    "Retenciones":FileMinus,

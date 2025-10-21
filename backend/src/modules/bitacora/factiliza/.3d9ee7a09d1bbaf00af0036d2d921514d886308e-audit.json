@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 30
+    },
+    "auditLog": "C:\\Users\\elsah\\OneDrive\\Escritorio\\Proyecto\\INNOVAPRO\\backend\\src\\modules\\bitacora\\factiliza\\.3d9ee7a09d1bbaf00af0036d2d921514d886308e-audit.json",
+    "files": [
+        {
+            "date": 1761067268412,
+            "name": "C:\\Users\\elsah\\OneDrive\\Escritorio\\Proyecto\\INNOVAPRO\\backend\\src\\modules\\bitacora\\factiliza\\factiliza-2025-10-21.log",
+            "hash": "4086b333a9a5b36bf3fc7adabc6fdf81a2761bf1a2207958be81aa1002a04db2"
+        }
+    ],
+    "hashType": "sha256"
+}

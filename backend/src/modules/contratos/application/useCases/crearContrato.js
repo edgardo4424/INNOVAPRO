@@ -6,7 +6,10 @@ const SequelizeCotizacionRepository = require("../../../cotizaciones/infrastruct
 
 const cotizacionRepository = new SequelizeCotizacionRepository();
 
-const CONST_ESTADO_COTIZACION_CONDICIONES_CUMPLIDAS = 9; // Asumiendo que 9 es el ID del estado "Condiciones cumplidas"
+const CONST_ESTADO_COTIZACION_POR_APROBAR = 3; // Asumiendo que 3 es el ID del estado "Por Aprobar"
+
+const db = require("../../../../database/models");
+
 
 module.exports = async (payload,usuario_id, contratoRepository,transaction=null)=>{
   
@@ -21,10 +24,10 @@ module.exports = async (payload,usuario_id, contratoRepository,transaction=null)
         }
     }
 
-    if(cotizacionExiste.estados_cotizacion_id != CONST_ESTADO_COTIZACION_CONDICIONES_CUMPLIDAS){
+    if(cotizacionExiste.estados_cotizacion_id != CONST_ESTADO_COTIZACION_POR_APROBAR){
         return {
             codigo:400,
-            respuesta: { mensaje: "La cotización debe cumplir con todas las condiciones de alquiler" }
+            respuesta: { mensaje: "La cotización debe estar en el estado POR APROBAR" }
         }
     }
 
@@ -57,6 +60,12 @@ module.exports = async (payload,usuario_id, contratoRepository,transaction=null)
 
 
     const contrato_creado=await contratoRepository.crearContrato(contratoData,transaction);
+
+    const cotizacionActualizadoEstadoAprobado = await db.cotizaciones.update(
+        { estados_cotizacion_id: 4 }, // Asumiendo que el siguiente estado es "Aprobado"
+        { where: { id: payload.cotizacion_id }, transaction }
+    );
+
     return{
         codigo:200,
         respuesta:{
