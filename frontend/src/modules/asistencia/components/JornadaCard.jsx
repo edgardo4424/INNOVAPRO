@@ -21,9 +21,10 @@ import {
 } from "@/components/ui/tooltip";
 import { estadosAsistencia } from "./AsistenciaSimple";
 import BadgeEstadoAsistencia from "./BadgeEstadoAsistencia";
+import { FaSpinner } from "react-icons/fa";
 
 const JornadaCard = ({
-  trabajador,
+  t,
   obtenerTrabajadores,
   fecha,
   asistenciasSincronizacion,
@@ -37,8 +38,10 @@ const JornadaCard = ({
     guardarAsistencia,
     inputsDeshabilitados,
     actualizarEstadoAsistencia,
-  } = useAsistencia(
     trabajador,
+    isLoading
+  } = useAsistencia(
+    t,
     obtenerTrabajadores,
     fecha,
     asistenciasSincronizacion,
@@ -105,6 +108,7 @@ const JornadaCard = ({
                     onValueChange={(value) =>
                       actualizarAsistencia("estado_asistencia", value)
                     }
+                    disabled={isLoading}
                   >
                     <SelectTrigger className="w-full truncate">
                       <SelectValue placeholder="Selecciona" />
@@ -140,7 +144,7 @@ const JornadaCard = ({
                           Number.parseFloat(e.target.value),
                         )
                       }
-                      disabled={inputsDeshabilitados}
+                      disabled={inputsDeshabilitados||isLoading}
                       className="w-full"
                     />
                   </div>
@@ -156,7 +160,7 @@ const JornadaCard = ({
                         )
                       }
                       placeholder="0"
-                      disabled={inputsDeshabilitados}
+                      disabled={inputsDeshabilitados||isLoading}
                       className="w-full"
                     />
                   </div>
@@ -175,7 +179,7 @@ const JornadaCard = ({
                         )
                       }
                       placeholder="0"
-                      disabled={inputsDeshabilitados}
+                      disabled={inputsDeshabilitados||isLoading}
                       className="w-full"
                     />
                   </div>
@@ -193,7 +197,7 @@ const JornadaCard = ({
                         eliminarSegundaJornada();
                       }
                     }}
-                    disabled={inputsDeshabilitados}
+                    disabled={inputsDeshabilitados||isLoading}
                   >
                     <SelectTrigger className={"w-full"}>
                       <SelectValue />
@@ -218,7 +222,7 @@ const JornadaCard = ({
                         e.target.value,
                       )
                     }
-                    disabled={inputsDeshabilitados}
+                    disabled={inputsDeshabilitados||isLoading}
                   />
                 </div>
 
@@ -236,7 +240,7 @@ const JornadaCard = ({
                         Number.parseInt(value),
                       )
                     }
-                    disabled={inputsDeshabilitados}
+                    disabled={inputsDeshabilitados||isLoading}
                   >
                     <SelectTrigger className="w-full truncate">
                       <SelectValue
@@ -270,7 +274,7 @@ const JornadaCard = ({
                         }
                       }}
                       className="rounded"
-                      disabled={inputsDeshabilitados}
+                      disabled={inputsDeshabilitados||isLoading}
                     />
                     <Label className="text-sm font-medium">
                       Agregar Segunda Jornada (Turno Tarde)
@@ -285,6 +289,7 @@ const JornadaCard = ({
                         <Input
                           placeholder="Ej: Planta B, Almacén"
                           value={segundaJornada.lugar}
+                          disabled={isLoading}
                           onChange={(e) =>
                             actualizarJornada(
                               segundaJornada.id,
@@ -312,6 +317,7 @@ const JornadaCard = ({
                               Number.parseInt(value),
                             )
                           }
+                          disabled={isLoading}
                         >
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Seleccione un tipo de trabajo" />
@@ -341,16 +347,20 @@ const JornadaCard = ({
                   onUpdateGastos={(gastos) =>
                     actualizarAsistencia("gastos", gastos)
                   }
-                  inputsDeshabilitados={inputsDeshabilitados}
+                  inputsDeshabilitados={inputsDeshabilitados||isLoading}
                 />
                 {trabajador.asistencia ? (
                   <Button
                     size={"sm"}
                     variant="outline"
-                    className="flex items-center gap-2 border-blue-500 bg-transparent text-blue-600 hover:bg-blue-50"
+                    className="flex items-center gap-2 border-blue-500 bg-transparent text-blue-600 hover:text-blue-700 hover:bg-blue-50 "
                     onClick={actualizarEstadoAsistencia}
+                    disabled={isLoading}
                   >
-                    <RefreshCw className="h-4 w-4" />
+                    {
+                     isLoading?<FaSpinner className="animate-spin"/>:<RefreshCw className="h-4 w-4" />
+                    }
+                      
                     Actualizar
                   </Button>
                 ) : (
@@ -358,8 +368,12 @@ const JornadaCard = ({
                     size="sm"
                     className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
                     onClick={guardarAsistencia}
+                    disabled={isLoading}
                   >
-                    <Save className="h-3 w-3" />
+                    {
+                     isLoading?<FaSpinner className="animate-spin"/>:<Save className="h-3 w-3" />
+                    }
+                    
                     Guardar
                   </Button>
                 )}

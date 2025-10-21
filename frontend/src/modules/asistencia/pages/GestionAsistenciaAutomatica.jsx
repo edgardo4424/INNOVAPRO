@@ -64,6 +64,7 @@ const GestionAsistenciaAutomatica = () => {
       trabajadores.forEach((trabajador) => {
          if (trabajador.asistencia) {
             switch (trabajador.asistencia.estado_asistencia) {
+               case "teletrabajo":
                case "presente":
                   stats.presentes++;
                   break;
@@ -162,7 +163,7 @@ const GestionAsistenciaAutomatica = () => {
               trabajadoresFiltrados.map((trabajador) => (
                 <JornadaCard
                   key={trabajador.id}
-                  trabajador={trabajador}
+                  t={trabajador}
                   obtenerTrabajadores={obtenerTrabajadores}
                   fecha={fechaSeleccionada}
                   asistenciasSincronizacion={asistenciasSincronizacion}

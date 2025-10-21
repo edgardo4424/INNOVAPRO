@@ -9,11 +9,13 @@ function esSabado(fechaStr) {
 }
 
 export const useAsistencia = (
-  trabajador,
+  t,
   obtenerTrabajadores,
   date,
   asistenciasSincronizacion = [],
 ) => {
+
+  const [trabajador,setTrabajador]=useState(t)
   const [asistencia, setAsistencia] = useState({
     trabajador_id: trabajador.id,
     estado_asistencia: "",
@@ -33,6 +35,7 @@ export const useAsistencia = (
     ],
     gastos: [],
   });
+  const [isLoading,setIsLoading]=useState(false)
   useEffect(() => {
     if (asistenciasSincronizacion && asistenciasSincronizacion.length > 0) {
       const asistencia_marcate = asistenciasSincronizacion.find(
@@ -112,7 +115,7 @@ export const useAsistencia = (
   }, [trabajador.asistencia]);
 
   const limpiarAsistenciaPorEstado = (estado) => {
-    const esValido = ["presente", "tardanza","permiso"].includes(estado);
+    const esValido = ["presente", "tardanza","permiso","teletrabajo"].includes(estado);
     setInputsDeshabilitados(!esValido);
 
     setAsistencia((prev) => ({
@@ -162,13 +165,18 @@ export const useAsistencia = (
   };
 
   const eliminarSegundaJornada = () => {
-    actualizarAsistencia("jornadas", [asistencia.jornadas[0]]);
-  };
+  // Filtra todas las jornadas excepto la que tenga turno "tarde"
+  const jornadasFiltradas = asistencia.jornadas.filter(j => j.turno !== "tarde");
+  actualizarAsistencia("jornadas", jornadasFiltradas);
+};
 
   const guardarAsistencia = async () => {
     try {
-      await asistenciaService.crearAsistenia(asistencia);
-      obtenerTrabajadores();
+      setIsLoading(true)
+      const response=await asistenciaService.crearAsistenia(asistencia);
+      const payload={...t}
+      payload.asistencia=response.data.asistencia;
+      setTrabajador(payload)
       toast.success("Asistencia guardada corrrectamente");
     } catch (error) {
       if (error?.response?.data?.error) {
@@ -177,14 +185,17 @@ export const useAsistencia = (
       }
       toast.error("Hubo un error descocnocido");
     } finally {
-      // await obtenerTrabajadores();
+      setIsLoading(false)
     }
   };
 
   const actualizarEstadoAsistencia = async () => {
     try {
-      await asistenciaService.actualizarAsistencia(asistencia);
-      obtenerTrabajadores();
+      setIsLoading(true)
+      const response=await asistenciaService.actualizarAsistencia(asistencia);
+      const payload={...t}
+      payload.asistencia=response.data.asistencia;
+      setTrabajador(payload)
       toast.success("Asistencia Actualizada corrrectamente");
     } catch (error) {
       if (error?.response?.data?.error) {
@@ -192,12 +203,14 @@ export const useAsistencia = (
         return;
       }
       toast.error("Hubo un error ala actualizar la asistencia");
+    } finally{
+      setIsLoading(false)
     }
   };
 
   useEffect(() => {
     const estado = asistencia.estado_asistencia;
-    const esEstadoValido = ["presente", "tardanza","permiso"].includes(estado);
+    const esEstadoValido = ["presente", "tardanza","permiso","teletrabajo"].includes(estado);
 
     setInputsDeshabilitados(!esEstadoValido);
   }, [asistencia.estado_asistencia]);
@@ -211,5 +224,7 @@ export const useAsistencia = (
     eliminarSegundaJornada,
     inputsDeshabilitados,
     actualizarEstadoAsistencia,
+    trabajador,
+    isLoading
   };
 };
