@@ -17,6 +17,37 @@ class SequelizePasePedidoRepository {
           model: db.stock_pedidos_piezas,
           as: "stock_pedido_pieza",
         },
+        {
+            model:db.contratos,
+            as:"contrato",
+            include:[
+              {
+                model:db.cotizaciones,
+                as:"cotizacion",
+                include:[
+                  {
+                  model:db.despieces,
+                  include:[
+                    {
+                      model:db.despieces_detalle,
+                    }
+                  ]
+                  },
+                  {
+                    model:db.obras,
+                
+                  },
+                  {
+                    model:db.clientes
+                  },
+                  {
+                    model:db.empresas_proveedoras
+                  }
+                ]
+              }
+            ]
+        }
+
       ],
     });
     return pases_pedidos;

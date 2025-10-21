@@ -40,10 +40,6 @@ const Contrato = sequelize.define(
          allowNull: false,
          defaultValue: false,
       },
-      notas_legales: {
-         type: DataTypes.STRING,
-         allowNull: true,
-      },
       renovaciones: {
          type: DataTypes.TEXT,
          allowNull: true,
