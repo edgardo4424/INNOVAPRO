@@ -12,13 +12,13 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import useProducto from "../hooks/useProducto";
 import filialesService from "../service/FilialesService";
-import determinarEstadoFactura from "../utils/manejadorCodigosSunat";
 import { obtenerFechaActual } from "../utils/fechaEmisionActual";
 
 const GuiaTransporteContext = createContext();
 
 export function GuiaTransporteProvider({ children }) {
   const [guiaTransporte, setGuiaTransporte] = useState(guiaInical); // ?Datos de guia que abarcan los 3 casos
+  const [pedidoId, setPedidoId] = useState(null);
 
   const [pesoTotalCalculado, setPesoTotalCalculado] = useState(0);
 
@@ -246,15 +246,10 @@ export function GuiaTransporteProvider({ children }) {
             ...guiaDatosPublico,
           };
           break;
-        case "traslado-misma-empresa":
-          guiaAEmitir = {
-            ...guiaAEmitir,
-            ...guiaDatosInternos,
-          };
-          break;
         default:
           break;
       }
+      if (pedidoId !== null) guiaAEmitir.pedido_id = pedidoId;
       const { status, success, message, data } =
         await factilizaService.enviarGuia({
           ...guiaAEmitir,
@@ -267,6 +262,7 @@ export function GuiaTransporteProvider({ children }) {
         data,
       };
       if (status == 200 || status == 201 || status == 400) {
+        console.log("limpiar entra");
         Limpiar();
       }
     } catch (error) {
@@ -295,6 +291,7 @@ export function GuiaTransporteProvider({ children }) {
   };
 
   const Limpiar = () => {
+
     setGuiaTransporte({
       ...guiaInical,
       fecha_Emision: obtenerFechaActual(),
@@ -340,6 +337,8 @@ export function GuiaTransporteProvider({ children }) {
         EmitirGuia,
         piezas,
         pesoTotalCalculado,
+        pedidoId,
+        setPedidoId,
       }}
     >
       {children}

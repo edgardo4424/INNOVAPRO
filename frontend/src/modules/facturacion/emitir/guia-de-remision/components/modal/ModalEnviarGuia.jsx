@@ -8,13 +8,13 @@ import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteC
 import {
   AlertCircle,
   CheckCircle,
-  CircleAlert,
   ClipboardPlus,
   LoaderCircle,
   TriangleAlert,
-  X,
+  X
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const ModalEnviarGuia = ({
   open,
@@ -23,6 +23,8 @@ const ModalEnviarGuia = ({
   guiaTransporteValida,
 }) => {
   const { EmitirGuia, validarGuia } = useGuiaTransporte();
+  const navigate = useNavigate(); // ✅ aquí arriba
+  const location = useLocation();
 
   // * Estados unificados para el modal
   const [isLoading, setIsLoading] = useState(false);
@@ -73,7 +75,9 @@ const ModalEnviarGuia = ({
       setDisplayMessage(err.message || "Error inesperado al emitir la guía.");
       setDetailedMessage("Por favor, inténtelo de nuevo más tarde.");
     } finally {
-      setIsLoading(false); // Detener el loading siempre
+      // ✅ Limpieza correcta del state del navigate
+      navigate(location.pathname, { replace: true, state: {} });
+      setIsLoading(false);
     }
   };
 

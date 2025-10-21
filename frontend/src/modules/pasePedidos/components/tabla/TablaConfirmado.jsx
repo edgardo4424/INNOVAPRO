@@ -23,16 +23,59 @@ const bgEstado = (estado) => {
 };
 
 const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
-  const plasmarBorrador = async (doc) => {
-    const { success, message, data } =
-      await facturaService.obtenerBorradorConId(doc.id);
+  const plasmarPedido = async (doc) => {
+    const guiaIncial = {
+      tipo_Doc: "09",
+      serie: "T005",
+      correlativo: "",
+      observacion: doc.observacion,
+      // ?Datos del comprobante de referencia
+      obra: doc.obra,
+      nro_contrato: doc.nro_contrato,
+      estado_Documento: "0",
+      empresa_Ruc: doc.empresa_Ruc,
 
-    if (!success) {
-      toast.error("No se pudo plasmar el borrador");
-      return;
-    }
+      cliente_Tipo_Doc: doc.cliente_Tipo_Doc,
+      cliente_Num_Doc: doc.cliente_Num_Doc,
+      cliente_Razon_Social: "",
+      cliente_Direccion: "",
+
+      guia_Envio_Peso_Total: Number(doc.guia_Envio_Peso_Total),
+      guia_Envio_Und_Peso_Total: doc.guia_Envio_Und_Peso_Total,
+
+      guia_Envio_Partida_Ubigeo: "",
+      guia_Envio_Partida_Direccion: "",
+      guia_Envio_Llegada_Ubigeo: "",
+      guia_Envio_Llegada_Direccion: "",
+
+      guia_Envio_Vehiculo_Placa: "",
+      nroCirculacion: "",
+
+      detalle: doc.detalle,
+
+      chofer: [],
+    };
+
+    const valoresTraslado = {
+      guia_Envio_Cod_Traslado: doc.guia_Envio_Cod_Traslado,
+    };
+
+    const tipoGuia =
+      doc.tranporte === "CLIENTE" ? "transporte-publico" : "transporte-privado";
+
+    const body = {
+      guia: guiaIncial,
+      codigo_traslado: valoresTraslado,
+      tipoGuia,
+    };
+
+    const documento = [body, { id_pedido: doc.id_pedido }];
+
+    console.log(guiaIncial);
+
+    navigate("/facturacion/emitir/guia", { state: documento });
   };
 
   return (
@@ -99,11 +142,12 @@ const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
                     <Tooltip side="bottom" align="center" className="mr-2">
                       <TooltipTrigger asChild>
                         <button
-                        onClick={() => {
-                          setOpen(true);
-                          setPedidoView(pedido);
-                        }}
-                        className="rounded p-1 transition-colors hover:bg-blue-100">
+                          onClick={() => {
+                            setOpen(true);
+                            setPedidoView(pedido);
+                          }}
+                          className="rounded p-1 transition-colors hover:bg-blue-100"
+                        >
                           <EyeIcon className="h-5 w-5 cursor-pointer text-blue-600 hover:text-blue-800" />
                         </button>
                       </TooltipTrigger>
@@ -114,7 +158,12 @@ const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
 
                     <Tooltip side="bottom" align="center" className="mr-2">
                       <TooltipTrigger asChild>
-                        <button className="rounded p-1 transition-colors hover:bg-yellow-100">
+                        <button
+                          onClick={() => {
+                            plasmarPedido(pedido);
+                          }}
+                          className="rounded p-1 transition-colors hover:bg-yellow-100"
+                        >
                           <FileInput className="h-5 w-5 cursor-pointer text-yellow-600 hover:text-yellow-700" />
                         </button>
                       </TooltipTrigger>

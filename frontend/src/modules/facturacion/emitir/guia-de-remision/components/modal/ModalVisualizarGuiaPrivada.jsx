@@ -73,25 +73,25 @@ export default function ModalVisualizarGuiaPrivada() {
                   <div className="grid grid-cols-1 items-start gap-6 px-6 py-6 md:grid-cols-4">
                     <div className="col-span-2">
                       <h1 className="text-lg font-bold text-blue-700 md:text-3xl">
-                        {filialActual.razon_social}
+                        {filialActual?.razon_social}
                       </h1>
-                      <p className="text-xs md:text-sm">{filialActual.ruc}</p>
+                      <p className="text-xs md:text-sm">{filialActual?.ruc}</p>
                       <p className="text-xs md:text-sm">
-                        DIRECCIÓN: {filialActual.direccion}
+                        DIRECCIÓN: {filialActual?.direccion}
                       </p>{" "}
                       {/* Placeholder */}
                     </div>
                     <div className="col-span-2 flex justify-end space-y-2 md:space-y-0 md:text-center">
                       <div>
                         <p className="text-sm font-bold md:text-lg">
-                          {getTipoDocGuiaDescription(guiaTransporte.tipo_Doc)}
+                          {getTipoDocGuiaDescription(guiaTransporte?.tipo_Doc)}
                         </p>
                         <p className="text-sm font-extrabold tracking-wide text-gray-700 md:text-2xl">
-                          {guiaTransporte.serie}-{guiaTransporte.correlativo}
+                          {guiaTransporte?.serie}-{guiaTransporte?.correlativo}
                         </p>
                         <p className="text-xs md:text-sm">
                           Fecha de Emisión:{" "}
-                          {formatDateTime(guiaTransporte.fecha_Emision)}
+                          {formatDateTime(guiaTransporte?.fecha_Emision)}
                         </p>
                       </div>
                     </div>
@@ -108,7 +108,7 @@ export default function ModalVisualizarGuiaPrivada() {
 
                       <div className="grid grid-cols-1 gap-4 text-sm text-gray-800 md:grid-cols-2">
                         {/* Razón Social y Dirección */}
-                        <div className="grid grid-cols-1 gap-y-2 gap-x-2 md:col-span-1 md:grid-cols-[auto_1fr]">
+                        <div className="grid grid-cols-1 gap-x-2 gap-y-2 md:col-span-1 md:grid-cols-[auto_1fr]">
                           <span className="text-xs font-semibold text-gray-700 md:text-sm">
                             Razón Social/Nombre:
                           </span>
@@ -183,7 +183,7 @@ export default function ModalVisualizarGuiaPrivada() {
                               <span className="text-xs md:text-sm">
                                 {" "}
                                 {getModalidadTrasladoDescription(
-                                  guiaDatosPrivado.guia_Envio_Mod_Traslado,
+                                  guiaDatosPrivado?.guia_Envio_Mod_Traslado,
                                 )}
                               </span>
 
@@ -191,7 +191,7 @@ export default function ModalVisualizarGuiaPrivada() {
                                 Placa del Vehiculo:
                               </span>
                               <span className="text-xs font-medium md:text-sm">
-                                {guiaTransporte.guia_Envio_Vehiculo_Placa ||
+                                {guiaTransporte?.guia_Envio_Vehiculo_Placa ||
                                   "N/A"}
                               </span>
 
@@ -200,7 +200,7 @@ export default function ModalVisualizarGuiaPrivada() {
                               </span>
                               <span className="text-xs font-medium md:text-sm">
                                 {getMotivoTrasladoDescription(
-                                  guiaDatosPrivado.guia_Envio_Cod_Traslado,
+                                  guiaDatosPrivado?.guia_Envio_Cod_Traslado,
                                 )}
                               </span>
                             </>
@@ -212,14 +212,14 @@ export default function ModalVisualizarGuiaPrivada() {
                               </span>
                               <span className="text-xs font-medium md:text-sm">
                                 {" "}
-                                {guiaDatosPublico.guia_Envio_Des_Traslado}
+                                {guiaDatosPublico?.guia_Envio_Des_Traslado}
                               </span>
 
                               <span className="text-xs font-semibold text-gray-700 md:text-sm">
                                 Modalidad de Traslado:
                               </span>
                               <span className="text-xs font-medium md:text-sm">
-                                {guiaDatosPublico.guia_Envio_Mod_Traslado ||
+                                {guiaDatosPublico?.guia_Envio_Mod_Traslado ||
                                   "N/A"}
                               </span>
 
@@ -228,7 +228,7 @@ export default function ModalVisualizarGuiaPrivada() {
                               </span>
                               <span className="text-xs font-medium md:text-sm">
                                 {getMotivoTrasladoDescription(
-                                  guiaDatosPublico.guia_Envio_Cod_Traslado,
+                                  guiaDatosPublico?.guia_Envio_Cod_Traslado,
                                 )}
                               </span>
                             </>
@@ -241,7 +241,7 @@ export default function ModalVisualizarGuiaPrivada() {
                               <span className="text-xs font-medium md:text-sm">
                                 {" "}
                                 {getModalidadTrasladoDescription(
-                                  guiaDatosInternos.guia_Envio_Des_Traslado,
+                                  guiaDatosInternos?.guia_Envio_Des_Traslado,
                                 )}
                               </span>
 
@@ -249,7 +249,7 @@ export default function ModalVisualizarGuiaPrivada() {
                                 Modalidad de Traslado:
                               </span>
                               <span className="text-xs md:text-sm">
-                                {guiaDatosInternos.guia_Envio_Mod_Traslado ||
+                                {guiaDatosInternos?.guia_Envio_Mod_Traslado ||
                                   "N/A"}
                               </span>
 
@@ -258,7 +258,7 @@ export default function ModalVisualizarGuiaPrivada() {
                               </span>
                               <span className="text-xs md:text-sm">
                                 {getMotivoTrasladoDescription(
-                                  guiaDatosInternos.guia_Envio_Cod_Traslado,
+                                  guiaDatosInternos?.guia_Envio_Cod_Traslado,
                                 )}
                               </span>
                             </>
@@ -271,15 +271,15 @@ export default function ModalVisualizarGuiaPrivada() {
                           </span>
                           <span className="text-xs font-medium md:text-sm">
                             {formatDateTime(
-                              guiaTransporte.guia_Envio_Fec_Traslado,
+                              guiaTransporte?.guia_Envio_Fec_Traslado,
                             )}
                           </span>
                           <span className="text-xs font-semibold text-gray-700 md:text-sm">
                             Peso Total Bruto:
                           </span>
                           <span className="text-xs font-medium md:text-sm">
-                            {guiaTransporte.guia_Envio_Peso_Total || "0"}{" "}
-                            {guiaTransporte.guia_Envio_Und_Peso_Total || "N/A"}
+                            {guiaTransporte?.guia_Envio_Peso_Total || "0"}{" "}
+                            {guiaTransporte?.guia_Envio_Und_Peso_Total || "N/A"}
                           </span>
                           <span className="text-xs font-semibold text-gray-700 md:text-sm">
                             Placa:
@@ -312,13 +312,14 @@ export default function ModalVisualizarGuiaPrivada() {
                             Ubigeo:
                           </span>
                           <span className="text-xs font-medium md:text-sm">
-                            {guiaTransporte.guia_Envio_Partida_Ubigeo || "—"}
+                            {guiaTransporte?.guia_Envio_Partida_Ubigeo || "—"}
                           </span>
                           <span className="text-xs font-semibold text-gray-700 md:text-sm">
                             Dirección:
                           </span>
                           <span className="text-xs font-medium md:text-sm">
-                            {guiaTransporte.guia_Envio_Partida_Direccion || "—"}
+                            {guiaTransporte?.guia_Envio_Partida_Direccion ||
+                              "—"}
                           </span>
                         </div>
                       </div>
@@ -335,13 +336,14 @@ export default function ModalVisualizarGuiaPrivada() {
                             Ubigeo:
                           </span>
                           <span className="text-xs font-medium md:text-sm">
-                            {guiaTransporte.guia_Envio_Llegada_Ubigeo || "—"}
+                            {guiaTransporte?.guia_Envio_Llegada_Ubigeo || "—"}
                           </span>
                           <span className="text-xs font-semibold text-gray-700 md:text-sm">
                             Dirección:
                           </span>
                           <span className="text-xs font-medium md:text-sm">
-                            {guiaTransporte.guia_Envio_Llegada_Direccion || "—"}
+                            {guiaTransporte?.guia_Envio_Llegada_Direccion ||
+                              "—"}
                           </span>
                         </div>
                       </div>
@@ -356,7 +358,7 @@ export default function ModalVisualizarGuiaPrivada() {
                       <h3 className="mb-3 text-sm font-bold text-gray-600">
                         DATOS DEL TRANSPORTISTA:
                       </h3>
-                      {guiaDatosPublico.transportista && (
+                      {guiaDatosPublico?.transportista && (
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                           <div className="grid grid-cols-1 gap-2 text-sm md:grid-cols-[auto_1fr]">
                             <span className="text-xs font-semibold text-gray-700 md:text-sm">
@@ -364,14 +366,14 @@ export default function ModalVisualizarGuiaPrivada() {
                             </span>
                             <span className="text-xs font-medium md:text-sm">
                               {getTipoDocCliente(
-                                guiaDatosPublico.transportista.tipo_Doc,
+                                guiaDatosPublico?.transportista.tipo_Doc,
                               )}
                             </span>
                             <span className="text-xs font-semibold text-gray-700 md:text-sm">
                               Nro. Doc.:
                             </span>
                             <span className="text-xs font-medium md:text-sm">
-                              {guiaDatosPublico.transportista.nro_Doc || "N/A"}
+                              {guiaDatosPublico?.transportista.nro_Doc || "N/A"}
                             </span>
                           </div>
                           <div className="grid grid-cols-1 gap-2 text-sm md:grid-cols-[auto_1fr]">
@@ -379,14 +381,14 @@ export default function ModalVisualizarGuiaPrivada() {
                               Razón Social:
                             </span>
                             <span className="text-xs font-medium md:text-sm">
-                              {guiaDatosPublico.transportista.razon_Social ||
+                              {guiaDatosPublico?.transportista.razon_Social ||
                                 "N/A"}
                             </span>
                             <span className="text-xs font-semibold text-gray-700 md:text-sm">
                               Nro. MTC:
                             </span>
                             <span className="text-xs font-medium md:text-sm">
-                              {guiaDatosPublico.transportista.nro_mtc || "N/A"}
+                              {guiaDatosPublico?.transportista.nro_mtc || "N/A"}
                             </span>
                           </div>
                         </div>
@@ -397,7 +399,7 @@ export default function ModalVisualizarGuiaPrivada() {
 
                 {/* Datos del Conductor (Chofer) */}
                 {Array.isArray(guiaTransporte?.chofer) &&
-                  guiaTransporte.chofer.length > 0 && (
+                  guiaTransporte?.chofer.length > 0 && (
                     <div className="rounded-xl border border-gray-200 bg-white">
                       <div className="p-4 md:p-6">
                         <h3 className="mb-3 text-sm font-bold text-gray-600">
@@ -405,7 +407,7 @@ export default function ModalVisualizarGuiaPrivada() {
                         </h3>
 
                         {(() => {
-                          const chofer = guiaTransporte.chofer[0];
+                          const chofer = guiaTransporte?.chofer[0];
 
                           return (
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -470,24 +472,24 @@ export default function ModalVisualizarGuiaPrivada() {
                         </tr>
                       </thead>
                       <tbody>
-                        {guiaTransporte.detalle &&
-                        guiaTransporte.detalle.length > 0 ? (
-                          guiaTransporte.detalle.map((item, index) => (
+                        {guiaTransporte?.detalle &&
+                        guiaTransporte?.detalle.length > 0 ? (
+                          guiaTransporte?.detalle.map((item, index) => (
                             <tr
                               key={index}
                               className="border-b last:border-b-0 hover:bg-gray-50"
                             >
                               <td className="px-4 py-2 text-xs md:text-sm">
-                                {item.cod_Producto || "N/A"}
+                                {item?.cod_Producto || "N/A"}
                               </td>
                               <td className="px-4 py-2 text-xs md:text-sm">
-                                {item.descripcion || "N/A"}
+                                {item?.descripcion || "N/A"}
                               </td>
                               <td className="px-4 py-2 text-xs md:text-sm">
-                                {item.unidad || "N/A"}
+                                {item?.unidad || "N/A"}
                               </td>
                               <td className="px-4 py-2 text-xs md:text-sm">
-                                {item.cantidad || "0"}
+                                {item?.cantidad || "0"}
                               </td>
                             </tr>
                           ))
@@ -512,7 +514,7 @@ export default function ModalVisualizarGuiaPrivada() {
                     OBSERVACION:
                   </h3>
                   <div className="rounded-md border border-gray-200 bg-white p-4 text-sm text-gray-800">
-                    {guiaTransporte.observacion ||
+                    {guiaTransporte?.observacion ||
                       "No hay observacion registradas."}
                   </div>
                 </div>

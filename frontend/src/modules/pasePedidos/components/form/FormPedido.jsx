@@ -165,7 +165,7 @@ const FormPedido = ({ pedidoView: pedido }) => {
             Nota Adicional / Observaciones:
           </p>
           <p className="mt-1 text-gray-600 italic">
-            {pedido?.Observacion || "[ESPACIO PARA NOTAS DEL EJECUTIVO]"}
+            {pedido?.observacion || "[ESPACIO PARA NOTAS DEL EJECUTIVO]"}
           </p>
         </div>
       </div>

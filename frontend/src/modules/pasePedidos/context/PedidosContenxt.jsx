@@ -8,7 +8,7 @@ const ArrayPedidos = [
   {
     id_pedido: 52,
     filial: "ENCOFRADOS INNOVA S.A.C.",
-    empresa_Ruc: "20562974998",
+    empresa_Ruc: "10749283781",
     nro_Pedido: "PED-00101",
     estado: "Confirmado",
     tipo_Servicio: "Alquiler",
@@ -34,7 +34,7 @@ const ArrayPedidos = [
     obra_Direccion: "Av. Los Olivos 1234",
     nro_contrato: "CON-00101",
     guia_Envio_Peso_Total: "0.45",
-    guia_Envio_Und_Peso_Total: "TEN",
+    guia_Envio_Und_Peso_Total: "TNE",
 
     obra_Nueva: "No",
     f_Pase_Pedido: "25/10/2025",
@@ -45,11 +45,9 @@ const ArrayPedidos = [
     estado_Equipo: "Basico",
     tipo_Plan_Equipo: "Plan INTERMEDIO",
 
-    direccion_Obra: "Av. Los Olivos 1234",
-
     mensaje_Extra: "No se entrega en la obra",
-    Observacion:
-      "lorem ipsum dolor sit amet consectetur adipisicing elit. Quos, quae.",
+    observacion:
+      "ROMEO SANTOS - ¡LA ESPERANZA ES LA ÚNICA SALIDA PARA EL HOMBRE QUE SE ENCUENTRA EN CRISIS! ¡NO TE RINDAS DE ESPERANZA, SINO DEJAR QUE TODO SALDRÁ BIEN! ¡LA ESPERANZA ES LA ÚNICA SALIDA PARA EL HOMBRE QUE SE ENCUENTRA EN CRISIS! ¡NO TE RINDAS DE ESPER",
 
     detalle: [
       {
@@ -429,17 +427,20 @@ const ArrayPedidos = [
     contrato_Contenido: {
       title: "Servicio de Alquier",
       subtitle: "Contrato de Alquiler",
-      descripcion: "<p><b>CP.1</b>: Escaleta de acceso dwjadwabda wkwd wakdh wadh dhawd awdh awkdalwk</p>",
-      list:[
+      descripcion:
+        "<p><b>CP.1</b>: Escaleta de acceso dwjadwabda wkwd wakdh wadh dhawd awdh awkdalwk</p>",
+      list: [
         {
           title: "CP.1",
-          description: "Escaleta de acceso dwjadwabda wkwd wakdh wadh dhawd awdh awkdalwk"
+          description:
+            "Escaleta de acceso dwjadwabda wkwd wakdh wadh dhawd awdh awkdalwk",
         },
         {
           title: "CP.2",
-          description: "Escaleta de acceso dwjadwabda wkwd wakdh wadh dhawd awdh awkdalwk"
-        }
-      ]
+          description:
+            "Escaleta de acceso dwjadwabda wkwd wakdh wadh dhawd awdh awkdalwk",
+        },
+      ],
     },
   },
 ];
