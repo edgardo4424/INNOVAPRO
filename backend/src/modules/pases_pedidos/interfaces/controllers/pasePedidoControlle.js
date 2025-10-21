@@ -10,6 +10,8 @@ const  PasePedidoController={
             const pases_pedidos= await obtenerPasesPedidosConfirmados(pasePedidoRepository);
             res.status(pases_pedidos.codigo).json(pases_pedidos.respuesta)
         } catch (error) {
+            console.log("Error encontrado: ",error);
+            
             res.status(500).json({error:error.message})
         }
         
