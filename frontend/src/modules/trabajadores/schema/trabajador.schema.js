@@ -228,11 +228,11 @@ export const trabajadorSchema = (isEdit = false, isGerente = false) =>
       .nullable()
       .test(
         "cuspp-afp",
-        "El CUSPP debe tener máximo 13 caracteres",
+        "El CUSPP debe tener 12 caracteres",
         function (value) {
           if(value){
-            // Si tiene valor, validar longitud exacta de 13
-            return value.length == 13;
+            // Si tiene valor, validar longitud exacta de 12
+            return value.length == 12;
           }else{
             // Si no tiene valor, no se valida
             return true
