@@ -80,6 +80,30 @@ const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
     navigate("/facturacion/emitir/guia", { state: documento });
   };
 
+  const actPlasmarPedido = (usuario) => {
+    switch (usuario) {
+      case "CEO":
+        return true;
+      case "Jefe de Almacén":
+        return true;
+      case "Auxiliar de oficina":
+        return true;
+      default:
+        return false;
+    }
+  };
+
+  const actValidarPedido = (usuario) => {
+    switch (usuario) {
+      case "CEO":
+        return true;
+      case "Técnico Comercial":
+        return true;
+      default:
+        return false;
+    }
+  };
+
   return (
     <div className="w-full rounded-xl border-1 border-gray-200">
       <table className="min-w-full overflow-hidden rounded-xl bg-white shadow-md">
@@ -158,8 +182,7 @@ const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
                       </TooltipContent>
                     </Tooltip>
 
-                    {
-                      (user.rol === "CEO" && (
+                    {actValidarPedido(user.rol) && (
                         <Tooltip side="bottom" align="center" className="mr-2">
                           <TooltipTrigger asChild>
                             <button
@@ -176,7 +199,7 @@ const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
                             <p>Validar Pedido</p>
                           </TooltipContent>
                         </Tooltip>
-                      ))}
+                      )}
 
                     {/* <Tooltip side="bottom" align="center" className="mr-2">
                       <TooltipTrigger asChild>
@@ -195,26 +218,23 @@ const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
                       </TooltipContent>
                     </Tooltip> */}
 
-                    {user.rol === "Jefe de Almacén" ||
-                      user.rol === "Auxiliar de oficina" ||
-                      user.rol === "Auxiliar de Almacén" ||
-                      (user.rol === "CEO" && (
-                        <Tooltip side="bottom" align="center" className="mr-2">
-                          <TooltipTrigger asChild>
-                            <button
-                              onClick={() => {
-                                plasmarPedido(pedido);
-                              }}
-                              className="rounded p-1 transition-colors hover:bg-yellow-100"
-                            >
-                              <FileInput className="h-5 w-5 cursor-pointer text-yellow-600 hover:text-yellow-700" />
-                            </button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Emitir Pedido</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      ))}
+                    {actPlasmarPedido(user.rol) && (
+                      <Tooltip side="bottom" align="center" className="mr-2">
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => {
+                              plasmarPedido(pedido);
+                            }}
+                            className="rounded p-1 transition-colors hover:bg-yellow-100"
+                          >
+                            <FileInput className="h-5 w-5 cursor-pointer text-yellow-600 hover:text-yellow-700" />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Emitir Pedido</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
                   </div>
                 </td>
               </tr>

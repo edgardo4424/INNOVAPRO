@@ -397,3 +397,12 @@
 }
 
 }
+
+.scroll-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
+.scroll-hide {
+  -ms-overflow-style: none; /* IE y Edge antiguos */
+  scrollbar-width: none; /* Firefox */
+}

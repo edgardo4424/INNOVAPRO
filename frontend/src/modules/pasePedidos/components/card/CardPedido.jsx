@@ -8,29 +8,33 @@ const formatearFecha = (date) =>
         minute: "2-digit",
       }).format(date)
     : "N/A";
+
+// NOTA: Se mantienen los colores de estado brillantes para que contrasten bien en dark mode,
+// pero si deseas tonos más apagados, puedes cambiar los números (ej: 500/600 a 700/800).
 const getEstadoClasses = (estado) => {
   switch (estado) {
     case "Confirmado":
-      return "bg-yellow-400/90 !text-white border-yellow-300";
+      // Amarillo
+      return "bg-yellow-500/90 !text-white border-yellow-400";
     case "Emitido":
-      return "bg-blue-400/90 !text-white border-blue-300";
+      // Azul
+      return "bg-blue-500/90 !text-white border-blue-400";
     case "Despachado":
-      return "bg-green-400/90 !text-white border-green-300";
+      // Verde
+      return "bg-green-500/90 !text-white border-green-400";
     default:
-      return "bg-gray-400/90 !text-white border-gray-300";
+      // Gris
+      return "bg-slate-500/90 !text-white border-slate-400";
   }
 };
 
 const CardPedido = ({ pedido }) => {
-  // Usamos la función de clases de estado
   const estadoClasses = getEstadoClasses(pedido.estado);
 
   return (
-    // Diseño de la tarjeta: Sombra, borde más sutil, fondo blanco
-    <div className="flex cursor-pointer flex-col rounded-xl border border-gray-200 bg-white px-4 shadow-md transition duration-300 ease-in-out">
-      {/* Encabezado y Etiqueta de Estado */}
-      <div className=" flex items-center justify-between">
-        <h3 className="text-md font-extrabold tracking-tight text-gray-900">
+    <div className="flex cursor-pointer flex-col rounded-xl border border-slate-700 bg-slate-900 px-4 shadow-xl transition duration-300 ease-in-out">
+      <div className=" flex items-center justify-between py-2">
+        <h3 className="text-md font-extrabold tracking-tight !text-white">
           {pedido.razon_social}
         </h3>
         <h3
@@ -40,44 +44,39 @@ const CardPedido = ({ pedido }) => {
         </h3>
       </div>
 
-      {/* Contenido Detallado - Usando Grid para organización */}
       <div className="grid grid-cols-2 gap-x-4 text-sm">
-        {/* Columna 1: Cliente y RUC */}
-        <div className="col-span-[auto_1fr]">
-          <p className="font-bold text-gray-700">Cliente:</p>
-          <span className="line-clamp-1 text-gray-600">
+        <div className="col-span-[auto_1fr] pb-1">
+          <p className="font-bold text-slate-300">Cliente:</p>
+          <span className="line-clamp-1 text-slate-200">
             {pedido.cliente_razon_social}
           </span>
-          <span className="block text-xs text-gray-500">
+          <span className="block text-xs text-slate-400">
             {pedido.cliente_ruc}
           </span>
         </div>
 
-        {/* Columna 2: Guía de Remisión (Solo si existe) */}
-        <div className="col-span-1">
-          <p className="font-bold text-gray-700">Guía Nro:</p>
+        <div className="col-span-1 pb-1">
+          <p className="font-bold text-slate-300">Guía Nro:</p>
           <span
-            className={`font-mono text-xs font-semibold ${pedido.guia_nro ? "text-blue-600" : "text-gray-400 italic"}`}
+            className={`font-mono text-xs font-semibold ${pedido.guia_nro ? "text-blue-400" : "text-slate-500 italic"}`}
           >
             {pedido.guia_nro || "PENDIENTE"}
           </span>
         </div>
 
-        {/* Separador visual */}
-        <hr className="col-span-2 my-1 border-gray-400" />
+        <hr className="col-span-2 my-1 border-slate-700" />
 
-        {/* Columna 3: Fechas */}
         <div className="col-span-2 flex justify-between py-3 pt-1 text-xs">
           <div className="flex gap-x-2">
-            <span className="font-semibold text-gray-700">Confir.</span>
-            <span className="text-gray-500">
+            <span className="font-semibold text-slate-300">Confir.</span>
+            <span className="text-slate-400">
               {formatearFecha(pedido.fecha_confirmacion)}
             </span>
           </div>
           {pedido.fecha_despacho && (
             <div className="flex gap-x-2 text-right">
-              <span className="font-semibold text-gray-700">Despacho</span>
-              <span className="text-gray-500">
+              <span className="font-semibold text-slate-300">Despacho</span>
+              <span className="text-slate-400">
                 {formatearFecha(pedido.fecha_despacho)}
               </span>
             </div>
