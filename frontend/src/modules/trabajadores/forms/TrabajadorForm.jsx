@@ -327,6 +327,26 @@ export default function TrabajadorForm() {
       }
     });
   }, [errors]);
+
+  const [listaCargosSunat, setListaCargosSunat] = useState([]);
+
+  const obtenerCargosSunat = async (cargo_innova_id) => {
+      try {
+        const respuesta =
+          await trabajadoresService.getTodosCargosSunat(cargo_innova_id);
+  
+        setListaCargosSunat(respuesta.data);
+        
+      } catch (error) {
+        setListaCargosSunat([]);
+      }
+    };
+  
+    useEffect(() => {
+  
+        obtenerCargosSunat(formData.cargo_id);
+    }, [formData.cargo_id]);
+  
   
   
   return (
@@ -532,7 +552,7 @@ export default function TrabajadorForm() {
                     )}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="cargo_id">Cargo *</Label>
+                    <Label htmlFor="cargo_id">Rol en INNOVA*</Label>
                     <Select
                       value={formData.cargo_id}
                       onValueChange={(value) =>
@@ -578,6 +598,7 @@ export default function TrabajadorForm() {
                 setFormData={setFormData}
                 errors={errors}
                 filiales={filiales}
+                listaCargosSunat={listaCargosSunat}
                 isEditMode={isEditMode}
               />
 
