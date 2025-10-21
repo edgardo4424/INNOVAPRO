@@ -235,6 +235,7 @@ class SequelizeNotasCreditoDebitoRepository {
             const { count, rows } = await NotasCreditoDebito.findAndCountAll({
                 attributes: [
                     "id",
+                    "factura_id",
                     "tipo_Operacion",
                     "tipo_Doc",
                     "serie",
@@ -276,27 +277,27 @@ class SequelizeNotasCreditoDebitoRepository {
             };
         }
     }
-    async obtenerNotaDetallada(correlativo, serie, empresa_ruc, tipo_doc) {
-
+    async obtenerNotaDetallada(correlativo, serie, empresa_ruc, tipo_doc, id) {
+        let whereNota = { correlativo: correlativo, serie: serie, empresa_Ruc: empresa_ruc, tipo_Doc: tipo_doc };
+        if (id) whereNota.id = id
         const nota = await NotasCreditoDebito.findAll({
-            where: {
-                correlativo: correlativo,
-                serie: serie,
-                empresa_ruc: empresa_ruc,
-                tipo_doc: tipo_doc,
-            },
+            where: whereNota,
             include: [
                 { model: LegendNotaCreditoDebito },
                 { model: DetalleNotaCreditoDebito },
             ],
         });
 
+        if (!nota || nota.length === 0) {
+            return [];
+        }
+
         const datosFactura = await Factura.findAll({
             where: {
                 id: nota[0]?.dataValues?.factura_id,
             },
         });
-
+        
         const empresa = await Filial.findOne({
             where: { ruc: empresa_ruc },
             attributes: [

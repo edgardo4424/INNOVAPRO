@@ -53,6 +53,8 @@ const PlacasForm = ({ closeModal }) => {
         chofer: [
           {
             ...item.chofere,
+            tipo_Doc: item.chofere?.tipo_doc,
+            nro_Doc: item.chofere?.nro_doc,
             tipo: "Principal",
           },
         ],
@@ -63,7 +65,8 @@ const PlacasForm = ({ closeModal }) => {
         ...prevGuiaPublico,
         transportista: {
           ...item.transportista,
-          tipo_doc: "6",
+          nro_Doc: item.transportista?.nro_doc,
+          tipo_Doc: "6",
         },
       }));
     }

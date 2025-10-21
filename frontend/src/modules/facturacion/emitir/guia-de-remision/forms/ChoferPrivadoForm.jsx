@@ -51,7 +51,7 @@ const ChoferPrivadoForm = () => {
 
     const chofer = guiaTransporte.chofer[index];
 
-    if (!chofer.nro_doc) {
+    if (!chofer.nro_Doc) {
       toast.error("Por favor, ingresa el número de documento del chofer.");
       return;
     }
@@ -62,15 +62,15 @@ const ChoferPrivadoForm = () => {
         status: status_inf,
         success: suscces_inf,
       } = await factilizaService.metodoOpcional(
-        chofer.tipo_doc,
-        chofer.nro_doc,
+        chofer.tipo_Doc,
+        chofer.nro_Doc,
       );
       let data_lic = {};
       let status_lic = 0;
       let suscces_lic = false;
       try {
         const res = await factilizaService.obtenerLicenciaPorDni(
-          chofer.nro_doc,
+          chofer.nro_Doc,
         );
         data_lic = res.data;
         status_lic = res.status;
@@ -162,16 +162,16 @@ const ChoferPrivadoForm = () => {
             {/* Campo Tipo de Documento */}
             <div>
               <Label
-                htmlFor={`chofer-${index}-tipo_doc`}
+                htmlFor={`chofer-${index}-tipo_Doc`}
                 className="mb-1 block text-left text-sm font-semibold text-gray-700"
               >
                 Tipo Documento
               </Label>
               <Select
-                name="tipo_doc"
-                value={chofer.tipo_doc}
+                name="tipo_Doc"
+                value={chofer.tipo_Doc}
                 onValueChange={(value) =>
-                  handleChange(value, "tipo_doc", index)
+                  handleChange(value, "tipo_Doc", index)
                 }
               >
                 <SelectTrigger className="w-full rounded-md border border-gray-300 shadow-sm">
@@ -191,7 +191,7 @@ const ChoferPrivadoForm = () => {
             <div>
               <div className="flex items-center gap-x-2">
                 <Label
-                  htmlFor={`chofer-${index}-nro_doc`}
+                  htmlFor={`chofer-${index}-nro_Doc`}
                   className="mb-1 block text-left text-sm font-semibold text-gray-700"
                 >
                   Número Documento
@@ -201,9 +201,9 @@ const ChoferPrivadoForm = () => {
               <div className="flex gap-2">
                 <Input
                   type="text" // Cambiado a text para flexibilidad, puedes restringir con 'number' si solo son dígitos
-                  id={`chofer-${index}-nro_doc`}
-                  name="nro_doc"
-                  value={chofer.nro_doc}
+                  id={`chofer-${index}-nro_Doc`}
+                  name="nro_Doc"
+                  value={chofer.nro_Doc}
                   onChange={(e) =>
                     handleChange(e.target.value, e.target.name, index)
                   }

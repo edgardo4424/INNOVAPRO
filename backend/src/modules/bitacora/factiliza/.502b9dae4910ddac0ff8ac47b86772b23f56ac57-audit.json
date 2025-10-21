@@ -1,0 +1,30 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 30
+    },
+    "auditLog": "C:\\Users\\Luis Saavedra\\Desktop\\TRABAJO\\INNOVAPRO\\backend\\src\\modules\\bitacora\\factiliza\\.502b9dae4910ddac0ff8ac47b86772b23f56ac57-audit.json",
+    "files": [
+        {
+            "date": 1760734574162,
+            "name": "C:\\Users\\Luis Saavedra\\Desktop\\TRABAJO\\INNOVAPRO\\backend\\src\\modules\\bitacora\\factiliza\\factiliza-2025-10-17.log",
+            "hash": "a72902f90e3b2e6af86d974766fcf46a72c004d1eb8c165482656541b39c857c"
+        },
+        {
+            "date": 1760766010479,
+            "name": "C:\\Users\\Luis Saavedra\\Desktop\\TRABAJO\\INNOVAPRO\\backend\\src\\modules\\bitacora\\factiliza\\factiliza-2025-10-18.log",
+            "hash": "7afc3d5f686faf5cbea7cc17edfbcdfb737d43b9bf0d948ad23637610789db73"
+        },
+        {
+            "date": 1761000507346,
+            "name": "C:\\Users\\Luis Saavedra\\Desktop\\TRABAJO\\INNOVAPRO\\backend\\src\\modules\\bitacora\\factiliza\\factiliza-2025-10-20.log",
+            "hash": "4ce5664bd477ee1f52d75fd1ae85b52bc1d9d30344601336765addabef1a20eb"
+        },
+        {
+            "date": 1761053157836,
+            "name": "C:\\Users\\Luis Saavedra\\Desktop\\TRABAJO\\INNOVAPRO\\backend\\src\\modules\\bitacora\\factiliza\\factiliza-2025-10-21.log",
+            "hash": "9bc471d990fc32c78b14f3424657a36328526651637c254bb78b9b4de1501f74"
+        }
+    ],
+    "hashType": "sha256"
+}

@@ -152,6 +152,7 @@ const TablaDocumentos = ({
                             setIdDocumento(factura.id);
                             setModalOpen(true);
                             setDocumentoAVisualizar({
+                              id: factura.id,
                               correlativo: String(factura.correlativo),
                               serie: factura.serie,
                               empresa_ruc: factura.empresa_ruc,
@@ -176,6 +177,7 @@ const TablaDocumentos = ({
                             setIdDocumento(factura.id);
                             setModalDescargar(true);
                             setDocumentoADescargar({
+                              id: factura.id,
                               serie: factura.serie,
                               correlativo: factura.correlativo,
                               numRuc: factura.empresa_ruc,
@@ -203,6 +205,7 @@ const TablaDocumentos = ({
                             setIdDocumento(factura.id);
                             setModalAnular(true);
                             setDocumentoAAnular({
+                              id: factura.id,
                               empresa_ruc: factura.empresa_ruc,
                               tipo_Doc: factura.tipo_doc,
                               serie: factura.serie,

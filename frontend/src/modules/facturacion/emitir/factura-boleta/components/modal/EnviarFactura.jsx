@@ -57,17 +57,22 @@ const EnviarFactura = ({ open, setOpen, ClosePreviu }) => {
     setDetailedMessage(""); // Limpiar mensajes de error anteriores
 
     try {
-      const result = await emitirFactura();
+      const { success, message, status, data } = await emitirFactura();
 
-      if (result.success) {
+      if ((success && status === 200) || status === 201) {
         // Caso de éxito
         setStatus("success");
-        setDisplayMessage(result.message || "Factura emitida con éxito.");
+        setDisplayMessage(message || "Factura emitida con éxito.");
+      } else if (status === 200 || status === 400) {
+        // Caso de error "detallado" (por ejemplo, desde la API)
+        setStatus("details");
+        setDisplayMessage(message);
+        setDetailedMessage(data.details || ""); // Si hay más detalles, los guardamos aquí
       } else {
-        // Caso de error lógico desde la API (ej. validaciones de SUNAT)
+        // Cualquier otro caso que no sea un éxito directo
         setStatus("error");
-        setDisplayMessage(result.message || "Error al emitir la factura.");
-        setDetailedMessage(result.detailed_message || "");
+        setDisplayMessage(message || "Error al emitir la Factura.");
+        setDetailedMessage(detailedMessage || "");
       }
     } catch (err) {
       // Manejo de errores de red o del sistema
@@ -83,6 +88,9 @@ const EnviarFactura = ({ open, setOpen, ClosePreviu }) => {
 
   const closeModal = () => {
     setOpen(false);
+    setStatus("idle");
+    setDisplayMessage("");
+    setDetailedMessage("");
     ClosePreviu();
   };
 
@@ -124,13 +132,29 @@ const EnviarFactura = ({ open, setOpen, ClosePreviu }) => {
               {displayMessage}
             </h2>
             {detailedMessage && (
-              <p className="mt-2 text-center text-sm text-red-600">
-                {detailedMessage}
-              </p>
+              <p className="text-sm text-red-600">{detailedMessage}</p>
             )}
             <Button
               onClick={closeModal}
               className="mt-4 bg-red-500 hover:bg-red-600"
+            >
+              Cerrar
+            </Button>
+          </>
+        );
+      case "details":
+        return (
+          <>
+            <TriangleAlert className="mb-4 text-orange-500" size={120} />
+            <h2 className="text-center text-lg font-semibold text-orange-700">
+              {displayMessage}
+            </h2>
+            {detailedMessage && (
+              <p className="text-sm text-orange-600">{detailedMessage}</p>
+            )}
+            <Button
+              onClick={closeModal}
+              className="mt-4 bg-orange-500 hover:bg-orange-600"
             >
               Cerrar
             </Button>

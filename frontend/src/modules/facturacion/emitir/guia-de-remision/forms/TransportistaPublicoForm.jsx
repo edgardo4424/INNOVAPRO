@@ -35,14 +35,14 @@ const TransportistaPublicoForm = () => {
     setLoadingBtn(true);
     const transportista = guiaDatosPublico.transportista;
 
-    if (transportista.nro_doc.length !== 11) {
+    if (transportista.nro_Doc.length !== 11) {
       toast.error("El número de documento del chofer debe tener 11 dígitos.");
       setLoadingBtn(false);
       return;
     }
 
     try {
-      const ruc = String(transportista?.nro_doc || "").trim();
+      const ruc = String(transportista?.nro_Doc || "").trim();
 
       if (!/^\d{11}$/.test(ruc)) {
         // ? RUC inválido: no sigas
@@ -149,7 +149,7 @@ const TransportistaPublicoForm = () => {
         </div> */}
         <div className="col-span-1">
           <Label
-            htmlFor={`chofer-nro_doc`}
+            htmlFor={`transportista-nro_Doc`}
             className="mb-1 block text-left text-sm font-semibold text-gray-700"
           >
             Nro. Documento
@@ -157,9 +157,9 @@ const TransportistaPublicoForm = () => {
           <div className="flex gap-x-1">
             <Input
               type="text"
-              id={`chofer-nro_doc`}
-              name="nro_doc"
-              value={guiaDatosPublico.transportista.nro_doc}
+              id={`transportista-nro_Doc`}
+              name="nro_Doc"
+              value={guiaDatosPublico.transportista.nro_Doc}
               onChange={(e) => handleChange(e.target.value, e.target.name)}
               className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
               maxLength={11}
@@ -176,14 +176,14 @@ const TransportistaPublicoForm = () => {
         </div>
         <div className="col-span-1 md:col-span-2 lg:col-span-2">
           <Label
-            htmlFor={`chofer-nombres`}
+            htmlFor={`transportista-nombres`}
             className="mb-1 block text-left text-sm font-semibold text-gray-700"
           >
             Razón Social
           </Label>
           <Input
             type="text"
-            id={`chofer-nombres`}
+            id={`transportista-razon_Social`}
             name="razon_Social"
             value={guiaDatosPublico.transportista.razon_Social}
             onChange={(e) => handleChange(e.target.value, e.target.name)}
@@ -192,7 +192,7 @@ const TransportistaPublicoForm = () => {
         </div>
         <div>
           <Label
-            htmlFor={`chofer-nro_mtc`}
+            htmlFor={`transportista-nro_mtc`}
             className="mb-1 block text-left text-sm font-semibold text-gray-700"
           >
             {`MTC`}
@@ -207,7 +207,7 @@ const TransportistaPublicoForm = () => {
           </Label>
           <Input
             type="text"
-            id={`chofer-nro_mtc`}
+            id={`transportista-nro_mtc`}
             name="nro_mtc"
             value={guiaDatosPublico.transportista.nro_mtc}
             onChange={(e) => handleChange(e.target.value, e.target.name)}

@@ -12,10 +12,22 @@ const DetalleProducto = () => {
   let subTotalConIgv = factura.total_Impuestos + factura.monto_Oper_Gravadas;
 
   const handleObservacion = (e) => {
-    const { value } = e.target;
+    const input = e.target;
+    const { value } = input;
+
+    const cursorStart = input.selectionStart;
+    const cursorEnd = input.selectionEnd;
+
+    const validatedValue = value.toUpperCase();
+
+    input.value = validatedValue;
+
+    input.selectionStart = cursorStart;
+    input.selectionEnd = cursorEnd;
+
     setFactura((prevFactura) => ({
       ...prevFactura,
-      Observacion: value.toUpperCase(),
+      Observacion: validatedValue,
     }));
   };
 
@@ -24,7 +36,7 @@ const DetalleProducto = () => {
       {/* Sección Izquierda - Observaciones y Detalles Extra */}
       <div className="flex w-full flex-col items-start py-6 md:w-7/12">
         {/* Observaciones */}
-        <div className="mb-6 flex w-full flex-col items-start relative">
+        <div className="relative mb-6 flex w-full flex-col items-start">
           <h2 className="mb-3 flex items-center text-lg font-semibold text-gray-800 md:text-xl">
             <span className="mr-3 h-6 w-1 rounded-full bg-blue-500"></span>
             <span> Observación:</span>
@@ -38,7 +50,7 @@ const DetalleProducto = () => {
             value={factura.Observacion}
             maxLength="250"
           ></textarea>
-          <p className="mt-2 text-right text-sm text-gray-500 absolute bottom-2 right-4">
+          <p className="absolute right-4 bottom-2 mt-2 text-right text-sm text-gray-500">
             {factura.Observacion.length}/250
           </p>
         </div>

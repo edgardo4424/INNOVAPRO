@@ -1,21 +1,14 @@
 module.exports = async (body, guiaRemisionRepository) => {
 
-    let transporte = [];
-
-    const { detalle, chofer, transportista,sunat_respuesta, ...guia } = body
-
-    if (transportista && chofer == undefined) {
-        transporte.push(transportista)
-    } else {
-        transporte = chofer;
-    }
+    const { detalle, chofer, transportista, sunat_respuesta, ...guia } = body
 
 
     const { success, message, data: resultadoCreacion } = await guiaRemisionRepository.crear({
         guia,
         detalle,
         sunat_respuesta,
-        chofer: transporte
+        chofer: chofer,
+        transportista: transportista
     });
 
     if (!success) {

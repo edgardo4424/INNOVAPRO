@@ -39,7 +39,7 @@ const ChoferForm = ({ closeModal }) => {
     return (
       item?.nombres?.toLowerCase().includes(texto) ||
       item?.apellidos?.razon_social?.toLowerCase().includes(texto) ||
-      item?.nro_doc?.nro_doc?.toLowerCase().includes(texto) ||
+      item?.nro_Doc?.nro_Doc?.toLowerCase().includes(texto) ||
       item?.nro_licencia?.nombres?.toLowerCase().includes(texto)
     );
   });
@@ -50,8 +50,8 @@ const ChoferForm = ({ closeModal }) => {
         ...prevGuiaTransporte,
         chofer: [
           {
-            tipo_doc: item?.tipo_doc,
-            nro_doc: item?.nro_doc,
+            tipo_Doc: item?.tipo_doc,
+            nro_Doc: item?.nro_doc,
             licencia: item?.nro_licencia,
             nombres: item?.nombres,
             apellidos: item?.apellidos,

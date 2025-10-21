@@ -3,8 +3,8 @@ const { utils } = require('../../../../utils/utils')
 function pdfDatosGuia(guia, choferes, transportistas, invi = "#FFFFFF") {
     let transporte = null;
 
-    if (Array.isArray(transportistas) && transportistas.length > 0) {
-        transporte = transportistas[0]?.dataValues || transportistas[0];
+    if (transportistas) {
+        transporte = transportistas;
     }
 
     //? Crear secciones de choferes
@@ -29,7 +29,7 @@ function pdfDatosGuia(guia, choferes, transportistas, invi = "#FFFFFF") {
                                         { text: "LICENCIA:", style: "datosGuiaChoferLabel" },
                                         { text: choferData.licencia || "—", style: "datosGuiaChoferValue" },
                                         { text: "NRO DOC:", style: "datosGuiaChoferLabel" },
-                                        { text: choferData.nro_doc || "—", style: "datosGuiaChoferValue" },
+                                        { text: choferData.nro_Doc || "—", style: "datosGuiaChoferValue" },
                                         { text: "NOMBRE COMPLETO:", style: "datosGuiaChoferLabel" },
                                         { text: nombreCompleto || "—", style: "datosGuiaChoferValue" },
                                     ],
@@ -147,7 +147,7 @@ function pdfDatosGuia(guia, choferes, transportistas, invi = "#FFFFFF") {
                                         { text: "RAZÓN SOCIAL:", style: "datosGuiaLabel" },
                                         { text: transporte?.razon_Social || "—", style: "datosGuiaValue" },
                                         { text: "NRO. DOC:", style: "datosGuiaLabel" },
-                                        { text: transporte?.nro_doc || "—", style: "datosGuiaValue" },
+                                        { text: transporte?.nro_Doc || "—", style: "datosGuiaValue" },
                                         { text: "NRO. MTC:", style: "datosGuiaLabel" },
                                         { text: transporte?.nro_mtc || "—", style: "datosGuiaValue" },
                                     ],

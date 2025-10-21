@@ -15,7 +15,8 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const verifySession = async () => { // Verificamos si hay token guardado
+    const verifySession = async () => {
+      // Verificamos si hay token guardado
       const token = localStorage.getItem("token");
 
       // Si no lo hay significa que la sesión no es válida
@@ -36,13 +37,16 @@ export function AuthProvider({ children }) {
           setUser(res.data.usuario);
         } else { // Si no es válido, cerramos sesión automáticamente
           console.warn("⚠️ Sesión inválida. Cerrando sesión...");
-          logout(); 
+          logout();
         }
       } catch (error) {
-        console.error("❌ Error verificando sesión:", error.response?.data || error.message);
+        console.error(
+          "❌ Error verificando sesión:",
+          error.response?.data || error.message,
+        );
         localStorage.removeItem("user");
         localStorage.removeItem("token");
-        logout();  
+        logout();
       } finally {
         setLoading(false);
       }
@@ -53,28 +57,26 @@ export function AuthProvider({ children }) {
 
   // Método para inicio de sesión con recaptcha integrado
   const login = async (email, password, recaptchaToken, navigate) => {
-    
-    const data = await loginService(email, password, recaptchaToken); 
-  
+    const data = await loginService(email, password, recaptchaToken);
+
     if (data?.error) {
       alert(`❌ ${data.mensaje}`);
       return false;
     }
-    // Si la respuesta es correcta, guardamos el token y el usuario en localStorage 
+    // Si la respuesta es correcta, guardamos el token y el usuario en localStorage
     // y el establecemos el token en el header de Axios para futuras peticiones.
     if (data && data.token && data.usuario) {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.usuario));
-      axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`; 
-      setUser(data.usuario); 
+      axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+      setUser(data.usuario);
       if (navigate) navigate("/", { replace: true });
       return true;
     }
-  
+
     alert("❌ Error desconocido al iniciar sesión.");
     return false;
-  };  
-  
+  };
 
   // Cerrar sesión, limpiar el localStorage, el header de axios y redirigimos al login
   const logout = () => {
@@ -83,14 +85,15 @@ export function AuthProvider({ children }) {
     delete axios.defaults.headers.common["Authorization"];
     setUser(null);
     setLoading(false);
-  
-    const LOGIN_URL = process.env.NODE_ENV === "production" ? "/#/login" : "/login";
+
+    const LOGIN_URL =
+      process.env.NODE_ENV === "production" ? "/#/login" : "/login";
     window.location.href = LOGIN_URL; // Redirigir al login
-  };  
+  };
 
   return (
     <AuthContext.Provider value={{ user, loading, login, logout }}>
-      {loading ? <LoaderInnova/> : children}
+      {loading ? <LoaderInnova /> : children}
     </AuthContext.Provider>
   );
 }

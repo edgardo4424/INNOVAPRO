@@ -23,11 +23,16 @@ import {
    Receipt,
    Truck,
    Building,
+
+   Shuffle,
+   ReceiptText,
+
    Gift,
    HeartHandshake,
    FileMinus,
    FileSpreadsheet,
    ClipboardList,
+
 } from "lucide-react";
 import {
    Sidebar,
@@ -77,9 +82,13 @@ const iconMap = {
    "Gestión de Condiciones": ShieldCheck,
    "Gestión de Transporte": Truck,
    "Asistencia general":Building,
+   "Pase Pedidos":Shuffle,
+   "Emitir Guía":ReceiptText
+
    "Beneficios":HeartHandshake,
    "Retenciones":FileMinus,
    "Planilla":ClipboardList 
+
 };
 
 const modulesByRole = {
@@ -136,7 +145,12 @@ const modulesByRole = {
          ],
       },
       { name: "Asistencia", path: "/asistencia-general" },
-
+      { group: "Pase Pedidos", 
+         items: [
+            { name: "Pedidos Tv", path: "pedidos/pedidos-tv" },
+            { name: "Pase Pedidos", path: "pedidos/pase-pedidos" },
+         ]
+       },
       {
          group: "Facturación",
          items: [
@@ -288,7 +302,26 @@ const modulesByRole = {
          ],
       },
       {
-         group: "Facturación",
+         group: "Emitir Guía",
+         items: [
+              { name: "Guía de Remisión", path: "/facturacion/emitir/guia" },
+            { name: "Lista de guías", path: "/facturacion/bandeja/guia-remision?page=1&limit=10" },
+         ],
+      },
+      { name: "Asistencia",path: "/asistencia-area"},
+
+
+   ],
+      "Auxiliar de oficina":[
+      {
+         group: "Gestión de Transporte",
+         items: [
+            { name: "Choferes", path: "/transporte/choferes" },
+            { name: "Transportistas", path: "/transporte/transportistas" },
+         ],
+      },
+      {
+         group: "Emitir Guía",
          items: [
               { name: "Guía de Remisión", path: "/facturacion/emitir/guia" },
             { name: "Lista de guías", path: "/facturacion/bandeja/guia-remision?page=1&limit=10" },
