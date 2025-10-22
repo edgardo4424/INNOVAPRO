@@ -124,6 +124,16 @@ const Contrato = sequelize.define(
          allowNull: false,
          defaultValue: 'PROGRAMADO',
       },
+      estado_condiciones: {
+         type: DataTypes.ENUM(
+            'Creado',
+            'Condiciones Solicitadas',
+            'Validando Condiciones',
+            'Condiciones Cumplidas'
+         ),
+         allowNull: false,
+         defaultValue: 'Creado',
+      },
       
    },
    {
