@@ -30,7 +30,7 @@ const PasePedido = sequelize.define(
         "Confirmado",
         "Stock Confirmado",
         "En despacho",
-        "Despacahdo"
+        "Despachado"
       ),
       allowNull: false,
       defaultValue: "pendiente",

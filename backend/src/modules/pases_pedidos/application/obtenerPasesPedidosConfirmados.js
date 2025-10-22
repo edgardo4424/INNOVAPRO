@@ -9,12 +9,13 @@ module.exports = async (pasePedidoRepository, transaction = null) => {
     pases_pedidos.map(async (p) => {
       const pedido = { ...p.get({ plain: true }) };
       const pase_pedido = pases_pedido_model();
-      pase_pedido.id_contrato=p.contrato_id;
-      pase_pedido.id_pedido = p.id;
+      pase_pedido.contrato_id=pedido.contrato_id;
+      pase_pedido.pedido_id = pedido.id;
+      pase_pedido.cotizacion_id=pedido.contrato.cotizacion_id;
       pase_pedido.filial=pedido.contrato.cotizacion.empresas_proveedora.razon_social;
       pase_pedido.estado=pedido.estado;
       pase_pedido.tipo_Servicio=pedido.tipo_cotizacion;
-      // pase_pedido.ubicacion= Consultando de odne se obtenndra
+      pase_pedido.ubicacion= pedido.contrato.cotizacion.obra.ubicacion.includes("Provincia de Lima")?"Lima":"Provincia";
 
       //*DATOS DEL CLIENTE 
       if (pedido.contrato.cotizacion.cliente.tipo == "Persona Jurídica") {

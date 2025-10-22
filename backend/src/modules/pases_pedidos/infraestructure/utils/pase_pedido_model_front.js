@@ -1,6 +1,7 @@
 const pases_pedido_model = () => ({
-  id_contrato:"",
-  id_pedido:"",
+  contrato_id:"",
+  pedido_id:"",
+  cotizacion_id:"",
   filial:"",
   estado:"",
   tipo_Servicio:"",

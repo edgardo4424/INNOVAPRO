@@ -246,6 +246,8 @@ class SequelizeStockRepository {
          const payload={
             "despiece_id": dp.id,
             "pieza_id": dp.pieza.id,
+            "item":dp.pieza.item,
+            "descripcion":dp.pieza.descripcion,
             "cantidad": dp.cantidad,
             "peso_kg": dp.peso_kg,
             "precio_venta_dolares": dp.precio_venta_dolares,
