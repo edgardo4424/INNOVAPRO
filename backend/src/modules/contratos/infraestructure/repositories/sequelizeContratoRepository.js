@@ -1,4 +1,5 @@
 const { Contrato } = require("../models/contratoModel");
+const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos // Llamamos los modelos sequalize de la base de datos
 
 class SequelizeContratoRepository{
 
@@ -31,7 +32,40 @@ class SequelizeContratoRepository{
     async obtenerContratos(transaction=null){
         const options={};
         if(transaction)options.transaction=transaction;
-        const contratos= await Contrato.findAll(options);
+        const contratos= await Contrato.findAll({
+            // Incluir asociaciones si es necesario
+            include: [
+                {
+                          model: db.clientes,
+                          as: "cliente",
+                          attributes: ["id", "razon_social", "ruc"],
+                        },
+                        {
+                          model: db.obras,
+                          as: "obra",
+                          attributes: ["id", "nombre", "direccion"],
+                        },
+                        {
+                          model: db.usuarios,
+                          as: "usuario",
+                          attributes: ["id"],
+                          include: [{
+                            model: db.trabajadores,
+                            as: "trabajador",
+                          }],
+                        },
+                        {
+                          model: db.usos,
+                          as: "uso",
+                          attributes: ["id", "descripcion"],
+                        },
+                        {
+                          model: db.despieces,
+                          as: "despiece",
+                          attributes: ["id", "cp"],
+                        },
+            ]
+        }, options);
         return contratos;
     }
 
