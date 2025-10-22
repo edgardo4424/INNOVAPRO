@@ -1,81 +1,143 @@
+const { Tarea } = require("../../tareas/infrastructure/models/tareaModel");
 const pases_pedido_model = require("../infraestructure/utils/pase_pedido_model_front");
-
+const db = require("../../../database/models");
 module.exports = async (pasePedidoRepository, transaction = null) => {
   const pases_pedidos =
-    await pasePedidoRepository.obtenerPasesPedidosConfirmados(transaction);
+    await pasePedidoRepository.obtenerPasesPedidos(transaction);
 
-  const trandform_data = pases_pedidos.map((p) => {
-    const pedido = { ...p.get({ plain: true }) };
-    const pase_pedido = pases_pedido_model();
-    pase_pedido.obra = pedido.contrato.cotizacion.obra.nombre;
-    pase_pedido.nro_contrato = pedido.contrato.ref_contrato;
-    pase_pedido.id_pedido = p.id;
-    pase_pedido.empresa_ruc =
+  const transform_data = await Promise.all(
+    pases_pedidos.map(async (p) => {
+      const pedido = { ...p.get({ plain: true }) };
+      const pase_pedido = pases_pedido_model();
+      pase_pedido.id_contrato=p.contrato_id;
+      pase_pedido.id_pedido = p.id;
+      pase_pedido.filial=pedido.contrato.cotizacion.empresas_proveedora.razon_social;
+      pase_pedido.estado=pedido.estado;
+      pase_pedido.tipo_Servicio=pedido.tipo_cotizacion;
+      // pase_pedido.ubicacion= Consultando de odne se obtenndra
+
+      //*DATOS DEL CLIENTE 
+      if (pedido.contrato.cotizacion.cliente.tipo == "Persona Jurídica") {
+        pase_pedido.cliente_Tipo_Doc = "06";
+        pase_pedido.cliente_Num_Doc = pedido.contrato.cotizacion.cliente.ruc;
+        pase_pedido.cliente_Razon_Social=pedido.contrato.cotizacion.cliente.razon_social;
+      }
+      if (pedido.contrato.cotizacion.cliente.tipo == "Persona Natural") {
+        const t_doc =
+          pedido.contrato.cotizacion.cliente.tipo_documento === "DNI"
+            ? "01"
+            : "04";
+        pase_pedido.cliente_Tipo_Doc = t_doc;
+        pase_pedido.cliente_Num_Doc = pedido.contrato.cotizacion.cliente.dni;
+      }
+
+      pase_pedido.nombre_Contacto=pedido.contrato.cotizacion.contacto.nombre;
+
+      const tarea = await Tarea.findOne({
+        where: { cotizacionId: pedido.contrato.cotizacion.id },
+        include: [
+          {
+            model: db.usuarios,
+            as: "usuario_solicitante",
+            include: [{ model: db.trabajadores, as: "trabajador" }],
+          },
+          {
+            model: db.usuarios,
+            as: "tecnico_asignado",
+            include: [{ model: db.trabajadores, as: "trabajador" }],
+          },
+        ],
+      });
+
+      if (tarea?.tecnico_asignado) {
+        pase_pedido.ot_Usuario_Pase=tarea.tecnico_asignado.trabajador.nombres;
+        pase_pedido.ot_Usuario_Revisado=tarea.tecnico_asignado.trabajador.nombres;
+      }
+      const trabajador=pedido.contrato.cotizacion.usuario.trabajador
+      pase_pedido.cm_Usuario=`${trabajador.nombres} ${trabajador.apellidos}`;
+      pase_pedido.cm_Email=pedido.contrato.cotizacion.usuario.email;
+      pase_pedido.cm_Telefono=trabajador.telefono||"No disponble"
+
+
+
+
+
+
+
+      pase_pedido.obra = pedido.contrato.cotizacion.obra.nombre;
+      pase_pedido.nro_contrato = pedido.contrato.ref_contrato;
+      pase_pedido.empresa_Ruc =
       pedido.contrato.cotizacion.empresas_proveedora.ruc;
-    if (pedido.contrato.cotizacion.cliente.tipo == "Persona Jurídica") {
-      pase_pedido.cliente_tipo_Doc = "06";
-      pase_pedido.cliente_num_Doc = pedido.contrato.cotizacion.cliente.ruc;
-    }
-    if (pedido.contrato.cotizacion.cliente.tipo == "Persona Natural") {
-      const t_doc =
-        pedido.contrato.cotizacion.cliente.tipo_documento === "DNI"
-          ? "01"
-          : "04";
-      pase_pedido.cliente_tipo_Doc = t_doc;
-      pase_pedido.cliente_num_Doc = pedido.contrato.cotizacion.cliente.dni;
-    }
-    const lista_despiece =
-      pedido.contrato.cotizacion.despiece.despieces_detalles;
-    let sumatoria_peso = 0;
-    const detalles = [];
-    for (const pieza of lista_despiece) {
-      const payload = {
-        index: null,
-        unidad: "UNI",
-        cantidad: pieza.cantidad,
-        cod_Producto: "Esperando a que luis lo incluya en la despices_detalles",
-        descripcion: "Esperando a que luis lo incluya en la despices_detalles",
-      };
-      sumatoria_peso += Number(pieza.peso_kg) * Number(pieza.cantidad);
 
-      detalles.push(payload);
-    }
-    pase_pedido.guia_Envio_Peso_Total = sumatoria_peso;
-    pase_pedido.detalle = detalles;
-    if (pedido.contrato.cotizacion.tiene_transporte) {
-      //La empresa(innova)hace el transporte
-      pase_pedido.ValoresPrivado = {
-        guia_Envio_Cod_Traslado:
-          pedido.contrato.cotizacion == "Alquiler" ? "13" : "02",
-        guia_Envio_Des_Traslado:
-          pedido.contrato.cotizacion == "Alquiler" ? "ALQUILER" : "VENTA",
-        guia_Envio_Mod_Traslado: "02",
-      };
-    } else {
-      pase_pedido.ValoresPrivado = {
-        guia_Envio_Cod_Traslado:
-          pedido.contrato.cotizacion == "Alquiler" ? "13" : "02",
-        guia_Envio_Des_Traslado:
-          pedido.contrato.cotizacion == "Alquiler" ? "ALQUILER" : "VENTA",
-        guia_Envio_Mod_Traslado: "01",
-        transportista: {
-          tipo_Doc: "6",
-          nro_Doc: "",
-          razon_Social: "",
-          nro_mtc: "",
-        },
-      };
-    }
-    pase_pedido.guia_Envio_Partida_Direccion=pedido.contrato.cotizacion.obra.direccion;
-    pase_pedido.guia_Envio_Llegada_Direccion=pedido.contrato.cotizacion.empresas_proveedora.direccion;
-    
-    return pase_pedido;    
-  });
+
+
+
+
+      const lista_despiece =
+        pedido.contrato.cotizacion.despiece.despieces_detalles;
+      let sumatoria_peso = 0;
+      let  detalles = [];
+      for (const pieza of lista_despiece) {
+        const payload = {
+          index: null,
+          unidad: "UNI",
+          cantidad: pieza.cantidad,
+          cod_Producto:
+            "Esperando a que luis lo incluya en la despices_detalles",
+          descripcion:
+            "Esperando a que luis lo incluya en la despices_detalles",
+        };
+        sumatoria_peso += Number(pieza.peso_kg) * Number(pieza.cantidad);
+
+        detalles.push(payload);
+      }
+      pase_pedido.guia_Envio_Peso_Total = sumatoria_peso;
+      pase_pedido.detalle = detalles;
+      if (pedido.contrato.cotizacion.tiene_transporte) {
+        //La empresa(innova)hace el transporte
+        pase_pedido.ValoresPrivado = {
+          guia_Envio_Cod_Traslado:
+            pedido.contrato.cotizacion.tipo_cotizacion == "Alquiler"
+              ? "13"
+              : "02",
+          guia_Envio_Des_Traslado:
+            pedido.contrato.cotizacion.tipo_cotizacion == "Alquiler"
+              ? "ALQUILER"
+              : "VENTA",
+          guia_Envio_Mod_Traslado: "02",
+        };
+      } else {
+        pase_pedido.ValoresPublico = {
+          guia_Envio_Cod_Traslado:
+            pedido.contrato.cotizacion.tipo_cotizacion == "Alquiler"
+              ? "13"
+              : "02",
+          guia_Envio_Des_Traslado:
+            pedido.contrato.cotizacion.tipo_cotizacion == "Alquiler"
+              ? "ALQUILER"
+              : "VENTA",
+          guia_Envio_Mod_Traslado: "01",
+          transportista: {
+            tipo_Doc: "6",
+            nro_Doc: "",
+            razon_Social: "",
+            nro_mtc: "",
+          },
+        };
+      }
+      pase_pedido.guia_Envio_Partida_Direccion =
+        pedido.contrato.cotizacion.obra.direccion;
+      pase_pedido.guia_Envio_Llegada_Direccion =
+        pedido.contrato.cotizacion.empresas_proveedora.direccion;
+
+      return pase_pedido;
+    })
+  );
   return {
     codigo: 202,
     respuesta: {
       mensaje: "Pases de pedido obtenidos correctamente",
-      pases_pedidos:trandform_data,
+      pases_pedidos: transform_data,
     },
   };
 };

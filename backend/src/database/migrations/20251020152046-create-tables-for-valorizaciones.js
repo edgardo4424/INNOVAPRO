@@ -8,6 +8,7 @@ module.exports = {
         "Por confirmar",
         "Pre confirmado",
         "Confirmado",
+        "Stock Confirmado",
         "En despacho",
         "Despacahdo"
       ),

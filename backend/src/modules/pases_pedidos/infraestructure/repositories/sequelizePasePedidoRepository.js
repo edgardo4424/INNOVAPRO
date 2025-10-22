@@ -8,7 +8,7 @@ class SequelizePasePedidoRepository {
     return pase_pedido;
   }
 
-  async obtenerPasesPedidosConfirmados(transaction = null) {
+  async obtenerPasesPedidos(transaction = null) {
     const pases_pedidos = await PasePedido.findAll({
       where: { estado: "Confirmado" },
       transaction,
@@ -42,6 +42,17 @@ class SequelizePasePedidoRepository {
                   },
                   {
                     model:db.empresas_proveedoras
+                  },
+                  {
+                    model:db.contactos
+                  },
+                  {
+                    model:db.usuarios,
+                    include: [{ model: db.trabajadores, as: "trabajador" }],
+                    
+                  },
+                  {
+                    model:db.cotizaciones_transporte
                   }
                 ]
               }
