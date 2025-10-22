@@ -148,6 +148,7 @@ module.exports = async (factura, repository, borradorRepository) => {
             correlativo: factura?.correlativo,
             message: error?.response?.data?.message || error?.message,
             error_factiliza: error?.response?.data,
+            ERROR_FULL: error?.response,
             content: factura
         });
         // ? 9 Manejo de errores genéricos o de red
