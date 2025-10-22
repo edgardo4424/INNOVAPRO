@@ -47,6 +47,8 @@ async function actualizarDespiecesDetalle({ despiece_id, despiece, transaction }
     despiece_id,
   });
 
+  console.log('detalles a insertar/actualizar', detalles);
+
   if (detalles.length > 0) {
     await db.despieces_detalle.bulkCreate(
       detalles.map(d => ({ ...d, despiece_id })),

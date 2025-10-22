@@ -112,6 +112,8 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
     // Actualizar las piezas en despieces_detalle, porque puede suceder que el comercial añada nuevas piezas
     // o quite piezas
 
+    console.log('despiece a actualizar', despiece);
+
     await actualizarDespiecesDetalle({
       despiece_id: cotizacionEncontrada.despiece_id,
       despiece: despiece,
@@ -295,7 +297,6 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
         dataActualizarCotizacion,
         transaction
       );
-
 
     await transaction.commit(); // ✔ Confirmar todo
     return {

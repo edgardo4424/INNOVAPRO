@@ -232,6 +232,7 @@ export function useRegistrarCotizacion(pasosLength) {
       setExito(true);
       setPasoActual(pasosLength);
     } catch (error) {
+      console.log("Error al guardar cotización desde OT", error);
       toast.error("Error al guardar la cotización");
     } finally {
       setGuardando(false);
@@ -264,8 +265,8 @@ export function useRegistrarCotizacion(pasosLength) {
 
       tiene_pernos: formData.atributos_opcionales.pernos.tiene_pernos,
 
-      tiene_instalacion: formData.atributos_opcionales.instalacion.tiene_instalacion,
-      tipo_instalacion: formData.atributos_opcionales.instalacion.tipo_instalacion || "NINGUNA",
+      tiene_instalacion: formData.atributos_opcionales.instalacion?.tiene_instalacion,
+      tipo_instalacion: formData.atributos_opcionales.instalacion?.tipo_instalacion || "NINGUNA",
       precio_instalacion_completa: formData.atributos_opcionales.instalacion.precio_instalacion_completa || 0,
       precio_instalacion_parcial: formData.atributos_opcionales.instalacion.precio_instalacion_parcial || 0,
       nota_instalacion: formData.atributos_opcionales.instalacion.nota_instalacion || "",

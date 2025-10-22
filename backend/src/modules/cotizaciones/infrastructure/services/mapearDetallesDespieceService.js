@@ -3,6 +3,8 @@ function mapearDetallesDespiece({despiece, despiece_id}){
     return despiece.map(pieza => ({
     despiece_id,
     pieza_id: pieza.pieza_id,
+    item: pieza.item,
+    descripcion: pieza.descripcion,
     cantidad: parseFloat(pieza.total),
     peso_kg: parseFloat(pieza.peso_kg),
     precio_venta_dolares: parseFloat(pieza.precio_venta_dolares),

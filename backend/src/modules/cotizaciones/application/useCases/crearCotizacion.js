@@ -93,6 +93,8 @@ module.exports = async (cotizacionData, cotizacionRepository) => {
 
     // 3. Insertar Detalles del Despiece
 
+    console.log("despiece para detalles", despiece);
+
     const detalles = mapearDetallesDespiece({ despiece, despiece_id });
 
     // Validación de todos los registros de despiece

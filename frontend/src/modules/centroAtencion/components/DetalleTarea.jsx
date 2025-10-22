@@ -270,10 +270,12 @@ export default function DetalleTarea({
                      <Button
                         onClick={async () => {
                            try {
+                              console.log("Guardando despiece:", formData.despiece);
                            const payload = {
                               idTarea: tarea.id,
                               despiece: formData.despiece.map(p => ({
                                  pieza_id: p.pieza_id,
+                                 item: p.item,
                                  cantidad: p.cantidad,
                                  peso_kg: p.peso_kg,
                                  precio_venta_dolares: p.precio_venta_dolares,
