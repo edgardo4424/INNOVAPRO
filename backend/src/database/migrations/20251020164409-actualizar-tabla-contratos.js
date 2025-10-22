@@ -62,13 +62,13 @@ module.exports = {
 
     await queryInterface.addColumn('contratos', 'estado_condiciones', {
       type: Sequelize.ENUM(
-        'CREADO',
-        'CONDICIONES_SOLICITADAS',
-        'VALIDANDO_CONDICIONES',
-        'CONDICIONES_CUMPLIDAS'
+        'Creado',
+        'Condiciones Solicitadas',
+        'Validando Condiciones',
+        'Condiciones Cumplidas'
       ),
       allowNull: false,
-      defaultValue: 'CREADO',
+      defaultValue: 'Creado',
     });
     
 

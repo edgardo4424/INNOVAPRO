@@ -1,10 +1,11 @@
 const actualizarContrato = require("../../application/useCases/actualizarContrato");
 const crearContrato = require("../../application/useCases/crearContrato");
 const obtenerContratos = require("../../application/useCases/obtenerContratos");
+const autocompletarCotizacionParaCrearContrato = require("../../application/useCases/autocompletarCotizacionParaCrearContrato");
 
 const SequelizeContratoRepository = require("../../infraestructure/repositories/sequelizeContratoRepository");
-
 const contratoRepository=new SequelizeContratoRepository();
+
 const ContratoController={
     async crearContrato(req,res){
         console.log("Entro a la función de crear contrato");
@@ -40,7 +41,19 @@ const ContratoController={
             console.log("Ocurrio el siguiente error: ",error)
             res.status(500).json({error:error.message})
         }
+    },
+
+    async autocompletarCotizacionParaCrearContrato(req,res){
+        console.log("Entro a la función de autocompletar cotización para crear contrato");
+        try {
+            const cotizacion_id=req.params.id;
+            const cotizacionResponse= await autocompletarCotizacionParaCrearContrato(cotizacion_id, contratoRepository);
+            console.log("Respuesta de autocompletarCotizacionParaCrearContrato:", cotizacionResponse);
+            res.status(cotizacionResponse.codigo).json(cotizacionResponse.respuesta);
+        } catch (error) {
+            console.log("Ocurrio el siguiente error: ",error)
+            res.status(500).json({error:error.message})
+        }
     }
 }
-
 module.exports=ContratoController
