@@ -187,7 +187,7 @@ const DatosDeDetraccion = () => {
     }
   }, [factura.tipo_Operacion]);
 
-  const shouldRender = !(factura.tipo_Doc !== "01");
+  const shouldRender = !(factura.tipo_Doc !== "01" && factura.tipo_Doc !== "03");
 
   return shouldRender ? (
     <div className="overflow-y-auto p-4 sm:p-6 lg:p-8">

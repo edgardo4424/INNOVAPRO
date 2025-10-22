@@ -397,8 +397,7 @@ export function FacturaBoletaProvider({ children }) {
       } else if (
         factura.tipo_Operacion === "1001" &&
         detraccionActivado &&
-        !retencionActivado &&
-        factura.tipo_Doc !== "03"
+        !retencionActivado
       ) {
         facturaAEmitir = {
           ...factura,

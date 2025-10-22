@@ -9,7 +9,7 @@ const RelacionDocs = () => {
 
     const [open, setOpen] = useState(false);
 
-    if (factura.tipo_Doc == "03") return null;
+    // if (factura.tipo_Doc == "03") return null;
     return (
         <div className="overflow-y-auto px-1 md:p-4 sm:p-6 lg:px-8 lg:py-4">
             <div className="flex justify-between items-center  py-3">
