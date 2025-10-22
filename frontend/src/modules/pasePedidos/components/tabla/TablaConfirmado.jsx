@@ -4,6 +4,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useAuth } from "@/context/AuthContext";
+import { getMotivoTrasladoDescription } from "@/modules/facturacion/utils/formateos";
 import { Badge, BadgeCheck, EyeIcon, FileInput } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -110,7 +111,7 @@ const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
         <thead className="bg-innova-blue text-white">
           <tr>
             <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
-              Nro. Pedido
+              Tipo de Pedido
             </th>
             <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
               Filial
@@ -122,7 +123,7 @@ const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
               Obra
             </th>
             <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
-              Fecha Entrega
+              Comercial
             </th>
             <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
               Estado
@@ -140,7 +141,9 @@ const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
                 className={`${index % 2 === 0 ? "bg-white" : "bg-gray-50"} border-b border-gray-200`}
               >
                 <td className="py-3 pl-2 text-xs text-gray-700">
-                  {pedido.nro_Pedido}
+                  {getMotivoTrasladoDescription(
+                    pedido.guia_Envio_Cod_Traslado,
+                  ) || "INDEFINIDO"}
                 </td>
                 <td className="py-3 pl-2 text-xs text-gray-700">
                   {pedido.filial}
@@ -148,11 +151,11 @@ const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
                 <td className="py-3 pl-2 text-xs text-gray-700">
                   {pedido.cliente_Razon_Social}
                 </td>
-                <td className="py-3 pl-2 text-xs text-gray-700">
+                <td className="py-3 pl-2 text-xs text-gray-700 uppercase">
                   {pedido.obra}
                 </td>
                 <td className="py-3 pl-2 text-xs text-gray-700">
-                  {pedido.f_Entrega}
+                  {pedido.cm_Usuario}
                 </td>
                 <td
                   className={
@@ -183,23 +186,23 @@ const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
                     </Tooltip>
 
                     {actValidarPedido(user.rol) && (
-                        <Tooltip side="bottom" align="center" className="mr-2">
-                          <TooltipTrigger asChild>
-                            <button
-                              onClick={() => {
-                                setOpen(true);
-                                setPedidoView(pedido);
-                              }}
-                              className="rounded p-1 transition-colors hover:bg-orange-100"
-                            >
-                              <Badge className="h-5 w-5 cursor-pointer text-orange-600 hover:text-orange-800" />
-                            </button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Validar Pedido</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      )}
+                      <Tooltip side="bottom" align="center" className="mr-2">
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => {
+                              setOpen(true);
+                              setPedidoView(pedido);
+                            }}
+                            className="rounded p-1 transition-colors hover:bg-orange-100"
+                          >
+                            <Badge className="h-5 w-5 cursor-pointer text-orange-600 hover:text-orange-800" />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Validar Pedido</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
 
                     {/* <Tooltip side="bottom" align="center" className="mr-2">
                       <TooltipTrigger asChild>

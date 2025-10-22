@@ -63,7 +63,7 @@ const FormPedido = ({ pedidoView: pedido }) => {
             <span className="text-xs text-gray-600 uppercase">
               Filial Operativa
             </span>
-            <span className="mt-0.5 text-sm font-bold">
+            <span className="mt-0.5 text-sm font-bold uppercase">
               {pedido?.filial || "N/A"}
             </span>
           </div>
@@ -71,7 +71,7 @@ const FormPedido = ({ pedidoView: pedido }) => {
             <span className="text-xs text-gray-600 uppercase">
               Cliente / Razón Social
             </span>
-            <span className="mt-0.5 text-sm font-extrabold">
+            <span className="mt-0.5 text-sm font-extrabold uppercase">
               {pedido?.cliente_Razon_Social || "N/A"}
             </span>
           </div>
@@ -83,7 +83,7 @@ const FormPedido = ({ pedidoView: pedido }) => {
             <span className="text-xs text-gray-600 uppercase">
               Tipo de Servicio
             </span>
-            <span className="mt-0.5 text-sm font-bold">
+            <span className="mt-0.5 text-sm font-bold uppercase">
               {pedido?.tipo_Servicio || "N/A"}
             </span>
           </div>
@@ -91,7 +91,7 @@ const FormPedido = ({ pedidoView: pedido }) => {
             <span className="text-xs text-gray-600 uppercase">
               Obra / Proyecto
             </span>
-            <span className="mt-0.5 text-sm font-extrabold">
+            <span className="mt-0.5 text-sm font-extrabold uppercase">
               {pedido?.obra || "N/A"}
             </span>
           </div>
@@ -150,8 +150,13 @@ const FormPedido = ({ pedidoView: pedido }) => {
               <span>{pedido?.tranporte || "N/A"}</span>
             </p>
             <p className="flex gap-x-2">
-              <span className="font-semibold">Peso ( {pedido?.guia_Envio_Und_Peso_Total || "N/A"} ):</span>
-              <span>{pedido?.guia_Envio_Peso_Total || "N/A"}</span>
+              <span className="font-semibold">Peso:</span>
+              <span className="flex gap-x-1">
+                <span>{pedido?.guia_Envio_Peso_Total || "N/A"} </span>
+                <span className="font-semibold">
+                  {pedido?.guia_Envio_Und_Peso_Total || "N/A"}
+                </span>
+              </span>
             </p>
           </div>
           <p className="mt-2 bg-amber-200 py-1 pl-1 font-bold text-gray-800 uppercase">
@@ -179,11 +184,11 @@ const FormPedido = ({ pedidoView: pedido }) => {
       <div className="grid grid-cols-2 px-10 py-3">
         <div className="grid grid-cols-2">
           <span className="font-bold">Ref. contrato:</span>
-          <span>{pedido?.nro_contrato || "N/A"}</span>
+          <span className="uppercase">{pedido?.nro_contrato || "N/A"}</span>
           <span className="font-bold">Dirección Obra:</span>
           <span>{pedido?.obra_Direccion || "N/A"}</span>
           <span className="font-bold">Proyecto / Obra:</span>
-          <span>{pedido?.obra || "N/A"}</span>
+          <span className="uppercase">{pedido?.obra || "N/A"}</span>
           <span className="font-bold">Fecha:</span>
           <span>10/10/2025</span>
           <span className="font-bold">Telf:</span>
@@ -201,9 +206,7 @@ const FormPedido = ({ pedidoView: pedido }) => {
           <span className="font-bold">A/A:</span>
           <span>{pedido?.nombre_Contacto || "N/A"}</span>
           <span className="font-bold">Domicilio Fiscal:</span>
-          <span>
-            {pedido?.dom_Fiscal || "N/A"}
-          </span>
+          <span>{pedido?.dom_Fiscal || "N/A"}</span>
           <span className="font-bold">E-mail:</span>
           <span>{pedido?.cli_Email || "N/A"}</span>
         </div>
