@@ -26,6 +26,8 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# ignora auditoria
+*-audit.json
 
 node_modules
 dist
