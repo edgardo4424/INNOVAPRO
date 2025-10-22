@@ -21,6 +21,7 @@ export function GuiaTransporteProvider({ children }) {
   const [pedidoId, setPedidoId] = useState(null);
 
   const [pesoTotalCalculado, setPesoTotalCalculado] = useState(0);
+  const [editadoPlasmado, setEditadoPlasmado] = useState(false);
 
   // ?? CORRELATIVOS
 
@@ -137,7 +138,7 @@ export function GuiaTransporteProvider({ children }) {
     const toKg = (value, unit) =>
       (Number(value) || 0) * (UNIT_TO_KG[unit] || 1);
     const fromKg = (kg, unit) => kg / (UNIT_TO_KG[unit] || 1);
-    const round = (n, d = 3) => {
+    const round = (n, d = 4) => {
       const m = Math.pow(10, d);
       return Math.round((n + Number.EPSILON) * m) / m;
     };
@@ -149,7 +150,7 @@ export function GuiaTransporteProvider({ children }) {
       const unidadTotal = guiaTransporte?.guia_Envio_Und_Peso_Total || "KGM";
 
       // 1) Sumar todo en KG
-      const totalKg = detalle.reduce((acc, item) => {
+      let totalKg = detalle.reduce((acc, item) => {
         const itemEncontrado = piezas.find((p) => p.item === item.cod_Producto);
         const cantidad = Number(item?.cantidad) || 0;
         if (itemEncontrado && item.unidad === "NIU") {
@@ -158,6 +159,11 @@ export function GuiaTransporteProvider({ children }) {
         const unidadItem = item?.unidad || "KGM";
         return acc + toKg(cantidad, unidadItem);
       }, 0);
+
+      if (editadoPlasmado) {
+        totalKg = toKg(pesoTotalCalculado, unidadTotal);
+        console.log(totalKg);
+      }
 
       // 2) Convertir al unit seleccionado
       const totalEnUnidad = fromKg(totalKg, unidadTotal);
@@ -291,7 +297,6 @@ export function GuiaTransporteProvider({ children }) {
   };
 
   const Limpiar = () => {
-
     setGuiaTransporte({
       ...guiaInical,
       fecha_Emision: obtenerFechaActual(),
@@ -299,6 +304,7 @@ export function GuiaTransporteProvider({ children }) {
       empresa_Ruc: guiaTransporte.empresa_Ruc,
       serie: guiaTransporte.serie,
     });
+    setEditadoPlasmado(false);
     setTipoGuia("transporte-publico");
     setGuiaDatosPublico(ValoresPublico);
     setGuiaDatosInternos(ValoresInterno);
@@ -339,6 +345,8 @@ export function GuiaTransporteProvider({ children }) {
         pesoTotalCalculado,
         pedidoId,
         setPedidoId,
+        setPesoTotalCalculado,
+        setEditadoPlasmado,
       }}
     >
       {children}

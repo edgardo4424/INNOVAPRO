@@ -11,6 +11,8 @@ const GuiaRemision = () => {
     setGuiaDatosPrivado,
     setGuiaDatosPublico,
     setPedidoId,
+    setPesoTotalCalculado,
+    setEditadoPlasmado,
   } = useGuiaTransporte();
 
   const location = useLocation();
@@ -24,11 +26,18 @@ const GuiaRemision = () => {
       }));
     }, 500);
   };
+  const plasmarPeso = (peso) => {
+    setEditadoPlasmado(true);
+    setTimeout(() => {
+      setPesoTotalCalculado(peso);
+    }, 500);
+  };
 
   useEffect(() => {
     const plasmarPedido = () => {
       if (documento.length > 0) {
-        const { guia, codigo_traslado, tipoGuia } = documento[0];
+        const { guia, codigo_traslado, tipoGuia, peso_total_kilo } =
+          documento[0];
 
         // ✅ UNA sola actualización completa y controlada
         setGuiaTransporte((prev) => ({
@@ -55,6 +64,7 @@ const GuiaRemision = () => {
         setTipoGuia(tipoGuia);
         setPedidoId(documento[1]?.id_pedido ?? null);
         plasmarRuc(documento[0]?.guia?.empresa_Ruc ?? "");
+        plasmarPeso(peso_total_kilo);
       }
     };
     plasmarPedido();

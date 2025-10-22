@@ -33,10 +33,10 @@ const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
       tipo_Doc: "09",
       serie: "T005",
       correlativo: "",
-      observacion: doc.observacion,
+      observacion: doc.observacion || "",
       // ?Datos del comprobante de referencia
-      obra: doc.obra,
-      nro_contrato: doc.nro_contrato,
+      obra: doc.obra ? doc.obra.toUpperCase() : "",
+      nro_contrato: doc.nro_contrato ? doc.nro_contrato.toUpperCase() : "",
       estado_Documento: "0",
       empresa_Ruc: doc.empresa_Ruc,
 
@@ -45,13 +45,13 @@ const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
       cliente_Razon_Social: "",
       cliente_Direccion: "",
 
-      guia_Envio_Peso_Total: Number(doc.guia_Envio_Peso_Total),
+      guia_Envio_Peso_Total: Number(doc.guia_Envio_Peso_Total).toFixed(4),
       guia_Envio_Und_Peso_Total: doc.guia_Envio_Und_Peso_Total,
 
-      guia_Envio_Partida_Ubigeo: "",
-      guia_Envio_Partida_Direccion: "",
-      guia_Envio_Llegada_Ubigeo: "",
-      guia_Envio_Llegada_Direccion: "",
+      guia_Envio_Partida_Ubigeo: doc.guia_Envio_Partida_Ubigeo,
+      guia_Envio_Partida_Direccion: doc.guia_Envio_Partida_Direccion,
+      guia_Envio_Llegada_Ubigeo: doc.guia_Envio_Llegada_Ubigeo,
+      guia_Envio_Llegada_Direccion: doc.guia_Envio_Llegada_Direccion,
 
       guia_Envio_Vehiculo_Placa: "",
       nroCirculacion: "",
@@ -65,12 +65,13 @@ const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
       guia_Envio_Cod_Traslado: doc.guia_Envio_Cod_Traslado,
     };
 
-    const tipoGuia =
-      doc.tranporte === "CLIENTE" ? "transporte-publico" : "transporte-privado";
+    const tipoGuia = "transporte-publico";
+    // doc.tranporte === "CLIENTE" ? "transporte-publico" : "transporte-privado";
 
     const body = {
       guia: guiaIncial,
       codigo_traslado: valoresTraslado,
+      peso_total_kilo: Number(doc.guia_Envio_Peso_Total).toFixed(4),
       tipoGuia,
     };
 
@@ -117,13 +118,16 @@ const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
               Filial
             </th>
             <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
+              Comercial
+            </th>
+            <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
               Cliente
             </th>
             <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
               Obra
             </th>
             <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
-              Comercial
+              Peso Total
             </th>
             <th className="px-3 py-3 text-left text-xs font-semibold tracking-wider uppercase">
               Estado
@@ -140,33 +144,37 @@ const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
                 key={pedido.id_pedido}
                 className={`${index % 2 === 0 ? "bg-white" : "bg-gray-50"} border-b border-gray-200`}
               >
-                <td className="py-3 pl-2 text-xs text-gray-700">
+                <td className="px-3 py-3 text-xs text-gray-700">
                   {getMotivoTrasladoDescription(
                     pedido.guia_Envio_Cod_Traslado,
                   ) || "INDEFINIDO"}
                 </td>
-                <td className="py-3 pl-2 text-xs text-gray-700">
+                <td className="px-3 py-3 text-xs text-gray-700">
                   {pedido.filial}
                 </td>
-                <td className="py-3 pl-2 text-xs text-gray-700">
+                <td className="px-3 py-3 text-xs text-gray-700">
+                  {pedido.cm_Usuario}
+                </td>
+                <td className="px-3 py-3 text-xs text-gray-700">
                   {pedido.cliente_Razon_Social}
                 </td>
-                <td className="py-3 pl-2 text-xs text-gray-700 uppercase">
+                <td className="px-3 py-3 text-xs text-gray-700 uppercase">
                   {pedido.obra}
                 </td>
-                <td className="py-3 pl-2 text-xs text-gray-700">
-                  {pedido.cm_Usuario}
+                <td className="px-3 py-3 text-xs text-gray-700 uppercase">
+                  {pedido.guia_Envio_Peso_Total.toFixed(4) || 0}{" "}
+                  {pedido.guia_Envio_Und_Peso_Total || ""}
                 </td>
                 <td
                   className={
-                    "py-3 pl-2 text-xs text-gray-700 " +
+                    "px-3 py-3 text-xs text-gray-700 " +
                     bgEstado(pedido.estado) +
                     ""
                   }
                 >
                   {pedido.estado}
                 </td>
-                <td className="py-3 pl-2 text-xs text-gray-700">
+                <td className="px-3 py-3 text-xs text-gray-700">
                   <div className="gap-x-auto flex justify-start">
                     <Tooltip side="bottom" align="center" className="mr-2">
                       <TooltipTrigger asChild>
