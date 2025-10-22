@@ -10,8 +10,8 @@ export async function obtenerContratos(params = {}) {
   const { data } = await api.get("/contratos", { params });
   return data; // { items, total }
 }
-export async function obtenerContratoPorId(id) {
-  const { data } = await api.get(`/contratos/${id}`);
+export async function autocompletarCotizacion(id) {
+  const { data } = await api.get(`/contratos/autocompletar-cotizacion/${id}`);
   return data;
 }
 export async function generarPDFContrato(id) {

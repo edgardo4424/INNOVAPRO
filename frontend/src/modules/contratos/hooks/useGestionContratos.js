@@ -28,7 +28,7 @@ export function useGestionContratos() {
     const id = modalConfirmacion.contratoId;
     cerrarModal();
     try {
-      const data = await contratosService.obtenerDatosPDF(id);
+      const data = await contratosService.autocompletarCotizacion(id);
 
       const doc = new jsPDF({
         orientation: "portrait",

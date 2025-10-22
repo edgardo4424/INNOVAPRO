@@ -3,6 +3,7 @@ import { useGestionContratos } from "../hooks/useGestionContratos";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ModuloNavegacion from "@/shared/components/ModuloNavegacion";
+import DemoDocxTemplate from "../components/DemoDocxTemplate";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -54,6 +55,8 @@ export default function GestionContratos() {
         onVerDetalle={verDetalleContrato}
         user={user}
       />
+
+      <DemoDocxTemplate />
 
       <AlertDialog open={modalConfirmacion.abierto} onOpenChange={cerrarModal}>
         <AlertDialogTrigger asChild>{/* Trigger oculto */}</AlertDialogTrigger>

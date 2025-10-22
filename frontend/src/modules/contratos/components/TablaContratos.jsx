@@ -45,21 +45,22 @@ export default function TablaContratos({
 }) {
   const [text, setText] = useState("");
   const [contratos, setContratos] = useState([]);
-  console.log("CONTRATOS:", contratos)
+
   // Aplanado defensivo (contrato es extensión de cotización)
   useEffect(() => {
-    const flattened = (data || []).map((item) => ({
+    const flattened = (data || []).map((item) => {
+      return ({
       ...item,
       // claves comunes
-      codigo_contrato: item.codigo_contrato ?? item.codigo_documento ?? "-",
+      codigo_contrato: item.ref_contrato ?? "-",
       cliente_razon_social: item.cliente?.razon_social ?? "-",
       obra_nombre: item.obra?.nombre ?? "-",
       uso_descripcion: item.uso?.descripcion ?? "-",
-      tipo_contrato: item.tipo_contrato ?? item.tipo_servicio ?? "-",
-      estado_contrato: item.estados_contrato?.nombre ?? item.estado?.nombre ?? "-",
+      tipo: item.tipo ?? item.tipo_servicio ?? "-",
+      estado_contrato: item.estado_condiciones ?? "-",
       fecha_inicio: item.fecha_inicio ?? item.vigencia?.inicio ?? null,
       fecha_fin: item.fecha_fin ?? item.vigencia?.fin ?? null,
-    }));
+    })});
     setContratos(flattened);
   }, [data]);
 
@@ -115,7 +116,7 @@ export default function TablaContratos({
           sortable: true,
         },
         visibleColumns.tipo && {
-          field: "tipo_contrato",
+          field: "tipo",
           headerName: "Tipo",
           width: 110,
           sortable: true,
@@ -282,12 +283,12 @@ export default function TablaContratos({
       setContratos(
         (data || []).map((item) => ({
           ...item,
-          codigo_contrato: item.codigo_contrato ?? item.codigo_documento ?? "—",
+          codigo_contrato: item.ref_contrato  ?? "—",
           cliente_razon_social: item.cliente?.razon_social ?? "—",
           obra_nombre: item.obra?.nombre ?? "—",
           uso_descripcion: item.uso?.descripcion ?? "—",
-          tipo_contrato: item.tipo_contrato ?? item.tipo_servicio ?? "—",
-          estado_contrato: item.estados_contrato?.nombre ?? item.estado?.nombre ?? "—",
+          tipo: item.tipo ?? item.tipo_servicio ?? "—",
+          estado_contrato: item.estado_condiciones ?? "—",
           fecha_inicio: item.fecha_inicio ?? item.vigencia?.inicio ?? null,
           fecha_fin: item.fecha_fin ?? item.vigencia?.fin ?? null,
         }))
@@ -296,12 +297,12 @@ export default function TablaContratos({
       const lower = text.toLowerCase();
       const filtro = (data || [])
         .filter((item) => {
-          const codigo = (item.codigo_contrato ?? item.codigo_documento ?? "").toLowerCase();
+          const codigo = (item.ref_contrato ?? "").toLowerCase();
           const cliente = (item.cliente?.razon_social ?? "").toLowerCase();
           const obra = (item.obra?.nombre ?? "").toLowerCase();
           const uso = (item.uso?.descripcion ?? "").toLowerCase();
           const estado = (
-            item.estados_contrato?.nombre ??
+            item.estado_condiciones ??
             item.estado?.nombre ??
             ""
           ).toLowerCase();
@@ -316,12 +317,12 @@ export default function TablaContratos({
         })
         .map((item) => ({
           ...item,
-          codigo_contrato: item.codigo_contrato ?? item.codigo_documento ?? "—",
+          codigo_contrato: item.ref_contrato ?? "—",
           cliente_razon_social: item.cliente?.razon_social ?? "—",
           obra_nombre: item.obra?.nombre ?? "—",
           uso_descripcion: item.uso?.descripcion ?? "—",
-          tipo_contrato: item.tipo_contrato ?? item.tipo_servicio ?? "—",
-          estado_contrato: item.estados_contrato?.nombre ?? item.estado?.nombre ?? "—",
+          tipo: item.tipo ?? item.tipo_servicio ?? "—",
+          estado_contrato: item.estado_condiciones ?? "—",
           fecha_inicio: item.fecha_inicio ?? item.vigencia?.inicio ?? null,
           fecha_fin: item.fecha_fin ?? item.vigencia?.fin ?? null,
         }));

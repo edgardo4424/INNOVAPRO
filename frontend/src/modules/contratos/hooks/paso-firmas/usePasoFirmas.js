@@ -16,18 +16,15 @@ export function usePasoFirmas() {
     const fil = formData?.cotizacion?.filial || formData?.cotizacion?.entidad?.filial || {};
     return {
       emisor: {
-        nombre: fil?.representante || "",
+        nombre: fil?.nombre_representante || "",
         cargo: fil?.cargo_representante || "Representante Legal",
-        documento: fil?.doc_representante || "",
+        documento: fil?.documento_representante || "",
       },
       receptor: {
-        nombre: cli?.representante || cli?.contacto?.nombre || "",
-        cargo: cli?.contacto?.cargo || "Representante",
-        documento: cli?.representante_doc || "",
-      },
-      asuntoBase: formData?.cotizacion?.codigo_documento
-        ? `Contrato de ${formData?.cotizacion?.tipo || "servicios"} - ${formData.cotizacion.codigo_documento}`
-        : "Contrato para revisión y firma",
+        nombre: cli?.nombre_representante || "",
+        cargo: cli?.cargo_representante || "",
+        documento: cli?.documento_representante || "",
+      }
     };
   }, [formData]);
 

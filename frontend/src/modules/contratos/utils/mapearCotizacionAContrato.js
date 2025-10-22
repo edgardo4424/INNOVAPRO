@@ -6,9 +6,10 @@ export function mapearCotizacionAContrato(data, cotizacionId) {
   // - obtenerDatosPDF: data?.cotizacion, data?.cliente, data?.obra, data?.filial, data?.contacto, data?.uso
   // - obtenerCotizacionPorId: data con shape equivalente (nombres distintos en algunos casos)
 
-  const cot = data?.cotizacion || data || {};
+  const cot = data.cotizacion || {};
 
   const cliente = data?.cliente || cot?.cliente || {};
+  const firmantes = data?.firmantes || {};
   const obra = data?.obra || cot?.obra || {};
   const filial = data?.filial || cot?.filial || {};
   const contacto = data?.contacto || cot?.contacto || {};
@@ -17,16 +18,10 @@ export function mapearCotizacionAContrato(data, cotizacionId) {
   const subtotal =
     Number(
       cot?.subtotal_con_descuento_sin_igv ??
-      cot?.subtotal_sin_igv ??
       0
     );
-  const igv = Math.round((subtotal * 18) / 100 * 100) / 100;
-  const total =
-    Number(
-      cot?.total_soles ??
-      cot?.total ??
-      subtotal + igv
-    );
+  const igv = cot?.igv_monto;
+  const total = cot?.total_final;
 
   return {
     id: Number(cotizacionId ?? cot?.id ?? data?.id ?? null),
@@ -35,12 +30,12 @@ export function mapearCotizacionAContrato(data, cotizacionId) {
     entidad: {
       cliente: {
         id: cliente?.id ?? null,
-        razon_social: cliente?.razon_social ?? "",
-        ruc: cliente?.ruc ?? "",
+        razon_social: cliente?.nombre_cliente ?? "",
+        ruc: cliente?.numero_documento ?? "",
         domicilio_fiscal: cliente?.domicilio_fiscal ?? cliente?.direccion ?? "",
-        cargo_representante: cliente?.cargo_representante ?? "",
-        nombre_representante: cliente?.nombre_representante ?? "",
-        documento_representante: cliente?.documento_representante ?? "",
+        cargo_representante: firmantes?.cliente.cargo_representante_legal ?? "",
+        nombre_representante: firmantes?.cliente.nombre_representante_legal ?? "",
+        documento_representante: firmantes?.cliente.numero_documento_representante_legal ?? "",
         domicilio_representante: cliente?.domicilio_representante ?? "",
       },
       obra: {
@@ -53,12 +48,12 @@ export function mapearCotizacionAContrato(data, cotizacionId) {
         id: filial?.id ?? null,
         razon_social: filial?.razon_social ?? "",
         ruc: filial?.ruc ?? "",
-        nombre_representante: filial?.nombre_representante ?? "",
-        documento_representante: filial?.documento_representante ?? "",
-        cargo_representante: filial?.cargo_representante ?? "",
-        telefono_representante: filial?.telefono_representante ?? "",
-        domicilio_fiscal: filial?.domicilio_fiscal ?? "",
-        direccion_almacen: filial?.direccion_almacen ?? "",
+        nombre_representante: firmantes?.filial.nombre_representante_legal ?? "",
+        documento_representante: firmantes?.filial.numero_documento_representante_legal ?? "",
+        cargo_representante: firmantes?.filial.cargo_representante_legal ?? "",
+        telefono_representante: firmantes?.filial.telefono_representante_legal ?? "",
+        domicilio_fiscal: firmantes?.filial.domicilio_representante_legal ?? "",
+        direccion_almacen: filial.direccion_almacen ?? "",
       },
       contacto: {
         id: contacto?.id ?? null,

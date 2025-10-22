@@ -47,6 +47,14 @@ app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads'), {
     maxAge: '30d',
 }));
 
+app.use(
+  "/public",
+  express.static(path.resolve(process.cwd(), "storage"), {
+    fallthrough: false,   // 404 si no existe (no cae al SPA)
+    cacheControl: true,
+    maxAge: "30d",
+  })
+);
 
 
 // 📂 Cargar rutas correctamente (SIN DUPLICAR)

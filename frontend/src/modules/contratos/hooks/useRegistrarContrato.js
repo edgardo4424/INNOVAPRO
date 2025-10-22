@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { useWizardContratoContext } from "../context/WizardContratoContext";
 
 // Servicios
-import { obtenerDatosPDF } from "@/modules/cotizaciones/services/cotizacionesService";
+import { autocompletarCotizacion } from "../services/contratosService";
 import { crearContrato } from "../services/contratosService";
 
 // Utilidad
@@ -52,7 +52,7 @@ export function useRegistrarContrato(totalPasos) {
     (async () => {
       try {
         setBuscandoBase(true);
-        const data = await obtenerDatosPDF(cotizacionId);
+        const data = await autocompletarCotizacion(cotizacionId);
         if (cancelado) return;
         const snapshot = mapearCotizacionAContrato(data, cotizacionId);
 

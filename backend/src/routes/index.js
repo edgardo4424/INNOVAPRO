@@ -2,12 +2,12 @@ const express = require("express");
 const router = express.Router();
 const { verificarToken } = require("../shared/middlewares/authMiddleware");
 const { registerModuleRoutes } = require("../../scripts/registerModuleRoutes");
+const path = require("path");
 
 // Llamada a rutas dentro de subcarpeta
 const condicionAlquilerRoutes = require("../modules/cotizaciones/condicionesAlquiler/interfaces/routes/condicionRoutes");
 
 router.use("/condiciones", condicionAlquilerRoutes);
-
 
 // 👇 EXCEPCIÓN: login y verify-session deben estar ANTES del middleware
 router.use("/auth", require("../modules/auth/interfaces/routes/authRoutes"));
