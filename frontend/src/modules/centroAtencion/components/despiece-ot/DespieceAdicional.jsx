@@ -28,7 +28,8 @@ export default function DespieceAdicional({ formData, setFormData }) {
         ...despieceOriginal.filter((p) => !p.esAdicional), //protegiendo todo el despiece original
         ...nuevoDespiece.map((p) => ({ //agregamos solo las piezas adicionales con su propiedad 'esAdicional'
           ...p,
-          esAdicional: true
+          esAdicional: true,
+          item: p.item
         }))
       ];
 

@@ -47,6 +47,8 @@ async function actualizarDespiecesDetalle({ despiece_id, despiece, transaction }
       // Ya existe, actualizarla
       await piezaExistente.update(
         {
+          item: nuevaPieza.item,
+          descripcion: nuevaPieza.descripcion,
           cantidad: nuevaPieza.total,
           peso_kg: nuevaPieza.peso_kg,
           precio_venta_dolares: nuevaPieza.precio_venta_dolares,

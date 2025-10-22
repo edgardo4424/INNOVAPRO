@@ -25,6 +25,12 @@ const DespieceDetalle = sequelize.define(
         key: "id",
       },
     },
+    item: {
+      type: DataTypes.STRING,
+    },
+    descripcion: {
+      type: DataTypes.STRING,
+    },
     cantidad: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -47,13 +53,13 @@ const DespieceDetalle = sequelize.define(
     },
     esAdicional: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false
-    }
+      defaultValue: false,
+    },
   },
   {
     timestamps: false,
     tableName: "despieces_detalle",
-     indexes: [
+    indexes: [
       {
         unique: true,
         fields: ["despiece_id", "pieza_id", "esAdicional"],
