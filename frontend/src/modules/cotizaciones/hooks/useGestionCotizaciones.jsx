@@ -3,7 +3,7 @@ import { jsPDF } from "jspdf";
 import { toast } from "react-toastify";
 import * as cotizacionesService from "../services/cotizacionesService";
 import generarPDFPorUso from "../pdf/generadorPDFModular";
-import { generarMensajeCondiciones } from "../utils/generarMensajeCondiciones";
+
 import { useAuth } from "@/context/AuthContext";
 
 // Este hook maneja la lógica de negocio para la gestión de cotizaciones, incluyendo la descarga de PDFs y la paginación de las cotizaciones.
@@ -62,21 +62,6 @@ export function useGestionCotizaciones() {
     }
   };
 
-  const solicitarCondiciones = async (cotizacion, extras) => {
-    try {
-      const comentario = generarMensajeCondiciones(cotizacion, extras);
-      await cotizacionesService.solicitarCondiciones(cotizacion.id, comentario);
-      toast.success("Condiciones de alquiler solicitadas correctamente");
-
-      const res = await cotizacionesService.obtenerTodos();
-      setCotizaciones( res || [])
-    } catch (error) {
-      console.error("Error al solicitar condiciones:", error);
-      toast.error("No se pudo enviar la solicitud.");
-    }
-  }
-
-
   // 🔄 Cargar cotizaciones al iniciar
   useEffect(() => {
     async function fetchCotizaciones() {
@@ -97,7 +82,6 @@ export function useGestionCotizaciones() {
     modalConfirmacion,
     cerrarModal,
     ejecutarDescarga,
-    solicitarCondiciones,
     user
   };
 }

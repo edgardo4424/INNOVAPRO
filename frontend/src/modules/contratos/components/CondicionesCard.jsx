@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import useCondicionesComercial from "../hooks/useCondicionesComercial";
+import useCondicionesComercial from "../../contratos/hooks/useCondicionesComercial";
 import { Checkbox } from "@/components/ui/checkbox";
 
 export default function CondicionesCard({ cotizacionId, onCumplidas, onClose, onActualizarCotizaciones}) {

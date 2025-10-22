@@ -21,6 +21,8 @@ export function useRegistrarContrato(totalPasos) {
     setPasoActual,
   } = useWizardContratoContext();
 
+  const [exito, setExito] = useState(false);
+
   const [buscandoBase, setBuscandoBase] = useState(false);
   const [guardando, setGuardando] = useState(false);
 
@@ -87,7 +89,7 @@ export function useRegistrarContrato(totalPasos) {
     const legales = formData?.legales || {};
     const val = formData?.valorizacion || {};
     const firmas = formData?.firmas || {};
-    const envio = formData?.envio || {};
+    //const envio = formData?.envio || {};
 
     // Fechas desde vigencia
     const fecha_inicio = legales?.vigencia?.inicio || null;
@@ -99,10 +101,10 @@ export function useRegistrarContrato(totalPasos) {
       .map(({ id, titulo, texto, fija }) => ({ id, titulo, texto, fija: !!fija }));
 
     // Condiciones (para auditoría del contrato)
-    const condiciones_alquiler = (legales?.condiciones_alquiler || []).map(c => ({
+    /* const condiciones_alquiler = (legales?.condiciones_alquiler || []).map(c => ({
       texto: c?.texto || "",
       cumplida: !!c?.cumplida,
-    }));
+    })); */
 
     return {
       // claves principales
@@ -150,6 +152,7 @@ export function useRegistrarContrato(totalPasos) {
         throw new Error("Falta la cotización base.");
       console.log("📦 Enviando payloadContrato:", payloadContrato);
       const res = await crearContrato(payloadContrato);
+      setExito(true);
       toast.success("Contrato creado correctamente.");
       return res;
     } catch (e) {
@@ -174,6 +177,7 @@ export function useRegistrarContrato(totalPasos) {
     guardarContrato,
     setFormData,
     setErrores,
-    payloadContrato, 
+    payloadContrato,
+    exito
   };
 }

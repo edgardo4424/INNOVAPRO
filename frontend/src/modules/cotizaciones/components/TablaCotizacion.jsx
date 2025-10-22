@@ -6,7 +6,7 @@ import {
    TooltipProvider,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { Edit, Eye, FileDown, SquareCheckBig, FileSignature } from "lucide-react";
+import { Edit, Eye, FileDown, FileSignature } from "lucide-react";
 import { ColumnSelector } from "@/shared/components/ColumnSelector";
 import { Input } from "@/components/ui/input";
 
@@ -15,8 +15,7 @@ import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import SolicitarCondicionesModal from "./SolicitarCondicionesModal";
-import CondicionesModal from "./CondicionesModal";
+
 import { obtenerTodos } from "../services/cotizacionesService"
 
 // Componente para texto truncado con tooltip
@@ -39,7 +38,6 @@ export default function TablaCotizacion({
    onDownloadPDF,
    setCotizacionPrevisualizada,
    onContinuarWizard,
-   onSolicitarCondicionesAlquiler,
    onCrearContrato,
    user,
 }) {
@@ -193,49 +191,6 @@ export default function TablaCotizacion({
                            </>
                         )}
 
-                        {/* Solicitar condiciones de alquiler para el mismo usuario */}
-                        {row.tipo_cotizacion === "Alquiler" && 
-                        row.estado_nombre === "Por Aprobar" && 
-                        row.usuario.id === user.id &&
-                        (
-                           <SolicitarCondicionesModal
-                              cotizacion={row}
-                              onConfirmar={onSolicitarCondicionesAlquiler}
-                           >
-                              <Tooltip>
-                                 <TooltipTrigger asChild>
-                                 <Button variant="outline" size="icon">
-                                    <SquareCheckBig />
-                                 </Button>
-                                 </TooltipTrigger>
-                                 <TooltipContent>
-                                 <p>Solicitar Condiciones de Alquiler</p>
-                                 </TooltipContent>
-                              </Tooltip>
-                           </SolicitarCondicionesModal>
-                        )}
-
-                        {/* Validar condiciones, si corresponde */}
-                        {row.estado_nombre === "Validar Condiciones" &&
-                         row.usuario.id === user.id && (
-                           <CondicionesModal 
-                              cotizacionId={row.id} 
-                              onActualizarCotizaciones={async () => {
-                                 const res = await obtenerTodos();
-                                 setCotizaciones(
-                                    res.map((item) => ({
-                                       ...item,
-                                       despiece_cp: item.despiece?.cp ?? "—",
-                                       cliente_razon_social: item.cliente?.razon_social ?? "—",
-                                       obra_nombre: item.obra?.nombre ?? "—",
-                                       uso_descripcion: item.uso?.descripcion ?? "—",
-                                       estado_nombre: item.estados_cotizacion?.nombre ?? "—",
-                                    }))
-                                 )
-                              }}
-                           />
-                        )}
-
                         {/* Continuar el Wizard si ya hay despiece generado por OT */}
                         {row.estado_nombre ===
                            "Despiece generado" && (
@@ -249,7 +204,7 @@ export default function TablaCotizacion({
                         )}
 
                         {/* Crear contrato (Cuando ya las condiciones están cumplidas) */}
-                        {row.estado_nombre === "Condiciones Cumplidas" && typeof onCrearContrato === "function" && (
+                        {row.estado_nombre === "Por Aprobar" && typeof onCrearContrato === "function" && (
                            <Tooltip>
                               <TooltipTrigger asChild>
                                  <Button 

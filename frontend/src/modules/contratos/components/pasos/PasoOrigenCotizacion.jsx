@@ -134,7 +134,7 @@ export default function PasoOrigenCotizacion() {
           </ul>
         ) : (
           <p className="text-sm text-muted-foreground">
-            No hay cotizaciones con estado “Condiciones Cumplidas”.
+            No hay cotizaciones con estado “Por Aprobar”.
           </p>
         )}
       </div>

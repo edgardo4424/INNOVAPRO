@@ -6,7 +6,7 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { Edit, Eye, FileDown, FileText } from "lucide-react";
+import { Edit, Eye, FileDown, FileText, SquareCheckBig } from "lucide-react";
 import { ColumnSelector } from "@/shared/components/ColumnSelector";
 import { Input } from "@/components/ui/input";
 
@@ -15,6 +15,9 @@ import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 import "ag-grid-community/styles/ag-theme-quartz.css";
+
+import SolicitarCondicionesModal from "./SolicitarCondicionesModal";
+import CondicionesModal from "./CondicionesModal";
 
 // Texto truncado con tooltip
 const TruncatedText = ({ text }) => {
@@ -36,12 +39,13 @@ export default function TablaContratos({
   onDownloadPDF,
   setContratoPrevisualizado,
   onContinuarWizard,
+  onSolicitarCondicionesAlquiler,
   onVerDetalle,
   user,
 }) {
   const [text, setText] = useState("");
   const [contratos, setContratos] = useState([]);
-
+  console.log("CONTRATOS:", contratos)
   // Aplanado defensivo (contrato es extensión de cotización)
   useEffect(() => {
     const flattened = (data || []).map((item) => ({
@@ -150,6 +154,9 @@ export default function TablaContratos({
             const puedeDescargar =
               ["Por Firmar", "Vigente", "Vencido", "Resuelto"].includes(row.estado_contrato);
 
+            const puedeSolicitarCondiciones =
+              ["PROGRAMADO", "Vigente", "Vencido", "Resuelto"].includes(row.estado);
+
             return (
               <div className="flex gap-1 justify-start">
                 {/* Ver detalle */}
@@ -219,6 +226,47 @@ export default function TablaContratos({
                       <p>Continuar / Editar</p>
                     </TooltipContent>
                   </Tooltip>
+                )}
+
+                {/* Solicitar condiciones de alquiler para el mismo usuario */}
+                {puedeSolicitarCondiciones &&
+                (
+                  <SolicitarCondicionesModal
+                    contrato={row}
+                    onConfirmar={onSolicitarCondicionesAlquiler}
+                  >
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline" size="icon">
+                        <SquareCheckBig />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Solicitar Condiciones de Alquiler</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  </SolicitarCondicionesModal>
+                )}
+
+                {/* Validar condiciones, si corresponde */}
+                {row.estado_nombre === "Validar Condiciones" &&
+                 row.usuario.id === user.id && (
+                 <CondicionesModal 
+                    cotizacionId={row.id} 
+                    onActualizarCotizaciones={async () => {
+                      const res = await obtenerTodos();
+                      setCotizaciones(
+                        res.map((item) => ({
+                          ...item,
+                          despiece_cp: item.despiece?.cp ?? "—",
+                          cliente_razon_social: item.cliente?.razon_social ?? "—",
+                          obra_nombre: item.obra?.nombre ?? "—",
+                          uso_descripcion: item.uso?.descripcion ?? "—",
+                          estado_nombre: item.estados_cotizacion?.nombre ?? "—",
+                        }))
+                      )
+                    }}
+                  />
                 )}
               </div>
             );

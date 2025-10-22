@@ -18,6 +18,13 @@ export async function generarPDFContrato(id) {
   const { data } = await api.post(`/contratos/${id}/generar-pdf`, {}, { responseType: "blob" });
   return data; // blob
 }
+// Solicitar condiciones de alquiler al área de administración
+export async function solicitarCondiciones(idCotizacion, comentario="") {
+  const res = await api.put(`/cotizaciones/${idCotizacion}/solicitar-condiciones`, {
+    comentario,
+  })
+  return res.data;
+}
 
 // Integraciones de wizard (si existen en backend de plantillas/preview)
 const contratosService = {

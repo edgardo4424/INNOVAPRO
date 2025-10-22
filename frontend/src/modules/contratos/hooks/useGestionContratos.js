@@ -3,6 +3,7 @@ import { jsPDF } from "jspdf";
 import { toast } from "react-toastify";
 import * as contratosService from "../services/contratosService";
 import {generarPDFContrato} from "../pdf/generadorPDFContrato";
+import { generarMensajeCondiciones } from "../utils/generarMensajeCondiciones";
 import { useAuth } from "@/context/AuthContext";
 
 // Lógica de negocio para gestión de contratos (extensión de cotizaciones)
@@ -58,10 +59,25 @@ export function useGestionContratos() {
     }
   };
 
+  const solicitarCondiciones = async (contrato, extras) => {
+      try {
+        console.log("CONTRATO QUE LLEGA A SOLICITUD DE CONDICIONES: ", contrato, "Y EXTRAS:", extras)
+        const comentario = generarMensajeCondiciones(contrato, extras);
+        await contratosService.solicitarCondiciones(contrato.id, comentario);
+        toast.success("Condiciones de alquiler solicitadas correctamente");
+  
+        const res = await contratosService.obtenerContratos();
+        setContratos( res || [])
+      } catch (error) {
+        console.error("Error al solicitar condiciones:", error);
+        toast.error("No se pudo enviar la solicitud.");
+      }
+    }
+
   useEffect(() => {
     async function fetchContratos() {
       try {
-        const res = await contratosService.obtenerTodos();
+        const res = await contratosService.obtenerContratos(); 
         setContratos(res || []);
       } catch (error) {
         console.error("❌ Error al obtener contratos:", error);
@@ -77,6 +93,7 @@ export function useGestionContratos() {
     modalConfirmacion,
     cerrarModal,
     ejecutarDescarga,
+    solicitarCondiciones,
     user,
   };
 }

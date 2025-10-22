@@ -13,7 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 
-export default function SolicitarCondicionesModal({ cotizacion, onConfirmar, children }) {
+export default function SolicitarCondicionesModal({ contrato, onConfirmar, children }) {
+  
   const [open, setOpen] = useState(false);
   const [tiempo, setTiempo] = useState("");
   const [referencia, setReferencia] = useState("");
@@ -27,7 +28,7 @@ export default function SolicitarCondicionesModal({ cotizacion, onConfirmar, chi
       nota: nota.trim(),
       estimadoEquipo: estimadoEquipo.trim(),
     };
-    onConfirmar(cotizacion, extras);
+    onConfirmar(contrato.id, extras);
     setOpen(false);
   };
 

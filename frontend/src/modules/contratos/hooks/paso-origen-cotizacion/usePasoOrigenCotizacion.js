@@ -22,7 +22,7 @@ export function usePasoOrigenCotizacion() {
           const estado =
             c?.estados_cotizacion?.nombre ||
             "";
-          return estado === "Condiciones Cumplidas";
+          return estado === "Por Aprobar";
         });
         setCotizaciones(filtradas);
       } catch (error) {
