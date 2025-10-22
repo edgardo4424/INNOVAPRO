@@ -17,5 +17,6 @@ router.post("/", stockController.crearStock);//crea el primer registro de stock 
 
 router.put("/disponible", stockController.actualizarStockDisponible); 
 router.put("/fijo", stockController.actualizarStockFijo); 
+router.post("/verificar-stock", stockController.verificarStock); 
 
 module.exports = router;
