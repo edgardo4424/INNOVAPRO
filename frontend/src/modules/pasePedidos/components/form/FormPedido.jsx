@@ -4,17 +4,16 @@ import TablaItems from "../tabla/TablaItems";
 const FormPedido = ({ pedidoView: pedido }) => {
   const bgEstado = (estado) => {
     switch (estado) {
+      case "Confirmado Stock":
+        return "bg-green-600 !text-white";
       case "Confirmado":
-        // 🟢 Verde: Listo, Aprobado
-        return "bg-green-400 !text-white";
+        return "bg-blue-600 !text-white";
       case "Pre Confirmado":
-        // 🟡 Amarillo/Azul: En proceso, En revisión (Si quieres que el azul signifique 'Proceso Activo')
-        return "bg-yellow-400 !text-white";
+        return "bg-yellow-500 !text-white"; // Usar texto oscuro para mejor contraste en fondos claros
       case "Por Confirmar":
-        // 🔴 Rojo/Naranja: Requiere atención inmediata, Falta aprobación crítica
-        return "bg-orange-400 !text-white";
+        return "bg-orange-500 !text-white";
       default:
-        return "bg-gray-400 !text-white";
+        return "bg-gray-500 !text-whitequot";
     }
   };
 

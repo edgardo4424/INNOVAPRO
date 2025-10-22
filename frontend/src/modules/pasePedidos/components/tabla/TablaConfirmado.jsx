@@ -5,22 +5,29 @@ import {
 } from "@/components/ui/tooltip";
 import { useAuth } from "@/context/AuthContext";
 import { getMotivoTrasladoDescription } from "@/modules/facturacion/utils/formateos";
-import { Badge, BadgeCheck, EyeIcon, FileInput } from "lucide-react";
+import {
+  Badge,
+  BadgeAlert,
+  BadgeCheck,
+  BadgeHelp,
+  ClipboardList,
+  EyeIcon,
+  FileInput,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const bgEstado = (estado) => {
   switch (estado) {
+    case "Confirmado Stock":
+      return "bg-green-600 !text-white";
     case "Confirmado":
-      // 🟢 Verde: Listo, Aprobado
-      return "bg-green-400 !text-white";
+      return "bg-blue-600 !text-white";
     case "Pre Confirmado":
-      // 🟡 Amarillo/Azul: En proceso, En revisión (Si quieres que el azul signifique 'Proceso Activo')
-      return "bg-yellow-400 !text-white";
+      return "bg-yellow-500 !text-white"; // Usar texto oscuro para mejor contraste en fondos claros
     case "Por Confirmar":
-      // 🔴 Rojo/Naranja: Requiere atención inmediata, Falta aprobación crítica
-      return "bg-orange-400 !text-white";
+      return "bg-orange-500 !text-white";
     default:
-      return "bg-gray-400 !text-white";
+      return "bg-gray-500 !text-whitequot";
   }
 };
 
@@ -28,8 +35,7 @@ const TablaConfirmado = ({
   listaPedidos,
   setOpen,
   setPedidoView,
-  setOpenCotizacion,
-  setCotizacion_id,
+  setOpenNuevaTarea,
 }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -171,14 +177,16 @@ const TablaConfirmado = ({
                   {pedido.guia_Envio_Peso_Total.toFixed(4) || 0}{" "}
                   {pedido.guia_Envio_Und_Peso_Total || ""}
                 </td>
-                <td
-                  className={
-                    "px-3 py-3 text-xs text-gray-700 " +
-                    bgEstado(pedido.estado) +
-                    ""
-                  }
-                >
-                  {pedido.estado}
+                <td>
+                  <span
+                    className={
+                      "rounded-full px-3 py-2 text-xs text-gray-700 " +
+                      bgEstado(pedido.estado) +
+                      ""
+                    }
+                  >
+                    {pedido.estado}
+                  </span>
                 </td>
                 <td className="px-3 py-3 text-xs text-gray-700">
                   <div className="gap-x-auto flex justify-start">
@@ -199,60 +207,61 @@ const TablaConfirmado = ({
                       </TooltipContent>
                     </Tooltip>
 
-                    {actValidarPedido(user.rol) && (
+                    {actValidarPedido(user.rol) &&
+                      pedido.estado !== "Confirmado Stock" && (
+                        <Tooltip side="bottom" align="center" className="mr-2">
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => {
+                                setOpenNuevaTarea(true);
+                                setPedidoView(pedido);
+                              }}
+                              className="rounded p-1 transition-colors hover:bg-orange-100"
+                            >
+                              <ClipboardList className="h-5 w-5 cursor-pointer text-orange-600 hover:text-orange-800" />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Generar Nueva Tarea</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
+
+                    {pedido.estado == "Confirmado Stock" && (
                       <Tooltip side="bottom" align="center" className="mr-2">
                         <TooltipTrigger asChild>
                           <button
-                            onClick={() => {
-                              setOpenCotizacion(true);
-                              setCotizacion_id(pedido.cotizacion_id);
-                              setPedidoView(pedido);
-                            }}
-                            className="rounded p-1 transition-colors hover:bg-orange-100"
+                            readOnly
+                            className="rounded p-1 transition-colors hover:bg-green-100"
                           >
-                            <Badge className="h-5 w-5 cursor-pointer text-orange-600 hover:text-orange-800" />
+                            <BadgeCheck className="h-5 w-5 cursor-pointer text-green-600 hover:text-green-800" />
                           </button>
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>Validar Pedido</p>
+                          <p>Stock Validado</p>
                         </TooltipContent>
                       </Tooltip>
                     )}
 
-                    {/* <Tooltip side="bottom" align="center" className="mr-2">
-                      <TooltipTrigger asChild>
-                        <button
-                          onClick={() => {
-                            setOpen(true);
-                            setPedidoView(pedido);
-                          }}
-                          className="rounded p-1 transition-colors hover:bg-green-100"
-                        >
-                          <BadgeCheck className="h-5 w-5 cursor-pointer text-green-600 hover:text-green-800" />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Pedido Validado</p>
-                      </TooltipContent>
-                    </Tooltip> */}
-
-                    {actPlasmarPedido(user.rol) && (
-                      <Tooltip side="bottom" align="center" className="mr-2">
-                        <TooltipTrigger asChild>
-                          <button
-                            onClick={() => {
-                              plasmarPedido(pedido);
-                            }}
-                            className="rounded p-1 transition-colors hover:bg-yellow-100"
-                          >
-                            <FileInput className="h-5 w-5 cursor-pointer text-yellow-600 hover:text-yellow-700" />
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Emitir Pedido</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    )}
+                    {actPlasmarPedido(user.rol) &&
+                      pedido.estado == "Confirmado Stock" && (
+                        <Tooltip side="bottom" align="center" className="mr-2">
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => {
+                                plasmarPedido(pedido);
+                              }}
+                              disabled={pedido.estado !== "Confirmado Stock"}
+                              className="rounded p-1 text-yellow-600 transition-colors hover:bg-yellow-100 hover:text-yellow-700 disabled:cursor-not-allowed disabled:text-gray-400 disabled:hover:bg-white disabled:hover:text-gray-400"
+                            >
+                              <FileInput className="h-5 w-5 cursor-pointer" />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Emitir Pedido</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
                   </div>
                 </td>
               </tr>

@@ -1,24 +1,44 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePedidos } from "../../context/PedidosContenxt";
 import FiltroPedidos from "../FiltroPedidos";
+import ModalNuevaTarea from "../modal/ModalNuevaTarea";
 import ModalPedidoDetallado from "../modal/ModalPedidoDetallado";
 import TablaConfirmado from "../tabla/TablaConfirmado";
 import TablaSkeleton from "../TablaSkeleton";
-import ModalValidarStock from "../modal/ModalValidarStock";
+
+let filtroInit = {
+  estado: "",
+  filial: "",
+  fecha: "",
+};
 
 const ContentPedidos = () => {
-  const { pedidos, loading } = usePedidos();
+  const { pedidos, loading, filiales } = usePedidos();
+
+  const [ListaPedidos, setListaPedidos] = useState(pedidos);
+  const [filtroPedidos, setFiltroPedidos] = useState(filtroInit);
 
   //   ?? Vizualizar Pedido
   const [pedidoView, setPedidoView] = useState(null);
   const [openView, setOpenView] = useState(false);
 
-  const [cotizacion_id, setCotizacion_id] = useState(null);
-  const [openCotizacion, setOpenCotizacion] = useState(false);
+  const [openNuevaTarea, setOpenNuevaTarea] = useState(false);
+
+  useEffect(() => {
+    if (!openNuevaTarea) {
+      setPedidoView(null);
+    }
+  }, [openNuevaTarea]);
+
+  useEffect(() => {}, [filtroPedidos]);
 
   return (
     <div className="flex flex-col gap-y-4">
-      <FiltroPedidos />
+      <FiltroPedidos
+      filiales={filiales}
+        setFiltroPedidos={setFiltroPedidos}
+        filtroPedidos={filtroPedidos}
+      />
       <div className="w-full">
         {loading ? (
           <TablaSkeleton rows={10} />
@@ -35,8 +55,7 @@ const ContentPedidos = () => {
               listaPedidos={pedidos}
               setOpen={setOpenView}
               setPedidoView={setPedidoView}
-              setOpenCotizacion={setOpenCotizacion}
-              setCotizacion_id={setCotizacion_id}
+              setOpenNuevaTarea={setOpenNuevaTarea}
             />
             {openView && pedidoView && (
               <ModalPedidoDetallado
@@ -48,14 +67,13 @@ const ContentPedidos = () => {
             )}
             {
               // ?? Vizualizar Cotizacion
-              openCotizacion && cotizacion_id && (
-                <ModalValidarStock
-                  open={openCotizacion}
-                  setOpen={setOpenCotizacion}
-                  cotizacion_id={cotizacion_id}
+              openNuevaTarea && pedidoView && (
+                <ModalNuevaTarea
+                  open={openNuevaTarea}
+                  setOpen={setOpenNuevaTarea}
                   pedidoView={pedidoView}
                   setPedidoView={setPedidoView}
-                  setCotizacion_id={setCotizacion_id}
+                  filiales={filiales}
                 />
               )
             }
