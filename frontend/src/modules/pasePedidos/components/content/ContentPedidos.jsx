@@ -4,6 +4,7 @@ import FiltroPedidos from "../FiltroPedidos";
 import ModalPedidoDetallado from "../modal/ModalPedidoDetallado";
 import TablaConfirmado from "../tabla/TablaConfirmado";
 import TablaSkeleton from "../TablaSkeleton";
+import ModalValidarStock from "../modal/ModalValidarStock";
 
 const ContentPedidos = () => {
   const { pedidos, loading } = usePedidos();
@@ -11,6 +12,10 @@ const ContentPedidos = () => {
   //   ?? Vizualizar Pedido
   const [pedidoView, setPedidoView] = useState(null);
   const [openView, setOpenView] = useState(false);
+
+  const [cotizacion_id, setCotizacion_id] = useState(null);
+  const [openCotizacion, setOpenCotizacion] = useState(false);
+
   return (
     <div className="flex flex-col gap-y-4">
       <FiltroPedidos />
@@ -30,6 +35,8 @@ const ContentPedidos = () => {
               listaPedidos={pedidos}
               setOpen={setOpenView}
               setPedidoView={setPedidoView}
+              setOpenCotizacion={setOpenCotizacion}
+              setCotizacion_id={setCotizacion_id}
             />
             {openView && pedidoView && (
               <ModalPedidoDetallado
@@ -39,6 +46,19 @@ const ContentPedidos = () => {
                 setPedidoView={setPedidoView}
               />
             )}
+            {
+              // ?? Vizualizar Cotizacion
+              openCotizacion && cotizacion_id && (
+                <ModalValidarStock
+                  open={openCotizacion}
+                  setOpen={setOpenCotizacion}
+                  cotizacion_id={cotizacion_id}
+                  pedidoView={pedidoView}
+                  setPedidoView={setPedidoView}
+                  setCotizacion_id={setCotizacion_id}
+                />
+              )
+            }
           </div>
         )}
       </div>

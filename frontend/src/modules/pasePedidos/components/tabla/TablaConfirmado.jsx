@@ -24,7 +24,13 @@ const bgEstado = (estado) => {
   }
 };
 
-const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
+const TablaConfirmado = ({
+  listaPedidos,
+  setOpen,
+  setPedidoView,
+  setOpenCotizacion,
+  setCotizacion_id,
+}) => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -141,7 +147,7 @@ const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
           {listaPedidos.map((pedido, index) => {
             return (
               <tr
-                key={pedido.id_pedido}
+                key={pedido.pedido_id}
                 className={`${index % 2 === 0 ? "bg-white" : "bg-gray-50"} border-b border-gray-200`}
               >
                 <td className="px-3 py-3 text-xs text-gray-700">
@@ -198,7 +204,8 @@ const TablaConfirmado = ({ listaPedidos, setOpen, setPedidoView }) => {
                         <TooltipTrigger asChild>
                           <button
                             onClick={() => {
-                              setOpen(true);
+                              setOpenCotizacion(true);
+                              setCotizacion_id(pedido.cotizacion_id);
                               setPedidoView(pedido);
                             }}
                             className="rounded p-1 transition-colors hover:bg-orange-100"

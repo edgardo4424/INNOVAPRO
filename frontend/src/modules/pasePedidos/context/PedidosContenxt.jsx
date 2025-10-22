@@ -7,8 +7,9 @@ export function PedidosProvider({ children }) {
   const [filiales, setFiliales] = useState([]);
   const [pedidos, setPedidos] = useState([
     {
-      id_contrato: 1,
-      id_pedido: 1,
+      contrato_id: 1,
+      pedido_id: 1,
+      cotizacion: 1,
       filial: "ENCOFRADOS INNOVA S.A.C.",
       estado: "Confirmado",
       guia_Envio_Cod_Traslado: "13",
@@ -189,8 +190,9 @@ export function PedidosProvider({ children }) {
         "AV. ALFREDO BENAVIDES NRO. 1579 INT. 602 URB. SAN JORGE",
     },
     {
-      id_contrato: 2,
-      id_pedido: 2,
+      contrato_id: 2,
+      pedido_id: 2,
+      cotizacion_id: 2,
       filial: "ANDAMIOS ELECTRICOS INNOVA S.A.C.",
       estado: "Confirmado",
       guia_Envio_Cod_Traslado: "13",
@@ -365,8 +367,9 @@ export function PedidosProvider({ children }) {
         "AV. ALFREDO BENAVIDES NRO. 1579 INT. 602 URB. SAN JORGE",
     },
     {
-      id_contrato: 3,
-      id_pedido: 3,
+      contrato_id: 3,
+      pedido_id: 3,
+      cotizacion_id: 3,
       filial: "ANDAMIOS ELECTRICOS INNOVA S.A.C.",
       estado: "Confirmado",
       guia_Envio_Cod_Traslado: "13",

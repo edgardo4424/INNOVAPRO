@@ -11,7 +11,7 @@ const GuiaRemision = () => {
     setGuiaDatosPrivado,
     setGuiaDatosPublico,
     setPedidoId,
-    setPesoTotalCalculado,
+    setPesoPlasmadoKilos,
     setEditadoPlasmado,
   } = useGuiaTransporte();
 
@@ -29,7 +29,7 @@ const GuiaRemision = () => {
   const plasmarPeso = (peso) => {
     setEditadoPlasmado(true);
     setTimeout(() => {
-      setPesoTotalCalculado(peso);
+      setPesoPlasmadoKilos(peso);
     }, 500);
   };
 
