@@ -36,6 +36,7 @@ export default function ModuloNavegacion() {
       "Registrar Cotización": FileEdit,
       Contratos: ScrollText,
       "Registrar Contrato": FileSignature,
+      "Contratos Documentos": FileSignature,
    };
    const modulesByRole = {
       CEO: [
@@ -50,6 +51,7 @@ export default function ModuloNavegacion() {
          { name: "Registrar Cotización", path: "/cotizaciones/registrar" },
          { name: "Contratos", path: "/contratos" },
          { name: "Registrar Contrato", path: "/contratos/registrar" },
+         { name: "Contratos Documentos", path: "contratos/:contratoId/documentos" },
       ],
       "Técnico Comercial": [
          { name: "Gestión de Clientes", path: "/gestion-clientes" },
@@ -61,6 +63,7 @@ export default function ModuloNavegacion() {
          { name: "Registrar Cotización", path: "/cotizaciones/registrar" },
          { name: "Contratos", path: "/contratos" },
          { name: "Registrar Contrato", path: "/contratos/registrar" },
+         { name: "Contratos Documentos", path: "contratos/:contratoId/documentos" },
       ],
       "Jefe de OT": [
          { name: "Centro de Atención", path: "/centro-atencion" },

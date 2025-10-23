@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Tooltip,
   TooltipTrigger,
@@ -6,7 +7,7 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { Edit, Eye, FileDown, FileText, SquareCheckBig } from "lucide-react";
+import { Edit, Eye, FileDown, FileText, SquareCheckBig, FileCog } from "lucide-react";
 import { ColumnSelector } from "@/shared/components/ColumnSelector";
 import { Input } from "@/components/ui/input";
 
@@ -43,6 +44,7 @@ export default function TablaContratos({
   onVerDetalle,
   user,
 }) {
+  const navigate = useNavigate();
   const [text, setText] = useState("");
   const [contratos, setContratos] = useState([]);
 
@@ -52,6 +54,8 @@ export default function TablaContratos({
       return ({
       ...item,
       // claves comunes
+      filial_id: item.filial?.id ?? item.filial_id ?? null,
+      uso_id: item.uso?.id ?? item.uso_id ?? null,
       codigo_contrato: item.ref_contrato ?? "-",
       cliente_razon_social: item.cliente?.razon_social ?? "-",
       obra_nombre: item.obra?.nombre ?? "-",
@@ -160,19 +164,29 @@ export default function TablaContratos({
 
             return (
               <div className="flex gap-1 justify-start">
-                {/* Ver detalle */}
+
+                {/* Documentos (plantilla → DOCX/PDF) */}
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={() => onVerDetalle?.(row.id)}
+                      onClick={() =>
+                        navigate(`/contratos/${row.id}/documentos`, {
+                          state: {
+                            filialId: row.filial_id ?? null,
+                            usoId: row.uso_id ?? null,
+                            // opcionalmente puedes pasar un slug/nombre si lo tienes:
+                            uso: row.uso?.slug ?? row.uso_descripcion ?? null,
+                          },
+                        })
+                      }
                     >
-                      <FileText />
+                      <FileCog />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Ver detalle</p>
+                    <p>Documentos</p>
                   </TooltipContent>
                 </Tooltip>
 
@@ -283,6 +297,8 @@ export default function TablaContratos({
       setContratos(
         (data || []).map((item) => ({
           ...item,
+          filial_id: item.filial?.id ?? item.filial_id ?? null,
+          uso_id: item.uso?.id ?? item.uso_id ?? null,
           codigo_contrato: item.ref_contrato  ?? "—",
           cliente_razon_social: item.cliente?.razon_social ?? "—",
           obra_nombre: item.obra?.nombre ?? "—",
@@ -317,6 +333,8 @@ export default function TablaContratos({
         })
         .map((item) => ({
           ...item,
+          filial_id: item.filial?.id ?? item.filial_id ?? null,
+          uso_id: item.uso?.id ?? item.uso_id ?? null,
           codigo_contrato: item.ref_contrato ?? "—",
           cliente_razon_social: item.cliente?.razon_social ?? "—",
           obra_nombre: item.obra?.nombre ?? "—",

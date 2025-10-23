@@ -1,4 +1,3 @@
-// INNOVA PRO+ v1.2.0 - Contratos - Hook avanzado (plantillas/preview)
 // Responsabilidades:
 // - Carga snapshot de cotización y plantillas
 // - Edición de variables con helpers
