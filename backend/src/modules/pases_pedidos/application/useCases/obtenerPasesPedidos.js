@@ -1,6 +1,6 @@
-const { Tarea } = require("../../tareas/infrastructure/models/tareaModel");
-const pases_pedido_model = require("../infraestructure/utils/pase_pedido_model_front");
-const db = require("../../../database/models");
+const { Tarea } = require("../../../tareas/infrastructure/models/tareaModel");
+const pases_pedido_model = require("../../infraestructure/utils/pase_pedido_model_front");
+const db = require("../../../../database/models");
 module.exports = async (pasePedidoRepository, transaction = null) => {
   const pases_pedidos =
     await pasePedidoRepository.obtenerPasesPedidos(transaction);
@@ -31,7 +31,9 @@ module.exports = async (pasePedidoRepository, transaction = null) => {
         pase_pedido.cliente_Tipo_Doc = t_doc;
         pase_pedido.cliente_Num_Doc = pedido.contrato.cotizacion.cliente.dni;
       }
+      pase_pedido.clienteId=pedido.contrato.cotizacion.cliente.id;
 
+      pase_pedido.contrato_id=pedido.contrato.cotizacion.contacto.id;
       pase_pedido.nombre_Contacto=pedido.contrato.cotizacion.contacto.nombre;
 
       const tarea = await Tarea.findOne({
@@ -66,10 +68,11 @@ module.exports = async (pasePedidoRepository, transaction = null) => {
 
 
       pase_pedido.obra = pedido.contrato.cotizacion.obra.nombre;
+      pase_pedido.obraId = pedido.contrato.cotizacion.obra.id;
       pase_pedido.nro_contrato = pedido.contrato.ref_contrato;
       pase_pedido.empresa_Ruc =
       pedido.contrato.cotizacion.empresas_proveedora.ruc;
-
+      pase_pedido.empresaProveedoraId= pedido.contrato.cotizacion.empresas_proveedora.id;
 
 
 

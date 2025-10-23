@@ -6,6 +6,6 @@ const {
 const PasePedidoController = require("../controllers/pasePedidoControlle");
 router.use(verificarToken); // Verificamos el token para todas las rutas
 
-router.get("/",PasePedidoController.obtenerPasesPedidosConfirmados)
-
+router.get("/",PasePedidoController.obtenerPasesPedidos);
+router.post("/",PasePedidoController.crearPasePedido);
 module.exports = router;

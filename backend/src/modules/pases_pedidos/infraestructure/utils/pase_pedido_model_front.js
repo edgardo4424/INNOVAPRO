@@ -17,10 +17,13 @@ const pases_pedido_model = () => ({
   ot_Usuario_Revisado: "",
   ot_Respuesta_Pase: "",
 
-  cm_Usuario: "Kaya Chalco",
-  cm_Email: "B2p3w@example.com",
-  cm_Telefono: "987654321",
-
+  cm_Usuario: "",
+  cm_Email: "",
+  cm_Telefono: "",
+  empresaProveedoraId: 1,
+  clienteId: 0,
+  obraId: 57,
+  contactoId:79,
 
 
   obra: "",
@@ -28,13 +31,13 @@ const pases_pedido_model = () => ({
   empresa_Ruc:"",
   guia_Envio_Peso_Total:0,
   guia_Envio_Und_Peso_Total:"KGM",
-  detalle:[],
   ValoresPublico:null,
   ValoresPrivado:null,
   guia_Envio_Partida_Ubigeo: "",
   guia_Envio_Partida_Direccion: "",
   guia_Envio_Llegada_Ubigeo: "",
   guia_Envio_Llegada_Direccion: "",
+  detalle:[],
 });
 
 module.exports=pases_pedido_model
