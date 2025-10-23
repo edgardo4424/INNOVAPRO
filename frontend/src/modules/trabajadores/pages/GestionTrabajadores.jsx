@@ -59,8 +59,12 @@ export default function CompGestionTrabajadoresonent() {
          setLoading(true);
          setError(null);
          const response = await trabajadoresService.getTrabajadores();
-      
-         setTrabajadores(response.data);
+         console.log("response", response.data);
+
+         // Filtrar todos los trabajadores que tengan fecha_baja = null
+         const trabajadoresActivos = response.data?.filter(trabajador => trabajador.fecha_baja == null);
+        
+         setTrabajadores(trabajadoresActivos);
       } catch (error) {
          console.error("Error al cargar trabajadores", error);
          setError(
