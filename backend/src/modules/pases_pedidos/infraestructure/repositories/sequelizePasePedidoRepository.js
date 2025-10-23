@@ -10,7 +10,7 @@ class SequelizePasePedidoRepository {
     if (buscar_pase) {
       throw new Error("Ya existe un pase de pedido con este contrato.");
     }
-    
+
     const pase_pedido = await PasePedido.create(payload, { transaction });
     return pase_pedido;
   }
@@ -66,6 +66,11 @@ class SequelizePasePedidoRepository {
       ],
     });
     return pases_pedidos;
+  }
+
+  async obtenerPasesPedido(id, transaction = null) {
+    const pase_pedido = await PasePedido.findByPk(id, { transaction });
+    return pase_pedido;
   }
 }
 

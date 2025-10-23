@@ -8,12 +8,28 @@ module.exports = {
         "Por confirmar",
         "Pre confirmado",
         "Confirmado",
+        "Rechazado",
         "Stock Confirmado",
-        "En despacho",
-        "Despacahdo"
+        "Incompleto",
+        "Finalizado"
       ),
       allowNull: false,
       defaultValue: "Por confirmar",
+    });
+    await queryInterface.changeColumn("pases_pedidos", "fecha_emision", {
+      type: Sequelize.DATEONLY,
+      allowNull: false,
+    });
+    await queryInterface.addColumn("pases_pedidos", "tarea_id", {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      defaultValue: null,
+      references: {
+        model: "tareas",
+        key: "id",
+      },
+      onUpdate: "RESTRICT",
+      onDelete: "RESTRICT",
     });
 
     await queryInterface.createTable("pedidos_guias", {
@@ -25,10 +41,10 @@ module.exports = {
       },
       guia_remision_id: {
         type: Sequelize.INTEGER,
-        allowNull:false,
-        references:{
-          model:"guias_de_remision",
-          key:"id"
+        allowNull: false,
+        references: {
+          model: "guias_de_remision",
+          key: "id",
         },
         onUpdate: "RESTRICT",
         onDelete: "RESTRICT",
@@ -96,9 +112,9 @@ module.exports = {
       pieza_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references:{
-          model:"piezas",
-          key:"id"
+        references: {
+          model: "piezas",
+          key: "id",
         },
         onUpdate: "RESTRICT",
         onDelete: "RESTRICT",
@@ -181,8 +197,8 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('movimientos_stock_pedido');
-    await queryInterface.dropTable('stock_pedidos_piezas');
-    await queryInterface.dropTable('pedidos_guias');
+    await queryInterface.dropTable("movimientos_stock_pedido");
+    await queryInterface.dropTable("stock_pedidos_piezas");
+    await queryInterface.dropTable("pedidos_guias");
   },
 };
