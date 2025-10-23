@@ -46,6 +46,7 @@ const dataInicial = {
   comision_afp: false,
   cuspp_afp: "",
   estado_civil: "SOLTERO",
+  correo: "",
   contratos_laborales: [
     {
       id: Math.floor(Date.now() / 1000),
@@ -149,6 +150,7 @@ export default function TrabajadorForm() {
           comision_afp: !!t.comision_afp,
           cuspp_afp: t.cuspp_afp ?? "",
           estado_civil: t.estado_civil,
+          correo: t.correo ?? "",
           cargo_id: (t.cargo_id ?? "").toString(),
           contratos_laborales: contratos.length
             ? contratos
@@ -208,6 +210,7 @@ export default function TrabajadorForm() {
       sueldo_base: ultimoContrato ? ultimoContrato.sueldo : "",
       cuspp_afp: formData.cuspp_afp?.trim(),
       estado_civil: formData.estado_civil,
+      correo: formData.correo,
     };
   };
 
@@ -529,6 +532,19 @@ export default function TrabajadorForm() {
                       </p>
                     )}
 
+                  </div>
+
+                    <div className="space-y-2">
+                    <Label htmlFor="correo">Correo personal</Label>
+                    <Input
+                      id="correo"
+                      value={formData.correo}
+                      onChange={(e) =>
+                        handleInputChange("correo", e.target.value)
+                      }
+                      placeholder="Ingrese el correo personal"
+                    />
+                  
                   </div>
                 </section>
                 <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
