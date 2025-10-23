@@ -17,14 +17,7 @@ const CargosSunat = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    id_cargo: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "cargos",
-        key: "id",
-      },
-    }
+   
   }, {
     timestamps: false,
     tableName: "cargos_sunat",

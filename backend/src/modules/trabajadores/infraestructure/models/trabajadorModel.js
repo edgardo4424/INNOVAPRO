@@ -83,6 +83,10 @@ const Trabajador = sequelize.define(
          type: DataTypes.ENUM('SOLTERO', 'CASADO', 'DIVORCIADO', 'VIUDO', 'CONVIVIENTE'),
          defaultValue: 'SOLTERO',
       },
+      correo: {
+         type: DataTypes.STRING,
+         allowNull: true
+      }
    },
    {
       tableName: "trabajadores",
