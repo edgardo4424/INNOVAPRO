@@ -19,8 +19,8 @@ export async function generarPDFContrato(id) {
   return data; // blob
 }
 // Solicitar condiciones de alquiler al área de administración
-export async function solicitarCondiciones(idCotizacion, comentario="") {
-  const res = await api.put(`/cotizaciones/${idCotizacion}/solicitar-condiciones`, {
+export async function solicitarCondiciones(idContrato, comentario="") {
+  const res = await api.put(`/contratos/${idContrato}/solicitar-condiciones`, {
     comentario,
   })
   return res.data;

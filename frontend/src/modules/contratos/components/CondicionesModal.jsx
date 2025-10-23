@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/tooltip";
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
-export default function CondicionesModal({ cotizacionId, onActualizarCotizaciones }) {
+export default function CondicionesModal({ contratoId, onActualizarCotizaciones }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -40,7 +40,7 @@ export default function CondicionesModal({ cotizacionId, onActualizarCotizacione
         </AlertDialogHeader>
         
         <CondicionesCard 
-            cotizacionId={cotizacionId} 
+            contratoId={contratoId} 
             onClose={() => setOpen(false)} 
             onActualizarCotizaciones={onActualizarCotizaciones}
         />

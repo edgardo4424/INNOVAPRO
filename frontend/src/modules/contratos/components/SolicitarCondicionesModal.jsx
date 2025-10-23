@@ -28,7 +28,7 @@ export default function SolicitarCondicionesModal({ contrato, onConfirmar, child
       nota: nota.trim(),
       estimadoEquipo: estimadoEquipo.trim(),
     };
-    onConfirmar(contrato.id, extras);
+    onConfirmar(contrato, extras);
     setOpen(false);
   };
 

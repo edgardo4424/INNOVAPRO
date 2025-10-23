@@ -61,7 +61,6 @@ export function useGestionContratos() {
 
   const solicitarCondiciones = async (contrato, extras) => {
       try {
-        console.log("CONTRATO QUE LLEGA A SOLICITUD DE CONDICIONES: ", contrato, "Y EXTRAS:", extras)
         const comentario = generarMensajeCondiciones(contrato, extras);
         await contratosService.solicitarCondiciones(contrato.id, comentario);
         toast.success("Condiciones de alquiler solicitadas correctamente");

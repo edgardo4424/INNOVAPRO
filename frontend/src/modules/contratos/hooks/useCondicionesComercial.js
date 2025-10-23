@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import {
-  obtenerCondicionesPorCotizacion,
+  obtenerCondicionesPorContrato,
   marcarCondicionesCumplidas,
 } from "../services/condicionesService";
 import { toast } from "react-toastify";
 
-export default function useCondicionesComercial(cotizacionId) {
+export default function useCondicionesComercial(contratoId) {
   const [condicion, setCondicion] = useState(null);
   const [loading, setLoading] = useState(true);
   const [cumplidas, setCumplidas] = useState([]);
@@ -13,7 +13,7 @@ export default function useCondicionesComercial(cotizacionId) {
   useEffect(() => {
     async function fetch() {
       try {
-        const data = await obtenerCondicionesPorCotizacion(cotizacionId);
+        const data = await obtenerCondicionesPorContrato(contratoId);
         setCondicion(data);
         setCumplidas(data.condiciones_cumplidas || []);
       } finally {
@@ -21,7 +21,7 @@ export default function useCondicionesComercial(cotizacionId) {
       }
     }
     fetch();
-  }, [cotizacionId]);
+  }, [contratoId]);
 
   const toggleCondicion = (cond) => {
     setCumplidas((prev) =>
@@ -33,8 +33,8 @@ export default function useCondicionesComercial(cotizacionId) {
 
   const guardar = async () => {
     try {
-        const res = await marcarCondicionesCumplidas(cotizacionId, cumplidas);
-        const dataActualizada = await obtenerCondicionesPorCotizacion(cotizacionId);
+        const res = await marcarCondicionesCumplidas(contratoId, cumplidas);
+        const dataActualizada = await obtenerCondicionesPorContrato(contratoId);
         setCondicion(dataActualizada);
         setCumplidas(dataActualizada.condiciones_cumplidas || []);
         toast.success("Condiciones actualizadas correctamente");

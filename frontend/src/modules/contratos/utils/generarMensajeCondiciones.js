@@ -1,5 +1,5 @@
-export function generarMensajeCondiciones(cotizacion, camposExtras = {}) {
-  const equipo = `${cotizacion.uso?.descripcion || "—"}${camposExtras?.estimadoEquipo ? ` - ${camposExtras.estimadoEquipo}` : ""}`;
+export function generarMensajeCondiciones(contrato, camposExtras = {}) {
+  const equipo = `${contrato.uso?.descripcion || "—"}${camposExtras?.estimadoEquipo ? ` - ${camposExtras.estimadoEquipo}` : ""}`;
   const referencia = camposExtras.referencia || "—";
   const nota = camposExtras.nota || "—";
   const tiempo = camposExtras.tiempo || "—";

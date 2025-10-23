@@ -20,6 +20,8 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import SolicitarCondicionesModal from "./SolicitarCondicionesModal";
 import CondicionesModal from "./CondicionesModal";
 
+import { obtenerContratos } from "../services/contratosService";
+
 // Texto truncado con tooltip
 const TruncatedText = ({ text }) => {
   if (!text) return "—";
@@ -61,7 +63,8 @@ export default function TablaContratos({
       obra_nombre: item.obra?.nombre ?? "-",
       uso_descripcion: item.uso?.descripcion ?? "-",
       tipo: item.tipo ?? item.tipo_servicio ?? "-",
-      estado_contrato: item.estado_condiciones ?? "-",
+      estado_contrato: item.estado ?? "-",
+      estado_condiciones: item.estado_condiciones ?? "-",
       fecha_inicio: item.fecha_inicio ?? item.vigencia?.inicio ?? null,
       fecha_fin: item.fecha_fin ?? item.vigencia?.fin ?? null,
     })});
@@ -75,6 +78,7 @@ export default function TablaContratos({
     uso: true,
     tipo: true,
     estado: true,
+    estado_condiciones: true,
     vigencia: true,
     acciones: true,
   });
@@ -86,6 +90,7 @@ export default function TablaContratos({
     { id: "uso", label: "Uso" },
     { id: "tipo", label: "Tipo" },
     { id: "estado", label: "Estado" },
+    { id: "estado_condiciones", label: "Estado Condiciones"},
     { id: "vigencia", label: "Vigencia" },
     { id: "acciones", label: "Acciones" },
   ];
@@ -131,6 +136,12 @@ export default function TablaContratos({
           width: 200,
           sortable: true,
         },
+        visibleColumns.estado_condiciones && {
+          field: "estado_condiciones",
+          headerName: "Estado Condiciones",
+          width: 200,
+          sortable: true,
+        },
         visibleColumns.vigencia && {
           headerName: "Vigencia",
           width: 210,
@@ -160,7 +171,7 @@ export default function TablaContratos({
               ["Por Firmar", "Vigente", "Vencido", "Resuelto"].includes(row.estado_contrato);
 
             const puedeSolicitarCondiciones =
-              ["PROGRAMADO", "Vigente", "Vencido", "Resuelto"].includes(row.estado);
+              ["Creado"].includes(row.estado_condiciones);
 
             return (
               <div className="flex gap-1 justify-start">
@@ -264,20 +275,23 @@ export default function TablaContratos({
                 )}
 
                 {/* Validar condiciones, si corresponde */}
-                {row.estado_nombre === "Validar Condiciones" &&
+                {row.estado_condiciones === "Validando Condiciones" &&
                  row.usuario.id === user.id && (
                  <CondicionesModal 
-                    cotizacionId={row.id} 
+                    contratoId={row.id} 
                     onActualizarCotizaciones={async () => {
-                      const res = await obtenerTodos();
-                      setCotizaciones(
+                      const res = await obtenerContratos();
+                      setContratos(
                         res.map((item) => ({
                           ...item,
-                          despiece_cp: item.despiece?.cp ?? "—",
+                          codigo_contrato: item.ref_contrato  ?? "—",
                           cliente_razon_social: item.cliente?.razon_social ?? "—",
                           obra_nombre: item.obra?.nombre ?? "—",
                           uso_descripcion: item.uso?.descripcion ?? "—",
-                          estado_nombre: item.estados_cotizacion?.nombre ?? "—",
+                          tipo: item.tipo ?? item.tipo_servicio ?? "—",
+                          estado_contrato: item.estado_condiciones ?? "—",
+                          fecha_inicio: item.fecha_inicio ?? item.vigencia?.inicio ?? null,
+                          fecha_fin: item.fecha_fin ?? item.vigencia?.fin ?? null,
                         }))
                       )
                     }}

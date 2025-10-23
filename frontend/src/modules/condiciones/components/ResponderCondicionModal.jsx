@@ -34,6 +34,7 @@ export default function ResponderCondicionModal({ condicion, onGuardar }) {
         : [...prev, condicion]
     );
   };
+  console.log("CONDICION A ENVIAR: ", condicion)
 
   const handleGuardar = () => {
     if (seleccionadas.length === 0) return;
@@ -42,7 +43,7 @@ export default function ResponderCondicionModal({ condicion, onGuardar }) {
       .map((c) => "• " + c)
       .join("\n")}${nota.trim() ? `\n\n OBSERVACIÓN:\n${nota}` : ""}`;
 
-    onGuardar(condicion.cotizacion_id, mensaje);
+    onGuardar(condicion.contrato_id, mensaje);
     setOpen(false);
     setSeleccionadas([]);
     setNota("");

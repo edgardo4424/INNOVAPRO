@@ -66,7 +66,6 @@ const ContratoController={
     },
 
      async solicitarCondiciones(req, res) {
-
         const transaction = await sequelize.transaction();
         
         try {

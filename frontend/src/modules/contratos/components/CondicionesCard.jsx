@@ -3,14 +3,14 @@ import { Button } from "@/components/ui/button";
 import useCondicionesComercial from "../../contratos/hooks/useCondicionesComercial";
 import { Checkbox } from "@/components/ui/checkbox";
 
-export default function CondicionesCard({ cotizacionId, onCumplidas, onClose, onActualizarCotizaciones}) {
+export default function CondicionesCard({ contratoId, onCumplidas, onClose, onActualizarCotizaciones}) {
   const {
     loading,
     condicion,
     cumplidas,
     toggleCondicion,
     guardar,
-  } = useCondicionesComercial(cotizacionId);
+  } = useCondicionesComercial(contratoId);
 
   if (loading) return <p className="text-sm text-muted">Cargando condiciones...</p>;
   if (!condicion || !condicion.condiciones) return null;
