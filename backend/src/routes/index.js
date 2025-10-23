@@ -5,7 +5,7 @@ const { registerModuleRoutes } = require("../../scripts/registerModuleRoutes");
 const path = require("path");
 
 // Llamada a rutas dentro de subcarpeta
-const condicionAlquilerRoutes = require("../modules/cotizaciones/condicionesAlquiler/interfaces/routes/condicionRoutes");
+const condicionAlquilerRoutes = require("../modules/contratos/condicionesAlquiler/interfaces/routes/condicionRoutes");
 
 router.use("/condiciones", condicionAlquilerRoutes);
 

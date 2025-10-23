@@ -11,4 +11,9 @@ router.post("/",ContratoController.crearContrato);
 router.put("/",ContratoController.actualizarContrato);
 router.get("/autocompletar-cotizacion/:id", ContratoController.autocompletarCotizacionParaCrearContrato);
 
+
+// Ruta para solicitar condiciones de alquiler de un contrato 
+router.put("/:id/solicitar-condiciones", ContratoController.solicitarCondiciones);
+
+
 module.exports = router;

@@ -130,6 +130,29 @@ class SequelizeContratoRepository {
     
     return cotizacion;
   }
+
+  // Este método se usa para actualizar el estado de un contrato de acuerdo a los parámetros que recibe
+  async actualizarEstadoCondiciones(id, nuevoEstado) {
+    const contrato = await this.obtenerPorId(id);
+   
+    if (!contrato) return null;
+    contrato.estado_condiciones = nuevoEstado;
+    await contrato.save();
+    return contrato;
+  }
+
+  async obtenerPorId(id, transaction = null) {
+    return await Contrato.findByPk(id, {
+      include: [
+        {
+          model: db.cotizaciones,
+          as: "cotizacion",
+        },
+      ],
+      ...(transaction && { transaction }),
+    }); // Llama al método del repositorio para obtener un contrato por ID
+  }
+
 }
 
 module.exports = SequelizeContratoRepository;

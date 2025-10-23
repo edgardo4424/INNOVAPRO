@@ -2,10 +2,10 @@ const obtenerCondicionesPendientes = require("../../application/useCases/obtener
 const responderCondicionUseCase = require("../../application/useCases/responderCondicion");
 const marcarCondicionesCumplidas = require("../../application/useCases/marcarCondicionesCumplidas");
 const sequelizeCondicionAlquilerRepository = require("../../infrastructure/repositories/sequelizeCondicionAlquilerRepository");
-const sequelizeCotizacionRepository = require("../../../infrastructure/repositories/sequelizeCotizacionRepository");
+const sequelizeContratoRepository = require("../../../infraestructure/repositories/sequelizeContratoRepository");
 
 const condicionRepository = new sequelizeCondicionAlquilerRepository();
-const cotizacionRepository = new sequelizeCotizacionRepository();
+const contratoRepository = new sequelizeContratoRepository();
 
 const CondicionAlquilerController = {
   async obtenerPendientes(req, res) {
@@ -22,14 +22,14 @@ const CondicionAlquilerController = {
     try {
       const { condiciones } = req.body;
       const actualizado_por = req.usuario?.id || null;
-      const cotizacionId = parseInt(req.params.id);
+      const contratoId = parseInt(req.params.id);
 
       const resultado = await responderCondicionUseCase(
-        cotizacionId, 
+        contratoId, 
         condiciones, 
         actualizado_por, 
         condicionRepository,
-        cotizacionRepository
+        contratoRepository
     );
 
       res.status(resultado.codigo).json(resultado.respuesta);
@@ -41,14 +41,14 @@ const CondicionAlquilerController = {
 
   async marcarCumplidas(req, res) {
     try {
-        const cotizacionId = parseInt(req.params.cotizacionId);
+        const contratoId = parseInt(req.params.contratoId);
         const { condiciones_cumplidas } = req.body;
 
         const resultado = await marcarCondicionesCumplidas(
-            cotizacionId,
+            contratoId,
             condiciones_cumplidas,
             condicionRepository,
-            cotizacionRepository
+            contratoRepository
         );
 
         res.status(resultado.codigo).json(resultado.respuesta);
@@ -58,9 +58,9 @@ const CondicionAlquilerController = {
         }
     },
 
-    async obtenerPorCotizacionId(req, res) {
-        const cotizacionId = parseInt(req.params.id);
-        const condicion = await condicionRepository.obtenerPorCotizacionId(cotizacionId);
+    async obtenerPorContratoId(req, res) {
+        const contratoId = parseInt(req.params.id);
+        const condicion = await condicionRepository.obtenerPorContratoId(contratoId);
         if (!condicion) return res.status(404).json({ mensaje: "No se encontró la condición" });
         res.json(condicion);
     }

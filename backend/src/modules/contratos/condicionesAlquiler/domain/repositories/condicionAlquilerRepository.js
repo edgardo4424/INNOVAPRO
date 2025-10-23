@@ -7,7 +7,7 @@ class CondicionAlquilerRepository {
     throw new Error("Método no implementado");
   }
 
-  obtenerPorCotizacionId(cotizacionId) {
+  obtenerPorContratoId(contratoId) {
     throw new Error("Método no implementado");
   }
 

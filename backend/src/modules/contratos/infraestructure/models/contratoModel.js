@@ -175,6 +175,11 @@ Contrato.associate = (models) => {
       foreignKey: "despiece_id",
       as: "despiece",
    });
+
+   Contrato.hasOne(models.condiciones_alquiler, {
+      foreignKey: "contrato_id",
+      as: "condiciones_alquiler_relacionado",
+   });
 };
 
 module.exports = { Contrato };

@@ -1,7 +1,7 @@
-module.exports = async (cotizacionId, condicionesCumplidas, condicionRepository, cotizacionRepository) => {
-  const condicion = await condicionRepository.obtenerPorCotizacionId(cotizacionId);
+module.exports = async (contratoId, condicionesCumplidas, condicionRepository, contratoRepository) => {
+  const condicion = await condicionRepository.obtenerPorContratoId(contratoId);
   if (!condicion) {
-    return { codigo: 404, respuesta: { mensaje: "No se encontró la condición" } };
+    return { codigo: 404, respuesta: { mensaje: "No se encontró la condición para el contrato asociado" } };
   }
 
   const condicionesRawCompleto = condicion.condiciones.split("CONDICIONES AUTORIZADAS:")[1] || "";
@@ -19,11 +19,11 @@ module.exports = async (cotizacionId, condicionesCumplidas, condicionRepository,
   const todasCumplidas = faltantes.length === 0;
 
   // Actualizamos las condiciones 
-  await condicionRepository.actualizarCondicionesCumplidas(cotizacionId, condicionesCumplidas, todasCumplidas);
+  await condicionRepository.actualizarCondicionesCumplidas(contratoId, condicionesCumplidas, todasCumplidas);
 
-  // Si están todas cumplidas, también actualizamos el estado de la cotización
+  // Si están todas cumplidas, también actualizamos el estado del contrato
   if (todasCumplidas) {
-    await cotizacionRepository.actualizarEstado(cotizacionId, 9); // 9 significa "Condiciones Cumplidas"
+    await contratoRepository.actualizarEstadoCondiciones(contratoId, "Condiciones Cumplidas");
   }
   
   return {

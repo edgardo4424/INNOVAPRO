@@ -6,32 +6,32 @@ const { enviarNotificacionTelegram } = require("../../../notificaciones/infrastr
 
 const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
 
-module.exports = async (cotizacionId, cotizacionRepository) => {
-  const cotizacion = await cotizacionRepository.obtenerPorId(cotizacionId); // Obtengo la cotización por ID 
+module.exports = async (contratoId, contratoRepository, transaction = null) => {
+  const contrato = await contratoRepository.obtenerPorId(contratoId, transaction); // Obtengo el contrato por ID
 
-  // Si no existe la cotización, o no la encuentra, retorna un error
-  if (!cotizacion) {
-    return { codigo: 404, respuesta: { mensaje: "Cotización no encontrada" } };
+  // Si no existe el contrato, o no lo encuentra, retorna un error
+  if (!contrato) {
+    return { codigo: 404, respuesta: { mensaje: "Contrato no encontrado" } };
   }
-  
-  // El estados_cotizacion_id = 3 es 'Por Aprobar'
-  // Si la cotización está Por Aprobar o es de tipo Alquiler, se puede solcitar condiciones, sino se retorna un error
-  if (cotizacion.estados_cotizacion_id !== 3 || cotizacion.tipo_cotizacion !== "Alquiler") {
+
+  console.log("Estado condiciones contrato:", contrato.estado_condiciones);
+  // Si el estado_condiciones es Creado o es de tipo Alquiler, se puede solicitar condiciones, sino se retorna un error
+  if (contrato.estado_condiciones != "Creado" || contrato.cotizacion.tipo_cotizacion !== "Alquiler") {
     return {
       codigo: 400,
-      respuesta: { mensaje: "Solo se pueden solicitar condiciones si la cotización está en estado 'POR APROBAR' o si es 'Alquiler'" }
+      respuesta: { mensaje: "Solo se pueden solicitar condiciones si el contrato está en estado 'Creado' o si es 'Alquiler'" }
     };
   }
 
-  // El estados_cotizacion_id = 7 es 'Condiciones Solicitadas'
-  // Actualizo el estado de la cotización a 'Condiciones Solicitadas'
-  cotizacion.estados_cotizacion_id = 7; 
-  await cotizacionRepository.actualizarEstado(cotizacionId, 7);
-  
+  // El estado_condiciones es 'Condiciones Solicitadas'
+  // Actualizo el estado_condiciones del contrato a 'Condiciones Solicitadas'
+  contrato.estado_condiciones = "Condiciones Solicitadas";
+  await contratoRepository.actualizarEstadoCondiciones(contratoId, "Condiciones Solicitadas", transaction);
+
   // Notificamos al comercial que solicitó las condiciones por el ERP
   const notificacionParaElCreador = {
-    usuarioId: cotizacion.usuario_id,
-    mensaje: `Se realizó la solicitud de condiciones para la cotización: ${cotizacion.codigo_documento}`,
+    usuarioId: contrato.usuario_id,
+    mensaje: `Se realizó la solicitud de condiciones para el contrato: ${contrato.ref_contrato}`,
     tipo: "exito",
   };
  
@@ -40,11 +40,11 @@ module.exports = async (cotizacionId, cotizacionRepository) => {
     notificacionParaElCreador
   );
   
-  // Emitimos la notificación privada al usario que creó la cotización
+  // Emitimos la notificación privada al usario que creó el contrato
   emitirNotificacionPrivada(notificacionParaElCreador.usuarioId, notiCreador);
   
   // Notificar al comercial que solicitó la las condiciones (TELEGRAM)
-  const usuario = await db.usuarios.findByPk(cotizacion.usuario_id); // Buscamos al usuario que creó la cotización
+  const usuario = await db.usuarios.findByPk(contrato.usuario_id, {transaction}); // Buscamos al usuario que creó el contrato
 
   // Si el usuario hizo su registro en el sistema de notificaciones y tiene un id_chat de Telegram,
   // enviamos la notificación por Telegram
@@ -53,7 +53,8 @@ module.exports = async (cotizacionId, cotizacionRepository) => {
     try {
       await enviarNotificacionTelegram(usuario.id_chat, notificacionParaElCreador.mensaje);
     } catch (error) {
-      console.error("❌ Error al intentar enviar notificación por Telegram:", error.message);
+      
+      throw new Error("❌ Error al intentar enviar notificación por Telegram:", error.message);
     }
   }
 

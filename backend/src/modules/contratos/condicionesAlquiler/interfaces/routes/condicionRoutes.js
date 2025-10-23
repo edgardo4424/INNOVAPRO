@@ -18,12 +18,12 @@ router.put(
   condicionController.responderCondicion
 );
 
-router.put("/marcar-cumplidas/:cotizacionId", verificarToken, condicionController.marcarCumplidas);
+router.put("/marcar-cumplidas/:contratoId", verificarToken, condicionController.marcarCumplidas);
 
 router.get(
   "/:id",
   verificarToken,
-  condicionController.obtenerPorCotizacionId
+  condicionController.obtenerPorContratoId
 );
 
 module.exports = router;
