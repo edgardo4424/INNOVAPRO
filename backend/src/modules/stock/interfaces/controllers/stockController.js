@@ -7,6 +7,7 @@ const crearStock = require("../../application/usesCases/crearStock");
 const obtenerStockPorId = require("../../application/usesCases/obtenerStockPorId");
 const actualizarStockDisponible = require("../../application/usesCases/actualizarStockDisponible");
 const actualizarStockFijo = require("../../application/usesCases/actualizarStockFijo");
+const verificarStockDisponible = require("../../application/usesCases/verificarStockDisponible");
 
 const StockController = {
    async obtenerStockPiezasPorEstado(req, res) {
@@ -60,6 +61,19 @@ const StockController = {
          res.status(500).json({ error: error.message });
       }
    },
+
+   async verificarStock(req,res){
+         try {
+            const cotizacion_id=req.body.cotizacion_id;
+            const response= await verificarStockDisponible(cotizacion_id,stockRepository)
+            // console.log("entro");
+            
+            res.status(response.codigo).json(response.respuesta)
+         } catch (error) {
+            console.log(error);
+            res.status(500).json({error:error.message})
+         }
+   }
 };
 
 module.exports = StockController; // Exportamos el controlador de usuarios
