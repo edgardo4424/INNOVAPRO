@@ -53,7 +53,7 @@ export const useAsistencia = (
                payload.jornadas=payload.jornadas.map((j)=>{
                   const jor={...j}
                   if(jor.turno==="mañana"){
-                     jor.lugar=m_marcate.direccion_obra
+                     jor.lugar=m_marcate.nombre_obra
                   }
                   return jor;
                })
@@ -63,7 +63,7 @@ export const useAsistencia = (
               payload.jornadas.push({
                   id: new Date().getTime(),
                   turno: "mañana",
-                  lugar: m_marcate.direccion_obra,
+                  lugar: m_marcate.nombre_obra,
                   tipo_trabajo_id: null,
               })
             }
@@ -76,7 +76,7 @@ export const useAsistencia = (
                   const jor={...j}
                  
                   if(jor.turno==="tarde"){
-                     jor.lugar=t_marcate.direccion_obra
+                     jor.lugar=t_marcate.nombre_obra
                   }
                   return jor;
                })
