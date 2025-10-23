@@ -5,12 +5,6 @@ const obtenerCotizaciones = require('../../application/useCases/obtenerCotizacio
 const generarPdfCotizacion = require('../../application/useCases/generarPdfCotizacion');
 const crearCotizacionConOT = require('../../application/useCases/crearCotizacionConOT');
 
-// Casos de uso para condiciones de alquiler
-const solicitarCondicionesAlquiler = require('../../application/useCases/solicitarCondicionesAlquiler');
-const crearCondicionAlquiler = require('../../application/useCases/crearCondicionAlquiler');
-
-const sequelizeCondicionAlquilerRepository = require('../../condicionesAlquiler/infrastructure/repositories/sequelizeCondicionAlquilerRepository');
-const condicionRepository = new sequelizeCondicionAlquilerRepository();
 
 const mostrarCotizacionPorId = require('../../application/useCases/mostrarCotizacionPorId')
 
@@ -101,28 +95,7 @@ const CotizacionController = {
 
     // Este método maneja la solicitud de condiciones de alquiler para una cotización específica
     // Recibe el ID de la cotización desde los parámetros de la solicitud y un comentario
-    async solicitarCondiciones(req, res) {
-        try {
-            const cotizacion_id = parseInt(req.params.id);
-            const comentario = req.body.comentario || "";
-            const creado_por = req.usuario?.id || null;
 
-            // Cambiamos el estado
-            const cambio = await solicitarCondicionesAlquiler(cotizacion_id, cotizacionRepository);
-            if (cambio.codigo !== 200) return res.status(cambio.codigo).json(cambio.respuesta);
-
-            // Registramos el comentario solo si no existe aún
-            const yaExiste = await condicionRepository.obtenerPorCotizacionId(cotizacion_id);
-            if (!yaExiste) {
-                await crearCondicionAlquiler({ cotizacion_id, comentario_solicitud: comentario, creado_por }, condicionRepository);
-            }
-
-            return res.status(200).json({ mensaje: "Solicitud registrada correctamente" });
-        } catch (error) {
-            console.error("❌ Error:", error);
-            res.status(500).json({ mensaje: "Error al registrar la solicitud" });
-        }
-    },
 
 
     /* async actualizarCotizacion(req, res) {

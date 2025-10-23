@@ -7,9 +7,13 @@ const CondicionAlquiler = sequelize.define("condiciones_alquiler", {
     autoIncrement: true,
     primaryKey: true,
   },
-  cotizacion_id: {
+  contrato_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    references: {
+      model: "contratos",
+      key: "id",
+    },
   },
   comentario_solicitud: {
     type: DataTypes.TEXT,
@@ -55,9 +59,9 @@ const CondicionAlquiler = sequelize.define("condiciones_alquiler", {
 });
 
 CondicionAlquiler.associate = (models) => {
-  CondicionAlquiler.belongsTo(models.cotizaciones, {
-    foreignKey: "cotizacion_id",
-    as: "cotizacion"
+  CondicionAlquiler.belongsTo(models.contratos, {
+    foreignKey: "contrato_id",
+    as: "contrato_relacionado",
   });
 };
 

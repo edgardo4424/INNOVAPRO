@@ -6,6 +6,15 @@ const autocompletarCotizacionParaCrearContrato = require("../../application/useC
 const SequelizeContratoRepository = require("../../infraestructure/repositories/sequelizeContratoRepository");
 const contratoRepository=new SequelizeContratoRepository();
 
+const SequelizeCondicionAlquilerRepository = require("../../condicionesAlquiler/infrastructure/repositories/sequelizeCondicionAlquilerRepository");
+const condicionRepository = new SequelizeCondicionAlquilerRepository();
+
+const sequelize = require("../../../../database/models").sequelize;
+
+// Casos de uso para condiciones de alquiler
+const solicitarCondicionesAlquiler = require('../../application/useCases/solicitarCondicionesAlquiler');
+const crearCondicionAlquiler = require('../../application/useCases/crearCondicionAlquiler');
+
 const ContratoController={
     async crearContrato(req,res){
         console.log("Entro a la función de crear contrato");
@@ -54,6 +63,39 @@ const ContratoController={
             console.log("Ocurrio el siguiente error: ",error)
             res.status(500).json({error:error.message})
         }
-    }
+    },
+
+     async solicitarCondiciones(req, res) {
+
+        const transaction = await sequelize.transaction();
+        
+        try {
+            const contrato_id = parseInt(req.params.id);
+            const comentario = req.body.comentario || "";
+            const creado_por = req.usuario?.id || null;
+
+            // Cambiamos el estado
+            const cambio = await solicitarCondicionesAlquiler(contrato_id, contratoRepository, transaction);
+            if (cambio.codigo !== 200) return res.status(cambio.codigo).json(cambio.respuesta);
+
+            console.log("cambio", cambio);
+            // Registramos el comentario solo si no existe aún
+            const yaExiste = await condicionRepository.obtenerPorContratoId(contrato_id, transaction);
+            console.log("Verificando existencia previa de condición:", yaExiste);
+            if (!yaExiste) {
+                await crearCondicionAlquiler({ contrato_id, comentario_solicitud: comentario, creado_por }, condicionRepository, transaction);
+            }
+
+            
+            // confirmar transacción antes de responder
+            await transaction.commit();
+            return res.status(201).json({ mensaje: "Solicitud registrada correctamente" });
+        } catch (error) {
+            await transaction.rollback();
+            console.error("❌ Error:", error);
+            res.status(500).json({ mensaje: "Error al registrar la solicitud" });
+        }
+    },
+
 }
 module.exports=ContratoController
