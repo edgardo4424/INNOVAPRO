@@ -4,30 +4,35 @@ import {
   AlertDialogDescription,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { X } from "lucide-react";
-import FormNuevaTarea from "../form/FormNuevaTarea";
-import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { usePedidos } from "../../context/PedidosContenxt";
+import { X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import pedidosService from "../../service/PedidosService";
+import { validaTarea } from "../../utils/validarTarea";
+import FormNuevaTarea from "../form/FormNuevaTarea";
 
 const TareaOT = {
   empresaProveedoraId: null,
   clienteId: null,
   obraId: null,
   contactoId: null,
+  cotizacionId: null,
+  atributos_valor_zonas: null,
 
   tipoTarea: "Pase de Pedido",
   usoId: null,
 
-  detalle: {
+  detalles: {
+    tipoSolicitud: "",
     nota: "",
     estadoPasePedido: "",
     numeroVersionContrato: "",
     fechaLimite: "",
     obra: "",
-    tipoSolicitud: "",
     prioridad: "",
   },
+  pedido_id: null,
   estado: "Pendiente",
   usuarioId: null,
 };
@@ -37,29 +42,60 @@ export default function ModalNuevaTarea({
   setOpen,
   pedidoView,
   setPedidoView,
-  filiales,
 }) {
   const { user } = useAuth();
   const [nuevaTareaForm, setNuevaTareaForm] = useState(TareaOT);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (pedidoView) {
-      setNuevaTareaForm({
-        ...nuevaTareaForm,
-        empresaProveedoraId: pedidoView.empresaProveedoraId, // * empresa
-        clienteId: pedidoView.clienteId, // * cliente
-        obraId: pedidoView.obraId, // * obra
-        contactoId: pedidoView.contactoId, // * contacto
-        usuarioId: user.id, // * usuario
-        detalle: {
-          ...nuevaTareaForm.detalle,
+      setNuevaTareaForm((prev) => ({
+        ...prev,
+        empresaProveedoraId: pedidoView.empresaProveedoraId,
+        clienteId: pedidoView.clienteId,
+        obraId: pedidoView.obraId,
+        contactoId: pedidoView.contactoId,
+        cotizacionId: pedidoView.cotizacion_id,
+        usuarioId: user.id,
+        pedido_id: pedidoView.pedido_id,
+        detalles: {
+          ...prev.detalles,
           estadoPasePedido: pedidoView.estado,
           numeroVersionContrato: pedidoView.nro_contrato,
           obra: pedidoView.obra ? pedidoView.obra.toUpperCase() : "",
         },
-      });
+      }));
     }
-  }, [pedidoView]);
+  }, [pedidoView, user.id]);
+
+  const handleCrearTarea = async () => {
+    try {
+      const { errores, validos } = validaTarea(nuevaTareaForm.detalles);
+
+      if (!validos) {
+        const mensajeError = Object.values(errores).join("\n");
+        toast.error(mensajeError);
+        return;
+      }
+
+      setIsLoading(true);
+
+      const { mensaje, tarea } =
+        await pedidosService.nuevaTareaPasePedido(nuevaTareaForm);
+
+      toast.success(mensaje);
+
+      if (tarea) {
+        setOpen(false);
+        setPedidoView(null);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Ocurrió un error al crear la tarea");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -82,8 +118,9 @@ export default function ModalNuevaTarea({
 
           <FormNuevaTarea
             pedidoContent={nuevaTareaForm}
-            pedidoView={pedidoView}
             setNuevaTareaForm={setNuevaTareaForm}
+            handleCrearTarea={handleCrearTarea}
+            isLoading={isLoading}
           />
         </div>
       </AlertDialogContent>

@@ -5,11 +5,11 @@ const {
   emitirNotificacionPrivada,
 } = require("../../../notificaciones/infrastructure/services/emisorNotificaciones");
 
-module.exports = async (idTarea, idUsuario, motivo, tareaRepository) => {
+module.exports = async (idTarea, idUsuario, motivo,user_name, tareaRepository) => {
 
   // id de la tarea e id del usuario del middleware (idUsuario)
 
-  const tarea = await tareaRepository.devolverTarea(idTarea, motivo, idUsuario);
+  const tarea = await tareaRepository.devolverTarea(idTarea, motivo, idUsuario, user_name);
 
   if (!tarea) {
     return {

@@ -179,6 +179,7 @@ const modulesByRole = {
       { name: "Registrar Tarea", path: "/registrar-tarea" },
       { name: "Centro de Atención", path: "/centro-atencion" },
       { name: "Cotizaciones", path: "/cotizaciones" },
+      { name: "Pase Pedidos", path: "/pedidos/pase-pedidos" },
       { name: "Registrar Cotización", path: "/cotizaciones/registrar" },
       { name: "Stock de Piezas", path: "/stock/piezas" },
    ],
@@ -293,6 +294,7 @@ const modulesByRole = {
       },
    ],
    "Jefa de Almacén":[
+      { name: "Centro de Atención", path: "/centro-atencion" },
       {
          group: "Gestión de Transporte",
          items: [
@@ -312,6 +314,7 @@ const modulesByRole = {
 
    ],
       "Auxiliar de oficina":[
+      { name: "Centro de Atención", path: "/centro-atencion" },
       {
          group: "Gestión de Transporte",
          items: [

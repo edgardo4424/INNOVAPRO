@@ -45,6 +45,7 @@ const PedidosRoutes = () => {
                 "Gerente de administración",
                 "Contadora",
                 "Asistente Facturación",
+                "Técnico Comercial",
               ]}
             />
           }

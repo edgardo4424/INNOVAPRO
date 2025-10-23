@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 // Componentes adicionales necesarios de shadcn/ui
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -9,19 +9,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 // Si usa un selector de fecha
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
 
-const FormNuevaTarea = ({ pedidoContent, setNuevaTareaForm, pedidoView }) => {
-  const { tipoTarea, detalle } = pedidoContent;
+const FormNuevaTarea = ({
+  pedidoContent,
+  setNuevaTareaForm,
+  handleCrearTarea,
+  isLoading,
+}) => {
   const {
     nota,
     estadoPasePedido,
@@ -30,25 +26,24 @@ const FormNuevaTarea = ({ pedidoContent, setNuevaTareaForm, pedidoView }) => {
     fechaLimite,
     tipoSolicitud,
     prioridad,
-  } = detalle;
-
-  const { filial, nro_contrato, empresa_Ruc, cliente_Razon_Social } =
-    pedidoView;
+  } = pedidoContent.detalles;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(name, value);
     setNuevaTareaForm({
       ...pedidoContent,
-      detalle: {
-        ...pedidoContent.detalle,
+      detalles: {
+        ...pedidoContent.detalles,
         [name]: value,
       },
     });
   };
 
   return (
-    <form className="space-y-6 rounded-lg border bg-white p-4 shadow-lg">
+    <form
+      onSubmit={(e) => e.preventDefault()}
+      className="space-y-6 rounded-lg border bg-white p-4 shadow-lg"
+    >
       {/* 1. SECCIÓN: DATOS DE LA SOLICITUD Y PRIORIDAD */}
       <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
         <div className="space-y-2">
@@ -61,6 +56,7 @@ const FormNuevaTarea = ({ pedidoContent, setNuevaTareaForm, pedidoView }) => {
           <Select
             name="tipoSolicitud"
             value={tipoSolicitud}
+            disabled={isLoading}
             onValueChange={(e) =>
               handleChange({ target: { name: "tipoSolicitud", value: e } })
             }
@@ -70,13 +66,13 @@ const FormNuevaTarea = ({ pedidoContent, setNuevaTareaForm, pedidoView }) => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="nuevo_despiece">Nuevo Despiece</SelectItem>
-              <SelectItem value="validacion_stock">
+              <SelectItem value="Validación de Stock">
                 Validación de Stock / Material
               </SelectItem>
-              <SelectItem value="modificacion_plano">
+              <SelectItem value="Modificación de plano">
                 Modificación de Plano Existente
               </SelectItem>
-              <SelectItem value="otro">
+              <SelectItem value="Otro">
                 Otro (Especificar en descripción)
               </SelectItem>
             </SelectContent>
@@ -91,6 +87,7 @@ const FormNuevaTarea = ({ pedidoContent, setNuevaTareaForm, pedidoView }) => {
           <Select
             name="prioridad"
             value={prioridad}
+            disabled={isLoading}
             onValueChange={(e) =>
               handleChange({ target: { name: "prioridad", value: e } })
             }
@@ -99,9 +96,9 @@ const FormNuevaTarea = ({ pedidoContent, setNuevaTareaForm, pedidoView }) => {
               <SelectValue placeholder="Seleccione la urgencia..." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="critica">Alta</SelectItem>
-              <SelectItem value="alta">Media</SelectItem>
-              <SelectItem value="normal">Normal</SelectItem>
+              <SelectItem value="ALTA">Alta</SelectItem>
+              <SelectItem value="MEDIA">Media</SelectItem>
+              <SelectItem value="NORMAL">Normal</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -118,6 +115,7 @@ const FormNuevaTarea = ({ pedidoContent, setNuevaTareaForm, pedidoView }) => {
             id="fechaLimite"
             className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:ring focus:ring-indigo-500 focus:outline-none"
             value={fechaLimite}
+            disabled={isLoading}
             onChange={(e) =>
               handleChange({
                 target: { name: "fechaLimite", value: e.target.value },
@@ -150,6 +148,11 @@ const FormNuevaTarea = ({ pedidoContent, setNuevaTareaForm, pedidoView }) => {
         </Label>
         <Textarea
           id="descripcion"
+          value={nota}
+          disabled={isLoading}
+          onChange={(e) =>
+            handleChange({ target: { name: "nota", value: e.target.value } })
+          }
           placeholder="Aqui puedes ser mas especifico en lo que quieres que realize la persona que tome el pase de pedido"
           className="min-h-[120px]"
         />
@@ -192,10 +195,12 @@ const FormNuevaTarea = ({ pedidoContent, setNuevaTareaForm, pedidoView }) => {
 
       {/* BOTÓN DE ENVÍO */}
       <Button
+        onClick={handleCrearTarea}
         type="submit"
+        disabled={isLoading}
         className="mt-6 w-full bg-blue-600 hover:bg-blue-700"
       >
-        Asignar Tarea a Oficina Técnica
+        {isLoading ? "Cargando..." : "Asignar Tarea a Oficina Técnica"}
       </Button>
     </form>
   );

@@ -1,11 +1,11 @@
 const sequelizeTareaRepository = require('../../infrastructure/repositories/sequelizeTareaRepository');
-const entidadService = require('../../infrastructure/services/entidadService'); 
+const entidadService = require('../../infrastructure/services/entidadService');
 
-const crearTarea = require('../../application/useCases/crearTarea'); 
-const obtenerTareas = require('../../application/useCases/obtenerTareas'); 
-const obtenerTareaPorId = require('../../application/useCases/obtenerTareaPorId'); 
+const crearTarea = require('../../application/useCases/crearTarea');
+const obtenerTareas = require('../../application/useCases/obtenerTareas');
+const obtenerTareaPorId = require('../../application/useCases/obtenerTareaPorId');
 
-const eliminarTarea = require('../../application/useCases/eliminarTarea'); 
+const eliminarTarea = require('../../application/useCases/eliminarTarea');
 
 const tomarTarea = require('../../application/useCases/tomarTarea')
 const liberarTarea = require('../../application/useCases/liberarTarea')
@@ -15,7 +15,7 @@ const devolverTarea = require('../../application/useCases/devolverTarea')
 const corregirTarea = require('../../application/useCases/corregirTarea');
 const crearDespieceOT = require('../../application/useCases/crearDespieceOT');
 
-const tareaRepository = new sequelizeTareaRepository(); 
+const tareaRepository = new sequelizeTareaRepository();
 
 const TareaController = {
     async crearTarea(req, res) {
@@ -26,42 +26,43 @@ const TareaController = {
                 usuarioId: req.usuario.id
             }
 
-            const nuevoTarea = await crearTarea(data, tareaRepository, entidadService );
-           
+            const nuevoTarea = await crearTarea(data, tareaRepository, entidadService);
+
             res.status(nuevoTarea.codigo).json(nuevoTarea.respuesta);
         } catch (error) {
-            console.log('error',error);
-            res.status(500).json({ error: error.message }); 
+            console.log('error', error);
+            res.status(500).json({ error: error.message });
         }
     },
 
     async obtenerTareas(req, res) {
         try {
-            const tareas = await obtenerTareas(tareaRepository);
+            const { id, rol } = req.usuario;
+            const tareas = await obtenerTareas(tareaRepository,id, rol);
             res.status(200).json(tareas.respuesta);
         } catch (error) {
-            console.log('error',error);
-            res.status(500).json({ error: error.message }); 
+            console.log('error', error);
+            res.status(500).json({ error: error.message });
         }
     },
 
     async obtenerTareaPorId(req, res) {
         try {
-            const tarea = await obtenerTareaPorId(req.params.id, tareaRepository); 
+            const tarea = await obtenerTareaPorId(req.params.id, tareaRepository);
             res.status(tarea.codigo).json(tarea.respuesta);
         } catch (error) {
-            console.log('error',error);
-            res.status(500).json({ error: error.message }); 
+            console.log('error', error);
+            res.status(500).json({ error: error.message });
         }
     },
 
     async eliminarTarea(req, res) {
         try {
-            const tareaEliminado = await eliminarTarea(req.params.id, tareaRepository); 
-            res.status(tareaEliminado.codigo).json(tareaEliminado.respuesta); 
+            const tareaEliminado = await eliminarTarea(req.params.id, tareaRepository);
+            res.status(tareaEliminado.codigo).json(tareaEliminado.respuesta);
         } catch (error) {
-            console.log('error',error);
-            res.status(500).json({ error: error.message }); 
+            console.log('error', error);
+            res.status(500).json({ error: error.message });
         }
     },
 
@@ -70,8 +71,8 @@ const TareaController = {
             const tarea = await tomarTarea(req.params.id, req.usuario.id, tareaRepository);
             res.status(200).json(tarea.respuesta);
         } catch (error) {
-            console.log('error',error);
-            res.status(500).json({ error: error.message }); 
+            console.log('error', error);
+            res.status(500).json({ error: error.message });
         }
     },
 
@@ -80,8 +81,8 @@ const TareaController = {
             const tarea = await liberarTarea(req.params.id, req.usuario.id, tareaRepository);
             res.status(200).json(tarea.respuesta);
         } catch (error) {
-            console.log('error',error);
-            res.status(500).json({ error: error.message }); 
+            console.log('error', error);
+            res.status(500).json({ error: error.message });
         }
     },
 
@@ -90,8 +91,8 @@ const TareaController = {
             const tarea = await finalizarTarea(req.params.id, req.usuario.id, tareaRepository);
             res.status(200).json(tarea.respuesta);
         } catch (error) {
-            console.log('error',error);
-            res.status(500).json({ error: error.message }); 
+            console.log('error', error);
+            res.status(500).json({ error: error.message });
         }
     },
 
@@ -100,47 +101,43 @@ const TareaController = {
             const tarea = await cancelarTarea(req.params.id, req.usuario.id, tareaRepository);
             res.status(200).json(tarea.respuesta);
         } catch (error) {
-            console.log('error',error);
-            res.status(500).json({ error: error.message }); 
+            console.log('error', error);
+            res.status(500).json({ error: error.message });
         }
     },
 
     async devolverTarea(req, res) {
         try {
-
-            let motivo = req.body.motivo;
-            if (typeof motivo !== "string") {
-                motivo = req.body.motivo?.value || JSON.stringify(req.body.motivo);
-            }
-
-            const tarea = await devolverTarea(req.params.id, req.usuario.id, motivo, tareaRepository);
+            let { motivo, user_name, user_id } = req.body;
+            const tarea = await devolverTarea(req.params.id, user_id, motivo, user_name, tareaRepository);
             res.status(200).json(tarea.respuesta);
         } catch (error) {
-            console.log('error',error);
-            res.status(500).json({ error: error.message }); 
+            console.log('error', error);
+            res.status(500).json({ error: error.message });
         }
     },
 
     async corregirTarea(req, res) {
         try {
-            let correccion = req.body.correccion
-            const tarea = await corregirTarea(req.params.id, correccion, tareaRepository);
+            let { correccion, user_id, user_name } = req.body;
+
+            const tarea = await corregirTarea(req.params.id, correccion, user_id, user_name, tareaRepository);
             res.status(200).json(tarea.respuesta);
         } catch (error) {
-            console.log('error',error);
-            res.status(500).json({ error: error.message }); 
+            console.log('error', error);
+            res.status(500).json({ error: error.message });
         }
     },
 
     async crearDespieceOT(req, res) {
         try {
 
-            const despieceCreado = await crearDespieceOT(req.body, tareaRepository );
-           
+            const despieceCreado = await crearDespieceOT(req.body, tareaRepository);
+
             res.status(despieceCreado.codigo).json(despieceCreado.respuesta);
         } catch (error) {
-            console.log('error',error);
-            res.status(500).json({ error: error.message }); 
+            console.log('error', error);
+            res.status(500).json({ error: error.message });
         }
     },
 };

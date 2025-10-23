@@ -1,10 +1,10 @@
-export async function validarTarea(detalle) {
+ function validaTarea(detalle) {
     const camposRequeridos = [
+        { key: "tipoSolicitud", name: "Tipo de Solicitud" },
         { key: "nota", name: "Nota" },
         { key: "fechaLimite", name: "Fecha Limite" },
-        { key: "tipoSolicitud", name: "Tipo de Solicitud" },
         { key: "prioridad", name: "Tipo de Prioridad" },
-    ]
+    ];
     const errores = {};
     let validos = true;
     for (const campo of camposRequeridos) {
@@ -15,3 +15,5 @@ export async function validarTarea(detalle) {
     }
     return { errores, validos };
 }
+
+export { validaTarea };
