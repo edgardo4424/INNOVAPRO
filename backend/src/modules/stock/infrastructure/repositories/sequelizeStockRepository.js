@@ -5,6 +5,7 @@ const {
   Cotizacion,
 } = require("../../../cotizaciones/infrastructure/models/cotizacionModel");
 const db = require("../../../../database/models");
+const { getFechaHoraLima } = require("../../../../shared/utils/fechaLima");
 const query = `SELECT 
   p.id AS pieza_id,
   p.item,
@@ -74,14 +75,12 @@ class SequelizeStockRepository {
     }
   }
 
-  // tipos de movimiento stock disponible: Alquiler, Devolucion, Ajuste ingreso, Ajuste salida
-  async actualizarStockDisponible(piezaId, cantidad, tipoMovimiento, motivo) {
-    const t = await sequelize.transaction();
+  // *tipos de movimiento stock disponible: Alquiler, Devolucion, Ajuste ingreso, Ajuste salida
+  async actualizarStockDisponible(piezaId, cantidad, tipoMovimiento, motivo,transaction=null) {
 
-    try {
       const stock = await Stock.findOne({
         where: { pieza_id: piezaId },
-        transaction: t,
+        transaction,
       });
       if (!stock) {
         throw new Error("Stock no encontrado");
@@ -104,10 +103,10 @@ class SequelizeStockRepository {
       if (stock.stock_disponible < 0) {
         throw new Error("El stock disponible no puede ser negativo");
       }
-      await stock.save({ transaction: t });
+      await stock.save({ transaction });
 
       const stockPost = stock.stock_disponible;
-      await MovimientoStock.create(
+     const move= await MovimientoStock.create(
         {
           stock_id: stock.id,
           tipo: tipoMovimiento,
@@ -116,17 +115,15 @@ class SequelizeStockRepository {
           stock_post_movimiento: stockPost,
           tipo_stock: "Disponible",
           motivo: motivo || null,
-          fecha: new Date(),
+          fecha: getFechaHoraLima(),
         },
-        { transaction: t }
+        { transaction}
       );
-      await t.commit();
-    } catch (error) {
-      await t.rollback();
-      throw new Error(error.message);
-    }
+      console.log(move.get({plain:true}));
+      
+
   }
-  //Tipos de movimiento stock fijo: Ingreso, Baja, Venta, Ingreso reparacion, Ingreso salida
+  // *Tipos de movimiento stock fijo: Ingreso, Baja, Venta, Ingreso reparacion, Ingreso salida
   async actualizarStockFijo(piezaId, cantidad, tipoMovimientoFijo, motivo) {
     const t = await sequelize.transaction();
 
