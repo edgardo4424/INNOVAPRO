@@ -8,7 +8,6 @@ module.exports = async (tareaData, tareaRepository, transaction = null) => {
     tareaData.pase_pedido_id,
     transaction
   );
-  console.log("Paso ka obtendcion de una pse de pedido", pase_pedido);
 
   if (!pase_pedido)
     return {

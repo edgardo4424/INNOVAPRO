@@ -147,7 +147,7 @@ const TareaController = {
         }
     },
     async crearTareaPasePedido(req,res){
-        const transaction=await sequelize.transaction();
+        const transaction= await sequelize.transaction();
         try {
             const response=await crearTareaPasePedido(req.body,tareaRepository,transaction);
             await transaction.commit()
