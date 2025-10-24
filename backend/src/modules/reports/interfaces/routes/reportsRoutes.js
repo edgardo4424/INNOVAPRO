@@ -7,7 +7,7 @@ const { verificarToken } = require("../../../../shared/middlewares/authMiddlewar
 const liquidacionReporteController = require("../controller/liquidacionReporteController");
 
 
-// router.use(verificarToken); // Verificamos el token y el rol de Gerente para todas las rutas
+router.use(verificarToken); // Verificamos el token y el rol de Gerente para todas las rutas
 
 router.post("/reporte-factura", reporteFacturaController.reporteFactura);
 router.post("/reporte-guia", reporteFacturaController.reporteGuia);

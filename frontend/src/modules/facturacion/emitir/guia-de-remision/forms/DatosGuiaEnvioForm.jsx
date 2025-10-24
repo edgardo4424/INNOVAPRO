@@ -644,7 +644,6 @@ const DatosGuiaEnvioForm = () => {
             name="nroCirculacion"
             value={nroCirculacion}
             onChange={handleChange}
-            maxLength={6}
             className="block w-full rounded-md border border-gray-400 px-3 py-2 text-sm text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
           />
         </div>
