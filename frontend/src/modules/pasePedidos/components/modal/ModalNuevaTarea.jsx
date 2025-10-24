@@ -71,7 +71,6 @@ export default function ModalNuevaTarea({
   const handleCrearTarea = async () => {
     try {
       const { errores, validos } = validaTarea(nuevaTareaForm.detalles);
-
       if (!validos) {
         const mensajeError = Object.values(errores).join("\n");
         toast.error(mensajeError);

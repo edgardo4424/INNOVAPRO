@@ -73,6 +73,8 @@ module.exports = async (idTarea, correccion, user_id, user_name, tareaRepository
       respuesta: {
         mensaje: "Tarea corregida con éxito",
         tarea,
+        status: 200,
+        success: true
       },
     };
   } catch (error) {

@@ -3,8 +3,15 @@ import {
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Loader2, PersonStanding, X } from "lucide-react";
+import {
+  ClipboardPlus,
+  Loader2,
+  PersonStanding,
+  Warehouse,
+  X,
+} from "lucide-react";
 import { useState } from "react"; // Necesitas useState para manejar el loading
 
 import { Button } from "@/components/ui/button";
@@ -212,7 +219,7 @@ export default function ModalValidarStock({
   open,
   setOpen,
   cotizacion_id,
-  pedidoView,
+  content,
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [piezasRecibidas, setPiezasRecibidas] = useState([]);
@@ -241,7 +248,7 @@ export default function ModalValidarStock({
         );
         setPiezasRecibidas(piezasOrdenadas);
         setEstadoStock(false);
-      }, 2500);
+      }, 1100);
     } catch (error) {
       console.error("❌ Error al validar stock:", error);
       setEstadoStock(null);
@@ -253,6 +260,13 @@ export default function ModalValidarStock({
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger asChild>
+        <Button className="cursor-pointer bg-green-500 duration-300 hover:scale-105 hover:bg-green-600">
+          <Warehouse />
+          <span className="hidden md:block">VALIDAR STOCK</span>
+        </Button>
+      </AlertDialogTrigger>
+
       <AlertDialogContent className="flex flex-col gap-6 border border-slate-200 bg-white/95 pt-10 shadow-xl backdrop-blur-md md:max-w-3xl">
         {/* ❌ Botón cerrar */}
         <button
@@ -271,7 +285,7 @@ export default function ModalValidarStock({
           <AlertDialogDescription className="mt-1 text-sm text-slate-600">
             Confirma la disponibilidad de stock para el pedido N°{" "}
             <span className="font-semibold text-slate-900">
-              {pedidoView?.nro_Pedido || "—"}
+              {/* {content?.nro_Pedido || "—"} */}
             </span>
           </AlertDialogDescription>
         </div>

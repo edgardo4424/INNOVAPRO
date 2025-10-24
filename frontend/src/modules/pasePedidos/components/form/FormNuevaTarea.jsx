@@ -62,10 +62,10 @@ const FormNuevaTarea = ({
             }
           >
             <SelectTrigger>
-              <SelectValue placeholder="Seleccione la acción " />
+              <SelectValue placeholder="Seleccione la acción..." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="nuevo_despiece">Nuevo Despiece</SelectItem>
+              <SelectItem value="Nuevo Despiece">Nuevo Despiece</SelectItem>
               <SelectItem value="Validación de Stock">
                 Validación de Stock / Material
               </SelectItem>

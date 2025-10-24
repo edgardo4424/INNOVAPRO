@@ -148,7 +148,7 @@ export const DetallesEspecificos = ({ detalles }) => {
     anclajes: <Anchor className="h-4 w-4 text-purple-500" />,
     uso: <Home className="h-4 w-4 text-purple-500" />,
     infoAdicional: <FileText className="h-4 w-4 text-purple-500" />,
-    nota: <FileText className="h-4 w-4 text-yellow-600" />,
+    nota: <FileText className="h-4 w-4 text-green-600" />,
     tipo_cotizacion: <Settings className="h-4 w-4 text-purple-500" />,
     dias_alquiler: <Clock className="h-4 w-4 text-purple-500" />,
     atributos_valor_zonas: <Package className="h-4 w-4 text-purple-500" />,
@@ -261,13 +261,13 @@ export const DetallesEspecificos = ({ detalles }) => {
         {/* Nota especial */}
         {detalles.nota && (
           <>
-            <Separator className="my-6" />
-            <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+            <Separator className="my-6 text-g" />
+            <div className="rounded-lg border border-green-200 bg-green-50 p-4">
               <div className="mb-2 flex items-center gap-2">
                 {iconos.nota}
-                <span className="font-medium text-yellow-800">Nota:</span>
+                <span className="font-medium text-green-800">Nota:</span>
               </div>
-              <p className="rounded bg-yellow-100 p-2 font-mono text-md text-yellow-900">
+              <p className="rounded bg-green-100 p-2 font-mono text-md text-green-900">
                 {detalles.nota}
               </p>
             </div>

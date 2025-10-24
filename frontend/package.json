@@ -6,6 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:3002": "vite --port 3002",
+    "dev:3003": "vite --port 3003",
     "build": "vite build",
     "build:prod": "cross-env NODE_ENV=production vite build --mode production",
     "preview": "vite preview"

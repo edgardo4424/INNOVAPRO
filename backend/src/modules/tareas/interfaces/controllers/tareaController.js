@@ -37,8 +37,9 @@ const TareaController = {
 
     async obtenerTareas(req, res) {
         try {
-            const { id, rol } = req.usuario;
-            const tareas = await obtenerTareas(tareaRepository,id, rol);
+            const { id, rol, nombre } = req.usuario;
+            console.log(id, rol, nombre);
+            const tareas = await obtenerTareas(tareaRepository, id, rol);
             res.status(200).json(tareas.respuesta);
         } catch (error) {
             console.log('error', error);
@@ -108,8 +109,9 @@ const TareaController = {
 
     async devolverTarea(req, res) {
         try {
-            let { motivo, user_name, user_id } = req.body;
-            const tarea = await devolverTarea(req.params.id, user_id, motivo, user_name, tareaRepository);
+            let { motivo } = req.body;
+            const { id, nombre } = req.usuario;
+            const tarea = await devolverTarea(req.params.id, id, motivo, nombre, tareaRepository);
             res.status(200).json(tarea.respuesta);
         } catch (error) {
             console.log('error', error);
@@ -119,10 +121,10 @@ const TareaController = {
 
     async corregirTarea(req, res) {
         try {
-            let { correccion, user_id, user_name } = req.body;
-
-            const tarea = await corregirTarea(req.params.id, correccion, user_id, user_name, tareaRepository);
-            res.status(200).json(tarea.respuesta);
+            let { correccion } = req.body;
+            const { id: id_usuario, nombre } = req.usuario;
+            const { codigo, respuesta } = await corregirTarea(req.params.id, correccion, id_usuario, nombre, tareaRepository);
+            res.status(codigo).json(respuesta);
         } catch (error) {
             console.log('error', error);
             res.status(500).json({ error: error.message });

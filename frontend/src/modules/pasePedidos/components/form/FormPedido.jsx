@@ -1,5 +1,6 @@
 import React from "react";
 import TablaItems from "../tabla/TablaItems";
+import { getMotivoTrasladoDescription } from "@/modules/facturacion/utils/formateos";
 
 const FormPedido = ({ pedidoView: pedido }) => {
   const bgEstado = (estado) => {
@@ -83,7 +84,7 @@ const FormPedido = ({ pedidoView: pedido }) => {
               Tipo de Servicio
             </span>
             <span className="mt-0.5 text-sm font-bold uppercase">
-              {pedido?.tipo_Servicio || "N/A"}
+              {getMotivoTrasladoDescription(pedido?.guia_Envio_Cod_Traslado) || "N/A"}
             </span>
           </div>
           <div className="col-span-3 flex flex-col justify-center bg-gray-50 p-2 text-center font-bold">

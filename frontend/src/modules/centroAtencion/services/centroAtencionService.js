@@ -10,6 +10,10 @@ const centroAtencionService = {
     const res = await api.get("/tareas");
     return res.data;
   },
+  corregirTarea: async (id, payload) => {
+    const res = await api.put(`/tareas/${id}/corregir`, payload);
+    return res.data;
+  },
 };
 
 export default centroAtencionService;

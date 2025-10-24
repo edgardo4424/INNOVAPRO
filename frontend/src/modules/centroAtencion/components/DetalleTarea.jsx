@@ -18,7 +18,7 @@ import {
   Wrench,
   X,
 } from "lucide-react";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, use, useEffect, useRef, useState } from "react";
 
 import {
   AlertDialog,
@@ -31,6 +31,8 @@ import { toast } from "react-toastify";
 import { DetallesEspecificos } from "./DetallesEspecificos";
 import DespieceOT from "./despiece-ot/DespieceOT";
 import ImportadorDespiece from "./despiece-ot/ImportadorDespiece";
+import ModalValidarStock from "./modal/ModalValidarStock";
+import ModalReabrirTarea from "./modal/ModalReabrirTarea";
 export default function DetalleTarea({
   tarea,
   onCerrar,
@@ -40,10 +42,15 @@ export default function DetalleTarea({
   handleFinalizarTarea,
   handleDevolverTarea,
   handleCancelarTarea,
-  handleCorregirTarea,
 }) {
   const [mostrarDespiece, setMostrarDespiece] = useState(false);
   const [respuestas, setRespuestas] = useState(null);
+
+  const [componenteRenderPedido, setComponenteRenderPedido] = useState(null);
+  const [open, setOpen] = useState(false);
+
+  const [openReabrirTarea, setOpenReabrirTarea] = useState(false);
+
   const despieceRef = useRef(null);
   const [formData, setFormData] = useState({
     despiece: [],
@@ -71,6 +78,28 @@ export default function DetalleTarea({
       setRespuestas([]);
     }
   }, [tarea?.respuestas]);
+
+  useEffect(() => {
+    if (!tarea?.detalles?.tipoSolicitud) return;
+
+    const componentes = {
+      "Validación de Stock": (
+        <ModalValidarStock
+          open={open}
+          setOpen={setOpen}
+          cotizacion_id={tarea?.detalles?.cotizacion_id}
+          content={tarea?.detalles}
+        />
+      ),
+      "Modificación de plano": <p>Componente para Modificación de plano</p>,
+      "Nuevo Despiece": <p>Componente para Nuevo Despiece</p>,
+      Otro: <p>Componente genérico</p>,
+    };
+
+    setComponenteRenderPedido(
+      componentes[tarea.detalles.tipoSolicitud] || null,
+    );
+  }, [tarea?.detalles, open]);
 
   return (
     <div className="centro-modal">
@@ -146,7 +175,7 @@ export default function DetalleTarea({
                     Comercial:
                   </span>
                   <p className="flex items-center gap-2 font-semibold text-gray-900">
-                    <User className="h-4 w-4" />
+                    <User className="size-5" />
                     {tarea?.usuario_solicitante?.nombre || "Desconocido"}
                   </p>
                 </div>
@@ -180,7 +209,7 @@ export default function DetalleTarea({
                     Fecha Creación:
                   </span>
                   <p className="flex items-center gap-2 font-semibold text-gray-900">
-                    <Calendar className="h-4 w-4" />
+                    <Calendar className="size-5" />
                     {new Date(tarea?.fecha_creacion).toLocaleDateString(
                       "es-PE",
                       {
@@ -196,7 +225,7 @@ export default function DetalleTarea({
                     Hora:
                   </span>
                   <p className="flex items-center gap-2 font-semibold text-gray-900">
-                    <Clock className="h-4 w-4" />
+                    <Clock className="size-5" />
                     {new Date(tarea?.fecha_creacion).toLocaleTimeString(
                       "es-PE",
                       {
@@ -357,7 +386,7 @@ export default function DetalleTarea({
                   className="flex-1 cursor-pointer gap-2 border-gray-400 text-gray-700 hover:bg-gray-200 hover:text-gray-900"
                   onClick={handleTomarTarea}
                 >
-                  <Hand className="h-4 w-4" />
+                  <Hand className="size-5" />
                   Tomar
                 </Button>
               )}
@@ -367,43 +396,38 @@ export default function DetalleTarea({
                   <>
                     <Button
                       variant="outline"
-                      className="flex-1 cursor-pointer gap-2 border-gray-300 text-gray-600 hover:bg-gray-100 hover:text-gray-800"
+                      className="flex-1 cursor-pointer gap-2 border-gray-300 text-gray-600 duration-300 hover:scale-105 hover:bg-gray-100"
                       onClick={handleLiberarTarea}
                     >
-                      <Unlock className="h-4 w-4" />
+                      <Unlock className="size-5" />
                       LIBERAR
                     </Button>
 
                     <Button
-                      className="flex-1 cursor-pointer gap-2 bg-[#061a5b] text-white hover:bg-[#061a5b]/80"
+                      className="flex-1 cursor-pointer gap-2 bg-blue-500 text-white duration-300 hover:scale-105 hover:bg-blue-500"
                       onClick={handleFinalizarTarea}
                     >
-                      <Check className="h-4 w-4" />
+                      <Check className="size-5" />
                       FINALIZAR
                     </Button>
 
-                    <Button
-                      className="flex-1 cursor-pointer gap-2 bg-[#065b16] text-white hover:bg-[#065b16]/80"
-                      onClick={handleFinalizarTarea}
-                    >
-                      <Warehouse className="h-4 w-4" />
-                      VALIDAR STOCK
-                    </Button>
+                    {/* //? RENDERIZADO DE  ACCION PASE PEDIDOS */}
+                    {componenteRenderPedido && componenteRenderPedido}
 
                     <Button
-                      className="flex-1 cursor-pointer gap-2 bg-amber-500 text-white hover:bg-amber-500/80"
+                      className="flex-1 cursor-pointer gap-2 bg-amber-500 text-white duration-300 hover:scale-105 hover:bg-amber-500"
                       onClick={handleDevolverTarea}
                     >
-                      <RotateCcw className="h-4 w-4" />
+                      <RotateCcw className="size-5" />
                       DEVOLVER
                     </Button>
 
                     <Button
                       variant="destructive"
-                      className="flex-1 cursor-pointer gap-2 bg-red-500 text-white hover:bg-red-500/80"
+                      className="flex-1 cursor-pointer gap-2 bg-red-500 text-white duration-300 hover:scale-105 hover:bg-red-500"
                       onClick={handleCancelarTarea}
                     >
-                      <X className="h-4 w-4" />
+                      <X className="size-5" />
                       ANULAR
                     </Button>
                   </>
@@ -414,12 +438,12 @@ export default function DetalleTarea({
           {user.rol === "Técnico Comercial" &&
             tarea?.estado === "Devuelta" &&
             tarea?.usuario_solicitante?.id === user.id && (
-              <Button
-                onClick={handleCorregirTarea}
-                className="flex-1 gap-2 bg-red-500 text-white hover:bg-red-500/80"
-              >
-                Corregir Tarea
-              </Button>
+              <ModalReabrirTarea
+                open={openReabrirTarea}
+                setOpen={setOpenReabrirTarea}
+                tarea={tarea}
+                cerrarTarea={onCerrar}
+              />
             )}
 
           {puedeGenerarDespiece && (

@@ -1,733 +1,303 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import filialesService from "../../facturacion/service/FilialesService";
+import pedidosService from "../service/PedidosService";
 
 const PedidosContenxt = createContext();
 
 export function PedidosProvider({ children }) {
   const [filiales, setFiliales] = useState([]);
   const [pedidos, setPedidos] = useState([
-    {
-      contrato_id: 1,
-      pedido_id: 1,
-      cotizacion_id: 1,
-      filial: "ENCOFRADOS INNOVA S.A.C.",
-      estado: "Confirmado Stock",
-      guia_Envio_Cod_Traslado: "13",
-      ubicacion: "",
-      cliente_Tipo_Doc: "6",
-      cliente_Num_Doc: "20602860338",
-      cliente_Razon_Social: "Deister Software Peru S.a.C.",
-      nombre_Contacto: "Deco",
-      ot_Usuario_Pase: "Amelia Isabel",
-      ot_Usuario_Revisado: "Amelia Isabel",
-      ot_Respuesta_Pase: "",
-      cm_Usuario: "Lucas Romero",
-      cm_Email: "lucas@grupoinnova.pe",
-      cm_Telefono: "No disponble",
-      obra: "DESITER-EDIF-21E",
-      nro_contrato: "DEI-LR-20255",
-      empresa_Ruc: "20562974998",
-      guia_Envio_Peso_Total: 2174.3500000000004,
-      guia_Envio_Und_Peso_Total: "KGM",
-      detalle: [
         {
-          index: null,
-          unidad: "NIU",
-          cantidad: "4.00",
-          cod_Producto: "AM.0100",
-          descripcion: "HUSILLO DE NIVELACION",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "4.00",
-          cod_Producto: "AM.0300",
-          descripcion: "PIEZA DE INICIO",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "12.00",
-          cod_Producto: "AM.0700",
-          descripcion: "VERTICAL 2.00m",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "5.00",
-          cod_Producto: "AM.1000",
-          descripcion: "VERTICAL 1.00m",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "20.00",
-          cod_Producto: "AM.1150",
-          descripcion: "ESPIGA ",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "16.00",
-          cod_Producto: "AM.1300",
-          descripcion: "HORIZONTAL MULTI DE 3072mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "2.00",
-          cod_Producto: "AM.1500",
-          descripcion: "HORIZONTAL MULTI DE 2072mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "12.00",
-          cod_Producto: "AM.1600",
-          descripcion: "HORIZONTAL MULTI DE 1572mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "3.00",
-          cod_Producto: "AM.2000",
-          descripcion: "HORIZONTAL MULTI DE 0732mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "3.00",
-          cod_Producto: "AM.5100",
-          descripcion: "DIAGONAL DE 3072mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "5.00",
-          cod_Producto: "AM.5400",
-          descripcion: "DIAGONAL DE 1572mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "2.00",
-          cod_Producto: "AM.7200",
-          descripcion: "PLATAFORMA METALICA DE 190x3072mm - C",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "6.00",
-          cod_Producto: "AM.8700",
-          descripcion: "TUBO DE ANCLAJE FERMIN",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "6.00",
-          cod_Producto: "AM.8900",
-          descripcion: "BRIDA FIJA",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "3.00",
-          cod_Producto: "AM.9000",
-          descripcion: "ACOPLADOR MULTI",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "4.00",
-          cod_Producto: "AM.9200",
-          descripcion: "PIN GRAVEDAD 12mm ",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "3.00",
-          cod_Producto: "EA.1400",
-          descripcion: "GURSAM 60 - ESCALERA DE ACCESO 2M",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "6.00",
-          cod_Producto: "EA.1500",
-          descripcion: "GURSAM 60 - BARANDILLA INTERMEDIA 2M",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "4.00",
-          cod_Producto: "EA.2000",
-          descripcion: "PERNO COCHE - M10 x 70",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "6.00",
-          cod_Producto: "AE.11400",
-          descripcion: "PERNO HEXAGONAL G.5.8 - M8 x 70",
-        },
-      ],
-      ValoresPublico: {
-        guia_Envio_Cod_Traslado: "13",
-        guia_Envio_Des_Traslado: "ALQUILER",
-        guia_Envio_Mod_Traslado: "01",
-        transportista: {
-          tipo_Doc: "6",
-          nro_Doc: "",
-          razon_Social: "",
-          nro_mtc: "",
-        },
-      },
-      ValoresPrivado: null,
-      guia_Envio_Partida_Ubigeo: "150108",
-      guia_Envio_Partida_Direccion: "CAL. CAMINO B LOTE. 17A URB. VILLA BAJA",
-      guia_Envio_Llegada_Ubigeo: "",
-      guia_Envio_Llegada_Direccion:
-        "AV. ALFREDO BENAVIDES NRO. 1579 INT. 602 URB. SAN JORGE",
-    },
-    {
-      contrato_id: 2,
-      pedido_id: 2,
-      cotizacion_id: 77,
-      empresaProveedoraId: 2,
-      clienteId: 61,
-      obraId: 57,
-      contactoId: 79,
-
-      filial: "ANDAMIOS ELECTRICOS INNOVA S.A.C.",
-      estado: "Confirmado",
-      guia_Envio_Cod_Traslado: "13",
-      ubicacion: "",
-      cliente_Tipo_Doc: "6",
-      cliente_Num_Doc: "20602784402",
-      cliente_Razon_Social: "Dekoding S.a.C.",
-      nombre_Contacto: "Deco",
-      ot_Usuario_Pase: "Claudia Celeste",
-      ot_Usuario_Revisado: "Claudia Celeste",
-      ot_Respuesta_Pase: "",
-      cm_Usuario: "Lucas Romero",
-      cm_Email: "lucas@grupoinnova.pe",
-      cm_Telefono: "No disponble",
-      obra: "DESAC-EDIFI",
-      nro_contrato: "DEKSAC-2027",
-      empresa_Ruc: "20602696643",
-      guia_Envio_Peso_Total: 1537.66,
-      guia_Envio_Und_Peso_Total: "KGM",
-      detalle: [
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "4.00",
-          cod_Producto: "AM.0100",
-          descripcion: "HUSILLO DE NIVELACION",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "4.00",
-          cod_Producto: "AM.0300",
-          descripcion: "PIEZA DE INICIO",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "12.00",
-          cod_Producto: "AM.0700",
-          descripcion: "VERTICAL 2.00m",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "5.00",
-          cod_Producto: "AM.1000",
-          descripcion: "VERTICAL 1.00m",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "20.00",
-          cod_Producto: "AM.1150",
-          descripcion: "ESPIGA ",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "16.00",
-          cod_Producto: "AM.1300",
-          descripcion: "HORIZONTAL MULTI DE 3072mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "2.00",
-          cod_Producto: "AM.1500",
-          descripcion: "HORIZONTAL MULTI DE 2072mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "12.00",
-          cod_Producto: "AM.1600",
-          descripcion: "HORIZONTAL MULTI DE 1572mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "3.00",
-          cod_Producto: "AM.2000",
-          descripcion: "HORIZONTAL MULTI DE 0732mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "3.00",
-          cod_Producto: "AM.5100",
-          descripcion: "DIAGONAL DE 3072mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "5.00",
-          cod_Producto: "AM.5400",
-          descripcion: "DIAGONAL DE 1572mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "2.00",
-          cod_Producto: "AM.7200",
-          descripcion: "PLATAFORMA METALICA DE 190x3072mm - C",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "6.00",
-          cod_Producto: "AM.8700",
-          descripcion: "TUBO DE ANCLAJE FERMIN",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "6.00",
-          cod_Producto: "AM.8900",
-          descripcion: "BRIDA FIJA",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "3.00",
-          cod_Producto: "AM.9000",
-          descripcion: "ACOPLADOR MULTI",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "4.00",
-          cod_Producto: "AM.9200",
-          descripcion: "PIN GRAVEDAD 12mm ",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "3.00",
-          cod_Producto: "EA.1400",
-          descripcion: "GURSAM 60 - ESCALERA DE ACCESO 2M",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "6.00",
-          cod_Producto: "EA.1500",
-          descripcion: "GURSAM 60 - BARANDILLA INTERMEDIA 2M",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "4.00",
-          cod_Producto: "EA.2000",
-          descripcion: "PERNO COCHE - M10 x 70",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "6.00",
-          cod_Producto: "AE.11400",
-          descripcion: "PERNO HEXAGONAL G.5.8 - M8 x 70",
-        },
-      ],
-      ValoresPublico: null,
-      ValoresPrivado: {
-        guia_Envio_Cod_Traslado: "02",
-        guia_Envio_Des_Traslado: "VENTA",
-        guia_Envio_Mod_Traslado: "02",
-      },
-      guia_Envio_Partida_Ubigeo: "150108",
-      guia_Envio_Partida_Direccion: "CAL. CAMINO B LOTE. 17A URB. VILLA BAJA",
-      guia_Envio_Llegada_Ubigeo: "",
-      guia_Envio_Llegada_Direccion:
-        "AV. ALFREDO BENAVIDES NRO. 1579 INT. 602 URB. SAN JORGE",
-    },
-    {
-      contrato_id: 3,
-      pedido_id: 3,
-      cotizacion_id: 3,
-      filial: "ANDAMIOS ELECTRICOS INNOVA S.A.C.",
-      estado: "Pre Confirmado",
-      guia_Envio_Cod_Traslado: "13",
-      ubicacion: "",
-      cliente_Tipo_Doc: "6",
-      cliente_Num_Doc: "20510715650",
-      cliente_Razon_Social:
-        "Stefanini It Solutions Peru Sociedad Anonima Cerrada",
-      nombre_Contacto: "Deco",
-      ot_Usuario_Pase: "Claudia Celeste",
-      ot_Usuario_Revisado: "Claudia Celeste",
-      ot_Respuesta_Pase: "",
-      cm_Usuario: "Lucas Romero",
-      cm_Email: "lucas@grupoinnova.pe",
-      cm_Telefono: "No disponble",
-      obra: "EDIFI-SOFT",
-      nro_contrato: "STEF-2027",
-      empresa_Ruc: "20602696643",
-      guia_Envio_Peso_Total: 1537.66,
-      guia_Envio_Und_Peso_Total: "KGM",
-      detalle: [
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "4.00",
-          cod_Producto: "AM.0100",
-          descripcion: "HUSILLO DE NIVELACION",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "4.00",
-          cod_Producto: "AM.0300",
-          descripcion: "PIEZA DE INICIO",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "12.00",
-          cod_Producto: "AM.0700",
-          descripcion: "VERTICAL 2.00m",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "5.00",
-          cod_Producto: "AM.1000",
-          descripcion: "VERTICAL 1.00m",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "20.00",
-          cod_Producto: "AM.1150",
-          descripcion: "ESPIGA ",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "16.00",
-          cod_Producto: "AM.1300",
-          descripcion: "HORIZONTAL MULTI DE 3072mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "2.00",
-          cod_Producto: "AM.1500",
-          descripcion: "HORIZONTAL MULTI DE 2072mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "12.00",
-          cod_Producto: "AM.1600",
-          descripcion: "HORIZONTAL MULTI DE 1572mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "3.00",
-          cod_Producto: "AM.2000",
-          descripcion: "HORIZONTAL MULTI DE 0732mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "3.00",
-          cod_Producto: "AM.5100",
-          descripcion: "DIAGONAL DE 3072mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "5.00",
-          cod_Producto: "AM.5400",
-          descripcion: "DIAGONAL DE 1572mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "2.00",
-          cod_Producto: "AM.7200",
-          descripcion: "PLATAFORMA METALICA DE 190x3072mm - C",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "6.00",
-          cod_Producto: "AM.8700",
-          descripcion: "TUBO DE ANCLAJE FERMIN",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "6.00",
-          cod_Producto: "AM.8900",
-          descripcion: "BRIDA FIJA",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "3.00",
-          cod_Producto: "AM.9000",
-          descripcion: "ACOPLADOR MULTI",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "4.00",
-          cod_Producto: "AM.9200",
-          descripcion: "PIN GRAVEDAD 12mm ",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "3.00",
-          cod_Producto: "EA.1400",
-          descripcion: "GURSAM 60 - ESCALERA DE ACCESO 2M",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "6.00",
-          cod_Producto: "EA.1500",
-          descripcion: "GURSAM 60 - BARANDILLA INTERMEDIA 2M",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "4.00",
-          cod_Producto: "EA.2000",
-          descripcion: "PERNO COCHE - M10 x 70",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "6.00",
-          cod_Producto: "AE.11400",
-          descripcion: "PERNO HEXAGONAL G.5.8 - M8 x 70",
-        },
-      ],
-      ValoresPublico: null,
-      ValoresPrivado: {
-        guia_Envio_Cod_Traslado: "02",
-        guia_Envio_Des_Traslado: "VENTA",
-        guia_Envio_Mod_Traslado: "02",
-      },
-      guia_Envio_Partida_Ubigeo: "150108",
-      guia_Envio_Partida_Direccion: "CAL. CAMINO B LOTE. 17A URB. VILLA BAJA",
-      guia_Envio_Llegada_Ubigeo: "",
-      guia_Envio_Llegada_Direccion:
-        "AV. ALFREDO BENAVIDES NRO. 1579 INT. 602 URB. SAN JORGE",
-    },
-    {
-      contrato_id: 4,
-      pedido_id: 4,
-      cotizacion_id: 4,
-      filial: "ANDAMIOS ELECTRICOS INNOVA S.A.C.",
-      estado: "Por Confirmar",
-      guia_Envio_Cod_Traslado: "13",
-      ubicacion: "",
-      cliente_Tipo_Doc: "6",
-      cliente_Num_Doc: "20510715650",
-      cliente_Razon_Social:
-        "Stefanini It Solutions Peru Sociedad Anonima Cerrada",
-      nombre_Contacto: "Deco",
-      ot_Usuario_Pase: "Claudia Celeste",
-      ot_Usuario_Revisado: "Claudia Celeste",
-      ot_Respuesta_Pase: "",
-      cm_Usuario: "Lucas Romero",
-      cm_Email: "lucas@grupoinnova.pe",
-      cm_Telefono: "No disponble",
-      obra: "EDIFI-SOFT",
-      nro_contrato: "STEF-2027",
-      empresa_Ruc: "20602696643",
-      guia_Envio_Peso_Total: 1537.66,
-      guia_Envio_Und_Peso_Total: "KGM",
-      detalle: [
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "4.00",
-          cod_Producto: "AM.0100",
-          descripcion: "HUSILLO DE NIVELACION",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "4.00",
-          cod_Producto: "AM.0300",
-          descripcion: "PIEZA DE INICIO",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "12.00",
-          cod_Producto: "AM.0700",
-          descripcion: "VERTICAL 2.00m",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "5.00",
-          cod_Producto: "AM.1000",
-          descripcion: "VERTICAL 1.00m",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "20.00",
-          cod_Producto: "AM.1150",
-          descripcion: "ESPIGA ",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "16.00",
-          cod_Producto: "AM.1300",
-          descripcion: "HORIZONTAL MULTI DE 3072mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "2.00",
-          cod_Producto: "AM.1500",
-          descripcion: "HORIZONTAL MULTI DE 2072mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "12.00",
-          cod_Producto: "AM.1600",
-          descripcion: "HORIZONTAL MULTI DE 1572mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "3.00",
-          cod_Producto: "AM.2000",
-          descripcion: "HORIZONTAL MULTI DE 0732mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "3.00",
-          cod_Producto: "AM.5100",
-          descripcion: "DIAGONAL DE 3072mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "5.00",
-          cod_Producto: "AM.5400",
-          descripcion: "DIAGONAL DE 1572mm",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "2.00",
-          cod_Producto: "AM.7200",
-          descripcion: "PLATAFORMA METALICA DE 190x3072mm - C",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "6.00",
-          cod_Producto: "AM.8700",
-          descripcion: "TUBO DE ANCLAJE FERMIN",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "6.00",
-          cod_Producto: "AM.8900",
-          descripcion: "BRIDA FIJA",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "3.00",
-          cod_Producto: "AM.9000",
-          descripcion: "ACOPLADOR MULTI",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "4.00",
-          cod_Producto: "AM.9200",
-          descripcion: "PIN GRAVEDAD 12mm ",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "3.00",
-          cod_Producto: "EA.1400",
-          descripcion: "GURSAM 60 - ESCALERA DE ACCESO 2M",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "6.00",
-          cod_Producto: "EA.1500",
-          descripcion: "GURSAM 60 - BARANDILLA INTERMEDIA 2M",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "4.00",
-          cod_Producto: "EA.2000",
-          descripcion: "PERNO COCHE - M10 x 70",
-        },
-        {
-          index: null,
-          unidad: "NIU",
-          cantidad: "6.00",
-          cod_Producto: "AE.11400",
-          descripcion: "PERNO HEXAGONAL G.5.8 - M8 x 70",
-        },
-      ],
-      ValoresPublico: null,
-      ValoresPrivado: {
-        guia_Envio_Cod_Traslado: "02",
-        guia_Envio_Des_Traslado: "VENTA",
-        guia_Envio_Mod_Traslado: "02",
-      },
-      guia_Envio_Partida_Ubigeo: "150108",
-      guia_Envio_Partida_Direccion: "CAL. CAMINO B LOTE. 17A URB. VILLA BAJA",
-      guia_Envio_Llegada_Ubigeo: "",
-      guia_Envio_Llegada_Direccion:
-        "AV. ALFREDO BENAVIDES NRO. 1579 INT. 602 URB. SAN JORGE",
-    },
-  ]);
+            "contrato_id": 80,
+            "pedido_id": 3,
+            "cotizacion_id": 77,
+            "filial": "ENCOFRADOS INNOVA S.A.C.",
+            "estado": "Confirmado",
+            "guia_Envio_Cod_Traslado": "13",
+            "ubicacion": "Lima",
+            "cliente_Tipo_Doc": "06",
+            "cliente_Num_Doc": "12345678912",
+            "cliente_Razon_Social": "Real Madrid Fc",
+            "nombre_Contacto": "zidane",
+            "ot_Usuario_Pase": "",
+            "ot_Usuario_Revisado": "",
+            "ot_Respuesta_Pase": "",
+            "cm_Usuario": "Lucas Romero",
+            "cm_Email": "lucas@grupoinnova.pe",
+            "cm_Telefono": "No disponble",
+            "empresaProveedoraId": 1,
+            "clienteId": 61,
+            "obraId": 58,
+            "contactoId": 79,
+            "obra": "Bernabeu",
+            "nro_contrato": "ae-45",
+            "empresa_Ruc": "20562974998",
+            "guia_Envio_Peso_Total": 4153.9,
+            "guia_Envio_Und_Peso_Total": "KGM",
+            "ValoresPublico": {
+                "guia_Envio_Cod_Traslado": "13",
+                "guia_Envio_Des_Traslado": "ALQUILER",
+                "guia_Envio_Mod_Traslado": "01",
+                "transportista": {
+                    "tipo_Doc": "6",
+                    "nro_Doc": "",
+                    "razon_Social": "",
+                    "nro_mtc": ""
+                }
+            },
+            "ValoresPrivado": null,
+            "guia_Envio_Partida_Ubigeo": "",
+            "guia_Envio_Partida_Direccion": "San Borja, Perú",
+            "guia_Envio_Llegada_Ubigeo": "",
+            "guia_Envio_Llegada_Direccion": "AV. ALFREDO BENAVIDES NRO. 1579 INT. 602 URB. SAN JORGE",
+            "detalle": [
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 4,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 4,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 8,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 8,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 6,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 12,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 1,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 2,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 2,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 6,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 4,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 4,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 4,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                }
+            ]
+        },
+        {
+            "contrato_id": 79,
+            "pedido_id": 4,
+            "cotizacion_id": 78,
+            "filial": "INDEK ANDINA E.I.R.L",
+            "estado": "Confirmado",
+            "guia_Envio_Cod_Traslado": "13",
+            "ubicacion": "Lima",
+            "cliente_Tipo_Doc": "06",
+            "cliente_Num_Doc": "12345685278",
+            "cliente_Razon_Social": "Fc Barcelona",
+            "nombre_Contacto": "Deco",
+            "ot_Usuario_Pase": "",
+            "ot_Usuario_Revisado": "",
+            "ot_Respuesta_Pase": "",
+            "cm_Usuario": "Lucas Romero",
+            "cm_Email": "lucas@grupoinnova.pe",
+            "cm_Telefono": "No disponble",
+            "empresaProveedoraId": 3,
+            "clienteId": 62,
+            "obraId": 57,
+            "contactoId": 79,
+            "obra": "CAMP NOU ",
+            "nro_contrato": "ak-89",
+            "empresa_Ruc": "20555389052",
+            "guia_Envio_Peso_Total": 21874.79,
+            "guia_Envio_Und_Peso_Total": "KGM",
+            "ValoresPublico": null,
+            "ValoresPrivado": {
+                "guia_Envio_Cod_Traslado": "02",
+                "guia_Envio_Des_Traslado": "VENTA",
+                "guia_Envio_Mod_Traslado": "02"
+            },
+            "guia_Envio_Partida_Ubigeo": "",
+            "guia_Envio_Partida_Direccion": "Miraflores, Perú",
+            "guia_Envio_Llegada_Ubigeo": "",
+            "guia_Envio_Llegada_Direccion": "AV. ALFREDO BENAVIDES NRO. 1579 INT. 602 URB. SAN JORGE",
+            "detalle": [
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 4,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 4,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 12,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 4,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 16,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 20,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 20,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 6,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 6,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 6,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 6,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 14,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 3,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 4,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 4,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                },
+                {
+                    "index": null,
+                    "unidad": "UNI",
+                    "cantidad": 4,
+                    "cod_Producto": "Esperando a que luis lo incluya en la despices_detalles",
+                    "descripcion": "Esperando a que luis lo incluya en la despices_detalles"
+                }
+            ]
+        }
+    ]);
+  // const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(false);
 
   // ?? OBTENER TODAS LAS FILIALES
@@ -747,6 +317,22 @@ export function PedidosProvider({ children }) {
       }
     };
     consultarFiliales();
+  }, []);
+
+  const ObtenerPasePedidos = async () => {
+    try {
+      const { mensaje, pases_pedidos } =
+        await pedidosService.obtenerPasePedidos();
+      if (pases_pedidos.length === 0) {
+        setPedidos([]);
+      } else {
+        setPedidos(pases_pedidos);
+      }
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    // ObtenerPasePedidos();
   }, []);
 
   return (
