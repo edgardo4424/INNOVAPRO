@@ -48,7 +48,7 @@ export default function ModalPagos({ open, setOpen }) {
                             <h2 className="text-yellow-300">⚠️ No Llegas a el Monto Total de la Factura</h2>
                         )
                     }
-                    <h2>{montoTotalFactura.toFixed(2)} / {montoTotalPagos.toFixed(2)}</h2>
+                    <h2>{montoTotalFactura} / {montoTotalPagos}</h2>
                 </div>
             </div>
             <AlertDialogContent className="md:min-w-3xl flex flex-col gap-4 ">

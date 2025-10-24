@@ -62,31 +62,31 @@ const Factura = sequelize.define(
             allowNull: true,
         },
         monto_Oper_Gravadas: {
-            type: DataTypes.DECIMAL(12, 2),
+            type: DataTypes.DECIMAL(12, 6),
             allowNull: true,
         },
         monto_Oper_Exoneradas: {
-            type: DataTypes.DECIMAL(12, 2),
+            type: DataTypes.DECIMAL(12, 6),
             allowNull: true,
         },
         monto_Igv: {
-            type: DataTypes.DECIMAL(12, 2),
+            type: DataTypes.DECIMAL(12, 6),
             allowNull: true,
         },
         total_Impuestos: {
-            type: DataTypes.DECIMAL(12, 2),
+            type: DataTypes.DECIMAL(12, 6),
             allowNull: true,
         },
         valor_Venta: {
-            type: DataTypes.DECIMAL(12, 2),
+            type: DataTypes.DECIMAL(12, 6),
             allowNull: true,
         },
         sub_Total: {
-            type: DataTypes.DECIMAL(12, 2),
+            type: DataTypes.DECIMAL(12, 6),
             allowNull: true,
         },
         monto_Imp_Venta: {
-            type: DataTypes.DECIMAL(12, 2),
+            type: DataTypes.DECIMAL(12, 6),
             allowNull: true,
         },
         estado_Documento: {
@@ -139,11 +139,11 @@ const Factura = sequelize.define(
             allowNull: true,
         },
         detraccion_percent: {
-            type: DataTypes.DECIMAL(5, 2),
+            type: DataTypes.DECIMAL(12, 6),
             allowNull: true,
         },
         detraccion_mount: {
-            type: DataTypes.DECIMAL(12, 2),
+            type: DataTypes.DECIMAL(12, 6),
             allowNull: true,
         },
         //! -- Campos para retenciones (Descuentos)
@@ -152,15 +152,15 @@ const Factura = sequelize.define(
             allowNull: true,
         },
         descuento_monto_base: {
-            type: DataTypes.DECIMAL(12, 2),
+            type: DataTypes.DECIMAL(12, 6),
             allowNull: true,
         },
         descuento_factor: {
-            type: DataTypes.DECIMAL(5, 2),
+            type: DataTypes.DECIMAL(12, 6),
             allowNull: true,
         },
         descuento_monto: {
-            type: DataTypes.DECIMAL(12, 2),
+            type: DataTypes.DECIMAL(12, 6),
             allowNull: true,
         },
         //! -- Campo de anulacion
@@ -181,7 +181,7 @@ const Factura = sequelize.define(
             allowNull: true,
         },
         neto_Pagar: {
-            type: DataTypes.DECIMAL(12, 2),
+            type: DataTypes.DECIMAL(12, 6),
             allowNull: true,
         },
         cuotas_Real: {

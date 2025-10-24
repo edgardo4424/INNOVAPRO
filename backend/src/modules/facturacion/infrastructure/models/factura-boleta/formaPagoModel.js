@@ -22,7 +22,7 @@ const FormaPagoFactura = sequelize.define(
             allowNull: false,
         },
         monto: {
-            type: DataTypes.DECIMAL(12, 2),
+            type: DataTypes.DECIMAL(12, 6),
             allowNull: false,
         },
         cuota: {

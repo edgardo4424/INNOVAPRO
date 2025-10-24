@@ -30,55 +30,76 @@ const ProductoForm = ({ closeModal }) => {
 
   const [activeButton, setActiveButton] = useState(false);
   const [tipoItem, setTipoItem] = useState(false);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
+    const IGV_PERCENT = 0.18;
+    const TIP_AFECTACION_GRAVADAS = [
+      "10",
+      "11",
+      "12",
+      "13",
+      "14",
+      "15",
+      "16",
+      "17",
+    ];
+    const TIP_AFECTACION_EXONERADAS = [
+      "20",
+      "21",
+      "30",
+      "31",
+      "32",
+      "33",
+      "34",
+      "35",
+      "36",
+      "40",
+    ];
+
+    // Validar entrada numérica
     let validatedValue = value;
-
-    if (name === "cantidad" || name === "monto_Valor_Unitario") {
-      let numericValue = parseFloat(value);
-
-      if (isNaN(numericValue) || numericValue < 0) {
-        validatedValue = 0;
-      } else {
-        validatedValue = numericValue;
-      }
+    if (["cantidad", "monto_Valor_Unitario"].includes(name)) {
+      const numericValue = parseFloat(value);
+      validatedValue =
+        isNaN(numericValue) || numericValue < 0 ? 0 : numericValue;
     }
 
+    // Obtener valores actuales
     const cantidad =
       name === "cantidad"
         ? validatedValue
         : parseFloat(productoActual.cantidad || 0);
+
     const valorUnitario =
       name === "monto_Valor_Unitario"
         ? validatedValue
         : parseFloat(productoActual.monto_Valor_Unitario || 0);
+
     const tipAfeIgv = productoActual.tip_Afe_Igv || "10";
 
-    let monto_Base_Igv = cantidad * valorUnitario;
+    // Calcular valores con 6 decimales
+    const monto_Base_Igv = +(cantidad * valorUnitario).toFixed(2);
     let igv = 0;
     let total_Impuestos = 0;
-    let monto_Precio_Unitario = valorUnitario;
-    let monto_Valor_Venta = cantidad * valorUnitario;
+    let monto_Precio_Unitario = 0;
 
-    if (["10", "11", "12", "13", "14", "15", "16", "17"].includes(tipAfeIgv)) {
-      igv = +(monto_Base_Igv * 0.18).toFixed(2);
-      total_Impuestos = igv.toFixed(2);
-      monto_Precio_Unitario = +(valorUnitario + igv).toFixed(2);
-    } else if (
-      ["20", "21", "30", "31", "32", "33", "34", "35", "36", "40"].includes(
-        tipAfeIgv,
-      )
-    ) {
+    if (TIP_AFECTACION_GRAVADAS.includes(tipAfeIgv)) {
+      igv = +(monto_Base_Igv * IGV_PERCENT).toFixed(2);
+      total_Impuestos = igv;
+      monto_Precio_Unitario = +(valorUnitario * (1 + IGV_PERCENT)).toFixed(2);
+    } else if (TIP_AFECTACION_EXONERADAS.includes(tipAfeIgv)) {
       igv = 0;
       total_Impuestos = 0;
-      monto_Precio_Unitario = valorUnitario;
+      monto_Precio_Unitario = +valorUnitario.toFixed(2);
     } else {
-      // En caso de un tipAfeIgv no reconocido, por defecto a 0 IGV
       igv = 0;
       total_Impuestos = 0;
-      monto_Precio_Unitario = valorUnitario;
+      monto_Precio_Unitario = +valorUnitario.toFixed(2);
     }
+
+    const monto_Valor_Venta = +(cantidad * valorUnitario).toFixed(2);
 
     setProductoActual((prevValores) => ({
       ...prevValores,
@@ -86,16 +107,12 @@ const ProductoForm = ({ closeModal }) => {
         typeof validatedValue === "string"
           ? validatedValue.toUpperCase()
           : validatedValue,
-      monto_Base_Igv: +monto_Base_Igv.toFixed(2),
+      monto_Base_Igv,
       igv,
       total_Impuestos,
       monto_Precio_Unitario,
-      monto_Valor_Venta: +monto_Valor_Venta.toFixed(2),
-      porcentaje_Igv: ["10", "11", "12", "13", "14", "15", "16", "17"].includes(
-        tipAfeIgv,
-      )
-        ? 18
-        : 0,
+      monto_Valor_Venta,
+      porcentaje_Igv: TIP_AFECTACION_GRAVADAS.includes(tipAfeIgv) ? 18 : 0,
     }));
   };
 
@@ -150,7 +167,6 @@ const ProductoForm = ({ closeModal }) => {
     setProductoValida(ProductoValidarEstados);
   }, []);
 
-
   return (
     <div className="max-h-[45dvh] min-h-[40dvh] w-full overflow-y-scroll md:max-h-[unset] md:overflow-y-hidden">
       <div className="flex w-full justify-end">
@@ -191,7 +207,7 @@ const ProductoForm = ({ closeModal }) => {
         </div>
 
         {/* Unidad */}
-        <div className={`col-span-full flex flex-col gap-1 md:col-span-1 `}>
+        <div className={`col-span-full flex flex-col gap-1 md:col-span-1`}>
           <Label>Tipo (valor interno)</Label>
           <Select
             name="tipo_item"
@@ -267,7 +283,7 @@ const ProductoForm = ({ closeModal }) => {
 
         {/* Valor Unitario */}
         <div className="col-span-full flex flex-col gap-1 md:col-span-2 lg:col-span-1">
-          <Label>Valor Unitario</Label>
+          <Label>Valor Unitario (max. 6 dec.)</Label>
           <Input
             type="number"
             name="monto_Valor_Unitario"
@@ -424,7 +440,9 @@ const ProductoForm = ({ closeModal }) => {
         </div> */}
 
         {/* Descripción */}
-        <div className={`col-span-full flex flex-col gap-1 md:col-span-${tipoItem ? "3" : "4"}`}>
+        <div
+          className={`col-span-full flex flex-col gap-1 md:col-span-${tipoItem ? "3" : "4"}`}
+        >
           <Label>Descripción</Label>
           <div className="relative w-full">
             <textarea
@@ -433,7 +451,7 @@ const ProductoForm = ({ closeModal }) => {
               value={productoActual.descripcion}
               onChange={handleDescripcion}
               maxLength={250}
-              className={`h-40 w-full resize-none rounded-xl uppercase border-1 p-2 ${productoValida?.descripcion ? "border-red-500" : "border-gray-400"}`}
+              className={`h-40 w-full resize-none rounded-xl border-1 p-2 uppercase ${productoValida?.descripcion ? "border-red-500" : "border-gray-400"}`}
             />
             <p className="absolute right-4 bottom-2 mt-2 text-right text-sm text-gray-500">
               {productoActual.descripcion.length}/250

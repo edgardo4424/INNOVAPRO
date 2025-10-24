@@ -97,49 +97,49 @@ const TablaDocumentos = ({
             // 🟢 Calculamos los días desde la fecha de emisión
             const diasTranscurridos = differenceInCalendarDays(
               new Date(),
-              new Date(factura.fecha_emision),
+              new Date(factura?.fecha_emision),
             );
 
             const disableAnular =
-              factura.estado !== "EMITIDA" || diasTranscurridos > 7;
+              factura?.estado !== "EMITIDA" || diasTranscurridos > 7;
 
             return (
               <tr
-                key={factura.id}
+                key={factura?.id}
                 className={`${
                   index % 2 === 0 ? "bg-white" : "bg-gray-50"
                 } border-b border-gray-200 transition-colors hover:bg-gray-100`}
               >
                 <td className="px-2 py-3 text-sm text-gray-700">
-                  {factura.tipo_doc == "01" ? "Factura" : "Boleta"}
+                  {factura?.tipo_doc == "01" ? "Factura" : "Boleta"}
                 </td>
                 <td className="px-2 py-3 text-xs font-medium text-gray-700">
-                  {`${factura.serie}-${factura.correlativo}`}
+                  {`${factura?.serie}-${factura?.correlativo}`}
                 </td>
                 <td className="px-6 py-3 text-xs text-gray-700">
-                  {new Date(factura.fecha_emision).toLocaleDateString("es-PE", {
+                  {new Date(factura?.fecha_emision).toLocaleDateString("es-PE", {
                     year: "numeric",
                     month: "2-digit",
                     day: "2-digit",
                   })}
                 </td>
                 <td className="px-2 py-3 text-xs text-gray-700">
-                  <span>{filialActural(factura.empresa_ruc) || ""}</span>
+                  <span>{filialActural(factura?.empresa_ruc) || ""}</span>
                 </td>
                 <td className="flex flex-col px-2 py-3 text-xs text-gray-700">
-                  <span>{factura.cliente_razon_social || ""}</span>
-                  <span>{`${factura.cliente_num_doc || ""}`}</span>
+                  <span>{factura?.cliente_razon_social || ""}</span>
+                  <span>{`${factura?.cliente_num_doc || ""}`}</span>
                 </td>
                 <td className="px-2 py-3 text-xs font-medium text-gray-700">
-                  {`${factura.tipo_moneda} ${factura.monto_imp_venta}`}
+                  {`${factura?.tipo_moneda} ${factura?.monto_imp_venta ? Number(factura?.monto_imp_venta).toFixed(2) : 0.00}`}
                 </td>
                 <td className="min-w-[160px] py-3">
                   <span
                     className={`rounded-full px-2 py-1 text-xs font-semibold ${getEstadoColor(
-                      factura.estado,
+                      factura?.estado,
                     )}`}
                   >
-                    {getEstadoTexto(factura.estado)}
+                    {getEstadoTexto(factura?.estado)}
                   </span>
                 </td>
                 <td className="px-2 py-3">
@@ -149,14 +149,14 @@ const TablaDocumentos = ({
                       <TooltipTrigger asChild>
                         <button
                           onClick={() => {
-                            setIdDocumento(factura.id);
+                            setIdDocumento(factura?.id);
                             setModalOpen(true);
                             setDocumentoAVisualizar({
-                              id: factura.id,
-                              correlativo: String(factura.correlativo),
-                              serie: factura.serie,
-                              empresa_ruc: factura.empresa_ruc,
-                              tipo_doc: factura.tipo_doc,
+                              id: factura?.id,
+                              correlativo: String(factura?.correlativo),
+                              serie: factura?.serie,
+                              empresa_ruc: factura?.empresa_ruc,
+                              tipo_doc: factura?.tipo_doc,
                             });
                           }}
                           className="rounded p-1 transition-colors hover:bg-blue-100"
@@ -174,16 +174,16 @@ const TablaDocumentos = ({
                       <TooltipTrigger asChild>
                         <button
                           onClick={() => {
-                            setIdDocumento(factura.id);
+                            setIdDocumento(factura?.id);
                             setModalDescargar(true);
                             setDocumentoADescargar({
-                              id: factura.id,
-                              serie: factura.serie,
-                              correlativo: factura.correlativo,
-                              numRuc: factura.empresa_ruc,
-                              tipoDoc: factura.tipo_doc,
-                              numDocumentoComprobante: factura.cliente_num_doc,
-                              razonSocial: factura.cliente_razon_social,
+                              id: factura?.id,
+                              serie: factura?.serie,
+                              correlativo: factura?.correlativo,
+                              numRuc: factura?.empresa_ruc,
+                              tipoDoc: factura?.tipo_doc,
+                              numDocumentoComprobante: factura?.cliente_num_doc,
+                              razonSocial: factura?.cliente_razon_social,
                             });
                           }}
                           className="rounded p-1 transition-colors hover:bg-green-100"
@@ -202,14 +202,14 @@ const TablaDocumentos = ({
                         <button
                           disabled={disableAnular}
                           onClick={() => {
-                            setIdDocumento(factura.id);
+                            setIdDocumento(factura?.id);
                             setModalAnular(true);
                             setDocumentoAAnular({
-                              id: factura.id,
-                              empresa_ruc: factura.empresa_ruc,
-                              tipo_Doc: factura.tipo_doc,
-                              serie: factura.serie,
-                              correlativo: factura.correlativo,
+                              id: factura?.id,
+                              empresa_ruc: factura?.empresa_ruc,
+                              tipo_Doc: factura?.tipo_doc,
+                              serie: factura?.serie,
+                              correlativo: factura?.correlativo,
                               anulacion_Motivo: "",
                               estado_Documento: "0",
                             });

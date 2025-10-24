@@ -40,11 +40,11 @@ function pdfDetallesTotal(
                         ],
                         [
                             { text: `DETRACCIÓN ${Number(factura?.detraccion_percent).toFixed(0)}%:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
-                            { text: `${utils.formatMoney(factura?.detraccion_mount)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
+                            { text: `${utils.formatMoneyResult(factura?.detraccion_mount)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
                         ],
                         [
                             { text: `NETO A PAGAR:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
-                            { text: `${utils.formatMoney(factura?.neto_Pagar) || '0.00'}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
+                            { text: `${utils.formatMoneyResult(factura?.neto_Pagar) || '0.00'}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
                         ],
                     ]
                 },
@@ -74,15 +74,15 @@ function pdfDetallesTotal(
                     body: [
                         [
                             { text: `BASE DEL DESCUENTO:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
-                            { text: `${factura?.descuento_monto_base}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
+                            { text: `${utils.formatMoneyResult(factura?.descuento_monto_base)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
                         ],
                         [
                             { text: `DESCUENTO ${Number(factura?.descuento_factor * 100).toFixed(0)}%:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
-                            { text: `${(factura?.descuento_monto)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
+                            { text: `${utils.formatMoneyResult(factura?.descuento_monto)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
                         ],
                         [
                             { text: `NETO A PAGAR:`, style: 'totalfactor', border: [false, false, false, false], color: text_color },
-                            { text: `${factura?.neto_Pagar}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
+                            { text: `${utils.formatMoneyResult(factura?.neto_Pagar)}`, style: 'totalValue', border: [false, false, false, false], color: text_color },
                         ],
                     ]
                 },
@@ -111,23 +111,19 @@ function pdfDetallesTotal(
                     body: [
                         [
                             { text: 'GRAVADA (S/)', style: 'totalLabel', border: [true, true, true, true] },
-                            { text: utils.formatMoney(factura?.monto_Oper_Gravadas), style: 'totalValue', alignment: 'right', border: [true, true, true, true] }
-                        ],
-                        [
-                            { text: 'OP. INAFECTA (S/)', style: 'totalLabel', border: [true, true, true, true] },
-                            { text: '0.00', style: 'totalValue', alignment: 'right', border: [true, true, true, true] }
+                            { text: utils.formatMoneyResult(factura?.monto_Oper_Gravadas), style: 'totalValue', alignment: 'right', border: [true, true, true, true] }
                         ],
                         [
                             { text: 'OP. EXONERADA (S/)', style: 'totalLabel', border: [true, true, true, true] },
-                            { text: '0.00', style: 'totalValue', alignment: 'right', border: [true, true, true, true] }
+                            { text: utils.formatMoneyResult(factura?.monto_Oper_Exoneradas), style: 'totalValue', alignment: 'right', border: [true, true, true, true] }
                         ],
                         [
                             { text: 'IGV 18.00% (S/)', style: 'totalLabel', border: [true, true, true, true] },
-                            { text: utils.formatMoney(factura?.total_Impuestos), style: 'totalValue', alignment: 'right', border: [true, true, true, true] }
+                            { text: utils.formatMoneyResult(factura?.total_Impuestos), style: 'totalValue', alignment: 'right', border: [true, true, true, true] }
                         ],
                         [
                             { text: 'TOTAL (S/)', style: 'totalFinalLabel', border: [true, true, true, true] },
-                            { text: utils.formatMoney(factura?.sub_Total), style: 'totalFinalValue', alignment: 'right', border: [true, true, true, true] }
+                            { text: utils.formatMoneyResult(factura?.sub_Total), style: 'totalFinalValue', alignment: 'right', border: [true, true, true, true] }
                         ]
                     ]
                 },

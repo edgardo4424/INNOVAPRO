@@ -259,7 +259,10 @@ const utils = {
     },
     formatMoney(value) {
         const n = Number(value ?? 0);
-        if (n === 1000.13) return "1,000.13";
+        return `${n.toFixed(3)}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
+    formatMoneyResult(value) {
+        const n = Number(value ?? 0);
         return `${n.toFixed(2)}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
     formatTypeDoc(code) {

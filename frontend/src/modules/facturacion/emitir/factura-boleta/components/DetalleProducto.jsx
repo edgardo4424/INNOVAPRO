@@ -103,7 +103,7 @@ const DetalleProducto = () => {
           <div className="flex items-center justify-between rounded-md px-3 py-2 transition-colors duration-150 hover:bg-gray-50">
             <span className="font-medium text-gray-700">Gravadas</span>
             <span className="font-semibold text-gray-800">
-              {tipo_Moneda == "PEN" ? "S/." : "$"} {TotalProducto.toFixed(2)}
+              {tipo_Moneda == "PEN" ? "S/." : "$"} {TotalProducto}
             </span>
           </div>
 
@@ -120,14 +120,14 @@ const DetalleProducto = () => {
               <span className="font-medium text-gray-700">IGV</span>
               <span className="font-semibold text-gray-800">
                 {tipo_Moneda == "PEN" ? "S/." : "$"}{" "}
-                {factura.monto_Igv.toFixed(2)}
+                {factura.monto_Igv}
               </span>
             </div>
 
             <div className="flex items-center justify-between rounded-md px-3 py-2 transition-colors duration-150 hover:bg-gray-50">
               <span className="font-medium text-gray-700">Sub Total + IGV</span>
               <span className="font-semibold text-gray-800">
-                {tipo_Moneda == "PEN" ? "S/." : "$"} {subTotalConIgv.toFixed(2)}
+                {tipo_Moneda == "PEN" ? "S/." : "$"} {subTotalConIgv}
               </span>
             </div>
           </div>
@@ -145,7 +145,7 @@ const DetalleProducto = () => {
               <span className="font-medium text-gray-700">Exonerados</span>
               <span className="font-semibold text-gray-800">
                 {tipo_Moneda == "PEN" ? "S/." : "$"}{" "}
-                {factura.monto_Oper_Exoneradas.toFixed(2)}
+                {factura.monto_Oper_Exoneradas}
               </span>
             </div>
 
@@ -153,7 +153,7 @@ const DetalleProducto = () => {
               <span className="font-medium text-gray-700">Sub Total</span>
               <span className="font-semibold text-gray-800">
                 {tipo_Moneda == "PEN" ? "S/." : "$"}{" "}
-                {factura.sub_Total.toFixed(2)}
+                {factura.sub_Total}
               </span>
             </div>
 
@@ -161,7 +161,7 @@ const DetalleProducto = () => {
               <span className="font-bold text-blue-800">Total</span>
               <span className="text-lg font-bold text-blue-800">
                 {tipo_Moneda == "PEN" ? "S/." : "$"}{" "}
-                {factura.monto_Imp_Venta.toFixed(2)}{" "}
+                {factura.monto_Imp_Venta}{" "}
               </span>
             </div>
           </div>

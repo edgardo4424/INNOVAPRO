@@ -34,19 +34,19 @@ const DetalleFactura = sequelize.define(
             allowNull: false,
         },
         monto_Valor_Unitario: {
-            type: DataTypes.DECIMAL(12, 2),
+            type: DataTypes.DECIMAL(12, 6),
             allowNull: false,
         },
         monto_Base_Igv: {
-            type: DataTypes.DECIMAL(12, 2),
+            type: DataTypes.DECIMAL(12, 6),
             allowNull: false,
         },
         porcentaje_Igv: {
-            type: DataTypes.DECIMAL(5, 2),
+            type: DataTypes.DECIMAL(12, 6),
             allowNull: false,
         },
         igv: {
-            type: DataTypes.DECIMAL(12, 2),
+            type: DataTypes.DECIMAL(12, 6),
             allowNull: false,
         },
         tip_Afe_Igv: {
@@ -54,19 +54,19 @@ const DetalleFactura = sequelize.define(
             allowNull: false,
         },
         total_Impuestos: {
-            type: DataTypes.DECIMAL(12, 2),
+            type: DataTypes.DECIMAL(12, 6),
             allowNull: false,
         },
         monto_Precio_Unitario: {
-            type: DataTypes.DECIMAL(12, 2),
+            type: DataTypes.DECIMAL(12, 6),
             allowNull: false,
         },
         monto_Valor_Venta: {
-            type: DataTypes.DECIMAL(12, 2),
+            type: DataTypes.DECIMAL(12, 6),
             allowNull: false,
         },
         factor_Icbper: {
-            type: DataTypes.DECIMAL(5, 2),
+            type: DataTypes.DECIMAL(12, 6),
             allowNull: false,
         },
         tipo_item: {

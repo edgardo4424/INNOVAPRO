@@ -28,6 +28,7 @@ module.exports = async (factura, repository, borradorRepository) => {
             correlativo: factura.correlativo,
             ruc: factura.empresa_Ruc,
             response,
+            content: factura,
         });
 
         const { status, success, message, data } = response || {};

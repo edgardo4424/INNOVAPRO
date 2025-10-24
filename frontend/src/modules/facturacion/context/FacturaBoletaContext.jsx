@@ -206,63 +206,66 @@ export function FacturaBoletaProvider({ children }) {
     }
   }, [productoActual.cod_Producto, factura.detalle, edicionProducto.edicion]);
 
-  useEffect(() => {
-    const actualizarFacturaMontos = () => {
-      let gravadas = 0;
-      let exoneradas = 0;
-      let igvTotal = 0;
+useEffect(() => {
+  const actualizarFacturaMontos = () => {
+    const IGV_PERCENT = 0.18;
+    const TIP_AFECTACION_GRAVADAS = ["10", "11", "12", "13", "14", "15", "16", "17"];
+    const TIP_AFECTACION_EXONERADAS = ["20", "21", "30", "31", "32", "33", "34", "35", "36", "40"];
 
-      factura.detalle.forEach((producto) => {
-        const valorVenta = parseFloat(producto.monto_Valor_Venta || 0);
+    let gravadas = 0;
+    let exoneradas = 0;
+    let igvTotal = 0;
 
-        if (
-          ["10", "11", "12", "13", "14", "15", "16", "17"].includes(
-            producto.tip_Afe_Igv,
-          )
-        ) {
-          gravadas += valorVenta;
-          igvTotal += valorVenta * 0.18;
-        } else if (
-          ["20", "21", "30", "31", "32", "33", "34", "35", "36", "40"].includes(
-            producto.tip_Afe_Igv,
-          )
-        ) {
-          // 👈 Aquí está el cambio
-          exoneradas += valorVenta;
-        }
-      });
+    factura.detalle.forEach((producto) => {
+      const cantidad = parseFloat(producto.cantidad || 0);
+      const valorUnitario = parseFloat(producto.monto_Valor_Unitario || 0);
+      const tipAfeIgv = producto.tip_Afe_Igv || "10";
 
-      const subTotal = gravadas + parseFloat(igvTotal.toFixed(2)) + exoneradas;
+      const valorVenta = +(cantidad * valorUnitario).toFixed(2);
+      let igv = 0;
 
-      setTotalProducto(gravadas);
+      if (TIP_AFECTACION_GRAVADAS.includes(tipAfeIgv)) {
+        igv = +(valorVenta * IGV_PERCENT).toFixed(2);
+        gravadas += valorVenta;
+        igvTotal += igv;
+      } else if (TIP_AFECTACION_EXONERADAS.includes(tipAfeIgv)) {
+        exoneradas += valorVenta;
+      }
+    });
 
-      setFactura({
-        ...factura,
-        monto_Oper_Gravadas: parseFloat(gravadas.toFixed(2)),
-        monto_Oper_Exoneradas: parseFloat(exoneradas.toFixed(2)),
-        monto_Igv: parseFloat(igvTotal.toFixed(2)),
-        total_Impuestos: parseFloat(igvTotal.toFixed(2)),
-        valor_Venta: parseFloat((gravadas + exoneradas).toFixed(2)),
-        sub_Total: parseFloat(subTotal.toFixed(2)),
-        monto_Imp_Venta: parseFloat(subTotal.toFixed(2)),
-      });
-    };
+    const baseTotal = gravadas + exoneradas;
+    const subTotal = +(baseTotal + igvTotal).toFixed(2);
 
-    if (factura.detalle?.length > 0) {
-      actualizarFacturaMontos();
-    } else {
-      setFactura((prev) => ({
-        ...prev,
-        monto_Oper_Gravadas: 0,
-        monto_Oper_Exoneradas: 0,
-        monto_Igv: 0,
-        total_Impuestos: 0,
-        valor_Venta: 0,
-        sub_Total: 0,
-        monto_Imp_Venta: 0,
-      }));
-    }
-  }, [factura.detalle]);
+    setTotalProducto(+gravadas.toFixed(2));
+
+    setFactura((prev) => ({
+      ...prev,
+      monto_Oper_Gravadas: +gravadas.toFixed(2),
+      monto_Oper_Exoneradas: +exoneradas.toFixed(2),
+      monto_Igv: +igvTotal.toFixed(2),
+      total_Impuestos: +igvTotal.toFixed(2),
+      valor_Venta: +baseTotal.toFixed(2),
+      sub_Total: +subTotal.toFixed(2),
+      monto_Imp_Venta: +subTotal.toFixed(2),
+    }));
+  };
+
+  if (factura.detalle?.length > 0) {
+    actualizarFacturaMontos();
+  } else {
+    setFactura((prev) => ({
+      ...prev,
+      monto_Oper_Gravadas: 0,
+      monto_Oper_Exoneradas: 0,
+      monto_Igv: 0,
+      total_Impuestos: 0,
+      valor_Venta: 0,
+      sub_Total: 0,
+      monto_Imp_Venta: 0,
+    }));
+  }
+}, [factura.detalle]);
+
 
   useEffect(() => {
     if (!factura.monto_Imp_Venta || factura.monto_Imp_Venta <= 0) return;
