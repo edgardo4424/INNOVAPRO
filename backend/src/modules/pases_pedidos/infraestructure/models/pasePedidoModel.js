@@ -19,8 +19,17 @@ const PasePedido = sequelize.define(
         key: "id",
       },
     },
+    tarea_id:{
+      type:DataTypes.INTEGER,
+      allowNull:true,
+      defaultValue:null,
+      references:{
+        model:"tareas",
+        key:"id",
+      }
+    },
     fecha_emision: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       allowNull: false,
     },
     estado: {
@@ -28,9 +37,10 @@ const PasePedido = sequelize.define(
         "Por confirmar",
         "Pre confirmado",
         "Confirmado",
+        "Rechazado",
         "Stock Confirmado",
-        "En despacho",
-        "Despachado"
+        "Incompleto",
+        "Finalizado"
       ),
       allowNull: false,
       defaultValue: "pendiente",
@@ -50,6 +60,10 @@ PasePedido.associate = (models) => {
   PasePedido.belongsTo(models.contratos, {
     foreignKey: "contrato_id",
     as: "contrato",
+  });
+  PasePedido.belongsTo(models.tareas, {
+    foreignKey: "tarea_id",
+    as: "tarea",
   });
   PasePedido.hasOne(models.stock_pedidos_piezas, {
     foreignKey: "pase_pedido_id",

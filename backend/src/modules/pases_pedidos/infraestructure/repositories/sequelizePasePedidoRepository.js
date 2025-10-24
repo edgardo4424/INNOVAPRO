@@ -68,9 +68,12 @@ class SequelizePasePedidoRepository {
     return pases_pedidos;
   }
 
-  async obtenerPasesPedido(id, transaction = null) {
+  async obtenerPasePedido(id, transaction = null) {    
     const pase_pedido = await PasePedido.findByPk(id, { transaction });
     return pase_pedido;
+  }
+  async actualizarPasePedido(payload, pedido_id, transaction = null) {
+    await PasePedido.update(payload, { where: { id: pedido_id },transaction });
   }
 }
 

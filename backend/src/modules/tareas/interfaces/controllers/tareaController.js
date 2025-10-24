@@ -14,6 +14,9 @@ const cancelarTarea = require('../../application/useCases/cancelarTarea')
 const devolverTarea = require('../../application/useCases/devolverTarea')
 const corregirTarea = require('../../application/useCases/corregirTarea');
 const crearDespieceOT = require('../../application/useCases/crearDespieceOT');
+const crearTareaPasePedido = require('../../application/useCases/crearTareaPasePedido');
+// const sequelize = require("../../../.././config/db");
+const sequelize=require("../../../../config/db")
 
 const tareaRepository = new sequelizeTareaRepository(); 
 
@@ -143,6 +146,18 @@ const TareaController = {
             res.status(500).json({ error: error.message }); 
         }
     },
+    async crearTareaPasePedido(req,res){
+        const transaction=await sequelize.transaction();
+        try {
+            const response=await crearTareaPasePedido(req.body,tareaRepository,transaction);
+            await transaction.commit()
+            res.status(response.codigo).json(response.respuesta);            
+        } catch (error) {
+            console.log(error);
+            await transaction.rollback();
+            res.status(500).json({error:error.message})
+        }
+    }
 };
 
 module.exports = TareaController; 
