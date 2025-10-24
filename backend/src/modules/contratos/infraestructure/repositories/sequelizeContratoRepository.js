@@ -153,6 +153,7 @@ class SequelizeContratoRepository {
     }); // Llama al método del repositorio para obtener un contrato por ID
   }
 
+  
 }
 
 module.exports = SequelizeContratoRepository;

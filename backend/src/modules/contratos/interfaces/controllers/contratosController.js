@@ -2,6 +2,7 @@ const actualizarContrato = require("../../application/useCases/actualizarContrat
 const crearContrato = require("../../application/useCases/crearContrato");
 const obtenerContratos = require("../../application/useCases/obtenerContratos");
 const autocompletarCotizacionParaCrearContrato = require("../../application/useCases/autocompletarCotizacionParaCrearContrato");
+const generarPdf = require("../../application/useCases/generarPdf");
 
 const SequelizeContratoRepository = require("../../infraestructure/repositories/sequelizeContratoRepository");
 const contratoRepository=new SequelizeContratoRepository();
@@ -84,8 +85,6 @@ const ContratoController={
             if (!yaExiste) {
                 await crearCondicionAlquiler({ contrato_id, comentario_solicitud: comentario, creado_por }, condicionRepository, transaction);
             }
-
-            
             // confirmar transacción antes de responder
             await transaction.commit();
             return res.status(201).json({ mensaje: "Solicitud registrada correctamente" });
@@ -93,6 +92,19 @@ const ContratoController={
             await transaction.rollback();
             console.error("❌ Error:", error);
             res.status(500).json({ mensaje: "Error al registrar la solicitud" });
+        }
+    },
+
+     async generarPdf(req,res){
+        console.log("Entro a la función de generar PDF");
+        try {
+            const contrato_id=req.params.id;
+            const contratoPdf= await generarPdf(contrato_id, contratoRepository);
+            console.log("Respuesta de generarPdf:", contratoPdf);
+            res.status(contratoPdf.codigo).json(contratoPdf.respuesta);
+        } catch (error) {
+            console.log("Ocurrio el siguiente error: ",error)
+            res.status(500).json({error:error.message})
         }
     },
 
