@@ -42,7 +42,8 @@ const unificarContratos = (contratos,fecha_fin_rango) => {
       grupo.regimen=contrato.regimen
       if (contrato.fecha_terminacion_anticipada) {
           grupo.fecha_terminacion_anticipada = contrato.fecha_terminacion_anticipada;
-      }  
+      }
+      grupo.numero_cuenta_cts=contrato.numero_cuenta_cts
     } else {
       resultado.push(grupo);
       grupo = { ...contrato ,ids_agrupacion: [contrato.id]};
@@ -61,7 +62,8 @@ const unificarContratos = (contratos,fecha_fin_rango) => {
     sueldo: c.sueldo,
     regimen: c.regimen,
     ids_agrupacion: c.ids_agrupacion.length > 1 ? c.ids_agrupacion : null,
-    fecha_terminacion_anticipada:c.fecha_terminacion_anticipada
+    fecha_terminacion_anticipada:c.fecha_terminacion_anticipada,
+    numero_cuenta_cts:c.numero_cuenta_cts
   }));
 };
 

@@ -131,7 +131,8 @@ function calcularDiasMesesPorContrato(rangoInicioStr, rangoFinStr, contratos,tru
             meses: 0,
             dias: 0,
             solapa: false,
-            fecha_terminacion_anticipada:c.fecha_terminacion_anticipada
+            fecha_terminacion_anticipada:c.fecha_terminacion_anticipada,
+            numero_cuenta_cts:c.numero_cuenta_cts
          };
       }
 
@@ -151,7 +152,8 @@ function calcularDiasMesesPorContrato(rangoInicioStr, rangoFinStr, contratos,tru
          meses,
          dias,
          solapa: true,
-         fecha_terminacion_anticipada:c.fecha_terminacion_anticipada
+         fecha_terminacion_anticipada:c.fecha_terminacion_anticipada,
+         numero_cuenta_cts:c.numero_cuenta_cts
       };
    });
 }
