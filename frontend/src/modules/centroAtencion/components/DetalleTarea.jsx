@@ -33,6 +33,7 @@ import DespieceOT from "./despiece-ot/DespieceOT";
 import ImportadorDespiece from "./despiece-ot/ImportadorDespiece";
 import ModalValidarStock from "./modal/ModalValidarStock";
 import ModalReabrirTarea from "./modal/ModalReabrirTarea";
+import ModalDevolverTarea from "./modal/ModalDevolverTarea";
 export default function DetalleTarea({
   tarea,
   onCerrar,
@@ -50,6 +51,8 @@ export default function DetalleTarea({
   const [open, setOpen] = useState(false);
 
   const [openReabrirTarea, setOpenReabrirTarea] = useState(false);
+
+  const [openDevolverTarea, setOpenDevolverTarea] = useState(false);
 
   const despieceRef = useRef(null);
   const [formData, setFormData] = useState({
@@ -378,7 +381,10 @@ export default function DetalleTarea({
 
         {/* Footer - Acciones */}
         <section className="grid flex-shrink-0 grid-cols-2 gap-3 rounded-b-lg border-t bg-gray-50 px-6 py-4 sm:grid-cols-3 md:grid-cols-5">
-          {(user.rol === "Jefe de OT" || user.rol === "OT") && (
+          {(user.rol === "Jefe de OT" ||
+            user.rol === "OT" ||
+            user.rol === "Jefa de Almacén" ||
+            user.rol === "Auxiliar de oficina") && (
             <>
               {tarea?.estado === "Pendiente" && !tarea?.asignadoA && (
                 <Button
@@ -414,13 +420,12 @@ export default function DetalleTarea({
                     {/* //? RENDERIZADO DE  ACCION PASE PEDIDOS */}
                     {componenteRenderPedido && componenteRenderPedido}
 
-                    <Button
-                      className="flex-1 cursor-pointer gap-2 bg-amber-500 text-white duration-300 hover:scale-105 hover:bg-amber-500"
-                      onClick={handleDevolverTarea}
-                    >
-                      <RotateCcw className="size-5" />
-                      DEVOLVER
-                    </Button>
+                    <ModalDevolverTarea
+                      open={openDevolverTarea}
+                      setOpen={setOpenDevolverTarea}
+                      tarea={tarea}
+                      cerrarTarea={onCerrar}
+                    />
 
                     <Button
                       variant="destructive"

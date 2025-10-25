@@ -60,6 +60,12 @@ export default function ModuloNavegacion() {
       "OT": [
          { name: "Centro de Atención", path: "/centro-atencion" },
       ],
+      "Jefa de Almacén": [
+         { name: "Centro de Atención", path: "/centro-atencion" },
+      ],
+      "Auxiliar de oficina": [
+         { name: "Centro de Atención", path: "/centro-atencion" },
+      ]
       // Agrega otros roles si aplica
    };
 

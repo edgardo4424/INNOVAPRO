@@ -80,7 +80,7 @@ const FormNuevaTarea = ({
         </div>
 
         {/* Prioridad */}
-        <div className="space-y-2">
+        {/* <div className="space-y-2">
           <Label htmlFor="prioridad" className="font-semibold text-gray-700">
             * Prioridad
           </Label>
@@ -101,42 +101,21 @@ const FormNuevaTarea = ({
               <SelectItem value="NORMAL">Normal</SelectItem>
             </SelectContent>
           </Select>
-        </div>
-      </div>
+        </div> */}
 
-      {/* Fecha Límite Requerida */}
-      <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
-        <div>
-          <Label htmlFor="fechaLimite" className="font-semibold text-gray-700">
-            Fecha Límite Requerida
-          </Label>
-          <Input
-            type="date"
-            id="fechaLimite"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:ring focus:ring-indigo-500 focus:outline-none"
-            value={fechaLimite}
-            disabled={isLoading}
-            onChange={(e) =>
-              handleChange({
-                target: { name: "fechaLimite", value: e.target.value },
-              })
-            }
-          />
-        </div>
-
-        {/* Referencia de Proyecto/Pedido */}
-        <div className="space-y-2">
-          <Label htmlFor="ref_pedido" className="font-semibold text-gray-700">
-            * Referencia de Proyecto / Pedido
-          </Label>
-          <Input
-            type="text"
-            id="ref_pedido"
-            value={obra}
-            readOnly
-            placeholder="Ej: PRJ-2025-001 / P-2025-543"
-          />
-        </div>
+          {/* Referencia de Proyecto/Pedido */}
+          <div className="space-y-2">
+            <Label htmlFor="ref_pedido" className="font-semibold  text-gray-700">
+              * Referencia de Proyecto / Pedido
+            </Label>
+            <Input
+              type="text"
+              id="ref_pedido"
+              value={obra}
+              readOnly
+              placeholder="Ej: PRJ-2025-001 / P-2025-543"
+            />
+          </div>
       </div>
 
       <hr className="my-6" />

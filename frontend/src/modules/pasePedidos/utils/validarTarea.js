@@ -2,8 +2,6 @@
     const camposRequeridos = [
         { key: "tipoSolicitud", name: "Tipo de Solicitud" },
         { key: "nota", name: "Nota" },
-        { key: "fechaLimite", name: "Fecha Limite" },
-        { key: "prioridad", name: "Tipo de Prioridad" },
     ];
     const errores = {};
     let validos = true;

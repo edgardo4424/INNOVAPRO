@@ -1,11 +1,11 @@
 import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,7 +14,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import centroAtencionService from "../../services/centroAtencionService";
 
-export default function ModalReabrirTarea({
+export default function ModalDevolverTarea({
   open,
   setOpen,
   tarea,
@@ -31,8 +31,8 @@ export default function ModalReabrirTarea({
 
     try {
       setIsLoading(true);
-      const { status } = await centroAtencionService.corregirTarea(tarea.id, {
-        correccion: respuesta,
+      const { status } = await centroAtencionService.devolverTarea(tarea.id, {
+        motivo: respuesta,
       });
 
       if (status === 200) {
@@ -50,13 +50,12 @@ export default function ModalReabrirTarea({
     }
   };
   console.log(tarea.detalles);
-
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button className="group flex cursor-pointer items-center gap-2 bg-blue-600 text-white transition-all hover:bg-blue-700">
+        <Button className="group flex cursor-pointer items-center gap-2 bg-amber-500 text-white transition-all hover:bg-amber-500">
           <RotateCcw className="size-5 transform transition-transform duration-500 group-hover:rotate-[360deg]" />
-          <span className="hidden md:block">REABRIR TAREA</span>
+          <span className="hidden md:block">DEVOLVER</span>
         </Button>
       </AlertDialogTrigger>
 
@@ -73,35 +72,29 @@ export default function ModalReabrirTarea({
         {/* Encabezado */}
         <AlertDialogHeader className="space-y-1 text-center">
           <AlertDialogTitle className="text-2xl font-bold text-slate-800">
-            Reabrir tarea #{tarea?.id}
+            Devolver tarea #{tarea?.id}
           </AlertDialogTitle>
           <AlertDialogDescription className="text-sm text-slate-600">
-            Selecciona o indica el motivo de reapertura y describe brevemente
-            los detalles.
+            {""}
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <div>
-          <div>
-            
-          </div>
-          {/* Descripción */}
-          <div className="flex flex-col gap-2">
-            <label
-              htmlFor="descripcion"
-              className="text-sm font-medium text-slate-700"
-            >
-              Descripción / Detalle
-            </label>
-            <Textarea
-              id="descripcion"
-              value={respuesta}
-              onChange={(e) => setRespuesta(e.target.value)}
-              placeholder="Ejemplo: Se requiere corregir las medidas del plano adjunto..."
-              className="h-32 resize-none border-slate-300 text-sm focus:border-blue-600 focus:ring-blue-600"
-              disabled={isLoading}
-            />
-          </div>
+        {/* Descripción */}
+        <div className="flex flex-col gap-2">
+          <label
+            htmlFor="descripcion"
+            className="text-sm font-medium text-slate-700"
+          >
+            Descripción / Detalle del porque devuelve esta tarea
+          </label>
+          <Textarea
+            id="descripcion"
+            value={respuesta}
+            onChange={(e) => setRespuesta(e.target.value)}
+            placeholder="Ejemplo: No cumple con la especificación..."
+            className="h-32 resize-none border-slate-300 text-sm focus:border-blue-600 focus:ring-blue-600"
+            disabled={isLoading}
+          />
         </div>
 
         {/* Footer con botones */}

@@ -201,7 +201,7 @@ class SequelizeTareaRepository {
     tarea.estado = "Devuelta";
     tarea.motivoDevolucion = motivo ?? "";
 
-    tarea.asignadoA = null;
+    // tarea.asignadoA = null;
 
     // 3) Manejo seguro de 'respuestas'
     const ahoraISO = new Date().toISOString();

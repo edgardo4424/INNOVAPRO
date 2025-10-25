@@ -72,7 +72,7 @@ module.exports = async (idTarea, correccion, user_id, user_name, tareaRepository
       codigo: 200,
       respuesta: {
         mensaje: "Tarea corregida con éxito",
-        tarea,
+        data: tarea,
         status: 200,
         success: true
       },

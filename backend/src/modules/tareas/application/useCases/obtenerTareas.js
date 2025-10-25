@@ -6,7 +6,9 @@ module.exports = async (tareaRepository, id, rol) => {
         rol !== "Gerente de comercialización" &&
         rol !== "Gerente de administración" &&
         rol !== "Jefe de OT" &&
-        rol !== "OT"
+        rol !== "OT" &&
+        rol !== "Auxiliar de oficina" &&
+        rol !== "Jefa de Almacén"
     ) {
         id_mis_tareas = id;
     }

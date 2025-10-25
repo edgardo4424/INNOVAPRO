@@ -1,4 +1,3 @@
-
 // src/modules/facturacion/routes/BandejaRoutes.jsx
 
 import RoleGuard from "@/routes/rol.guard";
@@ -22,17 +21,13 @@ const TransporteRoutes = () => {
               roles={[
                 "CEO",
                 "Jefa de Almacén",
-                "Gerente de administración"
+                "Gerente de administración",
+                "Auxiliar de oficina",
               ]}
             />
           }
         >
-          <Route
-            path="choferes"
-            element={
-             <Choferes />
-            }
-          />
+          <Route path="choferes" element={<Choferes />} />
         </Route>
 
         {/* Ruta protegida: Guía de Remisión */}
@@ -42,17 +37,13 @@ const TransporteRoutes = () => {
               roles={[
                 "CEO",
                 "Jefa de Almacén",
-                "Gerente de administración"
+                "Gerente de administración",
+                "Auxiliar de oficina",
               ]}
             />
           }
         >
-          <Route
-            path="vehiculos"
-            element={
-              <Vehiculos />
-            }
-          />
+          <Route path="vehiculos" element={<Vehiculos />} />
         </Route>
 
         {/* Ruta protegida: Nota de Crédito */}
@@ -62,17 +53,13 @@ const TransporteRoutes = () => {
               roles={[
                 "CEO",
                 "Jefa de Almacén",
-                "Gerente de administración"
+                "Gerente de administración",
+                "Auxiliar de oficina",
               ]}
             />
           }
         >
-          <Route
-            path="transportistas"
-            element={
-              <Transportistas />
-            }
-          />
+          <Route path="transportistas" element={<Transportistas />} />
         </Route>
       </Route>
     </Routes>

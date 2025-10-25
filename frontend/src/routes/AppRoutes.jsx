@@ -233,7 +233,7 @@ export default function AppRoutes() {
                      </Route>
                      //! -- Rutas asignada para OT 
                      <Route
-                        element={<RoleGuard roles={["CEO", "Técnico Comercial", "Jefe de OT","OT"]} />}
+                        element={<RoleGuard roles={["CEO", "Técnico Comercial", "Jefe de OT","OT","Auxiliar de oficina","Jefa de Almacén"]} />}
                      >
                         <Route
                            path="centro-atencion"

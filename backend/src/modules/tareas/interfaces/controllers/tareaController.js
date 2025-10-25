@@ -21,9 +21,10 @@ const TareaController = {
     async crearTarea(req, res) {
         try {
 
+            const { id } = req.usuario;
             const data = {
                 ...req.body,
-                usuarioId: req.usuario.id
+                usuarioId: id
             }
 
             const nuevoTarea = await crearTarea(data, tareaRepository, entidadService);

@@ -243,7 +243,7 @@ export const DetallesEspecificos = ({ detalles }) => {
                             </pre>
                           ))
                         ) : (
-                          <p className="font-semibold text-gray-900">
+                          <p className="font-semibold text-gray-900 uppercase">
                             {key === "usoId"
                               ? USOS_NOMBRE[value] || `Uso #${value}`
                               : Array.isArray(value)
@@ -261,13 +261,13 @@ export const DetallesEspecificos = ({ detalles }) => {
         {/* Nota especial */}
         {detalles.nota && (
           <>
-            <Separator className="my-6 text-g" />
+            <Separator className="text-g my-6" />
             <div className="rounded-lg border border-green-200 bg-green-50 p-4">
               <div className="mb-2 flex items-center gap-2">
                 {iconos.nota}
                 <span className="font-medium text-green-800">Nota:</span>
               </div>
-              <p className="rounded bg-green-100 p-2 font-mono text-md text-green-900">
+              <p className="text-md rounded bg-green-100 p-2 font-mono text-green-900">
                 {detalles.nota}
               </p>
             </div>

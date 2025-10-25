@@ -5,9 +5,7 @@ const {
   emitirNotificacionPrivada,
 } = require("../../../notificaciones/infrastructure/services/emisorNotificaciones");
 
-module.exports = async (idTarea, idUsuario, motivo,user_name, tareaRepository) => {
-
-  // id de la tarea e id del usuario del middleware (idUsuario)
+module.exports = async (idTarea, idUsuario, motivo, user_name, tareaRepository) => {
 
   const tarea = await tareaRepository.devolverTarea(idTarea, motivo, idUsuario, user_name);
 
@@ -50,7 +48,9 @@ module.exports = async (idTarea, idUsuario, motivo,user_name, tareaRepository) =
     codigo: 200,
     respuesta: {
       mensaje: "Tarea devuelta con éxito",
-      tarea: tarea,
+      data: tarea,
+      status: 200,
+      succes: true,
     },
   };
 }; // Exporta la función para que pueda ser utilizada en otros módulos

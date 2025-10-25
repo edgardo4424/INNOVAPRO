@@ -28,7 +28,6 @@ const TareaOT = {
     nota: "",
     estadoPasePedido: "",
     numeroVersionContrato: "",
-    fechaLimite: "",
     obra: "",
     prioridad: "",
   },
