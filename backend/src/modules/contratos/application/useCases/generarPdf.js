@@ -113,7 +113,17 @@ module.exports = async (
     anioFechaInicioContrato,
   });
 
-  //Obteniendo los datos del comercial
+  //Obteniendo la informacion de detalles Piezas adicionales
+  const piezas_adicionales = pdfCotizacionDataSnapshot.piezas_adicionales || [];
+  const cantidad_total_piezas_adicionales = piezas_adicionales.reduce(
+    (total, pieza) => total + (pieza.cantidad || 0),
+    0
+  );
+
+  const precio_alquiler_soles_total_piezas_adicionales = piezas_adicionales.reduce(
+    (total, pieza) => total + (pieza.precio_alquiler_soles || 0),
+    0
+  );
 
 
   let respuesta = {
@@ -196,21 +206,20 @@ module.exports = async (
       PU: {}, // Es Puntales
     },
 
-    equipos: pdfCotizacionDataSnapshot?.zonas || [],
+    detalles_piezasAdicionales: {
+      piezasAdicionales: piezas_adicionales,
+      cantidad_total: cantidad_total_piezas_adicionales,
+      precio_alquiler_soles_total: precio_alquiler_soles_total_piezas_adicionales,
+    },
+
     instalacion: {
-      tiene_instalacion:
-        pdfCotizacionDataSnapshot.instalacion?.tiene_instalacion || false,
-      data: pdfCotizacionDataSnapshot.instalacion?.tiene_instalacion
-        ? {
+      
             ...pdfCotizacionDataSnapshot.instalacion,
-          }
-        : {},
-    },
-    piezasAdicionales: {
-      tiene_piezas_adicionales:
-        pdfCotizacionDataSnapshot.piezasAdicionales.length > 0 ? true : false,
-      data: pdfCotizacionDataSnapshot.piezasAdicionales || [],
-    },
+          },
+    
+    equipos: pdfCotizacionDataSnapshot?.zonas || [],
+    
+    
     transporte: {
       tiene_transporte:
         pdfCotizacionDataSnapshot?.tarifa_transporte &&
