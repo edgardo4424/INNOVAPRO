@@ -1,4 +1,4 @@
-module.exports = async (nuevoStockData, stockRepository) => {
+module.exports = async (nuevoStockData, stockRepository,t=null) => {
     console.log('Se entro al caso de uso');
     
    const { piezaId, cantidad, tipoMovimiento, motivo } = nuevoStockData;
@@ -13,7 +13,8 @@ module.exports = async (nuevoStockData, stockRepository) => {
       piezaId,
       cantidad,
       tipoMovimiento,
-      motivo
+      motivo,
+      t
    );
 
    return {

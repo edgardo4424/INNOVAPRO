@@ -124,10 +124,8 @@ class SequelizeStockRepository {
 
   }
   // *Tipos de movimiento stock fijo: Ingreso, Baja, Venta, Ingreso reparacion, Ingreso salida
-  async actualizarStockFijo(piezaId, cantidad, tipoMovimientoFijo, motivo) {
-    const t = await sequelize.transaction();
+  async actualizarStockFijo(piezaId, cantidad, tipoMovimientoFijo, motivo,t=null) {
 
-    try {
       const stock = await Stock.findOne({
         where: { pieza_id: piezaId },
         transaction: t,
@@ -180,7 +178,7 @@ class SequelizeStockRepository {
         : "Ajuste salida";
 
       // Crear movimiento para stock fijo
-      await MovimientoStock.create(
+      const move_fijo=await MovimientoStock.create(
         {
           stock_id: stock.id,
           tipo: tipoMovimientoFijo,
@@ -195,7 +193,7 @@ class SequelizeStockRepository {
       );
 
       // Crear movimiento para stock disponible
-      await MovimientoStock.create(
+      const move_disp=await MovimientoStock.create(
         {
           stock_id: stock.id,
           tipo: tipoMovimientoDisponible,
@@ -208,11 +206,10 @@ class SequelizeStockRepository {
         },
         { transaction: t }
       );
-      await t.commit();
-    } catch (error) {
-      await t.rollback();
-      throw new Error(error.message);
-    }
+      console.log("MOVIMIENTO DE LA PIEZA CON ID",piezaId);
+      console.log("Movimeinto fijo",move_fijo.get({plain:true}));
+      console.log("Movimeinto disponible",move_disp.get({plain:true}));
+      
   }
 
   async verificarStockDisponible(cotizacion_id, transaction = null) {
