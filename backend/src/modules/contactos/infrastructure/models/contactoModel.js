@@ -47,6 +47,10 @@ Contacto.associate = (models) => {
   Contacto.hasMany(models.tareas,{
      foreignKey: "contactoId",
   })
+
+  Contacto.hasMany(models.contratos,{
+     foreignKey: "contacto_id",
+  })
 };
 
 module.exports = { Contacto }; // Exporta el modelo para que pueda ser utilizado en otros módulos

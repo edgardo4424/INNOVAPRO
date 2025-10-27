@@ -180,6 +180,11 @@ Contrato.associate = (models) => {
       foreignKey: "contrato_id",
       as: "condiciones_alquiler_relacionado",
    });
+
+   Contrato.belongsTo(models.contactos, {
+      foreignKey: "contacto_id",
+      as: "contacto",
+   });
 };
 
 module.exports = { Contrato };

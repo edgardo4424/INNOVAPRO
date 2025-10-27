@@ -1,21 +1,64 @@
 const {
-  mapearDataColgante
+  mapearDataColgante,
 } = require("../../infraestructure/services/Colgante/mapearDataColgante");
 const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
-const { mapearDataAndamioFachada } = require("../../infraestructure/services/AndamioFachada/mapearDataAndamioFachada");
-const { mapearDataAndamioTrabajo } = require("../../infraestructure/services/AndamioTrabajo/mapearDataAndamioTrabajo");
-const { mapearDataEscaleraAcceso } = require("../../infraestructure/services/EscaleraAcceso/mapearDataEscaleraAcceso");
-const { mapearDataEscuadrasConPlataformas } = require("../../infraestructure/services/EscuadrasConPlataformas/mapearDataEscuadrasConPlataformas");
+const {
+  mapearDataAndamioFachada,
+} = require("../../infraestructure/services/AndamioFachada/mapearDataAndamioFachada");
+const {
+  mapearDataAndamioTrabajo,
+} = require("../../infraestructure/services/AndamioTrabajo/mapearDataAndamioTrabajo");
+const {
+  mapearDataEscaleraAcceso,
+} = require("../../infraestructure/services/EscaleraAcceso/mapearDataEscaleraAcceso");
+const {
+  mapearDataEscuadrasConPlataformas,
+} = require("../../infraestructure/services/EscuadrasConPlataformas/mapearDataEscuadrasConPlataformas");
+const moment = require("moment");
 
 module.exports = async (
   contrato_id,
   contratoRepository,
   transaction = null
 ) => {
-  const contrato = await contratoRepository.obtenerPorId(
-    contrato_id,
-    transaction
-  ); // Llama al método del repositorio para obtener el contrato por ID
+  const contratoEncontrado = await db.contratos.findOne(
+    {
+      where: { id: contrato_id },
+      include: [
+        {
+          model: db.obras,
+          as: "obra",
+        },
+        {
+          model: db.empresas_proveedoras,
+          as: "filial",
+        },
+        {
+          model: db.clientes,
+          as: "cliente",
+        },
+        {
+          model: db.usuarios,
+          as: "usuario",
+          include: [
+            {
+              model: db.trabajadores,
+              as: "trabajador",
+            },
+          ],
+        },
+        {
+          model: db.contactos,
+          as: "contacto",
+        },
+      ],
+    },
+    { transaction }
+  );
+
+  const contrato = contratoEncontrado.get({ plain: true });
+
+  console.log("contrato", contrato);
 
   if (!contrato) {
     return {
@@ -55,39 +98,129 @@ module.exports = async (
     pdfCotizacionDataSnapshot = {};
   }
 
+  // obtener datos del contrato
+  const fechaInicioContrato = contrato.fecha_inicio;
+
+  const diaFechaInicioContrato = moment(fechaInicioContrato).date();
+  const mesFechaInicioContrato =
+    moment(fechaInicioContrato).format("MMMM").charAt(0).toUpperCase() +
+    moment(fechaInicioContrato).format("MMMM").slice(1); // Mes en formato texto capitalizado
+  const anioFechaInicioContrato = moment(fechaInicioContrato).year();
+
+  console.log({
+    diaFechaInicioContrato,
+    mesFechaInicioContrato,
+    anioFechaInicioContrato,
+  });
+
+  //Obteniendo los datos del comercial
+
+
   let respuesta = {
     activadores: {
+      //Usos
       esAE: false, //Es COLGANTE (Andamio Electrico)
       esAF: false, //Es ANDAMIO DE FACHADA
       esAT: false, //Es ANDAMIO DE TRABAJO
       esEA: false, //Es ESCALERA DE ACCESO
       esEC: false, //Es ESCUADRA CON PLATAFORMAS
+      esPD: false, //Es PLATAFORMA DE DESCARGA
+      esPU: false, //Es PUNTALES
+
+      // Detalles opcionales
+      tienePlataformas: false,
+      tienePernosSinArgolla: false,
+      tienePernosArgolla: false,
+      tienePuntales: false,
+      tienePiezasAdicionales: false,
+      tieneInstalacion: false,
+      tieneInstalacionParcial: false,
+      tieneTransporte: false,
+
+      // Condiciones de alquiler
+      mostrarCondiciones: true,
+      tienePagoAdelantado: true,
+      tieneGarantia: true,
+      tieneDepositoEnGarantia: true,
+      tieneOrdenDeServicio: true,
+      tieneLetra: true,
+      tieneCheque: true,
     },
     uso: pdfCotizacionDataSnapshot.uso,
-    obra: pdfCotizacionDataSnapshot.obra,
-    filial: pdfCotizacionDataSnapshot.filial,
-    cliente: pdfCotizacionDataSnapshot.cliente,
-    usuario: pdfCotizacionDataSnapshot.usuario,
-    contacto: pdfCotizacionDataSnapshot.contacto,
+    obra: {
+      nombre: contrato.obra.nombre,
+      direccion: contrato.obra.direccion,
+    },
+    filial: {
+      ruc: contrato.filial.ruc,
+      razon_social: contrato.filial.razon_social,
+      direccion: contrato.filial.direccion,
+    },
+    cliente: {
+      tipo: contrato.cliente.tipo,
+      ruc: contrato.cliente.tipo == "Persona Natural" ? contrato.cliente.dni : contrato.cliente.ruc,
+      razon_social: contrato.cliente.razon_social, // asi sea Persona Natural o Jurídica
+      domicilio_fiscal: contrato.cliente.domicilio_fiscal,
+      representante_legal: contrato.cliente.tipo == "Persona Natural" ? contrato.cliente.razon_social : contrato.cliente.representante_legal,
+      numero_documento_representante: contrato.cliente.tipo == "Persona Natural" ? contrato.cliente.dni : contrato.cliente.dni_representante,
+      cargo_representante_legal: contrato.cliente.cargo_representante,
+      domicilio_representante: contrato.cliente.domicilio_representante,
+    },
+    comercial: {
+      correo: contrato.usuario.correo,
+      nombre: contrato.usuario.trabajador.nombres,
+      apellido: contrato.usuario.trabajador.apellidos,
+      telefono: contrato.usuario.trabajador.telefono,
+    },
+    contacto: {
+      nombre: contrato.contacto.nombre,
+      correo: contrato.contacto.email,
+    },
+    fecha: {
+      dia: diaFechaInicioContrato,
+      mes: mesFechaInicioContrato,
+      anio: anioFechaInicioContrato,
+    },
     cotizacion: pdfCotizacionDataSnapshot.cotizacion,
+    contrato: {
+      codigo: contrato.ref_contrato,
+    },
+
+    //! USOS
+    usos: {
+      AF: {}, // Es Andamio de Fachada
+      AT: {}, // Es Andamio de Trabajo
+      EA: {}, // Es Escalera de Acceso
+      EC: {}, // Es Escuadra con Plataforma
+      PD: {}, // Es Plataforma de Descarga
+      PU: {}, // Es Puntales
+    },
+
     equipos: pdfCotizacionDataSnapshot?.zonas || [],
     instalacion: {
-        tiene_instalacion: pdfCotizacionDataSnapshot.instalacion?.tiene_instalacion || false,
-        data: pdfCotizacionDataSnapshot.instalacion?.tiene_instalacion ? {
-            ...pdfCotizacionDataSnapshot.instalacion
-        } : {}
+      tiene_instalacion:
+        pdfCotizacionDataSnapshot.instalacion?.tiene_instalacion || false,
+      data: pdfCotizacionDataSnapshot.instalacion?.tiene_instalacion
+        ? {
+            ...pdfCotizacionDataSnapshot.instalacion,
+          }
+        : {},
     },
     piezasAdicionales: {
-        tiene_piezas_adicionales: pdfCotizacionDataSnapshot.piezasAdicionales.length > 0 ? true : false,
-        data: pdfCotizacionDataSnapshot.piezasAdicionales || []
+      tiene_piezas_adicionales:
+        pdfCotizacionDataSnapshot.piezasAdicionales.length > 0 ? true : false,
+      data: pdfCotizacionDataSnapshot.piezasAdicionales || [],
     },
     transporte: {
-        tiene_transporte: pdfCotizacionDataSnapshot?.tarifa_transporte && Object.keys(pdfCotizacionDataSnapshot?.tarifa_transporte).length > 0 ? true : false,
-        data: {
-            ...pdfCotizacionDataSnapshot?.tarifa_transporte
-        }
-    }
-
+      tiene_transporte:
+        pdfCotizacionDataSnapshot?.tarifa_transporte &&
+        Object.keys(pdfCotizacionDataSnapshot?.tarifa_transporte).length > 0
+          ? true
+          : false,
+      data: {
+        ...pdfCotizacionDataSnapshot?.tarifa_transporte,
+      },
+    },
   };
 
   // Verificar por switch el uso de contrato,
@@ -95,22 +228,34 @@ module.exports = async (
     case "1":
       // Anadamio de fachada
       respuesta.activadores.esAF = true;
-      respuesta = mapearDataAndamioFachada({ pdfCotizacionDataSnapshot, respuesta });
+      respuesta = mapearDataAndamioFachada({
+        pdfCotizacionDataSnapshot,
+        respuesta,
+      });
       break;
     case "2":
       // Andamio de trabajo
       respuesta.activadores.esAT = true;
-      respuesta = mapearDataAndamioTrabajo({ pdfCotizacionDataSnapshot, respuesta });
+      respuesta = mapearDataAndamioTrabajo({
+        pdfCotizacionDataSnapshot,
+        respuesta,
+      });
       break;
     case "3":
       // Escalera de acceso
       respuesta.activadores.esEA = true;
-      respuesta = mapearDataEscaleraAcceso({ pdfCotizacionDataSnapshot, respuesta });
+      respuesta = mapearDataEscaleraAcceso({
+        pdfCotizacionDataSnapshot,
+        respuesta,
+      });
       break;
     case "4":
       // Escuadras con plataforma
       respuesta.activadores.esEC = true;
-      respuesta = mapearDataEscuadrasConPlataformas({ pdfCotizacionDataSnapshot, respuesta });
+      respuesta = mapearDataEscuadrasConPlataformas({
+        pdfCotizacionDataSnapshot,
+        respuesta,
+      });
       break;
     case "5":
       // Puntales

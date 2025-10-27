@@ -46,7 +46,7 @@ export async function generarCuerpoPlataformaDescarga(doc, data, startY = 120) {
       const descripcionEquipo = `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** ${equipo.cantidad_uso || "(CANTIDAD INDEFINIDA)"} ${equipo.cantidad_uso === 1 ? "Ud." : "Uds."} de ${data.uso?.nombre || "(NOMBRE DE EQUIPO INDEFINIDO)"} de ${equipo.capacidad || "(CAPACIDAD INDEFINIDA)"} TN`;
 
       renderTextoConNegrita(doc, descripcionEquipo, indent + box + 3, currentY);
-      currentY +=2;
+      currentY += 6;
     }
 
     currentY += 4; // Espacio entre zonas
