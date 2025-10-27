@@ -51,10 +51,10 @@ export async function generarCuerpoEscuadras(doc, data, startY = 120) {
       const anclaje = equipo.tipoAnclaje || "—";
       let cantidad = equipo.cantidadEscuadrasTramo || "—";
 
-      if (cantidad = "—") {
+      if (cantidad === "—") {
         cantidad = cantidad_escuadras || "—";
       }
-
+      
       const descripcion = `${cantidad} Uds. Escuadras de ${tipo}.00 x 2.00 para una carga de ${sobrecarga} kg/m2.`;
 
       currentY = await verificarSaltoDePagina(doc, currentY, 10);

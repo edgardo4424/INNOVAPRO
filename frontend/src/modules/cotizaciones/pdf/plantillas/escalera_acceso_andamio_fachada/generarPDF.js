@@ -8,6 +8,7 @@ import { renderNotasVenta } from "../../componentes/notas_venta";
 import { renderPiezasAdicionales } from "../../componentes/piezasAdicionales";
 import { generarCuerpoEscaleraAcceso } from "./cuerpo";
 import { generarCuerpoEscaleraAccesoVenta } from "./cuerpo_venta";
+import { renderInstalacion } from "../../componentes/instalacion";
 import { renderFondoPDF } from "../../componentes/fondoPDF";
 
 export default async function generarPDFEscaleraAndamioFachada(doc, data) {
@@ -24,6 +25,7 @@ export default async function generarPDFEscaleraAndamioFachada(doc, data) {
     if (data.piezasAdicionales?.length > 0) {
       currentY = await renderPiezasAdicionales(doc, data, currentY);
     }
+    currentY = await renderInstalacion(doc, data, currentY); // Renderiza la sección de instalación si existe
     currentY = await renderTextoTransporteVenta(doc, data, currentY); // Texto transporte específico para venta
     currentY = await renderNotasVenta(doc, data, currentY); // Notas específicas para venta
     
@@ -34,6 +36,7 @@ export default async function generarPDFEscaleraAndamioFachada(doc, data) {
     if (data.piezasAdicionales?.length > 0) {
       currentY = await renderPiezasAdicionales(doc, data, currentY);
     }
+    currentY = await renderInstalacion(doc, data, currentY); // Renderiza la sección de instalación si existe
     currentY = await renderTextoTransporte(doc, data, currentY); // Texto transporte estándar
     currentY = await renderNotas(doc, data, currentY); // Notas estándar 
   }
