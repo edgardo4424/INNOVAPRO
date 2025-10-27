@@ -23,6 +23,9 @@ module.exports = async (contratoRepository, transaction = null) => {
             usuario: informacion_trabajador,
             uso,
             despiece,
+            cotizacion: {
+                id: cotizacion.id,
+            },
             tipo: cotizacion?.tipo_cotizacion
         }
     })

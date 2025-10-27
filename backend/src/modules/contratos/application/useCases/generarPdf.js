@@ -120,11 +120,15 @@ module.exports = async (
     0
   );
 
-  const precio_alquiler_soles_total_piezas_adicionales = piezas_adicionales.reduce(
-    (total, pieza) => total + (pieza.precio_alquiler_soles || 0),
-    0
-  );
+  const precio_alquiler_soles_total_piezas_adicionales =
+    piezas_adicionales.reduce(
+      (total, pieza) => total + (pieza.precio_alquiler_soles || 0),
+      0
+    );
 
+  // Obteniendo la informacion de instalacion
+
+  const tiene_instalacion = pdfCotizacionDataSnapshot?.instalacion?.tiene_instalacion ? pdfCotizacionDataSnapshot?.instalacion?.tiene_instalacion : false;
 
   let respuesta = {
     activadores: {
@@ -168,11 +172,20 @@ module.exports = async (
     },
     cliente: {
       tipo: contrato.cliente.tipo,
-      ruc: contrato.cliente.tipo == "Persona Natural" ? contrato.cliente.dni : contrato.cliente.ruc,
+      ruc:
+        contrato.cliente.tipo == "Persona Natural"
+          ? contrato.cliente.dni
+          : contrato.cliente.ruc,
       razon_social: contrato.cliente.razon_social, // asi sea Persona Natural o Jurídica
       domicilio_fiscal: contrato.cliente.domicilio_fiscal,
-      representante_legal: contrato.cliente.tipo == "Persona Natural" ? contrato.cliente.razon_social : contrato.cliente.representante_legal,
-      numero_documento_representante: contrato.cliente.tipo == "Persona Natural" ? contrato.cliente.dni : contrato.cliente.dni_representante,
+      representante_legal:
+        contrato.cliente.tipo == "Persona Natural"
+          ? contrato.cliente.razon_social
+          : contrato.cliente.representante_legal,
+      numero_documento_representante:
+        contrato.cliente.tipo == "Persona Natural"
+          ? contrato.cliente.dni
+          : contrato.cliente.dni_representante,
       cargo_representante_legal: contrato.cliente.cargo_representante,
       domicilio_representante: contrato.cliente.domicilio_representante,
     },
@@ -209,27 +222,19 @@ module.exports = async (
     detalles_piezasAdicionales: {
       piezasAdicionales: piezas_adicionales,
       cantidad_total: cantidad_total_piezas_adicionales,
-      precio_alquiler_soles_total: precio_alquiler_soles_total_piezas_adicionales,
+      precio_alquiler_soles_total:
+        precio_alquiler_soles_total_piezas_adicionales,
     },
 
-    instalacion: {
-      
-            ...pdfCotizacionDataSnapshot.instalacion,
-          },
-    
-    equipos: pdfCotizacionDataSnapshot?.zonas || [],
-    
-    
-    transporte: {
-      tiene_transporte:
-        pdfCotizacionDataSnapshot?.tarifa_transporte &&
-        Object.keys(pdfCotizacionDataSnapshot?.tarifa_transporte).length > 0
-          ? true
-          : false,
-      data: {
-        ...pdfCotizacionDataSnapshot?.tarifa_transporte,
-      },
+    instalacion: tiene_instalacion ? pdfCotizacionDataSnapshot?.instalacion : {},
+
+    tarifa_transporte: {
+      ...pdfCotizacionDataSnapshot?.tarifa_transporte,
     },
+
+    perno_expansion_sin_argolla: {},
+    perno_expansion_con_argolla: {},
+    detalles_puntales: {},
   };
 
   // Verificar por switch el uso de contrato,
