@@ -118,10 +118,7 @@ class SequelizeStockRepository {
           fecha: getFechaHoraLima(),
         },
         { transaction}
-      );
-      console.log(move.get({plain:true}));
-      
-
+      );      
   }
   // *Tipos de movimiento stock fijo: Ingreso, Baja, Venta, Ingreso reparacion, Ingreso salida
   async actualizarStockFijo(piezaId, cantidad, tipoMovimientoFijo, motivo,t=null) {

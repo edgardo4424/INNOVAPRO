@@ -1,6 +1,9 @@
 const sequelize = require("../../config/db");
+const emitirGuia = require("../../modules/factiliza/application/emitirGuia");
+const SequelizeGuiaRemisionRepository = require("../../modules/facturacion/infrastructure/repositories/sequelizeGuiaRemisionRepository");
 const obtenerPasePedidoPorId = require("../../modules/pases_pedidos/application/useCases/obtenerPasePedidoPorId");
 const SequelizePasePedidoRepository = require("../../modules/pases_pedidos/infraestructure/repositories/sequelizePasePedidoRepository");
+const actualizarPedidoGuia = require("../../modules/pedidos_guias/application/useCases/actualizarPedidoGuia");
 const crearPedidoGuia = require("../../modules/pedidos_guias/application/useCases/crearPedidoGuia");
 const SequelizePedidoGuiaRepository = require("../../modules/pedidos_guias/infraestructure/repositories/sequelizePedidoGuiaRepository");
 const obtenerPiezaPorItem = require("../../modules/piezas/application/useCases/obtenerPiezaPorItem");
@@ -21,6 +24,8 @@ const stockRepository = new SequelizeStockRepository();
 const pasePedidoRepository = new SequelizePasePedidoRepository();
 const pedidoGuiaRepository = new SequelizePedidoGuiaRepository();
 const stockPedidoPiezaRepository = new SequelizeStockPedidoPiezaRepository();
+const facturacionRepository = new SequelizeGuiaRemisionRepository();
+
 module.exports = async function registrarTrabajadorConContrato(payload) {
   const t = await sequelize.transaction();
 
@@ -42,6 +47,7 @@ module.exports = async function registrarTrabajadorConContrato(payload) {
     const piezas_descuento = [];
     const piezas_stock_pedidos = [];
     for (const pieza of piezas) {
+      let copy = { ...pieza };
       const pieza_obtenida = await obtenerPiezaPorItem(
         pieza.cod_Producto,
         piezaRepository,
@@ -52,8 +58,8 @@ module.exports = async function registrarTrabajadorConContrato(payload) {
           `La pieza ${pieza.descripcion} no existe en el sistema`
         );
       }
-      pieza.id = pieza_obtenida.respuesta.id;
-      piezas_descuento.push(pieza);
+      copy.id = pieza_obtenida.respuesta.id;
+      piezas_descuento.push(copy);
       const pieza_pedido = {
         pase_pedido_id: pase_pedido.id,
         pieza_id: pieza_obtenida.respuesta.id,
@@ -106,26 +112,24 @@ module.exports = async function registrarTrabajadorConContrato(payload) {
       pedidoGuiaRepository,
       t
     );
-    const PEDIDO_GUIA = response_pedido_guia.respuesta.pase_pedido;
+    const PEDIDO_GUIA = response_pedido_guia.respuesta.pedido_guia;
+
     if (response_pedido_guia.codigo !== 200) {
       throw new Error(response.respuesta.mensaje);
     }
-    // console.log(
-    //   "Pizas a sumar en el stock en stock_pedidos_piezas",
-    //   piezas_stock_pedidos
-    // );
-    for (const p of piezas_stock_pedidos) {
+
+    if (payload.guia_Envio_Des_Traslado === "ALQUILER") {      
+      for (const p of piezas_stock_pedidos) {
       const dataForCreate = {
         pase_pedido_id: pase_pedido.id,
         pieza_id: p.pieza_id,
       };
-
       const verificar_registro = await obtenerStockPedidoPieza(
         dataForCreate,
         stockPedidoPiezaRepository,
         t
       );
-            
+
       if (!verificar_registro.respuesta.stock_pedido_pieza) {
         await crearStockPedidoPieza(
           dataForCreate,
@@ -149,12 +153,27 @@ module.exports = async function registrarTrabajadorConContrato(payload) {
         throw new Error(responseUpdateStock.respuesta.mensaje);
       }
     }
-    asdsa;
+    }
+    const guia_remision = await emitirGuia(payload, facturacionRepository);
+    if (
+      guia_remision.respuesta.status !== 200 &&
+      guia_remision.respuesta.status !== 201
+    ) {
+      throw new Error("guia remision no emitida");
+    }
+    const payload_pedido_guia_update = {
+      guia_remision_id: guia_remision.respuesta.data.guia.id,
+    };
+    await actualizarPedidoGuia(
+      PEDIDO_GUIA.id,
+      payload_pedido_guia_update,
+      pedidoGuiaRepository,
+      t
+    );
+    await t.commit();
     return {
       codigo: 200,
-      respuesta: {
-        mensaje: "Envio del pedido creado exitosamnete",
-      },
+      respuesta: guia_remision.respuesta,
     };
   } catch (error) {
     console.log("error inesperado", error);

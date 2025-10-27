@@ -68,7 +68,7 @@ class SequelizeStockPedidoPiezaRepository {
     //   "Movimiento creado en el stock Pedido Pieza: ",
     //   movimiento_stock_pedido_pieza.get({plain:true})
     // );
-    console.log("Stock Pedido Pieza Post", stock_pedido_pieza.get({plain:true}));
+    // console.log("Stock Pedido Pieza Post", stock_pedido_pieza.get({plain:true}));
   }
 }
 
