@@ -53,7 +53,7 @@ backend/data/sunat/padron_reducido_ruc.zip
 backend/data/sunat/padron_reducido_ruc.txt
 backend/.idea/
 backend/bitacora
-
+backend/src/modules/bitacora
 # Ignorar archivos de configuración locales, como variables de entorno
 .env
 *.env

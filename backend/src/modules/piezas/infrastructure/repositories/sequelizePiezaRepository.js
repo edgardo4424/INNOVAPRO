@@ -43,8 +43,8 @@ class SequelizePiezaRepository {
     return await pieza.destroy(); // Elimina el pieza y retorna el resultado
   }
 
-  async obtenerPiezaPorItem(item){
-    return await Pieza.findOne({ where: { item } });
+  async obtenerPiezaPorItem(item,transaction=null){
+    return await Pieza.findOne({ where: { item },transaction });
 }
 }
 
