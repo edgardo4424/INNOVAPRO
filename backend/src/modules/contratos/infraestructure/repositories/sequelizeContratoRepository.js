@@ -57,6 +57,11 @@ class SequelizeContratoRepository {
             ],
           },
           {
+            model: db.empresas_proveedoras,
+            as: "filial",
+            attributes: ["id", "razon_social", "ruc"],
+          },
+          {
             model: db.usos,
             as: "uso",
             attributes: ["id", "descripcion"],
