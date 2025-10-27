@@ -19,7 +19,6 @@ export default function GestionCotizaciones() {
       modalConfirmacion,
       cerrarModal,
       ejecutarDescarga,
-      solicitarCondiciones,
       user,
    } = useGestionCotizaciones();
    
@@ -46,7 +45,6 @@ export default function GestionCotizaciones() {
             onDownloadPDF={confirmarDescargaPDF}
             setCotizacionPrevisualizada={setCotizacionSeleccionadaId}
             onContinuarWizard={continuarCotizacion}
-            onSolicitarCondicionesAlquiler={solicitarCondiciones}
             onCrearContrato={crearContrato}
             user={user}
          />

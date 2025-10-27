@@ -3,6 +3,7 @@ import { jsPDF } from "jspdf";
 import { toast } from "react-toastify";
 import * as contratosService from "../services/contratosService";
 import {generarPDFContrato} from "../pdf/generadorPDFContrato";
+import { generarMensajeCondiciones } from "../utils/generarMensajeCondiciones";
 import { useAuth } from "@/context/AuthContext";
 
 // Lógica de negocio para gestión de contratos (extensión de cotizaciones)
@@ -27,7 +28,7 @@ export function useGestionContratos() {
     const id = modalConfirmacion.contratoId;
     cerrarModal();
     try {
-      const data = await contratosService.obtenerDatosPDF(id);
+      const data = await contratosService.autocompletarCotizacion(id);
 
       const doc = new jsPDF({
         orientation: "portrait",
@@ -58,10 +59,24 @@ export function useGestionContratos() {
     }
   };
 
+  const solicitarCondiciones = async (contrato, extras) => {
+      try {
+        const comentario = generarMensajeCondiciones(contrato, extras);
+        await contratosService.solicitarCondiciones(contrato.id, comentario);
+        toast.success("Condiciones de alquiler solicitadas correctamente");
+  
+        const res = await contratosService.obtenerContratos();
+        setContratos( res || [])
+      } catch (error) {
+        console.error("Error al solicitar condiciones:", error);
+        toast.error("No se pudo enviar la solicitud.");
+      }
+    }
+
   useEffect(() => {
     async function fetchContratos() {
       try {
-        const res = await contratosService.obtenerTodos();
+        const res = await contratosService.obtenerContratos(); 
         setContratos(res || []);
       } catch (error) {
         console.error("❌ Error al obtener contratos:", error);
@@ -77,6 +92,7 @@ export function useGestionContratos() {
     modalConfirmacion,
     cerrarModal,
     ejecutarDescarga,
+    solicitarCondiciones,
     user,
   };
 }

@@ -33,7 +33,7 @@ export default function PasoOrigenCotizacion() {
               Cambiar
             </button>
           </div>
-
+      {console.log("DATA QUE LLEGA AL COMPONENTE", data)}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm mt-3">
             <div>
               <p className="font-bold">Cliente</p>
@@ -134,7 +134,7 @@ export default function PasoOrigenCotizacion() {
           </ul>
         ) : (
           <p className="text-sm text-muted-foreground">
-            No hay cotizaciones con estado “Condiciones Cumplidas”.
+            No hay cotizaciones con estado “Por Aprobar”.
           </p>
         )}
       </div>

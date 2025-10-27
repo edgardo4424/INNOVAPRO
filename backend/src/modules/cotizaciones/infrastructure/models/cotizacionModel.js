@@ -96,7 +96,12 @@ const Cotizacion = sequelize.define(
         model: "usos",
         key: "id",
       },
-    }
+    },
+    pdf_cotizacion_data_snapshot: {
+      type: DataTypes.JSON,
+      allowNull: true,
+      comment: 'Snapshot de los datos del PDF de la cotización en el momento de crear el contrato'
+    },
 
   }, {
     timestamps: true,

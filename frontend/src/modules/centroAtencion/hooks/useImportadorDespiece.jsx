@@ -76,9 +76,12 @@ export default function useImportadorDespiece({ tarea, setFormDataExterno }) {
 
       return {
         pieza_id: pieza.id,
+        item: pieza.item,
         descripcion: pieza.descripcion,
         cantidad,
         peso_kg: (cantidad * peso).toFixed(2),
+        precio_venta_dolares: (cantidad * parseFloat(pieza.precio_venta_dolares || 0)).toFixed(2),
+        precio_venta_soles: (cantidad * parseFloat(pieza.precio_venta_soles || 0)).toFixed(2),
         precio_alquiler_soles: (cantidad * precioUnit).toFixed(2),
         precio_unitario: precioUnit,
       };

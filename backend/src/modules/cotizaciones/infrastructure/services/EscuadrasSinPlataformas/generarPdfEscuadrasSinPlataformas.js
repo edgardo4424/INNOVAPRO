@@ -2,7 +2,7 @@ const db = require("../../../../../database/models");
 const { agruparPorZonaYAtributos, agruparEscuadrasPorZonaYAtributos } = require("../mapearAtributosDelPdfService");
 const { mapearAtributosValor } = require("../mapearAtributosValorService");
 
-async function generarPdfEscuadrasSinPlataformas({ idDespiece, porcentajeDescuento }) {
+async function generarPdfEscuadrasSinPlataformas({ idDespiece, porcentajeDescuento, transaction = null }) {
   
   console.log({idDespiece, porcentajeDescuento});
     // Obtener la lista de atributos
@@ -17,7 +17,7 @@ async function generarPdfEscuadrasSinPlataformas({ idDespiece, porcentajeDescuen
           as: "atributo",
         },
       ],
-    });
+    }, { transaction });
   
     // Obtener atributos
   
@@ -54,7 +54,7 @@ async function generarPdfEscuadrasSinPlataformas({ idDespiece, porcentajeDescuen
             },
           },
         ],
-      });
+      }, { transaction });
     
       // calcular totales detalles escuadras
       const totalesDetallesEscuadras = piezasEscuadrasEncontradas.reduce(
@@ -89,7 +89,7 @@ async function generarPdfEscuadrasSinPlataformas({ idDespiece, porcentajeDescuen
             attributes: ["id", "item", "descripcion"],
           },
         ],
-      });
+      }, { transaction });
   
     const piezasDetalleAdicionalesEscuadrasSinPlataformaConDescuento =
     piezasDetalleAdicionalesEscuadrasSinPlataforma.map((p) => {

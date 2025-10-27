@@ -3,6 +3,7 @@ import { useGestionContratos } from "../hooks/useGestionContratos";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ModuloNavegacion from "@/shared/components/ModuloNavegacion";
+
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -27,6 +28,7 @@ export default function GestionContratos() {
     modalConfirmacion,
     cerrarModal,
     ejecutarDescarga,
+    solicitarCondiciones,
     user,
   } = useGestionContratos();
 
@@ -49,6 +51,7 @@ export default function GestionContratos() {
         onDownloadPDF={confirmarDescargaPDF}
         setContratoPrevisualizado={setContratoSeleccionadoId}
         onContinuarWizard={continuarContrato}
+        onSolicitarCondicionesAlquiler={solicitarCondiciones}
         onVerDetalle={verDetalleContrato}
         user={user}
       />

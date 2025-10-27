@@ -1,0 +1,20 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 30
+    },
+    "auditLog": "C:\\Users\\Luis\\Desktop\\INNOVAPRO\\backend\\src\\modules\\bitacora\\factiliza\\.28b827d51d6f88a1f0746a26d7feb546febd9fdf-audit.json",
+    "files": [
+        {
+            "date": 1761106328971,
+            "name": "C:\\Users\\Luis\\Desktop\\INNOVAPRO\\backend\\src\\modules\\bitacora\\factiliza\\factiliza-2025-10-21.log",
+            "hash": "d5fbf9acffbedf3a3db373f8cbf1eeb8c7d99d9b685ba9d63baee515d3b46d68"
+        },
+        {
+            "date": 1761110262322,
+            "name": "C:\\Users\\Luis\\Desktop\\INNOVAPRO\\backend\\src\\modules\\bitacora\\factiliza\\factiliza-2025-10-22.log",
+            "hash": "08eb301c08e33b08504ac276d8c8495f0a1a5e6e94c01126794f5e6899222a75"
+        }
+    ],
+    "hashType": "sha256"
+}

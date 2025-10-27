@@ -66,6 +66,8 @@ Despiece.hasMany(models.atributos_valor, {
   foreignKey: "despiece_id",
 });
 
+
+
 }
 
 module.exports = { Despiece }; // Exporta el modelo para que pueda ser utilizado en otros módulos

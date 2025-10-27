@@ -2,8 +2,8 @@ const db = require("../../../../../database/models");
 const { agruparPorZonaYAtributos, agruparEscuadrasPorZonaYAtributos } = require("../mapearAtributosDelPdfService");
 const { mapearAtributosValor } = require("../mapearAtributosValorService");
 
-async function generarPdfEscuadrasConPlataformas({ idDespiece, porcentajeDescuento }) {
-  const despieceEncontrado = await db.despieces.findByPk(idDespiece);
+async function generarPdfEscuadrasConPlataformas({ idDespiece, porcentajeDescuento, transaction = null }) {
+  const despieceEncontrado = await db.despieces.findByPk(idDespiece, { transaction });
 
   let atributosDelPdf = [];
 
@@ -39,7 +39,7 @@ async function generarPdfEscuadrasConPlataformas({ idDespiece, porcentajeDescuen
         as: "atributo",
       },
     ],
-  });
+  }, { transaction });
 
   // Obtener atributos
 
@@ -94,7 +94,7 @@ async function generarPdfEscuadrasConPlataformas({ idDespiece, porcentajeDescuen
         },
       },
     ],
-  });
+  }, { transaction });
 
   // calcular totales detalles escuadras
   const totalesDetallesEscuadras = piezasEscuadrasEncontradas.reduce(
@@ -130,7 +130,7 @@ async function generarPdfEscuadrasConPlataformas({ idDespiece, porcentajeDescuen
         },
       },
     ]
-  });
+  }, { transaction });
 
   const totalesDetallePlataformas = piezasPlataformasEncontrado.reduce(
   (acc, item) => {
@@ -200,7 +200,7 @@ const totalesFormateadosDetallePlataformas = {
         attributes: ["id", "item", "descripcion"],
       },
     ],
-  });
+  }, { transaction });
 
   const piezasDetalleAdicionalesEscuadrasConDescuento =
     piezasDetalleAdicionalesEscuadras.map((p) => {
@@ -234,10 +234,6 @@ const totalesFormateadosDetallePlataformas = {
 
   console.dir(listaAtributosConCantidadPlataformas, { depth: null, colors: true });
 
-  console.log({
-    totalesDetallesEscuadras,
-    totalesFormateadosDetallePlataformas,
-  });
   return {
     zonas: listaAtributosConCantidadPlataformas,
     piezasAdicionales: piezasDetalleAdicionalesEscuadrasConDescuento,

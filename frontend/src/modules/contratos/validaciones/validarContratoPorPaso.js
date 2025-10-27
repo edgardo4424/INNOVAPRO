@@ -4,7 +4,7 @@ const isEmail = (v = "") =>
 export default function validarContratoPorPaso(paso, datos) {
   const errores = {};
   const { cotizacion = {}, legales = {}, valorizacion = {}, firmas = {}, envio = {} } = datos || {};
-
+  console.log("DATOS EN VALIDACIONES : ", datos)
   // Paso 1: Origen (Cotización)
   if (paso === 1) {
     if (!cotizacion.id) errores.cotizacion_id = "Debes seleccionar una cotización válida.";

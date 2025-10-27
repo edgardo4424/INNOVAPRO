@@ -67,8 +67,8 @@ const RegistrarContratoWizard = lazy(() =>
 const GestionContratos = lazy(() =>
    import("@/modules/contratos/pages/GestionContratos")
 );
-const DetalleContrato = lazy(() =>
-   import("@/modules/contratos/pages/DetalleContrato")
+const ContratoDocumentos = lazy(() =>
+   import("@/modules/contratos/pages/ContratoDocumentos")
 );
 
 /* RUTAS PARA COTIZACIONES */
@@ -251,8 +251,8 @@ export default function AppRoutes() {
                            }
                         />
                         <Route
-                           path="contratos/:id"
-                           element={<DetalleContrato />}
+                           path="contratos/:contratoId/documentos"
+                           element={<ContratoDocumentos />}
                         />
                      </Route>
 

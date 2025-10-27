@@ -6,6 +6,7 @@ async function generarPdfAndamioTrabajo({
   idDespiece,
   tiene_pernos,
   porcentajeDescuento,
+  transaction = null,
 }) {
 
   let pernoExpansionConArgolla;
@@ -16,14 +17,14 @@ async function generarPdfAndamioTrabajo({
       where: {
         item: "CO.0010",
       },
-    });
+    }, { transaction });
 
     pernoEnElDespiece = await db.despieces_detalle.findOne({
       where: {
         despiece_id: idDespiece,
         pieza_id: pernoExpansionConArgolla.id,
       },
-    });
+    }, { transaction });
   }
 
   // Obtener la lista de atributos
@@ -38,7 +39,7 @@ async function generarPdfAndamioTrabajo({
         as: "atributo",
       },
     ],
-  });
+  }, { transaction });
 
   // Obtener atributos
 
@@ -72,7 +73,7 @@ async function generarPdfAndamioTrabajo({
           attributes: ["id", "item", "descripcion"],
         },
       ],
-    });
+    }, { transaction });
 
   const piezasDetalleAdicionalesAndamioTrabajoConDescuento =
   piezasDetalleAdicionalesAndamioTrabajo.map((p) => {

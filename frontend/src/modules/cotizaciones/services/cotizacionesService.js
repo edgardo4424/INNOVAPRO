@@ -99,11 +99,3 @@ export async function crearCotizacionDesdeOT(data) {
     throw error.response?.data || error;
   }
 }
-
-// Solicitar condiciones de alquiler al área de administración
-export async function solicitarCondiciones(idCotizacion, comentario="") {
-  const res = await api.put(`/cotizaciones/${idCotizacion}/solicitar-condiciones`, {
-    comentario,
-  })
-  return res.data;
-}

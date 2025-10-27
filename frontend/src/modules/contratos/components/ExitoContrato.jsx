@@ -1,73 +1,47 @@
-// INNOVA PRO+ v1.1.0 - Contratos
-import { CheckCircle2, FileDown, List, Eye } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
-import { generarPDFContrato } from "../services/contratosService";
+import { useNavigate } from "react-router-dom";
 
-// Uso:
-// <ExitoContrato contratoId={idCreado} />
-
-export default function ExitoContrato({ contratoId }) {
+export default function ExitoContrato() {
   const navigate = useNavigate();
-  const { id: idFromRoute } = useParams();
-  const id = contratoId || idFromRoute;
-
-  const onDescargarPDF = async () => {
-    try {
-      if (!id) {
-        toast.info("Aún no hay ID de contrato para descargar.");
-        return;
-      }
-      const blob = await generarPDFContrato(id);
-      const url = window.URL.createObjectURL(new Blob([blob]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `Contrato-${id}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode.removeChild(link);
-    } catch (e) {
-      console.error(e);
-      toast.error("No se pudo generar el PDF del contrato.");
-    }
-  };
 
   return (
-    <div className="flex flex-col items-center justify-center py-12">
-      <CheckCircle2 className="w-14 h-14 text-emerald-500" />
-      <h2 className="mt-3 text-2xl font-bold">¡Contrato creado correctamente!</h2>
-      <p className="mt-1 text-sm text-muted-foreground">
-        ID de contrato {id ? `#${id}` : "(pendiente de backend)"} listo.
-      </p>
-
-      <div className="mt-6 flex flex-wrap gap-3">
-        <button
-          onClick={() => navigate("/contratos")}
-          className="inline-flex items-center gap-2 rounded-lg border px-4 py-2 hover:bg-muted"
-        >
-          <List className="w-4 h-4" /> Ver contratos
-        </button>
-
-        <button
-          onClick={() => navigate(`/contratos/${id}`)}
-          disabled={!id}
-          className="inline-flex items-center gap-2 rounded-lg border px-4 py-2 hover:bg-muted disabled:opacity-50"
-        >
-          <Eye className="w-4 h-4" /> Ir al detalle
-        </button>
-
-        <button
-          onClick={onDescargarPDF}
-          disabled={!id}
-          className="inline-flex items-center gap-2 rounded-lg border px-4 py-2 hover:bg-muted disabled:opacity-50"
-        >
-          <FileDown className="w-4 h-4" /> Descargar PDF
-        </button>
+    <div className="flex flex-col items-center justify-center py-14 text-center">
+      <div className="relative">
+        <div className="h-16 w-16 rounded-full bg-emerald-100 flex items-center justify-center">
+          <svg
+            viewBox="0 0 24 24"
+            className="h-8 w-8 text-emerald-600"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.2"
+          >
+            <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
       </div>
 
-      <p className="mt-4 text-xs text-muted-foreground">
-        Si aún no está integrado el backend, puedes quedarte en esta pantalla y continuar con otros registros.
+      <h2 className="mt-4 text-2xl font-semibold tracking-tight">
+        ¡Contrato creado con éxito!
+      </h2>
+      <p className="mt-1 text-sm text-gray-600 max-w-xl">
+        Guardamos tu contrato correctamente. Puedes volver al panel principal o ir a la tabla de contratos.
       </p>
+
+      <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <button
+          type="button"
+          onClick={() => navigate("/")}
+          className="px-5 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-800 hover:bg-gray-50 transition"
+        >
+          Volver al Dashboard
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate("/contratos")}
+          className="px-5 py-2.5 rounded-lg bg-emerald-600 text-white hover:opacity-90 transition"
+        >
+          Ir a Contratos
+        </button>
+      </div>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Tooltip,
   TooltipTrigger,
@@ -6,7 +7,7 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { Edit, Eye, FileDown, FileText } from "lucide-react";
+import { Edit, Eye, FileDown, FileText, SquareCheckBig, FileCog } from "lucide-react";
 import { ColumnSelector } from "@/shared/components/ColumnSelector";
 import { Input } from "@/components/ui/input";
 
@@ -15,6 +16,11 @@ import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 import "ag-grid-community/styles/ag-theme-quartz.css";
+
+import SolicitarCondicionesModal from "./SolicitarCondicionesModal";
+import CondicionesModal from "./CondicionesModal";
+
+import { obtenerContratos } from "../services/contratosService";
 
 // Texto truncado con tooltip
 const TruncatedText = ({ text }) => {
@@ -36,26 +42,32 @@ export default function TablaContratos({
   onDownloadPDF,
   setContratoPrevisualizado,
   onContinuarWizard,
+  onSolicitarCondicionesAlquiler,
   onVerDetalle,
   user,
 }) {
+  const navigate = useNavigate();
   const [text, setText] = useState("");
   const [contratos, setContratos] = useState([]);
 
   // Aplanado defensivo (contrato es extensión de cotización)
   useEffect(() => {
-    const flattened = (data || []).map((item) => ({
+    const flattened = (data || []).map((item) => {
+      return ({
       ...item,
       // claves comunes
-      codigo_contrato: item.codigo_contrato ?? item.codigo_documento ?? "-",
+      filial_id: item.filial?.id ?? item.filial_id ?? null,
+      uso_id: item.uso?.id ?? item.uso_id ?? null,
+      codigo_contrato: item.ref_contrato ?? "-",
       cliente_razon_social: item.cliente?.razon_social ?? "-",
       obra_nombre: item.obra?.nombre ?? "-",
       uso_descripcion: item.uso?.descripcion ?? "-",
-      tipo_contrato: item.tipo_contrato ?? item.tipo_servicio ?? "-",
-      estado_contrato: item.estados_contrato?.nombre ?? item.estado?.nombre ?? "-",
+      tipo: item.tipo ?? item.tipo_servicio ?? "-",
+      estado_contrato: item.estado ?? "-",
+      estado_condiciones: item.estado_condiciones ?? "-",
       fecha_inicio: item.fecha_inicio ?? item.vigencia?.inicio ?? null,
       fecha_fin: item.fecha_fin ?? item.vigencia?.fin ?? null,
-    }));
+    })});
     setContratos(flattened);
   }, [data]);
 
@@ -66,6 +78,7 @@ export default function TablaContratos({
     uso: true,
     tipo: true,
     estado: true,
+    estado_condiciones: true,
     vigencia: true,
     acciones: true,
   });
@@ -77,6 +90,7 @@ export default function TablaContratos({
     { id: "uso", label: "Uso" },
     { id: "tipo", label: "Tipo" },
     { id: "estado", label: "Estado" },
+    { id: "estado_condiciones", label: "Estado Condiciones"},
     { id: "vigencia", label: "Vigencia" },
     { id: "acciones", label: "Acciones" },
   ];
@@ -111,7 +125,7 @@ export default function TablaContratos({
           sortable: true,
         },
         visibleColumns.tipo && {
-          field: "tipo_contrato",
+          field: "tipo",
           headerName: "Tipo",
           width: 110,
           sortable: true,
@@ -119,6 +133,12 @@ export default function TablaContratos({
         visibleColumns.estado && {
           field: "estado_contrato",
           headerName: "Estado",
+          width: 200,
+          sortable: true,
+        },
+        visibleColumns.estado_condiciones && {
+          field: "estado_condiciones",
+          headerName: "Estado Condiciones",
           width: 200,
           sortable: true,
         },
@@ -150,21 +170,34 @@ export default function TablaContratos({
             const puedeDescargar =
               ["Por Firmar", "Vigente", "Vencido", "Resuelto"].includes(row.estado_contrato);
 
+            const puedeSolicitarCondiciones =
+              ["Creado"].includes(row.estado_condiciones);
+
             return (
               <div className="flex gap-1 justify-start">
-                {/* Ver detalle */}
+
+                {/* Documentos (plantilla → DOCX/PDF) */}
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={() => onVerDetalle?.(row.id)}
+                      onClick={() =>
+                        navigate(`/contratos/${row.id}/documentos`, {
+                          state: {
+                            filialId: row.filial_id ?? null,
+                            usoId: row.uso_id ?? null,
+                            // opcionalmente puedes pasar un slug/nombre si lo tienes:
+                            uso: row.uso?.slug ?? row.uso_descripcion ?? null,
+                          },
+                        })
+                      }
                     >
-                      <FileText />
+                      <FileCog />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Ver detalle</p>
+                    <p>Documentos</p>
                   </TooltipContent>
                 </Tooltip>
 
@@ -220,6 +253,50 @@ export default function TablaContratos({
                     </TooltipContent>
                   </Tooltip>
                 )}
+
+                {/* Solicitar condiciones de alquiler para el mismo usuario */}
+                {puedeSolicitarCondiciones &&
+                (
+                  <SolicitarCondicionesModal
+                    contrato={row}
+                    onConfirmar={onSolicitarCondicionesAlquiler}
+                  >
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline" size="icon">
+                        <SquareCheckBig />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Solicitar Condiciones de Alquiler</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  </SolicitarCondicionesModal>
+                )}
+
+                {/* Validar condiciones, si corresponde */}
+                {row.estado_condiciones === "Validando Condiciones" &&
+                 row.usuario.id === user.id && (
+                 <CondicionesModal 
+                    contratoId={row.id} 
+                    onActualizarCotizaciones={async () => {
+                      const res = await obtenerContratos();
+                      setContratos(
+                        res.map((item) => ({
+                          ...item,
+                          codigo_contrato: item.ref_contrato  ?? "—",
+                          cliente_razon_social: item.cliente?.razon_social ?? "—",
+                          obra_nombre: item.obra?.nombre ?? "—",
+                          uso_descripcion: item.uso?.descripcion ?? "—",
+                          tipo: item.tipo ?? item.tipo_servicio ?? "—",
+                          estado_contrato: item.estado_condiciones ?? "—",
+                          fecha_inicio: item.fecha_inicio ?? item.vigencia?.inicio ?? null,
+                          fecha_fin: item.fecha_fin ?? item.vigencia?.fin ?? null,
+                        }))
+                      )
+                    }}
+                  />
+                )}
               </div>
             );
           },
@@ -234,12 +311,14 @@ export default function TablaContratos({
       setContratos(
         (data || []).map((item) => ({
           ...item,
-          codigo_contrato: item.codigo_contrato ?? item.codigo_documento ?? "—",
+          filial_id: item.filial?.id ?? item.filial_id ?? null,
+          uso_id: item.uso?.id ?? item.uso_id ?? null,
+          codigo_contrato: item.ref_contrato  ?? "—",
           cliente_razon_social: item.cliente?.razon_social ?? "—",
           obra_nombre: item.obra?.nombre ?? "—",
           uso_descripcion: item.uso?.descripcion ?? "—",
-          tipo_contrato: item.tipo_contrato ?? item.tipo_servicio ?? "—",
-          estado_contrato: item.estados_contrato?.nombre ?? item.estado?.nombre ?? "—",
+          tipo: item.tipo ?? item.tipo_servicio ?? "—",
+          estado_contrato: item.estado_condiciones ?? "—",
           fecha_inicio: item.fecha_inicio ?? item.vigencia?.inicio ?? null,
           fecha_fin: item.fecha_fin ?? item.vigencia?.fin ?? null,
         }))
@@ -248,12 +327,12 @@ export default function TablaContratos({
       const lower = text.toLowerCase();
       const filtro = (data || [])
         .filter((item) => {
-          const codigo = (item.codigo_contrato ?? item.codigo_documento ?? "").toLowerCase();
+          const codigo = (item.ref_contrato ?? "").toLowerCase();
           const cliente = (item.cliente?.razon_social ?? "").toLowerCase();
           const obra = (item.obra?.nombre ?? "").toLowerCase();
           const uso = (item.uso?.descripcion ?? "").toLowerCase();
           const estado = (
-            item.estados_contrato?.nombre ??
+            item.estado_condiciones ??
             item.estado?.nombre ??
             ""
           ).toLowerCase();
@@ -268,12 +347,14 @@ export default function TablaContratos({
         })
         .map((item) => ({
           ...item,
-          codigo_contrato: item.codigo_contrato ?? item.codigo_documento ?? "—",
+          filial_id: item.filial?.id ?? item.filial_id ?? null,
+          uso_id: item.uso?.id ?? item.uso_id ?? null,
+          codigo_contrato: item.ref_contrato ?? "—",
           cliente_razon_social: item.cliente?.razon_social ?? "—",
           obra_nombre: item.obra?.nombre ?? "—",
           uso_descripcion: item.uso?.descripcion ?? "—",
-          tipo_contrato: item.tipo_contrato ?? item.tipo_servicio ?? "—",
-          estado_contrato: item.estados_contrato?.nombre ?? item.estado?.nombre ?? "—",
+          tipo: item.tipo ?? item.tipo_servicio ?? "—",
+          estado_contrato: item.estado_condiciones ?? "—",
           fecha_inicio: item.fecha_inicio ?? item.vigencia?.inicio ?? null,
           fecha_fin: item.fecha_fin ?? item.vigencia?.fin ?? null,
         }));

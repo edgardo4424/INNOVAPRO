@@ -106,7 +106,7 @@ async function generarCodigoDocumentoContrato({cotizacion_id, usuario_id, transa
         }
     }
     // Construir el código del contrato
-    const codigoDocumentoContrato = `${filialAbv}-${tipoDocumento}-${codRolUsuario}${usuario_id}-${usuarioAbv}-${correlativo}_${version}`;
+    const codigoDocumentoContrato = `${filialAbv}-${tipoDocumento}-${codRolUsuario}-${usuarioAbv}${usuario_id}-${correlativo}_${version}`;
 
     return codigoDocumentoContrato;
 }

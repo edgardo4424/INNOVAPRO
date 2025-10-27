@@ -134,7 +134,7 @@ const {
 db.notificaciones = Notificaciones;
 
 // Condiciones de alquiler
-const CondicionAlquiler = require("../../modules/cotizaciones/infrastructure/models/condicionAlquilerModel");
+const CondicionAlquiler = require("../../modules/contratos/infraestructure/models/condicionAlquilerModel");
 db.condiciones_alquiler = CondicionAlquiler;
 
 // Tareas

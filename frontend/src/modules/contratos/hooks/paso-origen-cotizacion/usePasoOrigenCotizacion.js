@@ -2,7 +2,8 @@ import { useEffect, useState, useMemo  } from "react";
 
 import { toast } from "react-toastify";
 import { useWizardContratoContext } from "../../context/WizardContratoContext";
-import { obtenerTodos, obtenerDatosPDF } from "@/modules/cotizaciones/services/cotizacionesService";
+import { obtenerTodos } from "@/modules/cotizaciones/services/cotizacionesService";
+import { autocompletarCotizacion } from "../../services/contratosService";
 import { mapearCotizacionAContrato } from "../../utils/mapearCotizacionAContrato";
 
 export function usePasoOrigenCotizacion() {
@@ -22,7 +23,7 @@ export function usePasoOrigenCotizacion() {
           const estado =
             c?.estados_cotizacion?.nombre ||
             "";
-          return estado === "Condiciones Cumplidas";
+          return estado === "Por Aprobar";
         });
         setCotizaciones(filtradas);
       } catch (error) {
@@ -42,7 +43,8 @@ export function usePasoOrigenCotizacion() {
         // ya está seleccionada, no hagas nada
         return;
       }
-      const data = await obtenerDatosPDF(id);
+      const data = await autocompletarCotizacion(id);
+      console.log("DATA EN ORIGEN: ", data)
       const snapshot = mapearCotizacionAContrato(data, id);
       setFormData((prev) => ({ ...prev, cotizacion: snapshot }));
       
