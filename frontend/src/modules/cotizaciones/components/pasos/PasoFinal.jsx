@@ -44,7 +44,7 @@ export default function PasoFinal() {
   const totalReferencial = (
     parseFloat(totalConDescuento) +
     (atributos_opcionales.transporte.tiene_transporte ? precio_final_transporte : 0) +
-    (atributos_opcionales.instalacion.tipo_instalacion === "COMPLETA" || atributos_opcionales.instalacion.tipo_instalacion === "PARCIAL"
+    (atributos_opcionales.instalacion?.tipo_instalacion === "COMPLETA" || atributos_opcionales.instalacion?.tipo_instalacion === "PARCIAL"
       ? (atributos_opcionales.instalacion.precio_instalacion_completa || 0)
       : 0)
   ).toFixed(2);
@@ -79,9 +79,9 @@ export default function PasoFinal() {
       {/* SERVICIOS ADICIONALES */}
       {(
         atributos_opcionales.pernos.tiene_pernos_disponibles !== false || 
-        atributos_opcionales.transporte.tiene_transporte !== false || 
-        atributos_opcionales.instalacion.tipo_instalacion !== "NINGUNA" && 
-        atributos_opcionales.instalacion.tipo_instalacion !== "") && 
+        atributos_opcionales.transporte?.tiene_transporte !== false || 
+        atributos_opcionales.instalacion?.tipo_instalacion !== "NINGUNA" && 
+        atributos_opcionales.instalacion?.tipo_instalacion !== "") && 
         uso.id !== 8 && (
           <div className="wizard-section">
             <h4>➕ Servicios adicionales</h4>
@@ -98,13 +98,13 @@ export default function PasoFinal() {
               </div>
             )}
 
-            {atributos_opcionales.instalacion.tipo_instalacion === "COMPLETA" && (
+            {atributos_opcionales.instalacion?.tipo_instalacion === "COMPLETA" && (
               <div className="wizard-key-value">
                 <strong>🛠️ Instalación completa:</strong> S/ {atributos_opcionales.instalacion.precio_instalacion_completa?.toFixed(2) || "0.00"}
               </div>
             )}
 
-            {atributos_opcionales.instalacion.tipo_instalacion === "PARCIAL" && (
+            {atributos_opcionales.instalacion?.tipo_instalacion === "PARCIAL" && (
               <>
                 <div className="wizard-key-value">
                   <strong>🛠️ Instalación completa (referencia):</strong> S/ {atributos_opcionales.instalacion.precio_instalacion_completa?.toFixed(2) || "0.00"}
@@ -138,7 +138,7 @@ export default function PasoFinal() {
 
       {/* Total referencial incluyendo servicios */}
       {(
-        atributos_opcionales.instalacion.tiene_instalacion || 
+        atributos_opcionales.instalacion?.tiene_instalacion || 
         atributos_opcionales.transporte.tiene_transporte != false) &&
         uso.id !== 8 && (
           <div className="wizard-total" style={{ marginTop: "1rem", color: "#666", fontSize: "15px" }}>

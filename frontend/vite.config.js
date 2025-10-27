@@ -12,6 +12,10 @@ export default defineConfig(({ mode }) => {
     base: '/', // ⚠️ Cambia si usas subcarpeta (ej: /erp/)
     server: {
       port: 3000,
+      proxy: {
+      "/api":   { target: "http://localhost:3001", changeOrigin: true },
+      "/public":{ target: "http://localhost:3001", changeOrigin: true }, // <<< importante
+    },
     },
     resolve: {
       alias: {

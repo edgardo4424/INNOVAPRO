@@ -6,6 +6,8 @@ const { verificarToken } = require("../../../../shared/middlewares/authMiddlewar
 
 router.use(verificarToken);
 
+router.get("/", cargosSunatController.obtenerTodosLosCargosSunat)
+
 router.post("/", cargosSunatController.obtenerCargosSunat);
 
 module.exports = router;

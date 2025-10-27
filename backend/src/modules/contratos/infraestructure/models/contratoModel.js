@@ -67,6 +67,14 @@ const Contrato = sequelize.define(
               key: "id",
             },
           },
+          uso_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+               model: "usos",
+               key: "id",
+            },
+            },
       ref_contrato: {
          type: DataTypes.STRING,
          allowNull: false,
@@ -116,6 +124,16 @@ const Contrato = sequelize.define(
          allowNull: false,
          defaultValue: 'PROGRAMADO',
       },
+      estado_condiciones: {
+         type: DataTypes.ENUM(
+            'Creado',
+            'Condiciones Solicitadas',
+            'Validando Condiciones',
+            'Condiciones Cumplidas'
+         ),
+         allowNull: false,
+         defaultValue: 'Creado',
+      },
       
    },
    {
@@ -148,6 +166,24 @@ Contrato.associate = (models) => {
    Contrato.belongsTo(models.usuarios, {
       foreignKey: "usuario_id",
       as: "usuario",
+   });
+   Contrato.belongsTo(models.usos, {
+      foreignKey: "uso_id",
+      as: "uso",
+   });
+   Contrato.belongsTo(models.despieces, {
+      foreignKey: "despiece_id",
+      as: "despiece",
+   });
+
+   Contrato.hasOne(models.condiciones_alquiler, {
+      foreignKey: "contrato_id",
+      as: "condiciones_alquiler_relacionado",
+   });
+
+   Contrato.belongsTo(models.contactos, {
+      foreignKey: "contacto_id",
+      as: "contacto",
    });
 };
 

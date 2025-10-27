@@ -29,10 +29,12 @@ export default function ImportadorDespiece({ tarea, formData, setFormData }) {
   const handleGuardarDespiece = async () => {
     if (!formData.despiece || formData.despiece.length === 0) return;
 
+    console.log("Guardando despiece importado:", formData.despiece);
     const payload = {
       idTarea: tarea.id,
       despiece: formData.despiece.map((p) => ({
         pieza_id: p.pieza_id,
+        item: p.item,
         cantidad: p.cantidad,
         peso_kg: p.peso_kg,
         precio_venta_dolares: p.precio_venta_dolares,
@@ -42,9 +44,9 @@ export default function ImportadorDespiece({ tarea, formData, setFormData }) {
     };
 
     try {
-      const data = await crearDespieceOT(payload);
+      /* const data = await crearDespieceOT(payload);
       limpiarArchivo();
-      onDespieceCreado();
+      onDespieceCreado(); */
     } catch (error) {
       console.error("Error al guardar despiece importado", error);
     }

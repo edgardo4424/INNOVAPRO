@@ -22,22 +22,21 @@ export default function GestionCondiciones() {
                 icon="📁"
                 action={
                     <button
-                        onClick={() => navigate("/cotizaciones")}
+                        onClick={() => navigate("/contratos")}
                         className="mt-4 px-5 py-2 bg-innova-blue text-white rounded-xl hover:bg-innova-blue/90 transition"
                         >
-                        Ir a Cotizaciones
+                        Ir a Contratos
                     </button>
                 }   
             />
         )}
-        {console.log(condiciones)}
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-2 ">
             {condiciones.map((c) => {
-                const cot = c.cotizacion || {};
+                const cot = c.contrato_relacionado || {};
                 const cliente = cot.cliente || {};
                 const obra = cot.obra || {};
-                const usuario = cot.usuario || {};
-                const usuarioNombre = usuario.trabajador.nombres + " " + usuario.trabajador.apellidos;
+                const usuario = cot.usuario?.trabajador || {};
+                const usuarioNombre = usuario.nombres + " " + usuario.apellidos;
                 const fecha = new Date(c.created_at).toLocaleDateString("es-PE", {
                     year: "numeric", month: "short", day: "numeric"
                 });
@@ -50,7 +49,7 @@ export default function GestionCondiciones() {
                         <div className="flex justify-between items-start gap-3 flex-wrap">
                             <div className="text-sm leading-snug text-gray-700">
                                 <p className="font-semibold text-base text-gray-900">
-                                    Cotización: <span className="text-primary">{cot.codigo_documento || "—"}</span>
+                                    Cotización: <span className="text-primary">{cot.ref_contrato || "—"}</span>
                                 </p>
                                 <p>Cliente: {cliente.razon_social || "—"}</p>
                                 <p>RUC: {cliente.ruc || "—"}</p>

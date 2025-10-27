@@ -20,7 +20,9 @@ const {
 const { generarPdfPlataformaDescarga } = require("../../infrastructure/services/PlataformaDescarga/generarPdfPlataformaDescarga");
 const { generarPdfPuntales } = require("../../infrastructure/services/Puntales/generarPdfPuntales");
 
-module.exports = async (idCotizacion) => {
+module.exports = async (idCotizacion, transaction = null) => {
+
+  console.log("ID COTIZACION EN GENERAR PDF COTIZACION:", idCotizacion);
 
   // Buscar la cotizacion incluyendo: obra, cliente, contacto, despiece, filial, usuario, costos de cotizacion de transporte
   const cotizacionEncontrado = await db.cotizaciones.findByPk(idCotizacion, {
@@ -63,7 +65,9 @@ module.exports = async (idCotizacion) => {
         model: db.usos,
       },
     ],
-  });
+  } , { transaction });
+
+  
 
   if (!cotizacionEncontrado)
     return { codigo: 404, respuesta: { mensaje: "Cotización no encontrada" } };
@@ -83,7 +87,7 @@ module.exports = async (idCotizacion) => {
           ],
         },
       ],
-    }
+    }, { transaction }
   );
 
   if (!despieceEncontrado)
@@ -91,9 +95,10 @@ module.exports = async (idCotizacion) => {
 
   /* const uso_id = despieceEncontrado.atributos_valors?.[0].atributo.uso_id; */
   const uso_id = cotizacionEncontrado.uso_id;
+ 
+  const usoEncontrado = await db.usos.findByPk(uso_id, {}, { transaction });
 
-  const usoEncontrado = await db.usos.findByPk(uso_id);
-
+  console.log("USO EN GENERAR PDF COTIZACION:", usoEncontrado);
   const tipoServicio = cotizacionEncontrado.tipo_cotizacion;
   let tiempoAlquilerDias = null;
 
@@ -107,7 +112,9 @@ module.exports = async (idCotizacion) => {
     where: {
       cotizacion_id: cotizacionEncontrado.id,
     },
-  });
+  }, { transaction });
+
+
 
   // Calcular el subtotal sin igv de las piezas que NO SON ADICIONALES
    const piezasNoAdicionales = await db.despieces_detalle.findAll({
@@ -116,8 +123,9 @@ module.exports = async (idCotizacion) => {
       despiece_id: despieceEncontrado.id
     },
     raw: true
-   }) || []
+   }, { transaction }) || []
 
+   
    const { subtotal_piezas_no_adicionales_con_descuento_sin_igv } = calcularSubtotalConDescuentoPiezasNoAdicionales({
     despiecePiezasNoAdicionales: piezasNoAdicionales,
     tipoCotizacion: tipoServicio,
@@ -191,13 +199,14 @@ module.exports = async (idCotizacion) => {
     },
   };
 
+  console.log("datosPdfCotizacion", datosPdfCotizacion);
   // Añadir algunos datos particulares para cada uso
 
   switch (uso_id + "") {
     case "1":
       // ANDAMIO DE FACHADA
 
-      const pdfAndamioFachada = await generarPdfAndamioFachada({dataDespiece: despieceEncontrado, tiene_pernos: tiene_pernos, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
+      const pdfAndamioFachada = await generarPdfAndamioFachada({dataDespiece: despieceEncontrado, tiene_pernos: tiene_pernos, porcentajeDescuento: despieceEncontrado.porcentaje_descuento, transaction });
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
@@ -209,7 +218,7 @@ module.exports = async (idCotizacion) => {
     case "2":
       // ANDAMIO DE TRABAJO
 
-      const pdfAndamioTrabajo = await generarPdfAndamioTrabajo({idDespiece: despieceEncontrado.id, tiene_pernos: tiene_pernos, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
+      const pdfAndamioTrabajo = await generarPdfAndamioTrabajo({idDespiece: despieceEncontrado.id, tiene_pernos: tiene_pernos, porcentajeDescuento: despieceEncontrado.porcentaje_descuento, transaction });
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
@@ -221,7 +230,7 @@ module.exports = async (idCotizacion) => {
     case "3":
       // ESCALERA DE ACCESO
 
-      const pdfEscaleraAcceso = await generarPdfEscaleraAcceso({dataDespiece: despieceEncontrado, tiene_pernos: tiene_pernos, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
+      const pdfEscaleraAcceso = await generarPdfEscaleraAcceso({dataDespiece: despieceEncontrado, tiene_pernos: tiene_pernos, porcentajeDescuento: despieceEncontrado.porcentaje_descuento, transaction });
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
@@ -233,7 +242,7 @@ module.exports = async (idCotizacion) => {
     case "4":
       // ESCUADRAS CON PLATAFORMAS
 
-      const pdfEscuadrasConPlataformas = await generarPdfEscuadrasConPlataformas({idDespiece: despieceEncontrado.id, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
+      const pdfEscuadrasConPlataformas = await generarPdfEscuadrasConPlataformas({idDespiece: despieceEncontrado.id, porcentajeDescuento: despieceEncontrado.porcentaje_descuento, transaction})
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
@@ -244,7 +253,7 @@ module.exports = async (idCotizacion) => {
     case "5":
       // PUNTALES
 
-       const pdfPuntales = await generarPdfPuntales({idDespiece: despieceEncontrado.id, tipo_cotizacion: cotizacionEncontrado.tipo_cotizacion, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
+       const pdfPuntales = await generarPdfPuntales({idDespiece: despieceEncontrado.id, tipo_cotizacion: cotizacionEncontrado.tipo_cotizacion, porcentajeDescuento: despieceEncontrado.porcentaje_descuento, transaction})
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
@@ -259,7 +268,7 @@ module.exports = async (idCotizacion) => {
     case "7":
       // PLATAFORMAS DE DESCARGA
 
-      const pdfPlataformaDescarga = await generarPdfPlataformaDescarga({idDespiece: despieceEncontrado.id, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
+      const pdfPlataformaDescarga = await generarPdfPlataformaDescarga({idDespiece: despieceEncontrado.id, porcentajeDescuento: despieceEncontrado.porcentaje_descuento, transaction})
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
@@ -270,7 +279,7 @@ module.exports = async (idCotizacion) => {
     case "8":
       // COLGANTE
 
-       const pdfColgante = await generarPdfColgante({dataDespiece: despieceEncontrado, idDespiece: despieceEncontrado.id, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
+       const pdfColgante = await generarPdfColgante({dataDespiece: despieceEncontrado, idDespiece: despieceEncontrado.id, porcentajeDescuento: despieceEncontrado.porcentaje_descuento, transaction})
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,
@@ -286,7 +295,7 @@ module.exports = async (idCotizacion) => {
     case "11":
        // ESCUADRAS SIN PLATAFORMAS
 
-      const pdfEscuadrasSinPlataformas = await generarPdfEscuadrasSinPlataformas({idDespiece: despieceEncontrado.id, porcentajeDescuento: despieceEncontrado.porcentaje_descuento})
+      const pdfEscuadrasSinPlataformas = await generarPdfEscuadrasSinPlataformas({idDespiece: despieceEncontrado.id, porcentajeDescuento: despieceEncontrado.porcentaje_descuento, transaction})
 
       datosPdfCotizacion = {
         ...datosPdfCotizacion,

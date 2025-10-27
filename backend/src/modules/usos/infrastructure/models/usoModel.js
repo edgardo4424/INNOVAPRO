@@ -35,6 +35,9 @@ Uso.associate = (models) => {
      foreignKey: "usoId",
   })
 
+  Uso.hasMany(models.contratos,{
+      foreignKey: "uso_id",
+  })
 }
 
 module.exports = { Uso }; // Exporta el modelo para que pueda ser utilizado en otros módulos

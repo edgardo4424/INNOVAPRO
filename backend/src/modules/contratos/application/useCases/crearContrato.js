@@ -3,10 +3,14 @@ const { generarCodigoDocumentoContrato } = require("../../infraestructure/servic
 
 
 const SequelizeCotizacionRepository = require("../../../cotizaciones/infrastructure/repositories/sequelizeCotizacionRepository");
-
 const cotizacionRepository = new SequelizeCotizacionRepository();
 
-const CONST_ESTADO_COTIZACION_CONDICIONES_CUMPLIDAS = 9; // Asumiendo que 9 es el ID del estado "Condiciones cumplidas"
+const CONST_ESTADO_COTIZACION_POR_APROBAR = 3; // Asumiendo que 3 es el ID del estado "Por Aprobar"
+
+const generarPdfCotizacion = require('../../../cotizaciones/application/useCases/generarPdfCotizacion');
+
+const db = require("../../../../database/models");
+
 
 module.exports = async (payload,usuario_id, contratoRepository,transaction=null)=>{
   
@@ -21,10 +25,10 @@ module.exports = async (payload,usuario_id, contratoRepository,transaction=null)
         }
     }
 
-    if(cotizacionExiste.estados_cotizacion_id != CONST_ESTADO_COTIZACION_CONDICIONES_CUMPLIDAS){
+    if(cotizacionExiste.estados_cotizacion_id != CONST_ESTADO_COTIZACION_POR_APROBAR){
         return {
             codigo:400,
-            respuesta: { mensaje: "La cotización debe cumplir con todas las condiciones de alquiler" }
+            respuesta: { mensaje: "La cotización debe estar en el estado POR APROBAR" }
         }
     }
 
@@ -57,6 +61,22 @@ module.exports = async (payload,usuario_id, contratoRepository,transaction=null)
 
 
     const contrato_creado=await contratoRepository.crearContrato(contratoData,transaction);
+
+    // una vez que se crea el contrato, el pdf de la cotizacion no tendra que ser editable
+    // Por lo cual se guardara toda la data del pdf en la tabla cotizaciones para persistir la informacion de la cotizacion en el momento de crear el contrato
+
+    // obteniendo la data del pdf de la cotizacion
+
+    const dataPdfCotizacion= await generarPdfCotizacion(cotizacionExiste.id,transaction);
+
+    console.log("Data del PDF de la cotización generado:", dataPdfCotizacion);
+
+    // Guardar el snapshot de la cotizacion cuando se pase a contrato 
+    const cotizacionActualizado = await db.cotizaciones.update(
+        { pdf_cotizacion_data_snapshot: dataPdfCotizacion.respuesta, estados_cotizacion_id: 4 }, // Asumiendo que el siguiente estado es "Aprobado"
+        { where: { id: payload.cotizacion_id }, transaction }
+    );
+
     return{
         codigo:200,
         respuesta:{

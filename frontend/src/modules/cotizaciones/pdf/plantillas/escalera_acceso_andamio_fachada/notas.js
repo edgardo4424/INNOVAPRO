@@ -5,10 +5,11 @@ export async function renderNotas(doc, data, currentY) {
   const indent = 20;
   const maxWidth = 170;
   const lineHeight = 4.5;
-
+  
   currentY += 10;
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
+  currentY = await verificarSaltoDePagina(doc, currentY, data)
   doc.text("NOTA:", indent, currentY);
   doc.line(indent, currentY + 1.5, indent + 8, currentY + 1.5);
   currentY += 10;

@@ -11,11 +11,12 @@ const PedidoGuia = sequelize.define(
     },
     guia_remision_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       references: {
         model: "guias_de_remision",
         key: "id",
       },
+      defaultValue:null
     },
     contrato_id: {
       type: DataTypes.INTEGER,
@@ -37,14 +38,10 @@ const PedidoGuia = sequelize.define(
       type: DataTypes.DATEONLY,
       allowNull: false,
     },
-    tipo_guia: {
-      type: DataTypes.ENUM("alquiler", "venta"),
-      allowNull: false,
-    },
-    tipo_pedido: {
-      type: DataTypes.ENUM("envio", "devolucion"),
-      allowNull: false,
-    },
+    estado:{
+      type:DataTypes.ENUM("Emitido","Despachado"),
+      allowNull:false
+    }
   },
   {
     tableName: "pedidos_guias",

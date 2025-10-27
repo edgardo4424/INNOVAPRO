@@ -18,7 +18,7 @@ const MovimientoStockPedido = sequelize.define(
       },
     },
     tipo: {
-      type: DataTypes.ENUM("alquiler", "devolucion", "venta"),
+      type: DataTypes.ENUM("alquiler", "devolucion", "compra"),
       allowNull: false,
     },
     cantidad: {
@@ -31,10 +31,6 @@ const MovimientoStockPedido = sequelize.define(
     },
     stock_post_movimiento: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    tipo_stock: {
-      type: DataTypes.ENUM("disponible", "fijo"),
       allowNull: false,
     },
     motivo: {

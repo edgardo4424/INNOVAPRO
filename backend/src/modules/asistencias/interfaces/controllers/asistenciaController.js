@@ -14,9 +14,7 @@ const AsistenciaController = {
             req.body,
             asistenciaRepository
          );
-         res.status(asistencia.codigo).json({
-            mensaje: asistencia.respuesta.mensaje,
-         });
+         res.status(asistencia.codigo).json(asistencia.respuesta);
       } catch (error) {
          res.status(500).json({ error: error.message });
       }
@@ -28,9 +26,7 @@ const AsistenciaController = {
             req.body,
             asistenciaRepository
          );
-         res.status(asistencia.codigo).json({
-            mensaje: asistencia.respuesta.mensaje,
-         });
+         res.status(asistencia.codigo).json(asistencia.respuesta);
       } catch (error) {
          res.status(500).json({ error: error.message });
       }
@@ -41,9 +37,7 @@ const AsistenciaController = {
             req.body,
             asistenciaRepository
          );
-         res.status(asistencia.codigo).json({
-            mensaje: asistencia.respuesta.mensaje,
-         });
+         res.status(asistencia.codigo).json(asistencia.respuesta);
       } catch (error) {
          res.status(500).json({ error: error.message });
       }
@@ -54,9 +48,7 @@ const AsistenciaController = {
             req.body,
             asistenciaRepository
          );
-         res.status(asistencia.codigo).json({
-            mensaje: asistencia.respuesta.mensaje,
-         });
+         res.status(asistencia.codigo).json(asistencia.respuesta);
       } catch (error) {
          res.status(500).json({ error: error.message });
       }

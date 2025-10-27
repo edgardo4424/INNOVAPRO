@@ -1,11 +1,10 @@
-/* INNOVA PRO+ v1.2.0 */
-
 .wizard-container {
     background: #fff;
     padding: 2rem;
     max-width: 800px;
     margin: 0 auto;
-    border-radius: 16px;
+    border-radius: 10px;
+    margin-top: 25px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
   }
   

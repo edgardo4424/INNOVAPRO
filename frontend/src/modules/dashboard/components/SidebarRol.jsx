@@ -14,6 +14,7 @@ import {
    ClipboardPlus,
    FileText,
    FileEdit,
+   FileSignature,
    LayoutDashboard,
    Boxes,
    ChevronDown,
@@ -76,6 +77,8 @@ const iconMap = {
    "Registrar Tarea": ClipboardPlus,
    Cotizaciones: FileText,
    "Registrar Cotización": FileEdit,
+   Contratos: ScrollText,
+   "Registrar Contrato": FileSignature,
    "Stock de Piezas": Boxes,
    Trabajadores: Users,
    "Facturación": Receipt,
@@ -110,6 +113,8 @@ const modulesByRole = {
       { name: "Cotizaciones", path: "/cotizaciones" },
       { name: "Gestión de condiciones", path: "/condiciones" },
       { name: "Registrar Cotización", path: "/cotizaciones/registrar" },
+      { name: "Contratos", path: "/contratos" },
+      { name: "Registrar Contrato", path: "/contratos/registrar" },
       { name: "Stock de Piezas", path: "/stock/piezas" },
       {
          group: "Trabajadores",
@@ -172,6 +177,11 @@ const modulesByRole = {
       { name: "Datos de mantenimiento", path: "/data-mantenimiento" },
 
    ],
+
+   "Gerente general":[
+            { name: "Asistencia", path: "/asistencia-general" },
+
+   ],
    "Técnico Comercial": [
       { name: "Gestión de Clientes", path: "/gestion-clientes" },
       { name: "Gestión de Contactos", path: "/gestion-contactos" },
@@ -181,6 +191,8 @@ const modulesByRole = {
       { name: "Cotizaciones", path: "/cotizaciones" },
       { name: "Pase Pedidos", path: "/pedidos/pase-pedidos" },
       { name: "Registrar Cotización", path: "/cotizaciones/registrar" },
+      { name: "Contratos", path: "/contratos" },
+      { name: "Registrar Contrato", path: "/contratos/registrar" },
       { name: "Stock de Piezas", path: "/stock/piezas" },
    ],
    "Jefe de OT": [

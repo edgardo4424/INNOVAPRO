@@ -1,11 +1,14 @@
-const sequelizeDespieceDetalleRepository = require('../../infrastructure/repositories/sequelizeDespieceDetalleRepository'); // Importamos el repositorio de despieces detalle
+const sequelize = require("../../../../config/db");
 
-const crearDespieceDetalle = require('../../application/useCases/crearDespiecesDetalles'); // Importamos el caso de uso para crear un despiece detalle
-const obtenerDespiecesDetalle = require('../../application/useCases/obtenerDespiecesDetalle'); // Importamos el caso de uso para obtener todos los despiece detalles
-const obtenerDespieceDetallePorId = require('../../application/useCases/obtenerDespiecesDetallesPorId'); // Importamos el caso de uso para obtener un despiece detalle por ID
-const actualizarDespieceDetalle = require('../../application/useCases/actualizarDespiecesDetalles'); // Importamos el caso de uso para actualizar un despiece detalle
-const eliminarDespieceDetalle = require('../../application/useCases/eliminarDespiecesDetalles'); // Importamos el caso de uso para eliminar un despiece detalle
-const crearVariosDespiecesDetalles = require('../../application/useCases/crearVariosDespiecesDetalles');
+const sequelizeDespieceDetalleRepository = require("../../infrastructure/repositories/sequelizeDespieceDetalleRepository"); // Importamos el repositorio de despieces detalle
+
+const crearDespieceDetalle = require("../../application/useCases/crearDespiecesDetalles"); // Importamos el caso de uso para crear un despiece detalle
+const obtenerDespiecesDetalle = require("../../application/useCases/obtenerDespiecesDetalle"); // Importamos el caso de uso para obtener todos los despiece detalles
+const obtenerDespieceDetallePorId = require("../../application/useCases/obtenerDespiecesDetallesPorId"); // Importamos el caso de uso para obtener un despiece detalle por ID
+const actualizarDespieceDetalle = require("../../application/useCases/actualizarDespiecesDetalles"); // Importamos el caso de uso para actualizar un despiece detalle
+const eliminarDespieceDetalle = require("../../application/useCases/eliminarDespiecesDetalles"); // Importamos el caso de uso para eliminar un despiece detalle
+const crearVariosDespiecesDetalles = require("../../application/useCases/crearVariosDespiecesDetalles");
+const actualizarDespieceDetalleCotizacion = require("../../application/useCases/actualizarDespieceDetalleCotizacion");
 const actulizarDespiecePP = require('../../application/useCases/actulizarDespiecePP');
 
 const despieceDetalleRepository = new sequelizeDespieceDetalleRepository(); // Instancia del repositorio de despiece detalles
@@ -32,27 +35,84 @@ const DespieceDetalleController = {
         }
     },
 
-    async obtenerDespieceDetallePorId(req, res) {
-        try {
-            const despieces_detalle = await obtenerDespieceDetallePorId(req.params.id, despieceDetalleRepository); // Llamamos al caso de uso para obtener un despiece detalle por ID
-            res.status(despieces_detalle.codigo).json(despieces_detalle.respuesta); // Respondemos con el despiece detalle solicitado
-        } catch (error) {
-            res.status(500).json({ error: error.message }); // Respondemos con un error
-        }
-    },
+  async obtenerDespieceDetallePorId(req, res) {
+    try {
+      const despieces_detalle = await obtenerDespieceDetallePorId(
+        req.params.id,
+        despieceDetalleRepository
+      ); // Llamamos al caso de uso para obtener un despiece detalle por ID
+      res.status(despieces_detalle.codigo).json(despieces_detalle.respuesta); // Respondemos con el despiece detalle solicitado
+    } catch (error) {
+      res.status(500).json({ error: error.message }); // Respondemos con un error
+    }
+  },
 
-    async actualizarDespieceDetalle(req, res) {
-        try {
-            const despieceDetalleActualizado = await actualizarDespieceDetalle(req.params.id, req.body, despieceDetalleRepository); // Llamamos al caso de uso para actualizar un despiece detalle
+  async actualizarDespieceDetalle(req, res) {
+    try {
+      const despieceDetalleActualizado = await actualizarDespieceDetalle(
+        req.params.id,
+        req.body,
+        despieceDetalleRepository
+      ); // Llamamos al caso de uso para actualizar un despiece detalle
 
-            res.status(despieceDetalleActualizado.codigo).json(despieceDetalleActualizado.respuesta); // Respondemos con el despiece detalle actualizado
-        } catch (error) {
+      res
+        .status(despieceDetalleActualizado.codigo)
+        .json(despieceDetalleActualizado.respuesta); // Respondemos con el despiece detalle actualizado
+    } catch (error) {
+      res.status(500).json({ error: error.message }); // Respondemos con un error
 
-            res.status(500).json({ error: error.message }); // Respondemos con un error
-        }
-    },
+    }
+  },
 
-    async actulizarDespiecePP(req, res) {
+  async eliminarDespieceDetalle(req, res) {
+    try {
+      const despieceDetalleEliminado = await eliminarDespieceDetalle(
+        req.params.id,
+        despieceDetalleRepository
+      ); // Llamamos al caso de uso para eliminar un despiece detalle
+      res
+        .status(despieceDetalleEliminado.codigo)
+        .json(despieceDetalleEliminado.respuesta); // Respondemos con el despiece detalle eliminado
+    } catch (error) {
+      res.status(500).json({ error: error.message }); // Respondemos con un error
+    }
+  },
+
+  async crearVariosDespiecesDetalles(req, res) {
+    try {
+      const variosDespiecesDetalles = await crearVariosDespiecesDetalles(
+        req.body,
+        despieceDetalleRepository
+      ); // Llamamos al caso de uso para eliminar un despiece detalle
+      res
+        .status(variosDespiecesDetalles.codigo)
+        .json(variosDespiecesDetalles.respuesta); // Respondemos con el despiece detalle eliminado
+    } catch (error) {
+      res.status(500).json({ error: error.message }); // Respondemos con un error
+    }
+  },
+  
+  async actualizarDespieceDetalleCotizacion(req, res) {
+    const t = await sequelize.transaction();
+    const cotizacion_id = req.body.cotizacion_id;
+    const nuevo_despiece_detalles = req.body.nuevo_despiece_detalles;
+    try {
+      const response = await actualizarDespieceDetalleCotizacion(
+        cotizacion_id,
+        nuevo_despiece_detalles,
+        despieceDetalleRepository,
+        t
+      );
+      await t.commit();
+      res.status(response.codigo).json(response.respuesta);
+    } catch (error) {
+        console.log(error);
+      await t.rollback();
+      res.status(500).json({ error: error.message });
+    }
+  },
+    
+   async actulizarDespiecePP(req, res) {
         try {
             const idDespiece = Number(req.params.id); 
 
@@ -76,29 +136,7 @@ const DespieceDetalleController = {
             console.error("[CONTROLLER ERROR] actulizarDespiecePP:", error);
             res.status(500).json({ error: error.message });
         }
-    }
-
-    ,
-
-    async eliminarDespieceDetalle(req, res) {
-        try {
-            const despieceDetalleEliminado = await eliminarDespieceDetalle(req.params.id, despieceDetalleRepository); // Llamamos al caso de uso para eliminar un despiece detalle
-            res.status(despieceDetalleEliminado.codigo).json(despieceDetalleEliminado.respuesta); // Respondemos con el despiece detalle eliminado
-        } catch (error) {
-            res.status(500).json({ error: error.message }); // Respondemos con un error
-        }
     },
-
-    async crearVariosDespiecesDetalles(req, res) {
-        try {
-
-            const variosDespiecesDetalles = await crearVariosDespiecesDetalles(req.body, despieceDetalleRepository); // Llamamos al caso de uso para eliminar un despiece detalle
-            res.status(variosDespiecesDetalles.codigo).json(variosDespiecesDetalles.respuesta); // Respondemos con el despiece detalle eliminado
-        } catch (error) {
-            res.status(500).json({ error: error.message }); // Respondemos con un error
-        }
-    }
-
 };
 
 module.exports = DespieceDetalleController; // Exportamos el controlador de despiece detalles

@@ -2,7 +2,7 @@ const db = require("../../../../../database/models");
 const { agruparPorZonaYAtributos } = require("../mapearAtributosDelPdfService");
 const { mapearAtributosValor } = require("../mapearAtributosValorService");
 
-async function generarPdfAndamioFachada({ dataDespiece, tiene_pernos, porcentajeDescuento }) {
+async function generarPdfAndamioFachada({ dataDespiece, tiene_pernos, porcentajeDescuento, transaction = null }) {
   let pernoExpansionConArgolla;
   let pernoExpansionConArgollaEnElDespiece;
 
@@ -11,7 +11,7 @@ async function generarPdfAndamioFachada({ dataDespiece, tiene_pernos, porcentaje
       where: {
         item: "CO.0010",
       },
-    });
+    }, { transaction });
 
     if (pernoExpansionConArgolla) {
      
@@ -21,7 +21,7 @@ async function generarPdfAndamioFachada({ dataDespiece, tiene_pernos, porcentaje
             despiece_id: dataDespiece.id,
             pieza_id: pernoExpansionConArgolla.id,
           },
-        }
+        }, { transaction }
       );
     }
 
@@ -39,7 +39,7 @@ async function generarPdfAndamioFachada({ dataDespiece, tiene_pernos, porcentaje
         as: "atributo",
       },
     ],
-  });
+  }, { transaction });
 
   // Obtener atributos
 
@@ -76,7 +76,7 @@ async function generarPdfAndamioFachada({ dataDespiece, tiene_pernos, porcentaje
           attributes: ["id", "item", "descripcion"],
         },
       ],
-    });
+    }, { transaction });
 
      const piezasDetalleAdicionalesAndamioFachadaConDescuento =
   piezasDetalleAdicionalesAndamioFachada.map((p) => {
@@ -100,35 +100,40 @@ async function generarPdfAndamioFachada({ dataDespiece, tiene_pernos, porcentaje
 
   const puntalEncontrado = await db.piezas.findOne({
     where: { item: "PU.0100"}
-  })
+  }, { transaction });
 
   const piezaPinPresion = await db.piezas.findOne({
     where: { item: "PU.0350" },
-  });
+  }, { transaction });
   const piezaArgolla = await db.piezas.findOne({
     where: { item: "PU.0450" },
-  });
+  }, { transaction });
+
+  console.log({
+    dataDespieceId: dataDespiece.id,
+    puntalEncontradoId: puntalEncontrado.id,
+  })
 
   const puntal = await db.despieces_detalle.findOne({
     where: {
       despiece_id: Number(dataDespiece.id),
       pieza_id: Number(puntalEncontrado.id),
     }
-  })
+  }, { transaction });
 
   const pinPresion = await db.despieces_detalle.findOne({
     where: {
       despiece_id: Number(dataDespiece.id),
       pieza_id: Number(piezaPinPresion.id),
     },
-  });
+  }, { transaction });
 
   const argolla = await db.despieces_detalle.findOne({
     where: {
       despiece_id: Number(dataDespiece.id),
       pieza_id: Number(piezaArgolla.id),
     },
-  });
+  }, { transaction });
 
   const ventaPin = pinPresion
     ? (pinPresion.precio_venta_soles / pinPresion.cantidad).toFixed(2)
@@ -168,13 +173,13 @@ async function generarPdfAndamioFachada({ dataDespiece, tiene_pernos, porcentaje
       puntal: {
         tipo: "3.00 m",
         descripcion: puntalEncontrado?.descripcion,
-        cantidad: puntal?.cantidad,
+        cantidad: puntal?.cantidad || 0,
         subtotal_alquiler_soles: puntal?.precio_alquiler_soles,
         subtotal_venta_soles: puntal?.precio_venta_soles,
         subtotal_venta_dolares: puntal?.precio_venta_dolares,
       },
-      piezaVentaPinPresion: ventaPin,
-      piezaVentaArgolla: ventaArg
+      piezaVentaPinPresion: ventaPin || 0,
+      piezaVentaArgolla: ventaArg || 0
     }
   };
 }

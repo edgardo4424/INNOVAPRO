@@ -6,8 +6,8 @@ class SequelizeTareaRepository {
     return require("../models/tareaModel").Tarea; // Retorna el modelo de cliente
   }
 
-  async crear(tareaData) {
-
+  async crear(tareaData,transaction=null) {
+    
     return await db.tareas.create({
       usuarioId: tareaData.usuarioId,
       empresaProveedoraId: tareaData.empresaProveedoraId,
@@ -21,7 +21,7 @@ class SequelizeTareaRepository {
       usoId: tareaData.usoId,
       atributos_valor_zonas: tareaData.atributos_valor_zonas,
       cotizacionId: tareaData.cotizacionId
-    });
+    },{transaction});
   }
 
   async obtenerTareas(id_mis_tareas) {

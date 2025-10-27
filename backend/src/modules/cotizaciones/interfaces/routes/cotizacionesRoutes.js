@@ -11,8 +11,6 @@ router.post("/generar-pdf", cotizacionController.generarPdfCotizacion);
 router.post("/ot", cotizacionController.crearCotizacionConOT)
 router.get("/:id", cotizacionController.mostrarCotizacionPorId);
 
-// Ruta para solicitar condiciones de alquiler de una cotización 
-router.put("/:id/solicitar-condiciones", cotizacionController.solicitarCondiciones)
 
 /* router.put("/:id", cotizacionController.actualizarCotizacion);
 router.delete("/:id", cotizacionController.eliminarCotizacion); */

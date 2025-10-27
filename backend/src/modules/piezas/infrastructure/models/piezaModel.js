@@ -57,7 +57,11 @@ Pieza.associate = (models) => {
   });
   Pieza.hasMany(models.piezas_usos, {
     foreignKey: "pieza_id",
-});
+  });
+  Pieza.hasOne(models.stock,{
+    foreignKey:"pieza_id",
+    as:"stock"
+  })
 };
 
 module.exports = { Pieza }; // Exporta el modelo para que pueda ser utilizado en otros módulos

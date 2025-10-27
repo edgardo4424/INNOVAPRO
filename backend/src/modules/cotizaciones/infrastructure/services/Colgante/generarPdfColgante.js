@@ -6,6 +6,7 @@ async function generarPdfColgante({
   dataDespiece,
   idDespiece,
   porcentajeDescuento,
+  transaction = null,
 }) {
 
  
@@ -21,7 +22,7 @@ async function generarPdfColgante({
         as: "atributo",
       },
     ],
-  });
+  }, { transaction });
 
   // Obtener atributos
 
@@ -55,7 +56,7 @@ async function generarPdfColgante({
           attributes: ["id", "item", "descripcion"],
         },
       ],
-    });
+    }, { transaction });
 
   const piezasDetalleAdicionalesColganteConDescuento =
   piezasDetalleAdicionalesColgante.map((p) => {

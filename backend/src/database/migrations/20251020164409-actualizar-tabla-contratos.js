@@ -50,7 +50,7 @@ module.exports = {
       type: Sequelize.ENUM(
         'PROGRAMADO',
         'VIGENTE',
-        'POR VENCER',
+        'POR_VENCER',
         'VENCIDO',
         'FIRMADO'
       ),
@@ -58,7 +58,19 @@ module.exports = {
       defaultValue: 'PROGRAMADO',
     });
 
-    // 'Creado' y todo los demas
+    // Estados para validar las condiciones de alquiler, PENDIENTE, CONDICIONES SOLICITADAS, VALIDAR CONDICIONES, CONDICIONES ACEPTADAS
+
+    await queryInterface.addColumn('contratos', 'estado_condiciones', {
+      type: Sequelize.ENUM(
+        'Creado',
+        'Condiciones Solicitadas',
+        'Validando Condiciones',
+        'Condiciones Cumplidas'
+      ),
+      allowNull: false,
+      defaultValue: 'Creado',
+    });
+    
 
     await queryInterface.addColumn('contratos', 'despiece_id', {
       type: Sequelize.INTEGER,
@@ -127,6 +139,17 @@ module.exports = {
       onDelete: 'RESTRICT',
     });
 
+     await queryInterface.addColumn('contratos', 'uso_id', {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'usos',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'RESTRICT',
+    });
+
         await queryInterface.addColumn("contratos", "condiciones_alquiler", {
       type: Sequelize.JSON,
       allowNull: true,
@@ -173,6 +196,8 @@ module.exports = {
       allowNull: true,
     });
 
+    // Remover columnas si es que existen
+    
     await queryInterface.removeColumn('contratos', 'ref_contrato');
     await queryInterface.removeColumn('contratos', 'fecha_inicio');
     await queryInterface.removeColumn('contratos', 'fecha_fin');
@@ -180,7 +205,19 @@ module.exports = {
     await queryInterface.removeColumn('contratos', 'requiere_valo_adelantada');
     await queryInterface.removeColumn('contratos', 'renovaciones');
     await queryInterface.removeColumn('contratos', 'estado');
-   
+    await queryInterface.removeColumn('contratos', 'estado_condiciones');
+    await queryInterface.removeColumn('contratos', 'despiece_id');
+    await queryInterface.removeColumn('contratos', 'contacto_id');
+    await queryInterface.removeColumn('contratos', 'cliente_id');
+    await queryInterface.removeColumn('contratos', 'obra_id');
+    await queryInterface.removeColumn('contratos', 'filial_id');
+    await queryInterface.removeColumn('contratos', 'usuario_id');
+    await queryInterface.removeColumn('contratos', 'uso_id');
+    await queryInterface.removeColumn('contratos', 'condiciones_alquiler');
+    await queryInterface.removeColumn('contratos', 'firmas');
+    await queryInterface.removeColumn('contratos', 'envio');
+
+    
 
   }
 };

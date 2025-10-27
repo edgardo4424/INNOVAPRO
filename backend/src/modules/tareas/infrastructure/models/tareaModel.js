@@ -112,6 +112,10 @@ const Tarea = sequelize.define(
 );
 
 Tarea.associate = (models) => {
+  Tarea.hasMany(models.pases_pedidos,{
+    foreignKey:"tarea_id",
+    as:"pases_pedidos"
+  })
   Tarea.belongsTo(models.usuarios, {
     foreignKey: "usuarioId",
     as: "usuario_solicitante",

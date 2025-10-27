@@ -10,7 +10,7 @@ import {
    validarEmail,
 } from "../../../utils/validaciones";
 
-// 🔍 Validar un campo según tipo de documento
+// Validar un campo según tipo de documento
 function validarDocumento(tipo, valor) {
    switch (tipo) {
       case "DNI":
@@ -24,7 +24,7 @@ function validarDocumento(tipo, valor) {
    }
 }
 
-// 🔎 Validación para Persona Jurídica
+// Validación para Persona Jurídica
 export function validarClienteJuridico(cliente) {
    const errores = {};
 
@@ -59,7 +59,7 @@ export function validarClienteJuridico(cliente) {
    return errores;
 }
 
-// 🔎 Validación para Persona Natural
+// Validación para Persona Natural
 export function validarClienteNatural(cliente) {
    const errores = {};
 

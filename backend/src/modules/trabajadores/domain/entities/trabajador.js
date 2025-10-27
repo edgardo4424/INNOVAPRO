@@ -18,7 +18,8 @@ class Trabajador {
     fecha_nacimiento,
     cuspp_afp,
     estado_civil,
-    ruc
+    ruc,
+    correo
   }) {
     (this.id = id),
       (this.nombres = nombres),
@@ -38,7 +39,8 @@ class Trabajador {
     this.fecha_nacimiento = fecha_nacimiento;
     this.cuspp_afp = cuspp_afp;
     this.estado_civil = estado_civil;
-    this.ruc=ruc
+    this.ruc=ruc;
+    this.correo=correo;
   }
 
   validarCamposObligatorios(editar = false) {
@@ -187,7 +189,8 @@ class Trabajador {
       fecha_nacimiento: this.fecha_nacimiento,
       cuspp_afp: this.cuspp_afp,
       estado_civil: this.estado_civil,
-      ruc:this.ruc
+      ruc:this.ruc,
+      correo:this.correo,
     };
     if (editar) {
       datos.trabajador_id = this.id;

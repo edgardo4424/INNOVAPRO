@@ -103,6 +103,19 @@ export default function EmpresaForm({
                   )}
                </article>
 
+               {/* Dirección */}
+               <article className="">
+                  <Label className="text-neutral-800">Dirección de Almacén *</Label>
+                  <Input
+                     type="text"
+                     value={empresa.direccion_almacen || ""}
+                     onChange={(e) => handleChange("direccion_almacen", e.target.value)}
+                  />
+                  {errores.direccion_almacen && (
+                     <p className="error-message">{errores.direccion_almacen}</p>
+                  )}
+               </article>
+
                {/* Representante Legal */}
                <article className="">
                   <Label className="text-neutral-800">
