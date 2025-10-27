@@ -154,13 +154,30 @@ module.exports = async function registrarTrabajadorConContrato(payload) {
       }
     }
     }
+
+
+
+
+
     const guia_remision = await emitirGuia(payload, facturacionRepository);
     if (
       guia_remision.respuesta.status !== 200 &&
       guia_remision.respuesta.status !== 201
     ) {
-      throw new Error("guia remision no emitida");
+       await t.rollback();
+       console.log(guia_remision.respuesta);
+       
+      return{
+          codigo: 400,
+          respuesta: guia_remision.respuesta,
+      }
     }
+
+
+
+
+
+
     const payload_pedido_guia_update = {
       guia_remision_id: guia_remision.respuesta.data.guia.id,
     };
