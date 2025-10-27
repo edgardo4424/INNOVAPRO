@@ -206,10 +206,10 @@ class SequelizeStockRepository {
         },
         { transaction: t }
       );
-      console.log("MOVIMIENTO DE LA PIEZA CON ID",piezaId);
-      console.log("Movimeinto fijo",move_fijo.get({plain:true}));
-      console.log("Movimeinto disponible",move_disp.get({plain:true}));
-      console.log("Stock",stock.get({plain:true}));
+      // console.log("MOVIMIENTO DE LA PIEZA CON ID",piezaId);
+      // console.log("Movimeinto fijo",move_fijo.get({plain:true}));
+      // console.log("Movimeinto disponible",move_disp.get({plain:true}));
+      // console.log("Stock",stock.get({plain:true}));
       
       
   }

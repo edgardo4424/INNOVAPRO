@@ -30,11 +30,6 @@ const StockPedidoPieza = sequelize.define(
       allowNull: false,
       defaultValue: 0,
     },
-    stock_disponible: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0,
-    },
   },
   {
     tableName: "stock_pedidos_piezas",

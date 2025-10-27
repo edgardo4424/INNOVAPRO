@@ -8,7 +8,6 @@ module.exports=async(id,pasePedidoRepository,transaction=null)=>{
         }
     }
     const pase_pedido=await pasePedidoRepository.obtenerPasePedidoPorId(id,transaction);
-    console.log(pase_pedido);
     
     return{
         codigo:201,

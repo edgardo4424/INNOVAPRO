@@ -1,5 +1,4 @@
 module.exports = async (nuevoStockData, stockRepository,t=null) => {
-    console.log('Se entro al caso de uso');
     
    const { piezaId, cantidad, tipoMovimiento, motivo } = nuevoStockData;
    if (!piezaId || !cantidad || !tipoMovimiento) {
