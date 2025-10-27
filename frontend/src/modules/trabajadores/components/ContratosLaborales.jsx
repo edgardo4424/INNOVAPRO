@@ -317,7 +317,7 @@ const ContratosLaborales = ({
                 )}
               </div>
 
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label>Cargo en la SUNAT *</Label>
                 <Select
                   value={c?.id_cargo_sunat || ""}
@@ -372,7 +372,7 @@ const ContratosLaborales = ({
                     {errors[`contratos_laborales[${i}].id_cargo_sunat`]}
                   </p>
                 )}
-              </div>
+              </div> */}
 
               {/* Tipo de contrato */}
               <div className="space-y-2">

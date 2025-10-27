@@ -70,21 +70,21 @@ filial_id: yup
          })
          .nullable()
          .required("La empresa es obligatorio"),
-    id_cargo_sunat: yup
-         .number()
-         .transform((value, originalValue) => {
-            if (
-               originalValue === "" ||
-               originalValue === null ||
-               originalValue === undefined
-            ) {
-               return null;
-            }
-            const parsed = Number(originalValue);
-            return isNaN(parsed) ? null : parsed;
-         })
-         .nullable()
-         .required("El cargo de la SUNAT es obligatorio"),
+   //  id_cargo_sunat: yup
+   //       .number()
+   //       .transform((value, originalValue) => {
+   //          if (
+   //             originalValue === "" ||
+   //             originalValue === null ||
+   //             originalValue === undefined
+   //          ) {
+   //             return null;
+   //          }
+   //          const parsed = Number(originalValue);
+   //          return isNaN(parsed) ? null : parsed;
+   //       })
+   //       .nullable()
+   //       .required("El cargo de la SUNAT es obligatorio"),
 });
 
 export const trabajadorSchema = (isEdit = false, isGerente = false) =>

@@ -29,6 +29,7 @@ const BandejaRoutes = () => {
                 "Gerente de administración",
                 "Asistente Facturación",
                 "Contadora",
+                "Facturación",
               ]}
             />
           }
@@ -49,6 +50,7 @@ const BandejaRoutes = () => {
                 "Gerente de administración",
                 "Asistente Facturación",
                 "Contadora",
+                "Facturación"
               ]}
             />
           }
@@ -69,6 +71,7 @@ const BandejaRoutes = () => {
                 "Jefa de Almacén",
                 "Contadora",
                 "Asistente Facturación",
+                "Facturación"
               ]}
             />
           }

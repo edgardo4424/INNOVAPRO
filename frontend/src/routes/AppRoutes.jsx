@@ -242,7 +242,7 @@ export default function AppRoutes() {
                      {/*    //************************INICIO-FACTURACION************************* */}
 
 
-                     <Route element={<RoleGuard roles={["CEO", "Gerente de administración","Jefa de Almacén","Asistente Facturación","Contadora"]} />}>
+                     <Route element={<RoleGuard roles={["CEO", "Gerente de administración","Jefa de Almacén","Asistente Facturación","Contadora","Facturación"]} />}>
 
                         <Route
                            path="facturacion/emitir/*"
@@ -265,7 +265,7 @@ export default function AppRoutes() {
                                  }
                         />
 
-                        <Route element={<RoleGuard roles={["CEO", "Gerente de administración","Asistente Facturación","Contadora"]} />}>
+                        <Route element={<RoleGuard roles={["CEO", "Gerente de administración","Asistente Facturación","Contadora","Facturación"]} />}>
 
                            <Route
                            path="facturacion/borradores"
