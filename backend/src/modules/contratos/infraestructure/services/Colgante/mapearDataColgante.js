@@ -1,5 +1,5 @@
 
- function mapearDataColgante({ pdfCotizacionDataSnapshot, contrato, respuesta }) {
+ function mapearDataColgante({ pdfCotizacionDataSnapshot, respuesta }) {
 
   console.log('pdfCotizacionDataSnapshot', pdfCotizacionDataSnapshot);
   respuesta.atributos_opcionales = {
@@ -9,7 +9,6 @@
         } : {}
     };
   
-  console.log("respuesta en mapearDataColgante:", respuesta);
   return respuesta;
 }
 

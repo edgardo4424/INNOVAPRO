@@ -109,6 +109,11 @@ async function generarPdfAndamioFachada({ dataDespiece, tiene_pernos, porcentaje
     where: { item: "PU.0450" },
   }, { transaction });
 
+  console.log({
+    dataDespieceId: dataDespiece.id,
+    puntalEncontradoId: puntalEncontrado.id,
+  })
+
   const puntal = await db.despieces_detalle.findOne({
     where: {
       despiece_id: Number(dataDespiece.id),
@@ -168,13 +173,13 @@ async function generarPdfAndamioFachada({ dataDespiece, tiene_pernos, porcentaje
       puntal: {
         tipo: "3.00 m",
         descripcion: puntalEncontrado?.descripcion,
-        cantidad: puntal?.cantidad,
+        cantidad: puntal?.cantidad || 0,
         subtotal_alquiler_soles: puntal?.precio_alquiler_soles,
         subtotal_venta_soles: puntal?.precio_venta_soles,
         subtotal_venta_dolares: puntal?.precio_venta_dolares,
       },
-      piezaVentaPinPresion: ventaPin,
-      piezaVentaArgolla: ventaArg
+      piezaVentaPinPresion: ventaPin || 0,
+      piezaVentaArgolla: ventaArg || 0
     }
   };
 }

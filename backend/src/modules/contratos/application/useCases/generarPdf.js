@@ -2,6 +2,10 @@ const {
   mapearDataColgante
 } = require("../../infraestructure/services/Colgante/mapearDataColgante");
 const db = require("../../../../database/models"); // Llamamos los modelos sequelize de la base de datos
+const { mapearDataAndamioFachada } = require("../../infraestructure/services/AndamioFachada/mapearDataAndamioFachada");
+const { mapearDataAndamioTrabajo } = require("../../infraestructure/services/AndamioTrabajo/mapearDataAndamioTrabajo");
+const { mapearDataEscaleraAcceso } = require("../../infraestructure/services/EscaleraAcceso/mapearDataEscaleraAcceso");
+const { mapearDataEscuadrasConPlataformas } = require("../../infraestructure/services/EscuadrasConPlataformas/mapearDataEscuadrasConPlataformas");
 
 module.exports = async (
   contrato_id,
@@ -13,7 +17,6 @@ module.exports = async (
     transaction
   ); // Llama al método del repositorio para obtener el contrato por ID
 
-  console.log("contrato", contrato);
   if (!contrato) {
     return {
       codigo: 404,
@@ -52,12 +55,13 @@ module.exports = async (
     pdfCotizacionDataSnapshot = {};
   }
 
-  console.log('pdfCotizacionDataSnapshot', pdfCotizacionDataSnapshot);
-
   let respuesta = {
     activadores: {
       esAE: false, //Es COLGANTE (Andamio Electrico)
-      esAF: false,
+      esAF: false, //Es ANDAMIO DE FACHADA
+      esAT: false, //Es ANDAMIO DE TRABAJO
+      esEA: false, //Es ESCALERA DE ACCESO
+      esEC: false, //Es ESCUADRA CON PLATAFORMAS
     },
     uso: pdfCotizacionDataSnapshot.uso,
     obra: pdfCotizacionDataSnapshot.obra,
@@ -66,6 +70,7 @@ module.exports = async (
     usuario: pdfCotizacionDataSnapshot.usuario,
     contacto: pdfCotizacionDataSnapshot.contacto,
     cotizacion: pdfCotizacionDataSnapshot.cotizacion,
+    equipos: pdfCotizacionDataSnapshot?.zonas || [],
     instalacion: {
         tiene_instalacion: pdfCotizacionDataSnapshot.instalacion?.tiene_instalacion || false,
         data: pdfCotizacionDataSnapshot.instalacion?.tiene_instalacion ? {
@@ -89,15 +94,23 @@ module.exports = async (
   switch (contrato.uso_id + "") {
     case "1":
       // Anadamio de fachada
+      respuesta.activadores.esAF = true;
+      respuesta = mapearDataAndamioFachada({ pdfCotizacionDataSnapshot, respuesta });
       break;
     case "2":
       // Andamio de trabajo
+      respuesta.activadores.esAT = true;
+      respuesta = mapearDataAndamioTrabajo({ pdfCotizacionDataSnapshot, respuesta });
       break;
     case "3":
       // Escalera de acceso
+      respuesta.activadores.esEA = true;
+      respuesta = mapearDataEscaleraAcceso({ pdfCotizacionDataSnapshot, respuesta });
       break;
     case "4":
       // Escuadras con plataforma
+      respuesta.activadores.esEC = true;
+      respuesta = mapearDataEscuadrasConPlataformas({ pdfCotizacionDataSnapshot, respuesta });
       break;
     case "5":
       // Puntales
@@ -111,7 +124,7 @@ module.exports = async (
     case "8":
       // Colgante
       respuesta.activadores.esAE = true;
-      respuesta = mapearDataColgante({ pdfCotizacionDataSnapshot, contrato, respuesta });
+      respuesta = mapearDataColgante({ pdfCotizacionDataSnapshot, respuesta });
       break;
     case "9":
       // Elevador
