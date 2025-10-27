@@ -11,14 +11,13 @@ import {
   FileText,
   Hand,
   MapPin,
-  RotateCcw,
+  PackagePlus,
   Unlock,
   User,
-  Warehouse,
   Wrench,
   X,
 } from "lucide-react";
-import { Fragment, use, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 
 import {
   AlertDialog,
@@ -28,12 +27,15 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "react-toastify";
+import centroAtencionService from "../services/centroAtencionService";
 import { DetallesEspecificos } from "./DetallesEspecificos";
 import DespieceOT from "./despiece-ot/DespieceOT";
 import ImportadorDespiece from "./despiece-ot/ImportadorDespiece";
-import ModalValidarStock from "./modal/ModalValidarStock";
-import ModalReabrirTarea from "./modal/ModalReabrirTarea";
 import ModalDevolverTarea from "./modal/ModalDevolverTarea";
+import ModalListarPiezas from "./modal/ModalListarPiezas";
+import ModalReabrirTarea from "./modal/ModalReabrirTarea";
+import ModalValidarStock from "./modal/ModalValidarStock";
+import NuevoDespiezePasePedido from "./pase-pedidos/NuevoDespiezePasePedido";
 export default function DetalleTarea({
   tarea,
   onCerrar,
@@ -47,7 +49,6 @@ export default function DetalleTarea({
   const [mostrarDespiece, setMostrarDespiece] = useState(false);
   const [respuestas, setRespuestas] = useState(null);
 
-  const [componenteRenderPedido, setComponenteRenderPedido] = useState(null);
   const [open, setOpen] = useState(false);
 
   const [openReabrirTarea, setOpenReabrirTarea] = useState(false);
@@ -60,6 +61,13 @@ export default function DetalleTarea({
     ResumenDespiece: {},
   });
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+
+  // ?? Valores para Pase de Pedido
+  const [verPiezasCotizacion, setVerPiezasCotizacion] = useState(false);
+  const [openListaPiezas, setOpenListaPiezas] = useState(false);
+  const [componenteRenderPedido, setComponenteRenderPedido] = useState(null);
+  const [actNuevoDespieze, setActNuevoDespiece] = useState(false);
+  const [idDespiece, setIdDespiece] = useState(null);
 
   const puedeGenerarDespiece =
     (user?.rol === "Jefe de OT" || user?.rol === "OT") &&
@@ -90,12 +98,20 @@ export default function DetalleTarea({
         <ModalValidarStock
           open={open}
           setOpen={setOpen}
-          cotizacion_id={tarea?.detalles?.cotizacion_id}
+          cotizacion_id={tarea?.cotizacionId}
           content={tarea?.detalles}
         />
       ),
       "Modificación de plano": <p>Componente para Modificación de plano</p>,
-      "Nuevo Despiece": <p>Componente para Nuevo Despiece</p>,
+      "Nuevo Despiece": (
+        <Button
+          onClick={() => setActNuevoDespiece(!actNuevoDespieze)}
+          className="cursor-pointer bg-green-500 duration-300 hover:scale-105 hover:bg-green-600"
+        >
+          <PackagePlus />
+          <span className="hidden md:block">Nuevo Despiece</span>
+        </Button>
+      ),
       Otro: <p>Componente genérico</p>,
     };
 
@@ -103,6 +119,29 @@ export default function DetalleTarea({
       componentes[tarea.detalles.tipoSolicitud] || null,
     );
   }, [tarea?.detalles, open]);
+
+  const ObtenerIdDespiece = async () => {
+    const { despiece_id } = await centroAtencionService.obtenerCotizacion(
+      tarea?.cotizacionId,
+    );
+
+    console.log(despiece_id);
+
+    setIdDespiece(despiece_id);
+  };
+
+  useEffect(() => {
+    if (tarea?.cotizacionId !== null) {
+      setVerPiezasCotizacion(true);
+      ObtenerIdDespiece();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (actNuevoDespieze) {
+      setOpenListaPiezas(true);
+    }
+  }, [actNuevoDespieze]);
 
   return (
     <div className="centro-modal">
@@ -127,7 +166,7 @@ export default function DetalleTarea({
           </Button>
         </section>
 
-        <div className="flex-1 space-y-6 overflow-y-auto rounded-b-lg bg-white p-6">
+        <div className="scroll-hide flex-1 space-y-6 overflow-y-auto rounded-b-lg bg-white p-6">
           {/* Información Principal */}
           <div className="grid gap-6 md:grid-cols-2">
             <Card className="gap-0 border-l-4 border-l-[#061a5b]">
@@ -298,6 +337,24 @@ export default function DetalleTarea({
             </div>
           )}
 
+          {/* //? Sección Pase de Pedido - Listar Piezas de cotización */}
+          {verPiezasCotizacion && (
+            <ModalListarPiezas
+              open={openListaPiezas}
+              setOpen={setOpenListaPiezas}
+              cotizacion_id={tarea?.cotizacionId}
+            />
+          )}
+
+          {/* //? Sección Despiece - Pase de Pedido */}
+          {actNuevoDespieze && (
+            <NuevoDespiezePasePedido
+              idDespiece={idDespiece}
+              id_cotizacion={tarea?.cotizacionId}
+              setActNuevoDespiece={setActNuevoDespiece}
+            />
+          )}
+
           {/* Sección Despiece */}
           {mostrarDespiece ? (
             <>
@@ -307,6 +364,7 @@ export default function DetalleTarea({
                   formData={formData}
                   setFormData={setFormData}
                 />
+                +
                 <DespieceOT
                   tarea={tarea}
                   formData={formData}
@@ -359,6 +417,7 @@ export default function DetalleTarea({
                             precio_alquiler_soles: p.precio_alquiler_soles,
                           })),
                         };
+                        console.log("Piezas:", payload);
                         const response = await crearDespieceOT(payload);
                         toast.success("Despiece guardado correctamente");
                         setMostrarConfirmacion(false);

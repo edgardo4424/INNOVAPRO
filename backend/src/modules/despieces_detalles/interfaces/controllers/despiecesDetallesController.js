@@ -5,15 +5,16 @@ const obtenerDespiecesDetalle = require('../../application/useCases/obtenerDespi
 const obtenerDespieceDetallePorId = require('../../application/useCases/obtenerDespiecesDetallesPorId'); // Importamos el caso de uso para obtener un despiece detalle por ID
 const actualizarDespieceDetalle = require('../../application/useCases/actualizarDespiecesDetalles'); // Importamos el caso de uso para actualizar un despiece detalle
 const eliminarDespieceDetalle = require('../../application/useCases/eliminarDespiecesDetalles'); // Importamos el caso de uso para eliminar un despiece detalle
-const crearVariosDespiecesDetalles = require('../../application/useCases/crearVariosDespiecesDetalles')
+const crearVariosDespiecesDetalles = require('../../application/useCases/crearVariosDespiecesDetalles');
+const actulizarDespiecePP = require('../../application/useCases/actulizarDespiecePP');
 
 const despieceDetalleRepository = new sequelizeDespieceDetalleRepository(); // Instancia del repositorio de despiece detalles
 
 const DespieceDetalleController = {
     async crearDespieceDetalle(req, res) {
         try {
-            const nuevoDespieceDetalle = await crearDespieceDetalle(req.body, despieceDetalleRepository ); // Llamamos al caso de uso para crear un despiece detalle
-           
+            const nuevoDespieceDetalle = await crearDespieceDetalle(req.body, despieceDetalleRepository); // Llamamos al caso de uso para crear un despiece detalle
+
             res.status(nuevoDespieceDetalle.codigo).json(nuevoDespieceDetalle.respuesta); // Respondemos con el despiece detalle creado
         } catch (error) {
             console.log('error', error);
@@ -24,7 +25,7 @@ const DespieceDetalleController = {
     async obtenerDespiecesDetalle(req, res) {
         try {
             const despieces_detalle = await obtenerDespiecesDetalle(despieceDetalleRepository); // Llamamos al caso de uso para obtener todos los despieces detalles
-           
+
             res.status(200).json(despieces_detalle.respuesta); // 🔥 Siempre devuelve un array, aunque esté vacío
         } catch (error) {
             res.status(500).json({ error: error.message }); // Respondemos con un error
@@ -43,13 +44,41 @@ const DespieceDetalleController = {
     async actualizarDespieceDetalle(req, res) {
         try {
             const despieceDetalleActualizado = await actualizarDespieceDetalle(req.params.id, req.body, despieceDetalleRepository); // Llamamos al caso de uso para actualizar un despiece detalle
-            
+
             res.status(despieceDetalleActualizado.codigo).json(despieceDetalleActualizado.respuesta); // Respondemos con el despiece detalle actualizado
         } catch (error) {
-            
+
             res.status(500).json({ error: error.message }); // Respondemos con un error
         }
     },
+
+    async actulizarDespiecePP(req, res) {
+        try {
+            const idDespiece = Number(req.params.id); 
+
+            if (!idDespiece) {
+                return res.status(400).json({ error: "ID de despiece inválido o ausente" });
+            }
+
+            const { despiece } = req.body;
+            if (!Array.isArray(despiece) || despiece.length === 0) {
+                return res.status(400).json({ error: "Lista de piezas vacía o inválida" });
+            }
+
+            const { status, respuesta } = await actulizarDespiecePP(
+                idDespiece,
+                despiece,
+                despieceDetalleRepository
+            );
+
+            res.status(status).json(respuesta);
+        } catch (error) {
+            console.error("[CONTROLLER ERROR] actulizarDespiecePP:", error);
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    ,
 
     async eliminarDespieceDetalle(req, res) {
         try {
@@ -62,7 +91,7 @@ const DespieceDetalleController = {
 
     async crearVariosDespiecesDetalles(req, res) {
         try {
-            
+
             const variosDespiecesDetalles = await crearVariosDespiecesDetalles(req.body, despieceDetalleRepository); // Llamamos al caso de uso para eliminar un despiece detalle
             res.status(variosDespiecesDetalles.codigo).json(variosDespiecesDetalles.respuesta); // Respondemos con el despiece detalle eliminado
         } catch (error) {

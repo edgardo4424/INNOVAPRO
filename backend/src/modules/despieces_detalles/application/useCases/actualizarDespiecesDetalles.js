@@ -9,6 +9,6 @@ module.exports = async (id, despiecesDetallesData, despiecesDetallesRepository) 
 
     const despiecesDetallesActualizada = await despiecesDetallesRepository.actualizarDespieceDetalle(id, despiecesDetallesData)
 
-   return { codigo: 200, respuesta: { mensaje: "Despieces Detalles actualizado correctamente", despieces_detalles: despiecesDetallesActualizada } } // Retornamos el cliente creado
+   return { codigo: 200, respuesta: { mensaje: "Despieces Detalles actualizado correctamente", despieces_detalles: despiecesDetallesActualizada, status: 200 } } // Retornamos el cliente creado
 
 } // Exporta la función para que pueda ser utilizada en otros módulos

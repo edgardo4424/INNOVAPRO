@@ -103,19 +103,19 @@ const FormNuevaTarea = ({
           </Select>
         </div> */}
 
-          {/* Referencia de Proyecto/Pedido */}
-          <div className="space-y-2">
-            <Label htmlFor="ref_pedido" className="font-semibold  text-gray-700">
-              * Referencia de Proyecto / Pedido
-            </Label>
-            <Input
-              type="text"
-              id="ref_pedido"
-              value={obra}
-              readOnly
-              placeholder="Ej: PRJ-2025-001 / P-2025-543"
-            />
-          </div>
+        {/* Referencia de Proyecto/Pedido */}
+        <div className="space-y-2">
+          <Label htmlFor="ref_pedido" className="font-semibold text-gray-700">
+            * Referencia de Proyecto / Pedido
+          </Label>
+          <Input
+            type="text"
+            id="ref_pedido"
+            value={obra}
+            readOnly
+            placeholder="Ej: PRJ-2025-001 / P-2025-543"
+          />
+        </div>
       </div>
 
       <hr className="my-6" />
@@ -152,6 +152,7 @@ const FormNuevaTarea = ({
             value={estadoPasePedido}
             readOnly
             placeholder="Ej: PRJ-2025-001 / P-2025-543"
+            className={"uppercase"}
           />
         </div>
 
@@ -168,6 +169,7 @@ const FormNuevaTarea = ({
             readOnly
             id="version_contrato"
             placeholder="0021_31"
+            className={"uppercase"}
           />
         </div>
       </div>

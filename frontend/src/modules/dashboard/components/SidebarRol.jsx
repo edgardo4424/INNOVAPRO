@@ -309,6 +309,12 @@ const modulesByRole = {
             { name: "Lista de guías", path: "/facturacion/bandeja/guia-remision?page=1&limit=10" },
          ],
       },
+      { group: "Pase Pedidos", 
+         items: [
+            { name: "Pedidos Tv", path: "pedidos/pedidos-tv" },
+            { name: "Pase Pedidos", path: "pedidos/pase-pedidos" },
+         ]
+       },
       { name: "Asistencia",path: "/asistencia-area"},
 
 
@@ -322,6 +328,12 @@ const modulesByRole = {
             { name: "Transportistas", path: "/transporte/transportistas" },
          ],
       },
+      { group: "Pase Pedidos", 
+         items: [
+            { name: "Pedidos Tv", path: "pedidos/pedidos-tv" },
+            { name: "Pase Pedidos", path: "pedidos/pase-pedidos" },
+         ]
+       },
       {
          group: "Emitir Guía",
          items: [

@@ -1,9 +1,7 @@
 import { calcularResumen } from "../../hooks/useDespieceManualOT";
 
 export default function ResumenDespieceManual({ despiece = [], resumen = {} }) {
-  if (!Array.isArray(despiece) || despiece.length === 0 || !resumen) {
-    return <p>No se pudo generar el despiece correctamente.</p>;
-  }
+
 
   const formatear = (valor) => {
     const num = parseFloat(valor);

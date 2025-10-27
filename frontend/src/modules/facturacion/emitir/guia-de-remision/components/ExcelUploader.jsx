@@ -130,7 +130,7 @@ const ExcelUploader = ({ onDataLoaded, handleSubirDatos }) => {
     };
 
     return (
-        <div className="w-full max-w-sm">
+        <div className="w-full ">
             <div className="mb-3">
                 <h3 className="text-base font-semibold text-gray-800 mb-1">
                     Cargar desde Excel
@@ -218,7 +218,7 @@ const ExcelUploader = ({ onDataLoaded, handleSubirDatos }) => {
                             </div>
                         </div>
                     )}
-                    <div className="flex gap-x-4">
+                    <div className="flex py-2  gap-x-4">
 
                         <ModalVistaPrevia items={previewData} handleSubirDatos={handleSubirClick} />
 

@@ -19,9 +19,10 @@ const PedidosRoutes = () => {
             <RoleGuard
               roles={[
                 "CEO",
+                "Técnico Comercial",
                 "Gerente de administración",
-                "Contadora",
-                "Asistente Facturación",
+                "Jefa de Almacén",
+                "Auxiliar de oficina",
               ]}
             />
           }
@@ -42,10 +43,10 @@ const PedidosRoutes = () => {
             <RoleGuard
               roles={[
                 "CEO",
-                "Gerente de administración",
-                "Contadora",
-                "Asistente Facturación",
                 "Técnico Comercial",
+                "Gerente de administración",
+                "Jefa de Almacén",
+                "Auxiliar de oficina",
               ]}
             />
           }

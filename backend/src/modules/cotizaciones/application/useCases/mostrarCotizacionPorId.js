@@ -34,6 +34,7 @@ module.exports = async (id, cotizacionRepository) => {
         }
     ]
   }); 
+  console.log('cotizacion', cotizacion.despiece_id);
 
   if (!cotizacion)
     return { codigo: 404, respuesta: { mensaje: "Cotizacion no encontrado" } }; // Si no se encuentra el cotizacion, retorna un error 404
@@ -133,6 +134,7 @@ module.exports = async (id, cotizacionRepository) => {
     uso_id: cotizacion.uso_id,
     uso_nombre: cotizacion.uso.descripcion,
     zonas: atributosDelUso,
+    despiece_id: cotizacion.despiece_id,
     despiece: despieceFormateado,
     cotizacion: dataCotizacion,
   };
