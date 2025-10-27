@@ -1,8 +1,113 @@
-import { useState } from "react";
-import CardPedido from "../card/CardPedido";
+import React, { useEffect, useState } from "react";
 import { Clock, Archive, Package } from "lucide-react";
+import CardPedido from "../card/CardPedido";
 
 const pedidosConfirmados = [
+  {
+    id: 1,
+    contrato_id: 1,
+    contrato_nombre: "Contrato A",
+    filial: "22235154875",
+    razon_social: "Encofrados Innova S.a.C.",
+    cliente_ruc: "20602860338",
+    cliente_razon_social: "Deister Software Peru S.a.C.",
+    pedido_guia_id: null,
+    guia_nro: null,
+    estado: "Confirmado",
+    fecha_confirmacion: new Date(),
+    fecha_despacho: null,
+    despachado: false,
+  },
+  {
+    id: 1,
+    contrato_id: 1,
+    contrato_nombre: "Contrato A",
+    filial: "22235154875",
+    razon_social: "Encofrados Innova S.a.C.",
+    cliente_ruc: "20602860338",
+    cliente_razon_social: "Deister Software Peru S.a.C.",
+    pedido_guia_id: null,
+    guia_nro: null,
+    estado: "Confirmado",
+    fecha_confirmacion: new Date(),
+    fecha_despacho: null,
+    despachado: false,
+  },
+  {
+    id: 1,
+    contrato_id: 1,
+    contrato_nombre: "Contrato A",
+    filial: "22235154875",
+    razon_social: "Encofrados Innova S.a.C.",
+    cliente_ruc: "20602860338",
+    cliente_razon_social: "Deister Software Peru S.a.C.",
+    pedido_guia_id: null,
+    guia_nro: null,
+    estado: "Confirmado",
+    fecha_confirmacion: new Date(),
+    fecha_despacho: null,
+    despachado: false,
+  },
+  {
+    id: 1,
+    contrato_id: 1,
+    contrato_nombre: "Contrato A",
+    filial: "22235154875",
+    razon_social: "Encofrados Innova S.a.C.",
+    cliente_ruc: "20602860338",
+    cliente_razon_social: "Deister Software Peru S.a.C.",
+    pedido_guia_id: null,
+    guia_nro: null,
+    estado: "Confirmado",
+    fecha_confirmacion: new Date(),
+    fecha_despacho: null,
+    despachado: false,
+  },
+  {
+    id: 1,
+    contrato_id: 1,
+    contrato_nombre: "Contrato A",
+    filial: "22235154875",
+    razon_social: "Encofrados Innova S.a.C.",
+    cliente_ruc: "20602860338",
+    cliente_razon_social: "Deister Software Peru S.a.C.",
+    pedido_guia_id: null,
+    guia_nro: null,
+    estado: "Confirmado",
+    fecha_confirmacion: new Date(),
+    fecha_despacho: null,
+    despachado: false,
+  },
+  {
+    id: 1,
+    contrato_id: 1,
+    contrato_nombre: "Contrato A",
+    filial: "22235154875",
+    razon_social: "Encofrados Innova S.a.C.",
+    cliente_ruc: "20602860338",
+    cliente_razon_social: "Deister Software Peru S.a.C.",
+    pedido_guia_id: null,
+    guia_nro: null,
+    estado: "Confirmado",
+    fecha_confirmacion: new Date(),
+    fecha_despacho: null,
+    despachado: false,
+  },
+  {
+    id: 1,
+    contrato_id: 1,
+    contrato_nombre: "Contrato A",
+    filial: "22235154875",
+    razon_social: "Encofrados Innova S.a.C.",
+    cliente_ruc: "20602860338",
+    cliente_razon_social: "Deister Software Peru S.a.C.",
+    pedido_guia_id: null,
+    guia_nro: null,
+    estado: "Confirmado",
+    fecha_confirmacion: new Date(),
+    fecha_despacho: null,
+    despachado: false,
+  },
   {
     id: 1,
     contrato_id: 1,
@@ -28,7 +133,8 @@ const pedidosAlmacen = [
     filial: "22235154875",
     razon_social: "Encofrados Innova S.a.C.",
     cliente_ruc: "22235154875",
-    cliente_razon_social: "Stefanini It Solutions Peru Sociedad Anonima Cerrada",
+    cliente_razon_social:
+      "Stefanini It Solutions Peru Sociedad Anonima Cerrada",
     pedido_guia_id: 1,
     guia_nro: "T005-00000006",
     estado: "Emitido",
@@ -70,16 +176,22 @@ const pedidosDespachados = [
     despachado: true,
   },
 ];
-
 const ContentPedidosTv = () => {
-  // Manejo unificado de los estados
   const [pedidos, setPedidos] = useState({
-    Confirmadas: pedidosConfirmados,
-    Almacen: pedidosAlmacen,
-    Despachados: pedidosDespachados,
+    Confirmadas: pedidosConfirmados || [],
+    Almacen: pedidosAlmacen || [],
+    Despachados: pedidosDespachados || [],
   });
 
-  // Configuración de las columnas para renderizado dinámico
+  // ✅ Se actualiza cada vez que cambian las props
+  useEffect(() => {
+    setPedidos({
+      Confirmadas: pedidosConfirmados || [],
+      Almacen: pedidosAlmacen || [],
+      Despachados: pedidosDespachados || [],
+    });
+  }, [pedidosConfirmados, pedidosAlmacen, pedidosDespachados]);
+
   const COLUMNAS = [
     {
       title: "Confirmado",
@@ -105,34 +217,33 @@ const ContentPedidosTv = () => {
   ];
 
   return (
-    <div className="font-mulish grid min-h-[70vh] grid-cols-1 md:grid-cols-3">
+    <div className="font-mulish grid min-h-[70vh] grid-cols-1 gap-[1px] bg-slate-900 md:grid-cols-3">
       {COLUMNAS.map((columna) => (
         <div
           key={columna.key}
-          className={`border-t-6 ${columna.key !== "Despachados" && "border-r-2 border-r-gray-300" } bg-white ${columna.borderColor} flex h-full flex-col`}
+          className={`border-t-6 ${columna.key !== "Despachados" && "border-r-2 border-r-slate-700"} bg-slate-800 ${columna.borderColor} flex h-full flex-col`}
         >
-          {/* Encabezado de la Columna */}
-          <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-xl border-b border-gray-100 bg-gray-50/50 p-4">
+          {/* Encabezado de columna */}
+          <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-700 bg-slate-900/80 p-4 backdrop-blur-md">
             <div className="flex items-center space-x-2">
-              <columna.icon className="h-5 w-5 text-gray-500" />
-              <h2 className="text-xl font-bold tracking-tight text-gray-800">
+              <columna.icon className="h-5 w-5 text-slate-400" />
+              <h2 className="text-lg font-semibold tracking-tight !text-slate-100">
                 {columna.title}
               </h2>
             </div>
-            {/* Contador de pedidos en la columna */}
-            <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-gray-200 text-xs font-semibold text-gray-600">
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-700 text-xs font-semibold text-slate-200">
               {columna.list.length}
             </span>
           </div>
 
-          {/* Contenedor de las Tarjetas (Scrollable) */}
-          <div className="custom-scrollbar flex flex-grow flex-col gap-y-4 overflow-y-auto p-3">
+          {/* Contenido */}
+          <div className="scroll-hide flex max-h-[80vh] flex-grow flex-col gap-y-3 overflow-y-auto p-3">
             {columna.list.length > 0 ? (
               columna.list.map((pedido) => (
                 <CardPedido key={pedido.id} pedido={pedido} />
               ))
             ) : (
-              <div className="p-8 text-center text-gray-400 italic">
+              <div className="p-8 text-center text-slate-500 italic">
                 No hay pedidos en esta etapa.
               </div>
             )}

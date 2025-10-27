@@ -87,7 +87,6 @@ const iconMap = {
    "Asistencia general":Building,
    "Pase Pedidos":Shuffle,
    "Emitir Guía":ReceiptText,
-
    "Beneficios":HeartHandshake,
    "Retenciones":FileMinus,
    "Planilla":ClipboardList 
@@ -190,6 +189,7 @@ const modulesByRole = {
       { name: "Registrar Tarea", path: "/registrar-tarea" },
       { name: "Centro de Atención", path: "/centro-atencion" },
       { name: "Cotizaciones", path: "/cotizaciones" },
+      { name: "Pase Pedidos", path: "/pedidos/pase-pedidos" },
       { name: "Registrar Cotización", path: "/cotizaciones/registrar" },
       { name: "Contratos", path: "/contratos" },
       { name: "Registrar Contrato", path: "/contratos/registrar" },
@@ -306,6 +306,7 @@ const modulesByRole = {
       },
    ],
    "Jefa de Almacén":[
+      { name: "Centro de Atención", path: "/centro-atencion" },
       {
          group: "Gestión de Transporte",
          items: [
@@ -320,11 +321,18 @@ const modulesByRole = {
             { name: "Lista de guías", path: "/facturacion/bandeja/guia-remision?page=1&limit=10" },
          ],
       },
+      { group: "Pase Pedidos", 
+         items: [
+            { name: "Pedidos Tv", path: "pedidos/pedidos-tv" },
+            { name: "Pase Pedidos", path: "pedidos/pase-pedidos" },
+         ]
+       },
       { name: "Asistencia",path: "/asistencia-area"},
 
 
    ],
       "Auxiliar de oficina":[
+      { name: "Centro de Atención", path: "/centro-atencion" },
       {
          group: "Gestión de Transporte",
          items: [
@@ -332,6 +340,12 @@ const modulesByRole = {
             { name: "Transportistas", path: "/transporte/transportistas" },
          ],
       },
+      { group: "Pase Pedidos", 
+         items: [
+            { name: "Pedidos Tv", path: "pedidos/pedidos-tv" },
+            { name: "Pase Pedidos", path: "pedidos/pase-pedidos" },
+         ]
+       },
       {
          group: "Emitir Guía",
          items: [

@@ -26,7 +26,6 @@ const guiaRemisionRepository = new SequelizeGuiaRemisionRepository()
 const borradorRepository = new sequelizeBorradorRespository()
 
 
-
 const factilizaController = {
 
     async verificarEstadoSunat(req, res) {

@@ -9,37 +9,31 @@ const actualizarDespieceDetalle = require("../../application/useCases/actualizar
 const eliminarDespieceDetalle = require("../../application/useCases/eliminarDespiecesDetalles"); // Importamos el caso de uso para eliminar un despiece detalle
 const crearVariosDespiecesDetalles = require("../../application/useCases/crearVariosDespiecesDetalles");
 const actualizarDespieceDetalleCotizacion = require("../../application/useCases/actualizarDespieceDetalleCotizacion");
+const actulizarDespiecePP = require('../../application/useCases/actulizarDespiecePP');
 
 const despieceDetalleRepository = new sequelizeDespieceDetalleRepository(); // Instancia del repositorio de despiece detalles
 
 const DespieceDetalleController = {
-  async crearDespieceDetalle(req, res) {
-    try {
-      const nuevoDespieceDetalle = await crearDespieceDetalle(
-        req.body,
-        despieceDetalleRepository
-      ); // Llamamos al caso de uso para crear un despiece detalle
+    async crearDespieceDetalle(req, res) {
+        try {
+            const nuevoDespieceDetalle = await crearDespieceDetalle(req.body, despieceDetalleRepository); // Llamamos al caso de uso para crear un despiece detalle
 
-      res
-        .status(nuevoDespieceDetalle.codigo)
-        .json(nuevoDespieceDetalle.respuesta); // Respondemos con el despiece detalle creado
-    } catch (error) {
-      console.log("error", error);
-      res.status(500).json({ error: error.message }); // Respondemos con un error
-    }
-  },
+            res.status(nuevoDespieceDetalle.codigo).json(nuevoDespieceDetalle.respuesta); // Respondemos con el despiece detalle creado
+        } catch (error) {
+            console.log('error', error);
+            res.status(500).json({ error: error.message }); // Respondemos con un error
+        }
+    },
 
-  async obtenerDespiecesDetalle(req, res) {
-    try {
-      const despieces_detalle = await obtenerDespiecesDetalle(
-        despieceDetalleRepository
-      ); // Llamamos al caso de uso para obtener todos los despieces detalles
+    async obtenerDespiecesDetalle(req, res) {
+        try {
+            const despieces_detalle = await obtenerDespiecesDetalle(despieceDetalleRepository); // Llamamos al caso de uso para obtener todos los despieces detalles
 
-      res.status(200).json(despieces_detalle.respuesta); // 🔥 Siempre devuelve un array, aunque esté vacío
-    } catch (error) {
-      res.status(500).json({ error: error.message }); // Respondemos con un error
-    }
-  },
+            res.status(200).json(despieces_detalle.respuesta); // 🔥 Siempre devuelve un array, aunque esté vacío
+        } catch (error) {
+            res.status(500).json({ error: error.message }); // Respondemos con un error
+        }
+    },
 
   async obtenerDespieceDetallePorId(req, res) {
     try {
@@ -66,6 +60,7 @@ const DespieceDetalleController = {
         .json(despieceDetalleActualizado.respuesta); // Respondemos con el despiece detalle actualizado
     } catch (error) {
       res.status(500).json({ error: error.message }); // Respondemos con un error
+
     }
   },
 
@@ -96,6 +91,7 @@ const DespieceDetalleController = {
       res.status(500).json({ error: error.message }); // Respondemos con un error
     }
   },
+  
   async actualizarDespieceDetalleCotizacion(req, res) {
     const t = await sequelize.transaction();
     const cotizacion_id = req.body.cotizacion_id;
@@ -115,6 +111,32 @@ const DespieceDetalleController = {
       res.status(500).json({ error: error.message });
     }
   },
+    
+   async actulizarDespiecePP(req, res) {
+        try {
+            const idDespiece = Number(req.params.id); 
+
+            if (!idDespiece) {
+                return res.status(400).json({ error: "ID de despiece inválido o ausente" });
+            }
+
+            const { despiece } = req.body;
+            if (!Array.isArray(despiece) || despiece.length === 0) {
+                return res.status(400).json({ error: "Lista de piezas vacía o inválida" });
+            }
+
+            const { status, respuesta } = await actulizarDespiecePP(
+                idDespiece,
+                despiece,
+                despieceDetalleRepository
+            );
+
+            res.status(status).json(respuesta);
+        } catch (error) {
+            console.error("[CONTROLLER ERROR] actulizarDespiecePP:", error);
+            res.status(500).json({ error: error.message });
+        }
+    },
 };
 
 module.exports = DespieceDetalleController; // Exportamos el controlador de despiece detalles

@@ -12,15 +12,17 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import useProducto from "../hooks/useProducto";
 import filialesService from "../service/FilialesService";
-import determinarEstadoFactura from "../utils/manejadorCodigosSunat";
 import { obtenerFechaActual } from "../utils/fechaEmisionActual";
 
 const GuiaTransporteContext = createContext();
 
 export function GuiaTransporteProvider({ children }) {
   const [guiaTransporte, setGuiaTransporte] = useState(guiaInical); // ?Datos de guia que abarcan los 3 casos
+  const [pedidoId, setPedidoId] = useState(null);
 
   const [pesoTotalCalculado, setPesoTotalCalculado] = useState(0);
+  const [pesoPlasmadoKilos, setPesoPlasmadoKilos] = useState(0);
+  const [editadoPlasmado, setEditadoPlasmado] = useState(false);
 
   // ?? CORRELATIVOS
 
@@ -134,10 +136,15 @@ export function GuiaTransporteProvider({ children }) {
       ONZ: 0.028349523125, // onza
     };
 
+    // Convierte el valor de cualquier unidad a KILOGRAMOS (KG)
     const toKg = (value, unit) =>
       (Number(value) || 0) * (UNIT_TO_KG[unit] || 1);
+
+    // Convierte el valor de KILOGRAMOS (KG) a la unidad deseada
     const fromKg = (kg, unit) => kg / (UNIT_TO_KG[unit] || 1);
-    const round = (n, d = 3) => {
+
+    // Redondea un número a 'd' decimales
+    const round = (n, d = 4) => {
       const m = Math.pow(10, d);
       return Math.round((n + Number.EPSILON) * m) / m;
     };
@@ -148,26 +155,38 @@ export function GuiaTransporteProvider({ children }) {
         : [];
       const unidadTotal = guiaTransporte?.guia_Envio_Und_Peso_Total || "KGM";
 
-      // 1) Sumar todo en KG
-      const totalKg = detalle.reduce((acc, item) => {
-        const itemEncontrado = piezas.find((p) => p.item === item.cod_Producto);
-        const cantidad = Number(item?.cantidad) || 0;
-        if (itemEncontrado && item.unidad === "NIU") {
-          return acc + (Number(itemEncontrado.peso_kg) || 0) * cantidad;
-        }
-        const unidadItem = item?.unidad || "KGM";
-        return acc + toKg(cantidad, unidadItem);
-      }, 0);
+      let totalKg = 0;
 
-      // 2) Convertir al unit seleccionado
+      if (editadoPlasmado) {
+        totalKg = Number(pesoPlasmadoKilos) || 0;
+      } else {
+        totalKg = detalle.reduce((acc, item) => {
+          const itemEncontrado = piezas.find(
+            (p) => p.item === item.cod_Producto,
+          );
+          const cantidad = Number(item?.cantidad) || 0;
+
+          if (itemEncontrado && item.unidad === "NIU") {
+            return acc + (Number(itemEncontrado.peso_kg) || 0) * cantidad;
+          }
+
+          const unidadItem = item?.unidad || "KGM";
+          return acc + toKg(Number(item?.peso_item) || 0, unidadItem);
+        }, 0);
+      }
+
       const totalEnUnidad = fromKg(totalKg, unidadTotal);
 
-      // 3) Guardar
       setPesoTotalCalculado(round(totalEnUnidad, 4));
     };
 
     actualizarPesoTotal();
-  }, [guiaTransporte.detalle, guiaTransporte.guia_Envio_Und_Peso_Total]);
+  }, [
+    guiaTransporte.detalle,
+    guiaTransporte.guia_Envio_Und_Peso_Total,
+    editadoPlasmado,
+    pesoPlasmadoKilos,
+  ]);
 
   const validarGuia = async () => {
     try {
@@ -246,15 +265,10 @@ export function GuiaTransporteProvider({ children }) {
             ...guiaDatosPublico,
           };
           break;
-        case "traslado-misma-empresa":
-          guiaAEmitir = {
-            ...guiaAEmitir,
-            ...guiaDatosInternos,
-          };
-          break;
         default:
           break;
       }
+      if (pedidoId !== null) guiaAEmitir.pedido_id = pedidoId;
       const { status, success, message, data } =
         await factilizaService.enviarGuia({
           ...guiaAEmitir,
@@ -267,6 +281,7 @@ export function GuiaTransporteProvider({ children }) {
         data,
       };
       if (status == 200 || status == 201 || status == 400) {
+        console.log("limpiar entra");
         Limpiar();
       }
     } catch (error) {
@@ -302,6 +317,9 @@ export function GuiaTransporteProvider({ children }) {
       empresa_Ruc: guiaTransporte.empresa_Ruc,
       serie: guiaTransporte.serie,
     });
+    setPesoTotalCalculado(0);
+    setPesoPlasmadoKilos(0);
+    setEditadoPlasmado(false);
     setTipoGuia("transporte-publico");
     setGuiaDatosPublico(ValoresPublico);
     setGuiaDatosInternos(ValoresInterno);
@@ -340,6 +358,11 @@ export function GuiaTransporteProvider({ children }) {
         EmitirGuia,
         piezas,
         pesoTotalCalculado,
+        pedidoId,
+        setPedidoId,
+        setPesoTotalCalculado,
+        setEditadoPlasmado,
+        setPesoPlasmadoKilos,
       }}
     >
       {children}

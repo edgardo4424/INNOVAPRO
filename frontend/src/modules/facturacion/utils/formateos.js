@@ -264,7 +264,7 @@ const getMotivoTrasladoDescription = (code) => {
     case "09":
       return "EXPORTACION";
     case "13":
-      return "OTROS";
+      return "OTROS - ALQUILER";
     case "14":
       return "VENTA CON ENTREGA A TERCEROS";
     case "15":

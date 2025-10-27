@@ -97,6 +97,53 @@ class sequelizeDespieceDetalleRepository {
 
     return piezas_creadas;
   }
+  
+  
+  async actulizarPiezas(idDespiece, lista_piezas) {
+    const transacción = await db.sequelize.transaction();
+    try {
+      // ? 1 Consulta piezas actuales (dentro de la transacción)
+      const piezasActuales = await DespieceDetalle.findAll({
+        where: { despiece_id: idDespiece },
+        transaction: transacción
+      });
+
+      // ? 2 Borra TODAS las piezas anteriores
+      await DespieceDetalle.destroy({
+        where: { despiece_id: idDespiece },
+        transaction: transacción
+      });
+
+      // ? 3 Inserta las nuevas piezas UNA A UNA
+      const piezasNuevas = [];
+      for (const pieza of lista_piezas) {
+        const nuevaPieza = await DespieceDetalle.create(
+          { ...pieza, despiece_id: idDespiece },
+          { transaction: transacción }
+        );
+        piezasNuevas.push(nuevaPieza);
+      }
+
+      // ? 4 Confirma la transacción (commit)
+      await transacción.commit();
+
+      return {
+        success: true,
+        mensaje: "Piezas actualizadas exitosamente",
+        data: { anteriores: piezasActuales, nuevas: piezasNuevas },
+      };
+
+    } catch (error) {
+      await transacción.rollback();
+      return {
+        success: false,
+        mensaje: "Error al actualizar las piezas",
+        error,
+      };
+    }
+  }
+
+
 }
 
 module.exports = sequelizeDespieceDetalleRepository; // Exporta la clase para que pueda ser utilizada en otros módulos

@@ -1,20 +1,20 @@
 import React from "react";
 import TablaItems from "../tabla/TablaItems";
+import { getMotivoTrasladoDescription } from "@/modules/facturacion/utils/formateos";
 
 const FormPedido = ({ pedidoView: pedido }) => {
   const bgEstado = (estado) => {
     switch (estado) {
+      case "Confirmado Stock":
+        return "bg-green-600 !text-white";
       case "Confirmado":
-        // 🟢 Verde: Listo, Aprobado
-        return "bg-green-400 !text-white";
+        return "bg-blue-600 !text-white";
       case "Pre Confirmado":
-        // 🟡 Amarillo/Azul: En proceso, En revisión (Si quieres que el azul signifique 'Proceso Activo')
-        return "bg-yellow-400 !text-white";
+        return "bg-yellow-500 !text-white"; // Usar texto oscuro para mejor contraste en fondos claros
       case "Por Confirmar":
-        // 🔴 Rojo/Naranja: Requiere atención inmediata, Falta aprobación crítica
-        return "bg-orange-400 !text-white";
+        return "bg-orange-500 !text-white";
       default:
-        return "bg-gray-400 !text-white";
+        return "bg-gray-500 !text-whitequot";
     }
   };
 
@@ -63,7 +63,7 @@ const FormPedido = ({ pedidoView: pedido }) => {
             <span className="text-xs text-gray-600 uppercase">
               Filial Operativa
             </span>
-            <span className="mt-0.5 text-sm font-bold">
+            <span className="mt-0.5 text-sm font-bold uppercase">
               {pedido?.filial || "N/A"}
             </span>
           </div>
@@ -71,7 +71,7 @@ const FormPedido = ({ pedidoView: pedido }) => {
             <span className="text-xs text-gray-600 uppercase">
               Cliente / Razón Social
             </span>
-            <span className="mt-0.5 text-sm font-extrabold">
+            <span className="mt-0.5 text-sm font-extrabold uppercase">
               {pedido?.cliente_Razon_Social || "N/A"}
             </span>
           </div>
@@ -83,15 +83,15 @@ const FormPedido = ({ pedidoView: pedido }) => {
             <span className="text-xs text-gray-600 uppercase">
               Tipo de Servicio
             </span>
-            <span className="mt-0.5 text-sm font-bold">
-              {pedido?.tipo_Servicio || "N/A"}
+            <span className="mt-0.5 text-sm font-bold uppercase">
+              {getMotivoTrasladoDescription(pedido?.guia_Envio_Cod_Traslado) || "N/A"}
             </span>
           </div>
           <div className="col-span-3 flex flex-col justify-center bg-gray-50 p-2 text-center font-bold">
             <span className="text-xs text-gray-600 uppercase">
               Obra / Proyecto
             </span>
-            <span className="mt-0.5 text-sm font-extrabold">
+            <span className="mt-0.5 text-sm font-extrabold uppercase">
               {pedido?.obra || "N/A"}
             </span>
           </div>
@@ -150,8 +150,13 @@ const FormPedido = ({ pedidoView: pedido }) => {
               <span>{pedido?.tranporte || "N/A"}</span>
             </p>
             <p className="flex gap-x-2">
-              <span className="font-semibold">Peso ( {pedido?.guia_Envio_Und_Peso_Total || "N/A"} ):</span>
-              <span>{pedido?.guia_Envio_Peso_Total || "N/A"}</span>
+              <span className="font-semibold">Peso:</span>
+              <span className="flex gap-x-1">
+                <span>{pedido?.guia_Envio_Peso_Total || "N/A"} </span>
+                <span className="font-semibold">
+                  {pedido?.guia_Envio_Und_Peso_Total || "N/A"}
+                </span>
+              </span>
             </p>
           </div>
           <p className="mt-2 bg-amber-200 py-1 pl-1 font-bold text-gray-800 uppercase">
@@ -165,7 +170,7 @@ const FormPedido = ({ pedidoView: pedido }) => {
             Nota Adicional / Observaciones:
           </p>
           <p className="mt-1 text-gray-600 italic">
-            {pedido?.Observacion || "[ESPACIO PARA NOTAS DEL EJECUTIVO]"}
+            {pedido?.observacion || "[ESPACIO PARA NOTAS DEL EJECUTIVO]"}
           </p>
         </div>
       </div>
@@ -179,11 +184,11 @@ const FormPedido = ({ pedidoView: pedido }) => {
       <div className="grid grid-cols-2 px-10 py-3">
         <div className="grid grid-cols-2">
           <span className="font-bold">Ref. contrato:</span>
-          <span>{pedido?.nro_contrato || "N/A"}</span>
+          <span className="uppercase">{pedido?.nro_contrato || "N/A"}</span>
           <span className="font-bold">Dirección Obra:</span>
           <span>{pedido?.obra_Direccion || "N/A"}</span>
           <span className="font-bold">Proyecto / Obra:</span>
-          <span>{pedido?.obra || "N/A"}</span>
+          <span className="uppercase">{pedido?.obra || "N/A"}</span>
           <span className="font-bold">Fecha:</span>
           <span>10/10/2025</span>
           <span className="font-bold">Telf:</span>
@@ -201,9 +206,7 @@ const FormPedido = ({ pedidoView: pedido }) => {
           <span className="font-bold">A/A:</span>
           <span>{pedido?.nombre_Contacto || "N/A"}</span>
           <span className="font-bold">Domicilio Fiscal:</span>
-          <span>
-            {pedido?.dom_Fiscal || "N/A"}
-          </span>
+          <span>{pedido?.dom_Fiscal || "N/A"}</span>
           <span className="font-bold">E-mail:</span>
           <span>{pedido?.cli_Email || "N/A"}</span>
         </div>

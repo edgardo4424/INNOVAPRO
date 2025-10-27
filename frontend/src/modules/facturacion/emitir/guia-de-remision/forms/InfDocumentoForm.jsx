@@ -9,11 +9,9 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useGuiaTransporte } from "@/modules/facturacion/context/GuiaTransporteContext";
+import { formatDateTime } from "@/modules/facturacion/utils/formateos";
 import { ListTodo, LoaderCircle, Search, SquarePen } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Calendar22 } from "../../factura-boleta/components/Calendar22";
-import { formatDateTime } from "@/modules/facturacion/utils/formateos";
-import { obtenerFechaActual } from "@/modules/facturacion/utils/fechaEmisionActual";
 
 const InfDocumentoForm = () => {
   const {
@@ -97,7 +95,7 @@ const InfDocumentoForm = () => {
     // Buscar y establecer el correlativo bas ndose en la serie y el RUC actual
     if (
       correlativos.length > 0 &&
-      guiaTransporte.empresa_Ruc &&
+      guiaTransporte.empresa_Ruc !== "" &&
       guiaTransporte.serie
     ) {
       const correlativoEncontrado = correlativos.find(
@@ -115,28 +113,6 @@ const InfDocumentoForm = () => {
     }
   }, [guiaTransporte.empresa_Ruc, guiaTransporte.serie, correlativos]);
 
-  useEffect(() => {
-    if (tipoGuia === "traslado-misma-empresa") {
-      const filialSameRuc = filiales.find(
-        (filial) => filial.ruc === guiaTransporte.empresa_Ruc,
-      );
-      console.log(filialSameRuc);
-      setGuiaTransporte((prevValores) => ({
-        ...prevValores,
-        cliente_Tipo_Doc: "6",
-        cliente_Num_Doc: filialSameRuc.ruc,
-        cliente_Razon_Social: filialSameRuc.razon_social,
-        cliente_Direccion: filialSameRuc.direccion,
-      }));
-    }
-    if (guiaTransporte.empresa_Ruc) {
-      setGuiaDatosInternos((prevValores) => ({
-        ...prevValores,
-        guia_Envio_Partida_Ruc: guiaTransporte.empresa_Ruc,
-        guia_Envio_Llegada_Ruc: guiaTransporte.empresa_Ruc,
-      }));
-    }
-  }, [tipoGuia, guiaTransporte.empresa_Ruc]);
 
   useEffect(() => {
     if (correlativosPendientes?.length > 0 && correlativosPendientes) {

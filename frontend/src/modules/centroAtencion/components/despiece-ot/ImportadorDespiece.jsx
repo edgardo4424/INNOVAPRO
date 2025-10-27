@@ -6,8 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Upload, X, FileSpreadsheet, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ResumenDespieceManual from "./ResumenDespieceManual";
-import { crearDespieceOT } from "../../services/centroAtencionService";
 import useImportadorDespiece from "../../hooks/useImportadorDespiece";
+import centroAtencionService from "../../services/centroAtencionService";
 
 export default function ImportadorDespiece({ tarea, formData, setFormData }) {
   const [file, setFile] = useState(null);

@@ -72,7 +72,7 @@ const DetalleForm = () => {
             <ModalProducto open={open} setOpen={setOpen} />
             <TablaDetalles open={open} setOpen={setOpen} />
             <div className="flex flex-col md:flex-row justify-between px-4 gap-4 py-4 md:items-start">
-                <div className="flex-1 mx-auto md:mx-0">
+                <div className="flex-1 md:pr-20 mx-auto md:mx-0">
                     <ExcelUploader onDataLoaded={handleExcelDataLoaded} handleSubirDatos={handleSubirDatos} />
                 </div>
 

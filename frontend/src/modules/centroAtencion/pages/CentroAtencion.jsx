@@ -1,9 +1,13 @@
-import useCentroAtencion from "../hooks/useCentroAtencion";
-import TablaTareas from "../components/TablaTareas";
-import DetalleTarea from "../components/DetalleTarea";
-import DatePicker from "react-datepicker";
-import ModuloNavegacion from "@/shared/components/ModuloNavegacion";
-import "react-datepicker/dist/react-datepicker.css";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+   Popover,
+   PopoverContent,
+   PopoverTrigger,
+} from "@/components/ui/popover";
 import {
    Select,
    SelectContent,
@@ -11,24 +15,19 @@ import {
    SelectTrigger,
    SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { CalendarIcon, Search, X } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
-import {
-   Popover,
-   PopoverContent,
-   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
+import { ColumnSelector } from "@/shared/components/ColumnSelector";
+import ModuloNavegacion from "@/shared/components/ModuloNavegacion";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import "../../cotizaciones/styles/wizard.css";
+import { CalendarIcon, Search, X } from "lucide-react";
+import { useState } from "react";
+import "react-datepicker/dist/react-datepicker.css";
 import "../../cotizaciones/styles/exito.css";
-import { ColumnSelector } from "@/shared/components/ColumnSelector";
-import { Label } from "@/components/ui/label";
+import "../../cotizaciones/styles/wizard.css";
+import DetalleTarea from "../components/DetalleTarea";
+import TablaTareas from "../components/TablaTareas";
+import useCentroAtencion from "../hooks/useCentroAtencion";
 
 const statusConfig = {
    Todas: {

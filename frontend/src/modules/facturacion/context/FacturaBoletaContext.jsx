@@ -14,9 +14,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { validarFacturaCompleta } from "../emitir/factura-boleta/utils/validarPasos";
 import filialesService from "../service/FilialesService";
-import determinarEstadoFactura from "../utils/manejadorCodigosSunat";
 import { obtenerFechaActual } from "../utils/fechaEmisionActual";
-import procesarDetallePorSerie from "../utils/procesarProductos";
 
 const FacturaBoletaContext = createContext();
 

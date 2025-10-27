@@ -15,14 +15,11 @@ import {
   Hammer,
   BookMarked,
   FileSignature,
+  Siren,
+  HardHat,
 } from "lucide-react";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
 export const DetallesEspecificos = ({ detalles }) => {
@@ -42,8 +39,8 @@ export const DetallesEspecificos = ({ detalles }) => {
     2: "ANDAMIO DE TRABAJO",
     3: "ESCALERA DE ACCESO",
     4: "ESCUADRAS",
-    5: "PUNTALES"
-  }
+    5: "PUNTALES",
+  };
 
   const orden = [
     "apoyoTecnico",
@@ -123,11 +120,11 @@ export const DetallesEspecificos = ({ detalles }) => {
     plataformaAcceso: "Plataforma de Acceso",
     tripode: "¿Incluye trípode?",
     cantidad: "Cantidad",
-    tipoPuntal: "Tipo de puntal"
+    tipoPuntal: "Tipo de puntal",
   };
 
-
   const iconos = {
+    prioridad: <Siren className="h-4 w-4 text-purple-500" />,
     apoyoTecnico: <Settings className="h-4 w-4 text-purple-500" />,
     apoyoAdministrativo: <ClipboardList className="h-4 w-4 text-purple-500" />,
     tipoServicio: <ClipboardCheck className="h-4 w-4 text-purple-500" />,
@@ -151,10 +148,11 @@ export const DetallesEspecificos = ({ detalles }) => {
     anclajes: <Anchor className="h-4 w-4 text-purple-500" />,
     uso: <Home className="h-4 w-4 text-purple-500" />,
     infoAdicional: <FileText className="h-4 w-4 text-purple-500" />,
-    nota: <FileText className="h-4 w-4 text-yellow-600" />,
+    nota: <FileText className="h-4 w-4 text-green-600" />,
     tipo_cotizacion: <Settings className="h-4 w-4 text-purple-500" />,
     dias_alquiler: <Clock className="h-4 w-4 text-purple-500" />,
     atributos_valor_zonas: <Package className="h-4 w-4 text-purple-500" />,
+    obra: <HardHat className="h-4 w-4 text-purple-500" />,
   };
 
   const detallesOrdenados = Object.entries(detalles)
@@ -166,81 +164,96 @@ export const DetallesEspecificos = ({ detalles }) => {
       if (ia === -1) return 1;
       if (ib === -1) return -1;
       return ia - ib;
-  });
-console.log('detallesOrdenados', detallesOrdenados);
+    });
 
   return (
-    <Card className="border-l-4 border-l-purple-500 gap-3">
+    <Card className="gap-3 border-l-4 border-l-purple-500">
       <CardHeader>
-        <CardTitle className="text-xl flex items-center gap-2 text-purple-500">
+        <CardTitle className="flex items-center gap-2 text-xl text-purple-500">
           <Settings className="h-6 w-6" />
           Detalles Específicos
         </CardTitle>
       </CardHeader>
 
       <CardContent>
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid gap-6 md:grid-cols-2">
           {[0, 1].map((col) => (
             <div className="space-y-4" key={col}>
               {detallesOrdenados
                 .filter((_, i) => i % 2 === col)
-                .map(([key, value], idx) => (
-                  <div key={idx} className="bg-gray-50 p-4 rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
-                      {iconos[key] || <Settings className="h-4 w-4 text-purple-500" />}
-                      <span className="font-medium text-gray-700">
-                        {labels[key] ||
-                          key.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase())}
-                        :
-                      </span>
-                    </div>
-                    {key === "atributos_valor_zonas" ? (
-                      value.map((zona, index) => (
-                        <div key={index} className="mb-4">
-                          <p className="font-bold text-purple-700 mb-2">📍 Zona {zona.zona}</p>
-                          <table className="w-full text-sm border">
-                            <thead>
-                              <tr className="bg-purple-50 text-purple-800 border-b">
-                                <th className="text-left p-2">Atributo</th>
-                                <th className="text-left p-2">Valor</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {zona.atributos_formulario &&
-                                zona.atributos_formulario.map((grupo, i) =>
-                                  Object.entries(grupo).map(([k, v], j) => (
-                                    <tr key={`${i}-${j}`} className="border-t">
-                                      <td className="p-2 text-gray-700">
-                                        {atributosLabels[k] || k}
-                                      </td>
-                                      <td className="p-2 text-gray-900 font-medium">{v || "—"}</td>
-                                    </tr>
-                                  ))
-                                )}
-                            </tbody>
-                          </table>
+                .map(
+                  ([key, value], idx) =>
+                    value && (
+                      <div key={idx} className="rounded-lg bg-gray-50 p-4">
+                        <div className="mb-2 flex items-center gap-2">
+                          {iconos[key] || (
+                            <Settings className="h-4 w-4 text-purple-500" />
+                          )}
+                          <span className="font-medium text-gray-700">
+                            {labels[key] ||
+                              key
+                                .replace(/([A-Z])/g, " $1")
+                                .replace(/^./, (s) => s.toUpperCase())}
+                            :
+                          </span>
                         </div>
-                      ))
-                    ) : typeof value === "object" && !Array.isArray(value) ? (
-                      value.map((v, i) => (
-                        <pre
-                          key={i}
-                          className="text-xs text-gray-700 bg-gray-100 p-2 rounded mb-2 overflow-x-auto"
-                        >
-                          {JSON.stringify(v, null, 2)}
-                        </pre>
-                      ))
-                    ) : (
-                      <p className="text-gray-900 font-semibold">
-                        {key === "usoId"
-                          ? USOS_NOMBRE[value] || `Uso #${value}`
-                          : Array.isArray(value)
-                          ? value.join(", ")
-                          : value}
-                      </p>
-                    )}
-                  </div>
-                ))}
+                        {key === "atributos_valor_zonas" ? (
+                          value &&
+                          value?.map((zona, index) => (
+                            <div key={index} className="mb-4">
+                              <p className="mb-2 font-bold text-purple-700">
+                                📍 Zona {zona.zona}
+                              </p>
+                              <table className="w-full border text-sm">
+                                <thead>
+                                  <tr className="border-b bg-purple-50 text-purple-800">
+                                    <th className="p-2 text-left">Atributo</th>
+                                    <th className="p-2 text-left">Valor</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {zona.atributos_formulario &&
+                                    zona.atributos_formulario.map((grupo, i) =>
+                                      Object.entries(grupo).map(([k, v], j) => (
+                                        <tr
+                                          key={`${i}-${j}`}
+                                          className="border-t"
+                                        >
+                                          <td className="p-2 text-gray-700">
+                                            {atributosLabels[k] || k}
+                                          </td>
+                                          <td className="p-2 font-medium text-gray-900">
+                                            {v || "—"}
+                                          </td>
+                                        </tr>
+                                      )),
+                                    )}
+                                </tbody>
+                              </table>
+                            </div>
+                          ))
+                        ) : typeof value === "object" &&
+                          !Array.isArray(value) ? (
+                          value?.map((v, i) => (
+                            <pre
+                              key={i}
+                              className="mb-2 overflow-x-auto rounded bg-gray-100 p-2 text-xs text-gray-700"
+                            >
+                              {JSON.stringify(v, null, 2)}
+                            </pre>
+                          ))
+                        ) : (
+                          <p className="font-semibold text-gray-900 uppercase">
+                            {key === "usoId"
+                              ? USOS_NOMBRE[value] || `Uso #${value}`
+                              : Array.isArray(value)
+                                ? value.join(", ")
+                                : value}
+                          </p>
+                        )}
+                      </div>
+                    ),
+                )}
             </div>
           ))}
         </div>
@@ -248,13 +261,13 @@ console.log('detallesOrdenados', detallesOrdenados);
         {/* Nota especial */}
         {detalles.nota && (
           <>
-            <Separator className="my-6" />
-            <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
+            <Separator className="text-g my-6" />
+            <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+              <div className="mb-2 flex items-center gap-2">
                 {iconos.nota}
-                <span className="font-medium text-yellow-800">Nota:</span>
+                <span className="font-medium text-green-800">Nota:</span>
               </div>
-              <p className="text-yellow-900 font-mono text-sm bg-yellow-100 p-2 rounded">
+              <p className="text-md rounded bg-green-100 p-2 font-mono text-green-900">
                 {detalles.nota}
               </p>
             </div>

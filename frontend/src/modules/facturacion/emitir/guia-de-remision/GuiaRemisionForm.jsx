@@ -8,7 +8,6 @@ import InfDocumentoForm from "./forms/InfDocumentoForm";
 import TransportistaPublicoForm from "./forms/TransportistaPublicoForm";
 
 const GuiaRemisionForm = () => {
-  const { tipoGuia } = useGuiaTransporte();
 
   return (
     <div

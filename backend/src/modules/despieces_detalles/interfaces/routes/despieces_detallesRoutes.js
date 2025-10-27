@@ -10,6 +10,7 @@ router.get("/", despiecesDetallesController.obtenerDespiecesDetalle);
 router.post("/", despiecesDetallesController.crearDespieceDetalle);
 router.put("/actualizar-despiece",despiecesDetallesController.actualizarDespieceDetalleCotizacion);
 router.put("/:id", despiecesDetallesController.actualizarDespieceDetalle);
+router.put("/:id/actualizarPiezas", despiecesDetallesController.actulizarDespiecePP);
 router.delete("/:id", despiecesDetallesController.eliminarDespieceDetalle);
 router.post("/varios", despiecesDetallesController.crearVariosDespiecesDetalles); // inserta varias piezas en la tabla despieces_detalles
 module.exports = router;

@@ -4,7 +4,7 @@ const winston = require('winston');
 require('winston-daily-rotate-file');
 
 // 📁 Asegurar carpeta de logs
-const logDir = path.join(__dirname, '../../bitacora/factiliza');
+const logDir = path.join(__dirname, '../../../../bitacora/factiliza');
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir);
 }
