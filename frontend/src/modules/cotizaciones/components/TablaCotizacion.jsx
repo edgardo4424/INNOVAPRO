@@ -153,9 +153,9 @@ export default function TablaCotizacion({
                         {/* Descarga y previsualización de PDF */}
                         {(
                            row.estado_nombre === "Por Aprobar" ||
-                           row.estado_nombre === "Condiciones Cumplidas" ||
+                           row.estado_nombre === "Aprobado"/*  ||
                            row.estado_nombre === "Condiciones Solicitadas" ||
-                           row.estado_nombre === "Validar Condiciones"
+                           row.estado_nombre === "Validar Condiciones" */
                         ) && (
                            <>
                               <Tooltip>

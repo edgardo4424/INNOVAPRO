@@ -5,6 +5,7 @@ const { mapearAtributosValor } = require("../mapearAtributosValorService");
 async function generarPdfPlataformaDescarga({
   idDespiece,
   porcentajeDescuento,
+  transaction = null,
 }) {
 
   
@@ -20,7 +21,7 @@ async function generarPdfPlataformaDescarga({
         as: "atributo",
       },
     ],
-  });
+  }, { transaction });
 
   // Obtener atributos
 
@@ -54,7 +55,7 @@ async function generarPdfPlataformaDescarga({
           attributes: ["id", "item", "descripcion"],
         },
       ],
-    });
+    }, { transaction });
 
   const piezasDetalleAdicionalesPlataformaDescargaConDescuento =
   piezasDetalleAdicionalesPlataformaDescarga.map((p) => {
@@ -118,10 +119,10 @@ if(piezasDetalleAdicionalesPlataformaDescargaConDescuento.length>0){
     
           const piezaPinPresion = await db.piezas.findOne({
             where: { item: itemPiezaPinPresion },
-          });
+          }, { transaction });
           const piezaArgolla = await db.piezas.findOne({
             where: { item: itemArgolla },
-          });
+          }, { transaction });
     
           if (!piezaPinPresion || !piezaArgolla) {
             //console.warn(`⚠️ (${i}) No se encontraron piezas con item ${itemPiezaPinPresion} o ${itemArgolla}`);
@@ -137,14 +138,14 @@ if(piezasDetalleAdicionalesPlataformaDescargaConDescuento.length>0){
               despiece_id: Number(idDespiece),
               pieza_id: Number(piezaPinPresion.id),
             },
-          });
+          }, { transaction });
     
           const argolla = await db.despieces_detalle.findOne({
             where: {
               despiece_id: Number(idDespiece),
               pieza_id: Number(piezaArgolla.id),
             },
-          });
+          }, { transaction });
     
           //console.log(`✅ (${i}) IDs buscados: pin=${piezaPinPresion.id}, argolla=${piezaArgolla.id}`);
           //console.log(`✅ (${i}) Encontrado: pin=${!!pinPresion}, argolla=${!!argolla}`);

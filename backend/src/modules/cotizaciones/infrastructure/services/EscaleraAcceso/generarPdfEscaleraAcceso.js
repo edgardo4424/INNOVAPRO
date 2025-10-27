@@ -3,7 +3,7 @@ const { agruparPorZonaYAtributos } = require("../mapearAtributosDelPdfService");
 
 const { mapearAtributosValor } = require("../mapearAtributosValorService");
 
-async function generarPdfEscaleraAcceso({ dataDespiece, tiene_pernos, porcentajeDescuento }) {
+async function generarPdfEscaleraAcceso({ dataDespiece, tiene_pernos, porcentajeDescuento, transaction = null }) {
   let pernoExpansionConArgolla;
   let pernoExpansionConArgollaEnElDespiece;
 
@@ -15,7 +15,7 @@ async function generarPdfEscaleraAcceso({ dataDespiece, tiene_pernos, porcentaje
       where: {
         item: "CO.0010",
       },
-    });
+    }, { transaction });
 
     if (pernoExpansionConArgolla) {
 
@@ -25,7 +25,7 @@ async function generarPdfEscaleraAcceso({ dataDespiece, tiene_pernos, porcentaje
             despiece_id: dataDespiece.id,
             pieza_id: pernoExpansionConArgolla.id,
           },
-        }
+        }, { transaction }
       );
     }
 
@@ -33,7 +33,7 @@ async function generarPdfEscaleraAcceso({ dataDespiece, tiene_pernos, porcentaje
       where: {
         item: "CO.0015",
       },
-    });
+    }, { transaction });
 
     if (pernoExpansionSinArgolla) {
      
@@ -43,7 +43,7 @@ async function generarPdfEscaleraAcceso({ dataDespiece, tiene_pernos, porcentaje
             despiece_id: dataDespiece.id,
             pieza_id: pernoExpansionSinArgolla.id,
           },
-        }
+        }, { transaction }
       );
     }
 
@@ -62,7 +62,7 @@ async function generarPdfEscaleraAcceso({ dataDespiece, tiene_pernos, porcentaje
         as: "atributo",
       },
     ],
-  });
+  }, { transaction });
 
   // Obtener atributos
 
@@ -110,7 +110,7 @@ async function generarPdfEscaleraAcceso({ dataDespiece, tiene_pernos, porcentaje
           attributes: ["id", "item", "descripcion"],
         },
       ],
-    });
+    }, { transaction });
 
       const piezasDetalleAdicionalesEscaleraAccesoConDescuento =
   piezasDetalleAdicionalesEscaleraAcceso.map((p) => {
@@ -132,8 +132,6 @@ async function generarPdfEscaleraAcceso({ dataDespiece, tiene_pernos, porcentaje
 
   // Calcular los tramos de 2m y 1m
 
-  console.log('dataDespiece', dataDespiece.detalles_opcionales);
-    
   const { detalles_opcionales } = dataDespiece
 
   return {

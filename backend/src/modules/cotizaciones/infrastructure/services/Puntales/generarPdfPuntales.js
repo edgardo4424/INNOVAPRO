@@ -4,7 +4,7 @@ const {
 } = require("../mapearAtributosDelPdfService");
 const { mapearAtributosValor } = require("../mapearAtributosValorService");
 
-async function generarPdfPuntales({ idDespiece, tipo_cotizacion, porcentajeDescuento }) {
+async function generarPdfPuntales({ idDespiece, tipo_cotizacion, porcentajeDescuento, transaction = null }) {
   
   // Obtener la lista de atributos
 
@@ -18,7 +18,7 @@ async function generarPdfPuntales({ idDespiece, tipo_cotizacion, porcentajeDescu
         as: "atributo",
       },
     ],
-  });
+  }, { transaction });
 
   const resultadoPuntales = mapearAtributosValor(atributosDelUsoPuntales);
 
@@ -38,7 +38,7 @@ async function generarPdfPuntales({ idDespiece, tipo_cotizacion, porcentajeDescu
 
           const piezaPuntal = await db.piezas.findOne({
             where: { item: puntal },
-          });
+          }, { transaction });
 
           if (!piezaPuntal) {
             throw new Error(`No se encontró la pieza con item ${puntal}`);
@@ -49,7 +49,7 @@ async function generarPdfPuntales({ idDespiece, tipo_cotizacion, porcentajeDescu
               despiece_id: idDespiece,
               pieza_id: piezaPuntal.id,
             },
-          });
+          }, { transaction });
 
           if (!piezaPuntalDespiece) {
             throw new Error(
@@ -131,10 +131,10 @@ async function generarPdfPuntales({ idDespiece, tipo_cotizacion, porcentajeDescu
 
       const piezaPinPresion = await db.piezas.findOne({
         where: { item: itemPiezaPinPresion },
-      });
+      }, { transaction });
       const piezaArgolla = await db.piezas.findOne({
         where: { item: itemArgolla },
-      });
+      }, { transaction });
 
       if (!piezaPinPresion || !piezaArgolla) {
         //console.warn(`⚠️ (${i}) No se encontraron piezas con item ${itemPiezaPinPresion} o ${itemArgolla}`);
@@ -150,14 +150,14 @@ async function generarPdfPuntales({ idDespiece, tipo_cotizacion, porcentajeDescu
           despiece_id: Number(idDespiece),
           pieza_id: Number(piezaPinPresion.id),
         },
-      });
+      }, { transaction });
 
       const argolla = await db.despieces_detalle.findOne({
         where: {
           despiece_id: Number(idDespiece),
           pieza_id: Number(piezaArgolla.id),
         },
-      });
+      }, { transaction });
 
       const ventaPin = pinPresion
         ? (pinPresion.precio_venta_soles / pinPresion.cantidad).toFixed(2)
@@ -180,14 +180,14 @@ async function generarPdfPuntales({ idDespiece, tipo_cotizacion, porcentajeDescu
     where: {
       item: "PU.0550",
     },
-  });
+  }, { transaction });
 
   const piezaTripodeDespieceDetalle = await db.despieces_detalle.findOne({
     where: {
       despiece_id: idDespiece,
       pieza_id: piezaTripodeEncontrado.id,
     },
-  });
+  }, { transaction });
 
   // Obtener las piezas adicionales
 
@@ -203,7 +203,7 @@ async function generarPdfPuntales({ idDespiece, tipo_cotizacion, porcentajeDescu
         attributes: ["id", "item", "descripcion"],
       },
     ],
-  });
+  }, { transaction });
 
    const piezasDetalleAdicionalesPuntalesConDescuento =
   piezasDetalleAdicionalesPuntales.map((p) => {

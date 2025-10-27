@@ -21,10 +21,14 @@ const ContratoController={
         console.log("Entro a la función de crear contrato");
         const payload=req.body;
         const usuario_id=req.usuario.id;
+        const transaction= await sequelize.transaction();
         try {
-            const contratoResponse= await crearContrato(payload,usuario_id, contratoRepository);
+            const contratoResponse= await crearContrato(payload,usuario_id, contratoRepository, transaction);
+            // confirmar transacción antes de responder
+            await transaction.commit();
             res.status(contratoResponse.codigo).json(contratoResponse.respuesta)
         } catch (error) {
+             await transaction.rollback();
             console.log("Ocurrio el siguiente error: ",error)
             res.status(500).json({error:error.message})
         }
@@ -97,13 +101,17 @@ const ContratoController={
 
      async generarPdf(req,res){
         console.log("Entro a la función de generar PDF");
+  const transaction = await sequelize.transaction();
+        
         try {
             const contrato_id=req.params.id;
-            const contratoPdf= await generarPdf(contrato_id, contratoRepository);
-            console.log("Respuesta de generarPdf:", contratoPdf);
+            const contratoPdf= await generarPdf(contrato_id, contratoRepository, transaction);
+        
+            await transaction.commit();
             res.status(contratoPdf.codigo).json(contratoPdf.respuesta);
         } catch (error) {
             console.log("Ocurrio el siguiente error: ",error)
+            await transaction.rollback();
             res.status(500).json({error:error.message})
         }
     },
