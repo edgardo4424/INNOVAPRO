@@ -4,7 +4,7 @@ const pasePedidoRepository = new SequelizePasePedidoRepository();
 module.exports = async (tareaData, tareaRepository, transaction = null) => {
   const errorCampos = Tarea.validarCamposObligatorios(tareaData, "crear");
   if (errorCampos) return { codigo: 400, respuesta: { mensaje: errorCampos } };
-  const pase_pedido = await pasePedidoRepository.obtenerPasePedido(
+  const pase_pedido = await pasePedidoRepository.obtenerPasePedidoPorId(
     tareaData.pase_pedido_id,
     transaction
   );
