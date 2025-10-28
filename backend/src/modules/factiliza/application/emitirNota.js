@@ -5,7 +5,7 @@ const { determinarEstadoFactura } = require('../helpers/manejoCodigosSunat');
 module.exports = async (nota, repository, borradorRepository) => {
     try {
         const notaRegistrada = await repository.obtenerNotaDetallada(nota.correlativo, nota.serie, nota.empresa_Ruc, nota.tipo_Doc);
-        
+
         if (notaRegistrada?.length > 0) {
             return {
                 codigo: 400,
@@ -17,6 +17,14 @@ module.exports = async (nota, repository, borradorRepository) => {
                 },
             };
         }
+        // ! 🪵 Registrar lo enviado por el frontend
+        registrarLogFactiliza('FRONTEND_REQUEST_NOTA', {
+            tipo: nota.tipo_Doc == '07' ? 'CREDITO' : 'DEBITO',
+            serie: nota.serie,
+            correlativo: nota.correlativo,
+            ruc: nota.empresa_Ruc,
+            content: nota,
+        });
 
         // ? 1 Enviar la nota a Factiliza
         const response = await factilizaService.enviarNota(nota);

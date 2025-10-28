@@ -17,6 +17,14 @@ module.exports = async (factura, repository, borradorRepository) => {
                 },
             };
         }
+        // ! 🪵 Registrar lo enviado por el frontend
+        registrarLogFactiliza('FRONTEND_REQUEST_FACTURA', {
+            tipo: factura.tipo_Doc === '01' ? 'FACTURA' : 'BOLETA',
+            serie: factura.serie,
+            correlativo: factura.correlativo,
+            ruc: factura.empresa_Ruc,
+            content: factura,
+        });
 
         // ? 1 Enviar la factura a Factiliza
         const response = await factilizaService.enviarFactura(factura);

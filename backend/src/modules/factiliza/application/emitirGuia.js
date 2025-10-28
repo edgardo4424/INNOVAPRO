@@ -20,7 +20,7 @@ module.exports = async (guia, repository) => {
     }
 
     // ! 🪵 Registrar las guias enviadas
-    registrarLogFactiliza('GUIA_ENVIADA', {
+    registrarLogFactiliza('FRONTEND_REQUEST_GUIA', {
       tipo: 'GUIA',
       serie: guia.serie,
       correlativo: guia.correlativo,
