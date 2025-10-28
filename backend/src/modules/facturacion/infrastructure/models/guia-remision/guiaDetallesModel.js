@@ -33,6 +33,11 @@ const GuiaDetalles = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
+        pieza_id:{
+            type:DataTypes.INTEGER,
+            allowNull:true,
+            defaultValue:null
+        }
     },
     {
         timestamps: false,
@@ -43,6 +48,10 @@ const GuiaDetalles = sequelize.define(
 GuiaDetalles.associate = (models) => {
     GuiaDetalles.belongsTo(models.guias_de_remision, {
         foreignKey: "guia_id",
+    });
+    GuiaDetalles.belongsTo(models.piezas, {
+        foreignKey: "pieza_id",
+        as: "pieza",
     });
 }
 
