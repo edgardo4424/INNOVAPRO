@@ -166,6 +166,9 @@ class SequelizePlanillaRepository {
         {
           model: db.trabajadores,
           as: "trabajador",
+           where: {
+        fecha_baja: null, // 👈 aquí la condición
+      },
           include: [
             {
               model: db.cargos,
@@ -177,6 +180,7 @@ class SequelizePlanillaRepository {
       raw: false,
       transaction,
     });
+
 
     const contratosRxh = await db.contratos_laborales.findAll({
       where: {
@@ -195,6 +199,9 @@ class SequelizePlanillaRepository {
         {
           model: db.trabajadores,
           as: "trabajador",
+           where: {
+        fecha_baja: null, // 👈 aquí la condición
+      },
           include: [
             {
               model: db.cargos,
