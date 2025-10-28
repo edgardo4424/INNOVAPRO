@@ -1,0 +1,92 @@
+ {
+  activadores: {
+    esAE: false,
+    esAF: true,
+    esAT: false,
+    esEA: false,
+    esEC: false,
+    esPD: false,
+    esPU: false,
+    tienePlataformas: false,
+    tienePernosSinArgolla: false,
+    tienePernosArgolla: true,
+    tienePuntales: false,
+    tienePiezasAdicionales: true,
+    tieneInstalacion: true,
+    tieneInstalacionParcial: false,
+    tieneTransporte: true,
+    mostrarCondiciones: true,
+    tienePagoAdelantado: true,
+    tieneGarantia: true,
+    tieneDepositoEnGarantia: true,
+    tieneOrdenDeServicio: true,
+    tieneLetra: true,
+    tieneCheque: true
+  },
+  uso: { id: 1, nombre: 'ANDAMIO DE FACHADA' },
+  obra: {
+    nombre: 'Torres Paino',
+    direccion: 'Av. Angamos Este, Surquillo, Perú'
+  },
+  filial: {
+    ruc: '20562974998',
+    razon_social: 'ENCOFRADOS INNOVA S.A.C.',
+    direccion: 'AV. ALFREDO BENAVIDES NRO. 1579 INT. 602 URB. SAN JORGE'
+  },
+  cliente: {
+    tipo: 'Persona Jurídica',
+    ruc: '12121212121',
+    razon_social: 'Notaria Paino',
+    domicilio_fiscal: 'Av angamos 123',
+    representante_legal: 'Jose Diaz',
+    numero_documento_representante: '75410121',
+    cargo_representante_legal: 'Ingeniero',
+    domicilio_representante: 'Av los pinos 123'
+  },
+  comercial: {
+    correo: undefined,
+    nombre: 'Lucas',
+    apellido: 'Romero',
+    telefono: null
+  },
+  contacto: { nombre: 'Juan Pepe Hernandez', correo: 'juan@gmail.com' },
+  fecha: { dia: 28, mes: 'Octubre', anio: 2025 },
+  cotizacion: {
+    cp: '0',
+    fecha: '28/10/2025',
+    moneda: 'PEN',
+    tipo_servicio: 'Alquiler',
+    codigo_documento: 'EI-COT-COM-LR1-0001_1',
+    tiempo_alquiler_dias: 30,
+    subtotal_con_descuento_sin_igv: 1865.59
+  },
+  contrato: { codigo: 'EI-CC-COM-LR1-0001_1' },
+  usos: { AF: { zonas: [Array] }, AT: {}, EA: {}, EC: {}, PD: {}, PU: {} },
+  detalles_piezasAdicionales: {
+    piezasAdicionales: [ [Object] ],
+    cantidad_total: 2,
+    precio_alquiler_soles_total: 20.2
+  },
+  instalacion: {
+    nota: null,
+    tipo_instalacion: 'Completa',
+    tiene_instalacion: true,
+    precio_instalacion_parcial_soles: '0.00',
+    precio_instalacion_completa_soles: '120.00'
+  },
+  tarifa_transporte: {
+    costo_total_transporte: '600.00',
+    costo_tarifas_transporte: '400.00',
+    costo_distrito_transporte: '200.00',
+    costo_pernocte_transporte: '0.00'
+  },
+  perno_expansion_sin_argolla: {},
+  perno_expansion_con_argolla: {
+    total: 4,
+    nombre: 'PERNOS DE EXPANSION C/ ARGOLLA - M12 x 80',
+    precio_venta_soles: '60.00',
+    precio_venta_dolares: '16.20',
+    precio_alquiler_soles: '0.00'
+  },
+  detalles_puntales: {}
+}

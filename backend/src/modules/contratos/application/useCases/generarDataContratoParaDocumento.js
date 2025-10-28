@@ -58,8 +58,6 @@ module.exports = async (
 
   const contrato = contratoEncontrado.get({ plain: true });
 
-  console.log("contrato", contrato);
-
   if (!contrato) {
     return {
       codigo: 404,
@@ -107,11 +105,6 @@ module.exports = async (
     moment(fechaInicioContrato).format("MMMM").slice(1); // Mes en formato texto capitalizado
   const anioFechaInicioContrato = moment(fechaInicioContrato).year();
 
-  console.log({
-    diaFechaInicioContrato,
-    mesFechaInicioContrato,
-    anioFechaInicioContrato,
-  });
 
   //Obteniendo la informacion de detalles Piezas adicionales
   const piezas_adicionales = pdfCotizacionDataSnapshot.piezasAdicionales || [];

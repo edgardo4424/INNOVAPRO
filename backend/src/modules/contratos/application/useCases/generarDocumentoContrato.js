@@ -1,11 +1,12 @@
  const path = require("path");
 const fs = require("fs");
-const { renderDocxPlantilla } = require("../../infraestructure/services/contratosDocumentService");
+const { renderDocxPlantilla, documentoController } = require("../../infraestructure/services/contratosDocumentService");
 
 module.exports = async (
   contrato_id,
   data,
   contratoRepository,
+  options = {},
   transaction = null
 ) => {
 
@@ -43,8 +44,9 @@ module.exports = async (
         } */
     
      /*    const plantillaPath = path.join(templatesDir, templateFilename); */
-     const plantillaPath = templatesDir + '/01. ENCOFRADOS INNOVA/01. CONTRATOS (CC)/EI-CC-RESPONSABLE-000X_1-Año - Empresa - Obra - USO.docx';
-        if (!fs.existsSync(plantillaPath)) {
+     const plantillaPath = path.join(templatesDir, '01. ENCOFRADOS INNOVA','01. CONTRATOS (CC)','USOS V2.docx');
+     console.log("PLANTILLA PATH:", plantillaPath); 
+     if (!fs.existsSync(plantillaPath)) {
          /*  await transaction.rollback(); */
           return {
             codigo: 404,
@@ -66,15 +68,27 @@ module.exports = async (
           options: { nombreBase, generarPdf: true },
         });
     
-        // Construir URLs públicas usando el helper del documentoController
-        const base = documentoController.getServerBaseUrl(req); // usa el mismo helper
-        // document controller publica en /public/documentos/contratos según tu servicio
-        const publicBase = "/public/documentos/contratos";
-        const docxUrl = `${base}${publicBase}/${filenameDocx}`;
-        let pdfUrl = null;
-        if (pdfInfo && pdfInfo.filenamePdf) {
-          pdfUrl = `${base}${publicBase}/${pdfInfo.filenamePdf}`;
-        }
+         // Construir URLs públicas: primero intentar obtener base desde options.req si se pasó,
+  // si no, usar SERVER_PUBLIC_BASE_URL en env o fallback a http://localhost:PORT
+  let base;
+  if (options.req && typeof documentoController.getServerBaseUrl === "function") {
+    try {
+      base = documentoController.getServerBaseUrl(options.req);
+    } catch (err) {
+      console.warn("getServerBaseUrl falló con req, usando fallback env:", err.message);
+      base = process.env.SERVER_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+    }
+  } else {
+    base = options.serverBaseUrl || process.env.SERVER_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+  }
+
+  // publicBase tomado del controller (lo definiste cuando instanciaste documentoController)
+  const publicBase = documentoController?.publicBaseUrl || "/public/documentos/contratos";
+  const docxUrl = `${base}${publicBase}/${filenameDocx}`;
+  let pdfUrl = null;
+  if (pdfInfo && pdfInfo.filenamePdf) {
+    pdfUrl = `${base}${publicBase}/${pdfInfo.filenamePdf}`;
+  }
     
         // OPTIONAL: si quieres persistir la url dentro del contrato:
         // const db = require("../../../../database/models");
@@ -86,7 +100,6 @@ module.exports = async (
     respuesta: {
         mensaje: "Documento generado exitosamente",
         contrato: data,
-        plantilla_usada: templateFilename,
         docx: {
           filename: filenameDocx,
           url: docxUrl

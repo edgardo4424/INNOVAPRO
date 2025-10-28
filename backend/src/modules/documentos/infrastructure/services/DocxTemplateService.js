@@ -24,8 +24,16 @@ class DocxTemplateService {
       nullGetter: () => "",
     });
 
-    doc.setData(data);
-    try { doc.render(); }
+    /* doc.setData(data); */
+    console.log("data", data);
+    const flatData = {
+    ...data,
+    ...data.activadores, // <- solo aplana activadores
+    AF: data.usos?.AF || {},
+  };
+
+  console.dir(flatData, { depth: null });
+    try { doc.render(flatData); }
     catch (error) { throw new Error(`Error al renderizar DOCX: ${error.message}`); }
 
     const buf = doc.getZip().generate({ type: "nodebuffer" });

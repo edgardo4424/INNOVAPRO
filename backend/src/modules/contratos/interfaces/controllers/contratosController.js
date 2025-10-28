@@ -153,6 +153,8 @@ const ContratoController = {
 
      const data = dataContrato.respuesta || {};
 
+     console.dir(data, { depth: null });
+
       // Generando el documento automáticamente usando la data obtenida
       const respuesta = await generarDocumentoContrato(
         contrato_id,
