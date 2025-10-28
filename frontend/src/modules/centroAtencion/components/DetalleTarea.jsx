@@ -100,6 +100,8 @@ export default function DetalleTarea({
           setOpen={setOpen}
           cotizacion_id={tarea?.cotizacionId}
           content={tarea?.detalles}
+          setActNuevoDespiece={setActNuevoDespiece}
+          actNuevoDespieze={actNuevoDespieze}
         />
       ),
       "Modificación de plano": <p>Componente para Modificación de plano</p>,
@@ -137,11 +139,7 @@ export default function DetalleTarea({
     }
   }, []);
 
-  useEffect(() => {
-    if (actNuevoDespieze) {
-      setOpenListaPiezas(true);
-    }
-  }, [actNuevoDespieze]);
+
 
   return (
     <div className="centro-modal">

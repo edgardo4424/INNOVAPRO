@@ -288,10 +288,10 @@ export function GuiaTransporteProvider({ children }) {
       if (error.response) {
         const { success, message, detailed_message, data, status } =
           error.response.data;
+          console.log(error.response.data);
         result = {
           success: false,
-          message:
-            message || detailed_message || "Error al comunicarse con la API.",
+          message: message,
           data,
           status,
         };

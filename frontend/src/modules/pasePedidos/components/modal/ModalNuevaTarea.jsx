@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import pedidosService from "../../service/PedidosService";
 import { validaTarea } from "../../utils/validarTarea";
 import FormNuevaTarea from "../form/FormNuevaTarea";
+import { usePedidos } from "../../context/PedidosContenxt";
 
 const TareaOT = {
   empresaProveedoraId: null,
@@ -31,7 +32,7 @@ const TareaOT = {
     obra: "",
     prioridad: "",
   },
-  pedido_id: null,
+  pase_pedido_id: null,
   estado: "Pendiente",
   usuarioId: null,
 };
@@ -43,6 +44,7 @@ export default function ModalNuevaTarea({
   setPedidoView,
 }) {
   const { user } = useAuth();
+  const { ObtenerPasePedidos } = usePedidos();
   const [nuevaTareaForm, setNuevaTareaForm] = useState(TareaOT);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -56,7 +58,7 @@ export default function ModalNuevaTarea({
         contactoId: pedidoView.contactoId,
         cotizacionId: pedidoView.cotizacion_id,
         usuarioId: user.id,
-        pedido_id: pedidoView.pedido_id,
+        pase_pedido_id: pedidoView.pedido_id,
         detalles: {
           ...prev.detalles,
           estadoPasePedido: pedidoView.estado,
@@ -78,7 +80,7 @@ export default function ModalNuevaTarea({
 
       setIsLoading(true);
 
-      const { mensaje, tarea } =
+      const { mensaje, tarea, error } =
         await pedidosService.nuevaTareaPasePedido(nuevaTareaForm);
 
       toast.success(mensaje);
@@ -86,10 +88,12 @@ export default function ModalNuevaTarea({
       if (tarea) {
         setOpen(false);
         setPedidoView(null);
+        ObtenerPasePedidos();
       }
     } catch (error) {
-      console.error(error);
-      toast.error("Ocurrió un error al crear la tarea");
+      console.error(error.response.data);
+      const { error: errorMessage } = error.response.data;
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
