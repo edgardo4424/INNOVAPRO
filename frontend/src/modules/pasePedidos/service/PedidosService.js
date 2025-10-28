@@ -11,7 +11,7 @@ const pedidosService = {
         return res.data;
     },
     nuevaTareaPasePedido: async (body) => {
-        const res = await api.post(`/tareas`, body);
+        const res = await api.post(`/tareas/crear-tarea-pase`, body);
         return res.data;
     }
 }

@@ -30,6 +30,10 @@ const centroAtencionService = {
     const res = await api.put(`/despieces_detalles/${id}/actualizarPiezas`, payload);
     return res.data;
   },
+  validarStockCotizacion: async (id) => {
+    const res = await api.post(`/stock/verificar-stock`, { cotizacion_id: id });
+    return res.data;
+  },
 };
 
 export default centroAtencionService;

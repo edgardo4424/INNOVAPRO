@@ -23,29 +23,29 @@ const FormPedido = ({ pedidoView: pedido }) => {
       {/* 1. Bloque: Cabecera y Aprobaciones */}
       <div className="flex items-start justify-between border-b border-gray-400 bg-gray-50 p-3">
         {/* Logo e Identificación del Documento */}
-        <div className="flex w-full items-center space-x-3">
-          <div className="flex w-8/12 justify-center pt-1">
-            <p className="text-innova-blue text-2xl font-bold">
-              PASE PEDIDO N° {pedido?.nro_Pedido || "N/A"}
-            </p>
-          </div>
+        {/* <div className="flex w-full items-center space-x-3"> */}
+          {/* <div className="flex w-8/12 justify-center pt-1"> */}
+            {/* <p className="text-innova-blue text-2xl font-bold"> */}
+              {/* PASE PEDIDO N° {pedido?.nro_Pedido || "N/A"} */}
+            {/* </p> */}
+          {/* </div> */}
           {/* Firmas / V°B° (Agrupación) */}
-          <div className="w-4/12 border border-gray-300 bg-white p-2 pt-1 text-right text-xs">
-            <p className="mb-1 text-sm font-extrabold">APROBACIONES</p>
-            <div className="grid grid-cols-2 gap-x-4">
-              <p className="border-b border-dashed font-bold">
-                {pedido?.ot_Usuario_Pase || "N/A"}
-              </p>
-              <p className="border-b border-dashed font-bold">
-                {pedido?.ot_Usuario_Revisado || "N/A"}
-              </p>
-              <p className="mt-1 text-gray-500 italic">PASE PEDIDO</p>
-              <p className="mt-1 text-gray-500 italic">
-                {pedido?.ot_Respuesta_Pase || "N/A"}
-              </p>
-            </div>
-          </div>
-        </div>
+          {/* <div className="w-4/12 border border-gray-300 bg-white p-2 pt-1 text-right text-xs"> */}
+            {/* <p className="mb-1 text-sm font-extrabold">APROBACIONES</p> */}
+            {/* <div className="grid grid-cols-2 gap-x-4"> */}
+              {/* <p className="border-b border-dashed font-bold"> */}
+                {/* {pedido?.ot_Usuario_Pase || "N/A"} */}
+              {/* </p> */}
+              {/* <p className="border-b border-dashed font-bold"> */}
+                {/* {pedido?.ot_Usuario_Revisado || "N/A"} */}
+              {/* </p> */}
+              {/* <p className="mt-1 text-gray-500 italic">PASE PEDIDO</p> */}
+              {/* <p className="mt-1 text-gray-500 italic"> */}
+                {/* {pedido?.ot_Respuesta_Pase || "N/A"} */}
+              {/* </p> */}
+            {/* </div> */}
+          {/* </div> */}
+        {/* </div> */}
       </div>
 
       {/* 2. Bloque: Estado del Pedido (Bandera) */}
