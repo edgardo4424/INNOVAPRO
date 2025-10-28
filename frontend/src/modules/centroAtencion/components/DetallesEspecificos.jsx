@@ -72,6 +72,7 @@ export const DetallesEspecificos = ({ detalles }) => {
     "notaDespiece",
     "dias_alquiler",
     "atributos_valor_zonas",
+    "pedido_id",
   ];
 
   const labels = {
@@ -104,6 +105,7 @@ export const DetallesEspecificos = ({ detalles }) => {
     notaDespiece: "Nota del Despiece",
     dias_alquiler: "Días de alquiler",
     atributos_valor_zonas: "Zonas y Atributos",
+    pedido_id: "Pedido ID",
   };
 
   const atributosLabels = {
@@ -183,7 +185,7 @@ export const DetallesEspecificos = ({ detalles }) => {
                 .filter((_, i) => i % 2 === col)
                 .map(
                   ([key, value], idx) =>
-                    value && (
+                    value && key !== "pedido_id" && (
                       <div key={idx} className="rounded-lg bg-gray-50 p-4">
                         <div className="mb-2 flex items-center gap-2">
                           {iconos[key] || (

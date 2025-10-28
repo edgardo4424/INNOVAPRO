@@ -32,6 +32,7 @@ import { DetallesEspecificos } from "./DetallesEspecificos";
 import DespieceOT from "./despiece-ot/DespieceOT";
 import ImportadorDespiece from "./despiece-ot/ImportadorDespiece";
 import ModalDevolverTarea from "./modal/ModalDevolverTarea";
+import ModalFinzalizarTarea from "./modal/ModalFinalizarTarea";
 import ModalListarPiezas from "./modal/ModalListarPiezas";
 import ModalReabrirTarea from "./modal/ModalReabrirTarea";
 import ModalValidarStock from "./modal/ModalValidarStock";
@@ -68,6 +69,8 @@ export default function DetalleTarea({
   const [componenteRenderPedido, setComponenteRenderPedido] = useState(null);
   const [actNuevoDespieze, setActNuevoDespiece] = useState(false);
   const [idDespiece, setIdDespiece] = useState(null);
+
+  const [openFinalizarTarea, setOpenFinalizarTarea] = useState(false);
 
   const puedeGenerarDespiece =
     (user?.rol === "Jefe de OT" || user?.rol === "OT") &&
@@ -138,8 +141,6 @@ export default function DetalleTarea({
       ObtenerIdDespiece();
     }
   }, []);
-
-
 
   return (
     <div className="centro-modal">
@@ -473,6 +474,14 @@ export default function DetalleTarea({
                       <Check className="size-5" />
                       FINALIZAR
                     </Button>
+
+
+                    <ModalFinzalizarTarea
+                      open={openFinalizarTarea}
+                      setOpen={setOpenFinalizarTarea}
+                      tarea={tarea}
+                      cerrarTarea={onCerrar}
+                    />
 
                     {/* //? RENDERIZADO DE  ACCION PASE PEDIDOS */}
                     {componenteRenderPedido && componenteRenderPedido}

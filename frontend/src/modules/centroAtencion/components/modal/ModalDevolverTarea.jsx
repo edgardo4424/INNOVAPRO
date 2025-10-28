@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, RotateCcw, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import centroAtencionService from "../../services/centroAtencionService";
 
@@ -40,16 +40,21 @@ export default function ModalDevolverTarea({
         setOpen(false);
         cerrarTarea?.();
       } else {
-        toast.error("❌ No se pudo reabrir la tarea");
+        toast.error("❌ No se pudo devolver la tarea");
       }
     } catch (error) {
-      console.error("Error al reabrir tarea:", error);
-      toast.error("❌ Error interno al reabrir la tarea");
+      toast.error("❌ Error interno al devolver la tarea");
     } finally {
       setIsLoading(false);
     }
   };
-  console.log(tarea.detalles);
+
+  useEffect(() => {
+    if (open) {
+      setRespuesta("");
+    }
+  }, [open]);
+
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
