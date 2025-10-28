@@ -154,6 +154,7 @@ module.exports = async (guia, repository) => {
       correlativo: guia?.correlativo,
       message: error?.response?.data?.message || error?.message,
       error_factiliza: error?.response?.data,
+      error_full: error,
       content: guia
     });
 
