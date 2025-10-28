@@ -450,11 +450,11 @@ const ProductoForm = ({ closeModal }) => {
               name="descripcion"
               value={productoActual.descripcion}
               onChange={handleDescripcion}
-              maxLength={250}
+              maxLength={300}
               className={`h-40 w-full resize-none rounded-xl border-1 p-2 uppercase ${productoValida?.descripcion ? "border-red-500" : "border-gray-400"}`}
             />
             <p className="absolute right-4 bottom-2 mt-2 text-right text-sm text-gray-500">
-              {productoActual.descripcion.length}/250
+              {productoActual.descripcion.length}/300
             </p>
           </div>
         </div>

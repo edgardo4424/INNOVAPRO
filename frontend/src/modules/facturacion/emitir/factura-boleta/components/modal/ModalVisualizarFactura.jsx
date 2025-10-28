@@ -239,7 +239,7 @@ export default function ModalVisualizarFactura() {
                               <td className="px-4 py-2 text-sm">
                                 {item.unidad}
                               </td>
-                              <td className="max-w-[240px] px-4 py-2 text-sm">
+                              <td className="max-w-sm min-w-[200px] leading-relaxed break-words whitespace-pre-wrap text-gray-800">
                                 {item.descripcion}
                               </td>
                               <td className="px-4 py-2 text-right text-sm">
@@ -284,7 +284,7 @@ export default function ModalVisualizarFactura() {
                       <h3 className="text-md mb-2 font-bold text-gray-600">
                         OBSERVACION:
                       </h3>
-                      <div className="rounded-md bg-white p-2 text-sm text-gray-800">
+                      <div className="max-w-sm min-w-[200px] leading-relaxed break-words whitespace-pre-wrap text-gray-800 p-2">
                         {factura.Observacion ||
                           "No hay observacion registradas."}
                       </div>

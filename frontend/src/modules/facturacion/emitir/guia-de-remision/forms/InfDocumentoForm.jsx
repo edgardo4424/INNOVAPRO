@@ -429,11 +429,11 @@ const InfDocumentoForm = () => {
               value={observacion}
               onChange={handleChange}
               rows="2"
-              maxLength="250"
+              maxLength="200"
               className="h-32 w-full resize-none rounded-lg border border-gray-300 bg-white p-4 placeholder-gray-400 transition-all duration-200"
             ></Textarea>
             <p className="absolute right-4 bottom-2 mt-2 text-right text-sm text-gray-500">
-              {observacion.length}/250
+              {observacion.length}/200
             </p>
           </div>
         </div>

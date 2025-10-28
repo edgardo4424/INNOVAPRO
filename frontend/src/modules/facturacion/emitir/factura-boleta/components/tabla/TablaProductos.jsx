@@ -22,11 +22,7 @@ const TablaProductos = ({ setOpen }) => {
       <Table className={"border-2 border-gray-200"}>
         <TableHeader className="border-b-2 border-gray-400 bg-gray-100">
           <TableRow>
-            <TableHead
-              className={`w-[120px]`}
-            >
-              Tipo
-            </TableHead>
+            <TableHead className={`w-[120px]`}>Tipo</TableHead>
             <TableHead className="">Código</TableHead>
             <TableHead>Descripción</TableHead>
             <TableHead>Unidad</TableHead>
@@ -56,13 +52,11 @@ const TablaProductos = ({ setOpen }) => {
                 className={"cursor-pointer hover:bg-gray-100"}
                 onClick={() => seleccionarProducto(producto, index)}
               >
-                <TableCell
-                  className={`w-[120px]`}
-                >
+                <TableCell className={`w-[120px]`}>
                   {producto?.tipo_item || ""}
                 </TableCell>
                 <TableCell>{producto.cod_Producto || ""}</TableCell>
-                <TableCell className="max-w-sm min-w-[200px] whitespace-normal">
+                <TableCell className="max-w-sm min-w-[200px] leading-relaxed break-words whitespace-pre-wrap text-gray-800">
                   {producto.descripcion || ""}
                 </TableCell>
                 <TableCell>{producto.unidad || ""}</TableCell>

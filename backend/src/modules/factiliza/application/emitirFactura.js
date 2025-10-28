@@ -17,14 +17,6 @@ module.exports = async (factura, repository, borradorRepository) => {
                 },
             };
         }
-        // ! 🪵 Registrar lo enviado por el frontend
-        registrarLogFactiliza('FRONTEND_REQUEST_FACTURA', {
-            tipo: factura.tipo_Doc === '01' ? 'FACTURA' : 'BOLETA',
-            serie: factura.serie,
-            correlativo: factura.correlativo,
-            ruc: factura.empresa_Ruc,
-            content: factura,
-        });
 
         // ? 1 Enviar la factura a Factiliza
         const response = await factilizaService.enviarFactura(factura);
@@ -157,7 +149,6 @@ module.exports = async (factura, repository, borradorRepository) => {
             correlativo: factura?.correlativo,
             message: error?.response?.data?.message || error?.message,
             error_factiliza: error?.response?.data,
-            ERROR_FULL: error?.response,
             content: factura
         });
         // ? 9 Manejo de errores genéricos o de red

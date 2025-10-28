@@ -36,7 +36,7 @@ const registrarLogFactiliza = (tipo, data) => {
     const contenido = JSON.stringify(data, null, 2);
     logger.info(`[${tipo}] ${contenido}`);
   } catch (err) {
-    logger.error(`[LOGGER_ERROR_${tipo}] No se pudo escribir log: ${err} content:${contenido ?? '{title: "no se pudo registrar el content"}'}`);
+    logger.error(`[LOGGER_ERROR_${tipo}] No se pudo escribir log: ${err.message}`);
   }
 };
 

@@ -48,10 +48,10 @@ const DetalleProducto = () => {
             placeholder="Ingrese observación adicional para el documento..."
             onChange={handleObservacion}
             value={factura.Observacion}
-            maxLength="250"
+            maxLength="200"
           ></textarea>
           <p className="absolute right-4 bottom-2 mt-2 text-right text-sm text-gray-500">
-            {factura.Observacion.length}/250
+            {factura.Observacion.length}/200
           </p>
         </div>
 

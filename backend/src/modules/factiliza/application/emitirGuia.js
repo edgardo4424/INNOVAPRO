@@ -19,15 +19,6 @@ module.exports = async (guia, repository) => {
       };
     }
 
-    // ! 🪵 Registrar las guias enviadas
-    registrarLogFactiliza('FRONTEND_REQUEST_GUIA', {
-      tipo: 'GUIA',
-      serie: guia.serie,
-      correlativo: guia.correlativo,
-      ruc: guia.empresa_Ruc,
-      content: guia,
-    });
-
 
     // ? 1 Enviar la guía a Factiliza
     const response = await factilizaService.enviarGuia(guia);
@@ -154,7 +145,6 @@ module.exports = async (guia, repository) => {
       correlativo: guia?.correlativo,
       message: error?.response?.data?.message || error?.message,
       error_factiliza: error?.response?.data,
-      error_full: error,
       content: guia
     });
 
