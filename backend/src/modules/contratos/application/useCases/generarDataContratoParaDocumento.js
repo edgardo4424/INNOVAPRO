@@ -114,21 +114,22 @@ module.exports = async (
   });
 
   //Obteniendo la informacion de detalles Piezas adicionales
-  const piezas_adicionales = pdfCotizacionDataSnapshot.piezas_adicionales || [];
+  const piezas_adicionales = pdfCotizacionDataSnapshot.piezasAdicionales || [];
   const cantidad_total_piezas_adicionales = piezas_adicionales.reduce(
     (total, pieza) => total + (pieza.cantidad || 0),
     0
-  );
+  ) || 0;
 
   const precio_alquiler_soles_total_piezas_adicionales =
     piezas_adicionales.reduce(
       (total, pieza) => total + (pieza.precio_alquiler_soles || 0),
       0
-    );
+    ) || 0;
 
   // Obteniendo la informacion de instalacion
 
   const tiene_instalacion = pdfCotizacionDataSnapshot?.instalacion?.tiene_instalacion ? pdfCotizacionDataSnapshot?.instalacion?.tiene_instalacion : false;
+  const tiene_transporte = Object.keys(pdfCotizacionDataSnapshot?.tarifa_transporte || {}).length > 0 ? true : false;
 
   let respuesta = {
     activadores: {
@@ -146,10 +147,10 @@ module.exports = async (
       tienePernosSinArgolla: false,
       tienePernosArgolla: false,
       tienePuntales: false,
-      tienePiezasAdicionales: false,
-      tieneInstalacion: false,
-      tieneInstalacionParcial: false,
-      tieneTransporte: false,
+      tienePiezasAdicionales: piezas_adicionales.length > 0 ? true : false,
+      tieneInstalacion: tiene_instalacion,
+      tieneInstalacionParcial: pdfCotizacionDataSnapshot?.instalacion?.tipo_instalacion == "Parcial" ? true : false,
+      tieneTransporte: tiene_transporte,
 
       // Condiciones de alquiler
       mostrarCondiciones: true,
@@ -228,9 +229,7 @@ module.exports = async (
 
     instalacion: tiene_instalacion ? pdfCotizacionDataSnapshot?.instalacion : {},
 
-    tarifa_transporte: {
-      ...pdfCotizacionDataSnapshot?.tarifa_transporte,
-    },
+    tarifa_transporte: tiene_transporte ? pdfCotizacionDataSnapshot?.tarifa_transporte : {},
 
     perno_expansion_sin_argolla: {},
     perno_expansion_con_argolla: {},
