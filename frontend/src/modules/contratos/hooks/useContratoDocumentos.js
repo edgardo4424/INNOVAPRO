@@ -1,213 +1,136 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
-import { getPlantillasArbol, searchPlantillas } from "../services/contratoDocumentosService";
 import {
-  listarHistorialAPI,
+  getResumenYHistorialAPI,
   renderDocumentoAPI,
   subirFinalAPI,
   oficializarAPI,
 } from "../services/contratoDocumentosService";
-import { mapUsoPlantilla } from "../utils/mapUsoPlantilla";
 
-/**
- * Fuente de verdad:
- * - contratoId: por URL
- * - filialId, uso: se toman del contrato/cotización. TODO: integrarlo con tu contexto.
- * - mergeData: JSON armado automáticamente a partir del contrato (editable según rol).
- */
 export function useContratoDocumentos({ contratoId }) {
   const location = useLocation();
-  const [search] = useSearchParams();
 
-  // Parámetros entrantes (desde tabla o query)
-  const navFilialId = location.state?.filialId ?? (search.get("filialId") ? Number(search.get("filialId")) : null);
-  const navUsoId    = location.state?.usoId ?? (search.get("usoId") ? Number(search.get("usoId")) : null);
-  const navUsoStr   = location.state?.uso ?? (search.get("uso") || "");
+  const codigo_contrato = location.state.codigo_contrato ?? null;
 
-  // TODO: traer desde tu contexto del contrato si no vienen por state/query:
-  const [filialId, setFilialId] = useState(navFilialId ?? null);
-  const [usoId, setUsoId]       = useState(navUsoId ?? null);
-  const [uso, setUso]           = useState(navUsoStr ?? ""); // nombre de carpeta
-  // JSON de merge (lo precargo con un ejemplo; reemplaza por tu builder real)
-  const [mergeData, setMergeData] = useState("{}");
+  // ==== STATE PRINCIPAL ====
+  const [codigoContrato, setCodigoContrato] = useState(codigo_contrato ?? "");
+  const [filialId, setFilialId] = useState(null);
+  const [usoId, setUsoId] = useState(null);
+  const [oficializadoFlag, setOficializadoFlag] = useState(false);
+  const [docxGenerado, setDocxGenerado] = useState(null); // última URL generada por /render
 
-  // Árbol y plantillas
-  const [arbol, setArbol] = useState([]);     // Filial -> Usos -> Plantillas
-  const [plantillas, setPlantillas] = useState([]);
-  const [plantillaId, setPlantillaId] = useState(null);
-
-  // Historial y UI
   const [historial, setHistorial] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [generarPdf, setGenerarPdf] = useState(false);
-  const refDocx = useRef(null); const refPdf = useRef(null);
 
-  const isDataValid = useMemo(() => {
-    try { JSON.parse(mergeData); return true; } catch { return false; }
-  }, [mergeData]);
+  // Refs de inputs
+  const refDocx = useRef(null);
+  const refPdf = useRef(null);
 
-  // 1) Cargar árbol de plantillas (para combos y auto)
-  useEffect(() => {
-    (async () => {
-      try {
-        const r = await getPlantillasArbol();
-        setArbol(r?.data || []);
-      } catch (e) {
-        toast.error(e?.response?.data?.message || "No se pudo cargar el árbol de plantillas");
-      }
-    })();
-  }, []);
-
-  // 2) Precargar JSON demo si viene vacío (reemplaza por tu builder real)
-  useEffect(() => {
-    if (mergeData === "{}") {
-      setMergeData(JSON.stringify({
-        contrato: { codigo: `CT-${contratoId}` },
-        cliente: { razon_social: "CLIENTE DEMO SAC", ruc: "20123456789" },
-        obra: { nombre: "OBRA DEMO", direccion: "Dirección de la obra" },
-        mostrarCondiciones: true,
-        tienePagoAdelantado: true,
-        tieneGarantia: false,
-        tieneDepositoEnGarantia: false,
-        tieneOrdenDeServicio: false,
-        plan: "basico" // <- ayuda a mapear AEI
-      }, null, 2));
-    }
-  }, [contratoId]); // eslint-disable-line
-
-  // 3) Historial
-  const fetchHistorial = useCallback(async () => {
+  // ==== CARGA INICIAL: resumen + historial ====
+  const fetchResumenYHistorial = useCallback(async () => {
     try {
-      const r = await listarHistorialAPI(contratoId);
-      setHistorial(r?.data || []);
+      const r = await getResumenYHistorialAPI(contratoId);
+      // r: { resumen: {...}, historial: [...] }
+      setCodigoContrato(r?.resumen?.codigo_contrato || "");
+      setFilialId(r?.resumen?.filial_id ?? null);
+      setUsoId(r?.resumen?.uso_id ?? null);
+      setOficializadoFlag(Boolean(r?.resumen?.oficializado));
+      setDocxGenerado(r?.resumen?.docx_ultimo_url || null);
+      setHistorial(Array.isArray(r?.historial) ? r.historial : []);
     } catch (e) {
-      toast.error(e?.response?.data?.message || "Error listando documentos");
+      toast.error(e?.response?.data?.message || "Error cargando documentos del contrato");
     }
   }, [contratoId]);
-  useEffect(() => { fetchHistorial(); }, [fetchHistorial]);
 
-  // 4) Autoselección de USO por reglas (si no vino “uso” explícito)
   useEffect(() => {
-    if (!filialId || uso) return; // ya definido por navegación
-    try {
-      const filialMeta = arbol.find(f => f.filial_id === Number(filialId));
-      if (!filialMeta) return;
-      const inferred = mapUsoPlantilla({
-        filialNombre: filialMeta.filial_nombre,
-        mergeData: isDataValid ? JSON.parse(mergeData) : {},
-      });
-      if (inferred) setUso(inferred);
-    } catch (_) { /* no-op */ }
-  }, [arbol, filialId, uso, mergeData, isDataValid]);
+    fetchResumenYHistorial();
+  }, [fetchResumenYHistorial]);
 
-  // 5) Cargar plantillas segun filial/uso (filesystem)
-  const reloadPlantillas = useCallback(async () => {
-    if (!filialId) return;
-    setLoading(true);
-    try {
-      const r = await searchPlantillas({ filial_id: filialId, uso }); // si uso es null, traerá todas de la filial
-      const list = r?.data || [];
-      setPlantillas(list);
-
-      // Autoselección si hay 1 sola
-      if (!plantillaId && list.length === 1) setPlantillaId(list[0].id);
-    } catch (e) {
-      toast.error(e?.response?.data?.message || "Error buscando plantillas");
-    } finally {
-      setLoading(false);
-    }
-  }, [filialId, uso, plantillaId]);
-
-  useEffect(() => { reloadPlantillas(); }, [reloadPlantillas]);
-
-  // === Acciones ===
+  // ==== ACCIONES ====
   const renderDocumento = useCallback(async () => {
-    if (!plantillaId) return toast.error("Selecciona una plantilla");
-    if (!isDataValid) return toast.error("JSON inválido");
-
     setLoading(true);
     try {
-      const payload = {
-        plantilla_id: plantillaId,
-        data: JSON.parse(mergeData),
-        generarPdf,
-        nombreBase: `contrato-${contratoId}`,
-      };
-      const r = await renderDocumentoAPI(contratoId, payload);
-      toast.success("Documento generado");
-      setHistorial(prev => [r.documento, ...prev]);
+      const r = await renderDocumentoAPI(contratoId);
+      // r: { documento: {...}, docx_url: "..." }
+      if (r?.documento) {
+        setHistorial(prev => [r.documento, ...prev]);
+      }
+      if (r?.docx_url) setDocxGenerado(r.docx_url);
+      toast.success("Documento Word generado correctamente.");
     } catch (e) {
-      toast.error(e?.response?.data?.message || "Error generando documento");
+      toast.error(e?.response?.data?.message || "Error generando el documento");
     } finally {
       setLoading(false);
     }
-  }, [plantillaId, isDataValid, mergeData, generarPdf, contratoId]);
+  }, [contratoId]);
 
   const subirFinal = useCallback(async () => {
     const docx = refDocx.current?.files?.[0] || null;
-    const pdf  = refPdf.current?.files?.[0] || null;
-    if (!docx && !pdf) return toast.error("Sube DOCX o PDF final");
+    const pdf = refPdf.current?.files?.[0] || null;
+    if (!docx && !pdf) return toast.error("Sube el archivo final (.docx o .pdf)");
 
     setLoading(true);
     try {
       const r = await subirFinalAPI(contratoId, { docx, pdf });
-      toast.success("Contrato final agregado");
-      setHistorial(prev => [r.documento, ...prev]);
+      // r: { documento: {...} }
+      if (r?.documento) setHistorial(prev => [r.documento, ...prev]);
       if (refDocx.current) refDocx.current.value = "";
       if (refPdf.current) refPdf.current.value = "";
+      toast.success("Versión final cargada.");
     } catch (e) {
-      toast.error(e?.response?.data?.message || "Error subiendo contrato final");
+      toast.error(e?.response?.data?.message || "Error subiendo la versión final");
     } finally {
       setLoading(false);
     }
   }, [contratoId]);
 
   const oficializar = useCallback(async () => {
-    if (!window.confirm("¿Confirmas oficializar el contrato? Solo si ya está firmado por el cliente.")) return;
+    if (!window.confirm("¿Confirmas oficializar el contrato? Asegúrate de que ya esté firmado.")) return;
     setLoading(true);
     try {
-      await oficializarAPI(contratoId); // <- backend por implementar
-      toast.success("Contrato oficializado");
-      await fetchHistorial();
+      const r = await oficializarAPI(contratoId);
+      // r: { ok: true, documento: {...}, oficializado: true }
+      if (r?.documento) setHistorial(prev => [r.documento, ...prev]);
+      if (typeof r?.oficializado === "boolean") setOficializadoFlag(r.oficializado);
+      toast.success("Contrato oficializado.");
     } catch (e) {
-      toast.error(e?.response?.data?.message || "Error al oficializar");
+      toast.error(e?.response?.data?.message || "Error al oficializar el contrato");
     } finally {
       setLoading(false);
     }
-  }, [contratoId, fetchHistorial]);
+  }, [contratoId]);
 
-  // === Derivados ===
-  const oficializado = useMemo(() => {
-    // Criterio simple: si la última versión es "final" y hay PDF, lo consideramos oficializado (ajústalo cuando Luis haga el endpoint real).
-    const last = historial?.[0];
-    return Boolean(last && last.estado === "final");
-  }, [historial]);
+  // ==== DERIVADOS/UI ====
+  const oficializado = useMemo(() => oficializadoFlag, [oficializadoFlag]);
 
   const ui = {
-    refDocx, refPdf,
-    buttonGenerar: loading ? "Generando..." : "Generar DOCX",
+    refDocx,
+    refPdf,
+    buttonGenerar: loading ? "Generando..." : "Generar Documento Word",
     buttonSubir: loading ? "Subiendo..." : "Subir versión final",
     buttonOficializar: loading ? "Procesando..." : "Oficializar",
   };
 
   const state = {
-    contratoId, filialId, usoId, uso,
-    setUso, plantillas, plantillaId, setPlantillaId,
-    mergeData, setMergeData, generarPdf, setGenerarPdf,
-    historial, loading, arbol,
+    contratoId,
+    codigoContrato,
+    filialId,
+    usoId,
+    docxGenerado,
+    historial,
+    loading,
   };
 
   const actions = {
-    reloadPlantillas,
     renderDocumento,
     subirFinal,
     oficializar,
-    setUso,
-    setFilialId, setUsoId,
+    setFilialId,
+    setUsoId,
   };
 
-  const derived = { isDataValid, oficializado };
+  const derived = { oficializado };
 
   return { ui, state, actions, derived };
 }
