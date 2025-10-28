@@ -1,5 +1,6 @@
  const path = require("path");
 const fs = require("fs");
+const { renderDocxPlantilla } = require("../../infraestructure/services/contratosDocumentService");
 
 module.exports = async (
   contrato_id,
@@ -31,17 +32,18 @@ module.exports = async (
         
         // Obtener la ruta de la plantilla tomando como referencia a templatesDir, añadiendo mas carpetas
 
-        const templateFilename = templatesDir + '/01. ENCOFRADOS INNOVA/01. CONTRATOS (CC)/EI-CC-RESPONSABLE-000X_1-Año - Empresa - Obra - USO.docx';
+       //const templateFilename = templatesDir + '/01. ENCOFRADOS INNOVA/01. CONTRATOS (CC)/EI-CC-RESPONSABLE-000X_1-Año - Empresa - Obra - USO.docx';
     
-        if (!templateFilename) {
-         /*  await transaction.rollback(); */
+        /* if (!templateFilename) {
+         
           return {
             codigo: 400,
             respuesta: { mensaje: "No se proporcionó nombre de plantilla" }
           }
-        }
+        } */
     
-        const plantillaPath = path.join(templatesDir, templateFilename);
+     /*    const plantillaPath = path.join(templatesDir, templateFilename); */
+     const plantillaPath = templatesDir + '/01. ENCOFRADOS INNOVA/01. CONTRATOS (CC)/EI-CC-RESPONSABLE-000X_1-Año - Empresa - Obra - USO.docx';
         if (!fs.existsSync(plantillaPath)) {
          /*  await transaction.rollback(); */
           return {
@@ -85,6 +87,11 @@ module.exports = async (
         mensaje: "Documento generado exitosamente",
         contrato: data,
         plantilla_usada: templateFilename,
+        docx: {
+          filename: filenameDocx,
+          url: docxUrl
+        },
+        pdf: pdfUrl ? { filename: pdfInfo.filenamePdf, url: pdfUrl } : (pdfInfo?.error ? { error: pdfInfo.error } : null),
     },
   };
 };

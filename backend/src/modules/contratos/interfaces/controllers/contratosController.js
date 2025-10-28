@@ -154,7 +154,7 @@ const ContratoController = {
      const data = dataContrato.respuesta || {};
 
       // Generando el documento automáticamente usando la data obtenida
-      await generarDocumentoContrato(
+      const respuesta = await generarDocumentoContrato(
         contrato_id,
         data,
         contratoRepository,
@@ -162,7 +162,7 @@ const ContratoController = {
       );
       
       await transaction.commit();
-      res.status(dataContrato.codigo).json(dataContrato.respuesta);
+      res.status(respuesta.codigo).json(respuesta.respuesta);
     } catch (error) {
       console.log("Ocurrio el siguiente error: ", error);
       await transaction.rollback();
