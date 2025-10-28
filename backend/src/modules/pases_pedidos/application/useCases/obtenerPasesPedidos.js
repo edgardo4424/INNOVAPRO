@@ -1,6 +1,7 @@
 const { Tarea } = require("../../../tareas/infrastructure/models/tareaModel");
 const pases_pedido_model = require("../../infraestructure/utils/pase_pedido_model_front");
 const db = require("../../../../database/models");
+const obtenerRestoPiezas = require("../../infraestructure/services/obtenerRestoPiezas");
 module.exports = async (pasePedidoRepository, transaction = null) => {
   const pases_pedidos =
     await pasePedidoRepository.obtenerPasesPedidos(transaction);
@@ -81,23 +82,24 @@ module.exports = async (pasePedidoRepository, transaction = null) => {
       const lista_despiece =
         pedido.contrato.cotizacion.despiece.despieces_detalles;
       let sumatoria_peso = 0;
-      let  detalles = [];
-      for (const pieza of lista_despiece) {
+      let lista_piezas_para_emitir = [];
+      const restoPiezas=await obtenerRestoPiezas(lista_despiece,pedido.contrato_id);
+      for (const pieza of restoPiezas) {
         const payload = {
           index: null,
           unidad: "UNI",
           cantidad: pieza.cantidad,
-          cod_Producto:
-            "Esperando a que luis lo incluya en la despices_detalles",
-          descripcion:
-            "Esperando a que luis lo incluya en la despices_detalles",
+          cod_Producto:pieza.item,
+          descripcion:pieza.descripcion
         };
-        sumatoria_peso += Number(pieza.peso_kg) * Number(pieza.cantidad);
-
-        detalles.push(payload);
+        sumatoria_peso += Number(pieza.peso_kg);
+        lista_piezas_para_emitir.push(payload)
       }
+
+
+
       pase_pedido.guia_Envio_Peso_Total = sumatoria_peso;
-      pase_pedido.detalle = detalles;
+      pase_pedido.detalle = lista_piezas_para_emitir;
       if (pedido.contrato.cotizacion.tiene_transporte) {
         //La empresa(innova)hace el transporte
         pase_pedido.ValoresPrivado = {
