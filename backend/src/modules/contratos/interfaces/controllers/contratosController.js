@@ -16,6 +16,7 @@ const sequelize = require("../../../../database/models").sequelize;
 const solicitarCondicionesAlquiler = require("../../application/useCases/solicitarCondicionesAlquiler");
 const crearCondicionAlquiler = require("../../application/useCases/crearCondicionAlquiler");
 const { documentoController } = require("../../infraestructure/services/contratosDocumentService");
+const generarDocumentoContrato = require("../../application/useCases/generarDocumentoContrato");
 
 const ContratoController = {
   async crearContrato(req, res) {
@@ -137,20 +138,28 @@ const ContratoController = {
 
     try {
       const contrato_id = req.params.contratoId;
+
+       // Obteniendo los datos para la plantilla del contrato
       const dataContrato = await generarDataContratoParaDocumento(
         contrato_id,
         contratoRepository,
         transaction
       );
 
-      // Renderizar el documento de docxtemplater usando el controller genérico
-        req.body = {
-          ...dataContrato.respuesta,
-          contratoId: contrato_id,
-        };
-        await documentoController.render(req, res);
+       if (!dataContrato || dataContrato.codigo !== 200) {
+      await transaction.rollback();
+      return res.status(404).json({ mensaje: "No se encontró data para generar documento" });
+    }
 
+     const data = dataContrato.respuesta || {};
 
+      // Generando el documento automáticamente usando la data obtenida
+      await generarDocumentoContrato(
+        contrato_id,
+        data,
+        contratoRepository,
+        transaction,
+      );
       
       await transaction.commit();
       res.status(dataContrato.codigo).json(dataContrato.respuesta);
