@@ -2,6 +2,7 @@ const db = require("../../../../database/models");
 const {
   PedidoGuia,
 } = require("../../../pedidos_guias/infraestructure/models/pedidoGuiaModel");
+const restarInventarioYDetectarFaltantes = require("../utils/restarInventarioYDetectarFaltantes");
 const sumarPiezas = require("../utils/sumar_piezas");
 
 const obtenerRestoPiezas = async (lote_piezas, contrato_id) => {
@@ -20,9 +21,9 @@ const obtenerRestoPiezas = async (lote_piezas, contrato_id) => {
     const data = pedido.get({ plain: true });
     pedidos_guias.push(data.guia_remision.guia_detalles);
   }
-
   const suma_pedidos_anteriores = sumarPiezas(pedidos_guias);
-  console.log(suma_pedidos_anteriores);
+  const RESTO_PIEZAS=restarInventarioYDetectarFaltantes (lote_piezas,suma_pedidos_anteriores)
+  return RESTO_PIEZAS.resta.filter((p)=>p.cantidad>0);
   
 };
 
