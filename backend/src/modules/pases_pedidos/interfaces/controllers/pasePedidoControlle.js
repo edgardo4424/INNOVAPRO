@@ -1,3 +1,4 @@
+const actualizarPasePedido = require("../../application/useCases/actualizarPasePedido");
 const crearPasePedido = require("../../application/useCases/crearPasePedido");
 const obtenerPasesPedidos = require("../../application/useCases/obtenerPasesPedidos");
 const SequelizePasePedidoRepository = require("../../infraestructure/repositories/sequelizePasePedidoRepository")
@@ -27,7 +28,18 @@ const  PasePedidoController={
             res.status(500).json({error:error.message})
         }
         
-    }
+    },
+    async actualizarPasePedido(req,res){
+        try {
+            const payload=req.body.payload;
+            const pedido_id=req.body.pedido_id;
+            const response=await actualizarPasePedido(payload,pedido_id,pasePedidoRepository);
+            res.status(response.codigo).json(response.respuesta);
+        } catch (error) {
+            console.log("Error encontrado",error);
+            res.status(500).json({error:error.message})
+        }
+    },
 }
 
 module.exports=PasePedidoController

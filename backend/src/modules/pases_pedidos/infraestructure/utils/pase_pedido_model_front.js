@@ -38,6 +38,7 @@ const pases_pedido_model = () => ({
   guia_Envio_Llegada_Ubigeo: "",
   guia_Envio_Llegada_Direccion: "",
   detalle:[],
+  tarea_id:null,
 });
 
 module.exports=pases_pedido_model

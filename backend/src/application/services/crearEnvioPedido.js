@@ -1,8 +1,10 @@
 const sequelize = require("../../config/db");
 const emitirGuia = require("../../modules/factiliza/application/emitirGuia");
 const SequelizeGuiaRemisionRepository = require("../../modules/facturacion/infrastructure/repositories/sequelizeGuiaRemisionRepository");
+const actualizarPasePedido = require("../../modules/pases_pedidos/application/useCases/actualizarPasePedido");
 const obtenerPasePedidoPorId = require("../../modules/pases_pedidos/application/useCases/obtenerPasePedidoPorId");
 const SequelizePasePedidoRepository = require("../../modules/pases_pedidos/infraestructure/repositories/sequelizePasePedidoRepository");
+const determinarEstadoPasePedido = require("../../modules/pases_pedidos/infraestructure/services/determinarEstadoPasePedido");
 const actualizarPedidoGuia = require("../../modules/pedidos_guias/application/useCases/actualizarPedidoGuia");
 const crearPedidoGuia = require("../../modules/pedidos_guias/application/useCases/crearPedidoGuia");
 const SequelizePedidoGuiaRepository = require("../../modules/pedidos_guias/infraestructure/repositories/sequelizePedidoGuiaRepository");
@@ -59,6 +61,7 @@ module.exports = async function registrarTrabajadorConContrato(payload) {
         );
       }
       copy.id = pieza_obtenida.respuesta.id;
+      pieza.pieza_id=pieza_obtenida.respuesta.id;
       piezas_descuento.push(copy);
       const pieza_pedido = {
         pase_pedido_id: pase_pedido.id,
@@ -67,6 +70,8 @@ module.exports = async function registrarTrabajadorConContrato(payload) {
       };
       piezas_stock_pedidos.push(pieza_pedido);
     }
+    const estado_pase_pedido=await determinarEstadoPasePedido(payload.detalle,pase_pedido.contrato_id);
+
     //* DESCUENTO DEL STOCK DE CADA PIEZA
 
     if (payload.guia_Envio_Des_Traslado === "VENTA") {
@@ -155,29 +160,17 @@ module.exports = async function registrarTrabajadorConContrato(payload) {
     }
     }
 
-
-
-
-
     const guia_remision = await emitirGuia(payload, facturacionRepository);
     if (
       guia_remision.respuesta.status !== 200 &&
       guia_remision.respuesta.status !== 201
     ) {
-       await t.rollback();
-       console.log(guia_remision.respuesta);
-       
+      await t.rollback();       
       return{
           codigo: 400,
           respuesta: guia_remision.respuesta,
       }
     }
-
-
-
-
-
-
     const payload_pedido_guia_update = {
       guia_remision_id: guia_remision.respuesta.data.guia.id,
     };
@@ -187,6 +180,15 @@ module.exports = async function registrarTrabajadorConContrato(payload) {
       pedidoGuiaRepository,
       t
     );
+    console.log("Estado del pase de pediod desde la validadcion",estado_pase_pedido);
+    let nuevo_estado_pase_pedido;
+    if(estado_pase_pedido=="STOCK-INCOMPLETO")nuevo_estado_pase_pedido="Incompleto";
+    if(estado_pase_pedido=="STOCK-COMPLETO")nuevo_estado_pase_pedido="Finalizado";
+    if(!nuevo_estado_pase_pedido){
+      throw new Error("No se pudo determianr el nuevo estado del pase pedido");
+    }
+
+    await actualizarPasePedido({estado:nuevo_estado_pase_pedido},pase_pedido.id,pasePedidoRepository,t);
     await t.commit();
     return {
       codigo: 200,

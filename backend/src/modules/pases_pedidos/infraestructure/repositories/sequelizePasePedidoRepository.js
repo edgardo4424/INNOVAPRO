@@ -74,6 +74,9 @@ class SequelizePasePedidoRepository {
   }
   async actualizarPasePedido(payload, pedido_id, transaction = null) {
     await PasePedido.update(payload, { where: { id: pedido_id },transaction });
+    // const pase_pedido_actualizado=await PasePedido.findByPk(pedido_id,{transaction});
+    // console.log("PASE PEDIDO ACTUALIZADO: ", pase_pedido_actualizado);
+    
   }
 }
 

@@ -14,7 +14,8 @@ module.exports = async (pasePedidoRepository, transaction = null) => {
       pase_pedido.cotizacion_id=pedido.contrato.cotizacion_id;
       pase_pedido.filial=pedido.contrato.cotizacion.empresas_proveedora.razon_social;
       pase_pedido.estado=pedido.estado;
-      pase_pedido.tipo_Servicio=pedido.tipo_cotizacion;
+      pase_pedido.tarea_id=pedido.tarea_id
+      pase_pedido.tipo_Servicio=pedido.contrato.cotizacion.tipo_cotizacion //Alquiler o venta
       pase_pedido.ubicacion= pedido.contrato.cotizacion.obra.ubicacion.includes("Provincia de Lima")?"Lima":"Provincia";
 
       //*DATOS DEL CLIENTE 
