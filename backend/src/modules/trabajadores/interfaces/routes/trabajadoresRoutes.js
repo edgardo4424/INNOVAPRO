@@ -16,6 +16,9 @@ router.post("/", TrabajadorController.crearTrabajadorConContrato);
 router.put("/", TrabajadorController.editarTrabajadorConContrato);
 router.get("/trabajadores-contratos", TrabajadorController.obtenerTrabajadoresYcontratos);
 router.post("/contratos-vigentes", TrabajadorController.obtenerTrabajadoresConContratosVigentes);
+
+router.get("/areas-cargos", TrabajadorController.obtenerAreasYCargos);
+
 router.get("/:id", TrabajadorController.obtenerTrabajadorPorId);
 router.get("/:dni/filiales-vigentes", TrabajadorController.listarFilialesVigentes);
 router.post("/sincronizar/marcate/erp", TrabajadorController.sincronizarMarcate );

@@ -487,6 +487,20 @@ class SequelizeTrabajadorRepository {
 
       return trabajador;
    }
+
+   async obtenerAreasYCargos(transaction = null) {
+     
+      const areasYCargos = await db.cargos.findAll({
+         include: [
+            {
+               model: db.areas,
+               as: "area",
+            }
+         ]
+      }, { transaction });
+      return areasYCargos;
+   }
 }
+
 
 module.exports = SequelizeTrabajadorRepository;

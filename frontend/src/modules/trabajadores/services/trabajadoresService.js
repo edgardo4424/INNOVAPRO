@@ -12,6 +12,7 @@ const trabajadoresService = {
       api.get(`/trabajadores/${dni}/filiales-vigentes`, { params: {anio, mes } }),
    getCargosSunat:(id_cargo_sunat)=>api.post("/cargos_sunat", {cargo_innova_id: id_cargo_sunat}),
    getTodosCargosSunat:()=>api.get("/cargos_sunat"),
+   getAreasYCargos:()=>api.get("/trabajadores/areas-cargos"),
 };
 
 export default trabajadoresService;

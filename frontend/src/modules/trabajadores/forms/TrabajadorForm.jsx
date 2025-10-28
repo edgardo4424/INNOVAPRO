@@ -83,14 +83,20 @@ export default function TrabajadorForm() {
   const [fetchError, setFetchError] = useState("");
   const [filialesElegidas, setFilialesElegidas] = useState([]);
 
+  const [listaAreasCargos, setListaAreasCargos] = useState([]);
+  const [area, setArea] = useState("");
+
   // mock de filiales/cargos (reemplaza por tu fetch real si aplica)
   const fetchDataInicial = async () => {
     try {
       const res = await trabajadoresService.dataMantenimiento();
       const res_ = await trabajadoresService.getFiliales();
+      const res_areas_cargos = await trabajadoresService.getAreasYCargos();
 
       setFiliales(res_.data);
       setValorUit(res.data.valor);
+      setListaAreasCargos(res_areas_cargos.data.data);
+
     } catch (error) {
       toast.error("No se pudo obtener la uit");
     }
@@ -98,6 +104,7 @@ export default function TrabajadorForm() {
   useEffect(() => {
     setCargos(mockCargos);
     fetchDataInicial();
+ 
   }, []);
 
   // cargar trabajador si es edición
@@ -152,10 +159,12 @@ export default function TrabajadorForm() {
           estado_civil: t.estado_civil,
           correo: t.correo ?? "",
           cargo_id: (t.cargo_id ?? "").toString(),
+
           contratos_laborales: contratos.length
             ? contratos
             : dataInicial.contratos_laborales,
         });
+
       } catch (e) {
         console.error(e);
         setFetchError(
@@ -349,9 +358,21 @@ export default function TrabajadorForm() {
   
         obtenerCargosSunat(formData.cargo_id);
     }, [formData.cargo_id]);
-  
-  
-  
+
+    const obtenerAreaPorCargo = (cargo_id) => {
+     
+      const area_cargo_seleccionado = listaAreasCargos?.find( area_cargo => area_cargo.id == cargo_id);
+      
+      return area_cargo_seleccionado ? area_cargo_seleccionado.area.nombre : "";
+    };
+
+    useEffect(() => {
+      setArea(obtenerAreaPorCargo(formData.cargo_id));
+
+    }, [formData.cargo_id, listaAreasCargos]);
+
+   
+    
   return (
     <div className="w-full max-w-[52rem] p-6">
       <Card className="shadow-none">
@@ -593,8 +614,17 @@ export default function TrabajadorForm() {
                       <p className="text-sm text-red-500">{errors.cargo_id}</p>
                     )}
                   </div>
-                </section>
-                <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
+
+                    <div className="space-y-2">
+                    <Label htmlFor="area">Área *</Label>
+                    <Input
+                      id="area"
+                      value={area}
+                      readOnly
+                    />
+                   
+                  </div>
+
                   <div className="flex items-center space-x-2 pl-4">
                     <Checkbox
                       id="domiciliado"
@@ -607,6 +637,19 @@ export default function TrabajadorForm() {
                     <Label htmlFor="domiciliado">Domiciliado</Label>
                   </div>
                 </section>
+               {/*  <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div className="flex items-center space-x-2 pl-4">
+                    <Checkbox
+                      id="domiciliado"
+                      checked={formData.domiciliado}
+                      className="border-[#1b274a]/50 data-[state=checked]:border-[#1b274a]/80 data-[state=checked]:bg-[#1b274a]"
+                      onCheckedChange={(checked) =>
+                        handleInputChange("domiciliado", !!checked)
+                      }
+                    />
+                    <Label htmlFor="domiciliado">Domiciliado</Label>
+                  </div>
+                </section> */}
               </article>
 
               <ContratosLaborales
