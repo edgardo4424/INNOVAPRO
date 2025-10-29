@@ -15,6 +15,7 @@ const {
   mapearDataEscuadrasConPlataformas,
 } = require("../../infraestructure/services/EscuadrasConPlataformas/mapearDataEscuadrasConPlataformas");
 const moment = require("moment");
+const { mapearDataEscuadrasSinPlataformas } = require("../../infraestructure/services/EscuadrasSinPlataformas/mapearDataEscuadrasSinPlataformas");
 
 module.exports = async (
   contrato_id,
@@ -142,6 +143,7 @@ module.exports = async (
       tienePuntales: false,
       tienePiezasAdicionales: piezas_adicionales.length > 0 ? true : false,
       tieneInstalacion: tiene_instalacion,
+      tieneInstalacionCompleta: pdfCotizacionDataSnapshot?.instalacion?.tipo_instalacion == "Completa" ? true : false,
       tieneInstalacionParcial: pdfCotizacionDataSnapshot?.instalacion?.tipo_instalacion == "Parcial" ? true : false,
       tieneTransporte: tiene_transporte,
 
@@ -285,6 +287,11 @@ module.exports = async (
       break;
     case "11":
       // Escuadras sin plataforma
+       respuesta.activadores.esEC = true;
+      respuesta = mapearDataEscuadrasSinPlataformas({
+        pdfCotizacionDataSnapshot,
+        respuesta,
+      });
       break;
     default:
       break;

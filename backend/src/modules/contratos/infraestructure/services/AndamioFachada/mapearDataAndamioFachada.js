@@ -23,8 +23,14 @@ if(tienePernoExpansionConArgolla){
 
 if(tienePuntales){
     respuesta.activadores.tienePuntales = true;
+
+    const {puntal, ...resto} = pdfCotizacionDataSnapshot?.detalles_puntales;
+
+    const informacionPuntal = [puntal];
+
     respuesta.detalles_puntales = {
-        ...pdfCotizacionDataSnapshot?.detalles_puntales
+        puntales: informacionPuntal,
+        ...resto
     }
 }
   

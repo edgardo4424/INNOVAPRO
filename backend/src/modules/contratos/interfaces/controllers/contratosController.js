@@ -15,7 +15,9 @@ const sequelize = require("../../../../database/models").sequelize;
 // Casos de uso para condiciones de alquiler
 const solicitarCondicionesAlquiler = require("../../application/useCases/solicitarCondicionesAlquiler");
 const crearCondicionAlquiler = require("../../application/useCases/crearCondicionAlquiler");
-const { documentoController } = require("../../infraestructure/services/contratosDocumentService");
+const {
+  documentoController,
+} = require("../../infraestructure/services/contratosDocumentService");
 const generarDocumentoContrato = require("../../application/useCases/generarDocumentoContrato");
 
 const ContratoController = {
@@ -139,31 +141,46 @@ const ContratoController = {
     try {
       const contrato_id = req.params.contratoId;
 
-       // Obteniendo los datos para la plantilla del contrato
+      // Obteniendo los datos para la plantilla del contrato
       const dataContrato = await generarDataContratoParaDocumento(
         contrato_id,
         contratoRepository,
         transaction
       );
 
-       if (!dataContrato || dataContrato.codigo !== 200) {
-      await transaction.rollback();
-      return res.status(404).json({ mensaje: "No se encontró data para generar documento" });
-    }
+      if (!dataContrato || dataContrato.codigo !== 200) {
+        await transaction.rollback();
+        return res
+          .status(404)
+          .json({ mensaje: "No se encontró data para generar documento" });
+      }
 
-     const data = dataContrato.respuesta || {};
+      const dataContratoRespuesta = dataContrato.respuesta || {};
 
-     console.dir(data, { depth: null });
+      // Adaptar la data que viene del caso de uso generarDataContratoParaDocumento para utilizarlo
+      // con la libreria docxTemplater
+
+      const data = {
+        ...dataContratoRespuesta,
+        ...dataContratoRespuesta.activadores, // <- solo aplana activadores
+        AF: dataContratoRespuesta.usos?.AF || {},
+        AT: dataContratoRespuesta.usos?.AT || {},
+        AE: dataContratoRespuesta.usos?.AE || {},
+        EC: dataContratoRespuesta.usos?.EC || {},
+      };
+
+      console.dir(data, { depth: null });
 
       // Generando el documento automáticamente usando la data obtenida
       const respuesta = await generarDocumentoContrato(
         contrato_id,
         data,
         contratoRepository,
-        transaction,
+        transaction
       );
-      
+
       await transaction.commit();
+      //res.status(200).json(data);
       res.status(respuesta.codigo).json(respuesta.respuesta);
     } catch (error) {
       console.log("Ocurrio el siguiente error: ", error);
