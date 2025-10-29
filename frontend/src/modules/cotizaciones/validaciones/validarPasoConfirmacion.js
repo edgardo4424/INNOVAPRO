@@ -11,6 +11,7 @@ export default function validarPasoConfirmacion(formData) {
   const errores = {};
 
   const esColgante = formData.uso.id === 8;
+  const esEscaleraAcceso = formData.uso.id === 3;
 
   // Validación especial para Colgantes
   if (esColgante) {
@@ -24,6 +25,30 @@ export default function validarPasoConfirmacion(formData) {
     }
 
     return errores; // Nos saltamos el resto de validaciones para colgantes
+  }
+
+  // --- Escalera de Acceso (Alquiler/Venta) ---
+  if (esEscaleraAcceso) {
+    const det = formData.uso.detalles_escaleras || {};
+    if (det.precio_tramo === undefined || det.precio_tramo === "" || isNaN(det.precio_tramo)) {
+      errores.precio_tramo = "Ingresa un precio por tramo válido.";
+    }
+
+    if (!Array.isArray(det.escaleras) || det.escaleras.length === 0) {
+      errores.escaleras = "No hay equipos de escalera definidos.";
+    } else {
+      const inconsistencias = [];
+      det.escaleras.forEach((z) =>
+        (z.equipos || []).forEach((eq, idx) => {
+          const a = Number(eq.alturaTotal || 0);
+          const c = Number(eq.tramos_2m || 0) * 2 + Number(eq.tramos_1m || 0);
+          if (a !== c) inconsistencias.push(`Zona ${z.zona} • Equipo ${idx + 1}: ${c}≠${a}`);
+        })
+      );
+      if (inconsistencias.length) {
+        errores.escaleras = "Ajusta los tramos de escalera:\n" + inconsistencias.join("\n");
+      }
+    }
   }
 
   // Validación PERNOS

@@ -15,7 +15,6 @@ export default function PasoUso() {
     formData,
     setFormData
   })
-
   // Manejamos los cambios respectivos a los datos de la cotización en este paso
   const handleChangeCotizacion = (campo, valor) => { // Función para manejar los cambios en los campos del formulario
     setFormData((prev) => ({ 
