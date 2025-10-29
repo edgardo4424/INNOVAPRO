@@ -1,3 +1,4 @@
+import { useAuth } from "@/context/AuthContext";
 import {
   Building2,
   Calendar,
@@ -5,9 +6,13 @@ import {
   RotateCcw,
   Search,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { usePedidos } from "../context/PedidosContenxt";
+import coleccionEstadosPedidos from "../utils/coleccionEstadosPedidos";
 
 const FiltroPedidos = ({ filtroPedidos, setFiltroPedidos, filiales }) => {
+  const [estados, setEstados] = useState([]);
+  const { user } = useAuth();
   const { ObtenerPasePedidos } = usePedidos();
   const { estado, filial, fecha } = filtroPedidos;
 
@@ -15,6 +20,12 @@ const FiltroPedidos = ({ filtroPedidos, setFiltroPedidos, filiales }) => {
     const { name, value } = e.target;
     setFiltroPedidos((prev) => ({ ...prev, [name]: value }));
   };
+
+  useEffect(() => {
+    if (!user) return;
+    const result = coleccionEstadosPedidos(user.rol);
+    setEstados(result);
+  }, [user]);
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-6 duration-300">
@@ -62,14 +73,11 @@ const FiltroPedidos = ({ filtroPedidos, setFiltroPedidos, filiales }) => {
               value={estado}
               onChange={(e) => handleFiltroChange("estado", e.target.value)}
             >
-              <option value="">Todos</option>
-              <option value="Por Confirmar">Por Confirmar</option>
-              <option value="Pre Confirmado">Pre Confirmado</option>
-              <option value="Confirmado">Confirmado</option>
-              <option value="Rechazado">Rechazado</option>
-              <option value="Stock Confirmado">Stock Confirmado</option>
-              <option value="Incompleto">Incompleto</option>
-              <option value="Finalizado">Finalizado</option>
+              {estados.map((d) => (
+                <option key={d.id} value={d.value}>
+                  {d.label}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -80,7 +88,7 @@ const FiltroPedidos = ({ filtroPedidos, setFiltroPedidos, filiales }) => {
             htmlFor="fecha-input"
             className="mb-1 text-xs font-medium text-gray-500"
           >
-            Fecha de Despacho:
+            Fecha :
           </label>
           <div className="relative">
             <Calendar className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
