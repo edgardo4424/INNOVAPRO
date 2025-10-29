@@ -1497,7 +1497,7 @@ class SequelizePlanillaRepository {
       // console.log('trabajador.asignacionFamiliar', trabajador.asignacionFamiliar);
       if (trabajador.asignacion_familiar) {
        // planilla.asig_fam = MONTO_ASIGNACION_FAMILIAR;
-       planilla.asig_fam =trabajador.asignacion_familiar<=inicio_real?MONTO_ASIGNACION_FAMILIAR:0;
+       planilla.asig_fam =trabajador.asignacion_familiar<=fin_real?MONTO_ASIGNACION_FAMILIAR:0;
       }
 
       // prettier-ignore
