@@ -40,6 +40,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { obtenerContratoActual } from "@/modules/Beneficios/utils/contrato_actual";
 import { formatearFecha } from "@/utils/formatearFecha";
+import ModalEliminarTrabajador from "../components/ModalEliminarTrabajador";
 
 export default function CompGestionTrabajadoresonent() {
    const [trabajadores, setTrabajadores] = useState([]);
@@ -447,6 +448,15 @@ export default function CompGestionTrabajadoresonent() {
                                     </div>
                                  </TableCell>
                                  <TableCell>
+                                    <ModalEliminarTrabajador 
+                                       trabajador={
+                                          {nombres:employee.nombres,
+                                          apellidos:employee.apellidos,
+                                          numero_documento:employee.numero_documento,
+                                          tipo_documento:employee.tipo_documento,
+                                          cargo:employee.cargo.nombre,
+                                          area:employee.cargo.area.nombre,
+                                          }} />
                                     <Button
                                        size={"icon"}
                                        className={"size-8"}
