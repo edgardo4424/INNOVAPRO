@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 const PasoAtributos = () => {
   // En caso de que sea ELEVADOR o ENCOFRADOS redireccionamos a tareas con este navigate
   const navigate = useNavigate();
-
+  
   const { formData, setFormData, errores } = useWizardContext(); // Traemos el contexto del wizard donde se maneja el estado del formulario y los errores
   const {
     zonas,
@@ -34,7 +34,6 @@ const PasoAtributos = () => {
       setZonas(formData.uso.zonas);
     }
   }, []);
-
 
   // Actualizar zonas en el formData global cada vez que cambian
   useEffect(() => {
@@ -186,7 +185,7 @@ const PasoAtributos = () => {
           ))}
 
           {/* Botones para modificar cantidad de equipos por zona */}
-          {formData.uso_id !== 8 && (
+          {formData.uso.id !== 8 && (
             <div className="botones-cantidad">
               <button
                 type="button"
@@ -214,7 +213,7 @@ const PasoAtributos = () => {
       ))}
 
       {/* Botones para agregar/eliminar zonas */}
-      {formData.uso_id !== 8 && (
+      {formData.uso.id !== 8 && (
         <div className="wizard-section" style={{ textAlign: "center", marginTop: "2rem" }}>
           <p style={{ color: "#ff7b00", fontWeight: "bold", marginBottom: "0.6rem" }}>
             Puedes agregar más zonas si el proyecto lo requiere.

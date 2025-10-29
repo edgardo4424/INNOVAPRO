@@ -194,14 +194,15 @@ export function useGenerarDespiece(formData, setFormData) {
             }
           }
         }
-
+        console.log("data de escaleras: ", data.detalles_escaleras)
         // Si el uso es escalera de acceso, adicionalmente agregamos detalles de escaleras
         if (uso.id === 3 && data.detalles_escaleras) {
           nuevoEstado.uso.detalles_escaleras = {
             precio_tramo: data.detalles_escaleras.precio_por_tramo_alquiler,
             altura_total_general: data.detalles_escaleras.altura_total_general,
             tramos_2m: data.detalles_escaleras.tramos_2m,
-            tramos_1m: data.detalles_escaleras.tramos_1m
+            tramos_1m: data.detalles_escaleras.tramos_1m,
+            escaleras: data.detalles_escaleras.escaleras
           }
         }
 

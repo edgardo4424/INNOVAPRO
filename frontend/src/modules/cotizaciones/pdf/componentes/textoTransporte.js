@@ -10,8 +10,8 @@ export async function renderTextoTransporte(doc, data, currentY) {
 
   currentY += 6;
 
-  // ⛔ Validar salto antes de dibujar el rectángulo
-  currentY = await verificarSaltoDePagina(doc, currentY, 10);
+  // Validar salto antes de dibujar el rectángulo
+  currentY = await verificarSaltoDePagina(doc, currentY, data, 10);
   doc.rect(indent, currentY - box + 0.5, box, box);
   const subtitulo = "Servicio de Transporte: (OPCIONAL)";
   doc.setFont("helvetica", "normal");
@@ -31,7 +31,7 @@ export async function renderTextoTransporte(doc, data, currentY) {
     const aproxLineas = Math.ceil(palabras.length / 11);
     const alturaEstimado = aproxLineas * 5;
 
-    currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimado);
+    currentY = await verificarSaltoDePagina(doc, currentY, data, alturaEstimado);
     currentY = drawJustifiedText(doc, linea, indent + box + 3, currentY, 170, 5, 9.5);
   }
 

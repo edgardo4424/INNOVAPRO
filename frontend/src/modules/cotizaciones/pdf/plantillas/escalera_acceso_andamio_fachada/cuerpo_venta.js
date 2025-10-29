@@ -40,25 +40,39 @@ export async function generarCuerpoEscaleraAccesoVenta(doc, data, startY = 120) 
     const zonaTitulo = `Zona ${zona.zona || "1"} - ${zona.nota_zona || "(DESCRIPCIÓN DE ZONA INDEFINIDA)"}`;
     currentY = drawJustifiedText(doc, `**${zonaTitulo}**`, indent + 3, currentY, 170, 5.5, 10);
 
-    for (const equipo of zona.atributos || []) {
-      // Tramos Escalera
+    const detallesEscaleras = data.detalles_escaleras || {};
+    const detallesZona =
+      (detallesEscaleras.escaleras || []).find(z => String(z.zona) === String(zona.zona)) || null;
+
+    const equiposZona = zona.atributos || [];
+
+    for (let i = 0; i < equiposZona.length; i++) {
+      const equipo = equiposZona[i];
+      
+      // --- Tramos POR EQUIPO ---
+      const escaleraAcceso = detallesZona?.equipos?.[i] || null;
+      const tramo_2m = Number(escaleraAcceso.tramos_2m || 0);
+      const tramo_1m = Number(escaleraAcceso.tramos_1m || 0);
+
       let descripcionTramos = "";
-      const detalles = data.detalles_escaleras || {};
-      const tieneTramos = detalles.tramos_2m > 0 || detalles.tramos_1m > 0;
+      const partes = [];
+      if (tramo_2m > 0) partes.push(`${tramo_2m} tramo${tramo_2m > 1 ? "s" : ""} de 2.00 m`);
+      if (tramo_1m > 0) partes.push(`${tramo_1m} tramo${tramo_1m > 1 ? "s" : ""} de 1.00 m`);
+      if (partes.length) descripcionTramos = ` (${partes.join(" y ")})`;
 
-      if (tieneTramos) {
-        const partes = [];
-        if (detalles.tramos_2m > 0) partes.push(`${detalles.tramos_2m} tramo${detalles.tramos_2m > 1 ? "s" : ""} de 2.00 m`);
-        if (detalles.tramos_1m > 0) partes.push(`${detalles.tramos_1m} tramo${detalles.tramos_1m > 1 ? "s" : ""} de 1.00 m`);
-        descripcionTramos = ` (${partes.join(" y ")})`;
-      }
-
-      const descripcionEquipo = `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** ${equipo.cantidad_uso || "(CANTIDAD INDEFINIDA)"} ${equipo.cantidad_uso === 1 ? "Ud." : "Uds."} de ${data.uso?.nombre || "(NOMBRE DE EQUIPO INDEFINIDO)"} de ${equipo.longitud_mm || "(LONGITUD INDEFINIDA)"} m. de longitud x ${equipo.ancho_mm || "(ANCHO INDEFINIDO)"} m. de ancho x ${equipo.altura_m || "(ALTURA INDEFINIDA)"} m. de altura + 1.00 m de baranda de seguridad${descripcionTramos}.`;
+      // Texto del equipo
+      const descripcionEquipo =
+        `**CP${data.cotizacion?.cp || "(INDEFINIDO)"}:** ${equipo.cantidad_uso || "(CANTIDAD INDEFINIDA)"} ${equipo.cantidad_uso === 1 ? "Ud." : "Uds."} ` +
+        `de ${data.uso?.nombre || "(NOMBRE DE EQUIPO INDEFINIDO)"} de ${equipo.longitud_mm || "(LONGITUD INDEFINIDA)"} m. de longitud ` +
+        `x ${equipo.ancho_mm || "(ANCHO INDEFINIDO)"} m. de ancho ` +
+        `x ${equipo.altura_m || escaleraAcceso?.alturaTotal || "(ALTURA INDEFINIDA)"} m. de altura + 1.00 m de baranda de seguridad` +
+        `${descripcionTramos}.`;
 
       const palabras = descripcionEquipo.split(/\s+/);
       const aproxLineas = Math.ceil(palabras.length / 11);
       const alturaEstimada = aproxLineas * 5;
-
+      
+      currentY += 4;
       currentY = await verificarSaltoDePagina(doc, currentY, alturaEstimada);
       currentY = drawJustifiedText(doc, descripcionEquipo, indent + box + 3, currentY, 170, 5.5, 10);
     }
