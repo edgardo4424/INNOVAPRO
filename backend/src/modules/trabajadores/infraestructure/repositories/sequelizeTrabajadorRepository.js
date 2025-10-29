@@ -5,6 +5,13 @@ const { Op, fn, col, where } = require("sequelize");
 const filtrarContratosSinInterrupcion = require("../../../../services/filtrarContratosSinInterrupcion");
 const moment = require("moment");
 const { Area } = require("../models/areaModel");
+const { Asistencia } = require("../../../asistencias/infraestructure/models/asistenciaModel");
+const { Vacaciones } = require("../../../vacaciones/infraestructure/models/vacacionesModel");
+const { PlanillaQuincenal } = require("../../../planilla/infrastructure/models/PlanillaQuincenalModel");
+const { PlanillaMensual } = require("../../../planilla/infrastructure/models/PlanillaMensualModel");
+const { Cts } = require("../../../cts/infraestructure/models/ctsModel");
+const { Gratificacion } = require("../../../gratificaciones/infrastructure/models/GratificacionModel");
+const { ContratoLaboral } = require("../../../contratos_laborales/infraestructure/models/contratoLaboralModel");
 class SequelizeTrabajadorRepository {
    async crear(trabajadorData, transaction = null) {
       const options = {};
@@ -499,6 +506,42 @@ class SequelizeTrabajadorRepository {
          ]
       }, { transaction });
       return areasYCargos;
+   }
+   async eliminarTrabajadorPorId(trabajador_id,transaction=null){      
+      const trabajador=await Trabajador.findByPk(trabajador_id,{transaction});
+
+      if(!trabajador){
+         throw new Error("El empleado que desea eliminar no existe.")
+      }
+      //Comenzamos a validar que no cuente con Asistencia, vacaciones, planilla mensual,planilla quincenal, cts, gratificacion
+   
+      const asistencias=await Asistencia.findAll({where:{trabajador_id},transaction});
+      if(asistencias.length>0){
+           throw new Error("El trabajador ya cuenta con asistencias no puede ser eliminado.");
+      }
+      const vacaciones=await Vacaciones.findAll({where:{trabajador_id},transaction});
+      if(vacaciones.length>0){
+           throw new Error("El trabajador ya cuenta con vacaciones no puede ser eliminado.");
+      }
+      const planillas_quincenales=await PlanillaQuincenal.findAll({where:{trabajador_id},transaction});
+      if(planillas_quincenales.length>0){
+           throw new Error("El trabajador ya cuenta con planilla quincenal no puede ser eliminado.");
+      }
+      const planillas_mensuales=await PlanillaMensual.findAll({where:{trabajador_id},transaction});
+      if(planillas_mensuales.length>0){
+           throw new Error("El trabajador ya cuenta con planilla mensual no puede ser eliminado.");
+      }
+      const cts=await Cts.findAll({where:{trabajador_id},transaction});
+      if(cts.length>0){
+           throw new Error("El trabajador ya cuenta con CTS no puede ser eliminado.");
+      }
+      const gratificaciones=await Gratificacion.findAll({where:{trabajador_id},transaction});
+      if(gratificaciones.length>0){
+           throw new Error("El trabajador ya cuenta con gratificación no puede ser eliminado.");
+      }
+      //!Eliminamos los contratos y luego el trabajador
+      await ContratoLaboral.destroy({where:{trabajador_id},transaction})
+      await Trabajador.destroy({where:{id:trabajador_id},transaction})
    }
 }
 

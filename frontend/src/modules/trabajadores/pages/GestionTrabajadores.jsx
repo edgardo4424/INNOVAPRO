@@ -40,6 +40,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { obtenerContratoActual } from "@/modules/Beneficios/utils/contrato_actual";
 import { formatearFecha } from "@/utils/formatearFecha";
+import ModalEliminarTrabajador from "../components/ModalEliminarTrabajador";
 
 export default function CompGestionTrabajadoresonent() {
    const [trabajadores, setTrabajadores] = useState([]);
@@ -356,7 +357,7 @@ export default function CompGestionTrabajadoresonent() {
                            <TableHead>Sueldo Base</TableHead>
                            <TableHead>Sistema Pensión</TableHead>
                            <TableHead>Beneficios</TableHead>
-                           <TableHead>Acciones</TableHead>
+                           <TableHead className="text-center">Acciones</TableHead>
                         </TableRow>
                      </TableHeader>
                      <TableBody>
@@ -446,10 +447,10 @@ export default function CompGestionTrabajadoresonent() {
                                        )}
                                     </div>
                                  </TableCell>
-                                 <TableCell>
+                                 <TableCell className="space-x-4 text-center" >
                                     <Button
                                        size={"icon"}
-                                       className={"size-8"}
+                                       className={"gap-2"}
                                        variant={"outline"}
                                        onClick={() =>
                                           navigate(
@@ -457,8 +458,22 @@ export default function CompGestionTrabajadoresonent() {
                                           )
                                        }
                                     >
-                                       <Edit />
+                                       <Edit  className="text-amber-500"/>
                                     </Button>
+                                    <ModalEliminarTrabajador 
+                                       trabajador={
+                                          {nombres:employee.nombres,
+                                          apellidos:employee.apellidos,
+                                          numero_documento:employee.numero_documento,
+                                          tipo_documento:employee.tipo_documento,
+                                          cargo:employee.cargo.nombre,
+                                          area:employee.cargo.area.nombre,
+                                          trabajador_id:employee.id
+                                          }
+                                          } 
+                                          fetchTrabajadores={fetchTrabajadores}
+                                          />
+
                                  </TableCell>
                               </TableRow>
                            );

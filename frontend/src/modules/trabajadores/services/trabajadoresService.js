@@ -13,6 +13,7 @@ const trabajadoresService = {
    getCargosSunat:(id_cargo_sunat)=>api.post("/cargos_sunat", {cargo_innova_id: id_cargo_sunat}),
    getTodosCargosSunat:()=>api.get("/cargos_sunat"),
    getAreasYCargos:()=>api.get("/trabajadores/areas-cargos"),
+   eliminarTrabajador:(trabajador_id)=>api.delete(`/trabajadores/eliminar/${trabajador_id}`)
 };
 
 export default trabajadoresService;
