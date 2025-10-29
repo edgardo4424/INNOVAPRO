@@ -57,6 +57,8 @@ module.exports = async (
     { transaction }
   );
 
+  if(!contratoEncontrado) return { codigo: 404, respuesta: { error: "Contrato no encontrado" }}
+
   const contrato = contratoEncontrado.get({ plain: true });
 
   if (!contrato) {
