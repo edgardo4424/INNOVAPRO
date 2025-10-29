@@ -240,10 +240,14 @@ class SequelizePlanillaRepository {
         ? +((MONTO_ASIGNACION_FAMILIAR).toFixed(2))
         : 0; */
 
+
+
+      const fecha_limite_quincenal = `${anio}-${mes}-15`
  
+        
        const asignacionFamiliar =
                 (trabajador.asignacion_familiar &&
-                (new Date(trabajador.asignacion_familiar) <= new Date(fecha_inicio_mes)))
+                (new Date(trabajador.asignacion_familiar) <= new Date(fecha_limite_quincenal)))
                   ? dataMantenimiento.MONTO_ASIGNACION_FAMILIAR/2
                   : 0;
 
@@ -651,9 +655,12 @@ class SequelizePlanillaRepository {
         ? +((MONTO_ASIGNACION_FAMILIAR).toFixed(2))
         : 0; */
 
+         const fecha_limite_quincenal = `${anio}-${mes}-15`
+ 
+
        const asignacionFamiliar =
                 (trabajador.asignacion_familiar &&
-                (new Date(trabajador.asignacion_familiar) <= new Date(fecha_inicio_mes)))
+                (new Date(trabajador.asignacion_familiar) <= new Date(fecha_limite_quincenal)))
                   ? dataMantenimiento.MONTO_ASIGNACION_FAMILIAR/2
                   : 0;
 
