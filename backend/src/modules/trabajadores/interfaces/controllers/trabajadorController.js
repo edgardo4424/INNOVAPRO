@@ -19,6 +19,8 @@ const obtenerTrabajadoresPorAreaCargo = require("../../application/useCases/obte
 const obtenerAreas = require("../../application/useCases/obtenerAreas");
 const sincronizacion_marcate = require("../../application/useCases/sincronizacion_marcate");
 const obtenerAreasYCargos = require("../../application/useCases/obtenerAreasYCargos");
+const sequelize = require("../../../.././config/db");
+const eliminarTrabajadorPorId = require("../../application/useCases/eliminarTrabajadorPorId");
 
 
 const trabajadorRepository = new SequelizeTrabajadorRepository();
@@ -213,6 +215,20 @@ const TrabajadorController = {
       } catch (error) {
          console.log("error", error);
          res.status(500).json({ error: error.message });
+      }
+   },
+   async eliminarTrabajadorPorId(req,res){
+      const transaction = await sequelize.transaction();
+      try {
+         const trabajador_id=req.body.trabajador_id
+         const response= await eliminarTrabajadorPorId(trabajador_id,trabajadorRepository,transaction)
+         await transaction.commit();
+         res.status(response.codigo).json(response.respuesta);
+      } catch (error) {
+         await transaction.rollback();
+         console.log(error);
+         res.status(500).json({error:error.message})
+         
       }
    }
 };

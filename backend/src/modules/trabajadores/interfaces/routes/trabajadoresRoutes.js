@@ -22,5 +22,6 @@ router.get("/areas-cargos", TrabajadorController.obtenerAreasYCargos);
 router.get("/:id", TrabajadorController.obtenerTrabajadorPorId);
 router.get("/:dni/filiales-vigentes", TrabajadorController.listarFilialesVigentes);
 router.post("/sincronizar/marcate/erp", TrabajadorController.sincronizarMarcate );
+router.delete("/",TrabajadorController.eliminarTrabajadorPorId)
 
 module.exports = router;
