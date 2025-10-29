@@ -1,9 +1,10 @@
 module.exports=async(payload,pedido_id,pasePedidoRepository,transaction=null)=>{
     await pasePedidoRepository.actualizarPasePedido(payload,pedido_id,transaction);
     return{
-        codigo:201,
+        codigo:200,
         respuesta:{
-            mensaje:"Pase pedido actualziado correctamnete"
+            mensaje:"Pase pedido actualizado correctamnete",
+            status:200
         }
     }
 }

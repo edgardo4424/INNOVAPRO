@@ -15,7 +15,7 @@ module.exports = async (trabajadorRepository) => {
    })
 
    return {
-      codigo: 201,
+      codigo: 200,
       respuesta: {
          mensaje: "Petición exitosa",
          trabajadores: trabajadoresConFiliales,
