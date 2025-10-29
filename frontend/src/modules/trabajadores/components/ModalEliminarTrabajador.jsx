@@ -12,34 +12,41 @@ import {
 import { Button } from "@/components/ui/button";
 import { Circle, CircleAlert, CircleX, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
+import trabajadoresService from "../services/trabajadoresService";
 
-function esperar(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-const ModalEliminarTrabajador = ({ trabajador }) => {
+
+const ModalEliminarTrabajador = ({ trabajador,fetchTrabajadores }) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setisLoading] = useState(false);
   const handleConfirm = async() => {
-    // onConfirm?.()
-    console.log("Eniando data");
-    setisLoading(true)
-    await esperar(5000);
-    console.log("Se termina el timer");
-    setisLoading(false)
-    
-    // setOpen(false);
+    try {
+      setisLoading(true)
+      await trabajadoresService.eliminarTrabajador(trabajador.trabajador_id);
+      await fetchTrabajadores()
+      toast.success("Se elimino al trabajador exitosamente.")
+    } catch (error) {
+      if(error?.response?.data?.error){
+        toast.error(error.response.data.error);
+        return;
+      }      
+      toast.error("Error desconocido")
+    }
+    finally{
+      setisLoading(false);
+      setOpen(false);
+    }
   };
 
   const handleCancel = () => {
-    // onCancel?.()
     setOpen(false);
   };
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" size="icon" className="gap-2">
-          <Trash2 className="h-4 w-4" />
+        <Button variant="outline" size="icon" className="gap-2">
+          <Trash2 className="size-4 text-red-500" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent className="max-w-md">

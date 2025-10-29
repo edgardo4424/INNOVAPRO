@@ -357,7 +357,7 @@ export default function CompGestionTrabajadoresonent() {
                            <TableHead>Sueldo Base</TableHead>
                            <TableHead>Sistema Pensión</TableHead>
                            <TableHead>Beneficios</TableHead>
-                           <TableHead>Acciones</TableHead>
+                           <TableHead className="text-center">Acciones</TableHead>
                         </TableRow>
                      </TableHeader>
                      <TableBody>
@@ -447,7 +447,19 @@ export default function CompGestionTrabajadoresonent() {
                                        )}
                                     </div>
                                  </TableCell>
-                                 <TableCell>
+                                 <TableCell className="space-x-4 text-center" >
+                                    <Button
+                                       size={"icon"}
+                                       className={"gap-2"}
+                                       variant={"outline"}
+                                       onClick={() =>
+                                          navigate(
+                                             `/editar-trabajador?id=${employee.id}`
+                                          )
+                                       }
+                                    >
+                                       <Edit  className="text-amber-500"/>
+                                    </Button>
                                     <ModalEliminarTrabajador 
                                        trabajador={
                                           {nombres:employee.nombres,
@@ -456,19 +468,12 @@ export default function CompGestionTrabajadoresonent() {
                                           tipo_documento:employee.tipo_documento,
                                           cargo:employee.cargo.nombre,
                                           area:employee.cargo.area.nombre,
-                                          }} />
-                                    <Button
-                                       size={"icon"}
-                                       className={"size-8"}
-                                       variant={"outline"}
-                                       onClick={() =>
-                                          navigate(
-                                             `/editar-trabajador?id=${employee.id}`
-                                          )
-                                       }
-                                    >
-                                       <Edit />
-                                    </Button>
+                                          trabajador_id:employee.id
+                                          }
+                                          } 
+                                          fetchTrabajadores={fetchTrabajadores}
+                                          />
+
                                  </TableCell>
                               </TableRow>
                            );

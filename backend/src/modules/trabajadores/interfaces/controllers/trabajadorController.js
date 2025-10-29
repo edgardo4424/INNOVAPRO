@@ -220,7 +220,7 @@ const TrabajadorController = {
    async eliminarTrabajadorPorId(req,res){
       const transaction = await sequelize.transaction();
       try {
-         const trabajador_id=req.body.trabajador_id
+         const trabajador_id=req.params.trabajador_id         
          const response= await eliminarTrabajadorPorId(trabajador_id,trabajadorRepository,transaction)
          await transaction.commit();
          res.status(response.codigo).json(response.respuesta);
