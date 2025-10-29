@@ -50,8 +50,8 @@ module.exports = async (idTarea, idUsuario, tareaRepository) => {
     );
 
     await enviarMensajeWhatsAppFinalizaTarea(
-     // `51${notiCreador.usuario.telefono}`, // formato internacional, ejemplo: "51987654321"
-     '51912617842',
+      `51${notiCreador.usuario.telefono}`, // formato internacional, ejemplo: "51987654321"
+      //  '51912617842',
       notiCreador.usuario.trabajador?.nombres,
       tarea.id
     );

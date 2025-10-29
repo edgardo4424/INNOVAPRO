@@ -21,15 +21,15 @@ module.exports = async (pasePedidoRepository, transaction = null) => {
 
       //*DATOS DEL CLIENTE 
       if (pedido.contrato.cotizacion.cliente.tipo == "Persona Jurídica") {
-        pase_pedido.cliente_Tipo_Doc = "06";
+        pase_pedido.cliente_Tipo_Doc = "6";
         pase_pedido.cliente_Num_Doc = pedido.contrato.cotizacion.cliente.ruc;
         pase_pedido.cliente_Razon_Social=pedido.contrato.cotizacion.cliente.razon_social;
       }
       if (pedido.contrato.cotizacion.cliente.tipo == "Persona Natural") {
         const t_doc =
           pedido.contrato.cotizacion.cliente.tipo_documento === "DNI"
-            ? "01"
-            : "04";
+            ? "1"
+            : "4";
         pase_pedido.cliente_Tipo_Doc = t_doc;
         pase_pedido.cliente_Num_Doc = pedido.contrato.cotizacion.cliente.dni;
       }

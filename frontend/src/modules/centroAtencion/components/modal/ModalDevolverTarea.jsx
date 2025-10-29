@@ -1,11 +1,11 @@
 import {
-    AlertDialog,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -58,7 +58,7 @@ export default function ModalDevolverTarea({
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button className="group flex cursor-pointer items-center gap-2 bg-amber-500 text-white transition-all hover:bg-amber-500">
+        <Button className="group flex cursor-pointer items-center gap-2 bg-amber-500 text-white transition-all duration-200 hover:scale-105 hover:bg-amber-500">
           <RotateCcw className="size-5 transform transition-transform duration-500 group-hover:rotate-[360deg]" />
           <span className="hidden md:block">DEVOLVER</span>
         </Button>

@@ -246,7 +246,7 @@ class SequelizeTareaRepository {
 
 
 
-  async corregirTarea(idTarea, correccion, idUsuario, user_name) {
+  async corregirTarea(idTarea, correccion,detalles, idUsuario, user_name) {
     const tarea = await Tarea.findByPk(idTarea, {
       include: [
         {
@@ -299,6 +299,8 @@ class SequelizeTareaRepository {
 
       // Guardar en JSON
       tarea.respuestas = JSON.stringify(parsedRespuestas);
+      // Actualizar los detalles
+      if(detalles) tarea.detalles = detalles
 
       // Guardar cambios
       await tarea.save();

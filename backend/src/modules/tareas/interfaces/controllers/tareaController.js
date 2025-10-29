@@ -125,9 +125,9 @@ const TareaController = {
 
     async corregirTarea(req, res) {
         try {
-            let { correccion } = req.body;
+            let { correccion, detalles } = req.body;
             const { id: id_usuario, nombre } = req.usuario;
-            const { codigo, respuesta } = await corregirTarea(req.params.id, correccion, id_usuario, nombre, tareaRepository);
+            const { codigo, respuesta } = await corregirTarea(req.params.id, correccion,detalles, id_usuario, nombre, tareaRepository);
             res.status(codigo).json(respuesta);
         } catch (error) {
             console.log('error', error);

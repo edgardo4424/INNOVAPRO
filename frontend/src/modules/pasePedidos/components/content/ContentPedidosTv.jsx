@@ -173,7 +173,7 @@ const pedidosDespachados = [
     estado: "Despachado",
     fecha_confirmacion: new Date(),
     fecha_despacho: new Date(),
-    despachado: true,
+    // despachado: true,
   },
 ];
 const ContentPedidosTv = () => {
@@ -217,7 +217,7 @@ const ContentPedidosTv = () => {
   ];
 
   return (
-    <div className="font-mulish grid min-h-[70vh] grid-cols-1 gap-[1px] bg-slate-900 md:grid-cols-3">
+    <div className="font-mulish grid min-h-[70vh] grid-cols-1 gap-[1px] bg-slate-900 md:grid-cols-3 w-11/12">
       {COLUMNAS.map((columna) => (
         <div
           key={columna.key}

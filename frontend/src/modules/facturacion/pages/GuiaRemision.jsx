@@ -36,8 +36,14 @@ const GuiaRemision = () => {
   useEffect(() => {
     const plasmarPedido = () => {
       if (documento.length > 0) {
-        const { guia, codigo_traslado, tipoGuia, peso_total_kilo } =
-          documento[0];
+        const {
+          guia,
+          codigo_traslado,
+          tipoGuia,
+          ruc_filial,
+          peso_total_kilo,
+          pedido_id,
+        } = documento[0];
 
         // ✅ UNA sola actualización completa y controlada
         setGuiaTransporte((prev) => ({
@@ -51,19 +57,21 @@ const GuiaRemision = () => {
           ...prev,
           guia_Envio_Cod_Traslado:
             codigo_traslado?.guia_Envio_Cod_Traslado ?? "",
-          guia_Envio_Des_Traslado: "",
+          guia_Envio_Des_Traslado:
+            codigo_traslado?.guia_Envio_Des_Traslado ?? "",
         }));
 
         setGuiaDatosPublico((prev) => ({
           ...prev,
           guia_Envio_Cod_Traslado:
             codigo_traslado?.guia_Envio_Cod_Traslado ?? "",
-          guia_Envio_Des_Traslado: "",
+          guia_Envio_Des_Traslado:
+            codigo_traslado?.guia_Envio_Des_Traslado ?? "",
         }));
 
         setTipoGuia(tipoGuia);
-        setPedidoId(documento[1]?.id_pedido ?? null);
-        plasmarRuc(documento[0]?.guia?.empresa_Ruc ?? "");
+        setPedidoId(pedido_id);
+        plasmarRuc(ruc_filial ?? "");
         plasmarPeso(peso_total_kilo);
       }
     };

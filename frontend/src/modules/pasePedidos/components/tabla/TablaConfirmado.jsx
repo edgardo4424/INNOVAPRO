@@ -55,7 +55,7 @@ const TablaConfirmado = ({
 
       cliente_Tipo_Doc: doc.cliente_Tipo_Doc,
       cliente_Num_Doc: doc.cliente_Num_Doc,
-      cliente_Razon_Social: "",
+      cliente_Razon_Social: doc.cliente_Razon_Social || "",
       cliente_Direccion: "",
 
       guia_Envio_Peso_Total: Number(doc.guia_Envio_Peso_Total).toFixed(4),
@@ -76,13 +76,19 @@ const TablaConfirmado = ({
 
     const valoresTraslado = {
       guia_Envio_Cod_Traslado: doc.guia_Envio_Cod_Traslado,
+      guia_Envio_Des_Traslado: getMotivoTrasladoDescription(
+        doc.guia_Envio_Cod_Traslado,
+      ),
     };
 
-    const tipoGuia = "transporte-publico";
-    // doc.tranporte === "CLIENTE" ? "transporte-publico" : "transporte-privado";
+    const tipoGuia = doc.ValoresPublico
+      ? "transporte-publico"
+      : "transporte-privado";
 
     const body = {
       guia: guiaIncial,
+      ruc_filial: doc.empresa_Ruc,
+      pedido_id: doc.id_pedido || null,
       codigo_traslado: valoresTraslado,
       peso_total_kilo: Number(doc.guia_Envio_Peso_Total).toFixed(4),
       tipoGuia,

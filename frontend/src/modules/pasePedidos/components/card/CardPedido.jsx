@@ -44,7 +44,7 @@ const CardPedido = ({ pedido }) => {
         </h3>
       </div>
 
-      <div className="grid grid-cols-2 gap-x-4 text-sm">
+      <div className="grid grid-cols-[full_1fr] gap-x-4 text-sm">
         <div className="col-span-[auto_1fr] pb-1">
           <p className="font-bold text-slate-300">Cliente:</p>
           <span className="line-clamp-1 text-slate-200">
@@ -60,7 +60,7 @@ const CardPedido = ({ pedido }) => {
           <span
             className={`font-mono text-xs font-semibold ${pedido.guia_nro ? "text-blue-400" : "text-slate-500 italic"}`}
           >
-            {pedido.guia_nro || "PENDIENTE"}
+            {pedido.guia_nro || "N/A"}
           </span>
         </div>
 

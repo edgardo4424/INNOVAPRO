@@ -39,7 +39,7 @@ const PedidosTv = () => {
   };
 
   return (
-    <div className="relative flex max-h-[95dvh] w-full flex-col items-center bg-[#12213d] py-6 md:px-8">
+    <div className="relative flex  w-full flex-col items-center bg-[#12213d] py-6 md:px-8">
       {/* Header principal */}
       <div className="w-full flex items-center justify-between mb-6">
         <h2 className="text-2xl font-semibold !text-slate-100 md:text-3xl font-sans tracking-wide">
@@ -57,7 +57,7 @@ const PedidosTv = () => {
       </div>
 
       {/* Contenido normal */}
-      <div className="w-full">
+      <div className="w-full flex justify-center">
         <ContentPedidosTv />
       </div>
 
@@ -76,7 +76,7 @@ const PedidosTv = () => {
           </div>
 
           {/* Contenido TV centrado */}
-          <div className="flex-1 flex items-center justify-center absolute top-20 p-4 overflow-auto">
+          <div className="flex-1 w-full flex items-center justify-center absolute top-20  overflow-auto">
             <div className="w-full h-full flex items-center justify-center">
               <ContentPedidosTv />
             </div>

@@ -24,9 +24,8 @@ const NuevoDespiezePasePedido = ({ idDespiece, setActNuevoDespiece }) => {
 
   const HandleActualizarDespieze = async () => {
     try {
-      console.log("despiece", formData.despiece);
-      console.log("idDespiece", idDespiece);
-      const { anterior, nuevas, status, success } =
+      setLoading(true);
+        const { anterior, nuevas, status, success } =
         await centroAtencionService.actualizarDespiece(idDespiece, {
           despiece: formData.despiece,
         });
@@ -35,7 +34,10 @@ const NuevoDespiezePasePedido = ({ idDespiece, setActNuevoDespiece }) => {
         setActNuevoDespiece(false);
       }
     } catch (error) {
+      console.log(error);
       toast.error("Ocurrio un error al actualizar el despiece");
+    }finally {
+      setLoading(false);
     }
   };
 
@@ -105,6 +107,7 @@ const NuevoDespiezePasePedido = ({ idDespiece, setActNuevoDespiece }) => {
         <ModalVerificarGuardado
           open={open}
           setOpen={setOpen}
+          loading={loading}
           mensaje="¿Seguro que deseas actualizar este despiece?, al darle guardar este sobre escribira el despiece anterior"
           handleFormSubmit={HandleActualizarDespieze}
         />
