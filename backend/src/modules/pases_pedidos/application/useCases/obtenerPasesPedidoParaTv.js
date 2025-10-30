@@ -64,7 +64,7 @@ module.exports =async(pasePedidoRepository,pedidoGuiaRepository,fecha,transactio
     return{
         codigo:200,
         respuesta:{
-            mensaje:"Pases obtenidos satisfactoriamente.",
+            mensaje:mensaje_respuesta,
             confirmado:{
                 list:confirmado,
                 total:confirmado.length,

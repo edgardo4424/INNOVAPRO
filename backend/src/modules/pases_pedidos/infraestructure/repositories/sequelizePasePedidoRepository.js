@@ -4,7 +4,10 @@ const { PasePedido } = require("../models/pasePedidoModel");
 
 class SequelizePasePedidoRepository {
   async crearPasePedido(payload, transaction = null) {
-    const buscar_pase = await PasePedido.findByPk(payload.contrato_id, {
+    const buscar_pase = await PasePedido.findOne({
+      where: {
+        contrato_id: payload.contrato_id,
+      },
       transaction,
     });
     if (buscar_pase) {
@@ -15,9 +18,26 @@ class SequelizePasePedidoRepository {
     return pase_pedido;
   }
 
-  async obtenerPasesPedidos(transaction = null) {
+  async obtenerPasesPedidos(usuario, transaction = null) {
+    const { rol, area, id } = usuario;    
+    const roles_almacen = ["Jefa de Almacén", "Auxiliar de oficina"];
+    const roles_comerciales = ["Técnico Comercial"];
+    let pasePedidoWhere = {};
+    let contratoWhere = {};
+
+    if (roles_almacen.includes(rol)) {
+      pasePedidoWhere.estado = ["Stock Confirmado", "Incompleto"];
+    } else if (roles_comerciales.includes(rol)) {
+      contratoWhere.usuario_id = id;
+    } else if (area == "Gerencia");
+    else {
+      throw new Error(
+        "Usted no tiene autorización para acceder a esta información"
+      );
+    }
+
     const pases_pedidos = await PasePedido.findAll({
-      where: { estado: ["Confirmado", "Stock Confirmado", "Incompleto"] },
+      where: pasePedidoWhere,
       transaction,
       include: [
         {
@@ -27,6 +47,10 @@ class SequelizePasePedidoRepository {
         {
           model: db.contratos,
           as: "contrato",
+          ...(Object.keys(contratoWhere).length > 0 && {
+            where: contratoWhere,
+            required: true,
+          }),
           include: [
             {
               model: db.cotizaciones,
@@ -77,7 +101,7 @@ class SequelizePasePedidoRepository {
     // const pase_pedido_actualizado=await PasePedido.findByPk(pedido_id,{transaction});
     // console.log("PASE PEDIDO ACTUALIZADO: ", pase_pedido_actualizado);
   }
-  async obtenerPasesPedidoParaTv(transaction=null) {
+  async obtenerPasesPedidoParaTv(transaction = null) {
     const pases_pedidos = await PasePedido.findAll({
       where: { estado: ["Stock Confirmado", "Incompleto"] },
       transaction,
@@ -85,12 +109,12 @@ class SequelizePasePedidoRepository {
         {
           model: db.pedidos_guias,
           as: "pedidos_guias",
-          include:[
+          include: [
             {
-              model:db.guias_de_remision,
-              as:"guia_remision"
-            }
-          ]
+              model: db.guias_de_remision,
+              as: "guia_remision",
+            },
+          ],
         },
         {
           model: db.contratos,
@@ -98,17 +122,17 @@ class SequelizePasePedidoRepository {
           include: [
             {
               model: db.clientes,
-              as:"cliente"
+              as: "cliente",
             },
             {
               model: db.empresas_proveedoras,
-              as:"filial"
+              as: "filial",
             },
           ],
         },
       ],
     });
-    return pases_pedidos
+    return pases_pedidos;
   }
 }
 

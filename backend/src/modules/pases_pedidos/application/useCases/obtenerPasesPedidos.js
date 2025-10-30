@@ -2,9 +2,9 @@ const { Tarea } = require("../../../tareas/infrastructure/models/tareaModel");
 const pases_pedido_model = require("../../infraestructure/utils/pase_pedido_model_front");
 const db = require("../../../../database/models");
 const obtenerRestoPiezas = require("../../infraestructure/services/obtenerRestoPiezas");
-module.exports = async (pasePedidoRepository, transaction = null) => {
+module.exports = async (usuario,pasePedidoRepository ,transaction = null) => {
   const pases_pedidos =
-    await pasePedidoRepository.obtenerPasesPedidos(transaction);
+    await pasePedidoRepository.obtenerPasesPedidos(usuario,transaction);
 
   const transform_data = await Promise.all(
     pases_pedidos.map(async (p) => {
@@ -143,7 +143,7 @@ module.exports = async (pasePedidoRepository, transaction = null) => {
   return {
     codigo: 202,
     respuesta: {
-      mensaje: "Pases de pedido obtenidos correctamente",
+      mensaje: transform_data.length==0?"Usted no cuenta con pases de pedidos.":"Pases de pedido obtenidos correctamente",
       pases_pedidos: transform_data,
     },
   };
