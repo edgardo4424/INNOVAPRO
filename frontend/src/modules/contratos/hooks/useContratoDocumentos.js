@@ -60,7 +60,7 @@ export function useContratoDocumentos({ contratoId }) {
       if (r?.docx_url) setDocxGenerado(r.docx_url);
       toast.success("Documento Word generado correctamente.");
     } catch (e) {
-      toast.error(e?.response?.data?.message || "Error generando el documento");
+      toast.error(e?.response?.data?.error || "Error generando el documento");
     } finally {
       setLoading(false);
     }
