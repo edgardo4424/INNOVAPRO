@@ -231,10 +231,10 @@ class SequelizeStockRepository {
       transaction,
     });
     const DESPIECE_ID_COTIZACION = cotizacion.despiece_id;
-    const DESPIECE_DETALLE_COTIZACION = await DespieceDetalle.findAll({
+    const RESPONSE_DESPIECE_DETALLE_COTIZACION = await DespieceDetalle.findAll({
       where: { despiece_id: DESPIECE_ID_COTIZACION },
     });
-    // const DESPIECE_DETALLE_COTIZACION=RESPONSE_DESPIECE_DETALLE_COTIZACION.map((d)=>d.get({plain:true})
+    const DESPIECE_DETALLE_COTIZACION=RESPONSE_DESPIECE_DETALLE_COTIZACION.map((d)=>d.get({plain:true}));
 
     const responsePasesPedido = await PasePedido.findAll({
       where: { estado: "Stock Confirmado" },

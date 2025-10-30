@@ -18,9 +18,18 @@ export default function ModalFinzalizarTarea({
   setOpen,
   tarea,
   cerrarTarea,
+  cotizacion_id,
 }) {
   const handleFinalizar = async () => {
     try {
+      // * Consultar Stock
+      const { piezas, estado } =
+        await centroAtencionService.validarStockCotizacion(cotizacion_id);
+
+      if (!estado) {
+        toast.error("La piezas no se encuentran disponibles en su totalidad");
+        return;
+      }
 
       const { mensaje, tarea: data_respuesta } =
         await centroAtencionService.finalizarTarea(tarea.id);

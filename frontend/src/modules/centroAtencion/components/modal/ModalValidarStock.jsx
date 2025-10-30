@@ -11,7 +11,7 @@ import {
   PackageX,
   PersonStanding,
   Warehouse,
-  X
+  X,
 } from "lucide-react";
 import { useState } from "react"; // Necesitas useState para manejar el loading
 
@@ -42,6 +42,7 @@ export default function ModalValidarStock({
       );
       setPiezasRecibidas(piezasOrdenadas);
       setEstadoStock(estado);
+      
     } catch (error) {
       console.error("❌ Error al validar stock:", error);
       setEstadoStock(null);
@@ -126,12 +127,22 @@ export default function ModalValidarStock({
             <div className="gap-6">
               <div className="grid grid-cols-2">
                 {estadoStock ? (
-                  <div className="col-span-2 w-full rounded-2xl border border-green-400 bg-green-100 px-4 py-4 text-center text-green-700 shadow-sm">
-                    <h1 className="flex gap-x-3 text-lg font-semibold">
-                      <PackageCheck />{" "}
-                      <span>El stock cumple con las piezas solicitadas</span>
-                    </h1>
-                  </div>
+                  <>
+                    <div className="flex w-full items-center justify-center rounded-2xl border border-green-400 bg-green-100 text-center text-green-700 shadow-sm">
+                      <h1 className="flex items-center gap-x-2 p-2 text-sm font-semibold">
+                        <PackageCheck />{" "}
+                        <span>El stock cumple con las piezas solicitadas</span>
+                      </h1>
+                    </div>
+                    <div className="flex justify-center">
+                      <Button
+                        className={`cursor-pointer rounded-xl bg-green-500 px-5 py-2 font-medium text-white shadow-md transition-all duration-300 hover:bg-green-600`}
+                        onClick={handleValidar}
+                      >
+                        Validar Stock
+                      </Button>
+                    </div>
+                  </>
                 ) : (
                   <>
                     <div className="flex w-full items-center justify-center rounded-2xl border border-orange-400 bg-orange-100 text-center text-orange-700 shadow-sm">
@@ -142,7 +153,15 @@ export default function ModalValidarStock({
                         </span>
                       </h1>
                     </div>
-                    <div className="flex justify-center">
+
+                    <div className="flex justify-around">
+                      <Button
+                        className={`cursor-pointer rounded-xl bg-green-500 px-5 py-2 font-medium text-white shadow-md transition-all duration-300 hover:bg-green-600`}
+                        onClick={handleValidar}
+                      >
+                        Validar Stock
+                      </Button>
+
                       <Button
                         className={`cursor-pointer rounded-xl px-5 py-2 font-medium text-white shadow-md transition-all duration-300 ${actNuevoDespieze ? "bg-green-500 hover:bg-green-600" : "bg-orange-500 hover:bg-orange-600"} `}
                         onClick={activarDespiece}

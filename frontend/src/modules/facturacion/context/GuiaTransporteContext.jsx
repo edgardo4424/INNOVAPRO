@@ -184,7 +184,7 @@ export function GuiaTransporteProvider({ children }) {
   }, [
     guiaTransporte.detalle,
     guiaTransporte.guia_Envio_Und_Peso_Total,
-    editadoPlasmado,
+    // editadoPlasmado,
     pesoPlasmadoKilos,
   ]);
 
@@ -243,71 +243,67 @@ export function GuiaTransporteProvider({ children }) {
     }
   };
 
-  const EmitirGuia = async () => {
-    const { id: id_logeado } = await JSON.parse(localStorage.getItem("user"));
-    let result = {
-      success: false,
-      message: "Error desconocido al emitir la nota",
-      data: null,
-    };
-    try {
-      let guiaAEmitir = guiaTransporte;
-      switch (tipoGuia) {
-        case "transporte-privado":
-          guiaAEmitir = {
-            ...guiaAEmitir,
-            ...guiaDatosPrivado,
-          };
-          break;
-        case "transporte-publico":
-          guiaAEmitir = {
-            ...guiaAEmitir,
-            ...guiaDatosPublico,
-          };
-          break;
-        default:
-          break;
-      }
-      if (pedidoId !== null) guiaAEmitir.pedido_id = pedidoId;
-      const { status, success, message, data } =
-        await factilizaService.enviarGuia({
-          ...guiaAEmitir,
-          usuario_id: id_logeado,
-        });
-      result = {
-        status,
-        success,
-        message,
-        data,
-      };
-      if (status == 200 || status == 201 || status == 400) {
-        console.log("limpiar entra");
-        Limpiar();
-      }
-    } catch (error) {
-      if (error.response) {
-        const { success, message, detailed_message, data, status } =
-          error.response.data;
-          console.log(error.response.data);
-        result = {
-          success: false,
-          message: message,
-          data,
-          status,
-        };
-        return result;
-      } else {
-        return {
-          success: false,
-          message: error.message || "Ocurrió un error inesperado.",
-          data: null,
-          status: 500,
-        };
-      }
-    } finally {
-      return result;
-    }
+const EmitirGuia = async () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  const id_logeado = user?.id;
+
+  let result = {
+    success: false,
+    message: "Error desconocido al emitir la guía",
+    data: null,
+    status: 500,
   };
+
+  try {
+    // 🔧 Combinar datos según tipo de guía
+    const guiaAEmitir = {
+      ...guiaTransporte,
+      ...(tipoGuia === "transporte-privado" ? guiaDatosPrivado : {}),
+      ...(tipoGuia === "transporte-publico" ? guiaDatosPublico : {}),
+      ...(pedidoId ? { pedido_id: pedidoId } : {}),
+      usuario_id: id_logeado,
+    };
+
+    // 🧭 Seleccionar endpoint dinámicamente
+    const enviarGuiaFn = pedidoId
+      ? factilizaService.enviarGuiaPasePedidio
+      : factilizaService.enviarGuia;
+
+    // 🚀 Ejecutar la emisión
+    const response = await enviarGuiaFn(guiaAEmitir);
+    const { status, success, message, data } = response;
+
+    result = { status, success, message, data };
+
+    // 🧹 Limpiar si la emisión fue exitosa o controlada
+    if ([200, 201, 400].includes(status)) Limpiar();
+  } catch (error) {
+    // 🧩 Error con respuesta del servidor
+    if (error.response?.data) {
+      const { message, data, status } = error.response.data;
+      console.error("❌ Error al emitir guía:", error.response.data);
+
+      result = {
+        success: false,
+        message: message || "Error del servidor al emitir la guía",
+        data,
+        status: status || 500,
+      };
+    } else {
+      // ⚠️ Error de red o inesperado
+      result = {
+        success: false,
+        message: error.message || "Ocurrió un error inesperado.",
+        data: null,
+        status: 500,
+      };
+    }
+  }
+
+  // ✅ Retorno centralizado
+  return result;
+};
+
 
   const Limpiar = () => {
     setGuiaTransporte({

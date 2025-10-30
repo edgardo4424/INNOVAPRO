@@ -42,6 +42,12 @@ const factilizaService = {
         return res.data;
     },
 
+    // !!! Guia de Remision - por pedido
+    enviarGuiaPasePedidio: async (guia) => {
+        const res = await api.post("/pedidos_guias", guia);
+        return res.data;
+    },
+
 
     // ?? ============ CONSULTAS DOCUMENTOS ============
     consultarDocumentoJson: async (documento) => {

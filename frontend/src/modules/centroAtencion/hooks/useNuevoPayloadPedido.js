@@ -4,7 +4,8 @@ const nuevoPayloadPedido = (tipoSolicitud, pedido_id) => {
         return {
             payload: {
                 estado: "Stock Confirmado",
-                tarea_id: null
+                // tarea_id: null
+                fecha_confirmacion: new Date(),
             },
             pedido_id: pedido_id
         }
@@ -12,7 +13,8 @@ const nuevoPayloadPedido = (tipoSolicitud, pedido_id) => {
         return {
             payload: {
                 estado: "Stock Confirmado",
-                tarea_id: null
+                // tarea_id: null
+                fecha_confirmacion: new Date(),
             },
             pedido_id: pedido_id
         }
