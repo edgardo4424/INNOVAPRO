@@ -1,181 +1,80 @@
 import React, { useEffect, useState } from "react";
 import { Clock, Archive, Package } from "lucide-react";
 import CardPedido from "../card/CardPedido";
+import pedidosService from "../../service/PedidosService";
 
 const pedidosConfirmados = [
   {
-    id: 1,
-    contrato_id: 1,
-    contrato_nombre: "Contrato A",
-    filial: "22235154875",
-    razon_social: "Encofrados Innova S.a.C.",
-    cliente_ruc: "20602860338",
-    cliente_razon_social: "Deister Software Peru S.a.C.",
-    pedido_guia_id: null,
-    guia_nro: null,
-    estado: "Confirmado",
-    fecha_confirmacion: new Date(),
-    fecha_despacho: null,
-    despachado: false,
+    id: 2,
+    contrato_id: 2,
+    ref_contrato: "EI-CC-COM-LR1-0002_1",
+    filial: "20562974998",
+    razon_social: "ENCOFRADOS INNOVA S.A.C.",
+    cliente_ruc: "12345678952",
+    cliente_razon_social: "Fc barcelona",
+    guias: [
+      {
+        id: 2,
+        guia_nro: "T005-00005094",
+      },
+      {
+        id: 1,
+        guia_nro: "T005-00005090",
+      },
+    ],
+    estado: "Incompleto",
+    fecha_confirmacion: "2025-10-20T22:40:18.000Z",
   },
   {
-    id: 1,
-    contrato_id: 1,
-    contrato_nombre: "Contrato A",
-    filial: "22235154875",
-    razon_social: "Encofrados Innova S.a.C.",
-    cliente_ruc: "20602860338",
-    cliente_razon_social: "Deister Software Peru S.a.C.",
-    pedido_guia_id: null,
-    guia_nro: null,
-    estado: "Confirmado",
-    fecha_confirmacion: new Date(),
-    fecha_despacho: null,
-    despachado: false,
-  },
-  {
-    id: 1,
-    contrato_id: 1,
-    contrato_nombre: "Contrato A",
-    filial: "22235154875",
-    razon_social: "Encofrados Innova S.a.C.",
-    cliente_ruc: "20602860338",
-    cliente_razon_social: "Deister Software Peru S.a.C.",
-    pedido_guia_id: null,
-    guia_nro: null,
-    estado: "Confirmado",
-    fecha_confirmacion: new Date(),
-    fecha_despacho: null,
-    despachado: false,
-  },
-  {
-    id: 1,
-    contrato_id: 1,
-    contrato_nombre: "Contrato A",
-    filial: "22235154875",
-    razon_social: "Encofrados Innova S.a.C.",
-    cliente_ruc: "20602860338",
-    cliente_razon_social: "Deister Software Peru S.a.C.",
-    pedido_guia_id: null,
-    guia_nro: null,
-    estado: "Confirmado",
-    fecha_confirmacion: new Date(),
-    fecha_despacho: null,
-    despachado: false,
-  },
-  {
-    id: 1,
-    contrato_id: 1,
-    contrato_nombre: "Contrato A",
-    filial: "22235154875",
-    razon_social: "Encofrados Innova S.a.C.",
-    cliente_ruc: "20602860338",
-    cliente_razon_social: "Deister Software Peru S.a.C.",
-    pedido_guia_id: null,
-    guia_nro: null,
-    estado: "Confirmado",
-    fecha_confirmacion: new Date(),
-    fecha_despacho: null,
-    despachado: false,
-  },
-  {
-    id: 1,
-    contrato_id: 1,
-    contrato_nombre: "Contrato A",
-    filial: "22235154875",
-    razon_social: "Encofrados Innova S.a.C.",
-    cliente_ruc: "20602860338",
-    cliente_razon_social: "Deister Software Peru S.a.C.",
-    pedido_guia_id: null,
-    guia_nro: null,
-    estado: "Confirmado",
-    fecha_confirmacion: new Date(),
-    fecha_despacho: null,
-    despachado: false,
-  },
-  {
-    id: 1,
-    contrato_id: 1,
-    contrato_nombre: "Contrato A",
-    filial: "22235154875",
-    razon_social: "Encofrados Innova S.a.C.",
-    cliente_ruc: "20602860338",
-    cliente_razon_social: "Deister Software Peru S.a.C.",
-    pedido_guia_id: null,
-    guia_nro: null,
-    estado: "Confirmado",
-    fecha_confirmacion: new Date(),
-    fecha_despacho: null,
-    despachado: false,
-  },
-  {
-    id: 1,
-    contrato_id: 1,
-    contrato_nombre: "Contrato A",
-    filial: "22235154875",
-    razon_social: "Encofrados Innova S.a.C.",
-    cliente_ruc: "20602860338",
-    cliente_razon_social: "Deister Software Peru S.a.C.",
-    pedido_guia_id: null,
-    guia_nro: null,
-    estado: "Confirmado",
-    fecha_confirmacion: new Date(),
-    fecha_despacho: null,
-    despachado: false,
+    id: 4,
+    contrato_id: 3,
+    ref_contrato: "IA-CC-COM-LR1-0003_1",
+    filial: "20555389052",
+    razon_social: "INDEK ANDINA E.I.R.L",
+    cliente_ruc: "78521495634",
+    cliente_razon_social: "Atletico de madrid",
+    guias: [],
+    estado: "Stock Confirmado",
+    fecha_confirmacion: "2025-11-28T22:40:18.000Z",
   },
 ];
 
 const pedidosAlmacen = [
   {
     id: 2,
-    contrato_id: 1,
-    contrato_nombre: "Contrato B",
-    filial: "22235154875",
-    razon_social: "Encofrados Innova S.a.C.",
-    cliente_ruc: "22235154875",
-    cliente_razon_social:
-      "Stefanini It Solutions Peru Sociedad Anonima Cerrada",
-    pedido_guia_id: 1,
-    guia_nro: "T005-00000006",
-    estado: "Emitido",
-    fecha_confirmacion: new Date(),
-    fecha_despacho: null,
-    despachado: false,
-  },
-  {
-    id: 3,
     contrato_id: 2,
-    contrato_nombre: "Contrato C",
-    filial: "22235154875",
-    razon_social: "Encofrados Innova S.a.C.",
-    cliente_ruc: "22235154875",
-    cliente_razon_social: "Avantica Technologies S.a.C. | Encora",
-    pedido_guia_id: 2,
-    guia_nro: "T005-00000007",
+    ref_contrato: "EI-CC-COM-LR1-0002_1",
+    filial: "20562974998",
+    razon_social: "ENCOFRADOS INNOVA S.A.C.",
+    cliente_ruc: "12345678952",
+    cliente_razon_social: "Fc barcelona",
+    pedido_guia_id: 4,
+    guia_nro: "T005-00005094",
     estado: "Emitido",
-    fecha_confirmacion: new Date(),
-    fecha_despacho: null,
-    despachado: false,
+    fecha_emision_guia: "2025-10-27T19:48:00.000Z",
+    fecha_despacho: "2025-10-29",
+    fecha_confirmacion: "2025-10-20T22:40:18.000Z",
   },
 ];
 
 const pedidosDespachados = [
   {
-    id: 4,
-    contrato_id: 1,
-    contrato_nombre: "Contrato D",
-    filial: "22235154875",
-    razon_social: "Encofrados Innova S.a.C.",
-    cliente_ruc: "22235154875",
-    cliente_razon_social: "Casio Peru E.I.R.L.",
+    id: 2,
+    contrato_id: 2,
+    ref_contrato: "EI-CC-COM-LR1-0002_1",
+    filial: "20562974998",
+    razon_social: "ENCOFRADOS INNOVA S.A.C.",
+    cliente_ruc: "12345678952",
+    cliente_razon_social: "Fc barcelona",
     pedido_guia_id: 3,
-    guia_nro: "T005-00000008",
+    guia_nro: "T005-00005090",
     estado: "Despachado",
-    fecha_confirmacion: new Date(),
-    fecha_despacho: new Date(),
-    despachado: true,
+    fecha_emision_guia: "2025-10-27T19:48:00.000Z",
+    fecha_despacho: "2025-10-29",
+    fecha_confirmacion: "2025-10-20T22:40:18.000Z",
   },
 ];
+
 const ContentPedidosTv = () => {
   const [pedidos, setPedidos] = useState({
     Confirmadas: pedidosConfirmados || [],
@@ -183,7 +82,29 @@ const ContentPedidosTv = () => {
     Despachados: pedidosDespachados || [],
   });
 
-  // ✅ Se actualiza cada vez que cambian las props
+  const getFechaActual = () => {
+    const hoy = new Date();
+    const anio = hoy.getFullYear();
+    const mes = String(hoy.getMonth() + 1).padStart(2, "0");
+    const dia = String(hoy.getDate()).padStart(2, "0");
+    return `${anio}-${mes}-${dia}`;
+  };
+
+  const obtenerPedidos = async () => {
+    try {
+      const fechaActual = getFechaActual();
+      const { mensaje, confirmados, almacen, despachados } =
+        await pedidosService.obtenerPasesPedidosTv(fechaActual);
+      setPedidos({
+        Confirmadas: confirmados.list || [],
+        Almacen: almacen.list || [],
+        Despachados: despachados.list || [],
+      });
+    } catch (error) {
+      console.error("Error al obtener pedidos:", error);
+    }
+  };
+
   useEffect(() => {
     setPedidos({
       Confirmadas: pedidosConfirmados || [],
@@ -198,26 +119,26 @@ const ContentPedidosTv = () => {
       key: "Confirmado",
       icon: Clock,
       list: pedidos.Confirmadas,
-      borderColor: "border-yellow-400/90",
+      borderColor: "border-yellow-500/90",
     },
     {
       title: "Emitido",
       key: "Emitido",
       icon: Archive,
       list: pedidos.Almacen,
-      borderColor: "border-blue-400/90",
+      borderColor: "border-blue-500/90",
     },
     {
       title: "Despachado",
       key: "Despachado",
       icon: Package,
       list: pedidos.Despachados,
-      borderColor: "border-green-400/90",
+      borderColor: "border-green-500/90",
     },
   ];
 
   return (
-    <div className="font-mulish grid min-h-[70vh] grid-cols-1 gap-[1px] bg-slate-900 md:grid-cols-3">
+    <div className="font-mulish grid w-11/12 grid-cols-1 gap-[1px] bg-slate-900 md:grid-cols-3">
       {COLUMNAS.map((columna) => (
         <div
           key={columna.key}
@@ -237,7 +158,7 @@ const ContentPedidosTv = () => {
           </div>
 
           {/* Contenido */}
-          <div className="scroll-hide flex max-h-[80vh] flex-grow flex-col gap-y-3 overflow-y-auto p-3">
+          <div className="scroll-hide flex flex-1 flex-col gap-y-3 overflow-y-auto p-3">
             {columna.list.length > 0 ? (
               columna.list.map((pedido) => (
                 <CardPedido key={pedido.id} pedido={pedido} />

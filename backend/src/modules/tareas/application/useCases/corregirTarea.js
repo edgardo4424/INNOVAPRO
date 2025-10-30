@@ -7,7 +7,7 @@ const {
 
 const enviarMensajeWhatsApp = require("../../infrastructure/services/enviarMensajeServiceTomaTarea");
 
-module.exports = async (idTarea, correccion, user_id, user_name, tareaRepository) => {
+module.exports = async (idTarea, correccion, detalles = null, user_id, user_name, tareaRepository) => {
   try {
     // 1️⃣ Obtenemos la tarea original (para saber a quién estaba asignada)
     const tareaOriginal = await tareaRepository.obtenerPorId(idTarea);
@@ -16,7 +16,7 @@ module.exports = async (idTarea, correccion, user_id, user_name, tareaRepository
     }
 
     // 2️⃣ Ejecutamos la corrección
-    const tarea = await tareaRepository.corregirTarea(idTarea, correccion, user_id, user_name);
+    const tarea = await tareaRepository.corregirTarea(idTarea, correccion,detalles, user_id, user_name);
     if (!tarea) {
       return { codigo: 403, respuesta: { mensaje: "No puedes corregir esta tarea" } };
     }
@@ -81,7 +81,11 @@ module.exports = async (idTarea, correccion, user_id, user_name, tareaRepository
     console.error("💥 Error general al corregir tarea:", error);
     return {
       codigo: 500,
-      respuesta: { mensaje: "Error interno al corregir tarea", detalle: error.message },
+      respuesta: {
+        mensaje: "Error interno al corregir tarea",
+        status: 500,
+        success: false, detalle: error.message
+      },
     };
   }
 };

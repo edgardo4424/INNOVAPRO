@@ -5,19 +5,17 @@ import { Maximize2, X } from "lucide-react";
 const PedidosTv = () => {
   const [isFullScreen, setIsFullScreen] = useState(false);
 
-  // 👉 Entrar en pantalla completa (modo F11 del navegador)
   const enterFullScreen = async () => {
     try {
       const elem = document.documentElement;
       if (elem.requestFullscreen) await elem.requestFullscreen();
-      else if (elem.webkitRequestFullscreen) await elem.webkitRequestFullscreen(); // Safari
-      else if (elem.msRequestFullscreen) await elem.msRequestFullscreen(); // IE11
+      else if (elem.webkitRequestFullscreen) await elem.webkitRequestFullscreen();
+      else if (elem.msRequestFullscreen) await elem.msRequestFullscreen();
     } catch (err) {
       console.warn("⚠️ No se pudo activar pantalla completa:", err);
     }
   };
 
-  // 👉 Salir de pantalla completa
   const exitFullScreen = async () => {
     try {
       if (document.exitFullscreen) await document.exitFullscreen();
@@ -39,7 +37,7 @@ const PedidosTv = () => {
   };
 
   return (
-    <div className="relative flex max-h-[95dvh] w-full flex-col items-center bg-[#12213d] py-6 md:px-8">
+    <div className="relative flex min-h-[95dvh] w-full flex-col items-center bg-[#12213d] py-6 md:px-8">
       {/* Header principal */}
       <div className="w-full flex items-center justify-between mb-6">
         <h2 className="text-2xl font-semibold !text-slate-100 md:text-3xl font-sans tracking-wide">
@@ -57,14 +55,14 @@ const PedidosTv = () => {
       </div>
 
       {/* Contenido normal */}
-      <div className="w-full">
+      <div className="w-full flex flex-1 justify-center">
         <ContentPedidosTv />
       </div>
 
       {/* Overlay de pantalla completa */}
       {isFullScreen && (
-        <div className="fixed inset-0 z-[9999] flex flex-col bg-gradient-to-b from-[#0a0f1a] via-[#111827] to-[#1e293b] text-white animate-fadeIn">
-          {/* Botón salir (arriba a la derecha) */}
+        <div className="fixed inset-0 z-[9999] flex flex-col h-screen bg-gradient-to-b from-[#0a0f1a] via-[#111827] to-[#1e293b] text-white animate-fadeIn">
+          {/* Botón salir */}
           <div className="absolute top-4 right-4 z-[10000]">
             <button
               onClick={handleCloseTv}
@@ -75,11 +73,9 @@ const PedidosTv = () => {
             </button>
           </div>
 
-          {/* Contenido TV centrado */}
-          <div className="flex-1 flex items-center justify-center absolute top-20 p-4 overflow-auto">
-            <div className="w-full h-full flex items-center justify-center">
-              <ContentPedidosTv />
-            </div>
+          {/* Contenido TV ocupa todo el alto */}
+          <div className="flex-1 flex items-top justify-center overflow-auto p-6">
+            <ContentPedidosTv />
           </div>
         </div>
       )}

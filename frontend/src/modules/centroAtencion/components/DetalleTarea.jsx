@@ -32,12 +32,15 @@ import { DetallesEspecificos } from "./DetallesEspecificos";
 import DespieceOT from "./despiece-ot/DespieceOT";
 import ImportadorDespiece from "./despiece-ot/ImportadorDespiece";
 import ModalDevolverTarea from "./modal/ModalDevolverTarea";
+import ModalFinzalizarTarea from "./modal/ModalFinalizarTarea";
 import ModalListarPiezas from "./modal/ModalListarPiezas";
 import ModalReabrirTarea from "./modal/ModalReabrirTarea";
 import ModalValidarStock from "./modal/ModalValidarStock";
 import NuevoDespiezePasePedido from "./pase-pedidos/NuevoDespiezePasePedido";
+import ModalLiberarTarea from "./modal/ModalLiberarTarea";
 export default function DetalleTarea({
   tarea,
+  setTareas,
   onCerrar,
   user,
   handleTomarTarea,
@@ -68,6 +71,9 @@ export default function DetalleTarea({
   const [componenteRenderPedido, setComponenteRenderPedido] = useState(null);
   const [actNuevoDespieze, setActNuevoDespiece] = useState(false);
   const [idDespiece, setIdDespiece] = useState(null);
+
+  const [openFinalizarTarea, setOpenFinalizarTarea] = useState(false);
+  const [openLiberarTarea, setOpenLiberarTarea] = useState(false);
 
   const puedeGenerarDespiece =
     (user?.rol === "Jefe de OT" || user?.rol === "OT") &&
@@ -138,8 +144,6 @@ export default function DetalleTarea({
       ObtenerIdDespiece();
     }
   }, []);
-
-
 
   return (
     <div className="centro-modal">
@@ -289,6 +293,15 @@ export default function DetalleTarea({
             motivoDevolucion={tarea?.motivoDevolucion}
           />
 
+          {/* //? Sección Pase de Pedido - Listar Piezas de cotización */}
+          {verPiezasCotizacion && (
+            <ModalListarPiezas
+              open={openListaPiezas}
+              setOpen={setOpenListaPiezas}
+              cotizacion_id={tarea?.cotizacionId}
+            />
+          )}
+
           {respuestas && respuestas.length > 0 && (
             <div className="space-y-6">
               {respuestas.map((respuesta, index) => (
@@ -333,15 +346,6 @@ export default function DetalleTarea({
                 </Fragment>
               ))}
             </div>
-          )}
-
-          {/* //? Sección Pase de Pedido - Listar Piezas de cotización */}
-          {verPiezasCotizacion && (
-            <ModalListarPiezas
-              open={openListaPiezas}
-              setOpen={setOpenListaPiezas}
-              cotizacion_id={tarea?.cotizacionId}
-            />
           )}
 
           {/* //? Sección Despiece - Pase de Pedido */}
@@ -457,22 +461,19 @@ export default function DetalleTarea({
               {tarea?.asignadoA === user.id &&
                 tarea?.estado === "En proceso" && (
                   <>
-                    <Button
-                      variant="outline"
-                      className="flex-1 cursor-pointer gap-2 border-gray-300 text-gray-600 duration-300 hover:scale-105 hover:bg-gray-100"
-                      onClick={handleLiberarTarea}
-                    >
-                      <Unlock className="size-5" />
-                      LIBERAR
-                    </Button>
+                    <ModalLiberarTarea
+                      open={openLiberarTarea}
+                      setOpen={setOpenLiberarTarea}
+                      tarea={tarea}
+                      cerrarTarea={onCerrar}
+                    />
 
-                    <Button
-                      className="flex-1 cursor-pointer gap-2 bg-blue-500 text-white duration-300 hover:scale-105 hover:bg-blue-500"
-                      onClick={handleFinalizarTarea}
-                    >
-                      <Check className="size-5" />
-                      FINALIZAR
-                    </Button>
+                    <ModalFinzalizarTarea
+                      open={openFinalizarTarea}
+                      setOpen={setOpenFinalizarTarea}
+                      tarea={tarea}
+                      cerrarTarea={onCerrar}
+                    />
 
                     {/* //? RENDERIZADO DE  ACCION PASE PEDIDOS */}
                     {componenteRenderPedido && componenteRenderPedido}

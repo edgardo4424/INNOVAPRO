@@ -1,9 +1,9 @@
 import {
-    AlertDialog,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogTitle,
-    AlertDialogTrigger,
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { SaveAll, X } from "lucide-react";
 
@@ -13,6 +13,7 @@ import Loader from "@/shared/components/Loader";
 export default function ModalVerificarGuardado({
   open,
   setOpen,
+  loading,
   handleFormSubmit,
   mensaje = "¿estas seguro de esta accion?",
   isLoading,
@@ -54,10 +55,17 @@ export default function ModalVerificarGuardado({
             </div>
           ) : (
             <>
-              <button className="cursor-pointer rounded-xl border-2 border-red-500 bg-red-500 px-4 py-2 text-white transition-all duration-150 hover:scale-105">
+              <button
+                disabled={isLoading}
+                className="cursor-pointer rounded-xl border-2 border-red-500 bg-red-500 px-4 py-2 text-white transition-all duration-150 hover:scale-105"
+              >
                 Cancelar
               </button>
-              <button className="cursor-pointer rounded-xl border-2 border-green-500 bg-green-500 px-4 py-2 text-white transition-all duration-150 hover:scale-105">
+              <button
+                onClick={handleFormSubmit}
+                disabled={isLoading}
+                className="cursor-pointer rounded-xl border-2 border-green-500 bg-green-500 px-4 py-2 text-white transition-all duration-150 hover:scale-105"
+              >
                 Guardar
               </button>
             </>

@@ -30,6 +30,7 @@ export function PedidosProvider({ children }) {
 
   const ObtenerPasePedidos = async () => {
     try {
+      setLoading(true);
       const { mensaje, pases_pedidos } =
         await pedidosService.obtenerPasePedidos();
       if (pases_pedidos.length === 0) {
@@ -37,7 +38,10 @@ export function PedidosProvider({ children }) {
       } else {
         setPedidos(pases_pedidos);
       }
-    } catch (error) {}
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
