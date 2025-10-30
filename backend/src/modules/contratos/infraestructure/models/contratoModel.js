@@ -134,6 +134,10 @@ const Contrato = sequelize.define(
          allowNull: false,
          defaultValue: 'Creado',
       },
+      oficializado: {
+         type: DataTypes.BOOLEAN,
+         defaultValue: false,
+      },
       
    },
    {
@@ -184,6 +188,11 @@ Contrato.associate = (models) => {
    Contrato.belongsTo(models.contactos, {
       foreignKey: "contacto_id",
       as: "contacto",
+   });
+
+   Contrato.hasMany(models.documentos, {   
+      foreignKey: "contrato_id",
+      as: "documentos",
    });
 };
 

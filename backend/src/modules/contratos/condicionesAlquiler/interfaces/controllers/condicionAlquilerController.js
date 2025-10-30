@@ -7,6 +7,9 @@ const sequelizeContratoRepository = require("../../../infraestructure/repositori
 const condicionRepository = new sequelizeCondicionAlquilerRepository();
 const contratoRepository = new sequelizeContratoRepository();
 
+const SequelizePasePedidoRepository = require("../../../../pases_pedidos/infraestructure/repositories/sequelizePasePedidoRepository");
+const pasePedidoRepository = new SequelizePasePedidoRepository();
+
 const CondicionAlquilerController = {
   async obtenerPendientes(req, res) {
     try {
@@ -40,6 +43,7 @@ const CondicionAlquilerController = {
   },
 
   async marcarCumplidas(req, res) {
+    
     try {
         const contratoId = parseInt(req.params.contratoId);
         const { condiciones_cumplidas } = req.body;
@@ -48,7 +52,8 @@ const CondicionAlquilerController = {
             contratoId,
             condiciones_cumplidas,
             condicionRepository,
-            contratoRepository
+            contratoRepository,
+            pasePedidoRepository
         );
 
         res.status(resultado.codigo).json(resultado.respuesta);

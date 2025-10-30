@@ -15,6 +15,7 @@ const {
   mapearDataEscuadrasConPlataformas,
 } = require("../../infraestructure/services/EscuadrasConPlataformas/mapearDataEscuadrasConPlataformas");
 const moment = require("moment");
+const { mapearDataEscuadrasSinPlataformas } = require("../../infraestructure/services/EscuadrasSinPlataformas/mapearDataEscuadrasSinPlataformas");
 
 module.exports = async (
   contrato_id,
@@ -56,9 +57,9 @@ module.exports = async (
     { transaction }
   );
 
-  const contrato = contratoEncontrado.get({ plain: true });
+  if(!contratoEncontrado) return { codigo: 404, respuesta: { error: "Contrato no encontrado" }}
 
-  console.log("contrato", contrato);
+  const contrato = contratoEncontrado.get({ plain: true });
 
   if (!contrato) {
     return {
@@ -107,24 +108,24 @@ module.exports = async (
     moment(fechaInicioContrato).format("MMMM").slice(1); // Mes en formato texto capitalizado
   const anioFechaInicioContrato = moment(fechaInicioContrato).year();
 
-  console.log({
-    diaFechaInicioContrato,
-    mesFechaInicioContrato,
-    anioFechaInicioContrato,
-  });
 
   //Obteniendo la informacion de detalles Piezas adicionales
-  const piezas_adicionales = pdfCotizacionDataSnapshot.piezas_adicionales || [];
+  const piezas_adicionales = pdfCotizacionDataSnapshot.piezasAdicionales || [];
   const cantidad_total_piezas_adicionales = piezas_adicionales.reduce(
     (total, pieza) => total + (pieza.cantidad || 0),
     0
-  );
+  ) || 0;
 
-  const precio_alquiler_soles_total_piezas_adicionales = piezas_adicionales.reduce(
-    (total, pieza) => total + (pieza.precio_alquiler_soles || 0),
-    0
-  );
+  const precio_alquiler_soles_total_piezas_adicionales =
+    piezas_adicionales.reduce(
+      (total, pieza) => total + (pieza.precio_alquiler_soles || 0),
+      0
+    ) || 0;
 
+  // Obteniendo la informacion de instalacion
+
+  const tiene_instalacion = pdfCotizacionDataSnapshot?.instalacion?.tiene_instalacion ? pdfCotizacionDataSnapshot?.instalacion?.tiene_instalacion : false;
+  const tiene_transporte = Object.keys(pdfCotizacionDataSnapshot?.tarifa_transporte || {}).length > 0 ? true : false;
 
   let respuesta = {
     activadores: {
@@ -142,10 +143,11 @@ module.exports = async (
       tienePernosSinArgolla: false,
       tienePernosArgolla: false,
       tienePuntales: false,
-      tienePiezasAdicionales: false,
-      tieneInstalacion: false,
-      tieneInstalacionParcial: false,
-      tieneTransporte: false,
+      tienePiezasAdicionales: piezas_adicionales.length > 0 ? true : false,
+      tieneInstalacion: tiene_instalacion,
+      tieneInstalacionCompleta: pdfCotizacionDataSnapshot?.instalacion?.tipo_instalacion == "Completa" ? true : false,
+      tieneInstalacionParcial: pdfCotizacionDataSnapshot?.instalacion?.tipo_instalacion == "Parcial" ? true : false,
+      tieneTransporte: tiene_transporte,
 
       // Condiciones de alquiler
       mostrarCondiciones: true,
@@ -155,6 +157,16 @@ module.exports = async (
       tieneOrdenDeServicio: true,
       tieneLetra: true,
       tieneCheque: true,
+
+      // Anexos
+      anexoAE: false,
+      anexoAF: false,
+      anexoAT: false,
+      anexoEA: false,
+      anexoEC: false,
+      anexoPD: false,
+      anexoPU: false,
+
     },
     uso: pdfCotizacionDataSnapshot.uso,
     obra: {
@@ -168,11 +180,20 @@ module.exports = async (
     },
     cliente: {
       tipo: contrato.cliente.tipo,
-      ruc: contrato.cliente.tipo == "Persona Natural" ? contrato.cliente.dni : contrato.cliente.ruc,
+      ruc:
+        contrato.cliente.tipo == "Persona Natural"
+          ? contrato.cliente.dni
+          : contrato.cliente.ruc,
       razon_social: contrato.cliente.razon_social, // asi sea Persona Natural o Jurídica
       domicilio_fiscal: contrato.cliente.domicilio_fiscal,
-      representante_legal: contrato.cliente.tipo == "Persona Natural" ? contrato.cliente.razon_social : contrato.cliente.representante_legal,
-      numero_documento_representante: contrato.cliente.tipo == "Persona Natural" ? contrato.cliente.dni : contrato.cliente.dni_representante,
+      representante_legal:
+        contrato.cliente.tipo == "Persona Natural"
+          ? contrato.cliente.razon_social
+          : contrato.cliente.representante_legal,
+      numero_documento_representante:
+        contrato.cliente.tipo == "Persona Natural"
+          ? contrato.cliente.dni
+          : contrato.cliente.dni_representante,
       cargo_representante_legal: contrato.cliente.cargo_representante,
       domicilio_representante: contrato.cliente.domicilio_representante,
     },
@@ -209,27 +230,17 @@ module.exports = async (
     detalles_piezasAdicionales: {
       piezasAdicionales: piezas_adicionales,
       cantidad_total: cantidad_total_piezas_adicionales,
-      precio_alquiler_soles_total: precio_alquiler_soles_total_piezas_adicionales,
+      precio_alquiler_soles_total:
+        precio_alquiler_soles_total_piezas_adicionales,
     },
 
-    instalacion: {
-      
-            ...pdfCotizacionDataSnapshot.instalacion,
-          },
-    
-    equipos: pdfCotizacionDataSnapshot?.zonas || [],
-    
-    
-    transporte: {
-      tiene_transporte:
-        pdfCotizacionDataSnapshot?.tarifa_transporte &&
-        Object.keys(pdfCotizacionDataSnapshot?.tarifa_transporte).length > 0
-          ? true
-          : false,
-      data: {
-        ...pdfCotizacionDataSnapshot?.tarifa_transporte,
-      },
-    },
+    instalacion: tiene_instalacion ? pdfCotizacionDataSnapshot?.instalacion : {},
+
+    tarifa_transporte: tiene_transporte ? pdfCotizacionDataSnapshot?.tarifa_transporte : {},
+
+    perno_expansion_sin_argolla: {},
+    perno_expansion_con_argolla: {},
+    detalles_puntales: {},
   };
 
   // Verificar por switch el uso de contrato,
@@ -288,6 +299,11 @@ module.exports = async (
       break;
     case "11":
       // Escuadras sin plataforma
+       respuesta.activadores.esEC = true;
+      respuesta = mapearDataEscuadrasSinPlataformas({
+        pdfCotizacionDataSnapshot,
+        respuesta,
+      });
       break;
     default:
       break;

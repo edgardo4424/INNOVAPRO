@@ -1,4 +1,5 @@
 const db = require("../../../../database/models");
+const { Op } = require("sequelize");
 
 async function generarCodigoDocumentoContrato({cotizacion_id, usuario_id, transaction=null}) {
     
@@ -64,7 +65,9 @@ async function generarCodigoDocumentoContrato({cotizacion_id, usuario_id, transa
    const cotizaciones_estado_aprobado = await db.cotizaciones.findAll({
     where: {
         // Traer todos los que contengan el mismo codigo_documento_sin_version
-        //codigo_documento: codigo_documento_cotizacion_sin_version + "%",
+        codigo_documento: {
+      [Op.like]: `${codigo_documento_cotizacion_sin_version}%`, // <-- correcto
+    },
         usuario_id: cotizacion.usuario_id,
         filial_id: cotizacion.filial_id,
         contacto_id: cotizacion.contacto_id,
@@ -86,27 +89,73 @@ async function generarCodigoDocumentoContrato({cotizacion_id, usuario_id, transa
         return versionB - versionA;
     });
 
-    let correlativo = String(numeroContratos + 1).padStart(4, "0");
+    let correlativo = String(numeroContratos + 1).padStart(4, '0'); // iniciar en 0001
     let version = 1;
 
-    if(cotizacionesConEstadoAprobado.length>1){
-        const penultimaCotizacionAprobada = cotizacionesConEstadoAprobado[1]; // Penultima cotizacion aprobada
-        const ultimaVersion = parseInt(penultimaCotizacionAprobada.codigo_documento.split("_")[1]) || 0;
+    if(cotizacionesConEstadoAprobado.length>0){
+        const ultimaCotizacionAprobada = cotizacionesConEstadoAprobado[0]; // ultima cotizacion aprobada
+        const ultimaVersion = parseInt(ultimaCotizacionAprobada.codigo_documento.split("_")[1]) || 0;
         version = ultimaVersion + 1;
 
         const ultimoContratoDevueltoParaNuevaVersion = await db.contratos.findOne({
             where: {
-                cotizacion_id: penultimaCotizacionAprobada.id
+                cotizacion_id: ultimaCotizacionAprobada.id
             },
             transaction
         });
 
+        console.log("ultimoContratoDevueltoParaNuevaVersion", ultimoContratoDevueltoParaNuevaVersion);
+
         if(ultimoContratoDevueltoParaNuevaVersion){
             correlativo = ultimoContratoDevueltoParaNuevaVersion.ref_contrato.split("-")[4].split("_")[0];
+            version = parseInt(ultimoContratoDevueltoParaNuevaVersion.ref_contrato.split("-")[4].split("_")[1]) + 1;
+
         }
+    }else{
+
+        // OBtener el ultimo correlativo usado por el trabajador
+        const contratosDelTrabajador = await db.contratos.findAll({
+            where: {
+                usuario_id: usuario_id
+            },
+            transaction
+        });
+
+         // ordenar cotizaciones por correlativo descendente
+            contratosDelTrabajador.sort((a, b) => {
+                const correlativoA = parseInt(a.ref_contrato.split("-")[4].split("_")[0]) || 0;
+                const correlativoB = parseInt(b.ref_contrato.split("-")[4].split("_")[0]) || 0;
+                return correlativoB - correlativoA;
+            });
+
+            console.log("contratosDelTrabajador", contratosDelTrabajador);
+             const ultimoContrato = contratosDelTrabajador[0]; // ultimo contrato del trabajador
+            
+             if(ultimoContrato){
+                const numeroCorrelativo = (parseInt(ultimoContrato.ref_contrato.split("-")[4].split("_")[0]) || 0) + 1;
+                correlativo = String(numeroCorrelativo).padStart(4, '0');
+                version = 1;
+                console.log("ULTIMO CONTRATO")
+                console.log({
+                    correlativo,
+                    version
+                })
+             }else{
+                  correlativo = String(numeroContratos + 1).padStart(4, '0'); // iniciar en 0001
+                  version = 1;
+                  console.log("ELSE")
+                    console.log({
+                        correlativo,
+                        version
+                    })
+             }
+        
     }
+
     // Construir el código del contrato
     const codigoDocumentoContrato = `${filialAbv}-${tipoDocumento}-${codRolUsuario}-${usuarioAbv}${usuario_id}-${correlativo}_${version}`;
+
+    console.log("codigoDocumentoContrato generado:", codigoDocumentoContrato);
 
     return codigoDocumentoContrato;
 }

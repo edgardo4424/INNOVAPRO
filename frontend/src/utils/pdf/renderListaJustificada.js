@@ -30,14 +30,16 @@ export async function renderListaJustificada({
     const [numero, ...resto] = linea.trim().split(" ");
     const contenido = resto.join(" ");
     const subBloques = contenido.split("\n");
-    /* 
-    const palabras = contenido.split(/\s+/);
-    const aproxLineas = Math.ceil(palabras.length / 11);
-    const alturaEstimado = aproxLineas * lineHeight + 1.5;
- */
+    
+    // Calculamos altura estimada de todo el bloque
+    const anchoTexto = maxWidth - 10;
+    const textoDividido = doc.splitTextToSize(contenido, anchoTexto);
+    const alturaEstimado = textoDividido.length * lineHeight + 3;
+
+    // Verificamos el salto de página antes de renderizar el bloque
+    y = await verificarSaltoDePagina(doc, y, alturaEstimado);
 
     // Render del número
-    y = await verificarSaltoDePagina(doc, y, lineHeight);
     doc.setFontSize(fontSize);
     doc.text(numero, x + 3, y); // Número
 

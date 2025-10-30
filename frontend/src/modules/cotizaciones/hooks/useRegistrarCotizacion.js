@@ -25,6 +25,18 @@ export function useRegistrarCotizacion(pasosLength) {
     setErrores, 
   } = useWizardContext();
 
+  function validarEscalerasDetalladas(detalles) {
+    if (!detalles || !Array.isArray(detalles.escaleras)) return { ok: true };
+    const errores = [];
+    detalles.escaleras.forEach((z) => (z.equipos || []).forEach((eq, idx) => {
+      const alturaCalc = Number(eq.tramos_2m || 0) * 2 + Number(eq.tramos_1m || 0);
+      if (Number(eq.alturaTotal || 0) !== alturaCalc) {
+        errores.push(`Zona ${z.zona} • Equipo ${idx + 1}: ${alturaCalc}≠${eq.alturaTotal}`);
+      }
+    }));
+    return { ok: errores.length === 0, errores };
+  }
+
   function obtenerParametrosExtraCotizacion(formData) {
     const extras = {};
 
@@ -43,7 +55,7 @@ export function useRegistrarCotizacion(pasosLength) {
       }
     }
 
-    if (formData.uso.id === 3 && formData.uso.detalles_escaleras) {
+    /* if (formData.uso.id === 3 && formData.uso.detalles_escaleras) {
       // Escalera de Acceso
       extras.detalles_escaleras = {
         precio_por_tramo_alquiler: Number(formData.uso.detalles_escaleras.precio_tramo || 0),
@@ -51,6 +63,33 @@ export function useRegistrarCotizacion(pasosLength) {
         tramos_2m: Number(formData.uso.detalles_escaleras.tramos_2m || 0),
         tramos_1m: Number(formData.uso.detalles_escaleras.tramos_1m || 0)
       }
+    } */
+
+    if (formData.uso.id === 3 && formData.uso.detalles_escaleras) {
+      const d = formData.uso.detalles_escaleras;
+
+      extras.detalles_escaleras = {
+        precio_por_tramo_alquiler: Number(d.precio_tramo || 0),
+        altura_total_general: Number(d.altura_total_general || 0),
+        tramos_2m: Number(d.tramos_2m || 0),
+        tramos_1m: Number(d.tramos_1m || 0),
+        escaleras: (d.escaleras || []).map(z => ({
+          zona: z.zona,
+          equipos: (z.equipos || []).map(eq => ({
+            zona: eq.zona,
+            alturaTotal: Number(eq.alturaTotal || 0),
+            alturaEscaleraObra: Number(eq.alturaEscaleraObra || 0),
+            tipoEscalera: eq.tipoEscalera,
+            tipoIngreso: eq.tipoIngreso,
+            tipoAnclaje: eq.tipoAnclaje,
+            anchoDescanso: eq.anchoDescanso ?? "",
+            tramos_2m: Number(eq.tramos_2m || 0),
+            tramos_1m: Number(eq.tramos_1m || 0),
+            numero_tramos: Number(eq.numero_tramos || (Number(eq.tramos_2m || 0) + Number(eq.tramos_1m || 0))),
+            precio_subtotal_alquiler_soles: Number(eq.precio_subtotal_alquiler_soles || 0),
+          }))
+        }))
+      };
     }
 
     if (formData.uso.id === 7 && formData.uso.cantidad_plataformas) {
@@ -72,7 +111,7 @@ export function useRegistrarCotizacion(pasosLength) {
     (async () => {
       try {
         const data = await obtenerCotizacionPorId(id);
-        console.log("DATA DE LA COTI: ", data)
+        
         const despieceFormateado = data.despiece?.map(mapearPieza)
 
         const hayPernos = despieceFormateado.some(p => p.esPerno); 
@@ -146,6 +185,16 @@ export function useRegistrarCotizacion(pasosLength) {
 
   const guardarCotizacion = async () => {
     const formDataAjustado = ajustarResumenParaEscalera(formData);
+
+    if (formDataAjustado.uso.id === 3) {
+      const v = validarEscalerasDetalladas(formDataAjustado.uso.detalles_escaleras);
+      if (!v.ok) {
+        toast.error("⚠️ Ajusta los tramos de escalera: \n" + v.errores.join("\n"));
+        setGuardando(false);
+        return;
+      }
+    }
+
     const resultado = validarAtributosPorUso(formDataAjustado);
     if (!resultado.valido) {
       toast.error(`⚠️ Faltan datos mínimos para generar la cotización:\n${resultado.errores.join("\n")}`);
@@ -329,7 +378,7 @@ function ajustarResumenParaEscalera(formData) {
 
 // Para enviar al backend cuando es escalera de acceso:
 
-function calcularTotalesParaEscalera(formData) {
+/* function calcularTotalesParaEscalera(formData) {
   const precio_tramo = Number(formData.uso.detalles_escaleras.precio_tramo || 0);
   const tramos = Number(formData.uso.detalles_escaleras.tramos_2m || 0) + Number(formData.uso.detalles_escaleras.tramos_1m || 0);
   const subtotal = parseFloat((precio_tramo * tramos).toFixed(2));
@@ -346,7 +395,32 @@ function calcularTotalesParaEscalera(formData) {
     igv_monto,
     total_final
   };
-}
+} */
+
+  function calcularTotalesParaEscalera(formData) {
+    const d = formData.uso.detalles_escaleras;
+    const precio_tramo = Number(d?.precio_tramo || 0);
+
+    let subtotal = 0;
+    if (d?.escaleras?.length) {
+      d.escaleras.forEach(z => (z.equipos || []).forEach(eq => {
+        const n = Number(eq.tramos_2m || 0) + Number(eq.tramos_1m || 0);
+        subtotal += (n * precio_tramo);
+      }));
+    } else {
+      const tramos = Number(d?.tramos_2m || 0) + Number(d?.tramos_1m || 0);
+      subtotal = (precio_tramo * tramos);
+    }
+
+    subtotal = parseFloat(subtotal.toFixed(2));
+    const descuento = Number(formData.cotizacion.descuento || 0);
+    const subtotal_con_descuento = parseFloat((subtotal * (1 - descuento / 100)).toFixed(2));
+    const igv_porcentaje = 18;
+    const igv_monto = parseFloat((subtotal_con_descuento * igv_porcentaje / 100).toFixed(2));
+    const total_final = parseFloat((subtotal_con_descuento + igv_monto).toFixed(2));
+
+    return { subtotal, subtotal_con_descuento, igv_porcentaje, igv_monto, total_final };
+  }
 
   return {
     pasoActual,

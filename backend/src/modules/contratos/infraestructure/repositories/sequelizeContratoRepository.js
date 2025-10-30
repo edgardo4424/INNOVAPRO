@@ -57,6 +57,11 @@ class SequelizeContratoRepository {
             ],
           },
           {
+            model: db.empresas_proveedoras,
+            as: "filial",
+            attributes: ["id", "razon_social", "ruc"],
+          },
+          {
             model: db.usos,
             as: "uso",
             attributes: ["id", "descripcion"],
@@ -153,7 +158,19 @@ class SequelizeContratoRepository {
     }); // Llama al método del repositorio para obtener un contrato por ID
   }
 
-  
+  async obtenerDocumentosPorCodigoContrato(contrato_id, transaction = null) {
+
+    const contrato_con_sus_documentos = await Contrato.findOne({
+      where: { id: contrato_id },
+      include: [
+        {
+          model: db.documentos,
+          as: "documentos",
+        },
+      ],
+    }, { transaction });
+    return contrato_con_sus_documentos
+  }
 }
 
 module.exports = SequelizeContratoRepository;

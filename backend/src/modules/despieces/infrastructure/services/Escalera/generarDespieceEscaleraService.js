@@ -49,6 +49,8 @@ async function generarDespieceEscalera(zonas) {
       console.log(`💰 Precio subtotal de venta soles (S/): ${totales.precio_venta_soles.toFixed(2)}`);
       console.log(`📅 Precio subtotal de alquiler soles (S/): ${totales.precio_alquiler_soles.toFixed(2)}`); */
 
+      //! CALCULO GENERAL DE TRAMOS POR ALTURA TOTAL DE TODAS LAS ZONAS
+
       const alturasPorZona = dataPorZona.atributos_formulario.map(atributo => atributo.alturaTotal);
 
       const sumarTotalAlturas = alturasPorZona.reduce((total, altura) => total + altura, 0);
@@ -64,6 +66,33 @@ async function generarDespieceEscalera(zonas) {
         
       }
       const precioSubtotalAlquilerSoles = numero_tramos * precio_por_tramo_alquiler;
+
+      //! CALCULO DE TRAMOS POR ALTURA TOTAL POR EQUIPOS Y CADA ZONA
+
+      const dataZona = dataPorZona.atributos_formulario.map(atributo => {
+
+        const alturaTotal = Number(atributo?.alturaTotal) || 0;
+
+         let numero_tramos = alturaTotal / 2;
+    
+      let tramos_2m = numero_tramos;
+      let tramos_1m = 0;
+      if (alturaTotal % 2 !== 0) {
+        tramos_2m = numero_tramos - 0.5; //5
+        tramos_1m = 1
+        numero_tramos = numero_tramos + 0.5;
+        
+      }
+      const precio_subtotal_alquiler_soles = numero_tramos * precio_por_tramo_alquiler;
+        return {
+          zona: dataPorZona.zona,
+          ...atributo,
+          tramos_2m,
+          tramos_1m,
+          numero_tramos,
+          precio_subtotal_alquiler_soles
+        };
+      })
     
       return {
         despiece: resultadosCombinados,
@@ -75,7 +104,8 @@ async function generarDespieceEscalera(zonas) {
         precio_subtotal_alquiler_soles: precioSubtotalAlquilerSoles,
         altura_total_general: sumarTotalAlturas,
         tramos_2m,
-        tramos_1m
+        tramos_1m,
+        escaleras_por_zona: dataZona
       };
     })
   );
@@ -92,6 +122,40 @@ async function generarDespieceEscalera(zonas) {
  const totalTramos1m = totalTramos1mPorZona.reduce((total, tramos_1m) => total + tramos_1m, 0);
  
   const resultadoFinal = unificarDespiecesConTotales(resultadosPorZona);
+
+
+  // Obtener las escaleras por zona y equipo
+
+  let escalerasPorZonaYEquipo = [];
+
+  const escaleras = resultadosPorZona.map((zona, index) => {
+
+    escalerasPorZonaYEquipo.push(zona?.escaleras_por_zona);
+  });
+
+  // Aplanar el array de arrays en un solo array
+  escalerasPorZonaYEquipo = escalerasPorZonaYEquipo.flat();
+
+ 
+  // Mapear las escaleras por zona y equipo, si estan en la misma zona agruparlos en un arreglo con llave equipos
+  const escalerasPorZonaYEquipoMapeado = escalerasPorZonaYEquipo.reduce((acc, escalera) => {
+    const zonaExistente = acc.find(item => item.zona == escalera.zona);
+    if (zonaExistente) {
+      zonaExistente.equipos.push({
+        ...escalera,
+      });
+    } else {
+      acc.push({
+        zona: escalera.zona,
+        equipos: [{
+          ...escalera,
+        }],
+      });
+    }
+    return acc;
+  }, []);
+
+  console.dir(escalerasPorZonaYEquipoMapeado, { depth: null });
 
 /*   console.table(resultadoFinal.despiece);
 
@@ -110,8 +174,10 @@ console.log(`📅 Precio subtotal alquiler S/: ${resultadoFinal.totales.precio_s
       precio_por_tramo_alquiler: precio_por_tramo_alquiler,
       altura_total_general: totalAlturaGeneral,
       tramos_2m: totalTramos2m,
-      tramos_1m: totalTramos1m
-    }
+      tramos_1m: totalTramos1m,
+      escaleras: escalerasPorZonaYEquipoMapeado
+    },
+   
   };
 
 }

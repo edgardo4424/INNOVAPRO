@@ -73,6 +73,16 @@ export function useGestionContratos() {
       }
     }
 
+  const solicitarPasePedido = async (contratoId) => {
+    try {
+      await contratosService.solicitarPasePedido(contratoId);
+      toast.success("Se ha generado el Pase de Pedido con éxito");
+    } catch (error) {
+      console.error("No se pudo generar el pase de pedido:", error );
+      toast.error("No se puedo generar el pase de pedido");
+    }
+  }
+
   useEffect(() => {
     async function fetchContratos() {
       try {
@@ -89,6 +99,7 @@ export function useGestionContratos() {
   return {
     contratos,
     confirmarDescargaPDF,
+    solicitarPasePedido,
     modalConfirmacion,
     cerrarModal,
     ejecutarDescarga,

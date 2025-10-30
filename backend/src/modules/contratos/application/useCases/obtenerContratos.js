@@ -3,7 +3,7 @@ module.exports = async (contratoRepository, transaction = null) => {
   
      const listaContratos = contratos.map((contrato) => {
 
-        const {id, ref_contrato, fecha_inicio, fecha_fin, estado_condiciones, estado, cliente, obra, usuario, uso, despiece, cotizacion, ...resto} = contrato;
+        const {id, ref_contrato, fecha_inicio, fecha_fin, estado_condiciones, estado, cliente, obra, usuario, uso, despiece, cotizacion, filial, ...resto} = contrato;
 
         const informacion_trabajador = {
             id: usuario.id,
@@ -23,6 +23,10 @@ module.exports = async (contratoRepository, transaction = null) => {
             usuario: informacion_trabajador,
             uso,
             despiece,
+            cotizacion: {
+                id: cotizacion.id,
+            },
+            filial,
             tipo: cotizacion?.tipo_cotizacion
         }
     })

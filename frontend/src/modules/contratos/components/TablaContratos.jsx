@@ -7,7 +7,7 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { Edit, Eye, FileDown, FileText, SquareCheckBig, FileCog } from "lucide-react";
+import { Edit, Eye, FileDown, FileText, SquareCheckBig, FileCog, Truck} from "lucide-react";
 import { ColumnSelector } from "@/shared/components/ColumnSelector";
 import { Input } from "@/components/ui/input";
 
@@ -40,10 +40,10 @@ const TruncatedText = ({ text }) => {
 export default function TablaContratos({
   data = [],
   onDownloadPDF,
+  onSolicitarPasePedido,
   setContratoPrevisualizado,
   onContinuarWizard,
   onSolicitarCondicionesAlquiler,
-  onVerDetalle,
   user,
 }) {
   const navigate = useNavigate();
@@ -56,14 +56,16 @@ export default function TablaContratos({
       return ({
       ...item,
       // claves comunes
+      cotizacionId: item.cotizacion?.id ?? null,
       filial_id: item.filial?.id ?? item.filial_id ?? null,
+      filial_razon_social: item.filial?.razon_social ?? null,
       uso_id: item.uso?.id ?? item.uso_id ?? null,
       codigo_contrato: item.ref_contrato ?? "-",
       cliente_razon_social: item.cliente?.razon_social ?? "-",
       obra_nombre: item.obra?.nombre ?? "-",
       uso_descripcion: item.uso?.descripcion ?? "-",
       tipo: item.tipo ?? item.tipo_servicio ?? "-",
-      estado_contrato: item.estado ?? "-",
+      estado: item.estado ?? "-",
       estado_condiciones: item.estado_condiciones ?? "-",
       fecha_inicio: item.fecha_inicio ?? item.vigencia?.inicio ?? null,
       fecha_fin: item.fecha_fin ?? item.vigencia?.fin ?? null,
@@ -74,6 +76,7 @@ export default function TablaContratos({
   const [visibleColumns, setVisibleColumns] = useState({
     codigo: true,
     cliente: true,
+    filial: true,
     obra: true,
     uso: true,
     tipo: true,
@@ -86,6 +89,7 @@ export default function TablaContratos({
   const columnOptions = [
     { id: "codigo", label: "Código" },
     { id: "cliente", label: "Cliente" },
+    { id: "filial", label: "Filial" },
     { id: "obra", label: "Obra" },
     { id: "uso", label: "Uso" },
     { id: "tipo", label: "Tipo" },
@@ -98,84 +102,29 @@ export default function TablaContratos({
   const columns = useMemo(
     () =>
       [
-        visibleColumns.codigo && {
-          field: "codigo_contrato",
-          headerName: "Código",
-          width: 190,
-          cellRenderer: (p) => <TruncatedText text={p.value} />,
-        },
-        visibleColumns.cliente && {
-          field: "cliente_razon_social",
-          headerName: "Cliente",
-          width: 250,
-          cellRenderer: (p) => <TruncatedText text={p.value} />,
-        },
-        visibleColumns.obra && {
-          field: "obra_nombre",
-          headerName: "Obra",
-          width: 200,
-          cellRenderer: (p) => <TruncatedText text={p.value} />,
-          sortable: true,
-        },
-        visibleColumns.uso && {
-          field: "uso_descripcion",
-          headerName: "Uso",
-          width: 220,
-          cellRenderer: (p) => <TruncatedText text={p.value} />,
-          sortable: true,
-        },
-        visibleColumns.tipo && {
-          field: "tipo",
-          headerName: "Tipo",
-          width: 110,
-          sortable: true,
-        },
-        visibleColumns.estado && {
-          field: "estado_contrato",
-          headerName: "Estado",
-          width: 200,
-          sortable: true,
-        },
-        visibleColumns.estado_condiciones && {
-          field: "estado_condiciones",
-          headerName: "Estado Condiciones",
-          width: 200,
-          sortable: true,
-        },
-        visibleColumns.vigencia && {
-          headerName: "Vigencia",
-          width: 210,
-          valueGetter: (p) => {
-            const i = p.data?.fecha_inicio ? new Date(p.data.fecha_inicio) : null;
-            const f = p.data?.fecha_fin ? new Date(p.data.fecha_fin) : null;
-            if (!i && !f) return "—";
-            const fmt = (d) =>
-              `${`${d.getDate()}`.padStart(2, "0")}/${`${d.getMonth() + 1}`.padStart(2, "0")}/${d.getFullYear()}`;
-            return `${i ? fmt(i) : "—"} - ${f ? fmt(f) : "—"}`;
-          },
-          cellRenderer: (p) => <TruncatedText text={p.value} />,
-          sortable: false,
-        },
+        visibleColumns.codigo &&
         {
           headerName: "Acciones",
           sortable: false,
-          width: 230,
+          width: 150,
           cellRenderer: (params) => {
             const row = params.data;
 
             const puedeEditar =
-              ["Borrador", "Por Firmar"].includes(row.estado_contrato) &&
+              ["Borrador", "Por Firmar"].includes(row.estado) &&
               row?.usuario?.id === user?.id;
 
             const puedeDescargar =
-              ["Por Firmar", "Vigente", "Vencido", "Resuelto"].includes(row.estado_contrato);
+              ["Por Firmar", "Vigente", "Vencido", "Resuelto"].includes(row.estado);
 
             const puedeSolicitarCondiciones =
               ["Creado"].includes(row.estado_condiciones);
 
+            const puedeSolicitarPasePedido =
+              ["Validando Condiciones"].includes(row.estado_condiciones);
+
             return (
               <div className="flex gap-1 justify-start">
-
                 {/* Documentos (plantilla → DOCX/PDF) */}
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -185,10 +134,12 @@ export default function TablaContratos({
                       onClick={() =>
                         navigate(`/contratos/${row.id}/documentos`, {
                           state: {
+                            codigo_contrato: row.ref_contrato ?? null,
                             filialId: row.filial_id ?? null,
+                            filial_razon_social: row.filial?.razon_social ?? null,
                             usoId: row.uso_id ?? null,
-                            // opcionalmente puedes pasar un slug/nombre si lo tienes:
-                            uso: row.uso?.slug ?? row.uso_descripcion ?? null,
+                            cotizacionId: row.cotizacion.id ?? null,
+                            uso: row.uso_descripcion ?? null,
                           },
                         })
                       }
@@ -200,6 +151,26 @@ export default function TablaContratos({
                     <p>Documentos</p>
                   </TooltipContent>
                 </Tooltip>
+
+                {/* Descargar PDF */}
+                {puedeSolicitarPasePedido && (
+                  <>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => onSolicitarPasePedido(row.id)}
+                        >
+                          <Truck />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Solicitar Pase de Pedido</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </>
+                )}
 
                 {/* Descargar PDF */}
                 {puedeDescargar && (
@@ -289,7 +260,8 @@ export default function TablaContratos({
                           obra_nombre: item.obra?.nombre ?? "—",
                           uso_descripcion: item.uso?.descripcion ?? "—",
                           tipo: item.tipo ?? item.tipo_servicio ?? "—",
-                          estado_contrato: item.estado_condiciones ?? "—",
+                          estado: item.estado ?? "—",
+                          estado_condiciones: item.estado_condiciones ?? "—",
                           fecha_inicio: item.fecha_inicio ?? item.vigencia?.inicio ?? null,
                           fecha_fin: item.fecha_fin ?? item.vigencia?.fin ?? null,
                         }))
@@ -300,6 +272,72 @@ export default function TablaContratos({
               </div>
             );
           },
+        }, 
+        {
+          field: "codigo_contrato",
+          headerName: "Código",
+          width: 190,
+          cellRenderer: (p) => <TruncatedText text={p.value} />,
+        },
+        visibleColumns.filial && {
+          field: "filial_razon_social",
+          headerName: "Filial",
+          width: 200,
+          cellRenderer: (p) => <TruncatedText text={p.value} />,
+        },
+        visibleColumns.cliente && {
+          field: "cliente_razon_social",
+          headerName: "Cliente",
+          width: 200,
+          cellRenderer: (p) => <TruncatedText text={p.value} />,
+        },
+        visibleColumns.obra && {
+          field: "obra_nombre",
+          headerName: "Obra",
+          width: 150,
+          cellRenderer: (p) => <TruncatedText text={p.value} />,
+          sortable: true,
+        },
+        visibleColumns.uso && {
+          field: "uso_descripcion",
+          headerName: "Uso",
+          width: 150,
+          cellRenderer: (p) => <TruncatedText text={p.value} />,
+          sortable: true,
+        },
+        visibleColumns.tipo && {
+          field: "tipo",
+          headerName: "Tipo",
+          width: 80,
+          sortable: true,
+        },
+        visibleColumns.estado && {
+          field: "estado",
+          headerName: "Estado",
+          width: 150,
+          cellRenderer: (p) => <TruncatedText text={p.value} />,
+          sortable: true,
+        },
+        visibleColumns.estado_condiciones && {
+          field: "estado_condiciones",
+          headerName: "Estado Condiciones",
+          width: 150,
+          cellRenderer: (p) => <TruncatedText text={p.value} />,
+          sortable: true,
+        },
+        visibleColumns.vigencia && {
+          headerName: "Vigencia",
+          width: 200,
+          valueGetter: (p) => {
+            const i = p.data?.fecha_inicio ? new Date(p.data.fecha_inicio) : null;
+            const f = p.data?.fecha_fin ? new Date(p.data.fecha_fin) : null;
+            if (!i && !f) return "—";
+            const fmt = (d) =>
+              `${`${d.getDate()}`.padStart(2, "0")}/${`${d.getMonth() + 1}`.padStart(2, "0")}/${d.getFullYear()}`;
+            return `${i ? fmt(i) : "—"} - ${f ? fmt(f) : "—"}`;
+          },
+          cellRenderer: (p) => <TruncatedText text={p.value} />,
+          sortable: false,
         },
       ].filter(Boolean),
     [visibleColumns, user?.id]
@@ -312,13 +350,15 @@ export default function TablaContratos({
         (data || []).map((item) => ({
           ...item,
           filial_id: item.filial?.id ?? item.filial_id ?? null,
+          filial_razon_social: item.filial?.razon_social ?? null,
           uso_id: item.uso?.id ?? item.uso_id ?? null,
           codigo_contrato: item.ref_contrato  ?? "—",
           cliente_razon_social: item.cliente?.razon_social ?? "—",
           obra_nombre: item.obra?.nombre ?? "—",
           uso_descripcion: item.uso?.descripcion ?? "—",
           tipo: item.tipo ?? item.tipo_servicio ?? "—",
-          estado_contrato: item.estado_condiciones ?? "—",
+          estado: item.estado ?? "—",
+          estado_condiciones: item.estado_condiciones ?? "—",
           fecha_inicio: item.fecha_inicio ?? item.vigencia?.inicio ?? null,
           fecha_fin: item.fecha_fin ?? item.vigencia?.fin ?? null,
         }))
@@ -329,6 +369,7 @@ export default function TablaContratos({
         .filter((item) => {
           const codigo = (item.ref_contrato ?? "").toLowerCase();
           const cliente = (item.cliente?.razon_social ?? "").toLowerCase();
+          const filial = (item.filial?.razon_social ?? "").toLowerCase();
           const obra = (item.obra?.nombre ?? "").toLowerCase();
           const uso = (item.uso?.descripcion ?? "").toLowerCase();
           const estado = (
@@ -340,6 +381,7 @@ export default function TablaContratos({
           return (
             codigo.includes(lower) ||
             cliente.includes(lower) ||
+            filial.includes(lower) ||
             obra.includes(lower) ||
             uso.includes(lower) ||
             estado.includes(lower)
@@ -348,13 +390,15 @@ export default function TablaContratos({
         .map((item) => ({
           ...item,
           filial_id: item.filial?.id ?? item.filial_id ?? null,
+          filial_razon_social: item.filial?.razon_social ?? null,
           uso_id: item.uso?.id ?? item.uso_id ?? null,
           codigo_contrato: item.ref_contrato ?? "—",
           cliente_razon_social: item.cliente?.razon_social ?? "—",
           obra_nombre: item.obra?.nombre ?? "—",
           uso_descripcion: item.uso?.descripcion ?? "—",
           tipo: item.tipo ?? item.tipo_servicio ?? "—",
-          estado_contrato: item.estado_condiciones ?? "—",
+          estado: item.estado ?? "—",
+          estado_condiciones: item.estado_condiciones ?? "—",
           fecha_inicio: item.fecha_inicio ?? item.vigencia?.inicio ?? null,
           fecha_fin: item.fecha_fin ?? item.vigencia?.fin ?? null,
         }));

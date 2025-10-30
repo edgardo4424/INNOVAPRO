@@ -3,7 +3,7 @@ const { agruparPorZonaYAtributos, agruparEscuadrasPorZonaYAtributos } = require(
 const { mapearAtributosValor } = require("../mapearAtributosValorService");
 
 async function generarPdfEscuadrasConPlataformas({ idDespiece, porcentajeDescuento, transaction = null }) {
-  const despieceEncontrado = await db.despieces.findByPk(idDespiece, { transaction });
+  const despieceEncontrado = await db.despieces.findByPk(idDespiece, {},{ transaction });
 
   let atributosDelPdf = [];
 

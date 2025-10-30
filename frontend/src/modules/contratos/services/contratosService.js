@@ -25,6 +25,11 @@ export async function solicitarCondiciones(idContrato, comentario="") {
   })
   return res.data;
 }
+// Generar pase de pedido
+export async function solicitarPasePedido(idContrato) {
+  const res = await api.post(`/pases_pedidos`, idContrato);
+  return res.data;
+}
 
 // Integraciones de wizard (si existen en backend de plantillas/preview)
 const contratosService = {

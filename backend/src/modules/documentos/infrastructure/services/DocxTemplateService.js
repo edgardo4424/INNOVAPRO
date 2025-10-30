@@ -24,13 +24,17 @@ class DocxTemplateService {
       nullGetter: () => "",
     });
 
-    doc.setData(data);
-    try { doc.render(); }
+    /* doc.setData(data); */
+    
+    try { doc.render(data); }
     catch (error) { throw new Error(`Error al renderizar DOCX: ${error.message}`); }
 
     const buf = doc.getZip().generate({ type: "nodebuffer" });
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+
+    //! ASIGNACION DEL NOMBRE DEL ARCHIVO
     const filenameDocx = `${nombreBase}-${timestamp}.docx`;
+    
     const outputDocxPath = path.join(this.baseOutputDir, filenameDocx);
 
     fs.writeFileSync(outputDocxPath, buf);
