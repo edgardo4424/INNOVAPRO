@@ -144,15 +144,36 @@ module.exports = async (
       `http://localhost:${process.env.PORT || 3000}`;
   }
 
-  const publicBase =
+ /*  const publicBase =
     documentoController?.publicBaseUrl || "/public/documentos/contratos";
   // la URL incluye el subfolder del año
   const docxUrl = `${base}${publicBase}/${anio}/${nombre_comercial}/${filial_nombre}/${filenameDocx}`;
   let pdfUrl = null;
   if (pdfInfo && pdfInfo.filenamePdf) {
     pdfUrl = `${base}${publicBase}/${anio}/${nombre_comercial}/${filial_nombre}/${pdfInfo.filenamePdf}`;
+  } */
+
+    // Normalizar base (sin slash final)
+  const normalizeBase = (b) => String(b || "").replace(/\/+$/g, "");
+  const baseClean = normalizeBase(base);
+
+  // API base path (coincide con index.js)
+  const API_BASE_PATH = process.env.NODE_ENV === "production" ? "/backend/api" : "/api";
+
+  // Construir la ruta relativa al storage (siempre con slashes '/')
+  // NOTA: no uses path.join aquí porque en Windows produce backslashes; usamos arrays y .join('/')
+  const relativeStoragePath = ['documentos','contratos', String(anio), String(nombre_comercial), String(filial_nombre), String(filenameDocx)].join('/');
+
+  // URL protegida que el frontend solicitará con Authorization: Bearer <token>
+  const protectedDocxUrl = `${baseClean}${API_BASE_PATH}/contratos/${contrato_id}/documentos/download?file=${encodeURIComponent(relativeStoragePath)}`;
+
+  let protectedPdfUrl = null;
+  if (pdfInfo && pdfInfo.filenamePdf) {
+    const relativePdfPath = ['documentos','contratos', String(anio), String(nombre_comercial), String(filial_nombre), String(pdfInfo.filenamePdf)].join('/');
+    protectedPdfUrl = `${baseClean}${API_BASE_PATH}/contratos/${contrato_id}/documentos/download?file=${encodeURIComponent(relativePdfPath)}`;
   }
 
+   // Devuelve las URLs protegidas en la respuesta (y será este valor el que guardes en BD)
   return {
     codigo: 200,
     respuesta: {
@@ -160,10 +181,11 @@ module.exports = async (
       contrato: data,
       docx: {
         filename: filenameDocx,
-        url: docxUrl,
+        url: protectedDocxUrl,
+        pathOnDisk: outputDocxPath // opcional, útil para debug/log interno
       },
-      pdf: pdfUrl
-        ? { filename: pdfInfo.filenamePdf, url: pdfUrl }
+      pdf: protectedPdfUrl
+        ? { filename: pdfInfo.filenamePdf, url: protectedPdfUrl }
         : pdfInfo?.error
         ? { error: pdfInfo.error }
         : null,

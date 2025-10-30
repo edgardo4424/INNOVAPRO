@@ -23,6 +23,10 @@ router.post("/:contratoId/documentos/render", ContratoController.generarDocument
 //Ruta para obtener documentos vinculados a un contrato
 router.get("/:contratoId/documentos", ContratoController.obtenerDocumentosPorCodigoContrato);
 
+// Nueva ruta protegida para descargar un documento (requiere token)
+//router.get("/:contratoId/documentos/download", ContratoController.descargarDocumento);
+
+
 // Ruta para subir una plantilla y renderizarla vinculada a un contrato
 // Nota: el controller espera req/res normales; aquí le añadimos req.params.contratoId para que pueda usarla
 /* router.post(
