@@ -35,7 +35,7 @@ const ContentPedidos = () => {
   return (
     <div className="flex flex-col gap-y-4">
       <FiltroPedidos
-      filiales={filiales}
+        filiales={filiales}
         setFiltroPedidos={setFiltroPedidos}
         filtroPedidos={filtroPedidos}
       />

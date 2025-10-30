@@ -67,7 +67,7 @@ export default function CentroAtencion() {
       setFechaFiltroInicio,
       fechaFiltroFin,
       setFechaFiltroFin,
-
+      setTareas,
       tareaSeleccionada,
       handleSeleccionarTarea,
       handleCerrarDetalle,
@@ -266,6 +266,7 @@ export default function CentroAtencion() {
                tarea={tareaSeleccionada}
                onCerrar={handleCerrarDetalle}
                user={user}
+               setTareas={setTareas}
                {...acciones}
             />
          )}

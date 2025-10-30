@@ -5,7 +5,7 @@ import { getMotivoTrasladoDescription } from "@/modules/facturacion/utils/format
 const FormPedido = ({ pedidoView: pedido }) => {
   const bgEstado = (estado) => {
     switch (estado) {
-      case "Confirmado Stock":
+      case "Stock Confirmado":
         return "bg-green-600 !text-white";
       case "Confirmado":
         return "bg-blue-600 !text-white";

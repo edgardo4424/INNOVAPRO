@@ -82,7 +82,7 @@ export default function useCentroAtencion() {
    const acciones = useTareaActions({
       tareas,
       setTareas,
-      tareaSeleccionada,
+         tareaSeleccionada,
       handleCerrarDetalle,
       user,
    });
@@ -98,7 +98,7 @@ export default function useCentroAtencion() {
       setFechaFiltroInicio,
       fechaFiltroFin,
       setFechaFiltroFin,
-
+      setTareas,
       tareaSeleccionada,
       handleSeleccionarTarea,
       handleCerrarDetalle,

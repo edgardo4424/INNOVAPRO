@@ -17,7 +17,7 @@ class SequelizePasePedidoRepository {
 
   async obtenerPasesPedidos(transaction = null) {
     const pases_pedidos = await PasePedido.findAll({
-      where: { estado: ["Confirmado", "Stock Confirmado", "Incompleto"] },
+      where: { estado: ["Confirmado","Stock Confirmado","Incompleto"] },
       transaction,
       include: [
         {

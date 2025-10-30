@@ -10,6 +10,7 @@ import {
   BadgeAlert,
   BadgeCheck,
   BadgeHelp,
+  ClipboardCheck,
   ClipboardList,
   EyeIcon,
   FileInput,
@@ -18,7 +19,7 @@ import { useNavigate } from "react-router-dom";
 
 const bgEstado = (estado) => {
   switch (estado) {
-    case "Confirmado Stock":
+    case "Stock Confirmado":
       return "bg-green-600 !text-white";
     case "Confirmado":
       return "bg-blue-600 !text-white";
@@ -54,7 +55,7 @@ const TablaConfirmado = ({
 
       cliente_Tipo_Doc: doc.cliente_Tipo_Doc,
       cliente_Num_Doc: doc.cliente_Num_Doc,
-      cliente_Razon_Social: "",
+      cliente_Razon_Social: doc.cliente_Razon_Social || "",
       cliente_Direccion: "",
 
       guia_Envio_Peso_Total: Number(doc.guia_Envio_Peso_Total).toFixed(4),
@@ -75,13 +76,19 @@ const TablaConfirmado = ({
 
     const valoresTraslado = {
       guia_Envio_Cod_Traslado: doc.guia_Envio_Cod_Traslado,
+      guia_Envio_Des_Traslado: getMotivoTrasladoDescription(
+        doc.guia_Envio_Cod_Traslado,
+      ),
     };
 
-    const tipoGuia = "transporte-publico";
-    // doc.tranporte === "CLIENTE" ? "transporte-publico" : "transporte-privado";
+    const tipoGuia = doc.ValoresPublico
+      ? "transporte-publico"
+      : "transporte-privado";
 
     const body = {
       guia: guiaIncial,
+      ruc_filial: doc.empresa_Ruc,
+      pedido_id: doc.id_pedido || null,
       codigo_traslado: valoresTraslado,
       peso_total_kilo: Number(doc.guia_Envio_Peso_Total).toFixed(4),
       tipoGuia,
@@ -98,7 +105,7 @@ const TablaConfirmado = ({
     switch (usuario) {
       case "CEO":
         return true;
-      case "Jefe de Almacén":
+      case "Jefa de Almacén":
         return true;
       case "Auxiliar de oficina":
         return true;
@@ -107,7 +114,7 @@ const TablaConfirmado = ({
     }
   };
 
-  const actValidarPedido = (usuario) => {
+  const actNuevaTarea = (usuario) => {
     switch (usuario) {
       case "CEO":
         return true;
@@ -207,8 +214,8 @@ const TablaConfirmado = ({
                       </TooltipContent>
                     </Tooltip>
 
-                    {actValidarPedido(user.rol) &&
-                      pedido.estado !== "Confirmado Stock" && (
+                    {actNuevaTarea(user.rol) &&
+                      (pedido.tarea_id == null ? (
                         <Tooltip side="bottom" align="center" className="mr-2">
                           <TooltipTrigger asChild>
                             <button
@@ -225,9 +232,23 @@ const TablaConfirmado = ({
                             <p>Generar Nueva Tarea</p>
                           </TooltipContent>
                         </Tooltip>
-                      )}
+                      ) : (
+                        <Tooltip side="bottom" align="center" className="mr-2">
+                          <TooltipTrigger asChild>
+                            <button
+                              readOnly
+                              className="rounded p-1 transition-colors hover:bg-green-100"
+                            >
+                              <ClipboardCheck className="h-5 w-5 cursor-pointer text-green-600 hover:text-green-800" />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Ya tiene Tarea</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      ))}
 
-                    {pedido.estado == "Confirmado Stock" && (
+                    {pedido.estado == "Stock Confirmado" && (
                       <Tooltip side="bottom" align="center" className="mr-2">
                         <TooltipTrigger asChild>
                           <button
@@ -244,14 +265,14 @@ const TablaConfirmado = ({
                     )}
 
                     {actPlasmarPedido(user.rol) &&
-                      pedido.estado == "Confirmado Stock" && (
+                      pedido.estado == "Stock Confirmado" && (
                         <Tooltip side="bottom" align="center" className="mr-2">
                           <TooltipTrigger asChild>
                             <button
                               onClick={() => {
                                 plasmarPedido(pedido);
                               }}
-                              disabled={pedido.estado !== "Confirmado Stock"}
+                              disabled={pedido.estado !== "Stock Confirmado"}
                               className="rounded p-1 text-yellow-600 transition-colors hover:bg-yellow-100 hover:text-yellow-700 disabled:cursor-not-allowed disabled:text-gray-400 disabled:hover:bg-white disabled:hover:text-gray-400"
                             >
                               <FileInput className="h-5 w-5 cursor-pointer" />

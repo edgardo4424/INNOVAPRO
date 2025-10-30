@@ -30,7 +30,7 @@ const TareaOT = {
     estadoPasePedido: "",
     numeroVersionContrato: "",
     obra: "",
-    prioridad: "",
+    pedido_id: null,
   },
   pase_pedido_id: null,
   estado: "Pendiente",
@@ -62,6 +62,7 @@ export default function ModalNuevaTarea({
         detalles: {
           ...prev.detalles,
           estadoPasePedido: pedidoView.estado,
+          pedido_id: pedidoView.pedido_id,
           numeroVersionContrato: pedidoView.nro_contrato,
           obra: pedidoView.obra ? pedidoView.obra.toUpperCase() : "",
         },

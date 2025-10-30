@@ -18,6 +18,14 @@ const centroAtencionService = {
     const res = await api.put(`/tareas/${id}/devolver`, payload);
     return res.data;
   },
+  liberarTarea: async (id) => {
+    const res = await api.put(`/tareas/${id}/liberar`);
+    return res.data;
+  },
+  finalizarTarea: async (id) => {
+    const res = await api.put(`/tareas/${id}/finalizar`);
+    return res.data;
+  },
   listarPiezas: async () => {
     const res = await api.get("/piezas");
     return res.data;
@@ -28,6 +36,10 @@ const centroAtencionService = {
   },
   actualizarDespiece: async (id, payload) => {
     const res = await api.put(`/despieces_detalles/${id}/actualizarPiezas`, payload);
+    return res.data;
+  },
+  actualizarPasePedido: async (payload) => {
+    const res = await api.put(`/pases_pedidos`, payload);
     return res.data;
   },
   validarStockCotizacion: async (id) => {

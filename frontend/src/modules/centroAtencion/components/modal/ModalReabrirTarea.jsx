@@ -7,12 +7,21 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, RotateCcw, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import centroAtencionService from "../../services/centroAtencionService";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export default function ModalReabrirTarea({
   open,
@@ -22,18 +31,34 @@ export default function ModalReabrirTarea({
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [respuesta, setRespuesta] = useState("");
+  const [tipoSolicitud, setTipoSolicitud] = useState("");
+  const [renderSolicitud, setRenderSolicitud] = useState(false);
+  const [checkSolicitud, setCheckSolicitud] = useState(false);
 
   const handleConfirm = async () => {
     if (!respuesta.trim()) {
       toast.warning("Debes ingresar una descripción del motivo");
       return;
     }
-
     try {
       setIsLoading(true);
-      const { status } = await centroAtencionService.corregirTarea(tarea.id, {
+      const payload = {
         correccion: respuesta,
-      });
+      };
+      if (
+        tarea?.detalles?.pedido_id &&
+        tarea?.detalles?.tipoSolicitud &&
+        checkSolicitud &&
+        renderSolicitud
+      ) {
+        payload.detalles = {
+          ...tarea.detalles,
+          tipoSolicitudAnterior: tarea?.detalles?.tipoSolicitud,
+          tipoSolicitud: tipoSolicitud,
+        };
+      }
+      const { status, success, mensaje } =
+        await centroAtencionService.corregirTarea(tarea.id, payload);
 
       if (status === 200) {
         toast.success("✅ Tarea reabierta con éxito");
@@ -49,7 +74,20 @@ export default function ModalReabrirTarea({
       setIsLoading(false);
     }
   };
-  console.log(tarea.detalles);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setTipoSolicitud(value);
+  };
+
+  useEffect(() => {
+    if (open) {
+      if (tarea?.detalles?.pedido_id && tarea?.detalles?.tipoSolicitud) {
+        setTipoSolicitud(tarea?.detalles?.tipoSolicitud);
+        setRenderSolicitud(true);
+      }
+    }
+  }, [open]);
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -75,16 +113,56 @@ export default function ModalReabrirTarea({
           <AlertDialogTitle className="text-2xl font-bold text-slate-800">
             Reabrir tarea #{tarea?.id}
           </AlertDialogTitle>
-          <AlertDialogDescription className="text-sm text-slate-600">
-            Selecciona o indica el motivo de reapertura y describe brevemente
-            los detalles.
+          <AlertDialogDescription className="text-center text-sm text-slate-600">
+            {`¿Estas seguro de reabrir la tarea #${tarea?.id}?`}
           </AlertDialogDescription>
         </AlertDialogHeader>
 
         <div>
-          <div>
-            
-          </div>
+          {renderSolicitud && (
+            <div className="flex justify-between space-y-2">
+              <div className="flex w-full items-end justify-start gap-x-4">
+                <Label
+                  htmlFor="tipoSolicitud"
+                  className="font-semibold text-gray-700"
+                >
+                  Actualizar el tipo de solicitud ?
+                </Label>
+                <Input
+                  type="checkbox"
+                  name="checkSolicitud"
+                  id="checkSolicitud"
+                  checked={checkSolicitud}
+                  className={"size-5 shadow-none"}
+                  onChange={(e) => setCheckSolicitud(!checkSolicitud)}
+                />
+              </div>
+              <div>
+                <Select
+                  name="tipoSolicitud"
+                  value={tipoSolicitud}
+                  disabled={!checkSolicitud}
+                  onValueChange={(e) =>
+                    handleChange({
+                      target: { name: "tipoSolicitud", value: e },
+                    })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccione la acción..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Nuevo Despiece">
+                      Nuevo Despiece
+                    </SelectItem>
+                    <SelectItem value="Validación de Stock">
+                      Validación de Stock / Material
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
           {/* Descripción */}
           <div className="flex flex-col gap-2">
             <label

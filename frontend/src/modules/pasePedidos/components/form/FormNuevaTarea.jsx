@@ -69,39 +69,11 @@ const FormNuevaTarea = ({
               <SelectItem value="Validación de Stock">
                 Validación de Stock / Material
               </SelectItem>
-              <SelectItem value="Modificación de plano">
-                Modificación de Plano Existente
-              </SelectItem>
-              <SelectItem value="Otro">
-                Otro (Especificar en descripción)
-              </SelectItem>
+
             </SelectContent>
           </Select>
         </div>
 
-        {/* Prioridad */}
-        {/* <div className="space-y-2">
-          <Label htmlFor="prioridad" className="font-semibold text-gray-700">
-            * Prioridad
-          </Label>
-          <Select
-            name="prioridad"
-            value={prioridad}
-            disabled={isLoading}
-            onValueChange={(e) =>
-              handleChange({ target: { name: "prioridad", value: e } })
-            }
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Seleccione la urgencia..." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALTA">Alta</SelectItem>
-              <SelectItem value="MEDIA">Media</SelectItem>
-              <SelectItem value="NORMAL">Normal</SelectItem>
-            </SelectContent>
-          </Select>
-        </div> */}
 
         {/* Referencia de Proyecto/Pedido */}
         <div className="space-y-2">
