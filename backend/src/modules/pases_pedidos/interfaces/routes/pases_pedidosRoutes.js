@@ -9,5 +9,6 @@ router.use(verificarToken); // Verificamos el token para todas las rutas
 router.get("/",PasePedidoController.obtenerPasesPedidos);
 router.post("/",PasePedidoController.crearPasePedido);
 router.put("/",PasePedidoController.actualizarPasePedido);
+router.get("/tv/:fecha",PasePedidoController.obtenerPasesPedidoParaTv);
 
 module.exports = router;

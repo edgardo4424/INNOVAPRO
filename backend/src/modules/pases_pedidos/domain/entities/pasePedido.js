@@ -1,7 +1,7 @@
 class PasePedido {
-  constructor({ contrato_id, fecha_emision, estado }) {
+  constructor({ contrato_id, fecha_confirmacion, estado }) {
     this.contrato_id = contrato_id;
-    this.fecha_emision = fecha_emision;
+    this.fecha_confirmacion = fecha_confirmacion;
     this.estado = estado;
   }
 
@@ -9,9 +9,6 @@ class PasePedido {
     let errores = [];
     if (!this.contrato_id) {
       errores.push("El ID del contrato es obligatorio.");
-    }
-    if (!this.fecha_emision) {
-      errores.push("La fecha de emisión es obligatoria.");
     }
     const estados = ["Por confirmar", "Pre confirmado", "Confirmado"];
     if (!estados.includes(this.estado)) {
@@ -24,7 +21,7 @@ class PasePedido {
   get() {
     return {
       contrato_id: this.contrato_id,
-      fecha_emision: this.fecha_emision,
+      fecha_confirmacion: this.fecha_confirmacion||null,
       estado: this.estado,
     };
   }
