@@ -2,9 +2,11 @@ const pasePedidoEstructura = require("../../infraestructure/utils/pasePedidoEstr
 const pedidoGuiaEstructura = require("../../infraestructure/utils/pedidoGuiaEstructura");
 
 module.exports =async(pasePedidoRepository,pedidoGuiaRepository,fecha,transaction=null)=>{
-
+    console.log("FECHA RECIBIDA: ",fecha);
+    
     const response_pases_pedidos=await pasePedidoRepository.obtenerPasesPedidoParaTv(transaction);
-    const response_pedidos_guias=await pedidoGuiaRepository.obtenerPedidoGuiaParaTv(transaction)
+    const response_pedidos_guias=await pedidoGuiaRepository.obtenerPedidoGuiaParaTv(transaction);
+
     let confirmado=[]
     for (const pase_pedido of response_pases_pedidos) {
         const payload=pasePedidoEstructura();
@@ -47,13 +49,17 @@ module.exports =async(pasePedidoRepository,pedidoGuiaRepository,fecha,transactio
         payload.fecha_despacho=pedido_guia.fecha_despacho;
         payload.fecha_confirmacion=pedido_guia.pase_pedido.fecha_confirmacion;
         console.log(payload);
-        if(payload.estado==="Despachado"){
+        if(payload.estado==="Despachado"&&payload.fecha_despacho==fecha){
             despachado.push(payload);
         }
         else{
             almacen.push(payload)
         }
         
+    }
+    let mensaje_respuesta="Pases obtenidos satisfactoriamente.";
+    if(response_pases_pedidos.length==0&&response_pedidos_guias.length==0){
+        mensaje_respuesta="No se encontraron pedidos"
     }
     return{
         codigo:200,
