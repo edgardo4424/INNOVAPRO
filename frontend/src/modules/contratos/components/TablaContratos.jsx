@@ -7,7 +7,7 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { Edit, Eye, FileDown, FileText, SquareCheckBig, FileCog } from "lucide-react";
+import { Edit, Eye, FileDown, FileText, SquareCheckBig, FileCog, Truck} from "lucide-react";
 import { ColumnSelector } from "@/shared/components/ColumnSelector";
 import { Input } from "@/components/ui/input";
 
@@ -40,6 +40,7 @@ const TruncatedText = ({ text }) => {
 export default function TablaContratos({
   data = [],
   onDownloadPDF,
+  onSolicitarPasePedido,
   setContratoPrevisualizado,
   onContinuarWizard,
   onSolicitarCondicionesAlquiler,
@@ -52,6 +53,7 @@ export default function TablaContratos({
   // Aplanado defensivo (contrato es extensión de cotización)
   useEffect(() => {
     const flattened = (data || []).map((item) => {
+      console.log("ITEM: ", item)
       return ({
       ...item,
       // claves comunes
@@ -64,7 +66,7 @@ export default function TablaContratos({
       obra_nombre: item.obra?.nombre ?? "-",
       uso_descripcion: item.uso?.descripcion ?? "-",
       tipo: item.tipo ?? item.tipo_servicio ?? "-",
-      estado_contrato: item.estado ?? "-",
+      estado: item.estado ?? "-",
       estado_condiciones: item.estado_condiciones ?? "-",
       fecha_inicio: item.fecha_inicio ?? item.vigencia?.inicio ?? null,
       fecha_fin: item.fecha_fin ?? item.vigencia?.fin ?? null,
@@ -140,7 +142,7 @@ export default function TablaContratos({
           sortable: true,
         },
         visibleColumns.estado && {
-          field: "estado_contrato",
+          field: "estado",
           headerName: "Estado",
           width: 150,
           cellRenderer: (p) => <TruncatedText text={p.value} />,
@@ -175,14 +177,17 @@ export default function TablaContratos({
             const row = params.data;
 
             const puedeEditar =
-              ["Borrador", "Por Firmar"].includes(row.estado_contrato) &&
+              ["Borrador", "Por Firmar"].includes(row.estado) &&
               row?.usuario?.id === user?.id;
 
             const puedeDescargar =
-              ["Por Firmar", "Vigente", "Vencido", "Resuelto"].includes(row.estado_contrato);
+              ["Por Firmar", "Vigente", "Vencido", "Resuelto"].includes(row.estado);
 
             const puedeSolicitarCondiciones =
               ["Creado"].includes(row.estado_condiciones);
+
+            const puedeSolicitarPasePedido =
+              ["Validando Condiciones"].includes(row.estado_condiciones);
 
             return (
               <div className="flex gap-1 justify-start">
@@ -212,6 +217,26 @@ export default function TablaContratos({
                     <p>Documentos</p>
                   </TooltipContent>
                 </Tooltip>
+
+                {/* Descargar PDF */}
+                {puedeSolicitarPasePedido && (
+                  <>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => onSolicitarPasePedido(row.id)}
+                        >
+                          <Truck />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Solicitar Pase de Pedido</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </>
+                )}
 
                 {/* Descargar PDF */}
                 {puedeDescargar && (
@@ -301,7 +326,8 @@ export default function TablaContratos({
                           obra_nombre: item.obra?.nombre ?? "—",
                           uso_descripcion: item.uso?.descripcion ?? "—",
                           tipo: item.tipo ?? item.tipo_servicio ?? "—",
-                          estado_contrato: item.estado_condiciones ?? "—",
+                          estado: item.estado ?? "—",
+                          estado_condiciones: item.estado_condiciones ?? "—",
                           fecha_inicio: item.fecha_inicio ?? item.vigencia?.inicio ?? null,
                           fecha_fin: item.fecha_fin ?? item.vigencia?.fin ?? null,
                         }))
@@ -331,7 +357,8 @@ export default function TablaContratos({
           obra_nombre: item.obra?.nombre ?? "—",
           uso_descripcion: item.uso?.descripcion ?? "—",
           tipo: item.tipo ?? item.tipo_servicio ?? "—",
-          estado_contrato: item.estado_condiciones ?? "—",
+          estado: item.estado ?? "—",
+          estado_condiciones: item.estado_condiciones ?? "—",
           fecha_inicio: item.fecha_inicio ?? item.vigencia?.inicio ?? null,
           fecha_fin: item.fecha_fin ?? item.vigencia?.fin ?? null,
         }))
@@ -370,7 +397,8 @@ export default function TablaContratos({
           obra_nombre: item.obra?.nombre ?? "—",
           uso_descripcion: item.uso?.descripcion ?? "—",
           tipo: item.tipo ?? item.tipo_servicio ?? "—",
-          estado_contrato: item.estado_condiciones ?? "—",
+          estado: item.estado ?? "—",
+          estado_condiciones: item.estado_condiciones ?? "—",
           fecha_inicio: item.fecha_inicio ?? item.vigencia?.inicio ?? null,
           fecha_fin: item.fecha_fin ?? item.vigencia?.fin ?? null,
         }));

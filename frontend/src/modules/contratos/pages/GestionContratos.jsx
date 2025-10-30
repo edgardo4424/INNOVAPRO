@@ -25,6 +25,7 @@ export default function GestionContratos() {
   const {
     contratos,
     confirmarDescargaPDF,
+    solicitarPasePedido,
     modalConfirmacion,
     cerrarModal,
     ejecutarDescarga,
@@ -49,6 +50,7 @@ export default function GestionContratos() {
       <TablaContratos
         data={contratos}
         onDownloadPDF={confirmarDescargaPDF}
+        onSolicitarPasePedido={solicitarPasePedido}
         setContratoPrevisualizado={setContratoSeleccionadoId}
         onContinuarWizard={continuarContrato}
         onSolicitarCondicionesAlquiler={solicitarCondiciones}
