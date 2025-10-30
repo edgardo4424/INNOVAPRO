@@ -23,11 +23,11 @@ const  PasePedidoController={
     },
     async obtenerPasesPedidos(req,res){
         try {
-            const pases_pedidos= await obtenerPasesPedidos(pasePedidoRepository);
+            const usuario=req.usuario;
+            const pases_pedidos= await obtenerPasesPedidos(usuario,pasePedidoRepository);
             res.status(pases_pedidos.codigo).json(pases_pedidos.respuesta)
         } catch (error) {
             console.log("Error encontrado: ",error);
-            
             res.status(500).json({error:error.message})
         }
         

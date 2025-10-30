@@ -23,6 +23,12 @@ async function verificarToken(req, res, next) {
             {
               model: db.cargos,
               as: "cargo",
+              include:[
+                {
+                  model:db.areas,
+                  as:"area"
+                }
+              ]
             },
           ],
         },
@@ -34,6 +40,7 @@ async function verificarToken(req, res, next) {
       email: usuario.email,
       id_chat: usuario.id_chat,
       rol: usuario.trabajador?.cargo?.nombre,
+      area: usuario.trabajador?.cargo?.area?.nombre,
       nombre: usuario.trabajador?.nombres+" "+usuario.trabajador?.apellidos
     }
 
