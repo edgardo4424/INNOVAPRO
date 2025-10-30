@@ -2,11 +2,8 @@ const coleccionEstadosPedidos = (rol) => {
     switch (rol) {
         case 'Jefa de Almacén':
             return [
-                {
-                    id: 1,
-                    value: 'Stock Confirmado',
-                    label: 'Stock Confirmado'
-                }
+                { id: 1, value: 'Stock Confirmado', label: 'Stock Confirmado' },
+                { id: 7, value: "Incompleto", label: "Incompleto" },
             ]
         case 'CEO':
             return [
@@ -32,19 +29,13 @@ const coleccionEstadosPedidos = (rol) => {
             ]
         case 'Auxiliar de oficina':
             return [
-                {
-                    id: 1,
-                    value: 'Stock Confirmado',
-                    label: 'Stock Confirmado'
-                }
+                { id: 1, value: 'Stock Confirmado', label: 'Stock Confirmado' },
+                { id: 7, value: "Incompleto", label: "Incompleto" },
             ]
         default:
             return [
-                {
-                    id: 1,
-                    value: 'Stock Confirmado',
-                    label: 'Stock Confirmado'
-                }
+                { id: 1, value: 'Stock Confirmado', label: 'Stock Confirmado' },
+                { id: 7, value: "Incompleto", label: "Incompleto" },
             ]
     }
 };

@@ -471,6 +471,7 @@ export default function DetalleTarea({
                     <ModalFinzalizarTarea
                       open={openFinalizarTarea}
                       setOpen={setOpenFinalizarTarea}
+                      cotizacion_id={tarea?.cotizacionId}
                       tarea={tarea}
                       cerrarTarea={onCerrar}
                     />

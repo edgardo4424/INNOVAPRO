@@ -86,8 +86,7 @@ module.exports = async (usuario,pasePedidoRepository ,transaction = null) => {
       const restoPiezas=await obtenerRestoPiezas(lista_despiece,pedido.contrato_id);
       for (const pieza of restoPiezas) {
         const payload = {
-          index: null,
-          unidad: "UNI",
+          unidad: "NIU",
           cantidad: pieza.cantidad,
           cod_Producto:pieza.item,
           descripcion:pieza.descripcion

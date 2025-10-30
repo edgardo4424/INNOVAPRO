@@ -19,16 +19,18 @@ import { useNavigate } from "react-router-dom";
 
 const bgEstado = (estado) => {
   switch (estado) {
+    case "Finalizado":
+      return "bg-purple-700 !text-white";
     case "Stock Confirmado":
       return "bg-green-600 !text-white";
     case "Confirmado":
       return "bg-blue-600 !text-white";
     case "Pre Confirmado":
-      return "bg-yellow-500 !text-white"; // Usar texto oscuro para mejor contraste en fondos claros
+      return "bg-yellow-500 !text-white";
     case "Por Confirmar":
       return "bg-orange-500 !text-white";
     default:
-      return "bg-gray-500 !text-whitequot";
+      return "bg-gray-500 !text-white"; // 🔧 typo corregido
   }
 };
 
@@ -88,27 +90,43 @@ const TablaConfirmado = ({
     const body = {
       guia: guiaIncial,
       ruc_filial: doc.empresa_Ruc,
-      pedido_id: doc.id_pedido || null,
+      pedido_id: doc.pedido_id, // ✅ usa pedido_id, no id_pedido
       codigo_traslado: valoresTraslado,
       peso_total_kilo: Number(doc.guia_Envio_Peso_Total).toFixed(4),
       tipoGuia,
     };
 
-    const documento = [body, { id_pedido: doc.id_pedido }];
-
-    console.log(guiaIncial);
+    const documento = [body, { pedido_id: doc.pedido_id }];
 
     navigate("/facturacion/emitir/guia", { state: documento });
   };
 
-  const actPlasmarPedido = (usuario) => {
+  // disabled={pedido.estado !== "Stock Confirmado" || pedido.estado !== "Incompleto"}
+
+  const actPlasmado = (estado) => {
+    return !(estado === "Stock Confirmado" || estado === "Incompleto");
+  };
+
+  const actPlasmarPedido = (usuario, estadoPedido) => {
     switch (usuario) {
-      case "CEO":
-        return true;
       case "Jefa de Almacén":
-        return true;
+        if (
+          estadoPedido === "Stock Confirmado" ||
+          estadoPedido === "Incompleto"
+        ) {
+          return true;
+        } else {
+          return false;
+        }
       case "Auxiliar de oficina":
-        return true;
+        if (
+          estadoPedido === "Stock Confirmado" ||
+          estadoPedido === "Incompleto"
+        ) {
+          return true;
+        } else {
+          return false;
+        }
       default:
         return false;
     }
@@ -116,8 +134,8 @@ const TablaConfirmado = ({
 
   const actNuevaTarea = (usuario) => {
     switch (usuario) {
-      case "CEO":
-        return true;
+      // case "CEO":
+      //   return true;
       case "Técnico Comercial":
         return true;
       default:
@@ -264,25 +282,24 @@ const TablaConfirmado = ({
                       </Tooltip>
                     )}
 
-                    {actPlasmarPedido(user.rol) &&
-                      pedido.estado == "Stock Confirmado" && (
-                        <Tooltip side="bottom" align="center" className="mr-2">
-                          <TooltipTrigger asChild>
-                            <button
-                              onClick={() => {
-                                plasmarPedido(pedido);
-                              }}
-                              disabled={pedido.estado !== "Stock Confirmado"}
-                              className="rounded p-1 text-yellow-600 transition-colors hover:bg-yellow-100 hover:text-yellow-700 disabled:cursor-not-allowed disabled:text-gray-400 disabled:hover:bg-white disabled:hover:text-gray-400"
-                            >
-                              <FileInput className="h-5 w-5 cursor-pointer" />
-                            </button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Emitir Pedido</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      )}
+                    {actPlasmarPedido(user.rol, pedido.estado) && (
+                      <Tooltip side="bottom" align="center" className="mr-2">
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => {
+                              plasmarPedido(pedido);
+                            }}
+                            disabled={actPlasmado(pedido.estado)}
+                            className="rounded p-1 text-yellow-600 transition-colors hover:bg-yellow-100 hover:text-yellow-700 disabled:cursor-not-allowed disabled:text-gray-400 disabled:hover:bg-white disabled:hover:text-gray-400"
+                          >
+                            <FileInput className="h-5 w-5 cursor-pointer" />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Emitir Pedido</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
                   </div>
                 </td>
               </tr>

@@ -27,7 +27,7 @@ const GuiaRemision = () => {
     }, 500);
   };
   const plasmarPeso = (peso) => {
-    setEditadoPlasmado(true);
+    // setEditadoPlasmado(true);
     setTimeout(() => {
       setPesoPlasmadoKilos(peso);
     }, 500);
@@ -35,6 +35,7 @@ const GuiaRemision = () => {
 
   useEffect(() => {
     const plasmarPedido = () => {
+      console.log(documento);
       if (documento.length > 0) {
         const {
           guia,

@@ -3,83 +3,11 @@ import { Clock, Archive, Package } from "lucide-react";
 import CardPedido from "../card/CardPedido";
 import pedidosService from "../../service/PedidosService";
 
-const pedidosConfirmados = [
-  {
-    id: 2,
-    contrato_id: 2,
-    ref_contrato: "EI-CC-COM-LR1-0002_1",
-    filial: "20562974998",
-    razon_social: "ENCOFRADOS INNOVA S.A.C.",
-    cliente_ruc: "12345678952",
-    cliente_razon_social: "Fc barcelona",
-    guias: [
-      {
-        id: 2,
-        guia_nro: "T005-00005094",
-      },
-      {
-        id: 1,
-        guia_nro: "T005-00005090",
-      },
-    ],
-    estado: "Incompleto",
-    fecha_confirmacion: "2025-10-20T22:40:18.000Z",
-  },
-  {
-    id: 4,
-    contrato_id: 3,
-    ref_contrato: "IA-CC-COM-LR1-0003_1",
-    filial: "20555389052",
-    razon_social: "INDEK ANDINA E.I.R.L",
-    cliente_ruc: "78521495634",
-    cliente_razon_social: "Atletico de madrid",
-    guias: [],
-    estado: "Stock Confirmado",
-    fecha_confirmacion: "2025-11-28T22:40:18.000Z",
-  },
-];
-
-const pedidosAlmacen = [
-  {
-    id: 2,
-    contrato_id: 2,
-    ref_contrato: "EI-CC-COM-LR1-0002_1",
-    filial: "20562974998",
-    razon_social: "ENCOFRADOS INNOVA S.A.C.",
-    cliente_ruc: "12345678952",
-    cliente_razon_social: "Fc barcelona",
-    pedido_guia_id: 4,
-    guia_nro: "T005-00005094",
-    estado: "Emitido",
-    fecha_emision_guia: "2025-10-27T19:48:00.000Z",
-    fecha_despacho: "2025-10-29",
-    fecha_confirmacion: "2025-10-20T22:40:18.000Z",
-  },
-];
-
-const pedidosDespachados = [
-  {
-    id: 2,
-    contrato_id: 2,
-    ref_contrato: "EI-CC-COM-LR1-0002_1",
-    filial: "20562974998",
-    razon_social: "ENCOFRADOS INNOVA S.A.C.",
-    cliente_ruc: "12345678952",
-    cliente_razon_social: "Fc barcelona",
-    pedido_guia_id: 3,
-    guia_nro: "T005-00005090",
-    estado: "Despachado",
-    fecha_emision_guia: "2025-10-27T19:48:00.000Z",
-    fecha_despacho: "2025-10-29",
-    fecha_confirmacion: "2025-10-20T22:40:18.000Z",
-  },
-];
-
 const ContentPedidosTv = () => {
   const [pedidos, setPedidos] = useState({
-    Confirmadas: pedidosConfirmados || [],
-    Almacen: pedidosAlmacen || [],
-    Despachados: pedidosDespachados || [],
+    Confirmadas: [],
+    Almacen: [],
+    Despachados: [],
   });
 
   const getFechaActual = () => {
@@ -93,12 +21,12 @@ const ContentPedidosTv = () => {
   const obtenerPedidos = async () => {
     try {
       const fechaActual = getFechaActual();
-      const { mensaje, confirmados, almacen, despachados } =
+      const { mensaje, confirmado, almacen, despachado } =
         await pedidosService.obtenerPasesPedidosTv(fechaActual);
       setPedidos({
-        Confirmadas: confirmados.list || [],
+        Confirmadas: confirmado.list || [],
         Almacen: almacen.list || [],
-        Despachados: despachados.list || [],
+        Despachados: despachado.list || [],
       });
     } catch (error) {
       console.error("Error al obtener pedidos:", error);
@@ -106,12 +34,8 @@ const ContentPedidosTv = () => {
   };
 
   useEffect(() => {
-    setPedidos({
-      Confirmadas: pedidosConfirmados || [],
-      Almacen: pedidosAlmacen || [],
-      Despachados: pedidosDespachados || [],
-    });
-  }, [pedidosConfirmados, pedidosAlmacen, pedidosDespachados]);
+    obtenerPedidos();
+  }, []);
 
   const COLUMNAS = [
     {
