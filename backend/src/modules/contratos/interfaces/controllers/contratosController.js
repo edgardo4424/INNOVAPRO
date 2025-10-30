@@ -10,15 +10,18 @@ const contratoRepository = new SequelizeContratoRepository();
 const SequelizeCondicionAlquilerRepository = require("../../condicionesAlquiler/infrastructure/repositories/sequelizeCondicionAlquilerRepository");
 const condicionRepository = new SequelizeCondicionAlquilerRepository();
 
+const SequelizeDocumentoRepository = require("../../../documentos/infrastructure/repositories/sequelizeDocumentoRepository");
+const documentoRepository = new SequelizeDocumentoRepository();
+
 const sequelize = require("../../../../database/models").sequelize;
 
 // Casos de uso para condiciones de alquiler
 const solicitarCondicionesAlquiler = require("../../application/useCases/solicitarCondicionesAlquiler");
 const crearCondicionAlquiler = require("../../application/useCases/crearCondicionAlquiler");
-const {
-  documentoController,
-} = require("../../infraestructure/services/contratosDocumentService");
+
 const generarDocumentoContrato = require("../../application/useCases/generarDocumentoContrato");
+const guardarDocumento = require("../../../documentos/application/useCases/guardarDocumento");
+const obtenerDocumentosPorCodigoContrato = require("../../application/useCases/obtenerDocumentosPorCodigoContrato");
 
 const ContratoController = {
   async crearContrato(req, res) {
@@ -165,11 +168,10 @@ const ContratoController = {
         ...dataContratoRespuesta.activadores, // <- solo aplana activadores
         AF: dataContratoRespuesta.usos?.AF || {},
         AT: dataContratoRespuesta.usos?.AT || {},
+        EA: dataContratoRespuesta.usos?.EA || {},
         AE: dataContratoRespuesta.usos?.AE || {},
         EC: dataContratoRespuesta.usos?.EC || {},
       };
-
-      console.dir(data, { depth: null });
 
       // Generando el documento automáticamente usando la data obtenida
       const respuesta = await generarDocumentoContrato(
@@ -179,14 +181,56 @@ const ContratoController = {
         transaction
       );
 
+      if( respuesta.codigo !== 200 ){
+        await transaction.rollback();
+        return res
+          .status(404)
+          .json(respuesta.respuesta);
+      }
+
+      console.log("Respuesta de generarDocumentoContrato:", respuesta.respuesta);
+
+      const dataDocumento = {
+        contrato_id: contrato_id,
+        estado: "borrador",
+        docx_url: respuesta.respuesta.docx.url
+      }
+
+      console.log("dataDocumento a guardar:", dataDocumento);
+
+      // Guardar la informacion del contrato en la tabla documentos
+      const documento_creado = await guardarDocumento(
+        dataDocumento,
+        documentoRepository,
+        transaction
+      );
+
       await transaction.commit();
       //res.status(200).json(data);
-      res.status(respuesta.codigo).json(respuesta.respuesta);
+      res.status(respuesta.codigo).json(documento_creado.respuesta);
     } catch (error) {
       console.log("Ocurrio el siguiente error: ", error);
       await transaction.rollback();
       res.status(500).json({ error: error.message });
     }
   },
+
+  async obtenerDocumentosPorCodigoContrato(req, res) {
+    const transaction = await sequelize.transaction();
+    try {
+      const contrato_id = req.params.contratoId;
+      const documentos = await obtenerDocumentosPorCodigoContrato(
+        contrato_id,
+        contratoRepository,
+        transaction
+      );
+      await transaction.commit();
+      res.status(200).json(documentos);
+    } catch (error) {
+      console.log("Ocurrio el siguiente error: ", error);
+      await transaction.rollback();
+      res.status(500).json({ error: error.message });
+    }
+  }
 };
 module.exports = ContratoController;

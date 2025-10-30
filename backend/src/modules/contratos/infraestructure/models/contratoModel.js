@@ -185,6 +185,11 @@ Contrato.associate = (models) => {
       foreignKey: "contacto_id",
       as: "contacto",
    });
+
+   Contrato.hasMany(models.documentos, {   
+      foreignKey: "contrato_id",
+      as: "documentos",
+   });
 };
 
 module.exports = { Contrato };

@@ -20,6 +20,8 @@ router.put("/:id/solicitar-condiciones", ContratoController.solicitarCondiciones
 // Ruta para generar contrato en formato pdf
 router.post("/:contratoId/documentos/render", ContratoController.generarDocumentoAutomatico) // Generar el documento automaticamente usando toda la data de la base de datos
 
+//Ruta para obtener documentos vinculados a un contrato
+router.get("/:contratoId/documentos", ContratoController.obtenerDocumentosPorCodigoContrato);
 
 // Ruta para subir una plantilla y renderizarla vinculada a un contrato
 // Nota: el controller espera req/res normales; aquí le añadimos req.params.contratoId para que pueda usarla

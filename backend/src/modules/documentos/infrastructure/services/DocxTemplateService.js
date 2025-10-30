@@ -31,7 +31,10 @@ class DocxTemplateService {
 
     const buf = doc.getZip().generate({ type: "nodebuffer" });
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+
+    //! ASIGNACION DEL NOMBRE DEL ARCHIVO
     const filenameDocx = `${nombreBase}-${timestamp}.docx`;
+    
     const outputDocxPath = path.join(this.baseOutputDir, filenameDocx);
 
     fs.writeFileSync(outputDocxPath, buf);

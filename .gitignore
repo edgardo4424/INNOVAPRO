@@ -66,3 +66,6 @@ node_modules/
 # Ignorar archivos temporales y de cache
 .DS_Store
 Thumbs.db
+
+# Ignorar la carpeta de contratos generados
+backend/storage/documentos/contratos/

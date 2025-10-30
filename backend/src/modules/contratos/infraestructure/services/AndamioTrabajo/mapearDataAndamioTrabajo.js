@@ -17,7 +17,9 @@
   if(tienePernoExpansionConArgolla){
       respuesta.activadores.tienePernosArgolla = true;
       respuesta.perno_expansion_con_argolla = {
-        ...pdfCotizacionDataSnapshot?.atributos_opcionales
+        total: pdfCotizacionDataSnapshot?.atributos_opcionales?.cantidad_pernos_expansion,
+        nombre: pdfCotizacionDataSnapshot?.atributos_opcionales?.nombre_perno_expansion,
+        precio_venta_soles: pdfCotizacionDataSnapshot?.atributos_opcionales?.precio_perno_expansion,
       }
   }
   

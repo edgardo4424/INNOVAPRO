@@ -294,6 +294,9 @@ db.motivos_liquidacion = MotivosLiquidacion;
 const { CargosSunat } = require("../../modules/cargos_sunat/infrastructure/models/cargosSunatModel");
 db.cargos_sunat = CargosSunat;
 
+const { Documento } = require("../../modules/documentos/infrastructure/models/documentosModel");
+db.documentos = Documento;
+
 // ✅ Solo se asocian los que tienen .associate()
 if (db.usuarios.associate) db.usuarios.associate(db);
 if (db.contactos.associate) db.contactos.associate(db);
@@ -347,6 +350,7 @@ if(db.recibos_por_honorarios) db.recibos_por_honorarios.associate(db)
 if(db.planilla_mensual_recibo_honorario) db.planilla_mensual_recibo_honorario.associate(db)
 if(db.motivos_liquidacion) db.motivos_liquidacion.associate(db)
 if(db.cargos_sunat) db.cargos_sunat.associate(db)
+if(db.documentos.associate) db.documentos.associate(db);
 
 // ? Conexion Facturacion
 if (db.factura.associate) db.factura.associate(db);
