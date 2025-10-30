@@ -85,66 +85,11 @@ export default function TablaCotizacion({
    const columns = useMemo(
       () =>
          [
-            visibleColumns.codigo_documento && {
-               field: "codigo_documento",
-               headerName: "Cod. Doc",
-               width: 195,
-               cellRenderer: (params) => (
-                  <TruncatedText text={params.value} />
-               ),
-            },
-            visibleColumns.cp && {
-               field: "despiece_cp",
-               headerName: "CP",
-               width: 50,
-               cellRenderer: (params) => (
-                  <TruncatedText text={params.value} />
-               ),
-               sortable: true,
-            },
-            visibleColumns.cliente && {
-               field: "cliente_razon_social",
-               headerName: "Cliente",
-               width: 250,
-               cellRenderer: (params) => (
-                  <TruncatedText text={params.value} />
-               ),
-            },
-
-            visibleColumns.obra && {
-               field: "obra_nombre",
-               headerName: "Obra",
-               width: 190,
-               cellRenderer: (params) => (
-                  <TruncatedText text={params.value} />
-               ),
-               sortable: true,
-            },
-            visibleColumns.uso && {
-               field: "uso_descripcion",
-               headerName: "Uso",
-               width: 250,
-               cellRenderer: (params) => (
-                  <TruncatedText text={params.value} />
-               ),
-               sortable: true,
-            },
-            visibleColumns.tipo_cotizacion && {
-               field: "tipo_cotizacion",
-               headerName: "Tipo",
-               width: 85,
-               sortable: true,
-            },
-            visibleColumns.estado && {
-               field: "estado_nombre",
-               headerName: "Estado",
-               width: 190,
-               sortable: true,
-            },
+            visibleColumns.codigo_documento &&
             {
                headerName: "Acciones",
                sortable: false,
-               width: 200,
+               width: 150,
                cellRenderer: (params) => {
                   const row = params.data;
 
@@ -223,6 +168,62 @@ export default function TablaCotizacion({
                      </div>
                   );
                },
+            }, 
+            {
+               field: "codigo_documento",
+               headerName: "Cod. Doc",
+               width: 195,
+               cellRenderer: (params) => (
+                  <TruncatedText text={params.value} />
+               ),
+            },
+            visibleColumns.cp && {
+               field: "despiece_cp",
+               headerName: "CP",
+               width: 50,
+               cellRenderer: (params) => (
+                  <TruncatedText text={params.value} />
+               ),
+               sortable: true,
+            },
+            visibleColumns.cliente && {
+               field: "cliente_razon_social",
+               headerName: "Cliente",
+               width: 250,
+               cellRenderer: (params) => (
+                  <TruncatedText text={params.value} />
+               ),
+            },
+
+            visibleColumns.obra && {
+               field: "obra_nombre",
+               headerName: "Obra",
+               width: 190,
+               cellRenderer: (params) => (
+                  <TruncatedText text={params.value} />
+               ),
+               sortable: true,
+            },
+            visibleColumns.uso && {
+               field: "uso_descripcion",
+               headerName: "Uso",
+               width: 250,
+               cellRenderer: (params) => (
+                  <TruncatedText text={params.value} />
+               ),
+               sortable: true,
+            },
+            visibleColumns.tipo_cotizacion && {
+               field: "tipo_cotizacion",
+               headerName: "Tipo",
+               width: 85,
+               sortable: true,
+            },
+            visibleColumns.estado && {
+               field: "estado_nombre",
+               headerName: "Estado",
+               width: 190,
+               sortable: true,
             },
          ].filter(Boolean),
       [visibleColumns, user.id]

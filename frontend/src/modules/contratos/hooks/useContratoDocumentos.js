@@ -31,13 +31,14 @@ export function useContratoDocumentos({ contratoId }) {
   const fetchResumenYHistorial = useCallback(async () => {
     try {
       const r = await getResumenYHistorialAPI(contratoId);
-      // r: { resumen: {...}, historial: [...] }
-      setCodigoContrato(r?.resumen?.codigo_contrato || "");
-      setFilialId(r?.resumen?.filial_id ?? null);
-      setUsoId(r?.resumen?.uso_id ?? null);
-      setOficializadoFlag(Boolean(r?.resumen?.oficializado));
-      setDocxGenerado(r?.resumen?.docx_ultimo_url || null);
-      setHistorial(Array.isArray(r?.historial) ? r.historial : []);
+      const respuesta = r.respuesta;
+
+      setCodigoContrato(respuesta?.resumen?.codigo_contrato || "");
+      setFilialId(respuesta?.resumen?.filial_id ?? null);
+      setUsoId(respuesta?.resumen?.uso_id ?? null);
+      setOficializadoFlag(Boolean(respuesta?.resumen?.oficializado));
+      setDocxGenerado(respuesta?.resumen?.docx_ultimo_url || null);
+      setHistorial(Array.isArray(respuesta?.historial) ? respuesta.historial : []);
     } catch (e) {
       toast.error(e?.response?.data?.message || "Error cargando documentos del contrato");
     }

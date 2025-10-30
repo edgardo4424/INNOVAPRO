@@ -20,6 +20,7 @@ const OPCIONES_CONDICIONES = [
   "Letra",
   "Cheque",
   "Efectivo",
+  "Orden de Servicio",
 ];
 
 export default function ResponderCondicionModal({ condicion, onGuardar }) {
@@ -34,7 +35,6 @@ export default function ResponderCondicionModal({ condicion, onGuardar }) {
         : [...prev, condicion]
     );
   };
-  console.log("CONDICION A ENVIAR: ", condicion)
 
   const handleGuardar = () => {
     if (seleccionadas.length === 0) return;
