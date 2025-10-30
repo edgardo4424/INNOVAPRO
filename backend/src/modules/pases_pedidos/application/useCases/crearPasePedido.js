@@ -1,18 +1,16 @@
-const PasePedido = require("../../domain/entities/pasePedido");
 
-module.exports = async (pasePedidoRepository, payload, transaction = null) => {
-  const pase_pedido = new PasePedido(payload);
-  const errores = pase_pedido.validarCamposObligatorios();
-  if (errores.length > 0) {
+module.exports = async (pasePedidoRepository, contrato_id, transaction = null) => {
+
+  if (!contrato_id) {
     return {
       codigo: 403,
       respuesta: {
-        errores,
+        mensaje:"Los datos enviados son incorrectos."
       },
     };
   }
   const response_pase_pedido = await pasePedidoRepository.crearPasePedido(
-    pase_pedido.get(),
+    contrato_id,
     transaction
   );
 
