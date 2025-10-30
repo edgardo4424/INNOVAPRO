@@ -1,19 +1,48 @@
 const db = require("../../../../database/models");
+const CondicionAlquiler = require("../../../contratos/infraestructure/models/condicionAlquilerModel");
 
 const { PasePedido } = require("../models/pasePedidoModel");
 
 class SequelizePasePedidoRepository {
-  async crearPasePedido(payload, transaction = null) {
-    const buscar_pase = await PasePedido.findOne({
+  async crearPasePedido(contrato_id, transaction = null) {
+    const response_condiciones = await CondicionAlquiler.findOne({
+      where: { contrato_id },
+      transaction,
+    });
+    const condicion_alquiler = response_condiciones;
+    if (!condicion_alquiler) {
+      throw new Error("Debe crear las condiciones de alquiler antes de generar un pase de pedido.");
+    } 
+    if (condicion_alquiler.estado === "PENDIENTE") {
+      throw new Error("No se puede generar un pase de pedido mientras las condiciones de alquiler estén en estado 'PENDIENTE'.");
+    }
+    let estado__creacion_pase_pedido=null;
+    if(condicion_alquiler.estado==="DEFINIDAS"){
+      estado__creacion_pase_pedido="Por confirmar"
+    }
+    else if(condicion_alquiler.estado==="PARCIAL"){
+      estado__creacion_pase_pedido="Pre confirmado"
+    }
+    else if(condicion_alquiler.estado==="CUMPLIDAS"){
+      estado__creacion_pase_pedido="Confirmado"
+    }
+    else{
+      throw new Error("El estado recibido de las condición es inválido");
+    }    
+
+    const response_pase = await PasePedido.findOne({
       where: {
-        contrato_id: payload.contrato_id,
+        contrato_id
       },
       transaction,
     });
-    if (buscar_pase) {
+    if (response_pase) {
       throw new Error("Ya existe un pase de pedido con este contrato.");
     }
-
+    const payload={
+      contrato_id,
+      estado:estado__creacion_pase_pedido
+    }
     const pase_pedido = await PasePedido.create(payload, { transaction });
     return pase_pedido;
   }
@@ -98,8 +127,6 @@ class SequelizePasePedidoRepository {
   }
   async actualizarPasePedido(payload, pedido_id, transaction = null) {
     await PasePedido.update(payload, { where: { id: pedido_id }, transaction });
-    // const pase_pedido_actualizado=await PasePedido.findByPk(pedido_id,{transaction});
-    // console.log("PASE PEDIDO ACTUALIZADO: ", pase_pedido_actualizado);
   }
   async obtenerPasesPedidoParaTv(transaction = null) {
     const pases_pedidos = await PasePedido.findAll({
@@ -133,6 +160,48 @@ class SequelizePasePedidoRepository {
       ],
     });
     return pases_pedidos;
+  }
+  async actualizarPasePedidoAutomatico(contrato_id, transaction = null) {
+    console.log("update pase pedido automatico contrato id: ",contrato_id);
+    
+    const response_condiciones = await CondicionAlquiler.findOne({
+      where: { contrato_id },
+      transaction,
+    });
+    const condicion_alquiler = response_condiciones;
+    if (!condicion_alquiler) {
+      throw new Error("Debe crear las condiciones de alquiler antes de actualizar un pase de pedido.");
+    } 
+    if (condicion_alquiler.estado === "PENDIENTE") {
+      throw new Error("No se puede actualizar un pase de pedido mientras las condiciones de alquiler estén en estado 'PENDIENTE'.");
+    }
+    let estado__creacion_pase_pedido=null;
+    if(condicion_alquiler.estado==="DEFINIDAS"){
+      estado__creacion_pase_pedido="Por confirmar"
+    }
+    else if(condicion_alquiler.estado==="PARCIAL"){
+      estado__creacion_pase_pedido="Pre confirmado"
+    }
+    else if(condicion_alquiler.estado==="CUMPLIDAS"){
+      estado__creacion_pase_pedido="Confirmado"
+    }
+    else{
+      throw new Error("El estado recibido de las condición es inválido");
+    }    
+
+    const response_pase = await PasePedido.findOne({
+      where: {
+        contrato_id
+      },
+      transaction,
+    });
+    if (!response_pase) {
+      throw new Error("No existe un pase de pedido para este contrato.");
+    }
+    const payload={
+      estado:estado__creacion_pase_pedido
+    }
+    await PasePedido.update(payload, {where:{id:response_pase.id} ,transaction });
   }
 }
 
