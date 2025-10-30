@@ -68,15 +68,47 @@ class SequelizePasePedidoRepository {
     return pases_pedidos;
   }
 
-  async obtenerPasePedidoPorId(id, transaction = null) {    
+  async obtenerPasePedidoPorId(id, transaction = null) {
     const pase_pedido = await PasePedido.findByPk(id, { transaction });
     return pase_pedido;
   }
   async actualizarPasePedido(payload, pedido_id, transaction = null) {
-    await PasePedido.update(payload, { where: { id: pedido_id },transaction });
+    await PasePedido.update(payload, { where: { id: pedido_id }, transaction });
     // const pase_pedido_actualizado=await PasePedido.findByPk(pedido_id,{transaction});
     // console.log("PASE PEDIDO ACTUALIZADO: ", pase_pedido_actualizado);
-    
+  }
+  async obtenerPasesPedidoParaTv(transaction=null) {
+    const pases_pedidos = await PasePedido.findAll({
+      where: { estado: ["Stock Confirmado", "Incompleto"] },
+      transaction,
+      include: [
+        {
+          model: db.pedidos_guias,
+          as: "pedidos_guias",
+          include:[
+            {
+              model:db.guias_de_remision,
+              as:"guia_remision"
+            }
+          ]
+        },
+        {
+          model: db.contratos,
+          as: "contrato",
+          include: [
+            {
+              model: db.clientes,
+              as:"cliente"
+            },
+            {
+              model: db.empresas_proveedoras,
+              as:"filial"
+            },
+          ],
+        },
+      ],
+    });
+    return pases_pedidos
   }
 }
 

@@ -28,9 +28,9 @@ const PasePedido = sequelize.define(
         key:"id",
       }
     },
-    fecha_emision: {
-      type: DataTypes.DATEONLY,
-      allowNull: false,
+    fecha_confirmacion: {
+      type: DataTypes.DATE,
+      allowNull: true,
     },
     estado: {
       type: DataTypes.ENUM(
@@ -65,9 +65,13 @@ PasePedido.associate = (models) => {
     foreignKey: "tarea_id",
     as: "tarea",
   });
-  PasePedido.hasOne(models.stock_pedidos_piezas, {
+  PasePedido.hasMany(models.stock_pedidos_piezas, {
     foreignKey: "pase_pedido_id",
     as: "stock_pedido_pieza",
+  });
+  PasePedido.hasMany(models.pedidos_guias, {
+    foreignKey: "pase_pedido_id",
+    as: "pedidos_guias",
   });
 };
 
