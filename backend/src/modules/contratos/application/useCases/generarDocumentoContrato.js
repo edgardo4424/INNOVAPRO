@@ -48,7 +48,10 @@ module.exports = async (
     : new Date().getFullYear();
 
   const nombre_comercial = ((contratoData.usuario?.trabajador?.nombres + " " + contratoData.usuario?.trabajador?.apellidos).trim()).toUpperCase();
+  const nombre_comercial_sin_caracteres_especiales = nombre_comercial.replace(/[^\w\s]/gi, '');
+
   const filial_nombre = (contratoData.filial?.razon_social.trim()).toUpperCase();
+  const filial_nombre_sin_caracteres_especiales = filial_nombre.replace(/[^\w\s]/gi, '');
 
   //!2. ... (tu lógica de localizar plantilla y leer templateBuffer)
   const templatesDir = path.resolve(process.cwd(), "storage/plantillas");
@@ -95,14 +98,15 @@ module.exports = async (
 
   //!3.  Ejecutar el renderer del módulo documentos (reutilizamos el servicio)
   // Crear carpeta del año dentro de storage/documentos/contratos/{anio}/{nombre_comercial}
+  
   const yearDir = path.join(
     process.cwd(),
     "storage",
     "documentos",
     "contratos",
     String(anio),
-    String(nombre_comercial),
-    String(filial_nombre)
+    String(nombre_comercial_sin_caracteres_especiales),
+    String(filial_nombre_sin_caracteres_especiales)
   );
   fs.mkdirSync(yearDir, { recursive: true });
 
@@ -147,10 +151,10 @@ module.exports = async (
   const publicBase =
     documentoController?.publicBaseUrl || "/public/documentos/contratos";
   // la URL incluye el subfolder del año
-  const docxUrl = `${base}${publicBase}/${anio}/${nombre_comercial}/${filial_nombre}/${filenameDocx}`;
+  const docxUrl = `${base}${publicBase}/${anio}/${nombre_comercial}/${filial_nombre_sin_caracteres_especiales}/${filenameDocx}`;
   let pdfUrl = null;
   if (pdfInfo && pdfInfo.filenamePdf) {
-    pdfUrl = `${base}${publicBase}/${anio}/${nombre_comercial}/${filial_nombre}/${pdfInfo.filenamePdf}`;
+    pdfUrl = `${base}${publicBase}/${anio}/${nombre_comercial}/${filial_nombre_sin_caracteres_especiales}/${pdfInfo.filenamePdf}`;
   }
 
   return {
