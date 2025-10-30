@@ -24,7 +24,7 @@ class SequelizeCondicionAlquilerRepository {
 
     if (!condicion) return null;
 
-    const nuevoEstado = todasCumplidas === true ? "CUMPLIDAS" : condicion.estado;
+    const nuevoEstado = todasCumplidas === true ? "CUMPLIDAS" : "PARCIAL";
 
     await condicion.update({
       condiciones_cumplidas: nuevasCumplidas,

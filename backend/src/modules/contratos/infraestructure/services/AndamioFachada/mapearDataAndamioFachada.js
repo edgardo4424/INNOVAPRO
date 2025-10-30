@@ -1,6 +1,8 @@
 
  function mapearDataAndamioFachada({ pdfCotizacionDataSnapshot, respuesta }) {
 
+  respuesta.activadores.anexoAF = true;
+
   respuesta.usos.AF = {
     zonas: pdfCotizacionDataSnapshot?.zonas?.map((zona) => {
         const { atributos, ...resto} = zona;

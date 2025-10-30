@@ -1,7 +1,8 @@
 
  function mapearDataAndamioTrabajo({ pdfCotizacionDataSnapshot, respuesta }) {
 
-  console.log('pdfCotizacionDataSnapshot', pdfCotizacionDataSnapshot);
+  respuesta.activadores.anexoAT = true;
+
  respuesta.usos.AT = {
     zonas: pdfCotizacionDataSnapshot?.zonas?.map((zona) => {
         const { atributos, ...resto} = zona;

@@ -1,6 +1,8 @@
 
  function mapearDataEscuadrasConPlataformas({ pdfCotizacionDataSnapshot, respuesta }) {
 
+  respuesta.activadores.anexoEC = true;
+  
     respuesta.usos.EC = {
          zonas: pdfCotizacionDataSnapshot?.zonas?.map((zona) => {
                 const { atributos, ...resto} = zona;

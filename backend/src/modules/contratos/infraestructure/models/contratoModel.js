@@ -134,6 +134,10 @@ const Contrato = sequelize.define(
          allowNull: false,
          defaultValue: 'Creado',
       },
+      oficializado: {
+         type: DataTypes.BOOLEAN,
+         defaultValue: false,
+      },
       
    },
    {

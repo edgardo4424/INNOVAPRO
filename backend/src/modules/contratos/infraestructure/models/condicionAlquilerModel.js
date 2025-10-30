@@ -22,7 +22,7 @@ const CondicionAlquiler = sequelize.define("condiciones_alquiler", {
     type: DataTypes.TEXT, 
   },
   estado: {
-    type: DataTypes.ENUM("PENDIENTE", "DEFINIDAS", "CUMPLIDAS"),
+    type: DataTypes.ENUM("PENDIENTE", "DEFINIDAS", "PARCIAL", "CUMPLIDAS"),
     defaultValue: "PENDIENTE",
   },
   condiciones_cumplidas: {

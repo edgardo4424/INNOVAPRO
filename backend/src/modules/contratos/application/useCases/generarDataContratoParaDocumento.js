@@ -157,6 +157,16 @@ module.exports = async (
       tieneOrdenDeServicio: true,
       tieneLetra: true,
       tieneCheque: true,
+
+      // Anexos
+      anexoAE: false,
+      anexoAF: false,
+      anexoAT: false,
+      anexoEA: false,
+      anexoEC: false,
+      anexoPD: false,
+      anexoPU: false,
+
     },
     uso: pdfCotizacionDataSnapshot.uso,
     obra: {

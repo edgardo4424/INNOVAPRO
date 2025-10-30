@@ -1,4 +1,5 @@
 module.exports = async (contratoId, condicionesCumplidas, condicionRepository, contratoRepository) => {
+  console.log("ENTRO A MARCAR CONDICIONES CUMPLIDAS");
   const condicion = await condicionRepository.obtenerPorContratoId(contratoId);
   if (!condicion) {
     return { codigo: 404, respuesta: { mensaje: "No se encontró la condición para el contrato asociado" } };
@@ -16,6 +17,7 @@ module.exports = async (contratoId, condicionesCumplidas, condicionRepository, c
 
 
   const faltantes = definidas.filter(c => !condicionesCumplidas.includes(c));
+
   const todasCumplidas = faltantes.length === 0;
 
   // Actualizamos las condiciones 

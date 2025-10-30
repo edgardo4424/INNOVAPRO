@@ -8,6 +8,8 @@ module.exports = async (contratoId, condiciones, actualizado_por, condicionRepos
     actualizado_por
   };
 
+  console.log("Condiciones formateadas para actualizar:", condicionesFormateadas);
+
   const actualizada = await condicionRepository.actualizarCondicion(condicion.id, condicionesFormateadas);
   
   // Actualizar el estado del contrato a "Validando Condiciones"

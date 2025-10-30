@@ -1,7 +1,8 @@
 
  function mapearDataColgante({ pdfCotizacionDataSnapshot, respuesta }) {
 
-  console.log('pdfCotizacionDataSnapshot', pdfCotizacionDataSnapshot);
+  respuesta.activadores.anexoAE = true;
+  
   respuesta.atributos_opcionales = {
         tiene_atributos_opcionales: pdfCotizacionDataSnapshot?.detalles_colgantes && Object.keys(pdfCotizacionDataSnapshot?.detalles_colgantes).length > 0 ? true : false,
         data: pdfCotizacionDataSnapshot?.detalles_colgantes ? {

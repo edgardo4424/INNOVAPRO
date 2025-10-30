@@ -16,6 +16,20 @@ module.exports = async (
   options = {},
   transaction = null
 ) => {
+
+  // -- Verificar si el contrato ya tiene un documento de contrato generado automatico con estado "borrador"
+  const documentoExistente = await db.documentos.findOne({
+    where: {
+      contrato_id: contrato_id,
+      estado: "borrador",
+    },
+  }, { transaction });
+
+  if (documentoExistente) {
+    return { codigo: 409, respuesta: { error: "No se puede volver a generar el documento de contrato" } };
+  }
+  
+
   // --- obtener contrato y año (usar transaction correctamente) ---
   const contratoEncontrado = await db.contratos.findOne({
     where: { id: contrato_id },
@@ -151,10 +165,10 @@ module.exports = async (
   const publicBase =
     documentoController?.publicBaseUrl || "/public/documentos/contratos";
   // la URL incluye el subfolder del año
-  const docxUrl = `${base}${publicBase}/${anio}/${nombre_comercial}/${filial_nombre_sin_caracteres_especiales}/${filenameDocx}`;
+  const docxUrl = `${base}${publicBase}/${anio}/${nombre_comercial_sin_caracteres_especiales}/${filial_nombre_sin_caracteres_especiales}/${filenameDocx}`;
   let pdfUrl = null;
   if (pdfInfo && pdfInfo.filenamePdf) {
-    pdfUrl = `${base}${publicBase}/${anio}/${nombre_comercial}/${filial_nombre_sin_caracteres_especiales}/${pdfInfo.filenamePdf}`;
+    pdfUrl = `${base}${publicBase}/${anio}/${nombre_comercial_sin_caracteres_especiales}/${filial_nombre_sin_caracteres_especiales}/${pdfInfo.filenamePdf}`;
   }
 
   return {

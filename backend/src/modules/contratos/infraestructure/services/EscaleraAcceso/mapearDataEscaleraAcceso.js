@@ -1,6 +1,8 @@
 
  function mapearDataEscaleraAcceso({ pdfCotizacionDataSnapshot, respuesta }) {
 
+  respuesta.activadores.anexoEA = true;
+  
     respuesta.usos.EA = {
     zonas: pdfCotizacionDataSnapshot?.zonas?.map((zona) => {
         const { atributos, ...resto} = zona;
