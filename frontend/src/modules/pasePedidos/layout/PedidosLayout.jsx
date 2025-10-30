@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 
 const PedidosLayout = () => {
   return (
-    <div className="bandeja-layout">
+    <div className="bandeja-layout ">
       <Outlet />
     </div>
   );

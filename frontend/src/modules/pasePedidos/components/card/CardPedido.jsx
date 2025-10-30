@@ -1,44 +1,46 @@
-const formatearFecha = (date) =>
-  date
-    ? new Intl.DateTimeFormat("es-ES", {
-        year: "numeric",
-        month: "short",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-      }).format(date)
-    : "N/A";
+const formatearFecha = (dateString) => {
+  if (!dateString) return "";
+  const fecha = new Date(dateString);
 
-// NOTA: Se mantienen los colores de estado brillantes para que contrasten bien en dark mode,
-// pero si deseas tonos más apagados, puedes cambiar los números (ej: 500/600 a 700/800).
+  const dia = fecha.getDate().toString().padStart(2, "0");
+  const mes = (fecha.getMonth() + 1).toString().padStart(2, "0");
+  const anio = fecha.getFullYear();
+
+  let horas = fecha.getHours();
+  const minutos = fecha.getMinutes().toString().padStart(2, "0");
+  const ampm = horas >= 12 ? "pm" : "am";
+  horas = horas % 12 || 12; // convierte a formato 12h
+
+  return `${dia}/${mes}/${anio} ${horas}:${minutos} ${ampm}`;
+};
+
 const getEstadoClasses = (estado) => {
   switch (estado) {
-    case "Confirmado":
-      // Amarillo
-      return "bg-yellow-500/90 !text-white border-yellow-400";
+    case "Incompleto":
+      return "bg-orange-500/90 text-white border border-orange-400 shadow-sm";
+    case "Stock Confirmado":
+      return "bg-yellow-500/90 text-white border border-yellow-400 shadow-sm";
     case "Emitido":
-      // Azul
-      return "bg-blue-500/90 !text-white border-blue-400";
+      return "bg-blue-500/90 text-white border border-blue-400 shadow-sm";
     case "Despachado":
-      // Verde
-      return "bg-green-500/90 !text-white border-green-400";
+      return "bg-green-500/90 text-white border border-green-400 shadow-sm";
     default:
-      // Gris
-      return "bg-slate-500/90 !text-white border-slate-400";
+      return "bg-slate-500/90 text-white border border-slate-400 shadow-sm";
   }
 };
+
 
 const CardPedido = ({ pedido }) => {
   const estadoClasses = getEstadoClasses(pedido.estado);
 
   return (
     <div className="flex cursor-pointer flex-col rounded-xl border border-slate-700 bg-slate-900 px-4 shadow-xl transition duration-300 ease-in-out">
-      <div className=" flex items-center justify-between py-2">
+      <div className="flex items-center justify-between py-2">
         <h3 className="text-md font-extrabold tracking-tight !text-white">
           {pedido.razon_social}
         </h3>
         <h3
-          className={`rounded-full border px-3 py-1 text-xs font-semibold tracking-wider ${estadoClasses}`}
+          className={`rounded-full border px-3 py-1 text-xs font-semibold tracking-wider !text-white ${estadoClasses}`}
         >
           {pedido.estado}
         </h3>
@@ -55,14 +57,32 @@ const CardPedido = ({ pedido }) => {
           </span>
         </div>
 
-        <div className="col-span-1 pb-1">
-          <p className="font-bold text-slate-300">Guía Nro:</p>
-          <span
-            className={`font-mono text-xs font-semibold ${pedido.guia_nro ? "text-blue-400" : "text-slate-500 italic"}`}
-          >
-            {pedido.guia_nro || "N/A"}
-          </span>
-        </div>
+        {pedido?.guias && pedido?.guias.length > 0 && (
+          <div className="col-span-1 pb-1">
+            <p className="font-bold text-slate-300">Guías Nro:</p>
+            <p className="flex flex-col">
+              {pedido?.guias.map((guia, index) => (
+                <span
+                  key={guia.id}
+                  className={`font-mono text-xs font-semibold ${guia ? "text-blue-400" : "text-slate-500 italic"}`}
+                >
+                  {guia.guia_nro || "N/A"}
+                </span>
+              ))}
+            </p>
+          </div>
+        )}
+
+        {pedido.guia_nro && (
+          <div className="col-span-1 pb-1">
+            <p className="font-bold text-slate-300">Guía Nro:</p>
+            <span
+              className={`font-mono text-xs font-semibold ${pedido.guia_nro ? "text-blue-400" : "text-slate-500 italic"}`}
+            >
+              {pedido.guia_nro || "N/A"}
+            </span>
+          </div>
+        )}
 
         <hr className="col-span-2 my-1 border-slate-700" />
 
