@@ -7,7 +7,7 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { Edit, Eye, FileDown, FileText, SquareCheckBig, FileCog, Truck} from "lucide-react";
+import { SquareCheckBig, FileCog, Truck } from "lucide-react";
 import { ColumnSelector } from "@/shared/components/ColumnSelector";
 import { Input } from "@/components/ui/input";
 
@@ -39,10 +39,7 @@ const TruncatedText = ({ text }) => {
 
 export default function TablaContratos({
   data = [],
-  onDownloadPDF,
   onSolicitarPasePedido,
-  setContratoPrevisualizado,
-  onContinuarWizard,
   onSolicitarCondicionesAlquiler,
   user,
 }) {
@@ -53,23 +50,24 @@ export default function TablaContratos({
   // Aplanado defensivo (contrato es extensión de cotización)
   useEffect(() => {
     const flattened = (data || []).map((item) => {
-      return ({
-      ...item,
-      // claves comunes
-      cotizacionId: item.cotizacion?.id ?? null,
-      filial_id: item.filial?.id ?? item.filial_id ?? null,
-      filial_razon_social: item.filial?.razon_social ?? null,
-      uso_id: item.uso?.id ?? item.uso_id ?? null,
-      codigo_contrato: item.ref_contrato ?? "-",
-      cliente_razon_social: item.cliente?.razon_social ?? "-",
-      obra_nombre: item.obra?.nombre ?? "-",
-      uso_descripcion: item.uso?.descripcion ?? "-",
-      tipo: item.tipo ?? item.tipo_servicio ?? "-",
-      estado: item.estado ?? "-",
-      estado_condiciones: item.estado_condiciones ?? "-",
-      fecha_inicio: item.fecha_inicio ?? item.vigencia?.inicio ?? null,
-      fecha_fin: item.fecha_fin ?? item.vigencia?.fin ?? null,
-    })});
+      return {
+        ...item,
+        // claves comunes
+        cotizacionId: item.cotizacion?.id ?? null,
+        filial_id: item.filial?.id ?? item.filial_id ?? null,
+        filial_razon_social: item.filial?.razon_social ?? null,
+        uso_id: item.uso?.id ?? item.uso_id ?? null,
+        codigo_contrato: item.ref_contrato ?? "-",
+        cliente_razon_social: item.cliente?.razon_social ?? "-",
+        obra_nombre: item.obra?.nombre ?? "-",
+        uso_descripcion: item.uso?.descripcion ?? "-",
+        tipo: item.tipo ?? item.tipo_servicio ?? "-",
+        estado: item.estado ?? "-",
+        estado_condiciones: item.estado_condiciones ?? "-",
+        fecha_inicio: item.fecha_inicio ?? item.vigencia?.inicio ?? null,
+        fecha_fin: item.fecha_fin ?? item.vigencia?.fin ?? null,
+      };
+    });
     setContratos(flattened);
   }, [data]);
 
@@ -94,7 +92,7 @@ export default function TablaContratos({
     { id: "uso", label: "Uso" },
     { id: "tipo", label: "Tipo" },
     { id: "estado", label: "Estado" },
-    { id: "estado_condiciones", label: "Estado Condiciones"},
+    { id: "estado_condiciones", label: "Estado Condiciones" },
     { id: "vigencia", label: "Vigencia" },
     { id: "acciones", label: "Acciones" },
   ];
@@ -102,57 +100,24 @@ export default function TablaContratos({
   const columns = useMemo(
     () =>
       [
-        visibleColumns.codigo &&
-        {
+        visibleColumns.codigo && {
           headerName: "Acciones",
           sortable: false,
           width: 150,
           cellRenderer: (params) => {
             const row = params.data;
 
-            const puedeEditar =
-              ["Borrador", "Por Firmar"].includes(row.estado) &&
-              row?.usuario?.id === user?.id;
+            const puedeSolicitarCondiciones = ["Creado"].includes(
+              row.estado_condiciones,
+            );
 
-            const puedeDescargar =
-              ["Por Firmar", "Vigente", "Vencido", "Resuelto"].includes(row.estado);
-
-            const puedeSolicitarCondiciones =
-              ["Creado"].includes(row.estado_condiciones);
-
-            const puedeSolicitarPasePedido =
-              ["Validando Condiciones"].includes(row.estado_condiciones);
+            const puedeSolicitarPasePedido = ["Validando Condiciones"].includes(
+              row.estado_condiciones,
+            );
 
             return (
-              <div className="flex gap-1 justify-start">
-                {/* Documentos (plantilla → DOCX/PDF) */}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() =>
-                        navigate(`/contratos/${row.id}/documentos`, {
-                          state: {
-                            codigo_contrato: row.ref_contrato ?? null,
-                            filialId: row.filial_id ?? null,
-                            filial_razon_social: row.filial?.razon_social ?? null,
-                            usoId: row.uso_id ?? null,
-                            cotizacionId: row.cotizacion.id ?? null,
-                            uso: row.uso_descripcion ?? null,
-                          },
-                        })
-                      }
-                    >
-                      <FileCog />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Documentos</p>
-                  </TooltipContent>
-                </Tooltip>
-
-                {/* Descargar PDF */}
+              <div className="flex justify-start gap-1">
+                {/* Solicitud de pase de pedido */}
                 {puedeSolicitarPasePedido && (
                   <>
                     <Tooltip>
@@ -172,107 +137,89 @@ export default function TablaContratos({
                   </>
                 )}
 
-                {/* Descargar PDF */}
-                {puedeDescargar && (
-                  <>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => onDownloadPDF(row.id)}
-                        >
-                          <FileDown />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Descargar PDF</p>
-                      </TooltipContent>
-                    </Tooltip>
-
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => setContratoPrevisualizado(row.id)}
-                        >
-                          <Eye />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Previsualizar PDF</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </>
-                )}
-
-                {/* Continuar wizard (editar flujo) */}
-                {puedeEditar && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => onContinuarWizard(row.id)}
-                      >
-                        <Edit />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Continuar / Editar</p>
-                    </TooltipContent>
-                  </Tooltip>
-                )}
-
                 {/* Solicitar condiciones de alquiler para el mismo usuario */}
-                {puedeSolicitarCondiciones &&
-                (
+                {puedeSolicitarCondiciones && (
                   <SolicitarCondicionesModal
                     contrato={row}
                     onConfirmar={onSolicitarCondicionesAlquiler}
                   >
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="outline" size="icon">
-                        <SquareCheckBig />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Solicitar Condiciones de Alquiler</p>
-                    </TooltipContent>
-                  </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button variant="outline" size="icon">
+                          <SquareCheckBig />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Solicitar Condiciones de Alquiler</p>
+                      </TooltipContent>
+                    </Tooltip>
                   </SolicitarCondicionesModal>
                 )}
 
                 {/* Validar condiciones, si corresponde */}
                 {row.estado_condiciones === "Validando Condiciones" &&
-                 row.usuario.id === user.id && (
-                 <CondicionesModal 
-                    contratoId={row.id} 
-                    onActualizarCotizaciones={async () => {
-                      const res = await obtenerContratos();
-                      setContratos(
-                        res.map((item) => ({
-                          ...item,
-                          codigo_contrato: item.ref_contrato  ?? "—",
-                          cliente_razon_social: item.cliente?.razon_social ?? "—",
-                          obra_nombre: item.obra?.nombre ?? "—",
-                          uso_descripcion: item.uso?.descripcion ?? "—",
-                          tipo: item.tipo ?? item.tipo_servicio ?? "—",
-                          estado: item.estado ?? "—",
-                          estado_condiciones: item.estado_condiciones ?? "—",
-                          fecha_inicio: item.fecha_inicio ?? item.vigencia?.inicio ?? null,
-                          fecha_fin: item.fecha_fin ?? item.vigencia?.fin ?? null,
-                        }))
-                      )
-                    }}
-                  />
-                )}
+                  row.usuario.id === user.id && (
+                    <>
+                      {/* Documentos (plantilla → DOCX/PDF) */}
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() =>
+                              navigate(`/contratos/${row.id}/documentos`, {
+                                state: {
+                                  codigo_contrato: row.ref_contrato ?? null,
+                                  filialId: row.filial_id ?? null,
+                                  filial_razon_social:
+                                    row.filial?.razon_social ?? null,
+                                  usoId: row.uso_id ?? null,
+                                  cotizacionId: row.cotizacion.id ?? null,
+                                  uso: row.uso_descripcion ?? null,
+                                },
+                              })
+                            }
+                          >
+                            <FileCog />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Documentos</p>
+                        </TooltipContent>
+                      </Tooltip>
+
+                      <CondicionesModal
+                        contratoId={row.id}
+                        onActualizarCotizaciones={async () => {
+                          const res = await obtenerContratos();
+                          setContratos(
+                            res.map((item) => ({
+                              ...item,
+                              codigo_contrato: item.ref_contrato ?? "—",
+                              cliente_razon_social:
+                                item.cliente?.razon_social ?? "—",
+                              obra_nombre: item.obra?.nombre ?? "—",
+                              uso_descripcion: item.uso?.descripcion ?? "—",
+                              tipo: item.tipo ?? item.tipo_servicio ?? "—",
+                              estado: item.estado ?? "—",
+                              estado_condiciones:
+                                item.estado_condiciones ?? "—",
+                              fecha_inicio:
+                                item.fecha_inicio ??
+                                item.vigencia?.inicio ??
+                                null,
+                              fecha_fin:
+                                item.fecha_fin ?? item.vigencia?.fin ?? null,
+                            })),
+                          );
+                        }}
+                      />
+                    </>
+                  )}
               </div>
             );
           },
-        }, 
+        },
         {
           field: "codigo_contrato",
           headerName: "Código",
@@ -329,7 +276,9 @@ export default function TablaContratos({
           headerName: "Vigencia",
           width: 200,
           valueGetter: (p) => {
-            const i = p.data?.fecha_inicio ? new Date(p.data.fecha_inicio) : null;
+            const i = p.data?.fecha_inicio
+              ? new Date(p.data.fecha_inicio)
+              : null;
             const f = p.data?.fecha_fin ? new Date(p.data.fecha_fin) : null;
             if (!i && !f) return "—";
             const fmt = (d) =>
@@ -340,7 +289,7 @@ export default function TablaContratos({
           sortable: false,
         },
       ].filter(Boolean),
-    [visibleColumns, user?.id]
+    [visibleColumns, user?.id],
   );
 
   // Filtro texto
@@ -352,7 +301,7 @@ export default function TablaContratos({
           filial_id: item.filial?.id ?? item.filial_id ?? null,
           filial_razon_social: item.filial?.razon_social ?? null,
           uso_id: item.uso?.id ?? item.uso_id ?? null,
-          codigo_contrato: item.ref_contrato  ?? "—",
+          codigo_contrato: item.ref_contrato ?? "—",
           cliente_razon_social: item.cliente?.razon_social ?? "—",
           obra_nombre: item.obra?.nombre ?? "—",
           uso_descripcion: item.uso?.descripcion ?? "—",
@@ -361,7 +310,7 @@ export default function TablaContratos({
           estado_condiciones: item.estado_condiciones ?? "—",
           fecha_inicio: item.fecha_inicio ?? item.vigencia?.inicio ?? null,
           fecha_fin: item.fecha_fin ?? item.vigencia?.fin ?? null,
-        }))
+        })),
       );
     } else {
       const lower = text.toLowerCase();
@@ -408,10 +357,10 @@ export default function TablaContratos({
   }, [text, data]);
 
   return (
-    <div className="w-full px-4 max-w-7xl">
+    <div className="w-full max-w-7xl px-4">
       {/* Filtro + selector de columnas */}
-      <article className="flex flex-col md:flex-row justify-between mt-6">
-        <section className="relative flex-1 w-full md:max-w-80">
+      <article className="mt-6 flex flex-col justify-between md:flex-row">
+        <section className="relative w-full flex-1 md:max-w-80">
           <Input
             value={text}
             onChange={(e) => setText(e.target.value)}

@@ -1,6 +1,5 @@
 import TablaContratos from "../components/TablaContratos";
 import { useGestionContratos } from "../hooks/useGestionContratos";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ModuloNavegacion from "@/shared/components/ModuloNavegacion";
 
@@ -24,7 +23,6 @@ export default function GestionContratos() {
 
   const {
     contratos,
-    confirmarDescargaPDF,
     solicitarPasePedido,
     modalConfirmacion,
     cerrarModal,
@@ -32,12 +30,6 @@ export default function GestionContratos() {
     solicitarCondiciones,
     user,
   } = useGestionContratos();
-
-  const [contratoSeleccionadoId, setContratoSeleccionadoId] = useState(null);
-
-  const continuarContrato = (idContrato) => {
-    navigate(`/contratos/wizard/${idContrato}`);
-  };
 
   const verDetalleContrato = (idContrato) => {
     navigate(`/contratos/${idContrato}`);
@@ -49,10 +41,10 @@ export default function GestionContratos() {
 
       <TablaContratos
         data={contratos}
-        onDownloadPDF={confirmarDescargaPDF}
+     
         onSolicitarPasePedido={solicitarPasePedido}
-        setContratoPrevisualizado={setContratoSeleccionadoId}
-        onContinuarWizard={continuarContrato}
+       
+       
         onSolicitarCondicionesAlquiler={solicitarCondiciones}
         onVerDetalle={verDetalleContrato}
         user={user}
