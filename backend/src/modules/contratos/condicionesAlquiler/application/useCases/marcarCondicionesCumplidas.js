@@ -1,4 +1,4 @@
-module.exports = async (contratoId, condicionesCumplidas, condicionRepository, contratoRepository) => {
+module.exports = async (contratoId, condicionesCumplidas, condicionRepository , pasePedidoRepository) => {
   console.log("ENTRO A MARCAR CONDICIONES CUMPLIDAS");
   const condicion = await condicionRepository.obtenerPorContratoId(contratoId);
   if (!condicion) {
@@ -27,6 +27,9 @@ module.exports = async (contratoId, condicionesCumplidas, condicionRepository, c
   if (todasCumplidas) {
     await contratoRepository.actualizarEstadoCondiciones(contratoId, "Condiciones Cumplidas");
   }
+
+  // Actualizar el estado del pase de pedido
+  await pasePedidoRepository.actualizarPasePedidoAutomatico(contratoId);
   
   return {
     codigo: 200,

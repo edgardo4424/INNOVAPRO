@@ -23,6 +23,9 @@ router.post("/:contratoId/documentos/render", ContratoController.generarDocument
 //Ruta para obtener documentos vinculados a un contrato
 router.get("/:contratoId/documentos", ContratoController.obtenerDocumentosPorCodigoContrato);
 
+//Ruta para subir un contrato oficializado
+//router.post("/:contratoId/documentos/subir-oficializado", ContratoController.subirDocumentoOficializado);
+
 // Nueva ruta protegida para descargar un documento (requiere token)
 //router.get("/:contratoId/documentos/download", ContratoController.descargarDocumento);
 

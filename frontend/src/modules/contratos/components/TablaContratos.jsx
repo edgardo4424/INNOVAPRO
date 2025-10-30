@@ -53,7 +53,6 @@ export default function TablaContratos({
   // Aplanado defensivo (contrato es extensión de cotización)
   useEffect(() => {
     const flattened = (data || []).map((item) => {
-      console.log("ITEM: ", item)
       return ({
       ...item,
       // claves comunes
@@ -103,76 +102,11 @@ export default function TablaContratos({
   const columns = useMemo(
     () =>
       [
-        visibleColumns.codigo && {
-          field: "codigo_contrato",
-          headerName: "Código",
-          width: 190,
-          cellRenderer: (p) => <TruncatedText text={p.value} />,
-        },
-        visibleColumns.filial && {
-          field: "filial_razon_social",
-          headerName: "Filial",
-          width: 200,
-          cellRenderer: (p) => <TruncatedText text={p.value} />,
-        },
-        visibleColumns.cliente && {
-          field: "cliente_razon_social",
-          headerName: "Cliente",
-          width: 200,
-          cellRenderer: (p) => <TruncatedText text={p.value} />,
-        },
-        visibleColumns.obra && {
-          field: "obra_nombre",
-          headerName: "Obra",
-          width: 150,
-          cellRenderer: (p) => <TruncatedText text={p.value} />,
-          sortable: true,
-        },
-        visibleColumns.uso && {
-          field: "uso_descripcion",
-          headerName: "Uso",
-          width: 150,
-          cellRenderer: (p) => <TruncatedText text={p.value} />,
-          sortable: true,
-        },
-        visibleColumns.tipo && {
-          field: "tipo",
-          headerName: "Tipo",
-          width: 80,
-          sortable: true,
-        },
-        visibleColumns.estado && {
-          field: "estado",
-          headerName: "Estado",
-          width: 150,
-          cellRenderer: (p) => <TruncatedText text={p.value} />,
-          sortable: true,
-        },
-        visibleColumns.estado_condiciones && {
-          field: "estado_condiciones",
-          headerName: "Estado Condiciones",
-          width: 150,
-          cellRenderer: (p) => <TruncatedText text={p.value} />,
-          sortable: true,
-        },
-        visibleColumns.vigencia && {
-          headerName: "Vigencia",
-          width: 200,
-          valueGetter: (p) => {
-            const i = p.data?.fecha_inicio ? new Date(p.data.fecha_inicio) : null;
-            const f = p.data?.fecha_fin ? new Date(p.data.fecha_fin) : null;
-            if (!i && !f) return "—";
-            const fmt = (d) =>
-              `${`${d.getDate()}`.padStart(2, "0")}/${`${d.getMonth() + 1}`.padStart(2, "0")}/${d.getFullYear()}`;
-            return `${i ? fmt(i) : "—"} - ${f ? fmt(f) : "—"}`;
-          },
-          cellRenderer: (p) => <TruncatedText text={p.value} />,
-          sortable: false,
-        },
+        visibleColumns.codigo &&
         {
           headerName: "Acciones",
           sortable: false,
-          width: 200,
+          width: 150,
           cellRenderer: (params) => {
             const row = params.data;
 
@@ -338,6 +272,72 @@ export default function TablaContratos({
               </div>
             );
           },
+        }, 
+        {
+          field: "codigo_contrato",
+          headerName: "Código",
+          width: 190,
+          cellRenderer: (p) => <TruncatedText text={p.value} />,
+        },
+        visibleColumns.filial && {
+          field: "filial_razon_social",
+          headerName: "Filial",
+          width: 200,
+          cellRenderer: (p) => <TruncatedText text={p.value} />,
+        },
+        visibleColumns.cliente && {
+          field: "cliente_razon_social",
+          headerName: "Cliente",
+          width: 200,
+          cellRenderer: (p) => <TruncatedText text={p.value} />,
+        },
+        visibleColumns.obra && {
+          field: "obra_nombre",
+          headerName: "Obra",
+          width: 150,
+          cellRenderer: (p) => <TruncatedText text={p.value} />,
+          sortable: true,
+        },
+        visibleColumns.uso && {
+          field: "uso_descripcion",
+          headerName: "Uso",
+          width: 150,
+          cellRenderer: (p) => <TruncatedText text={p.value} />,
+          sortable: true,
+        },
+        visibleColumns.tipo && {
+          field: "tipo",
+          headerName: "Tipo",
+          width: 80,
+          sortable: true,
+        },
+        visibleColumns.estado && {
+          field: "estado",
+          headerName: "Estado",
+          width: 150,
+          cellRenderer: (p) => <TruncatedText text={p.value} />,
+          sortable: true,
+        },
+        visibleColumns.estado_condiciones && {
+          field: "estado_condiciones",
+          headerName: "Estado Condiciones",
+          width: 150,
+          cellRenderer: (p) => <TruncatedText text={p.value} />,
+          sortable: true,
+        },
+        visibleColumns.vigencia && {
+          headerName: "Vigencia",
+          width: 200,
+          valueGetter: (p) => {
+            const i = p.data?.fecha_inicio ? new Date(p.data.fecha_inicio) : null;
+            const f = p.data?.fecha_fin ? new Date(p.data.fecha_fin) : null;
+            if (!i && !f) return "—";
+            const fmt = (d) =>
+              `${`${d.getDate()}`.padStart(2, "0")}/${`${d.getMonth() + 1}`.padStart(2, "0")}/${d.getFullYear()}`;
+            return `${i ? fmt(i) : "—"} - ${f ? fmt(f) : "—"}`;
+          },
+          cellRenderer: (p) => <TruncatedText text={p.value} />,
+          sortable: false,
         },
       ].filter(Boolean),
     [visibleColumns, user?.id]

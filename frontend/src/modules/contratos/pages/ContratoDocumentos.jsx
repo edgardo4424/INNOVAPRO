@@ -58,9 +58,16 @@ export default function ContratoDocumentos() {
                   </tr>
                 </thead>
                 <tbody>
+                  {console.log("Historial: ", state.historial)}
                   {state.historial.map((h) => (
                     <tr key={h.id} className="border-b hover:bg-gray-50">
-                      <td className="py-2.5 px-4">v{h.version}</td>
+                      <td className="py-2.5 px-4">
+                        {h.version ? (
+                          <div>v {h.version}</div>
+                        ) : (
+                          "-"
+                        )}
+                      </td>
                       <td className="py-2.5 px-4">{h.estado}</td>
                       <td className="py-2.5 px-4">
                         {h.docx_url ? (
@@ -91,7 +98,7 @@ export default function ContratoDocumentos() {
                         )}
                       </td>
                       <td className="py-2.5 px-4">
-                        {new Date(h.created_at).toLocaleString()}
+                        {new Date(h.createdAt).toLocaleString("es-PE")}
                       </td>
                     </tr>
                   ))}

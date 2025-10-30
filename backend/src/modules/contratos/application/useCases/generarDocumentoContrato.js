@@ -26,7 +26,7 @@ module.exports = async (
   }, { transaction });
 
   if (documentoExistente) {
-    return { codigo: 409, respuesta: { error: "No se puede volver a generar el documento de contrato" } };
+    return { codigo: 409, respuesta: { error: "Ya existe un 'borrador' para este contrato" } };
   }
   
 
