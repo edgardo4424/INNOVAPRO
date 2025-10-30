@@ -156,17 +156,17 @@ const modulesByRole = {
             { name: "Pase Pedidos", path: "pedidos/pase-pedidos" },
          ]
        },
-      {
-         group: "Facturación",
-         items: [
-            { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
-            { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
-            { name: "Guia de Remision", path: "/facturacion/emitir/guia" },
-            { name: "Reporte", path: "/facturacion/reportes-venta" },
-            { name: "Bandeja", path: "/facturacion/bandeja" },
-            { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
-         ],
-      },
+      // {
+      //    group: "Facturación",
+      //    items: [
+      //       { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
+      //       { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
+      //       { name: "Guia de Remision", path: "/facturacion/emitir/guia" },
+      //       { name: "Reporte", path: "/facturacion/reportes-venta" },
+      //       { name: "Bandeja", path: "/facturacion/bandeja" },
+      //       { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
+      //    ],
+      // },
       {
          group: "Planilla",
          items: [
@@ -246,16 +246,16 @@ const modulesByRole = {
          ],
       },
       { name: "Datos de mantenimiento", path: "/data-mantenimiento" },
-      {
-         group: "Facturación",
-         items: [
-            { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
-            { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
-            { name: "Reporte", path: "/facturacion/reportes-venta" },
-            { name: "Bandeja", path: "/facturacion/bandeja" },
-            { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
-         ],
-      },
+      // {
+      //    group: "Facturación",
+      //    items: [
+      //       { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
+      //       { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
+      //       { name: "Reporte", path: "/facturacion/reportes-venta" },
+      //       { name: "Bandeja", path: "/facturacion/bandeja" },
+      //       { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
+      //    ],
+      // },
    ],
    "Contadora / RRHH":[
       {
@@ -294,16 +294,16 @@ const modulesByRole = {
       { name: "Datos de mantenimiento", path: "/data-mantenimiento" },
    ],
    "Asistente Facturación":[
-      {
-         group: "Facturación",
-         items: [
-            { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
-            { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
-            { name: "Reporte", path: "/facturacion/reportes-venta" },
-            { name: "Bandeja", path: "/facturacion/bandeja" },
-            { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
-         ],
-      },
+      // {
+      //    group: "Facturación",
+      //    items: [
+      //       { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
+      //       { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
+      //       { name: "Reporte", path: "/facturacion/reportes-venta" },
+      //       { name: "Bandeja", path: "/facturacion/bandeja" },
+      //       { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
+      //    ],
+      // },
    ],
    "Jefa de Almacén":[
       {
@@ -344,17 +344,17 @@ const modulesByRole = {
 
    ],
    "Gerente de administración":[
-      {
-         group: "Facturación",
-         items: [
-            { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
-            { name: "Guia de Remision", path: "/facturacion/emitir/guia" },
-            { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
-            { name: "Reporte", path: "/facturacion/reportes-venta" },
-            { name: "Bandeja", path: "/facturacion/bandeja" },
-            { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
-         ],
-      },
+      // {
+      //    group: "Facturación",
+      //    items: [
+      //       { name: "Factura y Boleta", path: "/facturacion/emitir/factura-boleta" },
+      //       { name: "Guia de Remision", path: "/facturacion/emitir/guia" },
+      //       { name: "Nota de Credito y Debito", path: "/facturacion/emitir/nota" },
+      //       { name: "Reporte", path: "/facturacion/reportes-venta" },
+      //       { name: "Bandeja", path: "/facturacion/bandeja" },
+      //       { name: "Borradores", path: "/facturacion/borradores?tipo_doc=todos&page=1&limit=10" },
+      //    ],
+      // },
       {
          group: "Gestión de Transporte",
          items: [
