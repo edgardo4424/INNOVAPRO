@@ -131,10 +131,8 @@ module.exports = async (usuario,pasePedidoRepository ,transaction = null) => {
           },
         };
       }
-      pase_pedido.guia_Envio_Partida_Direccion =
-        pedido.contrato.cotizacion.obra.direccion;
-      pase_pedido.guia_Envio_Llegada_Direccion =
-        pedido.contrato.cotizacion.empresas_proveedora.direccion;
+      pase_pedido.guia_Envio_Partida_Direccion =pedido.contrato.cotizacion.empresas_proveedora.direccion;
+      pase_pedido.guia_Envio_Llegada_Direccion =pedido.contrato.cotizacion.obra.direccion;
 
       return pase_pedido;
     })

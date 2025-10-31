@@ -203,6 +203,14 @@ class SequelizePasePedidoRepository {
     }
     await PasePedido.update(payload, {where:{id:response_pase.id} ,transaction });
   }
+
+   async obtenerPasePedidoPorContratoId(contrato_id, transaction = null) {
+    const pase_pedido = await PasePedido.findOne({
+      where: { contrato_id },
+      transaction,
+    });
+    return pase_pedido;
+  }
 }
 
 module.exports = SequelizePasePedidoRepository;

@@ -115,6 +115,8 @@ export default function TablaContratos({
               row.estado_condiciones,
             );
 
+            const validarUsuario = row.usuario?.id === user?.id;
+
             return (
               <div className="flex justify-start gap-1">
                 {/* Solicitud de pase de pedido */}
@@ -155,10 +157,12 @@ export default function TablaContratos({
                     </Tooltip>
                   </SolicitarCondicionesModal>
                 )}
-
+                {console.log("USER ID EN TABLA user.id:", user.id)}
+                {console.log("USER ID EN TABLA row.usuario.id:", row.usuario.id)}
+                {console.log(row.usuario.id === user.id)}
                 {/* Validar condiciones, si corresponde */}
-                {row.estado_condiciones === "Validando Condiciones" &&
-                  row.usuario.id === user.id && (
+                {(row.estado_condiciones === "Validando Condiciones") &&
+                  (validarUsuario) && (
                     <>
                       {/* Documentos (plantilla → DOCX/PDF) */}
                       <Tooltip>
